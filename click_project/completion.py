@@ -9,7 +9,10 @@ import click_completion
 from click import MultiCommand, Option, Argument
 import fnmatch as fnmatchlib
 
+from click_project.lib import to_bool
+
 CASE_INSENSITIVE_ENV = "_CLICK_PROJECT_CASE_INSENSITIVE_COMPLETION"
+COMPLETE_OPTIONS = "_CLICK_PROJECT_COMPLETE_OPTIONS"
 
 
 def startswith(string, incomplete):
@@ -27,6 +30,7 @@ def fnmatch(string, incomplete):
 
 
 IN_COMPLETION = None
+_get_choices = click_completion.get_choices
 
 
 def get_choices(cli, prog_name, args, incomplete):
@@ -39,7 +43,7 @@ def get_choices(cli, prog_name, args, incomplete):
     if hasattr(ctx.command, "get_choices"):
         choices = ctx.command.get_choices(ctx, args, incomplete)
     else:
-        choices = compute_choices(ctx, args, incomplete)
+        choices = _get_choices(cli, prog_name, args, incomplete)
     for item, help in choices:
         yield (item, help)
     IN_COMPLETION = False
@@ -81,4 +85,4 @@ def compute_choices(ctx, args, incomplete):
 def init():
     click_completion.startswith = startswith
     click_completion.get_choices = get_choices
-    click_completion.init()
+    click_completion.init(complete_options=to_bool(os.environ.get(COMPLETE_OPTIONS, "off")))

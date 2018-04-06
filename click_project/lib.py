@@ -40,7 +40,7 @@ from six.moves.urllib.request import urlopen
 from click._termui_impl import ProgressBar as ProgressBar_
 
 from click_project.click_helpers import click_get_current_context_safe
-from click_project.completion import startswith
+from click_completion import DocumentedChoice
 
 LOGGER = logging.getLogger(__name__)
 dry_run = None
@@ -51,6 +51,9 @@ if six.PY3:
     unicode_ = str
 else:
     unicode_ = unicode  # NOQA: F821 undefined name 'unicode': Needed for python3 compatibility
+
+
+DocumentedChoice = DocumentedChoice
 
 
 def read_properties_file(file_name):
@@ -1477,47 +1480,6 @@ def str_join(sep, ls):
     return sep.join(str(l) for l in ls)
 
 
-class DocumentedChoice(click.ParamType):
-    """The choice type allows a value to be checked against a fixed set of
-    supported values.  All of these values have to be strings. Each value may
-    be associated to a help message that will be display in the error message
-    and during the completion.
-    """
-    name = 'choice'
-
-    def __init__(self, choices):
-        self.choices = dict(choices)
-
-    def get_metavar(self, param):
-        return '[%s]' % '|'.join(self.choices.keys())
-
-    def get_missing_message(self, param):
-        formated_choices = ['{:<12} {}'.format(k, self.choices[k] or '') for k in sorted(self.choices.keys())]
-        return 'Choose from\n  ' + '\n  '.join(formated_choices)
-
-    def convert(self, value, param, ctx):
-        # Exact match
-        if value in self.choices:
-            return value
-
-        # Match through normalization
-        if ctx is not None and \
-           ctx.token_normalize_func is not None:
-            value = ctx.token_normalize_func(value)
-            for choice in self.choices:
-                if ctx.token_normalize_func(choice) == value:
-                    return choice
-
-        self.fail('invalid choice: %s. %s' %
-                  (value, self.get_missing_message(param)), param, ctx)
-
-    def __repr__(self):
-        return 'DocumentedChoice(%r)' % list(self.choices.keys())
-
-    def complete(self, ctx, incomplete):
-        return [(c, v) for c, v in six.iteritems(self.choices) if startswith(c, incomplete)]
-
-
 class AuthenticatorNotFound(click.UsageError):
     def __init__(self, machine, *args, **kwargs):
         super(AuthenticatorNotFound, self).__init__(
@@ -1574,7 +1536,6 @@ def assert_main_module():
     )
 
 
-
 def call_me(*cmd):
     assert_main_module()
     return call(
@@ -1593,3 +1554,9 @@ def check_my_output(*cmd):
             '-c',
             'from {} import main; main()'.format(main_module)
         ] + list(cmd))
+
+
+def to_bool(s):
+    """Converts a string to a boolean"""
+    from distutils.util import strtobool
+    return bool(strtobool(s))
