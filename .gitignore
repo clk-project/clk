@@ -1,0 +1,11 @@
+*.pyc
+*.egg-info
+*~
+.idea
+bin/csm
+bin/csm.bat
+dist
+wheelhouse
+build
+csmcli.zip
+csmcli-*
