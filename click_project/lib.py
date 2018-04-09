@@ -1456,7 +1456,7 @@ def tabulate(tabular_data, headers=(), tablefmt="simple",
             json_data.append(d)
         return colorize_json(json_data)
     elif tablefmt == 'json-map':
-        return colorize_json(dict((d[0], clear_ansi_color_codes(str_join(' ', d[1:]))) for d in tabular_data))
+        return colorize_json(dict((d[0], clear_ansi_color_codes(str_join(' ', d[1:])) if len(d[1:]) > 1 else d[1]) for d in tabular_data))
     elif tablefmt == 'json-maps':
         import collections
         json_data = {}
