@@ -34,8 +34,6 @@ _get_choices = click_completion.get_choices
 
 
 def get_choices(cli, prog_name, args, incomplete):
-    global IN_COMPLETION
-    IN_COMPLETION = True
     from click_completion import resolve_ctx
     ctx = resolve_ctx(cli, prog_name, args)
     if ctx is None:
@@ -46,7 +44,6 @@ def get_choices(cli, prog_name, args, incomplete):
         choices = _get_choices(cli, prog_name, args, incomplete)
     for item, help in choices:
         yield (item, help)
-    IN_COMPLETION = False
 
 
 def compute_choices(ctx, args, incomplete):

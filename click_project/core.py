@@ -22,6 +22,7 @@ from click_project import log
 from click_project.lib import main_default, natural_delta, ParameterType
 from click_project import startup_time
 from click_project.completion import startswith
+from click_project import completion
 
 LOGGER = get_logger(__name__)
 
@@ -331,6 +332,10 @@ def main_command_decoration(f, cls, **kwargs):
     f = main_command_option('--profiling', is_flag=True, callback=enable_profiling_callback,
                             help="Enable profiling the application code")(f)
     f = click.group(cls=cls, invoke_without_command=True)(f)
+    prog_name = cls.path
+    env_name = '_%s_COMPLETE' % prog_name.upper().replace('-', '_')
+    if env_name in os.environ:
+        completion.IN_COMPLETION = True
     command = main_default(
         prog_name=cls.path,
         standalone_mode=False,
