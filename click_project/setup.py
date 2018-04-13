@@ -56,5 +56,14 @@ def classic_setup(main_module=None, config_cls=Config, extra_command_packages=[]
 
 def basic_entry_point(main_module, extra_command_packages=[]):
     def decorator(f):
-        return classic_setup(main_module, extra_command_packages=extra_command_packages)(entry_point()(f))
+        path = f.__name__
+        config_cls = type(
+            "{}Config".format(path),
+            (Config,),
+            {
+                "app_dir_name": path,
+                "app_name": path,
+            }
+        )
+        return classic_setup(main_module, config_cls=config_cls, extra_command_packages=extra_command_packages)(entry_point()(f))
     return decorator
