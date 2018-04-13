@@ -1322,7 +1322,7 @@ def cache_disk(f=None, expire=int(os.environ.get(u'CLICK_PROJECT_CACHE_EXPIRE', 
             if os.path.exists(filepath):
                 modified = os.path.getmtime(filepath)
                 age_seconds = time.time() - modified
-                if age_seconds < expire:
+                if expire is None or age_seconds < expire:
                     return pickle.load(open(filepath, u"rb"))
             # call the decorated function...
             result = f(*args, **kwargs)
