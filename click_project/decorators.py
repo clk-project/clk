@@ -40,10 +40,7 @@ def param_config(name, *args, **kwargs):
     kwargs["expose_value"] = kwargs.get("expose_value", False)
     kwargs["callback"] = _subcommand_config_callback
 
-    def decorator(func):
-        return kls(*args, **kwargs)(func)
-
-    return decorator
+    return kls(*args, **kwargs)
 
 
 def use_settings(settings_name, settings_cls, override=True, default_level='context'):
