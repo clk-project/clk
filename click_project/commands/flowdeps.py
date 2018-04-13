@@ -171,8 +171,12 @@ def compute_dot(cmds=None, strict=False, cluster=True,
             parent_path = ".".join([part for part in cmd_path.split(".")[:-1]])
             clusters[parent_path].add(cmd_path)
 
+    aliases = {}
+
     def fill_graph(cmds):
         for cmd in iter_commands(from_paths=cmds):
+            if hasattr(cmd, "commands_to_run"):
+                aliases[cmd.path] = cmd.commands_to_run
             LOGGER.develop("Looking at {}".format(cmd.path))
             if strict:
                 deps = config.flowdeps.readonly.get(cmd.path, [])
@@ -215,7 +219,14 @@ def compute_dot(cmds=None, strict=False, cluster=True,
                 dot += "  }\n"
     for node in nodes:
         if node not in clusters.keys():
-            dot += """  "{}" [fillcolor = skyblue, style = filled];\n""".format(node)
+            dot += """  "{}" [label= "{}{}", fillcolor = {}, style = filled];\n""".format(
+                node,
+                node,
+                "\n -> {}".format(
+                    ' , '.join(' '.join(quote(arg) for arg in cmd) for cmd in aliases[node])
+                ) if node in aliases else "",
+                "greenyellow" if node in aliases else "skyblue",
+            )
     for src, dst in adjacency:
         dot += """  "{}" -> "{}";\n""".format(src, dst)
     dot += "}"
