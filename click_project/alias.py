@@ -188,6 +188,7 @@ class AliasCommandResolver(CommandResolver):
         if deps:
             alias_command.clickproject_flowdepends = deps
 
+        alias_command.commands_to_run = commands_to_run
         if c is not None:
             alias_command.original_command = c.command
             if kind == "group":
