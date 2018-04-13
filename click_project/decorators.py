@@ -23,6 +23,10 @@ LOGGER = logging.getLogger(__name__)
 def param_config(name, *args, **kwargs):
     typ = kwargs.pop("typ", object)
     kls = kwargs.pop("kls", option)
+    cls = kwargs.get("cls", {
+        option: click.core.Option,
+        argument: click.core.Argument
+    }[kls])
 
     class Conf(typ):
         pass
@@ -39,6 +43,9 @@ def param_config(name, *args, **kwargs):
 
     kwargs["expose_value"] = kwargs.get("expose_value", False)
     kwargs["callback"] = _subcommand_config_callback
+    # find out the name of the param to setup the default value
+    o = cls(args)
+    setattr(getattr(config, name), o.name, kwargs.get("default"))
 
     return kls(*args, **kwargs)
 
