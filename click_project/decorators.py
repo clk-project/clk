@@ -35,6 +35,8 @@ def param_config(name, *args, **kwargs):
         setattr(config, name, Conf())
 
     def _subcommand_config_callback(ctx, attr, value):
+        if not hasattr(config, name):
+            setattr(config, name, Conf())
         setattr(getattr(config, name), attr.name, value)
         if init_callback is not None:
             value = init_callback(ctx, attr, value)
