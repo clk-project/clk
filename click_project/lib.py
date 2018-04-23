@@ -1420,6 +1420,10 @@ class TablePrinter(object):
         for l in ls:
             self.echo(*l)
 
+    def echo_records(self, records):
+        for record in records:
+            self.echo(*[record[value] for value in self.headers_from_context()])
+
 
 def tabulate(tabular_data, headers=(), tablefmt="simple",
              floatfmt="g", numalign="decimal", stralign="left",
