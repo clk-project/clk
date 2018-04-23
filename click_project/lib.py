@@ -1525,7 +1525,10 @@ def get_authenticator(machine, askpass=True, required=True):
                     " `passwords {} netrc-set {}`".format(machine, login))
 
     if login is None or password is None:
-        raise AuthenticatorNotFound(machine)
+        if required:
+            raise AuthenticatorNotFound(machine)
+        else:
+            return None
 
     return login, password
 
