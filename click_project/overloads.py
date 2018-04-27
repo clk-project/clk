@@ -946,12 +946,12 @@ class MainCommand(click_didyoumean.DYMMixin, click.MultiCommand, ExtraParameters
         ExtraParametersMixin.format_help_text(self, ctx, formatter)
 
     def list_commands(self, ctx):
-        return [
+        return sorted(set([
             (c.split(".")[0] if "." in c else c)
             for c in list_commands_with_resolvers(
                 self.commandresolvers, self.path,
                 include_subcommands=True)
-        ]
+        ]))
 
     def get_command(self, ctx, name):
         cmd = get_command_safe(name)
