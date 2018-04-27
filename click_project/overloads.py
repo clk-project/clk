@@ -206,12 +206,14 @@ class CoreCommandResolver(CommandResolver):
     def _list_command_paths(self, parent=None):
         res = []
         for i, commands_package in enumerate(self.commands_packages):
+            # last iteration -> core package
+            core_package = (i + 1 == len(self.commands_packages))
             try:
                 cmddir = list(importlib.import_module(commands_package).__path__)[0]
-                res += sorted(m.replace('_', '-').strip('-') for _, m, _ in pkgutil.iter_modules([cmddir]))
-                if i + 1 == len(self.commands_packages):
-                    res = [
-                        r for r in res
+                tmp_res = sorted(m.replace('_', '-').strip('-') for _, m, _ in pkgutil.iter_modules([cmddir]))
+                if core_package:
+                    tmp_res = [
+                        r for r in tmp_res
                         if (
                                 (self.include_core_commands is None and
                                  self.exclude_core_commands is None)
@@ -221,8 +223,9 @@ class CoreCommandResolver(CommandResolver):
                                 (self.exclude_core_commands is not None and r not in self.exclude_core_commands)
                         )
                     ]
+                res += tmp_res
             except ImportError:
-                if i + 1 == len(self.commands_packages):
+                if core_package:
                     raise
         return res
 
@@ -230,11 +233,13 @@ class CoreCommandResolver(CommandResolver):
         name = path.split(".")[-1]
         attrname = name.replace('-', '_')
         for i, package in enumerate(self.commands_packages):
+            # last iteration -> core package
+            core_package = (i + 1 == len(self.commands_packages))
             try:
                 cmddir = list(importlib.import_module(package).__path__)[0]
                 modules_names = sorted(m for _, m, _ in pkgutil.iter_modules([cmddir]))
             except ImportError:
-                if i + 1 == len(self.commands_packages):
+                if core_package:
                     raise
             else:
                 if attrname in modules_names:
