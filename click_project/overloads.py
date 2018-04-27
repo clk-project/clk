@@ -200,6 +200,8 @@ def on_command_loading_error():
 
 class CoreCommandResolver(CommandResolver):
     commands_packages = ["click_project.commands"]
+    include_core_commands = None
+    exclude_core_commands = None
 
     def _list_command_paths(self, parent=None):
         res = []
@@ -207,6 +209,18 @@ class CoreCommandResolver(CommandResolver):
             try:
                 cmddir = list(importlib.import_module(commands_package).__path__)[0]
                 res += sorted(m.replace('_', '-').strip('-') for _, m, _ in pkgutil.iter_modules([cmddir]))
+                if i + 1 == len(self.commands_packages):
+                    res = [
+                        r for r in res
+                        if (
+                                (self.include_core_commands is None and
+                                 self.exclude_core_commands is None)
+                                or
+                                (self.include_core_commands is not None and r in self.include_core_commands)
+                                or
+                                (self.exclude_core_commands is not None and r not in self.exclude_core_commands)
+                        )
+                    ]
             except ImportError:
                 if i + 1 == len(self.commands_packages):
                     raise

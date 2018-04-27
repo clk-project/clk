@@ -41,7 +41,6 @@ setup(
         "appdirs",
         "ipdb",
         "humanize",
-        "ipython<6",
         "Pygments",
     ],
 )
