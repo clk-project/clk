@@ -102,6 +102,14 @@ def get_command(path):
         cmd_name,
     )
     if cmd is None:
+        for subcmd in list_commands_with_resolvers(
+            resolvers,
+            parent.path,
+            True
+        ):
+            if subcmd.startswith(cmd_name + "."):
+                cmd = group(name=cmd_name, help="Group of commands")(lambda: None)
+    if cmd is None:
         raise CommandNotFound(cmd_name)
     # adjust the path
     if cmd.path is None:
@@ -388,29 +396,29 @@ class Command(click.Command, ExtraParametersMixin):
         return super(Command, self).invoke(ctx, *args, **kwargs)
 
 
-def _list_matching_commands_from_resolver(resolver, parent_path):
+def _list_matching_commands_from_resolver(resolver, parent_path, include_subcommands=False):
     parent = get_command(parent_path)
     if isinstance(parent, config.main_command.__class__):
         res = {
             command
             for command in resolver._list_command_paths(parent)
-            if "." not in command
+            if include_subcommands or "." not in command
         }
     else:
         res = {
             command[len(parent_path)+1:]
             for command in resolver._list_command_paths(parent)
             if command.startswith(parent_path + ".")
-            and "." not in command[len(parent_path)+1:]
+            and (include_subcommands or "." not in command[len(parent_path)+1:])
         }
     return res
 
 
-def list_commands_with_resolvers(resolvers, parent_path):
+def list_commands_with_resolvers(resolvers, parent_path, include_subcommands=False):
     load_plugins()
     res = set()
     for resolver in resolvers:
-        res |= set(_list_matching_commands_from_resolver(resolver, parent_path))
+        res |= set(_list_matching_commands_from_resolver(resolver, parent_path, include_subcommands=include_subcommands))
     return sorted(res)
 
 
@@ -524,9 +532,15 @@ class Group(click_didyoumean.DYMMixin, click.Group, ExtraParametersMixin):
         return decorator
 
     def list_commands(self, ctx):
-        res = list_commands_with_resolvers(self.commandresolvers, self.path)
+        res = list_commands_with_resolvers(
+            self.commandresolvers, self.path,
+            include_subcommands=True)
         if hasattr(self, "original_command"):
             res += self.original_command.list_commands(ctx)
+        res = [
+            (c.split(".")[0] if "." in c else c)
+            for c in res
+        ]
         return sorted(set(res))
 
     def get_command(self, ctx, cmd_name):
@@ -918,7 +932,12 @@ class MainCommand(click_didyoumean.DYMMixin, click.MultiCommand, ExtraParameters
         ExtraParametersMixin.format_help_text(self, ctx, formatter)
 
     def list_commands(self, ctx):
-        return list_commands_with_resolvers(self.commandresolvers, self.path)
+        return [
+            (c.split(".")[0] if "." in c else c)
+            for c in list_commands_with_resolvers(
+                self.commandresolvers, self.path,
+                include_subcommands=True)
+        ]
 
     def get_command(self, ctx, name):
         cmd = get_command_safe(name)

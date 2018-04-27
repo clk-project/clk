@@ -38,27 +38,6 @@ class AliasToGroupResolver(CommandResolver):
         return get_command(original_path)
 
 
-class DottedAliasResolver(CommandResolver):
-
-    def _list_command_paths(self, parent):
-        for alias in [a for a in get_settings('alias').keys() if "." in a]:
-            split = alias.split(".")[:-1]
-            if isinstance(parent, config.main_command.__class__):
-                yield split[0]
-            elif alias.startswith(parent.path):
-                next_part = alias[len(parent.path)+1:].split(".")[0]
-                yield "{}.{}".format(parent.path, next_part)
-
-    def _get_command(self, path, parent=None):
-        split = path.split(".")
-        name = split[-1]
-
-        @group(name=name)
-        def alias_group():
-            """Group of several aliases."""
-        return alias_group
-
-
 class AliasCommandResolver(CommandResolver):
 
     def _list_command_paths(self, parent):

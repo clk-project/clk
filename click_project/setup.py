@@ -8,7 +8,7 @@ from click_project.triggers import setup as setup_triggers
 from click_project.overloads import CoreCommandResolver, MainCommand, entry_point
 from click_project.scriptcommands import ScriptCommandResolver
 from click_project.externalcommands import ExternalCommandResolver
-from click_project.alias import DottedAliasResolver, AliasCommandResolver, AliasToGroupResolver
+from click_project.alias import AliasCommandResolver, AliasToGroupResolver
 from click_project.hook import HookCommandResolver, setup as setup_hook
 from click_project.overloads import Group, GroupCommandResolver
 from click_project.completion import init as completion_init
@@ -36,7 +36,6 @@ def classic_setup(main_module=None, config_cls=Config, extra_command_packages=[]
         AliasCommandResolver(),
         HookCommandResolver(),
         GroupCommandResolver(),
-        DottedAliasResolver(),
         AliasToGroupResolver(),
     ]
     MainCommand.commandresolvers = [
@@ -45,7 +44,6 @@ def classic_setup(main_module=None, config_cls=Config, extra_command_packages=[]
         AliasCommandResolver(),
         HookCommandResolver(),
         CoreCommandResolver(),
-        DottedAliasResolver(),
     ]
 
     def decorator(command):
