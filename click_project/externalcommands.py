@@ -35,8 +35,10 @@ class ExternalCommandResolver(CommandResolver):
                 if os.path.isdir(path):
                     for file in os.listdir(path):
                         if file.startswith(prefix):
-                            if file.endswith(".sh"):
-                                self._external_cmds.append(file[len(prefix):-3] + "@sh")
+                            for suffix in ".sh", ".py":
+                                if file.endswith(suffix):
+                                    self._external_cmds.append(file[len(prefix):-3] + suffix.replace(".", "@"))
+                                    break
                             else:
                                 self._external_cmds.append(file[len(prefix):].replace(".", "@"))
         return self._external_cmds
