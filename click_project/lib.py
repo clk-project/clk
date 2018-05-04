@@ -10,11 +10,11 @@ import functools
 import hashlib
 import heapq
 import itertools
+import time
 import json
 import getpass
 import logging
 import os
-import pickle
 import platform
 import re
 import shutil
@@ -23,14 +23,10 @@ import subprocess
 import sys
 import tempfile
 import threading
-import time
-import types
 import traceback
 from copy import deepcopy
 from contextlib import contextmanager
 
-import psutil
-import appdirs
 import click
 import colorama
 import glob2
@@ -1295,43 +1291,6 @@ def subkwargs(kwargs, params):
         for key, value in kwargs.items()
         if key in params
     }
-
-
-def cache_disk(f=None, expire=int(os.environ.get(u'CLICK_PROJECT_CACHE_EXPIRE', 24 * 60 * 60)),
-               cache_folder=appdirs.user_cache_dir('click_project')):
-    u"""A decorator that cache a method result to disk"""
-    def decorator(f):
-        if expire == -1:
-            return f
-
-        def inner_function(*args, **kwargs):
-            # calculate a cache key based on the decorated method signature
-            key = u"{}{}{}{}".format(
-                re.sub(
-                    "pluginbase\._internalspace.[^\.]+\.",
-                    "click_project.plugins.", f.__module__),
-                f.__name__,
-                args,
-                kwargs).encode(u"utf-8")
-            # print(key)
-            key = hashlib.sha1(key).hexdigest()
-            if not os.path.exists(cache_folder):
-                makedirs(cache_folder)
-            filepath = os.path.join(cache_folder, key)
-            # verify that the cached object exists and is less than $seconds old
-            if os.path.exists(filepath):
-                modified = os.path.getmtime(filepath)
-                age_seconds = time.time() - modified
-                if expire is None or age_seconds < expire:
-                    return pickle.load(open(filepath, u"rb"))
-            # call the decorated function...
-            result = f(*args, **kwargs)
-            # ... and save the cached object for next time
-            pickle.dump(result, open(filepath, u"wb"))
-            return result
-        return inner_function
-
-    return decorator(f) if f else decorator
 
 
 def deprecated_module(src, dst):

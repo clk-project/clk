@@ -17,10 +17,11 @@ import six
 
 from click_project.click_helpers import click_get_current_context_safe
 from click_project.core import get_ctx, rebuild_path, settings_stores,\
-    main_command_arguments_to_dict, main_command_arguments_from_dict, main_command_decoration
+    main_command_arguments_to_dict, main_command_arguments_from_dict,\
+    main_command_decoration, cache_disk
 from click_project.commandresolver import CommandResolver
 from click_project.config import config, get_settings2, in_project
-from click_project.lib import check_output, subkwargs, ParameterType, cache_disk
+from click_project.lib import check_output, subkwargs, ParameterType
 from click_project.plugins import load_plugins
 from click_project.completion import startswith
 

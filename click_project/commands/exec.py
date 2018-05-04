@@ -6,8 +6,8 @@ from __future__ import print_function, absolute_import
 import os
 
 from click_project.decorators import command, option, argument
+from click_project.core import cache_disk
 from click_project.lib import call, double_quote, ParameterType
-from click_project.lib import cache_disk
 from click_project.completion import startswith
 
 

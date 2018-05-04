@@ -8,7 +8,8 @@ import getpass
 
 from click_project.lib import cd, call
 from click_project.decorators import option, argument, flag
-from click_project.lib import ParameterType, check_output, cache_disk
+from click_project.core import cache_disk
+from click_project.lib import ParameterType, check_output
 from click_project.completion import startswith
 from click_project.config import config
 

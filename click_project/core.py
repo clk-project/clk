@@ -7,9 +7,13 @@ import platform
 import os
 import subprocess
 import pstats
+import time
 import logging
 import re
+import hashlib
+import pickle
 from datetime import datetime
+import appdirs
 
 from six import StringIO
 
@@ -19,7 +23,7 @@ from click_project.config import temp_config, config, Config, migrate_profiles
 from click_project.click_helpers import click_get_current_context_safe
 from click_project.log import get_logger
 from click_project import log
-from click_project.lib import main_default, natural_delta, ParameterType
+from click_project.lib import main_default, natural_delta, ParameterType, makedirs
 from click_project import startup_time
 from click_project.completion import startswith
 from click_project import completion
@@ -592,3 +596,42 @@ def main():
         end_time = datetime.now()
         LOGGER.debug("command run in %s" % natural_delta(end_time - startup_time))
     exit(exitcode)
+
+
+def cache_disk(f=None, expire=int(os.environ.get(u'CLICK_PROJECT_CACHE_EXPIRE', 24 * 60 * 60)),
+               cache_folder_name=None):
+    u"""A decorator that cache a method result to disk"""
+    cache_folder = appdirs.user_cache_dir(config.app_name)
+
+    def decorator(f):
+        if expire == -1:
+            return f
+
+        def inner_function(*args, **kwargs):
+            # calculate a cache key based on the decorated method signature
+            key = u"{}{}{}{}".format(
+                re.sub(
+                    "pluginbase\._internalspace.[^\.]+\.",
+                    "click_project.plugins.", f.__module__),
+                f.__name__,
+                args,
+                kwargs).encode(u"utf-8")
+            # print(key)
+            key = hashlib.sha1(key).hexdigest()
+            if not os.path.exists(cache_folder):
+                makedirs(cache_folder)
+            filepath = os.path.join(cache_folder, key)
+            # verify that the cached object exists and is less than $seconds old
+            if os.path.exists(filepath):
+                modified = os.path.getmtime(filepath)
+                age_seconds = time.time() - modified
+                if expire is None or age_seconds < expire:
+                    return pickle.load(open(filepath, u"rb"))
+            # call the decorated function...
+            result = f(*args, **kwargs)
+            # ... and save the cached object for next time
+            pickle.dump(result, open(filepath, u"wb"))
+            return result
+        return inner_function
+
+    return decorator(f) if f else decorator
