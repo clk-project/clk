@@ -564,6 +564,13 @@ class Group(click_didyoumean.DYMMixin, click.Group, ExtraParametersMixin):
         return sorted(set(res))
 
     def get_command(self, ctx, cmd_name):
+        if "." in cmd_name:
+            raise click.UsageError(
+                "{} is not a valid command name,"
+                " did you mean '{}'?".format(
+                    cmd_name,
+                    " ".join(cmd_name.split("."))
+                ))
         return get_command_safe(self.path + "." + cmd_name)
 
 
@@ -960,6 +967,13 @@ class MainCommand(click_didyoumean.DYMMixin, click.MultiCommand, ExtraParameters
         ]))
 
     def get_command(self, ctx, name):
+        if "." in name:
+            raise click.UsageError(
+                "{} is not a valid command name,"
+                " did you mean '{}'?".format(
+                    name,
+                    " ".join(name.split("."))
+                ))
         cmd = get_command_safe(name)
         return cmd
 
