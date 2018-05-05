@@ -44,7 +44,7 @@ def set(machine, login, password):
     except:  # NOQA: E722
         LOGGER.error(
             "Could not save your password."
-            " You might want to consider using `password {} netrc-set`".format(machine)
+            " You might want to consider using `password netrc-set {}`".format(machine)
         )
         raise
 
