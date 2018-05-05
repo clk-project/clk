@@ -16,13 +16,15 @@ from click_project.config import setup_config_class, Config
 from click_project.log import get_logger, basic_config
 from click_project import lib
 from click_project.core import main  # NOQA: F401
+from click_project.lib import get_authenticator_hints
 
 LOGGER = get_logger(__name__)
 
 
 def classic_setup(main_module=None, config_cls=Config,
                   extra_command_packages=[], include_core_commands=None,
-                  exclude_core_commands=None):
+                  exclude_core_commands=None, authenticator_hints={}):
+    get_authenticator_hints.update(authenticator_hints)
     lib.main_module = main_module
     completion_init()
     setup_config_class(config_cls)
@@ -57,7 +59,8 @@ def classic_setup(main_module=None, config_cls=Config,
 
 
 def basic_entry_point(main_module, extra_command_packages=[],
-                      include_core_commands=None, exclude_core_commands=None):
+                      include_core_commands=None, exclude_core_commands=None,
+                      authenticator_hints={}):
     def decorator(f):
         path = f.__name__
         config_cls = type(
@@ -71,5 +74,6 @@ def basic_entry_point(main_module, extra_command_packages=[],
         return classic_setup(main_module, config_cls=config_cls,
                              extra_command_packages=extra_command_packages,
                              include_core_commands=include_core_commands,
-                             exclude_core_commands=exclude_core_commands)(entry_point()(f))
+                             exclude_core_commands=exclude_core_commands,
+                             authenticator_hints=authenticator_hints)(entry_point()(f))
     return decorator
