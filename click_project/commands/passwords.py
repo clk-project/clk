@@ -22,8 +22,13 @@ def passwords():
     """Manipulate your passwords"""
 
 
+class LazyChoice(click.Choice):
+    def convert(self, value, param, ctx):
+        return value
+
+
 @passwords.command(ignore_unknown_options=True, change_directory_options=False)
-@argument('machine', type=click.Choice(get_authenticator_hints))
+@argument('machine', type=LazyChoice(get_authenticator_hints))
 @argument('login')
 @option('--password', prompt=True,
         hide_input=True,
@@ -45,7 +50,7 @@ def set(machine, login, password):
 
 
 @passwords.command(ignore_unknown_options=True, change_directory_options=False)
-@argument('machine', type=click.Choice(get_authenticator_hints))
+@argument('machine', type=LazyChoice(get_authenticator_hints))
 def remove(machine):
     """Remove the password"""
     if click.confirm(
@@ -63,7 +68,7 @@ def remove(machine):
                        change_directory_options=False)
 @table_format(default='key_value')
 @table_fields(choices=['login', 'password'])
-@argument('machine', type=click.Choice(get_authenticator_hints))
+@argument('machine', type=LazyChoice(get_authenticator_hints))
 @flag("--password/--no-password", help="Show the password")
 def show(machine, fields, format, password):
     """Show the login/password"""
@@ -79,7 +84,7 @@ def show(machine, fields, format, password):
 
 
 @passwords.command(ignore_unknown_options=True, change_directory_options=False)
-@argument('machine', type=click.Choice(get_authenticator_hints))
+@argument('machine', type=LazyChoice(get_authenticator_hints))
 @argument('login')
 @option('--password', prompt=True,
         hide_input=True,
