@@ -291,6 +291,8 @@ class ColorType(ParameterType):
 def main_command_decoration(f, cls, **kwargs):
     f = main_command_option('-n', '--dry-run/--no-dry-run', is_flag=True, callback=dry_run_callback,
                             help="Don't actually run anything")(f)
+    f = main_command_option('--no-cache/--cache', is_flag=True, callback=no_cache_callback,
+                            help="Deactivate the caching mechanism")(f)
     f = main_command_option('--autoflow/--no-autoflow', help="Automatically trigger the --flow option in"
                             " every command", is_flag=True, callback=autoflow_callback, default=None)(f)
     f = main_command_option('--persist-migration/--no-persist-migration', help=(
@@ -463,6 +465,14 @@ def dry_run_callback(ctx, attr, value):
 
 
 @main_command_options_callback
+def no_cache_callback(ctx, attr, value):
+    global cache_disk_deactivate
+    if value is not None:
+        cache_disk_deactivate = value
+    return value
+
+
+@main_command_options_callback
 def quiet_callback(ctx, attr, value):
     if value:
         config.log_level = 'critical'
@@ -598,9 +608,15 @@ def main():
     exit(exitcode)
 
 
+cache_disk_deactivate = False
+
+
 def cache_disk(f=None, expire=int(os.environ.get(u'CLICK_PROJECT_CACHE_EXPIRE', 24 * 60 * 60)),
                cache_folder_name=None):
     u"""A decorator that cache a method result to disk"""
+    if cache_disk_deactivate:
+        return lambda f: f
+
     cache_folder = appdirs.user_cache_dir(config.app_name)
 
     def decorator(f):
