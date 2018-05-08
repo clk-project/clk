@@ -475,6 +475,9 @@ class GroupCommandResolver(CommandResolver):
         return super(Group, parent).get_command(ctx, cmd_name)
 
 
+allow_dotted_commands = False
+
+
 class Group(click_didyoumean.DYMMixin, click.Group, ExtraParametersMixin):
     commandresolvers = [
         GroupCommandResolver(),
@@ -564,7 +567,7 @@ class Group(click_didyoumean.DYMMixin, click.Group, ExtraParametersMixin):
         return sorted(set(res))
 
     def get_command(self, ctx, cmd_name):
-        if "." in cmd_name:
+        if "." in cmd_name and not allow_dotted_commands:
             raise click.UsageError(
                 "{} is not a valid command name,"
                 " did you mean '{}'?".format(
@@ -967,7 +970,7 @@ class MainCommand(click_didyoumean.DYMMixin, click.MultiCommand, ExtraParameters
         ]))
 
     def get_command(self, ctx, name):
-        if "." in name:
+        if "." in name and not allow_dotted_commands:
             raise click.UsageError(
                 "{} is not a valid command name,"
                 " did you mean '{}'?".format(

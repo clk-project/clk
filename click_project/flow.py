@@ -11,6 +11,7 @@ from collections import defaultdict
 from click_project.lib import ordered_unique
 from click_project.config import config
 from click_project.overloads import get_command, CommandNotFound, get_command_handlers
+from click_project import overloads
 
 LOGGER = logging.getLogger(__name__)
 
@@ -99,7 +100,14 @@ def execute_flow_step(cmd, args=None):
             " ".join(cmd)
         )
     )
-    config.main_command(cmd)
+    old_allow = overloads.allow_dotted_commands
+    overloads.allow_dotted_commands = True
+    try:
+        config.main_command(cmd)
+    except:
+        raise
+    finally:
+        overloads.allow_dotted_commands = old_allow
 
 
 def all_part(path):
