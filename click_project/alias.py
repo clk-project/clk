@@ -45,14 +45,12 @@ class AliasCommandResolver(CommandResolver):
             return [
                 a
                 for a in get_settings('alias').keys()
-                if "." not in a
             ]
         else:
             return [
                 a
                 for a in get_settings('alias').keys()
                 if a.startswith(parent.path + ".")
-                and "." not in a[len(parent.path)+1:]
                 and a[len(parent.path)+1:] != 0
             ]
 
