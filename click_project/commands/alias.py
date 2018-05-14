@@ -48,7 +48,7 @@ def get_choices(ctx, args_, incomplete):
         args.pop(0)
         while ',' in args:
             args = args[args.index(',')+1:]
-        ctx = get_ctx(args)
+        ctx = get_ctx(args, side_effects=True)
         choices = compute_choices(ctx, args, incomplete)
     for item, help in choices:
         yield (item, help)
