@@ -55,11 +55,14 @@ def rebuild_path(ctx):
     return path
 
 
-def get_ctx(path):
+def get_ctx(path, side_effects=False):
     key = tuple(path)
     if key not in get_ctx_cache:
-        with temp_config():
+        if side_effects:
             res = resolve_context_with_side_effects(path)
+        else:
+            with temp_config():
+                res = resolve_context_with_side_effects(path)
         assert res is not None, "Could not interpret the command {}".format(".".join(path))
         get_ctx_cache[key] = res
     else:
