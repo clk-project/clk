@@ -103,7 +103,13 @@ def execute_flow_step(cmd, args=None):
     old_allow = overloads.allow_dotted_commands
     overloads.allow_dotted_commands = True
     try:
-        config.main_command(cmd)
+        # executing the main command while parse again the command
+        # line. Therefore we need to provide it with the main command
+        # parameters.
+        config.main_command(
+            config.command_line_settings["parameters"].get(config.main_command.path, [])
+            + cmd
+        )
     except:
         raise
     finally:
