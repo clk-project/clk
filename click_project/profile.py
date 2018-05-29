@@ -70,14 +70,16 @@ class Profile(object):
 
     def create_recipe(self, name, mkdir=True):
         name = self.recipe_full_name(name)
-        assert re.match(
+        if not re.match(
             "^{}/[a-z0-9_]+$".format(self.name),
             name
-        ), (
-            "Invalid recipe name: %s. A recipe's name must contain only letters or _" % name
-        )
+        ):
+            raise click.UsageError(
+                "Invalid recipe name: %s. A recipe's name must contain only letters or _" % name
+            )
         location = self.recipe_location(name)
-        assert not os.path.exists(location), ("{} already exists".format(location))
+        if os.path.exists(location):
+            raise click.UsageError("{} already exists".format(location))
         p = ProfileFactory.get(location, name=name, app_name=self.app_name)
         if mkdir:
             p.write_settings()
