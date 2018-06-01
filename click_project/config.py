@@ -549,9 +549,10 @@ def pass_config(f):
 
 
 def in_project(command):
+    from click_project.overloads import AutomaticOption
     options = [
-        click.Option(['--in-project'], is_flag=True, help="Run the command in the project directory"),
-        click.Option(['--cwd'], help="Run the command in this directory. It can be used with --in-project to change to a directory"
+        AutomaticOption(['--in-project'], is_flag=True, help="Run the command in the project directory"),
+        AutomaticOption(['--cwd'], help="Run the command in this directory. It can be used with --in-project to change to a directory"
                      " relative to the project directory")
     ]
     callback = command.callback

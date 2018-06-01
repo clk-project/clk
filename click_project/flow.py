@@ -10,7 +10,8 @@ from collections import defaultdict
 
 from click_project.lib import ordered_unique
 from click_project.config import config
-from click_project.overloads import get_command, CommandNotFound, get_command_handlers, Option, FlowOption, FlowArgument
+from click_project.overloads import get_command, CommandNotFound, get_command_handlers, Option, FlowOption, \
+    FlowArgument, AutomaticOption
 from click_project import overloads
 
 LOGGER = logging.getLogger(__name__)
@@ -164,19 +165,19 @@ def has_flow(cmd):
 def get_flow_params(cmd, flow_default=None, flowfrom_default=None, flowafter_default=None):
     deps = get_flow_commands_to_run(cmd)
     return [
-        Option(
+        AutomaticOption(
             ["--flow/--no-flow"],
             default=flow_default,
             help="Trigger the dependency flow ({})".format(", ".join(deps))
         ),
-        Option(
+        AutomaticOption(
             ["--flow-from"],
             default=flowfrom_default,
             type=click.Choice(deps),
             help="Trigger the dependency flow from the given step"
             " (ignored if --flow-after is given)",
         ),
-        Option(
+        AutomaticOption(
             ["--flow-after"],
             default=flowafter_default,
             type=click.Choice(deps),

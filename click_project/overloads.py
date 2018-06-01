@@ -289,22 +289,22 @@ class LevelChoice(click.Choice):
 
 class ExtraParametersMixin(object):
     def __init__(self):
-        set_param_opt = click.Option(['--set-parameters'], expose_value=False, callback=self.set_parameters_callback,
+        set_param_opt = AutomaticOption(['--set-parameters'], expose_value=False, callback=self.set_parameters_callback,
                                      help="Set the parameters for this command",
                                      type=LevelChoice())
-        append_param_opt = click.Option(['--append-parameters'], expose_value=False, callback=self.append_parameters_callback,
+        append_param_opt = AutomaticOption(['--append-parameters'], expose_value=False, callback=self.append_parameters_callback,
                                         help="append the parameters for this command",
                                         type=LevelChoice())
-        remove_param_opt = click.Option(['--remove-parameters'], expose_value=False, callback=self.remove_parameters_callback,
+        remove_param_opt = AutomaticOption(['--remove-parameters'], expose_value=False, callback=self.remove_parameters_callback,
                                         help="remove the parameters for this command",
                                         type=LevelChoice())
-        unset_param_opt = click.Option(['--unset-parameters'], expose_value=False, callback=self.unset_parameters_callback,
+        unset_param_opt = AutomaticOption(['--unset-parameters'], expose_value=False, callback=self.unset_parameters_callback,
                                        help="Unset the parameters for this command",
                                        type=LevelChoice())
-        show_param_opt = click.Option(['--show-parameters'], expose_value=False, callback=self.show_parameters_callback,
+        show_param_opt = AutomaticOption(['--show-parameters'], expose_value=False, callback=self.show_parameters_callback,
                                       help="Show the parameters for this command",
                                       type=LevelChoice(extra=["context"]))
-        no_param_opt = click.Option(['--no-parameters'], expose_value=False, is_flag=True, is_eager=True,
+        no_param_opt = AutomaticOption(['--no-parameters'], expose_value=False, is_flag=True, is_eager=True,
                                     help="Don't use the parameters settings for this commands")
         self.params.append(set_param_opt)
         self.params.append(append_param_opt)
@@ -418,6 +418,9 @@ class Command(click.Command, ExtraParametersMixin):
 
     def flow_option(self, *args, **kwargs):
         return flow_option(*args, target_command=self, **kwargs)
+
+    def flow_options(self, *args, **kwargs):
+        return flow_options(*args, target_command=self, **kwargs)
 
     def flow_argument(self, *args, **kwargs):
         return flow_argument(*args, target_command=self, **kwargs)
@@ -727,7 +730,15 @@ class Option(ParameterMixin, click.Option):
     pass
 
 
+class AutomaticOption(Option):
+    pass
+
+
 class Argument(ParameterMixin, click.Argument):
+    pass
+
+
+class AutomaticArgument(Argument):
     pass
 
 
@@ -828,6 +839,18 @@ def flow_command(flowdepends=(), flow_from=None, flow_after=None, **kwargs):
 
 def flow_option(*args, **kwargs):
     return option(*args, cls=FlowOption, **kwargs)
+
+
+def flow_options(options=None, target_command=None, **kwargs):
+    if options is None:
+        options = [p.name for p in target_command.params if isinstance(p, click.Option) and not isinstance(p, AutomaticOption)]
+
+    def decorator(f):
+        for name in reversed(options):
+            f = option(name, target_command=target_command, cls=FlowOption, **kwargs)(f)
+        return f
+
+    return decorator
 
 
 def flow_argument(*args, **kwargs):
