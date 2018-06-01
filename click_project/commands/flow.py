@@ -58,6 +58,3 @@ def get_choices(ctx, args_, incomplete):
 def flow(ctx, command, params):
     """Build and run the CoSMo project"""
     execute_flow([command] + list(params))
-
-
-flow.get_choices = get_choices

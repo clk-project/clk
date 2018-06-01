@@ -6,9 +6,10 @@ from __future__ import absolute_import, print_function
 import importlib
 import logging
 import pkgutil
+import re
 import shlex
 import traceback
-from copy import copy
+from copy import copy, deepcopy
 from collections import OrderedDict
 
 import click
@@ -415,6 +416,12 @@ class Command(click.Command, ExtraParametersMixin):
             raise SystemExit()
         return super(Command, self).invoke(ctx, *args, **kwargs)
 
+    def flow_option(self, *args, **kwargs):
+        return flow_option(*args, target_command=self, **kwargs)
+
+    def flow_argument(self, *args, **kwargs):
+        return flow_argument(*args, target_command=self, **kwargs)
+
 
 def _list_matching_commands_from_resolver(resolver, parent_path, include_subcommands=False):
     parent = get_command(parent_path)
@@ -543,6 +550,13 @@ class Group(click_didyoumean.DYMMixin, click.Group, ExtraParametersMixin):
     def command(self, *args, **kwargs):
         def decorator(f):
             cmd = command(*args, **kwargs)(f)
+            self.add_command(cmd)
+            return cmd
+        return decorator
+
+    def flow_command(self, *args, **kwargs):
+        def decorator(f):
+            cmd = flow_command(*args, **kwargs)(f)
             self.add_command(cmd)
             return cmd
         return decorator
@@ -763,7 +777,8 @@ def option(*args, **kwargs):
             else:
                 return value
         kwargs["callback"] = new_callback
-    return click.option(*args, cls=Option, **kwargs)
+    kwargs.setdefault('cls', Option)
+    return click.option(*args, **kwargs)
 
 
 def flag(*args, **kwargs):
@@ -788,7 +803,44 @@ def argument(*args, **kwargs):
             else:
                 return value
         kwargs["callback"] = new_callback
-    return click.argument(*args, cls=Argument, **kwargs)
+    kwargs.setdefault('cls', Argument)
+    return click.argument(*args, **kwargs)
+
+
+def flow_command(flowdepends=(), **kwargs):
+    # TODO: actually trigger a flow
+    # TODO: pass the parameters to the triggered flow commands
+    # TODO: deal with flow_from and flow_after
+    def decorator(f):
+        try:
+            params = list(f.__click_params__)
+            params.reverse()
+        except AttributeError:
+            params = []
+        flowdepends_set = set(flowdepends)
+        for p in params:
+            if isinstance(p, (FlowOption, FlowArgument)):
+                flowdepends_set.add(p.target_command.path)
+
+        def wrapper(**kwargs):
+            from click_project.flow import in_a_flow
+            ctx = click_get_current_context_safe()
+            if not in_a_flow(ctx):
+                ctx.params["flow"] = True
+                ctx.invoke(ctx.command.callback, **ctx.params)
+
+        c = command(flowdepends=list(flowdepends_set), **kwargs)(f)
+        c.callback = wrapper
+        return c
+    return decorator
+
+
+def flow_option(*args, **kwargs):
+    return option(*args, cls=FlowOption, **kwargs)
+
+
+def flow_argument(*args, **kwargs):
+    return argument(*args, cls=FlowArgument, **kwargs)
 
 
 class CommandType(ParameterType):
@@ -979,6 +1031,60 @@ class MainCommand(click_didyoumean.DYMMixin, click.MultiCommand, ExtraParameters
                 ))
         cmd = get_command_safe(name)
         return cmd
+
+
+class FlowOption(Option):
+    def __init__(self, param_decls, target_command, target_option=None, **kwargs):
+        name, opts, secondary_opts = self._parse_decls(param_decls or (), kwargs.get('expose_value'))
+        self.target_command = target_command
+        self.target_option = target_option or name
+        o = [p for p in self.target_command.params if p.name == self.target_option]
+        if o:
+           o = o[0]
+        else:
+            raise Exception("No '%s' option in the '%s' command" % (self.target_option, target_command.name))
+        okwargs = deepcopy(o.__dict__)
+        del okwargs['name']
+        del okwargs['opts']
+        del okwargs['secondary_opts']
+        del okwargs['is_bool_flag']
+        if okwargs['is_flag'] and isinstance(okwargs['flag_value'], bool):
+            # required to properly set he is_bool_flag, because of a bug in click.Option.__init__
+            del okwargs['type']
+        if not opts and not secondary_opts:
+            zipped_options = ['/'.join(c) for c in zip(o.opts, o.secondary_opts)]
+            param_decls = [self.target_option] + zipped_options + o.opts[len(zipped_options):] + o.secondary_opts[len(zipped_options):]
+        Option.__init__(self, param_decls, **okwargs)
+
+    def _parse_decls(self, decls, expose_value):
+        try:
+            name, opts, secondary_opts = Option._parse_decls(self, decls, expose_value)
+        except TypeError as e:
+            re_match = re.match('No options defined but a name was passed \((\S+)\)\.', e.message)
+            if re_match:
+                name = re_match.group(1)
+                opts = []
+                secondary_opts = []
+            else:
+                raise
+        return name, opts, secondary_opts
+
+class FlowArgument(Argument):
+    def __init__(self, param_decls, target_command, target_argument=None, **kwargs):
+        name, opts, secondary_opts = self._parse_decls(param_decls or (), kwargs.get('expose_value'))
+        self.target_command = target_command
+        self.target_argument = target_argument or name
+        o = [p for p in self.target_command.params if p.name == self.target_argument]
+        if o:
+           o = o[0]
+        else:
+            raise Exception("No '%s' argument in the '%s' command" % (self.target_argument, target_command.name))
+        okwargs = deepcopy(o.__dict__)
+        del okwargs['name']
+        del okwargs['opts']
+        del okwargs['secondary_opts']
+        del okwargs['multiple']
+        Argument.__init__(self, param_decls, **okwargs)
 
 
 def entry_point(cls=None, **kwargs):

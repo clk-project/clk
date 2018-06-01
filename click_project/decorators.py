@@ -13,7 +13,7 @@ import six
 from click_project.lib import get_tabulate_formats, ParameterType
 from click_project.config import config,  merge_settings
 from click_project.completion import startswith
-from click_project.overloads import command, group, option, flag, argument
+from click_project.overloads import command, group, option, flag, argument, flow_command, flow_option, flow_argument
 from click_project.flow import flowdepends  # NOQA: F401
 from click_project.core import settings_stores
 
@@ -241,7 +241,8 @@ def table_fields(func=None, choices=(), default=None):
 __all__ = ['get_tabulate_formats', 'startswith', 'settings_stores', 'option',
            'argument', 'param_config', 'pass_context', 'table_fields',
            'ParameterType', 'group', 'table_format', 'deprecated', 'flag',
-           'merge_settings', 'command', 'use_settings']
+           'merge_settings', 'command', 'use_settings', 'flow_argument',
+           'flow_option', 'flow_command']
 
 
 if __name__ == '__main__':
