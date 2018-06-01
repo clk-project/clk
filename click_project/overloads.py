@@ -22,40 +22,11 @@ from click_project.core import get_ctx, rebuild_path, settings_stores,\
     main_command_decoration, cache_disk
 from click_project.commandresolver import CommandResolver
 from click_project.config import config, get_settings2, in_project
-from click_project.lib import check_output, subkwargs, ParameterType
+from click_project.lib import check_output, ParameterType
 from click_project.plugins import load_plugins
 from click_project.completion import startswith
 
 LOGGER = logging.getLogger(__name__)
-
-
-def extendcommand(src, dst, params):
-    dst.params.extend(
-        [
-            param
-            for param in src.params
-            if param.name in params
-        ]
-    )
-
-
-def combinecommands(name, commands, **kwargs):
-    @command(
-        name=name,
-        handle_dry_run=all([
-            cmd[0].handle_dry_run
-            for cmd in commands
-        ]),
-        **kwargs
-    )
-    @click.pass_context
-    def result(ctx, **kwargs):
-        for cmd, params in commands:
-            ctx.invoke(cmd, **subkwargs(kwargs, params))
-    for cmd, params in commands:
-        extendcommand(cmd, result, params)
-    result.click_project_combined_commands = commands
-    return result
 
 
 class CommandNotFound(Exception):
