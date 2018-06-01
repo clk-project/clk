@@ -90,6 +90,7 @@ class Config(object):
         self.settings = None
         self._local_profile = None
         self.command_line_settings = defaultdict(lambda: defaultdict(list))
+        self.flow_settings = defaultdict(lambda: defaultdict(list))
         self._global_profile = None
         self.app_dir = get_appdir(self.app_dir_name)
         self.autoflow = None
@@ -452,6 +453,7 @@ class Config(object):
         if not profiles_only:
             yield self.env_settings
             yield self.command_line_settings
+            yield self.flow_settings
 
     def merge_settings(self):
         if self.local_profile:

@@ -808,7 +808,6 @@ def argument(*args, **kwargs):
 
 
 def flow_command(flowdepends=(), flow_from=None, flow_after=None, **kwargs):
-    # TODO: pass the parameters to the triggered flow commands
     def decorator(f):
         try:
             params = list(f.__click_params__)
@@ -1028,13 +1027,14 @@ class MainCommand(click_didyoumean.DYMMixin, click.MultiCommand, ExtraParameters
 class FlowOption(Option):
     def __init__(self, param_decls, target_command, target_option=None, **kwargs):
         name, opts, secondary_opts = self._parse_decls(param_decls or (), kwargs.get('expose_value'))
-        self.target_command = target_command
-        self.target_option = target_option or name
-        o = [p for p in self.target_command.params if p.name == self.target_option]
+        target_option = target_option or name
+        o = [p for p in target_command.params if p.name == target_option]
         if o:
            o = o[0]
         else:
-            raise Exception("No '%s' option in the '%s' command" % (self.target_option, target_command.name))
+            raise Exception("No '%s' option in the '%s' command" % (target_option, target_command.name))
+        self.target_command = target_command
+        self.target_parameter = o
         okwargs = deepcopy(o.__dict__)
         del okwargs['name']
         del okwargs['opts']
@@ -1045,7 +1045,10 @@ class FlowOption(Option):
             del okwargs['type']
         if not opts and not secondary_opts:
             zipped_options = ['/'.join(c) for c in zip(o.opts, o.secondary_opts)]
-            param_decls = [self.target_option] + zipped_options + o.opts[len(zipped_options):] + o.secondary_opts[len(zipped_options):]
+            param_decls = [target_option] + zipped_options + o.opts[len(zipped_options):] + o.secondary_opts[len(zipped_options):]
+        # change the default value to None in order to detect when the value should be passed to the previous commands
+        # in the flow
+        okwargs['default'] = None
         Option.__init__(self, param_decls, **okwargs)
 
     def _parse_decls(self, decls, expose_value):
@@ -1065,18 +1068,22 @@ class FlowOption(Option):
 class FlowArgument(Argument):
     def __init__(self, param_decls, target_command, target_argument=None, **kwargs):
         name, opts, secondary_opts = self._parse_decls(param_decls or (), kwargs.get('expose_value'))
-        self.target_command = target_command
-        self.target_argument = target_argument or name
-        o = [p for p in self.target_command.params if p.name == self.target_argument]
+        target_argument = target_argument or name
+        o = [p for p in target_command.params if p.name == target_argument]
         if o:
            o = o[0]
         else:
-            raise Exception("No '%s' argument in the '%s' command" % (self.target_argument, target_command.name))
+            raise Exception("No '%s' argument in the '%s' command" % (target_argument, target_command.name))
+        self.target_command = target_command
+        self.target_parameter = o
         okwargs = deepcopy(o.__dict__)
         del okwargs['name']
         del okwargs['opts']
         del okwargs['secondary_opts']
         del okwargs['multiple']
+        # change the default value to None in order to detect when the value should be passed to the previous commands
+        # in the flow
+        okwargs['default'] = None
         Argument.__init__(self, param_decls, **okwargs)
 
 

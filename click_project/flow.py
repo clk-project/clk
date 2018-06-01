@@ -10,7 +10,7 @@ from collections import defaultdict
 
 from click_project.lib import ordered_unique
 from click_project.config import config
-from click_project.overloads import get_command, CommandNotFound, get_command_handlers, Option
+from click_project.overloads import get_command, CommandNotFound, get_command_handlers, Option, FlowOption, FlowArgument
 from click_project import overloads
 
 LOGGER = logging.getLogger(__name__)
@@ -208,11 +208,35 @@ def get_flow_wrapper(name, function):
         flow = flow if flow is not None else config.autoflow
         global _in_a_flow
         if flow or flow_from or flow_after:
+            # forward the parameter values the the other commands in the flow
+            for param in ctx.command.params:
+                if isinstance(param, FlowOption):
+                    value = kwargs[param.target_parameter.name]
+                    # don't forward anything if the option was not explicitly used
+                    if value is not None:
+                        if param.target_parameter.is_flag:
+                            if value:
+                                config.flow_settings['parameters'][param.target_command.path].extend(
+                                    [param.target_parameter.opts[0]])
+                            else:
+                                config.flow_settings['parameters'][param.target_command.path].extend(
+                                    [param.target_parameter.secondary_opts[0]])
+                        else:
+                            config.flow_settings['parameters'][param.target_command.path].extend(
+                                [param.target_parameter.opts[0], str(value)])
+                if isinstance(param, FlowArgument):
+                    value = kwargs[param.target_parameter.name]
+                    # don't forward anything if the option was not explicitly used
+                    if value is not None:
+                        config.flow_settings['parameters'][param.target_command.path].append(str(value))
+            # run the flow
             _in_a_flow = True
             config.autoflow = False
             subpath = ctx.command.path
             execute_flow_dependencies(subpath, flow_from=flow_from, flow_after=flow_after)
             _in_a_flow = False
+            # restore the flow settings
+            config.flow_settings['parameters'].clear()
         res = function(*args, **kwargs)
         return res
     return flow_wrapper
