@@ -10,7 +10,7 @@ from collections import defaultdict
 
 from click_project.lib import ordered_unique
 from click_project.config import config
-from click_project.overloads import get_command, CommandNotFound, get_command_handlers
+from click_project.overloads import get_command, CommandNotFound, get_command_handlers, Option
 from click_project import overloads
 
 LOGGER = logging.getLogger(__name__)
@@ -49,7 +49,10 @@ def get_command_handler(cmd):
             and "--flow-from" not in param.opts
             and "--flow-after" not in param.opts
         ]
-        cmd.params.extend(get_flow_params(cmd.path))
+        flow_default = cmd.clickproject_flow if hasattr(cmd, "clickproject_flow") else None
+        flowfrom_default = cmd.clickproject_flowfrom if hasattr(cmd, "clickproject_flowfrom") else None
+        flowafter_default = cmd.clickproject_flowafter if hasattr(cmd, "clickproject_flowafter") else None
+        cmd.params.extend(get_flow_params(cmd.path, flow_default, flowfrom_default, flowafter_default))
         cmd.callback = get_flow_wrapper(cmd.name, cmd.callback)
     return cmd
 
@@ -158,24 +161,24 @@ def has_flow(cmd):
     return get_flow_commands_to_run(cmd) != []
 
 
-def get_flow_params(cmd):
+def get_flow_params(cmd, flow_default=None, flowfrom_default=None, flowafter_default=None):
     deps = get_flow_commands_to_run(cmd)
     return [
-        click.Option(
+        Option(
             ["--flow/--no-flow"],
-            default=None,
+            default=flow_default,
             help="Trigger the dependency flow ({})".format(", ".join(deps))
         ),
-        click.Option(
+        Option(
             ["--flow-from"],
-            default=None,
+            default=flowfrom_default,
             type=click.Choice(deps),
             help="Trigger the dependency flow from the given step"
             " (ignored if --flow-after is given)",
         ),
-        click.Option(
+        Option(
             ["--flow-after"],
-            default=None,
+            default=flowafter_default,
             type=click.Choice(deps),
             help="Trigger the dependency flow after the given step (overrides --flow-from)",
         ),

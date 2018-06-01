@@ -807,10 +807,8 @@ def argument(*args, **kwargs):
     return click.argument(*args, **kwargs)
 
 
-def flow_command(flowdepends=(), **kwargs):
-    # TODO: actually trigger a flow
+def flow_command(flowdepends=(), flow_from=None, flow_after=None, **kwargs):
     # TODO: pass the parameters to the triggered flow commands
-    # TODO: deal with flow_from and flow_after
     def decorator(f):
         try:
             params = list(f.__click_params__)
@@ -821,16 +819,10 @@ def flow_command(flowdepends=(), **kwargs):
         for p in params:
             if isinstance(p, (FlowOption, FlowArgument)):
                 flowdepends_set.add(p.target_command.path)
-
-        def wrapper(**kwargs):
-            from click_project.flow import in_a_flow
-            ctx = click_get_current_context_safe()
-            if not in_a_flow(ctx):
-                ctx.params["flow"] = True
-                ctx.invoke(ctx.command.callback, **ctx.params)
-
         c = command(flowdepends=list(flowdepends_set), **kwargs)(f)
-        c.callback = wrapper
+        c.clickproject_flow = (not flow_from and not flow_after) or None
+        c.clickproject_flowfrom = flow_from
+        c.clickproject_flowafter = flow_after
         return c
     return decorator
 
@@ -1068,6 +1060,7 @@ class FlowOption(Option):
             else:
                 raise
         return name, opts, secondary_opts
+
 
 class FlowArgument(Argument):
     def __init__(self, param_decls, target_command, target_argument=None, **kwargs):
