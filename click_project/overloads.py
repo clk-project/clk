@@ -387,6 +387,35 @@ class Command(click.Command, ExtraParametersMixin):
             raise SystemExit()
         return super(Command, self).invoke(ctx, *args, **kwargs)
 
+    def format_options(self, ctx, formatter):
+        """Writes all the options into the formatter if they exist."""
+        auto_opts = []
+        opts = []
+        args = []
+        for param in self.get_params(ctx):
+            if isinstance(param, AutomaticOption):
+                rv = param.get_help_record(ctx)
+                if rv is not None:
+                    auto_opts.append(rv)
+            elif isinstance(param, click.Option):
+                rv = param.get_help_record(ctx)
+                if rv is not None:
+                    opts.append(rv)
+            elif isinstance(param, click.Argument):
+                rv = param.get_help_record(ctx)
+                if rv is not None:
+                    args.append(rv)
+
+        if args:
+            with formatter.section('Arguments'):
+                formatter.write_dl(args)
+        if opts:
+            with formatter.section('Options'):
+                formatter.write_dl(opts)
+        if auto_opts:
+            with formatter.section('Automatic options'):
+                formatter.write_dl(auto_opts)
+
     def flow_option(self, *args, **kwargs):
         return flow_option(*args, target_command=self, **kwargs)
 
@@ -655,7 +684,7 @@ class ParameterMixin(click.Parameter):
         if res is None:
             res = (
                 self.human_readable_name,
-                "not documented"
+                self.help
             )
         default = self._get_default_from_values(ctx)
         canon_default = self.default
@@ -706,7 +735,9 @@ class AutomaticOption(Option):
 
 
 class Argument(ParameterMixin, click.Argument):
-    pass
+    def __init__(self, *args, **kwargs):
+        self.help = kwargs.pop('help', '')
+        super(Argument, self).__init__(*args, **kwargs)
 
 
 class AutomaticArgument(Argument):
