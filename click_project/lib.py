@@ -1394,7 +1394,7 @@ def tabulate(tabular_data, headers=(), tablefmt="simple",
         data = []
         for kv in tabular_data:
             if len(kv) > 1:
-                data.append("%s %s" % (kv[0], click.style(' '.join(str(v) for v in kv[1:]), **config.alt_style)))
+                data.append("%s %s" % (kv[0], click.style(u' '.join(to_string(v) for v in kv[1:]), **config.alt_style)))
             else:
                 data.append(kv[0])
         return '\n'.join(data)
@@ -1526,3 +1526,9 @@ def to_bool(s):
     """Converts a string to a boolean"""
     from distutils.util import strtobool
     return bool(strtobool(s))
+
+
+def to_string(s):
+    if isinstance(s, six.string_types):
+        return s
+    return str(s)
