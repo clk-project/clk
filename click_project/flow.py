@@ -167,11 +167,13 @@ def get_flow_params(cmd, flow_default=None, flowfrom_default=None, flowafter_def
     return [
         AutomaticOption(
             ["--flow/--no-flow"],
+            group='flow',
             default=flow_default,
             help="Trigger the dependency flow ({})".format(", ".join(deps))
         ),
         AutomaticOption(
             ["--flow-from"],
+            group='flow',
             default=flowfrom_default,
             type=click.Choice(deps),
             help="Trigger the dependency flow from the given step"
@@ -179,6 +181,7 @@ def get_flow_params(cmd, flow_default=None, flowfrom_default=None, flowafter_def
         ),
         AutomaticOption(
             ["--flow-after"],
+            group='flow',
             default=flowafter_default,
             type=click.Choice(deps),
             help="Trigger the dependency flow after the given step (overrides --flow-from)",

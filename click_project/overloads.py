@@ -10,7 +10,7 @@ import re
 import shlex
 import traceback
 from copy import copy, deepcopy
-from collections import OrderedDict
+from collections import OrderedDict, defaultdict
 
 import click
 import click_didyoumean
@@ -261,22 +261,28 @@ class LevelChoice(click.Choice):
 class ExtraParametersMixin(object):
     def __init__(self):
         set_param_opt = AutomaticOption(['--set-parameters'], expose_value=False, callback=self.set_parameters_callback,
-                                     help="Set the parameters for this command",
-                                     type=LevelChoice())
+                                        group='parameters',
+                                        help="Set the parameters for this command",
+                                        type=LevelChoice())
         append_param_opt = AutomaticOption(['--append-parameters'], expose_value=False, callback=self.append_parameters_callback,
-                                        help="append the parameters for this command",
-                                        type=LevelChoice())
+                                           group='parameters',
+                                           help="append the parameters for this command",
+                                           type=LevelChoice())
         remove_param_opt = AutomaticOption(['--remove-parameters'], expose_value=False, callback=self.remove_parameters_callback,
-                                        help="remove the parameters for this command",
-                                        type=LevelChoice())
+                                           group='parameters',
+                                           help="remove the parameters for this command",
+                                           type=LevelChoice())
         unset_param_opt = AutomaticOption(['--unset-parameters'], expose_value=False, callback=self.unset_parameters_callback,
-                                       help="Unset the parameters for this command",
-                                       type=LevelChoice())
+                                          group='parameters',
+                                          help="Unset the parameters for this command",
+                                          type=LevelChoice())
         show_param_opt = AutomaticOption(['--show-parameters'], expose_value=False, callback=self.show_parameters_callback,
-                                      help="Show the parameters for this command",
-                                      type=LevelChoice(extra=["context"]))
+                                         group='parameters',
+                                         help="Show the parameters for this command",
+                                         type=LevelChoice(extra=["context"]))
         no_param_opt = AutomaticOption(['--no-parameters'], expose_value=False, is_flag=True, is_eager=True,
-                                    help="Don't use the parameters settings for this commands")
+                                       group='parameters',
+                                       help="Don't use the parameters settings for this commands")
         self.params.append(set_param_opt)
         self.params.append(append_param_opt)
         self.params.append(remove_param_opt)
@@ -389,18 +395,17 @@ class Command(click.Command, ExtraParametersMixin):
 
     def format_options(self, ctx, formatter):
         """Writes all the options into the formatter if they exist."""
-        auto_opts = []
-        opts = []
+        opts = defaultdict(list)
         args = []
         for param in self.get_params(ctx):
-            if isinstance(param, AutomaticOption):
+            if isinstance(param, Option):
                 rv = param.get_help_record(ctx)
                 if rv is not None:
-                    auto_opts.append(rv)
+                    opts[param.group].append(rv)
             elif isinstance(param, click.Option):
                 rv = param.get_help_record(ctx)
                 if rv is not None:
-                    opts.append(rv)
+                    opts[None].append(rv)
             elif isinstance(param, click.Argument):
                 rv = param.get_help_record(ctx)
                 if rv is not None:
@@ -409,12 +414,12 @@ class Command(click.Command, ExtraParametersMixin):
         if args:
             with formatter.section('Arguments'):
                 formatter.write_dl(args)
-        if opts:
+        if opts[None]:
             with formatter.section('Options'):
-                formatter.write_dl(opts)
-        if auto_opts:
-            with formatter.section('Automatic options'):
-                formatter.write_dl(auto_opts)
+                formatter.write_dl(opts[None])
+        for group in sorted(group for group in opts.keys() if group is not None):
+            with formatter.section('%s options' % group.capitalize()):
+                formatter.write_dl(opts[group])
 
     def flow_option(self, *args, **kwargs):
         return flow_option(*args, target_command=self, **kwargs)
@@ -727,21 +732,21 @@ class ParameterMixin(click.Parameter):
 
 
 class Option(ParameterMixin, click.Option):
-    pass
+    def __init__(self, *args, **kwargs):
+        self.group = kwargs.pop('group', None)
+        super(Option, self).__init__(*args, **kwargs)
 
 
 class AutomaticOption(Option):
-    pass
+    def __init__(self, *args, **kwargs):
+        kwargs.setdefault('group', 'automatic')
+        super(AutomaticOption, self).__init__(*args, **kwargs)
 
 
 class Argument(ParameterMixin, click.Argument):
     def __init__(self, *args, **kwargs):
         self.help = kwargs.pop('help', '')
         super(Argument, self).__init__(*args, **kwargs)
-
-
-class AutomaticArgument(Argument):
-    pass
 
 
 def command(ignore_unknown_options=False, change_directory_options=True,
