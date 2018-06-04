@@ -1085,7 +1085,8 @@ class FlowOption(Option):
         try:
             name, opts, secondary_opts = Option._parse_decls(self, decls, expose_value)
         except TypeError as e:
-            re_match = re.match('No options defined but a name was passed \((\S+)\)\.', e.message)
+            message = e.message if six.PY2 else e.args[0]
+            re_match = re.match('No options defined but a name was passed \((\S+)\)\.', message)
             if re_match:
                 name = re_match.group(1)
                 opts = []
