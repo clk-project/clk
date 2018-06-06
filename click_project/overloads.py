@@ -15,6 +15,7 @@ from collections import OrderedDict, defaultdict
 import click
 import click_didyoumean
 import six
+from click.utils import make_default_short_help
 
 from click_project.click_helpers import click_get_current_context_safe
 from click_project.core import get_ctx, rebuild_path, settings_stores,\
@@ -363,6 +364,9 @@ class ExtraParametersMixin(object):
 class HelpMixin(object):
     def __init__(self, *args, **kwargs):
         super(HelpMixin, self).__init__(*args, **kwargs)
+        if self.help and 'short_help' not in kwargs.keys():
+            # just keep the first line of the help in the short help
+            self.short_help = make_default_short_help(self.help.splitlines()[0], max_length=90)
 
         def show_help(ctx, param, value):
             if value and not ctx.resilient_parsing:
@@ -430,9 +434,6 @@ class HelpMixin(object):
 class Command(HelpMixin, ExtraParametersMixin, click.Command):
     def __init__(self, *args, **kwargs):
         super(Command, self).__init__(*args, **kwargs)
-        if self.help and self.short_help.endswith('...') and 'short_help' not in kwargs.keys():
-            # just keep the first line of the help in the short help
-            self.short_help = self.help.splitlines()[0]
         self.path = None
 
     def parse_args(self, ctx, args):
