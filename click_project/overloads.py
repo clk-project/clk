@@ -259,7 +259,8 @@ class LevelChoice(click.Choice):
 
 
 class ExtraParametersMixin(object):
-    def __init__(self):
+    def __init__(self, *args, **kwargs):
+        super(ExtraParametersMixin, self).__init__(*args, **kwargs)
         set_param_opt = AutomaticOption(['--set-parameters'], expose_value=False, callback=self.set_parameters_callback,
                                         group='parameters',
                                         help="Set the parameters for this command",
@@ -359,10 +360,39 @@ class ExtraParametersMixin(object):
             exit(0)
 
 
-class Command(click.Command, ExtraParametersMixin):
+class HelpMixin(object):
+    def format_options(self, ctx, formatter):
+        """Writes all the options into the formatter if they exist."""
+        opts = defaultdict(list)
+        args = []
+        for param in self.get_params(ctx):
+            if isinstance(param, Option):
+                rv = param.get_help_record(ctx)
+                if rv is not None:
+                    opts[param.group].append(rv)
+            elif isinstance(param, click.Option):
+                rv = param.get_help_record(ctx)
+                if rv is not None:
+                    opts[None].append(rv)
+            elif isinstance(param, click.Argument):
+                rv = param.get_help_record(ctx)
+                if rv is not None:
+                    args.append(rv)
+
+        if args:
+            with formatter.section('Arguments'):
+                formatter.write_dl(args)
+        if opts[None]:
+            with formatter.section('Options'):
+                formatter.write_dl(opts[None])
+        for group in sorted(group for group in opts.keys() if group is not None):
+            with formatter.section('%s options' % group.capitalize()):
+                formatter.write_dl(opts[group])
+
+
+class Command(HelpMixin, ExtraParametersMixin, click.Command):
     def __init__(self, *args, **kwargs):
-        click.Command.__init__(self, *args, **kwargs)
-        ExtraParametersMixin.__init__(self)
+        super(Command, self).__init__(*args, **kwargs)
         if self.help and self.short_help.endswith('...') and 'short_help' not in kwargs.keys():
             # just keep the first line of the help in the short help
             self.short_help = self.help.splitlines()[0]
@@ -392,34 +422,6 @@ class Command(click.Command, ExtraParametersMixin):
                 ))
             raise SystemExit()
         return super(Command, self).invoke(ctx, *args, **kwargs)
-
-    def format_options(self, ctx, formatter):
-        """Writes all the options into the formatter if they exist."""
-        opts = defaultdict(list)
-        args = []
-        for param in self.get_params(ctx):
-            if isinstance(param, Option):
-                rv = param.get_help_record(ctx)
-                if rv is not None:
-                    opts[param.group].append(rv)
-            elif isinstance(param, click.Option):
-                rv = param.get_help_record(ctx)
-                if rv is not None:
-                    opts[None].append(rv)
-            elif isinstance(param, click.Argument):
-                rv = param.get_help_record(ctx)
-                if rv is not None:
-                    args.append(rv)
-
-        if args:
-            with formatter.section('Arguments'):
-                formatter.write_dl(args)
-        if opts[None]:
-            with formatter.section('Options'):
-                formatter.write_dl(opts[None])
-        for group in sorted(group for group in opts.keys() if group is not None):
-            with formatter.section('%s options' % group.capitalize()):
-                formatter.write_dl(opts[group])
 
     def flow_option(self, *args, **kwargs):
         return flow_option(*args, target_command=self, **kwargs)
@@ -493,7 +495,7 @@ class GroupCommandResolver(CommandResolver):
 allow_dotted_commands = False
 
 
-class Group(click_didyoumean.DYMMixin, click.Group, ExtraParametersMixin):
+class Group(click_didyoumean.DYMMixin, HelpMixin, ExtraParametersMixin, click.Group):
     commandresolvers = [
         GroupCommandResolver(),
     ]
@@ -505,8 +507,8 @@ class Group(click_didyoumean.DYMMixin, click.Group, ExtraParametersMixin):
         if default_command is not None:
             self.set_default_command(default_command)
 
-        click_didyoumean.DYMMixin.__init__(self, *args, **kwargs)
-        ExtraParametersMixin.__init__(self)
+        super(Group, self).__init__(*args, **kwargs)
+
         self.path = None
         if self.help and self.short_help.endswith('...') and 'short_help' not in kwargs.keys():
             # just keep the first line of the help in the short help
@@ -554,6 +556,11 @@ class Group(click_didyoumean.DYMMixin, click.Group, ExtraParametersMixin):
             # and this must be done here in case option where passed to the group
             ctx.protected_args = ctx.protected_args or [self.default_cmd_name]
         return newargs
+
+    def format_options(self, ctx, formatter):
+        # manually overide the HelpMixin in order to add the commands section
+        HelpMixin.format_options(self, ctx, formatter)
+        self.format_commands(ctx, formatter)
 
     def command(self, *args, **kwargs):
         def decorator(f):
@@ -651,7 +658,7 @@ def eval_arg(arg):
 class ParameterMixin(click.Parameter):
     def __init__(self, *args, **kwargs):
         self.deprecated = kwargs.pop("deprecated", None)
-        return super(ParameterMixin, self).__init__(*args, **kwargs)
+        super(ParameterMixin, self).__init__(*args, **kwargs)
 
     def __process_value(self, ctx, value):
         if value is not None:
@@ -966,15 +973,13 @@ class CommandSettingsKeyType(ParameterType):
         return value
 
 
-class MainCommand(click_didyoumean.DYMMixin, click.MultiCommand, ExtraParametersMixin):
+class MainCommand(click_didyoumean.DYMMixin, HelpMixin, ExtraParametersMixin, click.MultiCommand):
     auto_envvar_prefix = "CLICK_PROJECT"
     path = "click-project"
     commandresolvers = [CoreCommandResolver()]
 
     def __init__(self, *args, **kwargs):
-        click.MultiCommand.__init__(self, *args, **kwargs)
-        click_didyoumean.DYMMixin.__init__(self, *args, **kwargs)
-        ExtraParametersMixin.__init__(self)
+        super(MainCommand, self).__init__(*args, **kwargs)
 
     def get_command_short_help(self, ctx, cmd_name):
         @cache_disk
@@ -1033,6 +1038,11 @@ class MainCommand(click_didyoumean.DYMMixin, click.MultiCommand, ExtraParameters
     def format_help_text(self, ctx, formatter):
         super(MainCommand, self).format_help_text(ctx, formatter)
         ExtraParametersMixin.format_help_text(self, ctx, formatter)
+
+    def format_options(self, ctx, formatter):
+        # manually overide the HelpMixin in order to add the commands section
+        HelpMixin.format_options(self, ctx, formatter)
+        self.format_commands(ctx, formatter)
 
     def list_commands(self, ctx):
         return sorted(set([
