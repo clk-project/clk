@@ -9,6 +9,7 @@ import logging
 
 import click
 import six
+from click.utils import make_default_short_help
 
 from click_project.lib import get_tabulate_formats, ParameterType
 from click_project.config import config,  merge_settings
@@ -202,7 +203,10 @@ def deprecated(version=None, message=None):
             LOGGER.deprecated(msg)
             return callback(*args, **kwargs)
 
-        command.short_help = (command.short_help or "") + " (deprecated)"
+        deprecated_suffix = " (deprecated)"
+        ref_short_help = make_default_short_help(command.help.splitlines()[0], max_length=90)
+        if command.short_help == ref_short_help:
+            command.short_help = make_default_short_help(command.help.splitlines()[0], max_length=90 - len(deprecated_suffix)) + deprecated_suffix
         command.callback = run_deprecated_command
         return command
 
