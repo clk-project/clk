@@ -801,6 +801,7 @@ def command(ignore_unknown_options=False, change_directory_options=True,
             handle_dry_run=None, flowdepends=None, *args, **attrs):
     """Create a new Command and automatically pass the config"""
     context_settings = attrs.get('context_settings', {})
+    context_settings.setdefault('max_content_width', 120)
     if ignore_unknown_options is not None:
         context_settings['ignore_unknown_options'] = ignore_unknown_options
     attrs['context_settings'] = context_settings
@@ -1020,6 +1021,9 @@ class MainCommand(click_didyoumean.DYMMixin, HelpMixin, ExtraParametersMixin, cl
     commandresolvers = [CoreCommandResolver()]
 
     def __init__(self, *args, **kwargs):
+        context_settings = kwargs.get('context_settings', {})
+        context_settings.setdefault('max_content_width', 120)
+        kwargs['context_settings'] = context_settings
         super(MainCommand, self).__init__(*args, **kwargs)
 
     def get_command_short_help(self, ctx, cmd_name):
