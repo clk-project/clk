@@ -204,7 +204,8 @@ def deprecated(version=None, message=None):
             return callback(*args, **kwargs)
 
         deprecated_suffix = " (deprecated)"
-        ref_short_help = make_default_short_help(command.help.splitlines()[0], max_length=90)
+        help = command.help.splitlines()[0] if command.help else ""
+        ref_short_help = make_default_short_help(help)
         if command.short_help == ref_short_help:
             command.short_help = make_default_short_help(command.help.splitlines()[0], max_length=90 - len(deprecated_suffix)) + deprecated_suffix
         command.callback = run_deprecated_command
