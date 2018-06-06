@@ -305,6 +305,7 @@ class ExtraParametersMixin(object):
             return get_settings2('parameters').get(self.path, [])
 
     def format_help_text(self, ctx, formatter):
+        super(ExtraParametersMixin, self).format_help_text(ctx, formatter)
         extra_args = self.get_extra_args()
         if extra_args:
             formatter.write_paragraph()
@@ -448,10 +449,6 @@ class Command(HelpMixin, ExtraParametersMixin, click.Command):
         ))
         click.Command.parse_args(self, ctx, args)
 
-    def format_help_text(self, ctx, formatter):
-        super(Command, self).format_help_text(ctx, formatter)
-        ExtraParametersMixin.format_help_text(self, ctx, formatter)
-
     def invoke(self, ctx, *args, **kwargs):
         if config.dry_run and not self.handle_dry_run:
             LOGGER.warning(
@@ -554,7 +551,6 @@ class Group(click_didyoumean.DYMMixin, HelpMixin, ExtraParametersMixin, click.Gr
 
     def format_help_text(self, ctx, formatter):
         super(Group, self).format_help_text(ctx, formatter)
-        ExtraParametersMixin.format_help_text(self, ctx, formatter)
         if self.default_cmd_name is not None:
             formatter.write_paragraph()
             with formatter.indentation():
@@ -1080,10 +1076,6 @@ class MainCommand(click_didyoumean.DYMMixin, HelpMixin, ExtraParametersMixin, cl
                 ctx.has_subcommands = False
         config.init()
         return res
-
-    def format_help_text(self, ctx, formatter):
-        super(MainCommand, self).format_help_text(ctx, formatter)
-        ExtraParametersMixin.format_help_text(self, ctx, formatter)
 
     def format_options(self, ctx, formatter, include_auto_opts=False):
         # manually overide the HelpMixin in order to add the commands section
