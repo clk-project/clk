@@ -780,6 +780,7 @@ class ParameterMixin(click.Parameter):
 class Option(ParameterMixin, click.Option):
     def __init__(self, *args, **kwargs):
         self.group = kwargs.pop('group', None)
+        kwargs.setdefault('show_default', True)
         super(Option, self).__init__(*args, **kwargs)
 
 
