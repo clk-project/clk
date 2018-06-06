@@ -361,15 +361,29 @@ class ExtraParametersMixin(object):
 
 
 class HelpMixin(object):
-    def format_options(self, ctx, formatter):
+    def __init__(self, *args, **kwargs):
+        super(HelpMixin, self).__init__(*args, **kwargs)
+
+        def show_help(ctx, param, value):
+            if value and not ctx.resilient_parsing:
+                click.echo(self.get_help_all(ctx), color=ctx.color)
+                ctx.exit()
+        self.params.append(
+            AutomaticOption(['--help-all'], is_flag=True, group=None, show_default=False,
+                            is_eager=True, expose_value=False,
+                            callback=show_help,
+                            help='Show the full help message, automatic options included.'))
+
+    def format_options(self, ctx, formatter, include_auto_opts=False):
         """Writes all the options into the formatter if they exist."""
         opts = defaultdict(list)
         args = []
         for param in self.get_params(ctx):
             if isinstance(param, Option):
-                rv = param.get_help_record(ctx)
-                if rv is not None:
-                    opts[param.group].append(rv)
+                if include_auto_opts or not isinstance(param, AutomaticOption) or '--help-all' in param.opts:
+                    rv = param.get_help_record(ctx)
+                    if rv is not None:
+                        opts[param.group].append(rv)
             elif isinstance(param, click.Option):
                 rv = param.get_help_record(ctx)
                 if rv is not None:
@@ -388,6 +402,29 @@ class HelpMixin(object):
         for group in sorted(group for group in opts.keys() if group is not None):
             with formatter.section('%s options' % group.capitalize()):
                 formatter.write_dl(opts[group])
+
+    def get_help_all(self, ctx):
+        """Formats the help into a string and returns it.  This creates a
+        formatter and will call into the following formatting methods:
+        """
+        formatter = ctx.make_formatter()
+        self.format_help_all(ctx, formatter)
+        return formatter.getvalue().rstrip('\n')
+
+    def format_help_all(self, ctx, formatter):
+        """Writes the help into the formatter if it exists.
+
+        This calls into the following methods:
+
+        -   :meth:`format_usage`
+        -   :meth:`format_help_text`
+        -   :meth:`format_options`
+        -   :meth:`format_epilog`
+        """
+        self.format_usage(ctx, formatter)
+        self.format_help_text(ctx, formatter)
+        self.format_options(ctx, formatter, True)
+        self.format_epilog(ctx, formatter)
 
 
 class Command(HelpMixin, ExtraParametersMixin, click.Command):
@@ -557,9 +594,9 @@ class Group(click_didyoumean.DYMMixin, HelpMixin, ExtraParametersMixin, click.Gr
             ctx.protected_args = ctx.protected_args or [self.default_cmd_name]
         return newargs
 
-    def format_options(self, ctx, formatter):
+    def format_options(self, ctx, formatter, include_auto_opts=False):
         # manually overide the HelpMixin in order to add the commands section
-        HelpMixin.format_options(self, ctx, formatter)
+        HelpMixin.format_options(self, ctx, formatter, include_auto_opts)
         self.format_commands(ctx, formatter)
 
     def command(self, *args, **kwargs):
@@ -691,8 +728,10 @@ class ParameterMixin(click.Parameter):
         return value
 
     def get_help_record(self, ctx):
+        show_default = self.show_default
         self.show_default = False
         res = super(ParameterMixin, self).get_help_record(ctx)
+        self.show_default = show_default
         if res is None:
             res = (
                 self.human_readable_name,
@@ -707,7 +746,7 @@ class ParameterMixin(click.Parameter):
         else:
             canon_default = str(canon_default)
 
-        if self.default is not None:
+        if self.default is not None and self.show_default:
             res1 = res[1]
             res1 += "  [default: "
             if default:
@@ -753,6 +792,7 @@ class AutomaticOption(Option):
 class Argument(ParameterMixin, click.Argument):
     def __init__(self, *args, **kwargs):
         self.help = kwargs.pop('help', '')
+        self.show_default = kwargs.pop('show_default', True)
         super(Argument, self).__init__(*args, **kwargs)
 
 
@@ -1039,9 +1079,9 @@ class MainCommand(click_didyoumean.DYMMixin, HelpMixin, ExtraParametersMixin, cl
         super(MainCommand, self).format_help_text(ctx, formatter)
         ExtraParametersMixin.format_help_text(self, ctx, formatter)
 
-    def format_options(self, ctx, formatter):
+    def format_options(self, ctx, formatter, include_auto_opts=False):
         # manually overide the HelpMixin in order to add the commands section
-        HelpMixin.format_options(self, ctx, formatter)
+        HelpMixin.format_options(self, ctx, formatter, include_auto_opts)
         self.format_commands(ctx, formatter)
 
     def list_commands(self, ctx):
