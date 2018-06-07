@@ -270,6 +270,9 @@ def call(args, **kwargs):
     args = [str(arg) for arg in args]
     message = ' '.join(quote(arg) for arg in args)
     action_message = "run: {}".format(message)
+    cwd = kwargs.get('cwd')
+    if cwd:
+        action_message = "in %s, %s" % (cwd, action_message)
     if internal:
         LOGGER.develop(action_message)
     else:
