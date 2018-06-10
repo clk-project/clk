@@ -3,14 +3,12 @@
 
 from __future__ import print_function, absolute_import
 
-import logging
-
 import click
 
-from click_project.log import LOG_LEVELS
+from click_project.log import LOG_LEVELS, get_logger
 from click_project.decorators import command, argument, option
 
-LOGGER = logging.getLogger(__name__)
+LOGGER = get_logger(__name__)
 
 
 @command(ignore_unknown_options=True, handle_dry_run=True)

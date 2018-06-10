@@ -15,14 +15,14 @@ import six
 from click_project.decorators import group, flag, argument, use_settings, option, pass_context, table_format, table_fields
 from click_project.lib import TablePrinter
 from click_project.lib import quote, which
+from click_project.log import get_logger
 from click_project.overloads import CommandType, CommandSettingsKeyType
 from click_project.flow import get_flow_commands_to_run, flowdeps as _flowdeps
 from click_project.colors import Colorer
 from click_project.overloads import iter_commands
 from click_project.config import config
 
-import logging
-LOGGER = logging.getLogger(__name__)
+LOGGER = get_logger(__name__)
 
 
 class FlowdepsConfig(object):

@@ -6,9 +6,9 @@ from __future__ import print_function, absolute_import
 
 from click_project.decorators import group, use_settings
 from click_project.keyvaluestore import keyvaluestore_generic_commands
+from click_project.log import get_logger
 
-import logging
-LOGGER = logging.getLogger(__name__)
+LOGGER = get_logger(__name__)
 
 
 class ValueConfig(object):

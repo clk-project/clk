@@ -3,7 +3,6 @@
 
 from __future__ import print_function, absolute_import
 
-import logging
 import os
 from datetime import datetime
 import dateutil.parser
@@ -17,9 +16,10 @@ from click_project.lib import rm, copy, TablePrinter
 from click_project.commands.git_store import _save, restore, current_remote,\
     GitRemoteType, push as git_store_push, fetch as git_store_fetch,\
     get_refs, remove as git_store_remove
+from click_project.log import get_logger
 from click_project.overloads import CommandSettingsKeyType
 
-LOGGER = logging.getLogger(__name__)
+LOGGER = get_logger(__name__)
 
 
 class GitRecordConfig(object):

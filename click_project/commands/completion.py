@@ -11,10 +11,10 @@ from click_project.lib import updated_env, quote, DocumentedChoice, call_me
 from click_project.completion import CASE_INSENSITIVE_ENV
 import click_completion
 from click_project.commands.parameters import get_choices
+from click_project.log import get_logger
 from click_project.overloads import CommandType
 
-import logging
-LOGGER = logging.getLogger(__name__)
+LOGGER = get_logger(__name__)
 
 
 class CompletionConfig(object):

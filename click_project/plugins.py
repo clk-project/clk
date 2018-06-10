@@ -3,7 +3,7 @@
 
 from __future__ import print_function, absolute_import
 
-import logging
+
 import traceback
 from datetime import datetime
 
@@ -11,12 +11,13 @@ from pluginbase import PluginBase
 
 from click_project.click_helpers import click_get_current_context_safe
 from click_project.config import config, get_settings
+from click_project.log import get_logger
 
 plugin_base = PluginBase(package='click_project.plugins')
 plugins = None
 plugins_cache = set()
 
-LOGGER = logging.getLogger(__name__)
+LOGGER = get_logger(__name__)
 
 
 def on_command_loading_error():

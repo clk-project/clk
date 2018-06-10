@@ -4,7 +4,6 @@
 from __future__ import print_function, absolute_import
 
 import json
-import logging
 import time
 import os
 
@@ -13,8 +12,9 @@ import click
 from click_project.decorators import group, option, flag, argument, table_format, table_fields
 from click_project.lib import get_keyring
 from click_project.lib import TablePrinter, get_authenticator_hints
+from click_project.log import get_logger
 
-LOGGER = logging.getLogger(__name__)
+LOGGER = get_logger(__name__)
 
 
 @group()

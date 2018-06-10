@@ -4,15 +4,15 @@
 from __future__ import print_function, absolute_import
 
 import os
-import logging
 import subprocess
 import re
 
 from click_project.commandresolver import CommandResolver
 from click_project.config import config
 from click_project.lib import which
+from click_project.log import get_logger
 
-LOGGER = logging.getLogger(__name__)
+LOGGER = get_logger(__name__)
 
 
 def external_cmds_paths():

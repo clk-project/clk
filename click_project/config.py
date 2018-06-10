@@ -7,7 +7,6 @@ import functools
 from collections import defaultdict
 import collections
 from copy import deepcopy
-import logging
 from contextlib import contextmanager
 from functools import update_wrapper
 
@@ -16,11 +15,11 @@ import click
 
 from click_project.profile import iter_settings, ProfileFactory
 from click_project.click_helpers import click_get_current_context_safe
-from click_project.log import DevelopColorFormatter, LOG_LEVELS, default_handler
+from click_project.log import DevelopColorFormatter, LOG_LEVELS, default_handler, get_logger
 from click_project.lib import updated_env, cd
 
 
-LOGGER = logging.getLogger(__name__)
+LOGGER = get_logger(__name__)
 
 
 def migrate_profiles():

@@ -3,18 +3,17 @@
 
 from __future__ import print_function, absolute_import
 
-import logging
-
 import click
 from collections import defaultdict
 
 from click_project.lib import ordered_unique
 from click_project.config import config
+from click_project.log import get_logger
 from click_project.overloads import get_command, CommandNotFound, get_command_handlers, Option, FlowOption, \
     FlowArgument, AutomaticOption
 from click_project import overloads
 
-LOGGER = logging.getLogger(__name__)
+LOGGER = get_logger(__name__)
 
 flowdeps = defaultdict(list)
 

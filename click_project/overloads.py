@@ -4,7 +4,6 @@
 from __future__ import absolute_import, print_function
 
 import importlib
-import logging
 import pkgutil
 import re
 import shlex
@@ -24,10 +23,11 @@ from click_project.core import get_ctx, rebuild_path, settings_stores,\
 from click_project.commandresolver import CommandResolver
 from click_project.config import config, get_settings2, in_project
 from click_project.lib import check_output, ParameterType
+from click_project.log import get_logger
 from click_project.plugins import load_plugins
 from click_project.completion import startswith
 
-LOGGER = logging.getLogger(__name__)
+LOGGER = get_logger(__name__)
 
 
 class CommandNotFound(Exception):

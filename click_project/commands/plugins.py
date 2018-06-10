@@ -3,7 +3,6 @@
 
 from __future__ import print_function, absolute_import
 
-import logging
 import os
 
 import click
@@ -15,8 +14,9 @@ from click_project.lib import rm, get_option_choices, makedirs, createfile, \
     ln, glob_first, ParameterType, TablePrinter
 from click_project.completion import startswith
 from click_project.lib import ensure_unicode, call
+from click_project.log import get_logger
 
-LOGGER = logging.getLogger(__name__)
+LOGGER = get_logger(__name__)
 
 
 def pip(command, args):

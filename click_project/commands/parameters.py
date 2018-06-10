@@ -9,12 +9,12 @@ from click_project.config import config
 from click_project.decorators import group, flag, argument, use_settings,\
     option, table_format, table_fields, pass_context
 from click_project.lib import TablePrinter, quote
+from click_project.log import get_logger
 from click_project.overloads import get_command_safe, get_ctx, CommandType, CommandSettingsKeyType
 from click_project.completion import compute_choices
 from click_project.colors import Colorer
 
-import logging
-LOGGER = logging.getLogger(__name__)
+LOGGER = get_logger(__name__)
 
 
 class ParametersConfig(object):

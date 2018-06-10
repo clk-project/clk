@@ -13,7 +13,6 @@ import itertools
 import time
 import json
 import getpass
-import logging
 import os
 import platform
 import re
@@ -38,7 +37,9 @@ from click._termui_impl import ProgressBar as ProgressBar_
 from click_project.click_helpers import click_get_current_context_safe
 from click_completion import DocumentedChoice
 
-LOGGER = logging.getLogger(__name__)
+from click_project.log import get_logger
+
+LOGGER = get_logger(__name__)
 dry_run = None
 main_module = None
 

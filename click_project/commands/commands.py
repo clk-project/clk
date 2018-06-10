@@ -7,9 +7,9 @@ import click
 
 from click_project.config import config
 from click_project.decorators import command, pass_context
+from click_project.log import get_logger
 
-import logging
-LOGGER = logging.getLogger(__name__)
+LOGGER = get_logger(__name__)
 
 
 @command(handle_dry_run=True)

@@ -3,7 +3,6 @@
 
 from __future__ import print_function, absolute_import
 
-import logging
 import os
 import subprocess
 
@@ -14,9 +13,9 @@ from click_project.decorators import group, option, argument, flag, table_format
 from click_project.lib import which, check_output, call, createfile, ParameterType,\
     TablePrinter
 from click_project.completion import startswith
+from click_project.log import get_logger
 
-
-LOGGER = logging.getLogger(__name__)
+LOGGER = get_logger(__name__)
 
 
 def git():

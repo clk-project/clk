@@ -12,9 +12,9 @@ from click_project.lib import quote
 from click_project.decorators import pass_context
 from click_project.colors import Colorer
 from click_project.launcher import LauncherType
+from click_project.log import get_logger
 
-import logging
-LOGGER = logging.getLogger(__name__)
+LOGGER = get_logger(__name__)
 
 
 class LaunchersConfig(object):

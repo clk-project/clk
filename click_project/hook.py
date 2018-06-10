@@ -3,17 +3,17 @@
 
 from __future__ import print_function, absolute_import
 
-import logging
 from collections import defaultdict
 
 from click_project.commandresolver import CommandResolver
 from click_project import plugins
 from click_project.config import config
 from click_project.decorators import command as deco_command, group as deco_group
+from click_project.log import get_logger
 from click_project.overloads import get_command_handlers
 
 
-LOGGER = logging.getLogger(__name__)
+LOGGER = get_logger(__name__)
 
 command_loaders = defaultdict(dict)
 

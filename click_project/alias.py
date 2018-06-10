@@ -3,20 +3,19 @@
 
 from __future__ import print_function, absolute_import
 
-import logging
-
 import click
 
 from click_project.config import get_settings, temp_config, config
 from click_project.lib import quote
 from click_project.commandresolver import CommandResolver
+from click_project.log import get_logger
 from click_project.overloads import Group,\
     list_commands, get_command, command, group, get_ctx, Command
 from click_project.core import resolve_context_with_side_effects
 from click_project.decorators import pass_context
 from click_project.flow import get_flow_commands_to_run
 
-LOGGER = logging.getLogger(__name__)
+LOGGER = get_logger(__name__)
 
 
 class AliasToGroupResolver(CommandResolver):

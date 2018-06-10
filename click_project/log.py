@@ -9,10 +9,6 @@ import logging
 
 import click
 import click_log
-import six
-
-from click_project.click_helpers import click_get_current_context_safe
-from click_project import completion
 
 
 class DevelopColorFormatter(click_log.core.ColorFormatter):
@@ -40,6 +36,7 @@ class Handler(logging.Handler):
     It puts everything in the error output. Also, it allow to exit abruptly when
     a log of some level is issued"""
     def emit(self, record):
+        from click_project import completion
         if completion.IN_COMPLETION and record.levelno < 40:
             return
         try:
@@ -51,7 +48,7 @@ class Handler(logging.Handler):
             self.handleError(record)
         if (
                 exit_on_log_level is not None and
-                record.levelno >= nameToLevel[exit_on_log_level.upper()]
+                record.levelno >= LOG_LEVELS[exit_on_log_level.lower()]
         ):
             raise LogLevelExitException()
 
@@ -74,6 +71,7 @@ def basic_config(logger=None):
 
 
 def get_logger(name):
+    # type: (str) -> Logger
     if name.startswith("pluginbase."):
         name = name.replace("_", "|")
         name = re.sub("^pluginbase\.\|internalspace.[^.]+\.", "click_project.plugins.", name)
@@ -85,96 +83,49 @@ LOGGER = get_logger(__name__)
 
 
 def getLogger(name):
+    # type: (str) -> Logger
     LOGGER.deprecated("getLogger is deprecated. Please use get_logger instead")
     return get_logger(name)
 
 
+class Logger(logging.getLoggerClass()):
+    def develop(self, msg, *args, **kwargs):
+        if self.isEnabledFor(DEVELOP):
+            self._log(DEVELOP, msg, args, **kwargs)
+
+    def action(self, msg, *args, **kwargs):
+        from click_project import lib
+        if lib.dry_run:
+            click.echo("(dry-run) {}".format(msg))
+        elif self.isEnabledFor(ACTION):
+            self._log(ACTION, msg, args, **kwargs)
+
+    def status(self, msg, *args, **kwargs):
+        if self.isEnabledFor(STATUS):
+            self._log(STATUS, msg, args, **kwargs)
+
+    def deprecated(self, msg, *args, **kwargs):
+        if self.isEnabledFor(DEPRECATED):
+            self._log(DEPRECATED, msg, args, **kwargs)
+
+
+logging.setLoggerClass(Logger)
+
 DEVELOP = 5
-if six.PY3:
-    logging._levelToName[DEVELOP] = "DEVELOP"
-    logging._nameToLevel["DEVELOP"] = DEVELOP
-    nameToLevel = logging._nameToLevel
-else:
-    logging._levelNames[DEVELOP] = 'DEVELOP'
-    logging._levelNames['DEVELOP'] = DEVELOP
-    nameToLevel = logging._levelNames
+logging.addLevelName(DEVELOP, "DEVELOP")
 DevelopColorFormatter.colors["develop"] = DevelopColorFormatter.colors["debug"]
 
-
-def develop(self, msg, *args, **kwargs):
-    if self.isEnabledFor(DEVELOP):
-        self._log(DEVELOP, msg, args, **kwargs)
-
-
-logging.Logger.develop = develop
-
-
 ACTION = 15
-if six.PY3:
-    logging._levelToName[ACTION] = "ACTION"
-    logging._nameToLevel["ACTION"] = ACTION
-    nameToLevel = logging._nameToLevel
-else:
-    logging._levelNames[ACTION] = 'ACTION'
-    logging._levelNames['ACTION'] = ACTION
-    nameToLevel = logging._levelNames
+logging.addLevelName(ACTION, "ACTION")
 DevelopColorFormatter.colors["action"] = dict(fg='green')
 
-
-# set dry_run to True to put the action log in stdout instead of the usual logger output
-dry_run = False
-
-
-def action(self, msg, *args, **kwargs):
-    from click_project import lib
-    if lib.dry_run:
-        click.echo("(dry-run) {}".format(msg))
-    elif self.isEnabledFor(ACTION):
-        self._log(ACTION, msg, args, **kwargs)
-
-
-logging.Logger.action = action
-
-
 STATUS = 17
-if six.PY3:
-    logging._levelToName[STATUS] = "STATUS"
-    logging._nameToLevel["STATUS"] = STATUS
-    nameToLevel = logging._nameToLevel
-else:
-    logging._levelNames[STATUS] = 'STATUS'
-    logging._levelNames['STATUS'] = STATUS
-    nameToLevel = logging._levelNames
+logging.addLevelName(STATUS, "STATUS")
 # don't register the colors dict in order to avoid the 'status: ' prefix
 
-
-def status(self, msg, *args, **kwargs):
-    if self.isEnabledFor(STATUS):
-        self._log(STATUS, msg, args, **kwargs)
-
-
-logging.Logger.status = status
-
-
 DEPRECATED = 18
-if six.PY3:
-    logging._levelToName[DEPRECATED] = "DEPRECATED"
-    logging._nameToLevel["DEPRECATED"] = DEPRECATED
-    nameToLevel = logging._nameToLevel
-else:
-    logging._levelNames[DEPRECATED] = 'DEPRECATED'
-    logging._levelNames['DEPRECATED'] = DEPRECATED
-    nameToLevel = logging._levelNames
+logging.addLevelName(DEPRECATED, "DEPRECATED")
 DevelopColorFormatter.colors["deprecated"] = dict(fg='magenta')
-
-
-def deprecated(self, msg, *args, **kwargs):
-    if self.isEnabledFor(DEPRECATED):
-        self._log(DEPRECATED, msg, args, **kwargs)
-
-
-logging.Logger.deprecated = deprecated
-
 
 DEBUG = logging.DEBUG
 INFO = logging.INFO

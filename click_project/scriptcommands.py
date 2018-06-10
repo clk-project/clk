@@ -5,14 +5,14 @@ from __future__ import print_function, absolute_import
 
 import os
 import re
-import logging
 import click
 import subprocess
 
 from click_project.commandresolver import CommandResolver
 from click_project.config import config
+from click_project.log import get_logger
 
-LOGGER = logging.getLogger(__name__)
+LOGGER = get_logger(__name__)
 
 
 class ScriptCommandResolver(CommandResolver):

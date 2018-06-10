@@ -13,11 +13,11 @@ from click_project.decorators import group, flag, argument, use_settings, option
 from click_project.lib import TablePrinter
 from click_project.lib import quote
 from click_project.completion import compute_choices
+from click_project.log import get_logger
 from click_project.overloads import get_ctx, CommandSettingsKeyType, CommandType
 from click_project.colors import Colorer
 
-import logging
-LOGGER = logging.getLogger(__name__)
+LOGGER = get_logger(__name__)
 
 
 class AliasConfig(object):

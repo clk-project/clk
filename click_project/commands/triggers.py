@@ -11,12 +11,12 @@ import six
 from click_project.config import config
 from click_project.decorators import group, flag, argument, use_settings
 from click_project.lib import quote, echo_key_value
+from click_project.log import get_logger
 from click_project.overloads import CommandType, CommandSettingsKeyType
 from click_project.commands.alias import get_choices
 from click_project.colors import Colorer
 
-import logging
-LOGGER = logging.getLogger(__name__)
+LOGGER = get_logger(__name__)
 
 
 def format(cmds):

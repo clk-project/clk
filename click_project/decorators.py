@@ -5,7 +5,6 @@ from __future__ import print_function, absolute_import
 
 import functools
 import types
-import logging
 
 import click
 import six
@@ -14,11 +13,12 @@ from click.utils import make_default_short_help
 from click_project.lib import get_tabulate_formats, ParameterType
 from click_project.config import config,  merge_settings
 from click_project.completion import startswith
+from click_project.log import get_logger
 from click_project.overloads import command, group, option, flag, argument, flow_command, flow_option, flow_argument
 from click_project.flow import flowdepends  # NOQA: F401
 from click_project.core import settings_stores
 
-LOGGER = logging.getLogger(__name__)
+LOGGER = get_logger(__name__)
 
 
 def param_config(name, *args, **kwargs):

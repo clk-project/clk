@@ -4,7 +4,6 @@
 from __future__ import print_function, absolute_import
 
 import os
-import logging
 import json
 import collections
 import six
@@ -14,8 +13,9 @@ import click
 
 from click_project.lib import json_dump_file, glob, rm, copy, makedirs, \
     ensure_unicode, part_of_day, createfile, move, json_file
+from click_project.log import get_logger
 
-LOGGER = logging.getLogger(__name__)
+LOGGER = get_logger(__name__)
 
 
 def load_settings(path):
