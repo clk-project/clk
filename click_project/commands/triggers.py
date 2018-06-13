@@ -62,16 +62,16 @@ def set_sub_commands(position):
 
     @trigger_group.command(ignore_unknown_options=True, change_directory_options=False, handle_dry_run=True)
     @argument('cmd', type=CommandType())
-    @argument('subcommand', type=CommandType())
+    @argument('triggered-command', type=CommandType())
     @argument('params', nargs=-1)
-    def set(cmd, subcommand, params):
+    def set(cmd, triggered_command, params):
         """Set an triggers"""
         if cmd.startswith("-"):
             raise click.UsageError("triggers must not start with dashes (-)")
         if re.match('^\w', cmd) is None:
             raise click.ClickException("Invalid triggers name: " + cmd)
         commands = []
-        text = [subcommand] + list(params)
+        text = [triggered_command] + list(params)
         sep = ','
         while sep in text:
             index = text.index(sep)
