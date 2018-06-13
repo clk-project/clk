@@ -61,7 +61,7 @@ def set_sub_commands(position):
     trigger_group.inherited_params = triggers.inherited_params
 
     @trigger_group.command(ignore_unknown_options=True, change_directory_options=False, handle_dry_run=True)
-    @argument('cmd')
+    @argument('cmd', type=CommandType())
     @argument('subcommand', type=CommandType())
     @argument('params', nargs=-1)
     def set(cmd, subcommand, params):
