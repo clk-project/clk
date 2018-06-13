@@ -7,23 +7,33 @@ import click
 import getpass
 
 from click_project.lib import cd, call
-from click_project.decorators import option, argument, flag
+from click_project.decorators import option, argument, flag, group as group_
 from click_project.core import cache_disk
 from click_project.lib import ParameterType, check_output
 from click_project.completion import startswith
 from click_project.config import config
 
 
-def docker_generic_commands(group, directory, flowdepends=[], extra_options=lambda: []):
+def docker_command(group=None, **kwargs):
+    """A decorator to create a group with docker subcommands"""
+    def decorator(f):
+        opts = dict((k, v) for k, v in kwargs.items() if k in ['directory', 'extra_options'])
+        for k in opts.keys():
+            del kwargs[k]
+        g = group.group(**kwargs)(f) if group else group_(**kwargs)(f)
+        docker_generic_commands(g, **opts)
+        return g
+    return decorator
+
+
+def docker_generic_commands(group, directory, extra_options=lambda: ["-p", config.simulator_name.lower()]):
     def abs_directory():
-        return os.path.abspath(directory())
+        return os.path.abspath(directory() if callable(directory) else directory)
 
     def docker_compose(args, internal=False):
-        with cd(abs_directory(), internal=internal):
-            call(["docker-compose",
-                 "-p", config.simulator_name.lower()] +
-                 extra_options() +
-                 args, internal=internal)
+        call(["docker-compose"] +
+             (extra_options() if callable(extra_options) else extra_options) +
+             args, internal=internal, cwd=abs_directory())
 
     class DockerServices(ParameterType):
         @property
@@ -37,7 +47,7 @@ def docker_generic_commands(group, directory, flowdepends=[], extra_options=lamb
                         check_output(["docker-compose"] + args + ["config", "--services"],
                                      internal=True).splitlines()
                     ]
-            return compute(abs_directory(), extra_options())
+            return compute(abs_directory(), extra_options() if callable(extra_options) else extra_options)
 
         def complete(self, ctx, incomplete):
             return [
@@ -46,7 +56,7 @@ def docker_generic_commands(group, directory, flowdepends=[], extra_options=lamb
                 if startswith(choice, incomplete)
             ]
 
-    @group.command(flowdepends=flowdepends)
+    @group.command()
     @argument("service", type=DockerServices(), nargs=-1)
     @option('--scale', 'scales', help="Scale a service. Use the format 'service=number'", multiple=True)
     @flag("--force-recreate/--no-force-recreate")
