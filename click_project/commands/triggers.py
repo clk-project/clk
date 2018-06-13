@@ -65,7 +65,7 @@ def set_sub_commands(position):
     @argument('triggered-command', type=CommandType())
     @argument('params', nargs=-1)
     def set(cmd, triggered_command, params):
-        """Set an triggers"""
+        """Set a triggers"""
         if cmd.startswith("-"):
             raise click.UsageError("triggers must not start with dashes (-)")
         if re.match('^\w', cmd) is None:
@@ -132,7 +132,7 @@ def set_sub_commands(position):
     @argument('origin', type=CommandSettingsKeyType("triggers"))
     @argument('destination')
     def rename(origin, destination):
-        """Rename an triggers"""
+        """Rename a triggers"""
         config.triggers.writable[destination] = config.triggers.readonly[origin]
         if origin in config.triggers.writable:
             del config.triggers.writable[origin]
