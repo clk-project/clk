@@ -6,7 +6,7 @@ from __future__ import print_function, absolute_import
 import click
 from collections import defaultdict
 
-from click_project.lib import ordered_unique
+from click_project.lib import ordered_unique, quote, flat_map
 from click_project.config import config
 from click_project.log import get_logger
 from click_project.overloads import get_command, CommandNotFound, get_command_handlers, Option, FlowOption, \
@@ -224,6 +224,9 @@ def get_flow_wrapper(name, function):
                             else:
                                 config.flow_settings['parameters'][param.target_command.path].extend(
                                     [param.target_parameter.secondary_opts[0]])
+                        elif param.target_parameter.multiple:
+                            config.flow_settings['parameters'][param.target_command.path].extend(
+                                flat_map((param.target_parameter.opts[0], str(v)) for v in value))
                         else:
                             config.flow_settings['parameters'][param.target_command.path].extend(
                                 [param.target_parameter.opts[0], str(value)])
@@ -231,7 +234,10 @@ def get_flow_wrapper(name, function):
                     value = kwargs[param.target_parameter.name]
                     # don't forward anything if the option was not explicitly used
                     if value is not None:
-                        config.flow_settings['parameters'][param.target_command.path].append(str(value))
+                        if param.target_parameter.nargs == 1:
+                            config.flow_settings['parameters'][param.target_command.path].append(str(value))
+                        else:
+                            config.flow_settings['parameters'][param.target_command.path].extend(str(v) for v in value)
             # run the flow
             _in_a_flow = True
             config.autoflow = False
