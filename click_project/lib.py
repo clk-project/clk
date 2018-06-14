@@ -1191,12 +1191,35 @@ def read(f):
     return open(f, 'rb').read().decode('utf-8')
 
 
-def natural_delta(dt):
-    """Return a natural representation of a time delta"""
-    if dt.seconds < 60:
-        return "%s second%s" % (dt.seconds + dt.microseconds/10.0**6, 's' if dt.seconds > 1 else '')
-    else:
-        return humanize.naturaldelta(dt)
+def natural_delta(value):
+    """Given a timedelta or a number of seconds, return a natural
+    representation of the amount of time elapsed.  This is similar to
+    ``natural_time``, but does not add tense to the result."""
+    date, delta = date_and_delta(value)
+    if date is None:
+        return value
+
+    seconds = abs(delta.seconds)
+    hours = seconds // 3600
+    seconds = seconds % 3600
+    minutes = seconds // 60
+    seconds = seconds % 60
+    days = abs(delta.days)
+    years = days // 365
+    days = days % 365
+
+    if years:
+        return "%s year%s %s day%s" % (years, 's' if years > 1 else '', days, 's' if days > 1 else '')
+    elif days:
+        return "%s day%s %s hour%s" % (days, 's' if days > 1 else '', hours, 's' if hours > 1 else '')
+    elif hours:
+        return "%s hour%s %s second%s" % (hours, 's' if hours > 1 else '', minutes, 's' if minutes > 1 else '')
+    elif minutes:
+        return "%s minute%s %s second%s" % (minutes, 's' if minutes > 1 else '', seconds, 's' if seconds > 1 else '')
+    elif delta.microseconds:
+        seconds = seconds + abs(delta.microseconds)/10.**6
+        return "%1.3f second%s" % (seconds, 's' if seconds > 1 else '')
+    return "%s second%s" % (seconds, 's' if seconds > 1 else '')
 
 
 def natural_time(value, future=False, months=True):
@@ -1208,7 +1231,7 @@ def natural_time(value, future=False, months=True):
     unless ``future`` is set to True."""
     from humanize.time import naturaldelta, _
     from datetime import datetime, timedelta
-    import dateutil
+    import dateutil.tz
     now = datetime.now(dateutil.tz.tzlocal())
     date, delta = date_and_delta(value)
     if date is None:
@@ -1231,7 +1254,7 @@ def date_and_delta(value):
     it was.  If that's not possible, return (None, value)."""
     from humanize.time import abs_timedelta
     from datetime import datetime, timedelta
-    import dateutil
+    import dateutil.tz
     now = datetime.now(dateutil.tz.tzlocal())
     if isinstance(value, datetime):
         date = value
