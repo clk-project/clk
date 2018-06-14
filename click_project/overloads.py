@@ -643,10 +643,12 @@ class Group(click_didyoumean.DYMMixin, HelpMixin, ExtraParametersMixin, click.Gr
 def eval_arg(arg):
     if not isinstance(arg, six.string_types):
         return arg
+    eval_match = re.match('eval(\(\d+\)|):(.+)', arg)
+    nexteval_match = re.match('nexteval(\(\d+\)|):(.+)', arg)
     if arg.startswith("noeval:"):
         arg = arg[len("noeval:"):]
-    elif arg.startswith("nexteval:"):
-        arg = 'eval:' + arg[len("nexteval:"):]
+    elif nexteval_match:
+        arg = 'eval%s:%s' % (('(%s)' % nexteval_match.group(1) if nexteval_match.group(1) else ''), nexteval_match.group(2))
     elif arg.startswith("value:"):
         key = arg[len("value:"):]
         arg = config.get_settings("value").get(key, {"value": None})["value"]
@@ -666,13 +668,12 @@ def eval_arg(arg):
                 )
             )
             exit(1)
-    elif arg.startswith("eval:"):
+    elif eval_match:
         try:
-            evaluated_arg = check_output(
-                shlex.split(
-                    arg[len("eval:"):]
-                )
-            ).strip()
+            @cache_disk(expire=int(eval_match.group(1) or '600'))
+            def evaluate(project, expr):
+                return check_output(shlex.split(expr)).strip()
+            evaluated_arg = evaluate(config.project, eval_match.group(2))
             LOGGER.develop("%s evaluated to %s" % (arg, evaluated_arg))
             arg = evaluated_arg
         except Exception:
