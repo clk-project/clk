@@ -156,9 +156,9 @@ def main_command_arguments_to_dict(opts, resilient_parsing):
                 res[option.name] = opts[pos+1:pos+1+option.nargs]
                 nargs = option.nargs + 1
             pos += nargs
-    except IndexError as e:
+    except IndexError:
         if not resilient_parsing:
-            raise e
+            raise click.UsageError("%s option requires an argument" % opts[pos])
     return res
 
 
