@@ -569,7 +569,7 @@ def communicate(command, *args, **kwargs):
 
 def check_output(cmd, *args, **kwargs):
     """Return the process output"""
-    message = ' '.join(quote(arg) for arg in cmd)
+    message = ' '.join(quote(str(arg)) for arg in cmd)
     try:
         nostderr = kwargs.pop('nostderr')
     except KeyError:
