@@ -135,6 +135,20 @@ def docker_generic_commands(group, directory, extra_options=lambda: ["-p", confi
         """Execute a command in the running container"""
         docker_compose(['exec', service] + list(command))
 
+    @group.command(ignore_unknown_options=True)
+    @argument("service", type=DockerServices())
+    @argument("command", nargs=-1)
+    def run(service, command):
+        """Run a one-off command in the container"""
+        docker_compose(['run', service] + list(command))
+
+    @group.command(ignore_unknown_options=True)
+    @argument("service", type=DockerServices())
+    @argument("args", nargs=-1)
+    def build(service, args):
+        """Build the container"""
+        docker_compose(['build', service] + list(args))
+
     @group.command()
     def fix_up():
         """Add the current user to the docker group. Calling this will result in changing /etc/group using sudo
