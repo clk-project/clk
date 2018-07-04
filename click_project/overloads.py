@@ -731,8 +731,13 @@ class ParameterMixin(click.Parameter):
         res = super(ParameterMixin, self).get_help_record(ctx)
         self.show_default = show_default
         if res is None:
+            metavar = self.type.get_metavar(ctx)
+            if metavar:
+                metavar = "%s %s" % (self.human_readable_name, metavar)
+            else:
+                metavar = self.human_readable_name
             res = (
-                self.human_readable_name,
+                metavar,
                 self.help
             )
         default = self._get_default_from_values(ctx)
