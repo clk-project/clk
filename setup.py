@@ -30,7 +30,6 @@ setup(
         "colorama",
         "python-dateutil",
         "keyring",
-        "psutil==5.0.0",
         "tabulate",
         "networkx",
         "pydotplus",
