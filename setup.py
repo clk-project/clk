@@ -36,7 +36,7 @@ setup(
         "pluginbase",
         # cryptography is pinned so that we are not bothered by it very frequent
         # updates
-        "cryptography==2.1.2",
+        "cryptography==2.2.2",
         "appdirs",
         "ipdb",
         "humanize",
