@@ -480,6 +480,9 @@ class RememberParametersMixin(object):
                 raise NotImplementedError()
         return res
 
+    def set_command_line_settings(self, ctx, args):
+        config.command_line_settings["parameters"][self.path] = self.unparse_args(ctx, args)
+
 
 class Command(HelpMixin, ExtraParametersMixin, RememberParametersMixin, click.Command):
     def __init__(self, *args, **kwargs):
@@ -487,6 +490,7 @@ class Command(HelpMixin, ExtraParametersMixin, RememberParametersMixin, click.Co
         self.path = None
 
     def parse_args(self, ctx, args):
+        self.set_command_line_settings(ctx, args)
         # user by alias to pass to the aliased command
         self.raw_arguments = list(args)
         args = self.inject_extra_args(args)
@@ -616,6 +620,7 @@ class Group(click_didyoumean.DYMMixin, HelpMixin, ExtraParametersMixin, Remember
         self.default_cmd_name = cmd_name
 
     def parse_args(self, ctx, args):
+        self.set_command_line_settings(ctx, args)
         # use by alias to pass to the aliased command
         self.raw_arguments = list(args)
         args = self.inject_extra_args(args)
@@ -1087,6 +1092,7 @@ class MainCommand(click_didyoumean.DYMMixin, HelpMixin, ExtraParametersMixin,
         return short_help(ctx.command_path, cmd_name)
 
     def parse_args(self, ctx, args):
+        self.set_command_line_settings(ctx, args)
         params = main_command_arguments_to_dict(args, ctx.resilient_parsing)
         # store the actual parameters here, because the list will be modified in
         # this method
@@ -1098,7 +1104,6 @@ class MainCommand(click_didyoumean.DYMMixin, HelpMixin, ExtraParametersMixin,
         self.raw_arguments = list(args)
         core_command_line = main_command_arguments_from_dict(params)
 
-        config.command_line_settings["parameters"][self.path] = core_command_line
         # parse the args, injecting the extra args, till the extra args are stable
         old_extra_args = []
         if '--no-parameters' in args:
