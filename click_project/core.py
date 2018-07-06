@@ -330,10 +330,10 @@ def main_command_decoration(f, cls, **kwargs):
     f = main_command_option('--debug-on-command-load-error', is_flag=True,
                             help="Trigger a debugger whenever a command fails to load",
                             callback=debug_on_command_load_error_callback)(f)
-    f = click.option("--report-file",
-                     help="Create a report file to put with bug reports",
-                     callback=report_file_callback,
-                     is_eager=True)(f)
+    f = main_command_option("--report-file",
+                            help="Create a report file to put with bug reports",
+                            callback=report_file_callback,
+                            is_eager=True)(f)
     f = main_command_option('-r', '--recipe', callback=recipe_callback,
                             help="Enable this recipe for the time of the command", type=RecipeType(), multiple=True)(f)
     f = main_command_option('-u', '--without-recipe', callback=without_recipe_callback,
