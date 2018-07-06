@@ -432,7 +432,56 @@ class HelpMixin(object):
         self.format_epilog(ctx, formatter)
 
 
-class Command(HelpMixin, ExtraParametersMixin, click.Command):
+class RememberParametersMixin(object):
+    """Mixin to use a parser that remembers the given parameters.
+
+    The parameters are remembered in the parser. This means that they are as
+    close as possible to the values given by the user. Particularly, they are
+    remembered before being handled by callbacks or converted by types.
+    """
+    def unparse_args(self, ctx, args):
+        """Reconstruct parameters equivalent to those initially given to the command line"""
+        parser = self.make_parser(ctx)
+        opts, _, param_order = parser.parse_args(args=copy(args))
+
+        res = []
+        for param in param_order:
+            value = opts[param.name]
+            # only flag
+            if value is True:
+                res.append(param.opts[0])
+            elif value is False:
+                res.append(param.secondary_opts[0])
+            # only options
+            elif isinstance(value, list):
+                # multiple == True
+                elem = value.pop(0)
+                if elem is True:
+                    res.append(param.opts[0])
+                elif elem is False:
+                    res.append(param.secondary_opts[0])
+                elif isinstance(elem, six.string_types):
+                    res += [param.opts[0]] + [elem]
+                else:
+                    res += [param.opts[0]] + list(elem)
+            elif isinstance(param, click.Option):
+                if isinstance(value, six.string_types):
+                    res += [param.opts[0]] + [value]
+                else:
+                    res += [param.opts[0]] + list(value)
+            elif isinstance(param, click.Argument):
+                # an not given argument results in a value of None.
+                if value is not None:
+                    if isinstance(value, six.string_types):
+                        res += [value]
+                    else:
+                        res += list(value)
+            else:
+                raise NotImplementedError()
+        return res
+
+
+class Command(HelpMixin, ExtraParametersMixin, RememberParametersMixin, click.Command):
     def __init__(self, *args, **kwargs):
         super(Command, self).__init__(*args, **kwargs)
         self.path = None
@@ -530,7 +579,7 @@ class GroupCommandResolver(CommandResolver):
 allow_dotted_commands = False
 
 
-class Group(click_didyoumean.DYMMixin, HelpMixin, ExtraParametersMixin, click.Group):
+class Group(click_didyoumean.DYMMixin, HelpMixin, ExtraParametersMixin, RememberParametersMixin, click.Group):
     commandresolvers = [
         GroupCommandResolver(),
     ]
@@ -1018,7 +1067,8 @@ class CommandSettingsKeyType(ParameterType):
         return value
 
 
-class MainCommand(click_didyoumean.DYMMixin, HelpMixin, ExtraParametersMixin, click.MultiCommand):
+class MainCommand(click_didyoumean.DYMMixin, HelpMixin, ExtraParametersMixin,
+                  RememberParametersMixin, click.MultiCommand):
     auto_envvar_prefix = "CLICK_PROJECT"
     path = "click-project"
     commandresolvers = [CoreCommandResolver()]
