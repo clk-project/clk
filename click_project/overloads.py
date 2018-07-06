@@ -1093,16 +1093,12 @@ class MainCommand(click_didyoumean.DYMMixin, HelpMixin, ExtraParametersMixin,
 
     def parse_args(self, ctx, args):
         self.set_command_line_settings(ctx, args)
-        params = main_command_arguments_to_dict(args, ctx.resilient_parsing)
-        # store the actual parameters here, because the list will be modified in
-        # this method
         ctx.auto_envvar_prefix = self.auto_envvar_prefix
         core_command_line = config.command_line_settings["parameters"].get(self.path, [])
         if core_command_line is not None:
             args = core_command_line + args
         self.raw_args = list(args)
         self.raw_arguments = list(args)
-        core_command_line = main_command_arguments_from_dict(params)
 
         # parse the args, injecting the extra args, till the extra args are stable
         old_extra_args = []
