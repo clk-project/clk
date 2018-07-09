@@ -120,7 +120,7 @@ def set_sub_commands(position):
                         for level_name in colorer.level_to_color
                     }
                     args = colorer.colorize(values, config.triggers.readlevel)
-                    if not args[0]:
+                    if args and not args[0]:
                         if triggers_ in triggers:
                             args = ["None"]
                         else:
