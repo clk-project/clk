@@ -37,7 +37,7 @@ def alias():
 
 
 def get_choices(ctx, args_, incomplete):
-    args = ctx.command.raw_arguments[:]
+    args = config.command_line_settings["parameters"][ctx.command.path][:]
     while args and args[0].startswith("-"):
         a = args.pop(0)
         if args and (a == "-r" or a == "--recipe"):

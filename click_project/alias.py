@@ -145,7 +145,7 @@ class AliasCommandResolver(CommandResolver):
             def run_callback(_ctx):
                 LOGGER.develop("Running callback of {} with args {}, params {}".format(
                     _ctx.command.path,
-                    _ctx.command.raw_arguments,
+                    config.command_line_settings["parameters"][_ctx.command.path],
                     _ctx.params,
                 ))
                 with _ctx:
