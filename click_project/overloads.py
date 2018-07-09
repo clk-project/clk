@@ -291,7 +291,6 @@ class ExtraParametersMixin(object):
         self.params.append(show_param_opt)
         self.params.append(unset_param_opt)
         self.params.append(no_param_opt)
-        self.raw_args = []
 
     def get_extra_args(self, implicit=False):
         if implicit:
@@ -315,8 +314,6 @@ class ExtraParametersMixin(object):
                 formatter.write_text(parameters_help)
 
     def inject_extra_args(self, args):
-        if not self.raw_args:
-            self.raw_args = list(args)
         args = self.get_extra_args(implicit=('--no-parameters' in args)) + args
         return args
 
@@ -332,35 +329,51 @@ class ExtraParametersMixin(object):
 
     def unset_parameters_callback(self, ctx, param, value):
         if value and not ctx.resilient_parsing:
+            raw_args = config.command_line_settings["parameters"][self.path]
+            index = raw_args.index('--set-parameters')
+            raw_args = raw_args[:index] + raw_args[index+2:]
+            config.command_line_settings["parameters"][self.path] = raw_args
+            config.merge_settings()
             config.main_command(["parameters"] + self.parameters_callback_split_value(value) + ["unset", self.path])
             exit(0)
 
     def set_parameters_callback(self, ctx, param, value):
         if value and not ctx.resilient_parsing:
-            import ipdb
-            ipdb.set_trace()
-
-            index = self.raw_args.index('--set-parameters')
-            raw_args = self.raw_args[:index] + self.raw_args[index+2:]
+            raw_args = config.command_line_settings["parameters"][self.path]
+            index = raw_args.index('--set-parameters')
+            raw_args = raw_args[:index] + raw_args[index+2:]
+            config.command_line_settings["parameters"][self.path] = raw_args
+            config.merge_settings()
             config.main_command(["parameters"] + self.parameters_callback_split_value(value) + ["set", self.path] + ["--"] + raw_args)
             exit(0)
 
     def append_parameters_callback(self, ctx, param, value):
         if value and not ctx.resilient_parsing:
-            index = self.raw_args.index('--append-parameters')
-            raw_args = self.raw_args[:index] + self.raw_args[index+2:]
+            raw_args = config.command_line_settings["parameters"][self.path]
+            index = raw_args.index('--append-parameters')
+            raw_args = raw_args[:index] + raw_args[index+2:]
+            config.command_line_settings["parameters"][self.path] = raw_args
+            config.merge_settings()
             config.main_command(["parameters"] + self.parameters_callback_split_value(value) + ["append", self.path] + ["--"] + raw_args)
             exit(0)
 
     def remove_parameters_callback(self, ctx, param, value):
         if value and not ctx.resilient_parsing:
-            index = self.raw_args.index('--remove-parameters')
-            raw_args = self.raw_args[:index] + self.raw_args[index+2:]
+            raw_args = config.command_line_settings["parameters"][self.path]
+            index = raw_args.index('--remove-parameters')
+            raw_args = raw_args[:index] + raw_args[index+2:]
+            config.command_line_settings["parameters"][self.path] = raw_args
+            config.merge_settings()
             config.main_command(["parameters"] + self.parameters_callback_split_value(value) + ["remove", self.path] + ["--"] + raw_args)
             exit(0)
 
     def show_parameters_callback(self, ctx, param, value):
         if value and not ctx.resilient_parsing:
+            raw_args = config.command_line_settings["parameters"][self.path]
+            index = raw_args.index('--set-parameters')
+            raw_args = raw_args[:index] + raw_args[index+2:]
+            config.command_line_settings["parameters"][self.path] = raw_args
+            config.merge_settings()
             config.main_command(["parameters"] + self.parameters_callback_split_value(value) + ["show", self.path])
             exit(0)
 
@@ -484,7 +497,7 @@ class RememberParametersMixin(object):
         return res
 
     def set_command_line_settings(self, ctx, args):
-        config.command_line_settings["parameters"][self.path] = self.unparse_args(ctx, args)
+        config.command_line_settings["parameters"][self.path] += self.unparse_args(ctx, args)
 
 
 class Command(HelpMixin, ExtraParametersMixin, RememberParametersMixin, click.Command):
@@ -495,7 +508,6 @@ class Command(HelpMixin, ExtraParametersMixin, RememberParametersMixin, click.Co
     def parse_args(self, ctx, args):
         self.set_command_line_settings(ctx, args)
         # user by alias to pass to the aliased command
-        self.raw_arguments = list(args)
         args = self.inject_extra_args(args)
         self.complete_arguments = list(args)
         LOGGER.develop("In the {} '{}', parsing the args {}".format(
@@ -625,7 +637,6 @@ class Group(click_didyoumean.DYMMixin, HelpMixin, ExtraParametersMixin, Remember
     def parse_args(self, ctx, args):
         self.set_command_line_settings(ctx, args)
         # use by alias to pass to the aliased command
-        self.raw_arguments = list(args)
         args = self.inject_extra_args(args)
         self.complete_arguments = args[:]
         LOGGER.develop("In the {} '{}', parsing the args {}".format(
@@ -1097,8 +1108,6 @@ class MainCommand(click_didyoumean.DYMMixin, HelpMixin, ExtraParametersMixin,
     def parse_args(self, ctx, args):
         self.set_command_line_settings(ctx, args)
         ctx.auto_envvar_prefix = self.auto_envvar_prefix
-        self.raw_args = list(args)
-        self.raw_arguments = list(args)
         # parse the args, injecting the extra args, till the extra args are stable
         old_extra_args = []
         if '--no-parameters' in args:
