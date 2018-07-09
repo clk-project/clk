@@ -337,6 +337,9 @@ class ExtraParametersMixin(object):
 
     def set_parameters_callback(self, ctx, param, value):
         if value and not ctx.resilient_parsing:
+            import ipdb
+            ipdb.set_trace()
+
             index = self.raw_args.index('--set-parameters')
             raw_args = self.raw_args[:index] + self.raw_args[index+2:]
             config.main_command(["parameters"] + self.parameters_callback_split_value(value) + ["set", self.path] + ["--"] + raw_args)
@@ -1094,12 +1097,8 @@ class MainCommand(click_didyoumean.DYMMixin, HelpMixin, ExtraParametersMixin,
     def parse_args(self, ctx, args):
         self.set_command_line_settings(ctx, args)
         ctx.auto_envvar_prefix = self.auto_envvar_prefix
-        core_command_line = config.command_line_settings["parameters"].get(self.path, [])
-        if core_command_line is not None:
-            args = core_command_line + args
         self.raw_args = list(args)
         self.raw_arguments = list(args)
-
         # parse the args, injecting the extra args, till the extra args are stable
         old_extra_args = []
         if '--no-parameters' in args:
