@@ -477,10 +477,12 @@ class RememberParametersMixin(object):
                 else:
                     res += [param.opts[0]] + list(elem)
             elif isinstance(param, click.Option):
-                if isinstance(value, six.string_types):
-                    res += [param.opts[0]] + [value]
-                else:
-                    res += [param.opts[0]] + list(value)
+                res += [param.opts[0]]
+                if not param.is_flag:
+                    if isinstance(value, six.string_types):
+                        res += [value]
+                    else:
+                        res += list(value)
             elif isinstance(param, click.Argument):
                 # an not given argument results in a value of None.
                 if value is not None:
@@ -633,6 +635,7 @@ class Group(click_didyoumean.DYMMixin, HelpMixin, ExtraParametersMixin, Remember
 
     def parse_args(self, ctx, args):
         self.set_command_line_settings(ctx, args)
+
         args = self.get_extra_args(implicit=('--no-parameters' in args)) + list(args)
         self.complete_arguments = args[:]
         LOGGER.develop("In the {} '{}', parsing the args {}".format(
