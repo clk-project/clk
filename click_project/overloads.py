@@ -633,7 +633,7 @@ class Group(click_didyoumean.DYMMixin, HelpMixin, ExtraParametersMixin, Remember
 
     def parse_args(self, ctx, args):
         self.set_command_line_settings(ctx, args)
-        args = self.get_extra_args(implicit=('--no-parameters' in args))
+        args = self.get_extra_args(implicit=('--no-parameters' in args)) + list(args)
         self.complete_arguments = args[:]
         LOGGER.develop("In the {} '{}', parsing the args {}".format(
             self.__class__.__name__,
