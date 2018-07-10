@@ -494,6 +494,7 @@ class RememberParametersMixin(object):
 
     def set_command_line_settings(self, ctx, args):
         config.command_line_settings["parameters"][self.path] += self.unparse_args(ctx, args)
+        config.merge_settings()
 
 
 class Command(HelpMixin, ExtraParametersMixin, RememberParametersMixin, click.Command):
