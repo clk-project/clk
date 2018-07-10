@@ -313,10 +313,6 @@ class ExtraParametersMixin(object):
                     "The current parameters set for this command are: {}").format(" ".join(extra_args))
                 formatter.write_text(parameters_help)
 
-    def inject_extra_args(self, args):
-        args = self.get_extra_args(implicit=('--no-parameters' in args)) + args
-        return args
-
     def parameters_callback_split_value(self, value):
         profile = value
         recipe = "main"
@@ -507,8 +503,7 @@ class Command(HelpMixin, ExtraParametersMixin, RememberParametersMixin, click.Co
 
     def parse_args(self, ctx, args):
         self.set_command_line_settings(ctx, args)
-        # user by alias to pass to the aliased command
-        args = self.inject_extra_args(args)
+        args = self.get_extra_args(implicit=('--no-parameters' in args))
         self.complete_arguments = list(args)
         LOGGER.develop("In the {} '{}', parsing the args {}".format(
             self.__class__.__name__,
@@ -636,8 +631,7 @@ class Group(click_didyoumean.DYMMixin, HelpMixin, ExtraParametersMixin, Remember
 
     def parse_args(self, ctx, args):
         self.set_command_line_settings(ctx, args)
-        # use by alias to pass to the aliased command
-        args = self.inject_extra_args(args)
+        args = self.get_extra_args(implicit=('--no-parameters' in args))
         self.complete_arguments = args[:]
         LOGGER.develop("In the {} '{}', parsing the args {}".format(
             self.__class__.__name__,
