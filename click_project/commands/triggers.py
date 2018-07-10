@@ -53,130 +53,128 @@ def triggers():
     pass
 
 
-def set_sub_commands(position):
+@triggers.command(ignore_unknown_options=True, change_directory_options=False, handle_dry_run=True)
+@argument('position', type=click.Choice(["pre", "post", "error", "success"]))
+@argument('cmd', type=CommandType())
+@argument('triggered-command', type=CommandType())
+@argument('params', nargs=-1)
+def set(cmd, triggered_command, params, position):
+    """Set a triggers"""
+    if cmd.startswith("-"):
+        raise click.UsageError("triggers must not start with dashes (-)")
+    if re.match('^\w', cmd) is None:
+        raise click.ClickException("Invalid triggers name: " + cmd)
+    commands = []
+    text = [triggered_command] + list(params)
+    sep = ','
+    while sep in text:
+        index = text.index(sep)
+        commands.append(text[:index])
+        del text[:index + 1]
+    if text:
+        commands.append(text)
+    if cmd in config.triggers.writable:
+        config.triggers.writable[cmd][position] = commands
+    else:
+        config.triggers.writable[cmd] = {position: commands}
+    config.triggers.write()
 
-    @triggers.group(default_command='show', name=position, help="Manipulate %s command triggers" % position)
-    def trigger_group():
-        pass
-    trigger_group.inherited_params = triggers.inherited_params
 
-    @trigger_group.command(ignore_unknown_options=True, change_directory_options=False, handle_dry_run=True)
-    @argument('cmd', type=CommandType())
-    @argument('triggered-command', type=CommandType())
-    @argument('params', nargs=-1)
-    def set(cmd, triggered_command, params):
-        """Set a triggers"""
-        if cmd.startswith("-"):
-            raise click.UsageError("triggers must not start with dashes (-)")
-        if re.match('^\w', cmd) is None:
-            raise click.ClickException("Invalid triggers name: " + cmd)
-        commands = []
-        text = [triggered_command] + list(params)
-        sep = ','
-        while sep in text:
-            index = text.index(sep)
-            commands.append(text[:index])
-            del text[:index + 1]
-        if text:
-            commands.append(text)
-        if cmd in config.triggers.writable:
-            config.triggers.writable[cmd][position] = commands
-        else:
-            config.triggers.writable[cmd] = {position: commands}
-        config.triggers.write()
-    set.get_choices = get_choices
+set.get_choices = get_choices
 
-    @trigger_group.command(handle_dry_run=True)
-    @argument('cmds', nargs=-1, type=CommandSettingsKeyType("triggers"))
-    def unset(cmds):
-        """Unset some triggers"""
+
+@triggers.command(handle_dry_run=True)
+@argument('position', type=click.Choice(["pre", "post", "error", "success"]))
+@argument('cmds', nargs=-1, type=CommandSettingsKeyType("triggers"))
+def unset(cmds, position):
+    """Unset some triggers"""
+    for cmd in cmds:
+        if cmd not in config.triggers.writable:
+            raise click.ClickException("The %s configuration has no '%s' triggers registered."
+                                       "Try using another level option (like --local, --workgroup or --global)"
+                                       % (config.triggers.writelevel, cmd))
+    for cmd in cmds:
+        LOGGER.status("Erasing {} triggers from {} settings".format(cmd, config.triggers.writelevel))
+        del config.triggers.writable[cmd]
+    config.triggers.write()
+
+
+@triggers.command(handle_dry_run=True)
+@argument('position', type=click.Choice(["pre", "post", "error", "success"]))
+@flag('--name-only/--no-name-only', help="Only display the triggers names")
+@Colorer.color_options
+@argument('triggers', nargs=-1, type=CommandSettingsKeyType("triggers"))
+def show(name_only, triggers, position, **kwargs):
+    """Show the triggers"""
+    show_triggers = triggers or sorted(config.triggers.readonly.keys())
+    with Colorer(kwargs) as colorer:
+        for triggers_ in show_triggers:
+            if name_only:
+                click.echo(triggers_)
+            else:
+                values = {
+                    level_name: format(
+                        config.triggers.all_settings[level_name].get(
+                            triggers_, {}
+                        ).get(position, []))
+                    for level_name in colorer.level_to_color
+                }
+                args = colorer.colorize(values, config.triggers.readlevel)
+                if args and not args[0]:
+                    if triggers_ in triggers:
+                        args = ["None"]
+                    else:
+                        args = None
+                if args:
+                    echo_key_value(triggers_, " , ".join(args), config.alt_style)
+
+
+@triggers.command(handle_dry_run=True)
+@argument('origin', type=CommandSettingsKeyType("triggers"))
+@argument('destination')
+@argument('position', type=click.Choice(["pre", "post", "error", "success"]))
+def rename(origin, destination, position):
+    """Rename a triggers"""
+    config.triggers.writable[destination] = config.triggers.readonly[origin]
+    if origin in config.triggers.writable:
+        del config.triggers.writable[origin]
+    # rename the triggers when used in the other triggers
+    from six.moves.builtins import set
+    renamed_in = set()
+    for a, data in six.iteritems(config.triggers.writable):
+        cmds = data[position]
         for cmd in cmds:
-            if cmd not in config.triggers.writable:
-                raise click.ClickException("The %s configuration has no '%s' triggers registered."
-                                           "Try using another level option (like --local, --workgroup or --global)"
-                                           % (config.triggers.writelevel, cmd))
+            if cmd[0] == origin:
+                LOGGER.debug("%s renamed in %s" % (origin, a))
+                cmd[0] = destination
+                renamed_in.add(a)
+    # warn the user if the triggers is used at other level, and thus has not been renamed there
+    for a, cmds in six.iteritems(config.triggers.readonly):
+        cmds = data[position]
         for cmd in cmds:
-            LOGGER.status("Erasing {} triggers from {} settings".format(cmd, config.triggers.writelevel))
-            del config.triggers.writable[cmd]
-        config.triggers.write()
-
-    @trigger_group.command(handle_dry_run=True)
-    @flag('--name-only/--no-name-only', help="Only display the triggers names")
-    @Colorer.color_options
-    @argument('triggers', nargs=-1, type=CommandSettingsKeyType("triggers"))
-    def show(name_only, triggers, **kwargs):
-        """Show the triggers"""
-        show_triggers = triggers or sorted(config.triggers.readonly.keys())
-        with Colorer(kwargs) as colorer:
-            for triggers_ in show_triggers:
-                if name_only:
-                    click.echo(triggers_)
-                else:
-                    values = {
-                        level_name: format(
-                            config.triggers.all_settings[level_name].get(
-                                triggers_, {}
-                            ).get(position, []))
-                        for level_name in colorer.level_to_color
-                    }
-                    args = colorer.colorize(values, config.triggers.readlevel)
-                    if args and not args[0]:
-                        if triggers_ in triggers:
-                            args = ["None"]
-                        else:
-                            args = None
-                    if args:
-                        echo_key_value(triggers_, " , ".join(args), config.alt_style)
-
-    @trigger_group.command(handle_dry_run=True)
-    @argument('origin', type=CommandSettingsKeyType("triggers"))
-    @argument('destination')
-    def rename(origin, destination):
-        """Rename a triggers"""
-        config.triggers.writable[destination] = config.triggers.readonly[origin]
-        if origin in config.triggers.writable:
-            del config.triggers.writable[origin]
-        # rename the triggers when used in the other triggers
-        from six.moves.builtins import set
-        renamed_in = set()
-        for a, data in six.iteritems(config.triggers.writable):
-            cmds = data[position]
-            for cmd in cmds:
-                if cmd[0] == origin:
-                    LOGGER.debug("%s renamed in %s" % (origin, a))
-                    cmd[0] = destination
-                    renamed_in.add(a)
-        # warn the user if the triggers is used at other level, and thus has not been renamed there
-        for a, cmds in six.iteritems(config.triggers.readonly):
-            cmds = data[position]
-            for cmd in cmds:
-                if cmd[0] == origin and a not in renamed_in:
-                    LOGGER.warning("%s is still used in %s at another configuration level."
-                                   " You may want to correct this manually." % (origin, a))
-        config.triggers.write()
-
-    @trigger_group.command(ignore_unknown_options=True, handle_dry_run=True)
-    @argument('cmd', type=CommandType())
-    @argument('params', nargs=-1, required=True)
-    def append(cmd, params):
-        """Add some commands at the end of the triggers"""
-        commands = []
-        text = list(params)
-        sep = ','
-        while sep in text:
-            index = text.index(sep)
-            commands.append(text[:index])
-            del text[:index + 1]
-        if text:
-            commands.append(text)
-        data = config.triggers.readonly.get(cmd, {})
-        data[position] = data.get(position, []) + commands
-        config.triggers.writable[cmd] = data
-        config.triggers.write()
-    append.get_choices = get_choices
+            if cmd[0] == origin and a not in renamed_in:
+                LOGGER.warning("%s is still used in %s at another configuration level."
+                               " You may want to correct this manually." % (origin, a))
+    config.triggers.write()
 
 
-set_sub_commands("pre")
-set_sub_commands("post")
-set_sub_commands("onerror")
-set_sub_commands("onsuccess")
+@triggers.command(ignore_unknown_options=True, handle_dry_run=True)
+@argument('cmd', type=CommandType())
+@argument('params', nargs=-1, required=True)
+@argument('position', type=click.Choice(["pre", "post", "error", "success"]))
+def append(cmd, params, position):
+    """Add some commands at the end of the triggers"""
+    commands = []
+    text = list(params)
+    sep = ','
+    while sep in text:
+        index = text.index(sep)
+        commands.append(text[:index])
+        del text[:index + 1]
+    if text:
+        commands.append(text)
+    data = config.triggers.readonly.get(cmd, {})
+    data[position] = data.get(position, []) + commands
+    config.triggers.writable[cmd] = data
+    config.triggers.write()
+append.get_choices = get_choices
