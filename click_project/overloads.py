@@ -493,7 +493,7 @@ class RememberParametersMixin(object):
         return res
 
     def set_command_line_settings(self, ctx, args):
-        config.command_line_settings["parameters"][self.path] += self.unparse_args(ctx, args)
+        config.command_line_settings["parameters"][self.path] = self.unparse_args(ctx, args)
         config.merge_settings()
 
 
@@ -505,6 +505,7 @@ class Command(HelpMixin, ExtraParametersMixin, RememberParametersMixin, click.Co
     def parse_args(self, ctx, args):
         self.set_command_line_settings(ctx, args)
         args = self.get_extra_args(implicit=('--no-parameters' in args))
+
         self.complete_arguments = list(args)
         LOGGER.develop("In the {} '{}', parsing the args {}".format(
             self.__class__.__name__,
