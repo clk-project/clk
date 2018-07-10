@@ -326,7 +326,7 @@ class ExtraParametersMixin(object):
     def unset_parameters_callback(self, ctx, param, value):
         if value and not ctx.resilient_parsing:
             raw_args = config.command_line_settings["parameters"][self.path]
-            index = raw_args.index('--set-parameters')
+            index = raw_args.index('--unset-parameters')
             raw_args = raw_args[:index] + raw_args[index+2:]
             config.command_line_settings["parameters"][self.path] = raw_args
             config.merge_settings()
@@ -366,7 +366,7 @@ class ExtraParametersMixin(object):
     def show_parameters_callback(self, ctx, param, value):
         if value and not ctx.resilient_parsing:
             raw_args = config.command_line_settings["parameters"][self.path]
-            index = raw_args.index('--set-parameters')
+            index = raw_args.index('--show-parameters')
             raw_args = raw_args[:index] + raw_args[index+2:]
             config.command_line_settings["parameters"][self.path] = raw_args
             config.merge_settings()
