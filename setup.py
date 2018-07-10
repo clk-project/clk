@@ -34,9 +34,6 @@ setup(
         "networkx",
         "pydotplus",
         "pluginbase",
-        # cryptography is pinned so that we are not bothered by it very frequent
-        # updates
-        "cryptography==2.2.2",
         "appdirs",
         "ipdb",
         "humanize",
