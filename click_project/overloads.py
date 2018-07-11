@@ -499,9 +499,26 @@ class RememberParametersMixin(object):
         config.merge_settings()
 
 
-class Command(HelpMixin, ExtraParametersMixin, RememberParametersMixin, click.Command):
+class DeprecatedMixin(object):
+    def init_deprecated(self):
+        self.deprecated = None
+
+    def invoke_handle_deprecated(self, ctx, *args, **kwargs):
+        if self.deprecated:
+            msg = "'%s' is deprecated" % self.path.replace('.', ' ')
+            version = self.deprecated.get("version")
+            message = self.deprecated.get("message")
+            if version:
+                msg += " since version %s" % version
+            if message:
+                msg += ". " + message
+            LOGGER.deprecated(msg)
+
+
+class Command(DeprecatedMixin, HelpMixin, ExtraParametersMixin, RememberParametersMixin, click.Command):
     def __init__(self, *args, **kwargs):
         super(Command, self).__init__(*args, **kwargs)
+        super(Command, self).init_deprecated()
         self.path = None
 
     def parse_args(self, ctx, args):
@@ -517,6 +534,7 @@ class Command(HelpMixin, ExtraParametersMixin, RememberParametersMixin, click.Co
         click.Command.parse_args(self, ctx, args)
 
     def invoke(self, ctx, *args, **kwargs):
+        super(Command, self).invoke_handle_deprecated(ctx, *args, **kwargs)
         if config.dry_run and not self.handle_dry_run:
             LOGGER.warning(
                 "'{}' does not support dry-run mode: I won't call it".format(
@@ -597,7 +615,7 @@ class GroupCommandResolver(CommandResolver):
 allow_dotted_commands = False
 
 
-class Group(click_didyoumean.DYMMixin, HelpMixin, ExtraParametersMixin, RememberParametersMixin, click.Group):
+class Group(click_didyoumean.DYMMixin, DeprecatedMixin, HelpMixin, ExtraParametersMixin, RememberParametersMixin, click.Group):
     commandresolvers = [
         GroupCommandResolver(),
     ]
@@ -610,6 +628,7 @@ class Group(click_didyoumean.DYMMixin, HelpMixin, ExtraParametersMixin, Remember
             self.set_default_command(default_command)
 
         super(Group, self).__init__(*args, **kwargs)
+        super(Group, self).init_deprecated()
 
         self.path = None
         if self.help and self.short_help.endswith('...') and 'short_help' not in kwargs.keys():
@@ -632,6 +651,10 @@ class Group(click_didyoumean.DYMMixin, HelpMixin, ExtraParametersMixin, Remember
             cmd_name = command.name
             self.add_command(command)
         self.default_cmd_name = cmd_name
+
+    def invoke(self, ctx, *args, **kwargs):
+        super(Group, self).invoke_handle_deprecated(ctx, *args, **kwargs)
+        return super(Group, self).invoke(ctx, *args, **kwargs)
 
     def parse_args(self, ctx, args):
         self.set_command_line_settings(ctx, args)
@@ -1085,7 +1108,7 @@ class CommandSettingsKeyType(ParameterType):
         return value
 
 
-class MainCommand(click_didyoumean.DYMMixin, HelpMixin, ExtraParametersMixin,
+class MainCommand(click_didyoumean.DYMMixin, DeprecatedMixin, HelpMixin, ExtraParametersMixin,
                   RememberParametersMixin, click.MultiCommand):
     auto_envvar_prefix = "CLICK_PROJECT"
     path = "click-project"
@@ -1096,6 +1119,7 @@ class MainCommand(click_didyoumean.DYMMixin, HelpMixin, ExtraParametersMixin,
         context_settings.setdefault('max_content_width', 120)
         kwargs['context_settings'] = context_settings
         super(MainCommand, self).__init__(*args, **kwargs)
+        super(MainCommand, self).init_deprecated()
 
     def get_command_short_help(self, ctx, cmd_name):
         @cache_disk
@@ -1103,6 +1127,10 @@ class MainCommand(click_didyoumean.DYMMixin, HelpMixin, ExtraParametersMixin,
             cmd = self.get_command(ctx, name)
             return cmd.short_help if cmd else None
         return short_help(ctx.command_path, cmd_name)
+
+    def invoke(self, ctx, *args, **kwargs):
+        super(MainCommand, self).invoke_handle_deprecated(ctx, *args, **kwargs)
+        return super(MainCommand, self).invoke(ctx, *args, **kwargs)
 
     def parse_args(self, ctx, args):
         self.set_command_line_settings(ctx, args)
