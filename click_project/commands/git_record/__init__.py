@@ -102,7 +102,12 @@ def git_record():
 @option("-m", "--message", help="Message to describe the record")
 @flag("--create-hash-file/--dont-create-hash-file",
       help="Create a hash file, to be consumed by generated hash scripts")
-def add(file, name, message, create_hash_file):
+@flag("--upload/--no-upload", help=(
+    "Upload the content as soon as added."
+    " People tend to forget to upload and think their data is safe on the remote."
+    " The default value of True is then conservative."), default=True)
+@pass_context
+def add(ctx, file, name, message, create_hash_file, upload):
     """Add the data file/directory in the git record
 
     If a content was already associated to the file, add this one on top of the
@@ -124,6 +129,8 @@ def add(file, name, message, create_hash_file):
     config.git_record.writable[rel] = records
     config.git_record.write()
     LOGGER.status("Successfully added {}".format(name))
+    if upload:
+        ctx.invoke(_upload)
 
 
 @git_record.command()
@@ -319,7 +326,7 @@ def set_documentation(file, message, index):
 @flag("--force", help="Force transferring the file even if it looks useless")
 @argument('file', nargs=-1, type=CommandSettingsKeyType("git_record"))
 @pass_context
-def upload(ctx, file, remote, force):
+def _upload(ctx, file, remote, force):
     """Upload the files/directorie
 
     So that anyone can download them.
