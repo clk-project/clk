@@ -168,7 +168,7 @@ def prune_old_records(ctx, file):
 Keeping only the last record.
 """
     file = file or config.git_record.writable.keys()
-    assert_file_in_level(config, file)
+    assert_file_in_level(file)
     pruned = 0
     for fil in file:
         for name, records in config.git_record.writable.items():
@@ -228,8 +228,8 @@ def pop(file, index):
     """Pop the git records at index"""
     if not file:
         raise click.UsageError("You must precise at least one file to act upon")
-    assert_indices(config, file, index)
-    assert_file_in_level(config, file)
+    assert_indices(file, index)
+    assert_file_in_level(file)
     for fil in file:
         records = config.git_record.writable[fil]
         LOGGER.status("Erasing record at index {} for file {}".format(index, fil))
@@ -301,8 +301,8 @@ def set_documentation(file, message, index):
     """Set the documentation of the given file"""
     # starting from the end, the index starts at 1
     file = set(file or config.git_record.writable.keys())
-    assert_indices(config, file, index)
-    assert_file_in_level(config, file)
+    assert_indices(file, index)
+    assert_file_in_level(file)
     for fil in file:
         record = config.git_record.writable[fil][-index]
         if message:
