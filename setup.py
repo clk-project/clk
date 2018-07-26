@@ -24,7 +24,6 @@ setup(
         "click>=6.4",
         "click-log",
         "click-didyoumean",
-        "click-completion>=0.3.0",
         "six",
         "glob2",
         "colorama",
