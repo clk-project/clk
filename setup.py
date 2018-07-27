@@ -38,4 +38,10 @@ setup(
         "humanize",
         "Pygments",
     ],
+    entry_points = {
+        'console_scripts':
+        [
+            'clk=click_project.main:main',
+        ]
+    },
 )

@@ -1,19 +1,14 @@
 #!/usr/bin/env python3
 # -*- coding:utf-8 -*-
 
-from __future__ import print_function, absolute_import
-
-from click_project.overloads import MainCommand
-from click_project.core import main, main_command
-from click_project.log import get_logger
-from click_project.setup import classic_setup
-
-LOGGER = get_logger(__name__)
+from click_project.setup import basic_entry_point, main
 
 
-@classic_setup(__name__)
-@main_command(MainCommand)
-def click_project(**kwargs):
+@basic_entry_point(
+    __name__,
+    extra_command_packages=["clk_commands", "clk_commands_perso"],
+)
+def clk(**kwargs):
     pass
 
 
