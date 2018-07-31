@@ -130,7 +130,7 @@ def add(ctx, file, name, message, create_hash_file, upload):
     config.git_record.write()
     LOGGER.status("Successfully added {}".format(name))
     if upload:
-        ctx.invoke(_upload)
+        ctx.invoke(_upload, file=(rel,))
 
 
 @git_record.command()
