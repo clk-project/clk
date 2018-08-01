@@ -80,6 +80,8 @@ def compute_choices(ctx, args, incomplete):
 
 
 def init():
-    click_completion.core.startswith = startswith
     click_completion.core.get_choices = get_choices
-    click_completion.init(complete_options=to_bool(os.environ.get(COMPLETE_OPTIONS, "off")))
+    click_completion.init(
+        complete_options=to_bool(os.environ.get(COMPLETE_OPTIONS, "off")),
+        match_incomplete=startswith
+    )
