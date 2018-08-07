@@ -836,8 +836,7 @@ class ParameterMixin(click.Parameter):
             canon_default = ', '.join('%s' % d for d in self.default)
         elif callable(canon_default):
             canon_default = canon_default()
-        else:
-            canon_default = str(canon_default)
+        canon_default = str(canon_default)
 
         if self.default is not None and self.show_default:
             res1 = res[1]
