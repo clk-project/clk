@@ -20,6 +20,7 @@ def commands(ctx):
 
 
 def display_subcommands(ctx, cmd, indent=''):
+    # type: (click.Context, Group, str) -> None
     for sub_cmd_name in cmd.list_commands(ctx):
         sub_cmd = cmd.get_command(ctx, sub_cmd_name)
         if sub_cmd:

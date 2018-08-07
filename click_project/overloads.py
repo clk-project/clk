@@ -708,6 +708,7 @@ class Group(click_didyoumean.DYMMixin, DeprecatedMixin, HelpMixin, ExtraParamete
         return decorator
 
     def list_commands(self, ctx):
+        # type: (click.Context) -> [Command]
         res = list_commands_with_resolvers(
             self.commandresolvers, self.path,
             include_subcommands=True)
@@ -720,6 +721,7 @@ class Group(click_didyoumean.DYMMixin, DeprecatedMixin, HelpMixin, ExtraParamete
         return sorted(set(res))
 
     def get_command(self, ctx, cmd_name):
+        # type: (click.Context, str) -> Command
         if "." in cmd_name and not allow_dotted_commands:
             raise click.UsageError(
                 "{} is not a valid command name,"
