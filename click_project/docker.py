@@ -57,9 +57,9 @@ def docker_generic_commands(group, directory, extra_options=lambda: ["-p", confi
             ]
 
     @group.command()
-    @argument("service", type=DockerServices(), nargs=-1)
+    @argument("service", type=DockerServices(), nargs=-1, help="The services to spin up")
     @option('--scale', 'scales', help="Scale a service. Use the format 'service=number'", multiple=True)
-    @flag("--force-recreate/--no-force-recreate")
+    @flag("--force-recreate/--no-force-recreate", help="Force the recreation of the services")
     def up(service, force_recreate, scales):
         """Create and start containers"""
         user_in_docker_group()
@@ -84,67 +84,67 @@ def docker_generic_commands(group, directory, extra_options=lambda: ["-p", confi
         docker_compose(['down'] + args)
 
     @group.command()
-    @argument("service", type=DockerServices(), nargs=-1)
+    @argument("service", type=DockerServices(), nargs=-1, help="The services to start")
     def start(service):
         """Start services"""
         with cd(abs_directory()):
             docker_compose(['start'] + list(service))
 
     @group.command()
-    @argument("service", type=DockerServices(), nargs=-1)
+    @argument("service", type=DockerServices(), nargs=-1, help="The services to stop")
     def stop(service):
         """Stop services"""
         docker_compose(['stop'] + list(service))
 
     @group.command()
-    @argument("service", type=DockerServices(), nargs=-1)
+    @argument("service", type=DockerServices(), nargs=-1, help="The services to restart")
     def restart(service):
         """Restart services"""
         docker_compose(['restart'] + list(service))
 
     @group.command(ignore_unknown_options=True)
-    @argument("service", type=DockerServices(), nargs=-1)
+    @argument("service", type=DockerServices(), nargs=-1, help="The services to list")
     def ps(service):
         """List containers"""
         service = service or []
         docker_compose(['ps'] + list(service))
 
     @group.command(ignore_unknown_options=True)
-    @argument("service", type=DockerServices(), nargs=-1)
+    @argument("service", type=DockerServices(), nargs=-1, help="The services to check the status")
     def status(service):
-        """List containers"""
+        """Show the services status"""
         service = service or []
         docker_compose(['ps'] + list(service))
 
     @group.command()
-    @argument("service", type=DockerServices(), nargs=-1)
+    @argument("service", type=DockerServices(), nargs=-1, help="The services to show the logs")
     def logs(service):
         """View output logs from containers"""
         docker_compose(['logs', '-f'] + list(service))
 
     @group.command()
-    @option("--services/--no-services")
+    @option("--services/--no-services", help="List the services instead of the whole configuration")
     def _config(services):
         """Validate and view the compose file"""
         docker_compose(['config'] + (['--services'] if services else []))
 
     @group.command(ignore_unknown_options=True)
-    @argument("service", type=DockerServices())
-    @argument("command", nargs=-1)
+    @argument("service", type=DockerServices(), help="The container where the command will be run")
+    @argument("command", nargs=-1, help="The command to run in the container")
     def _exec(service, command):
         """Execute a command in the running container"""
         docker_compose(['exec', service] + list(command))
 
     @group.command(ignore_unknown_options=True)
-    @argument("service", type=DockerServices())
-    @argument("command", nargs=-1)
+    @argument("service", type=DockerServices(), help="The container where the command will be run")
+    @argument("command", nargs=-1, help="The command to run in the container")
     def run(service, command):
         """Run a one-off command in the container"""
         docker_compose(['run', service] + list(command))
 
     @group.command(ignore_unknown_options=True)
-    @argument("service", type=DockerServices())
-    @argument("args", nargs=-1)
+    @argument("service", type=DockerServices(), help="The service to build")
+    @argument("args", nargs=-1, help="Extra arguments to pass to the build command")
     def build(service, args):
         """Build the container"""
         docker_compose(['build', service] + list(args))
