@@ -8,6 +8,7 @@ import click
 from click_project.config import config
 from click_project.decorators import command, pass_context
 from click_project.log import get_logger
+from click_project.overloads import Group
 
 LOGGER = get_logger(__name__)
 
@@ -25,6 +26,9 @@ def display_subcommands(ctx, cmd, indent=''):
         sub_cmd = cmd.get_command(ctx, sub_cmd_name)
         if sub_cmd:
             click.echo(cmd_format(sub_cmd_name, sub_cmd.short_help, indent))
+            for param in sub_cmd.params:
+                if not hasattr(param, 'help') or not param.help:
+                    LOGGER.warn("no help message in parameter %s" % param.name)
             if isinstance(sub_cmd, click.Group):
                 if not hasattr(sub_cmd, "original_command"):
                     display_subcommands(ctx, sub_cmd, indent + '  ')

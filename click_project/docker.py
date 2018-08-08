@@ -2,7 +2,6 @@
 # -*- coding:utf-8 -*-
 
 import os
-import grp
 import click
 import getpass
 
@@ -157,6 +156,11 @@ def docker_generic_commands(group, directory, extra_options=lambda: ["-p", confi
         call(['sudo', 'login'])
 
     def user_in_docker_group():
-        groups = [g.gr_name for g in grp.getgrall() if getpass.getuser() in g.gr_mem]
-        if 'docker' not in groups:
-            raise click.ClickException("The current user is not in the docker group. Please add it to '/etc/group' or use 'fix-up'")
+        try:
+            import grp
+            groups = [g.gr_name for g in grp.getgrall() if getpass.getuser() in g.gr_mem]
+            if 'docker' not in groups:
+                raise click.ClickException("The current user is not in the docker group."
+                                           " Please add it to '/etc/group' or use 'fix-up'")
+        except ImportError:
+            pass
