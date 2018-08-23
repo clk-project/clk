@@ -29,7 +29,6 @@ from contextlib import contextmanager
 import click
 import colorama
 import glob2
-import humanize
 import six
 from six.moves.urllib.request import urlopen
 from click._termui_impl import ProgressBar as ProgressBar_
