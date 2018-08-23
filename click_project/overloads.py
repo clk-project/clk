@@ -1041,7 +1041,7 @@ class CommandType(ParameterType):
             period_candidates = [
                 (
                     elem[0] + ".",
-                    elem[1]
+                    None
                 )
                 for elem in candidates
                 if isinstance(get_command_safe(elem[0]), Group)
