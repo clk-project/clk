@@ -55,18 +55,18 @@ def get_choices(ctx, args_, incomplete):
 
 
 @alias.command(ignore_unknown_options=True, change_directory_options=False, handle_dry_run=True)
-@argument('cmd')
-@argument('subcommand', type=CommandType())
 @option("--documentation", help="Documentation to display")
-@argument('params', nargs=-1)
-def set(cmd, subcommand, documentation, params):
+@argument('alias', help="The alias name")
+@argument('command', type=CommandType(), help="The alias command")
+@argument('params', nargs=-1, help="The command parameters")
+def set(alias, command, documentation, params):
     """Set an alias"""
-    if cmd.startswith("-"):
+    if alias.startswith("-"):
         raise click.UsageError("Aliases must not start with dashes (-)")
-    if re.match('^\w', cmd) is None:
-        raise click.ClickException("Invalid alias name: " + cmd)
+    if re.match('^\w', alias) is None:
+        raise click.ClickException("Invalid alias name: " + alias)
     commands = []
-    text = [subcommand] + list(params)
+    text = [command] + list(params)
     sep = ','
     while sep in text:
         index = text.index(sep)
@@ -78,7 +78,7 @@ def set(cmd, subcommand, documentation, params):
         "documentation": documentation,
         "commands": commands,
     }
-    config.alias.writable[cmd] = data
+    config.alias.writable[alias] = data
     config.alias.write()
 
 
@@ -86,8 +86,8 @@ set.get_choices = get_choices
 
 
 @alias.command()
-@argument('alias', type=CommandSettingsKeyType("alias"))
-@argument('documentation')
+@argument('alias', type=CommandSettingsKeyType("alias"), help="The alias name")
+@argument('documentation', help="The alias documentation")
 def set_documentation(alias, documentation):
     """Set the documentation of the alias"""
     if alias not in config.alias.writable:
@@ -99,30 +99,31 @@ def set_documentation(alias, documentation):
 
 
 @alias.command(handle_dry_run=True)
-@argument('cmds', nargs=-1, type=CommandSettingsKeyType("alias"))
-def unset(cmds):
+@argument('aliases', nargs=-1, type=CommandSettingsKeyType("alias"), help="The aliases to unset")
+def unset(aliases):
     """Unset some aliases"""
-    for cmd in cmds:
+    for cmd in aliases:
         if cmd not in config.alias.writable:
             raise click.ClickException("The %s configuration has no '%s' alias registered."
                                        "Try using another level option (like --local, --workgroup or --global)"
                                        % (config.alias.writelevel, cmd))
-    for cmd in cmds:
+    for cmd in aliases:
         LOGGER.status("Erasing {} alias from {} settings".format(cmd, config.alias.writelevel))
         del config.alias.writable[cmd]
     config.alias.write()
 
 
 @alias.command(handle_dry_run=True)
-@argument('cmds', nargs=-1, type=CommandSettingsKeyType("alias"))
-def unset_documentation(cmds):
+@argument('aliases', nargs=-1, type=CommandSettingsKeyType("alias"),
+          help="The aliases where the documentation will be removed")
+def unset_documentation(aliases):
     """Unset the documentation of some aliases"""
-    for cmd in cmds:
+    for cmd in aliases:
         if cmd not in config.alias.writable:
             raise click.ClickException("The %s configuration has no '%s' alias registered."
-                                       "Try using another level option (like --local, --workgroup or --global)"
+                                       " Try using another level option (like --local, --workgroup or --global)"
                                        % (config.alias.writelevel, cmd))
-    for cmd in cmds:
+    for cmd in aliases:
         LOGGER.status("Erasing the documentation of {} alias from {} settings".format(cmd, config.alias.writelevel))
         config.alias.writable[cmd]["documentation"] = None
     config.alias.write()
@@ -136,7 +137,8 @@ def unset_documentation(cmds):
         type=CommandSettingsKeyType("alias", silent_fail=True))
 @table_format(default='key_value')
 @table_fields(choices=['alias', 'commands'])
-@argument('aliases', nargs=-1, type=CommandSettingsKeyType("alias"))
+@argument('aliases', nargs=-1, type=CommandSettingsKeyType("alias"), help="The aliases to show. All the aliases are"
+          " showed when no alias is provided")
 def show(name_only, aliases, under, fields, format, **kwargs):
     """Show the aliases"""
     if name_only:
@@ -170,37 +172,37 @@ def show(name_only, aliases, under, fields, format, **kwargs):
 
 
 @alias.command(handle_dry_run=True)
-@argument('origin', type=CommandSettingsKeyType("alias"))
-@argument('destination')
-def rename(origin, destination):
+@argument('source', type=CommandSettingsKeyType("alias"), help="The alias to rename")
+@argument('destination', help="The new name of the alias")
+def rename(source, destination):
     """Rename an alias"""
-    config.alias.writable[destination] = config.alias.readonly[origin]
-    if origin in config.alias.writable:
-        del config.alias.writable[origin]
+    config.alias.writable[destination] = config.alias.readonly[source]
+    if source in config.alias.writable:
+        del config.alias.writable[source]
     # rename the alias when used in the other aliases
     from six.moves.builtins import set
     renamed_in = set()
     for a, data in six.iteritems(config.alias.writable):
         cmds = data["commands"]
         for cmd in cmds:
-            if cmd[0] == origin:
-                LOGGER.debug("%s renamed in %s" % (origin, a))
+            if cmd[0] == source:
+                LOGGER.debug("%s renamed in %s" % (source, a))
                 cmd[0] = destination
                 renamed_in.add(a)
     # warn the user if the alias is used at other level, and thus has not been renamed there
     for a, cmds in six.iteritems(config.alias.readonly):
         cmds = data["commands"]
         for cmd in cmds:
-            if cmd[0] == origin and a not in renamed_in:
+            if cmd[0] == source and a not in renamed_in:
                 LOGGER.warning("%s is still used in %s at another configuration level."
-                               " You may want to correct this manually." % (origin, a))
+                               " You may want to correct this manually." % (source, a))
     config.alias.write()
 
 
 @alias.command(ignore_unknown_options=True, handle_dry_run=True)
-@argument('cmd', type=CommandType())
-@argument('params', nargs=-1, required=True)
-def append(cmd, params):
+@argument('alias', type=CommandType(), help="The alias to modify")
+@argument('params', nargs=-1, required=True, help="The command parameters to append to the alias command")
+def append(alias, params):
     """Add some commands at the end of the alias"""
     commands = []
     text = list(params)
@@ -211,9 +213,9 @@ def append(cmd, params):
         del text[:index + 1]
     if text:
         commands.append(text)
-    data = config.alias.readonly.get(cmd, {})
+    data = config.alias.readonly.get(alias, {})
     data["commands"] = data.get("commands", []) + commands
-    config.alias.writable[cmd] = data
+    config.alias.writable[alias] = data
     config.alias.write()
 
 

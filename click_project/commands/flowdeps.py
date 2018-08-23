@@ -55,40 +55,40 @@ def flowdeps():
 
 
 @flowdeps.command(handle_dry_run=True)
-@argument('cmd', type=CommandType())
-@argument('params', nargs=-1, type=CommandType())
-def set(cmd, params):
+@argument('cmd', type=CommandType(), help="The command to which set the flow dependencies")
+@argument('dependencies', nargs=-1, type=CommandType(), help="The flow dependencies")
+def set(cmd, dependencies):
     """Set the flow dependencies of a command"""
-    config.flowdeps.writable[cmd] = params
+    config.flowdeps.writable[cmd] = dependencies
     config.flowdeps.write()
 
 
 @flowdeps.command(ignore_unknown_options=True, handle_dry_run=True)
-@argument('cmd', type=CommandType())
-@argument('params', nargs=-1, type=CommandType())
-def append(cmd, params):
+@argument('cmd', type=CommandType(), help="The command to which append the flow dependencies")
+@argument('dependencies', nargs=-1, type=CommandType(), help="The additional flow dependencies")
+def append(cmd, dependencies):
     """Add a flow dependency after the flowdeps of a command"""
-    params = config.flowdeps.writable.get(cmd, []) + list(params)
-    config.flowdeps.writable[cmd] = params
+    dependencies = config.flowdeps.writable.get(cmd, []) + list(dependencies)
+    config.flowdeps.writable[cmd] = dependencies
     config.flowdeps.write()
 
 
 @flowdeps.command(handle_dry_run=True)
-@argument('cmd', type=CommandSettingsKeyType("flowdeps"))
-@argument('params', type=CommandType(), nargs=-1)
-def insert(cmd, params):
+@argument('cmd', type=CommandSettingsKeyType("flowdeps"), help="The command to which insert the flow dependencies")
+@argument('dependencies', type=CommandType(), nargs=-1, help="The additional flow dependencies")
+def insert(cmd, dependencies):
     """Add a flow dependency before the flowdeps of a command"""
-    params = list(params) + config.flowdeps.readonly.get(cmd, [])
-    config.flowdeps.writable[cmd] = params
+    dependencies = list(dependencies) + config.flowdeps.readonly.get(cmd, [])
+    config.flowdeps.writable[cmd] = dependencies
     config.flowdeps.write()
 
 
 @flowdeps.command(handle_dry_run=True)
-@argument('cmd', type=CommandSettingsKeyType("flowdeps"))
-@argument('params', type=CommandType(), nargs=-1)
-def remove(cmd, params):
+@argument('cmd', type=CommandSettingsKeyType("flowdeps"), help="The command to which remove the flow dependencies")
+@argument('dependencies', type=CommandType(), nargs=-1, help="The flow flow dependencies to remove")
+def remove(cmd, dependencies):
     """Remove some flow dependencies of a command"""
-    for param in params:
+    for param in dependencies:
         try:
             config.flowdeps.writable[cmd].remove(param)
         except ValueError:
@@ -97,7 +97,8 @@ def remove(cmd, params):
 
 
 @flowdeps.command(handle_dry_run=True)
-@argument('cmds', nargs=-1, type=CommandSettingsKeyType("flowdeps"))
+@argument('cmds', nargs=-1, type=CommandSettingsKeyType("flowdeps"),
+          help="The command to which unset the flow dependencies")
 def unset(cmds):
     """Unset the flow dependencies of a command"""
     for cmd in cmds:
@@ -117,7 +118,7 @@ def unset(cmds):
 @Colorer.color_options
 @table_format(default='key_value')
 @table_fields(choices=['command', 'dependencies'])
-@argument('cmds', nargs=-1, type=CommandType())
+@argument('cmds', nargs=-1, type=CommandType(), help="The commands to show")
 @pass_context
 def show(ctx, name_only, cmds, full, fields, format, **kwargs):
     """Show the flow dependencies of a command"""
@@ -247,7 +248,7 @@ def compute_dot(cmds=None, strict=False, cluster=True,
 @flag("--cluster/--independent",
       help="Show all commands independently or cluster groups",
       default=True)
-@argument('cmds', nargs=-1, type=CommandType())
+@argument('cmds', nargs=-1, type=CommandType(), help="The commands to display")
 def graph(output, format, cmds, strict, cluster,
           left_right, lonely):
     """Display the flow dependencies as a graph"""

@@ -15,16 +15,16 @@ LOGGER = get_logger(__name__)
 
 def keyvaluestore_generic_commands(group, settings_name):
     @group.command(ignore_unknown_options=True)
-    @argument('key')
-    @argument('value')
-    def set(key, value):
-        """Add a value"""
+    @argument('key', help="The key")
+    @argument('value', help="The value")
+    def _set(key, value):
+        """Set a value"""
         getattr(config, settings_name).writable[key] = {"value": value}
         getattr(config, settings_name).write()
 
     @group.command(handle_dry_run=True)
-    @argument('src', type=CommandSettingsKeyType("value"))
-    @argument('dst')
+    @argument('src', type=CommandSettingsKeyType("value"), help="The current key")
+    @argument('dst', help="The new key")
     @flag("--overwrite/--no-overwrite", help="̂Rename even if the destination already exists")
     def rename(src, dst, overwrite):
         """Rename a key"""
@@ -45,7 +45,7 @@ def keyvaluestore_generic_commands(group, settings_name):
         getattr(config, settings_name).write()
 
     @group.command(handle_dry_run=True)
-    @argument('keys', nargs=-1, type=CommandSettingsKeyType("value"))
+    @argument('keys', nargs=-1, type=CommandSettingsKeyType("value"), help="The keys to unset")
     def unset(keys):
         """Unset some values"""
         for key in keys:
@@ -65,7 +65,8 @@ def keyvaluestore_generic_commands(group, settings_name):
     @Colorer.color_options
     @table_format(default='key_value')
     @table_fields(choices=['key', 'value'])
-    @argument('keys', nargs=-1, type=CommandSettingsKeyType("value"))
+    @argument('keys', nargs=-1, type=CommandSettingsKeyType("value"),
+              help="The keys to show. When no keys are provided, all the keys are showed")
     def show(fields, format, keys, all, **kwargs):
         """Show the values"""
         keys = keys or (

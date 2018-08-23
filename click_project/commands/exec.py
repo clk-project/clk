@@ -36,7 +36,7 @@ class ExecutableType(ParameterType):
 @option('--stdout', help="File to which redirecting the standard output")
 @option('--stderr', help="File to which redirecting the standard error")
 @launcher
-@argument('command', nargs=-1, required=True, type=ExecutableType())
+@argument('command', nargs=-1, required=True, type=ExecutableType(), help="The command to execute")
 def exec_(launcher_command, launcher, shell, command, stdout, stderr):
     """Run a command in the CoSMo environment"""
     if launcher:

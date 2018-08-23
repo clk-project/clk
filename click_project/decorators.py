@@ -168,7 +168,7 @@ def use_settings(settings_name, settings_cls, override=True, default_level='cont
         for level in config.levels:
             f = flag('--{}'.format(level), "level", flag_value=level, help="Consider only the {} level".format(level), callback=level_callback)(f)
         f = flag('--context', "level", flag_value="context", help="Guess the level", callback=level_callback)(f)
-        f = option('--recipe', type=RecipeType(), callback=recipe_callback)(f)
+        f = option('--recipe', type=RecipeType(), callback=recipe_callback, help="Use this recipe")(f)
 
         setup_settings(None)
 

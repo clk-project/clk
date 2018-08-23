@@ -47,8 +47,8 @@ def launchers():
 
 @launchers.command(ignore_unknown_options=True, change_directory_options=False,
                    handle_dry_run=True)
-@argument('launcher', type=LauncherType(missing_ok=True))
-@argument('command', nargs=-1)
+@argument('launcher', type=LauncherType(missing_ok=True), help="The launcher name")
+@argument('command', nargs=-1, help="The launcher command")
 def set(launcher, command):
     """Set a launcher"""
     config.launchers.writable[launcher] = command
@@ -56,8 +56,8 @@ def set(launcher, command):
 
 
 @launchers.command(ignore_unknown_options=True, handle_dry_run=True)
-@argument('launcher', type=LauncherType())
-@argument('params', nargs=-1)
+@argument('launcher', type=LauncherType(), help="The launcher name")
+@argument('params', nargs=-1, help="The parameters to append")
 def append(launcher, params):
     """Add a parameters at the end of a launcher"""
     params = config.launchers.writable.get(launcher, []) + list(params)
@@ -66,7 +66,7 @@ def append(launcher, params):
 
 
 @launchers.command(handle_dry_run=True)
-@argument('launchers', nargs=-1, type=LauncherType())
+@argument('launchers', nargs=-1, type=LauncherType(), help="The launcher name")
 def unset(launchers):
     """Unset a launcher"""
     for launcher in launchers:
@@ -88,10 +88,7 @@ def unset(launchers):
 @Colorer.color_options
 @table_format(default='key_value')
 @table_fields(choices=['launcher', 'command'])
-@argument('launchers',
-          nargs=-1,
-          default=None,
-          type=LauncherType())
+@argument('launchers', nargs=-1, default=None, type=LauncherType(), help="The launcher names")
 @pass_context
 def show(ctx, name_only, launchers, all, fields, format, **kwargs):
     """Show the launchers"""
