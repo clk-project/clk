@@ -18,9 +18,9 @@ from click_project.lib import cd, call
 @option('--auth-cache/--no-auth-cache', default=False, help="Cache authentication")
 @option('--interactive/--no-interactive', default=False, help="Interactive prompting")
 @option('--trust-server-cert/--no-trust-server-cert', default=True, help="Accept unknown certificates")
-@argument('url')
-@argument('directory', required=False)
-@argument('args', nargs=-1)
+@argument('url', help="The repository URL")
+@argument('directory', required=False, help="The destination directory")
+@argument('args', nargs=-1, help="Extra arguments to pass to the svn program")
 def svn_sync(revision, username, password, url, auth_cache, interactive, trust_server_cert, directory, args):
     """Retrieve and/or update a svn repository"""
     directory = directory or re.split('[:/]', url)[-1]

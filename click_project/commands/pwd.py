@@ -63,7 +63,8 @@ class PWDType(ParameterType):
 @table_format(default='key_value')
 @table_fields(choices=['type', 'directory'])
 @option('--project/--no-project', help="Also display the directories used by project")
-@argument("keys", type=PWDType(), nargs=-1)
+@argument("keys", type=PWDType(), nargs=-1,
+          help="Only display these key values. If no key is provided, all the key values are displayed")
 def pwd(format, fields, project, keys):
     """Print the working directories"""
     values = PWDType().values if project or keys else PWDType().basic_values

@@ -51,8 +51,8 @@ def get_choices(ctx, args_, incomplete):
 
 @parameters.command(ignore_unknown_options=True, change_directory_options=False,
                     handle_dry_run=True)
-@argument('cmd', type=CommandType())
-@argument('params', nargs=-1)
+@argument('cmd', type=CommandType(), help="The command to set")
+@argument('params', nargs=-1, help="The command parameters")
 def set(cmd, params):
     """Set the parameters of a command"""
     old = config.parameters.writable.get(cmd)
@@ -79,8 +79,8 @@ set.get_choices = get_choices
 
 
 @parameters.command(ignore_unknown_options=True, handle_dry_run=True)
-@argument('cmd', type=CommandType())
-@argument('params', nargs=-1)
+@argument('cmd', type=CommandType(), help="The command to which the parameters will be appended")
+@argument('params', nargs=-1, help="The parameters to append")
 def append(cmd, params):
     """Add a parameter after the parameters of a command"""
     old = config.parameters.writable.get(cmd, [])
@@ -110,8 +110,8 @@ append.get_choices = get_choices
 
 
 @parameters.command(ignore_unknown_options=True, handle_dry_run=True)
-@argument('cmd', type=CommandSettingsKeyType("parameters"))
-@argument('params', nargs=-1)
+@argument('cmd', type=CommandSettingsKeyType("parameters"), help="The command to which the parameters will be inserted")
+@argument('params', nargs=-1, help="The parameters to insert")
 def insert(cmd, params):
     """Add a parameter before the parameters of a command"""
     params = list(params) + config.parameters.readonly.get(cmd, [])
@@ -123,8 +123,8 @@ insert.get_choices = get_choices
 
 
 @parameters.command(ignore_unknown_options=True, handle_dry_run=True)
-@argument('cmd', type=CommandSettingsKeyType("parameters"))
-@argument('params', nargs=-1)
+@argument('cmd', type=CommandSettingsKeyType("parameters"), help="The command to which the parameters will be removed")
+@argument('params', nargs=-1, help="The parameters to remove")
 def remove(cmd, params):
     """Remove some parameters of a command"""
     # first try to remove the parameters as a block. This way the user can do parameters remove generate -G foo
@@ -150,7 +150,8 @@ def remove(cmd, params):
 
 
 @parameters.command(handle_dry_run=True)
-@argument('cmds', nargs=-1, type=CommandSettingsKeyType("parameters"))
+@argument('cmds', nargs=-1, type=CommandSettingsKeyType("parameters"),
+          help="The commands to which the parameters will be unset")
 def unset(cmds):
     """Unset the parameters of a command"""
     for cmd in cmds:
@@ -171,17 +172,12 @@ def unset(cmds):
 
 @parameters.command(handle_dry_run=True)
 @flag('--name-only/--no-name-only', help="Only display the command names")
-@flag('--full', help="Show the full parameters,"
-      " even those guessed from the context (implies --no-color)")
+@flag('--full', help="Show the full parameters, even those guessed from the context (implies --no-color)")
 @Colorer.color_options
-@option("--under", help="Limit the scope to the commands under the given namespace",
-        type=CommandType())
+@option("--under", help="Limit the scope to the commands under the given namespace", type=CommandType())
 @table_format(default='key_value')
 @table_fields(choices=['command', 'parameters'])
-@argument('cmds',
-          nargs=-1,
-          default=None,
-          type=CommandType())
+@argument('cmds', nargs=-1, default=None, type=CommandType(), help="The commands to show")
 @pass_context
 def show(ctx, name_only, cmds, full, under, fields, format, **kwargs):
     """Show the parameters of a command"""

@@ -54,10 +54,10 @@ def triggers():
 
 
 @triggers.command(ignore_unknown_options=True, change_directory_options=False, handle_dry_run=True)
-@argument('position', type=click.Choice(["pre", "post", "error", "success"]))
-@argument('cmd', type=CommandType())
-@argument('triggered-command', type=CommandType())
-@argument('params', nargs=-1)
+@argument('position', type=click.Choice(["pre", "post", "error", "success"]), help="The trigger position")
+@argument('cmd', type=CommandType(), help="The command to which the trigger is associated command")
+@argument('triggered-command', type=CommandType(), help="The command to trigger")
+@argument('params', nargs=-1, help="The parameters passed to the triggered command")
 def set(cmd, triggered_command, params, position):
     """Set a triggers"""
     if cmd.startswith("-"):
@@ -84,8 +84,9 @@ set.get_choices = get_choices
 
 
 @triggers.command(handle_dry_run=True)
-@argument('position', type=click.Choice(["pre", "post", "error", "success"]))
-@argument('cmds', nargs=-1, type=CommandSettingsKeyType("triggers"))
+@argument('position', type=click.Choice(["pre", "post", "error", "success"]), help="The trigger position")
+@argument('cmds', nargs=-1, type=CommandSettingsKeyType("triggers"),
+          help="The commands where the triggers will be unset")
 def unset(cmds, position):
     """Unset some triggers"""
     for cmd in cmds:
@@ -100,10 +101,10 @@ def unset(cmds, position):
 
 
 @triggers.command(handle_dry_run=True)
-@argument('position', type=click.Choice(["pre", "post", "error", "success"]))
-@flag('--name-only/--no-name-only', help="Only display the triggers names")
+@flag('--name-only/--no-name-only', help="Only display the triggers names",)
 @Colorer.color_options
-@argument('triggers', nargs=-1, type=CommandSettingsKeyType("triggers"))
+@argument('position', type=click.Choice(["pre", "post", "error", "success"]), help="The trigger position")
+@argument('triggers', nargs=-1, type=CommandSettingsKeyType("triggers"), help="The commands to show")
 def show(name_only, triggers, position, **kwargs):
     """Show the triggers"""
     show_triggers = triggers or sorted(config.triggers.readonly.keys())
@@ -130,9 +131,9 @@ def show(name_only, triggers, position, **kwargs):
 
 
 @triggers.command(handle_dry_run=True)
-@argument('origin', type=CommandSettingsKeyType("triggers"))
-@argument('destination')
-@argument('position', type=click.Choice(["pre", "post", "error", "success"]))
+@argument('origin', type=CommandSettingsKeyType("triggers"), help="The current trigger")
+@argument('destination', help="The new trigger")
+@argument('position', type=click.Choice(["pre", "post", "error", "success"]), help="The trigger position")
 def rename(origin, destination, position):
     """Rename a triggers"""
     config.triggers.writable[destination] = config.triggers.readonly[origin]
@@ -159,9 +160,9 @@ def rename(origin, destination, position):
 
 
 @triggers.command(ignore_unknown_options=True, handle_dry_run=True)
-@argument('cmd', type=CommandType())
-@argument('params', nargs=-1, required=True)
-@argument('position', type=click.Choice(["pre", "post", "error", "success"]))
+@argument('cmd', type=CommandType(), help="The command to modify")
+@argument('params', nargs=-1, required=True, help="The extra parameters")
+@argument('position', type=click.Choice(["pre", "post", "error", "success"]), help="The trigger position")
 def append(cmd, params, position):
     """Add some commands at the end of the triggers"""
     commands = []
