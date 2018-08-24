@@ -499,6 +499,20 @@ class RememberParametersMixin(object):
         config.merge_settings()
 
 
+class MissingDocumentationMixin(object):
+    """A mixin to use to display a waring when running a command that miss some documentation, either on the command
+    itself or on its parameters
+    """
+    def invoke(self, ctx):
+        if not ctx.resilient_parsing:
+            if not self.help:
+                LOGGER.warn("The command '%s' has no documentation" % self.path)
+            for param in self.params:
+                if not param.help:
+                    LOGGER.warn("The parameter '%s' in the command '%s' has no documentation" % (param.name, self.path))
+        super(MissingDocumentationMixin, self).invoke(ctx)
+
+
 class DeprecatedMixin(object):
     def init_deprecated(self):
         self.deprecated = None
@@ -515,7 +529,7 @@ class DeprecatedMixin(object):
             LOGGER.deprecated(msg)
 
 
-class Command(DeprecatedMixin, HelpMixin, ExtraParametersMixin, RememberParametersMixin, click.Command):
+class Command(MissingDocumentationMixin, DeprecatedMixin, HelpMixin, ExtraParametersMixin, RememberParametersMixin, click.Command):
     def __init__(self, *args, **kwargs):
         super(Command, self).__init__(*args, **kwargs)
         super(Command, self).init_deprecated()
@@ -615,7 +629,7 @@ class GroupCommandResolver(CommandResolver):
 allow_dotted_commands = False
 
 
-class Group(click_didyoumean.DYMMixin, DeprecatedMixin, HelpMixin, ExtraParametersMixin, RememberParametersMixin, click.Group):
+class Group(click_didyoumean.DYMMixin, MissingDocumentationMixin, DeprecatedMixin, HelpMixin, ExtraParametersMixin, RememberParametersMixin, click.Group):
     commandresolvers = [
         GroupCommandResolver(),
     ]
