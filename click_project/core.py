@@ -263,6 +263,9 @@ class ColorType(ParameterType):
         # got from click.termui.style
         if "," not in incomplete and ":" not in incomplete:
             candidates = self.colors + [key + "-" for key in self.args.keys()]
+            candidates = [candidate for candidate in candidates if startswith(candidate, incomplete)]
+            if len(candidates) == 1:
+                incomplete = candidates[0]
             tested = incomplete
             prefix = ""
         valuematch = re.match("^(?P<prefix>.*?)(?P<key>[^,:]+)-(?P<value>[^,]*)$", incomplete)
