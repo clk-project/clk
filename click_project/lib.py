@@ -352,9 +352,9 @@ def tempdir(dir=None):
 
 
 @contextmanager
-def temporary_file(dir=None):
+def temporary_file(dir=None, suffix=None):
     u"""Create a temporary file to use in a with statement"""
-    d = tempfile.NamedTemporaryFile(delete=False)
+    d = tempfile.NamedTemporaryFile(delete=False, suffix=suffix)
     try:
         yield d
     except Exception:
