@@ -93,7 +93,7 @@ def git_record():
 
 
 @git_record.command()
-@argument("file")
+@argument("file", help="The file to add.")
 @option("--name", help=(
     "Name to use, instead of the computed one."
     " You should not need this option,"
