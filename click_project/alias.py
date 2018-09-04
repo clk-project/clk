@@ -55,7 +55,11 @@ class AliasCommandResolver(CommandResolver):
 
     def _get_command(self, path, parent=None):
         name = path.split(".")[-1]
-        commands_to_run = get_settings('alias')[path]["commands"]
+        command_line_settings = config.command_line_settings["parameters"][config.main_command.path]
+        commands_to_run = [
+            command_line_settings + cmd
+            for cmd in get_settings('alias')[path]["commands"]
+        ]
         cmdhelp = get_settings('alias')[path]["documentation"]
         cmdhelp = cmdhelp or "Alias for: {}".format(' , '.join(' '.join(quote(arg) for arg in cmd) for cmd in commands_to_run))
         short_help = cmdhelp.splitlines()[0]
@@ -64,6 +68,7 @@ class AliasCommandResolver(CommandResolver):
         deps = []
 
         for cmd in commands_to_run:
+
             cmdctx = get_ctx(cmd)
             # capture the flow of the aliased command only if it is not called
             # with an explicit flow
