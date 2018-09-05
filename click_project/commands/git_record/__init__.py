@@ -101,6 +101,7 @@ def git_record():
 ))
 @option("-m", "--message", help="Message to describe the record")
 @flag("--create-hash-file/--dont-create-hash-file",
+      default=True,
       help="Create a hash file, to be consumed by generated hash scripts")
 @flag("--upload/--no-upload", help=(
     "Upload the content as soon as added."
