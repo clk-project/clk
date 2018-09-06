@@ -142,11 +142,12 @@ def docker_generic_commands(group, directory, extra_options=lambda: ["-p", confi
         docker_compose(['run', service] + list(command))
 
     @group.command(ignore_unknown_options=True)
-    @argument("service", type=DockerServices(), help="The service to build")
+    @argument("service", type=DockerServices(), required=False, help="The service to build")
     @argument("args", nargs=-1, help="Extra arguments to pass to the build command")
     def build(service, args):
         """Build the container"""
-        docker_compose(['build', service] + list(args))
+        command = ['build'] + ([service] if service else []) + list(args)
+        docker_compose(command)
 
     @group.command()
     def fix_up():
