@@ -149,6 +149,13 @@ def docker_generic_commands(group, directory, extra_options=lambda: ["-p", confi
         command = ['build'] + ([service] if service else []) + list(args)
         docker_compose(command)
 
+    @group.command(ignore_unknown_options=True)
+    @argument("args", nargs=-1, help="Extra arguments to pass to the images command")
+    def images(args):
+        """Build the container"""
+        command = ['images'] + list(args)
+        docker_compose(command)
+
     @group.command()
     def fix_up():
         """Add the current user to the docker group. Calling this will result in changing /etc/group using sudo
