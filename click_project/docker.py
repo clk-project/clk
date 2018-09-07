@@ -60,14 +60,16 @@ def docker_generic_commands(group, directory, extra_options=lambda: ["-p", confi
     @option('--scale', 'scales', help="Scale a service. Use the format 'service=number'", multiple=True)
     @flag("--force-recreate/--no-force-recreate", help="Force the recreation of the services")
     @flag("--build/--no-build", help="Build the images before starting the containers", default=True)
-    def up(service, force_recreate, scales, build):
+    @flag("--detach/--no-detach", "-d/-D", help="Run containers in the background", default=True)
+    def up(service, force_recreate, scales, build, detach):
         """Create and start containers"""
         user_in_docker_group()
         up_args = []
         for scale in scales:
             up_args += ['--scale', scale]
         docker_compose(
-            ['up', '-d'] +
+            ['up'] +
+            (['--detach'] if detach else [])+
             (['--build'] if build else [])+
             up_args +
             (["--force-recreate"] if force_recreate else []) +
