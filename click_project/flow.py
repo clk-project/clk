@@ -18,6 +18,21 @@ LOGGER = get_logger(__name__)
 flowdeps = defaultdict(list)
 
 
+def setup_flow_params(cmd):
+    # remove the --flow params if already there
+    cmd.params = [
+        param
+        for param in cmd.params
+        if "--flow" not in param.opts
+        and "--flow-from" not in param.opts
+        and "--flow-after" not in param.opts
+    ]
+    flow_default = cmd.clickproject_flow if hasattr(cmd, "clickproject_flow") else None
+    flowfrom_default = cmd.clickproject_flowfrom if hasattr(cmd, "clickproject_flowfrom") else None
+    flowafter_default = cmd.clickproject_flowafter if hasattr(cmd, "clickproject_flowafter") else None
+    cmd.params.extend(get_flow_params(cmd.path, flow_default, flowfrom_default, flowafter_default))
+
+
 def get_command_handler(cmd):
     if hasattr(cmd.callback, "clickproject_flowdepends"):
         LOGGER.warn(
@@ -41,18 +56,7 @@ def get_command_handler(cmd):
         )
         cmd_has_flow = None
     if cmd_has_flow:
-        # remove the --flow params if already there
-        cmd.params = [
-            param
-            for param in cmd.params
-            if "--flow" not in param.opts
-            and "--flow-from" not in param.opts
-            and "--flow-after" not in param.opts
-        ]
-        flow_default = cmd.clickproject_flow if hasattr(cmd, "clickproject_flow") else None
-        flowfrom_default = cmd.clickproject_flowfrom if hasattr(cmd, "clickproject_flowfrom") else None
-        flowafter_default = cmd.clickproject_flowafter if hasattr(cmd, "clickproject_flowafter") else None
-        cmd.params.extend(get_flow_params(cmd.path, flow_default, flowfrom_default, flowafter_default))
+        setup_flow_params(cmd)
         cmd.callback = get_flow_wrapper(cmd.name, cmd.callback)
     return cmd
 
