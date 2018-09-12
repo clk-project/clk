@@ -78,6 +78,28 @@ def set(alias, command, documentation, params):
         "documentation": documentation,
         "commands": commands,
     }
+    old = config.alias.writable.get(alias)
+    if old is not None:
+        LOGGER.status(
+            "Removing {} alias of {}: {}".format(
+                config.alias.writelevelname,
+                alias,
+                " , ".join(
+                    " ".join(command)
+                    for command in old["commands"]
+                )
+            )
+        )
+    LOGGER.status(
+        "New {} alias for {}: {}".format(
+            config.alias.writelevelname,
+            alias,
+                " , ".join(
+                    " ".join(command)
+                    for command in data["commands"]
+                )
+        )
+    )
     config.alias.writable[alias] = data
     config.alias.write()
 
