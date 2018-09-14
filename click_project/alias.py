@@ -11,7 +11,7 @@ from click_project.commandresolver import CommandResolver
 from click_project.log import get_logger
 from click_project.overloads import Group,\
     list_commands, get_command, command, group, get_ctx, Command
-from click_project.core import resolve_context_with_side_effects
+from click_project.core import resolve_context_with_side_effects, run
 from click_project.decorators import pass_context
 from click_project.flow import get_flow_commands_to_run
 
@@ -55,11 +55,7 @@ class AliasCommandResolver(CommandResolver):
 
     def _get_command(self, path, parent=None):
         name = path.split(".")[-1]
-        command_line_settings = config.command_line_settings["parameters"][config.main_command.path]
-        commands_to_run = [
-            command_line_settings + cmd
-            for cmd in get_settings('alias')[path]["commands"]
-        ]
+        commands_to_run = get_settings('alias')[path]["commands"]
         cmdhelp = get_settings('alias')[path]["documentation"]
         cmdhelp = cmdhelp or "Alias for: {}".format(' , '.join(' '.join(quote(arg) for arg in cmd) for cmd in commands_to_run))
         short_help = cmdhelp.splitlines()[0]
@@ -113,8 +109,7 @@ class AliasCommandResolver(CommandResolver):
             commands = list(commands_to_run)
             for command_ in commands[:-1]:
                 LOGGER.debug("Running command: {}".format(" ".join(quote(c) for c in command_)))
-                with temp_config():
-                    config.main_command(command_)
+                run(command_)
             arguments = ctx.command.complete_arguments[:]
             while "--flow" in arguments:
                 del arguments[arguments.index("--flow")]

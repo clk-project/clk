@@ -12,6 +12,7 @@ from click_project.log import get_logger
 from click_project.overloads import get_command, CommandNotFound, get_command_handlers, Option, FlowOption, \
     FlowArgument, AutomaticOption
 from click_project import overloads
+from click_project.core import run
 
 LOGGER = get_logger(__name__)
 
@@ -110,13 +111,7 @@ def execute_flow_step(cmd, args=None):
     old_allow = overloads.allow_dotted_commands
     overloads.allow_dotted_commands = True
     try:
-        # executing the main command while parse again the command
-        # line. Therefore we need to provide it with the main command
-        # parameters.
-        config.main_command(
-            config.command_line_settings["parameters"].get(config.main_command.path, [])
-            + cmd
-        )
+        run(cmd)
     except:
         raise
     finally:

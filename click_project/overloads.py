@@ -19,7 +19,7 @@ from click.utils import make_default_short_help
 from click_project.click_helpers import click_get_current_context_safe
 from click_project.core import get_ctx, rebuild_path, settings_stores,\
     main_command_arguments_to_dict, main_command_arguments_from_dict,\
-    main_command_decoration, cache_disk
+    main_command_decoration, cache_disk, run
 from click_project.commandresolver import CommandResolver
 from click_project.config import config, get_settings2, in_project
 from click_project.lib import check_output, ParameterType
@@ -330,7 +330,7 @@ class ExtraParametersMixin(object):
             raw_args = raw_args[:index] + raw_args[index+2:]
             config.command_line_settings["parameters"][self.path] = raw_args
             config.merge_settings()
-            config.main_command(["parameters"] + self.parameters_callback_split_value(value) + ["unset", self.path])
+            run(["parameters"] + self.parameters_callback_split_value(value) + ["unset", self.path])
             exit(0)
 
     def set_parameters_callback(self, ctx, param, value):
@@ -340,7 +340,7 @@ class ExtraParametersMixin(object):
             raw_args = raw_args[:index] + raw_args[index+2:]
             config.command_line_settings["parameters"][self.path] = raw_args
             config.merge_settings()
-            config.main_command(["parameters"] + self.parameters_callback_split_value(value) + ["set", self.path] + ["--"] + raw_args)
+            run(["parameters"] + self.parameters_callback_split_value(value) + ["set", self.path] + ["--"] + raw_args)
             exit(0)
 
     def append_parameters_callback(self, ctx, param, value):
@@ -350,7 +350,7 @@ class ExtraParametersMixin(object):
             raw_args = raw_args[:index] + raw_args[index+2:]
             config.command_line_settings["parameters"][self.path] = raw_args
             config.merge_settings()
-            config.main_command(["parameters"] + self.parameters_callback_split_value(value) + ["append", self.path] + ["--"] + raw_args)
+            run(["parameters"] + self.parameters_callback_split_value(value) + ["append", self.path] + ["--"] + raw_args)
             exit(0)
 
     def remove_parameters_callback(self, ctx, param, value):
@@ -360,7 +360,7 @@ class ExtraParametersMixin(object):
             raw_args = raw_args[:index] + raw_args[index+2:]
             config.command_line_settings["parameters"][self.path] = raw_args
             config.merge_settings()
-            config.main_command(["parameters"] + self.parameters_callback_split_value(value) + ["remove", self.path] + ["--"] + raw_args)
+            run(["parameters"] + self.parameters_callback_split_value(value) + ["remove", self.path] + ["--"] + raw_args)
             exit(0)
 
     def show_parameters_callback(self, ctx, param, value):
@@ -370,7 +370,7 @@ class ExtraParametersMixin(object):
             raw_args = raw_args[:index] + raw_args[index+2:]
             config.command_line_settings["parameters"][self.path] = raw_args
             config.merge_settings()
-            config.main_command(["parameters"] + self.parameters_callback_split_value(value) + ["show", self.path])
+            run(["parameters"] + self.parameters_callback_split_value(value) + ["show", self.path])
             exit(0)
 
 

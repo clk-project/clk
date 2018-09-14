@@ -8,6 +8,7 @@ from functools import partial
 from click_project.log import get_logger
 from click_project.config import config
 from click_project.overloads import get_command_handlers
+from click_project.core import run
 
 
 class add_trigger(object):
@@ -40,7 +41,7 @@ def run_triggers(name, path, commands):
         if isinstance(command, type(lambda x: x)):
             command()
         else:
-            config.main_command(command)
+            run(command)
 
 
 def get_trigger_wrapper(path, function):
