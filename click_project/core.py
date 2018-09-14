@@ -34,6 +34,33 @@ LOGGER = get_logger(__name__)
 settings_stores = {}
 
 
+def run(cmd, *args, **kwargs):
+    """Calls the main_command without polluting the calling config
+
+    Directly calling the main_command has two drawbacks.
+
+    1. A call to main_command redo a parsing of the arguments. This may result in
+       rewritting things into the config.
+    2. The calling side generally don't want to handle possible changes in
+       the config made by the called command.
+
+    This command runs main_command in a new config, avoiding the nasty side
+    effects. It extends to call with its own main_command command line
+    parameters, so that the new parsing step should have a similar default
+    behavior.
+
+    For instance, say the command `a` does `config.me = "a"`, and the command
+    `b` does `config.me = "b"`, then calls `a`, and then echo
+    config.me. Now, imagine you execute `clk --develop b`. I expect it to run b
+    in develop mode, then run a in develop mode and still write b on the
+    standard output. This is exactly what run is about.
+
+    """
+    cmd = config.command_line_settings["parameters"][config.main_command.path] + cmd
+    with temp_config():
+        return config.main_command(cmd, *args, **kwargs)
+
+
 def resolve_context_with_side_effects(path):
     from click_completion import resolve_ctx
     return resolve_ctx(config.main_command, config.main_command.__class__.path, path)
