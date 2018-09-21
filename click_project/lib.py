@@ -306,6 +306,8 @@ def _call(args, kwargs):
     signal.signal(signal.SIGTERM, signal_handler)
     if call_merge_stdout_and_stderr:
         kwargs["stderr"] = subprocess.STDOUT
+    if kwargs.pop("to_stderr", False):
+        kwargs["stdout"] = subprocess.PIPE
     if call_capture_stdout:
         kwargs["stdout"] = subprocess.PIPE
     try:
