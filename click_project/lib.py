@@ -134,6 +134,15 @@ def copy(src, dst):
         shutil.copy(src, dst)
 
 
+def link(src, dst):
+    if platform.system() == 'Windows':
+        return copy(src, dst)
+    LOGGER.action("hard link {} to {}".format(src, dst))
+    if dry_run:
+        return
+    os.link(src, dst)
+
+
 def rm(*file_or_tree):
     LOGGER.action("remove {}".format(' '.join(file_or_tree)))
     if dry_run:
