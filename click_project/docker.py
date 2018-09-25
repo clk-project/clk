@@ -5,7 +5,7 @@ import os
 import click
 import getpass
 
-from click_project.lib import cd, call
+from click_project.lib import cd, call, updated_env
 from click_project.decorators import option, argument, flag, group as group_
 from click_project.core import cache_disk
 from click_project.lib import ParameterType, check_output
@@ -25,14 +25,16 @@ def docker_command(group=None, **kwargs):
     return decorator
 
 
-def docker_generic_commands(group, directory, extra_options=lambda: ["-p", config.simulator_name.lower()]):
+def docker_generic_commands(group, directory, extra_options=lambda: ["-p", config.simulator_name.lower()],
+                            extra_env = lambda: {}):
     def abs_directory():
         return os.path.abspath(directory() if callable(directory) else directory)
 
     def docker_compose(args, internal=False):
-        call(["docker-compose"] +
-             (extra_options() if callable(extra_options) else extra_options) +
-             args, internal=internal, cwd=abs_directory())
+        with updated_env(**extra_env()):
+            call(["docker-compose"] +
+                 (extra_options() if callable(extra_options) else extra_options) +
+                 args, internal=internal, cwd=abs_directory())
 
     class DockerServices(ParameterType):
         @property
