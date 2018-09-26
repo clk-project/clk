@@ -26,7 +26,7 @@ def docker_command(group=None, **kwargs):
 
 
 def docker_generic_commands(group, directory, extra_options=lambda: ["-p", config.simulator_name.lower()],
-                            extra_env = lambda: {}):
+                            extra_env=lambda: {}, extra_flowdepends={}):
     def abs_directory():
         return os.path.abspath(directory() if callable(directory) else directory)
 
@@ -57,11 +57,11 @@ def docker_generic_commands(group, directory, extra_options=lambda: ["-p", confi
                 if startswith(choice, incomplete)
             ]
 
-    @group.command()
+    @group.command(flowdepends=extra_flowdepends.get('up'))
     @argument("service", type=DockerServices(), nargs=-1, help="The services to spin up")
     @option('--scale', 'scales', help="Scale a service. Use the format 'service=number'", multiple=True)
     @flag("--force-recreate/--no-force-recreate", help="Force the recreation of the services")
-    @flag("--build/--no-build", help="Build the images before starting the containers", default=True)
+    @flag("--build/--no-build", help="Build the images before starting the containers", default=False)
     @flag("--detach/--no-detach", "-d/-D", help="Run containers in the background", default=True)
     def up(service, force_recreate, scales, build, detach):
         """Create and start containers"""
@@ -78,7 +78,7 @@ def docker_generic_commands(group, directory, extra_options=lambda: ["-p", confi
             list(service)
         )
 
-    @group.command()
+    @group.command(flowdepends=extra_flowdepends.get('down'))
     @option('--remove-orphans/--no-remove-orphans', default=True,
             help="Remove the container of the project that are not in the current config")
     def down(remove_orphans):
@@ -88,33 +88,33 @@ def docker_generic_commands(group, directory, extra_options=lambda: ["-p", confi
             args += ['--remove-orphans']
         docker_compose(['down'] + args)
 
-    @group.command()
+    @group.command(flowdepends=extra_flowdepends.get('start'))
     @argument("service", type=DockerServices(), nargs=-1, help="The services to start")
     def start(service):
         """Start services"""
         with cd(abs_directory()):
             docker_compose(['start'] + list(service))
 
-    @group.command()
+    @group.command(flowdepends=extra_flowdepends.get('stop'))
     @argument("service", type=DockerServices(), nargs=-1, help="The services to stop")
     def stop(service):
         """Stop services"""
         docker_compose(['stop'] + list(service))
 
-    @group.command()
+    @group.command(flowdepends=extra_flowdepends.get('restart'))
     @argument("service", type=DockerServices(), nargs=-1, help="The services to restart")
     def restart(service):
         """Restart services"""
         docker_compose(['restart'] + list(service))
 
-    @group.command(ignore_unknown_options=True)
+    @group.command(ignore_unknown_options=True, flowdepends=extra_flowdepends.get('ps'))
     @argument("service", type=DockerServices(), nargs=-1, help="The services to list")
     def ps(service):
         """List containers"""
         service = service or []
         docker_compose(['ps'] + list(service))
 
-    @group.command(ignore_unknown_options=True)
+    @group.command(ignore_unknown_options=True, flowdepends=extra_flowdepends.get('status'))
     @argument("service", type=DockerServices(), nargs=-1, help="The services to check the status")
     def status(service):
         """Show the services status"""
@@ -127,27 +127,27 @@ def docker_generic_commands(group, directory, extra_options=lambda: ["-p", confi
         """View output logs from containers"""
         docker_compose(['logs', '-f'] + list(service))
 
-    @group.command()
+    @group.command(flowdepends=extra_flowdepends.get('config'))
     @option("--services/--no-services", help="List the services instead of the whole configuration")
     def _config(services):
         """Validate and view the compose file"""
         docker_compose(['config'] + (['--services'] if services else []))
 
-    @group.command(ignore_unknown_options=True)
+    @group.command(ignore_unknown_options=True, flowdepends=extra_flowdepends.get('exec'))
     @argument("service", type=DockerServices(), help="The container where the command will be run")
     @argument("command", nargs=-1, help="The command to run in the container")
     def _exec(service, command):
         """Execute a command in the running container"""
         docker_compose(['exec', service] + list(command))
 
-    @group.command(ignore_unknown_options=True)
+    @group.command(ignore_unknown_options=True, flowdepends=extra_flowdepends.get('run'))
     @argument("service", type=DockerServices(), help="The container where the command will be run")
     @argument("command", nargs=-1, help="The command to run in the container")
     def run(service, command):
         """Run a one-off command in the container"""
         docker_compose(['run', service] + list(command))
 
-    @group.command(ignore_unknown_options=True)
+    @group.command(ignore_unknown_options=True, flowdepends=extra_flowdepends.get('build'))
     @argument("service", type=DockerServices(), required=False, help="The service to build")
     @argument("args", nargs=-1, help="Extra arguments to pass to the build command")
     def build(service, args):
@@ -155,7 +155,7 @@ def docker_generic_commands(group, directory, extra_options=lambda: ["-p", confi
         command = ['build'] + ([service] if service else []) + list(args)
         docker_compose(command)
 
-    @group.command(ignore_unknown_options=True)
+    @group.command(ignore_unknown_options=True, flowdepends=extra_flowdepends.get('images'))
     @argument("args", nargs=-1, help="Extra arguments to pass to the images command")
     def images(args):
         """Build the container"""
