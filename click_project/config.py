@@ -490,17 +490,7 @@ setup_config_class()
 
 class ConfigProxy(object):
     def __getattr__(self, k):
-        try:
-            return getattr(configs[-1], k)
-        except AttributeError:
-            for config in list(reversed(configs))[1:]:
-                if hasattr(config, k):
-                    value = getattr(config, k)
-                    if hasattr(value, "copy"):
-                        value = value.copy()
-                    setattr(configs[-1], k, value)
-                    return value
-            raise
+        return getattr(configs[-1], k)
 
     def __setattr__(self, k, v):
         return setattr(configs[-1], k, v)
@@ -515,7 +505,7 @@ config = ConfigProxy()
 @contextmanager
 def temp_config():
     with updated_env():
-        configs.append(config_cls())
+        configs.append(deepcopy(configs[-1]))
         try:
             yield
         finally:
