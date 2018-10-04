@@ -129,13 +129,8 @@ def all_part(path):
 
 def execute_flow_dependencies(cmd, flow_from=None, flow_after=None):
     torun = get_flow_commands_to_run(cmd, flow_from=flow_from, flow_after=flow_after)
-    cache = set(parent for parent, _ in all_part(cmd))
     for dep in torun:
-        cmd = None
-        for parent, child in all_part(dep):
-            if parent not in cache and cmd is None:
-                cmd = [parent] + child
-            cache.add(parent)
+        cmd = dep.split(".")
         execute_flow_step(cmd)
 
 
