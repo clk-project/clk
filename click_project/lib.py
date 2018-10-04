@@ -693,7 +693,7 @@ def download(url, outdir=None, outfilename=None, mkdir=False, sha256=None):
     size = int(r.headers["Content-Length"] or r.headers['content-length'])
     outfile = open(outpath, "wb")
     try:
-        with progressbar(length=size, label="Downloading %s" % url) as bar:
+        with progressbar(length=size, label="Downloading %s" % os.path.basename(url)) as bar:
             chunk = r.read(1024)
             while chunk:
                 outfile.write(chunk)
