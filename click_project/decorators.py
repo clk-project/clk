@@ -48,7 +48,10 @@ def param_config(name, *args, **kwargs):
     kwargs["callback"] = _subcommand_config_callback
     # find out the name of the param to setup the default value
     o = cls(args)
-    setattr(getattr(config, name), o.name, kwargs.get("default"))
+    default = kwargs.get("default")
+    if callable(default):
+        default = default()
+    setattr(getattr(config, name), o.name, default)
 
     return kls(*args, **kwargs)
 
