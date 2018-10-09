@@ -11,7 +11,7 @@ from click_project.commandresolver import CommandResolver
 from click_project.log import get_logger
 from click_project.overloads import Group,\
     list_commands, get_command, command, group, get_ctx, Command
-from click_project.core import resolve_context_with_side_effects, run
+from click_project.core import get_ctx, run, temp_config
 from click_project.decorators import pass_context
 from click_project.flow import get_flow_commands_to_run
 
@@ -74,7 +74,7 @@ class AliasCommandResolver(CommandResolver):
                     not cmdctx.params.get("flow_after")
             ):
                 deps += get_flow_commands_to_run(cmdctx.command.path)
-        c = resolve_context_with_side_effects(commands_to_run[-1])
+        c = get_ctx(commands_to_run[-1])
         kind = None
 
         def create_cls(cls):
@@ -128,37 +128,38 @@ class AliasCommandResolver(CommandResolver):
             whole_command = commands[-1] + arguments
             if whole_command[0] == config.main_command.path:
                 whole_command = whole_command[1:]
-            original_command_ctx = resolve_context_with_side_effects(whole_command)
+            with temp_config():
+                original_command_ctx = get_ctx(whole_command, side_effects=True)
 
-            cur_ctx = original_command_ctx
-            ctxs = []
-            # if the resolution of the context brought too many commands, we
-            # must not call the call back of the children of the original_command
-            while cur_ctx and ctx.command.original_command != cur_ctx.command:
-                cur_ctx = cur_ctx.parent
+                cur_ctx = original_command_ctx
+                ctxs = []
+                # if the resolution of the context brought too many commands, we
+                # must not call the call back of the children of the original_command
+                while cur_ctx and ctx.command.original_command != cur_ctx.command:
+                    cur_ctx = cur_ctx.parent
 
-            while cur_ctx:
-                ctxs.insert(0, cur_ctx)
-                cur_ctx = cur_ctx.parent
-            LOGGER.develop("Running command: {}".format(" ".join(quote(c) for c in commands[-1])))
+                while cur_ctx:
+                    ctxs.insert(0, cur_ctx)
+                    cur_ctx = cur_ctx.parent
+                LOGGER.develop("Running command: {}".format(" ".join(quote(c) for c in commands[-1])))
 
-            def run_callback(_ctx):
-                LOGGER.develop("Running callback of {} with args {}, params {}".format(
-                    _ctx.command.path,
-                    config.command_line_settings["parameters"][_ctx.command.path],
-                    _ctx.params,
-                ))
-                with _ctx:
-                    old_resilient_parsing = _ctx.resilient_parsing
-                    _ctx.resilient_parsing = ctx.resilient_parsing
-                    _ctx.command.callback(
-                        **_ctx.params
-                    )
-                    _ctx.resilient_parsing = old_resilient_parsing
-            for cur_ctx in ctxs[:-1]:
+                def run_callback(_ctx):
+                    LOGGER.develop("Running callback of {} with args {}, params {}".format(
+                        _ctx.command.path,
+                        config.command_line_settings["parameters"][_ctx.command.path],
+                        _ctx.params,
+                    ))
+                    with _ctx:
+                        old_resilient_parsing = _ctx.resilient_parsing
+                        _ctx.resilient_parsing = ctx.resilient_parsing
+                        _ctx.command.callback(
+                            **_ctx.params
+                        )
+                        _ctx.resilient_parsing = old_resilient_parsing
+                for cur_ctx in ctxs[:-1]:
+                    run_callback(cur_ctx)
+                cur_ctx = ctxs[-1]
                 run_callback(cur_ctx)
-            cur_ctx = ctxs[-1]
-            run_callback(cur_ctx)
         alias_command = pass_context(alias_command)
         alias_command = cls(alias_command)
         if deps:
