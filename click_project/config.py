@@ -377,6 +377,13 @@ class Config(object):
                 yield recipe
 
     @property
+    def all_enabled_profiles_and_recipes(self):
+        for profile in self.profiles:
+            for recipe in self.sorted_recipes(self.filter_enabled_recipes(profile.recipes)):
+                yield recipe
+            yield profile
+
+    @property
     def profiles(self):
         return [
             self.profiles_per_level[level]
