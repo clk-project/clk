@@ -1223,7 +1223,7 @@ def natural_delta(value):
     elif days:
         return "%s day%s %s hour%s" % (days, 's' if days > 1 else '', hours, 's' if hours > 1 else '')
     elif hours:
-        return "%s hour%s %s second%s" % (hours, 's' if hours > 1 else '', minutes, 's' if minutes > 1 else '')
+        return "%s hour%s %s minute%s" % (hours, 's' if hours > 1 else '', minutes, 's' if minutes > 1 else '')
     elif minutes:
         return "%s minute%s %s second%s" % (minutes, 's' if minutes > 1 else '', seconds, 's' if seconds > 1 else '')
     elif delta.microseconds:
