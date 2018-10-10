@@ -221,11 +221,16 @@ def table_format(func=None, default=None, config_name='config.table.format'):
 
 
 def table_fields(func=None, choices=(), default=None):
+    def callback(ctx, attr, value):
+        if not value:
+            value = list(choices)
+        return value
+
     def decorator(func):
         fields_type = click.Choice(choices) if choices else None
         opts = [
             option('--field', 'fields', multiple=True, type=fields_type, default=default,
-                   help="Only display the following fields in the output")
+                   help="Only display the following fields in the output", callback=callback)
         ]
         for opt in reversed(opts):
             func = opt(func)
