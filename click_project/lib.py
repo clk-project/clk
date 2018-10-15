@@ -1509,7 +1509,8 @@ def get_authenticator(machine, askpass=True, required=True):
     except Exception:
         LOGGER.warning("I could not automatically find your login/password for {}.".format(machine))
 
-    if (login is None or password is None) and askpass:
+    from click_project import completion
+    if (login is None or password is None) and askpass and not completion.IN_COMPLETION:
         LOGGER.info("Please enter your username and password for {}".format(machine))
         if machine in get_authenticator_hints:
             LOGGER.info("Hint: {}".format(get_authenticator_hints[machine]))
