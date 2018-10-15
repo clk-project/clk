@@ -1517,6 +1517,7 @@ def get_authenticator(machine, askpass=True, required=True):
         login = six.moves.input("%s username: " % machine)
         password = getpass.getpass("%s password: " % machine)
         try:
+            LOGGER.info("Saving the credentials in your keyring: {}".format(keyring.name))
             keyring.set_password("click_project", machine, json.dumps((login, password)))
         except:
             LOGGER.warning("I could not save your credentials.")
