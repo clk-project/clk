@@ -9,6 +9,7 @@ import click
 from click_project.lib import ParameterType, quote
 from click_project.config import config
 from click_project.completion import startswith
+from click_project.overloads import option
 
 
 class LauncherCommandType(ParameterType):
@@ -53,15 +54,17 @@ class LauncherType(ParameterType):
 def launcher(func):
     """Option decorator fer the commands using a launcher"""
     opts = [
-        click.option("--launcher-command", help=(
+        option("--launcher-command", help=(
             "Extra arguments to prepend to the simulation command."
             " Ignored if --launcher is given."),
-                     type=LauncherCommandType()),
-        click.option("-l", "--launcher", help=(
+               type=LauncherCommandType(),
+               group="launcher"),
+        option("-l", "--launcher", help=(
             "Name of the launcher to prepend to the simulation command."
             " It overrides --launcher-command."
             " See the launchers commands for more information"),
-                     type=LauncherType())
+               type=LauncherType(),
+               group="launcher")
     ]
     for opt in reversed(opts):
         func = opt(func)
