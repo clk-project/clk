@@ -54,8 +54,10 @@ class Handler(logging.Handler):
 
 
 default_handler = Handler()
-default_handler.setLevel(logging.INFO)
 default_handler.formatter = click_log.ColorFormatter()
+
+
+managed_loggers = set()
 
 
 def basic_config(logger=None):
@@ -65,9 +67,13 @@ def basic_config(logger=None):
         logger = logging.getLogger(logger)
     logger.handlers = [default_handler]
     logger.propagate = False
-    logger.setLevel(1)
-
+    managed_loggers.add(logger)
     return logger
+
+
+def set_level(level):
+    for logger in managed_loggers:
+        logger.setLevel(level)
 
 
 def get_logger(name):

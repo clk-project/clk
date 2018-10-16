@@ -15,7 +15,7 @@ import click
 
 from click_project.profile import iter_settings, ProfileFactory
 from click_project.click_helpers import click_get_current_context_safe
-from click_project.log import DevelopColorFormatter, LOG_LEVELS, default_handler, get_logger
+from click_project.log import LOG_LEVELS, set_level, get_logger
 from click_project.lib import updated_env, cd
 
 
@@ -401,9 +401,7 @@ class Config(object):
     def log_level(self, value):
         if value is not None:
             self._log_level = value
-            default_handler.setLevel(LOG_LEVELS[value])
-            if self.develop:
-                default_handler.formatter = DevelopColorFormatter()
+            set_level(LOG_LEVELS[value])
 
     @property
     def develop(self):
