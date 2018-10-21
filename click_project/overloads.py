@@ -61,7 +61,6 @@ def get_command(path):
                 "Because it starts with an alias to the root command,"
                 " I deliberately chose to ignore it.".format(path)
             )
-
     else:
         parent = config.main_command
     cmd_name = pathsplit[-1]
@@ -454,7 +453,7 @@ class RememberParametersMixin(object):
     def unparse_args(self, ctx, args):
         """Reconstruct parameters equivalent to those initially given to the command line"""
         parser = self.make_parser(ctx)
-        opts, _, param_order = parser.parse_args(args=copy(args))
+        opts, remaining, param_order = parser.parse_args(args=copy(args))
 
         res = []
         for param in param_order:
@@ -492,10 +491,10 @@ class RememberParametersMixin(object):
                         res += list(value)
             else:
                 raise NotImplementedError()
-        return res
+        return res, remaining
 
     def set_command_line_settings(self, ctx, args):
-        config.command_line_settings["parameters"][self.path] += self.unparse_args(ctx, args)
+        config.command_line_settings["parameters"][self.path] += args
         config.merge_settings()
 
 
@@ -671,7 +670,8 @@ class Group(click_didyoumean.DYMMixin, MissingDocumentationMixin, DeprecatedMixi
         return super(Group, self).invoke(ctx, *args, **kwargs)
 
     def parse_args(self, ctx, args):
-        self.set_command_line_settings(ctx, args)
+        res, remaining = self.unparse_args(ctx, args)
+        self.set_command_line_settings(ctx, res)
 
         args = self.get_extra_args(implicit=('--no-parameters' in args)) + list(args)
         self.complete_arguments = args[:]
@@ -1148,7 +1148,8 @@ class MainCommand(click_didyoumean.DYMMixin, DeprecatedMixin, HelpMixin, ExtraPa
         return super(MainCommand, self).invoke(ctx, *args, **kwargs)
 
     def parse_args(self, ctx, args):
-        self.set_command_line_settings(ctx, args)
+        res, remaining = self.unparse_args(ctx, args)
+        self.set_command_line_settings(ctx, res)
         ctx.auto_envvar_prefix = self.auto_envvar_prefix
         # parse the args, injecting the extra args, till the extra args are stable
         old_extra_args = []
