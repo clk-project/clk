@@ -61,9 +61,14 @@ def run(cmd, *args, **kwargs):
         return config.main_command(cmd, *args, **kwargs)
 
 
-def resolve_context_with_side_effects(path):
+def resolve_context_with_side_effects(path, resilient_parsing=True):
     from click_completion import resolve_ctx
-    return resolve_ctx(config.main_command, config.main_command.__class__.path, path)
+    return resolve_ctx(
+        config.main_command,
+        config.main_command.__class__.path,
+        path,
+        resilient_parsing=resilient_parsing
+    )
 
 
 get_ctx_cache = {}
@@ -82,21 +87,22 @@ def rebuild_path(ctx):
     return path
 
 
-def get_ctx(path, side_effects=False):
+def get_ctx(path, side_effects=False, resilient_parsing=None):
+    if resilient_parsing is None:
+        ctx = click_get_current_context_safe()
+        resilient_parsing = (ctx is not None and ctx.resilient_parsing) or False
+
     key = tuple(path)
     if key not in get_ctx_cache:
         if side_effects:
-            res = resolve_context_with_side_effects(path)
+            res = resolve_context_with_side_effects(path, resilient_parsing=resilient_parsing)
         else:
             with temp_config():
-                res = resolve_context_with_side_effects(path)
+                res = resolve_context_with_side_effects(path, resilient_parsing=resilient_parsing)
         assert res is not None, "Could not interpret the command {}".format(".".join(path))
         get_ctx_cache[key] = res
     else:
         res = get_ctx_cache[key]
-    ctx = click_get_current_context_safe()
-    if ctx is not None:
-        res.resilient_parsing = ctx.resilient_parsing
     return res
 
 
