@@ -446,52 +446,17 @@ class HelpMixin(object):
 class RememberParametersMixin(object):
     """Mixin to use a parser that remembers the given parameters.
 
-    The parameters are remembered in the parser. This means that they are as
-    close as possible to the values given by the user. Particularly, they are
-    remembered before being handled by callbacks or converted by types.
+    Use split_args_remaining to find out what part of the command line is really
+    to be saved. The use set_command_line_settings to save whatever needs to be
+    saved.
+
     """
-    def unparse_args(self, ctx, args):
+    def split_args_remaining(self, ctx, args):
         """Reconstruct parameters equivalent to those initially given to the command line"""
         parser = self.make_parser(ctx)
         opts, remaining, param_order = parser.parse_args(args=copy(args))
-
-        res = []
-        for param in param_order:
-            value = opts[param.name]
-            # only flag
-            if value is True:
-                res.append(param.opts[0])
-            elif value is False:
-                res.append(param.secondary_opts[0])
-            # only options
-            elif isinstance(value, list):
-                # multiple == True
-                elem = value.pop(0)
-                if elem is True:
-                    res.append(param.opts[0])
-                elif elem is False:
-                    res.append(param.secondary_opts[0])
-                elif isinstance(elem, six.string_types):
-                    res += [param.opts[0]] + [elem]
-                else:
-                    res += [param.opts[0]] + list(elem)
-            elif isinstance(param, click.Option):
-                res += [param.opts[0]]
-                if not param.is_flag:
-                    if isinstance(value, six.string_types):
-                        res += [value]
-                    else:
-                        res += list(value)
-            elif isinstance(param, click.Argument):
-                # an not given argument results in a value of None.
-                if value is not None:
-                    if isinstance(value, six.string_types):
-                        res += [value]
-                    else:
-                        res += list(value)
-            else:
-                raise NotImplementedError()
-        return res, remaining
+        threshold = len(remaining)
+        return args[:-threshold], args[threshold+1:]
 
     def set_command_line_settings(self, ctx, args):
         config.command_line_settings["parameters"][self.path] += args
@@ -670,7 +635,7 @@ class Group(click_didyoumean.DYMMixin, MissingDocumentationMixin, DeprecatedMixi
         return super(Group, self).invoke(ctx, *args, **kwargs)
 
     def parse_args(self, ctx, args):
-        res, remaining = self.unparse_args(ctx, args)
+        res, remaining = self.split_args_remaining(ctx, args)
         self.set_command_line_settings(ctx, res)
 
         args = self.get_extra_args(implicit=('--no-parameters' in args)) + list(args)
@@ -1148,7 +1113,7 @@ class MainCommand(click_didyoumean.DYMMixin, DeprecatedMixin, HelpMixin, ExtraPa
         return super(MainCommand, self).invoke(ctx, *args, **kwargs)
 
     def parse_args(self, ctx, args):
-        res, remaining = self.unparse_args(ctx, args)
+        res, remaining = self.split_args_remaining(ctx, args)
         self.set_command_line_settings(ctx, res)
         ctx.auto_envvar_prefix = self.auto_envvar_prefix
         # parse the args, injecting the extra args, till the extra args are stable
