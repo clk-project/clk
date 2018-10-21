@@ -4,7 +4,6 @@
 from __future__ import print_function, absolute_import
 
 from click_project.flow import setup as setup_flow
-from click_project.triggers import setup as setup_triggers
 from click_project.overloads import CoreCommandResolver, MainCommand, entry_point
 from click_project.scriptcommands import ScriptCommandResolver
 from click_project.externalcommands import ExternalCommandResolver
@@ -28,7 +27,6 @@ def classic_setup(main_module=None, config_cls=Config,
     lib.main_module = main_module
     completion_init()
     setup_config_class(config_cls)
-    setup_triggers()
     setup_flow()
     setup_hook()
     for package in extra_command_packages:

@@ -20,6 +20,7 @@ from click_project.click_helpers import click_get_current_context_safe
 from click_project.core import get_ctx, rebuild_path, settings_stores,\
     main_command_arguments_to_dict, main_command_arguments_from_dict,\
     main_command_decoration, cache_disk, run
+from click_project.triggers import TriggerMixin
 from click_project.commandresolver import CommandResolver
 from click_project.config import config, get_settings2, in_project
 from click_project.lib import check_output, ParameterType
@@ -493,7 +494,7 @@ class DeprecatedMixin(object):
             LOGGER.deprecated(msg)
 
 
-class Command(MissingDocumentationMixin, DeprecatedMixin, HelpMixin, ExtraParametersMixin, RememberParametersMixin, click.Command):
+class Command(MissingDocumentationMixin, DeprecatedMixin, TriggerMixin, HelpMixin, ExtraParametersMixin, RememberParametersMixin, click.Command):
     def __init__(self, *args, **kwargs):
         super(Command, self).__init__(*args, **kwargs)
         super(Command, self).init_deprecated()
@@ -593,7 +594,8 @@ class GroupCommandResolver(CommandResolver):
 allow_dotted_commands = False
 
 
-class Group(click_didyoumean.DYMMixin, MissingDocumentationMixin, DeprecatedMixin, HelpMixin, ExtraParametersMixin, RememberParametersMixin, click.Group):
+class Group(click_didyoumean.DYMMixin, MissingDocumentationMixin,
+            DeprecatedMixin, TriggerMixin, HelpMixin, ExtraParametersMixin, RememberParametersMixin, click.Group):
     commandresolvers = [
         GroupCommandResolver(),
     ]
@@ -1088,7 +1090,7 @@ class CommandSettingsKeyType(ParameterType):
         return value
 
 
-class MainCommand(click_didyoumean.DYMMixin, DeprecatedMixin, HelpMixin, ExtraParametersMixin,
+class MainCommand(click_didyoumean.DYMMixin, DeprecatedMixin, TriggerMixin, HelpMixin, ExtraParametersMixin,
                   RememberParametersMixin, click.MultiCommand):
     auto_envvar_prefix = "CLICK_PROJECT"
     path = "click-project"
