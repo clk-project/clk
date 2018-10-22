@@ -54,6 +54,8 @@ def clean_flow_arguments(arguments):
 
 
 def get_command_handler(cmd):
+    if hasattr(cmd, "clickproject_flow_already_setup"):
+        return cmd
     if hasattr(cmd.callback, "clickproject_flowdepends"):
         LOGGER.warn(
             "Using the decorator @flowdepends is deprecated"
@@ -78,6 +80,7 @@ def get_command_handler(cmd):
     if cmd_has_flow:
         setup_flow_params(cmd)
         cmd.callback = get_flow_wrapper(cmd.name, cmd.callback)
+        cmd.clickproject_flow_already_setup = True
     return cmd
 
 
