@@ -13,7 +13,7 @@ from click_project.overloads import Group,\
     list_commands, get_command, command, group, get_ctx, Command
 from click_project.core import get_ctx, run, temp_config
 from click_project.decorators import pass_context
-from click_project.flow import get_flow_commands_to_run
+from click_project.flow import get_flow_commands_to_run, clean_flow_arguments
 
 LOGGER = get_logger(__name__)
 
@@ -111,20 +111,7 @@ class AliasCommandResolver(CommandResolver):
                 LOGGER.debug("Running command: {}".format(" ".join(quote(c) for c in command_)))
                 run(command_)
             arguments = ctx.command.complete_arguments[:]
-            while "--flow" in arguments:
-                del arguments[arguments.index("--flow")]
-            while "--flow-from" in arguments:
-                del arguments[arguments.index("--flow-from")+1]
-                del arguments[arguments.index("--flow-from")]
-            to_remove = [i for i, arg in enumerate(arguments) if arg.startswith('--flow-from=')]
-            for i in reversed(to_remove):
-                del arguments[i]
-            while "--flow-after" in arguments:
-                del arguments[arguments.index("--flow-after")+1]
-                del arguments[arguments.index("--flow-after")]
-            to_remove = [i for i, arg in enumerate(arguments) if arg.startswith('--flow-after=')]
-            for i in reversed(to_remove):
-                del arguments[i]
+            arguments = clean_flow_arguments(arguments)
             whole_command = commands[-1] + arguments
             if whole_command[0] == config.main_command.path:
                 whole_command = whole_command[1:]

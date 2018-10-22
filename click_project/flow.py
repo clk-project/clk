@@ -34,6 +34,25 @@ def setup_flow_params(cmd):
     cmd.params.extend(get_flow_params(cmd.path, flow_default, flowfrom_default, flowafter_default))
 
 
+def clean_flow_arguments(arguments):
+    arguments = arguments[:]
+    while "--flow" in arguments:
+        del arguments[arguments.index("--flow")]
+    while "--flow-from" in arguments:
+        del arguments[arguments.index("--flow-from")+1]
+        del arguments[arguments.index("--flow-from")]
+    to_remove = [i for i, arg in enumerate(arguments) if arg.startswith('--flow-from=')]
+    for i in reversed(to_remove):
+        del arguments[i]
+    while "--flow-after" in arguments:
+        del arguments[arguments.index("--flow-after")+1]
+        del arguments[arguments.index("--flow-after")]
+    to_remove = [i for i, arg in enumerate(arguments) if arg.startswith('--flow-after=')]
+    for i in reversed(to_remove):
+        del arguments[i]
+    return arguments
+
+
 def get_command_handler(cmd):
     if hasattr(cmd.callback, "clickproject_flowdepends"):
         LOGGER.warn(
