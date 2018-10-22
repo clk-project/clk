@@ -141,10 +141,8 @@ class AliasCommandResolver(CommandResolver):
                         **_ctx.params
                     )
                     _ctx.resilient_parsing = old_resilient_parsing
-            for cur_ctx in ctxs[:-1]:
+            for cur_ctx in ctxs:
                 run_callback(cur_ctx)
-            cur_ctx = ctxs[-1]
-            run_callback(cur_ctx)
         alias_command = pass_context(alias_command)
         alias_command = cls(alias_command)
         if deps:
