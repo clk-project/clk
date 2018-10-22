@@ -115,8 +115,36 @@ class AliasCommandResolver(CommandResolver):
             whole_command = commands[-1] + arguments
             if whole_command[0] == config.main_command.path:
                 whole_command = whole_command[1:]
-            run(whole_command)
+            original_command_ctx = get_ctx(whole_command, side_effects=True)
+            cur_ctx = original_command_ctx
+            ctxs = []
+            # if the resolution of the context brought too many commands, we
+            # must not call the call back of the children of the original_command
+            while cur_ctx and ctx.command.original_command != cur_ctx.command:
+                cur_ctx = cur_ctx.parent
 
+            while cur_ctx:
+                ctxs.insert(0, cur_ctx)
+                cur_ctx = cur_ctx.parent
+            LOGGER.develop("Running command: {}".format(" ".join(quote(c) for c in commands[-1])))
+
+            def run_callback(_ctx):
+                LOGGER.develop("Running callback of {} with args {}, params {}".format(
+                    _ctx.command.path,
+                    config.command_line_settings["parameters"][_ctx.command.path],
+                    _ctx.params,
+                ))
+                with _ctx:
+                    old_resilient_parsing = _ctx.resilient_parsing
+                    _ctx.resilient_parsing = ctx.resilient_parsing
+                    _ctx.command.callback(
+                        **_ctx.params
+                    )
+                    _ctx.resilient_parsing = old_resilient_parsing
+            for cur_ctx in ctxs[:-1]:
+                run_callback(cur_ctx)
+            cur_ctx = ctxs[-1]
+            run_callback(cur_ctx)
         alias_command = pass_context(alias_command)
         alias_command = cls(alias_command)
         if deps:
