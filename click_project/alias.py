@@ -113,8 +113,13 @@ class AliasCommandResolver(CommandResolver):
             arguments = ctx.command.complete_arguments[:]
             arguments = clean_flow_arguments(arguments)
             whole_command = commands[-1] + arguments
-            if whole_command[0] == config.main_command.path:
-                whole_command = whole_command[1:]
+            # make sure the main_command is part of the whole command, so that
+            # all the parsing is done. In particular, the parsing of the first
+            # group after the main_command won't trigger its callback if the
+            # main_command is not in the whole command.
+            if whole_command[0] != config.main_command.path:
+                whole_command = [config.main_command.path] + whole_command
+
             original_command_ctx = get_ctx(whole_command, side_effects=True)
             cur_ctx = original_command_ctx
             ctxs = []
