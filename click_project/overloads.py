@@ -640,7 +640,7 @@ class Group(click_didyoumean.DYMMixin, MissingDocumentationMixin,
         res, remaining = self.split_args_remaining(ctx, args)
         self.set_command_line_settings(ctx, res)
 
-        args = self.get_extra_args(implicit=('--no-parameters' in args)) + list(args)
+        args = self.get_extra_args(implicit=('--no-parameters' in args)) + list(remaining)
         self.complete_arguments = args[:]
         LOGGER.develop("In the {} '{}', parsing the args {}".format(
             self.__class__.__name__,
