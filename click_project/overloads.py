@@ -772,6 +772,8 @@ class ParameterMixin(click.Parameter):
         super(ParameterMixin, self).__init__(*args, **kwargs)
 
     def __process_value(self, ctx, value):
+        if value is None:
+            value = self.get_default(ctx)
         if value is not None:
             if isinstance(value, tuple):
                 value = tuple(eval_arg(v) for v in value)
