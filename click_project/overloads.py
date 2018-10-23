@@ -457,7 +457,7 @@ class RememberParametersMixin(object):
         parser = self.make_parser(ctx)
         opts, remaining, param_order = parser.parse_args(args=copy(args))
         threshold = len(remaining)
-        return args[:-threshold], args[threshold+1:]
+        return args[:-threshold], remaining
 
     def set_command_line_settings(self, ctx, args):
         config.command_line_settings["parameters"][self.path] += args
