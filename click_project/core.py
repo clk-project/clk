@@ -459,7 +459,7 @@ def enable_profiling_callback(ctx, attr, value):
 
 @main_command_options_callback
 def log_level_callback(ctx, attr, value):
-    if config.log_level is None:
+    if value is not None:
         config.log_level = value
     return value
 
