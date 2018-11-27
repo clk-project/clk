@@ -234,7 +234,8 @@ class CoreCommandResolver(CommandResolver):
 class LevelChoice(click.Choice):
     name = 'level'
 
-    def __init__(self, extra=None):
+    def __init__(self, extra=None, case_sensitive=True):
+        self.case_sensitive = case_sensitive
         if extra is None:
             self.extra = []
         else:
