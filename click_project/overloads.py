@@ -15,6 +15,7 @@ import click
 import click_didyoumean
 import six
 from click.utils import make_default_short_help
+from click.exceptions import MissingParameter
 
 from click_project.click_helpers import click_get_current_context_safe
 from click_project.core import get_ctx, rebuild_path, settings_stores,\
@@ -27,6 +28,8 @@ from click_project.lib import check_output, ParameterType
 from click_project.log import get_logger
 from click_project.plugins import load_plugins
 from click_project.completion import startswith
+import click_project.completion
+
 
 LOGGER = get_logger(__name__)
 
@@ -783,8 +786,14 @@ class ParameterMixin(click.Parameter):
         return value
 
     def full_process_value(self, ctx, value):
-        value = super(ParameterMixin, self).full_process_value(ctx, value)
-        value = self.__process_value(ctx, value)
+        try:
+            value = super(ParameterMixin, self).full_process_value(ctx, value)
+        except MissingParameter as e:
+            if not click_project.completion.IN_COMPLETION:
+                raise e
+            value = self.__process_value(ctx, value)
+            if value is None:
+                raise e
         return value
 
     def get_path(self, ctx):
