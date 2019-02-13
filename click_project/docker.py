@@ -148,11 +148,18 @@ def docker_generic_commands(group, directory, extra_options=lambda: ["-p", confi
         docker_compose(['run', service] + list(command))
 
     @group.command(ignore_unknown_options=True, flowdepends=extra_flowdepends.get('build'))
+    @option('--cache/--no-cache', default=True, help="Use cache when building the images")
+    @option('--pull/--no-pull', default=False, help="Always attempt to pull a newer version of the image")
     @argument("service", type=DockerServices(), required=False, help="The service to build")
     @argument("args", nargs=-1, help="Extra arguments to pass to the build command")
-    def build(service, args):
+    def build(service, args, cache, pull):
         """Build the container"""
-        command = ['build'] + ([service] if service else []) + list(args)
+        command = ['build']
+        if not cache:
+            command += ['--no-cache']
+        if pull:
+            command += ['--pull']
+        command += ([service] if service else []) + list(args)
         docker_compose(command)
 
     @group.command(ignore_unknown_options=True, flowdepends=extra_flowdepends.get('images'))
