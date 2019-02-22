@@ -786,10 +786,14 @@ class ParameterMixin(click.Parameter):
         return value
 
     def full_process_value(self, ctx, value):
-        value = super(ParameterMixin, self).full_process_value(ctx, value)
+        try:
+            value = super(ParameterMixin, self).full_process_value(ctx, value)
+        except MissingParameter:
+            if click_project.completion.IN_COMPLETION:
+                value = self.get_default(ctx)
+            else:
+                raise
         value = self.__process_value(ctx, value)
-        if value is None and click_project.completion.IN_COMPLETION:
-            value = self.get_default(ctx)
         return value
 
     def get_path(self, ctx):
