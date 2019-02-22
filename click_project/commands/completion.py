@@ -9,6 +9,7 @@ from click_project.config import config
 from click_project.decorators import group, option, argument, flag
 from click_project.lib import updated_env, quote, DocumentedChoice, call_me
 from click_project.completion import CASE_INSENSITIVE_ENV
+import click_project.completion
 import click_completion
 from click_project.commands.parameters import get_choices
 from click_project.log import get_logger
@@ -80,7 +81,10 @@ def _try(description, last, command, args, call):
         if call:
             call_me()
         else:
+            oldvalue = click_project.completion.IN_COMPLETION
+            click_project.completion.IN_COMPLETION = True
             config.main_command()
+            click_project.completion.IN_COMPLETION = oldvalue
 
 
 _try.get_choices = get_choices
