@@ -82,11 +82,14 @@ def docker_generic_commands(group, directory, extra_options=lambda: ["-p", confi
     @option('--remove-orphans/--no-remove-orphans', default=True,
             help="Remove the container of the project that are not in the current config")
     @option("--timeout", "-t", help="Specify a shutdown timeout in seconds")
-    def down(remove_orphans, timeout):
+    @option('--volumes/--no-volumes', default=True, help="Remove the application volumes")
+    def down(remove_orphans, timeout, volumes):
         """Stop and remove containers, networks, images, and volumes"""
         args = []
         if remove_orphans:
             args += ['--remove-orphans']
+        if volumes:
+            args += ['--volumes']
         if timeout is not None:
             args += ['--timeout', timeout]
         docker_compose(['down'] + args)
