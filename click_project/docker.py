@@ -129,9 +129,10 @@ def docker_generic_commands(group, directory, extra_options=lambda: ["-p", confi
 
     @group.command()
     @argument("service", type=DockerServices(), nargs=-1, help="The services to show the logs")
-    def logs(service):
+    @option('-f', '--follow/--no-follow', default=False, help="Follow log output")
+    def logs(service, follow):
         """View output logs from containers"""
-        docker_compose(['logs', '-f'] + list(service))
+        docker_compose(['logs'] + (['--follow'] if follow else []) + list(service))
 
     @group.command(flowdepends=extra_flowdepends.get('config'))
     @option("--services/--no-services", help="List the services instead of the whole configuration")
