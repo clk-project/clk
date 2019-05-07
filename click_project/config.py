@@ -535,6 +535,18 @@ def get_settings2(section):
     return config.get_settings2(section)
 
 
+def get_settings_for_path(section, path, implicit=False):
+    if implicit:
+        return (
+            config.global_context_settings[section].get(path, []) +
+            config.local_context_settings[section].get(path, []) +
+            config.env_settings[section].get(path, []) +
+            config.command_line_settings[section].get(path, [])
+        )
+    else:
+        return get_settings2(section).get(path, [])
+
+
 def pass_config(f):
     def new_func(*args, **kwargs):
         ctx = click.get_current_context()

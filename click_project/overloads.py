@@ -23,7 +23,7 @@ from click_project.core import get_ctx, rebuild_path, settings_stores,\
     main_command_decoration, cache_disk, run
 from click_project.triggers import TriggerMixin
 from click_project.commandresolver import CommandResolver
-from click_project.config import config, get_settings2, in_project
+from click_project.config import config, get_settings_for_path, get_settings2, in_project
 from click_project.lib import check_output, ParameterType
 from click_project.log import get_logger
 from click_project.plugins import load_plugins
@@ -297,15 +297,7 @@ class ExtraParametersMixin(object):
         self.params.append(no_param_opt)
 
     def get_extra_args(self, implicit=False):
-        if implicit:
-            return (
-                config.global_context_settings["parameters"].get(self.path, []) +
-                config.local_context_settings["parameters"].get(self.path, []) +
-                config.env_settings["parameters"].get(self.path, []) +
-                config.command_line_settings["parameters"].get(self.path, [])
-            )
-        else:
-            return get_settings2('parameters').get(self.path, [])
+        return get_settings_for_path("parameters", self.path, implicit=implicit)
 
     def format_help_text(self, ctx, formatter):
         super(ExtraParametersMixin, self).format_help_text(ctx, formatter)
