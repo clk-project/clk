@@ -125,10 +125,10 @@ class ExternalCommandResolver(CommandResolver):
 
         def external_command(**kwargs):
             from click_project.lib import call
+            config.merge_settings()
             args = (
                 [command_path]
                 + get_settings_for_path("parameters", path)
-                + config.command_line_settings["parameters"][path]
             )
             call(
                 args
