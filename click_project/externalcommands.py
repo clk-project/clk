@@ -11,7 +11,7 @@ import importlib
 import click
 
 from click_project.commandresolver import CommandResolver
-from click_project.config import config
+from click_project.config import config, get_settings_for_path
 from click_project.lib import which
 from click_project.log import get_logger
 
@@ -127,6 +127,7 @@ class ExternalCommandResolver(CommandResolver):
             from click_project.lib import call
             args = (
                 [command_path]
+                + get_settings_for_path("parameters", path)
                 + config.command_line_settings["parameters"][path]
             )
             call(
