@@ -133,12 +133,19 @@ class ExternalCommandResolver(CommandResolver):
             call(
                 args
             )
-
+        types = {
+            "int": int,
+            "float": float,
+            "str": str,
+        }
         for o in options:
             if "type" in o:
-                t = o["type"].split(".")
-                m = importlib.import_module(".".join(t[:-1]))
-                t = getattr(m, t[-1])
+                if "." in o["type"]:
+                    t = o["type"].split(".")
+                    m = importlib.import_module(".".join(t[:-1]))
+                    t = getattr(m, t[-1])
+                else:
+                    t = types[o["type"]]
             external_command = option(
                 o["name"],
                 help=o["help"],
@@ -146,9 +153,12 @@ class ExternalCommandResolver(CommandResolver):
             )(external_command)
         for a in arguments:
             if "type" in a:
-                t = a["type"].split(".")
-                m = importlib.import_module(".".join(t[:-1]))
-                t = getattr(m, t[-1])
+                if "." in a["type"]:
+                    t = a["type"].split(".")
+                    m = importlib.import_module(".".join(t[:-1]))
+                    t = getattr(m, t[-1])
+                else:
+                    t = types[a["type"]]
             external_command = argument(
                 a["name"],
                 help=a["help"],
