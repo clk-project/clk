@@ -12,7 +12,7 @@ import click
 
 from click_project.commandresolver import CommandResolver
 from click_project.config import config, get_settings_for_path
-from click_project.lib import which
+from click_project.lib import which, updated_env, quote
 from click_project.log import get_logger
 
 LOGGER = get_logger(__name__)
@@ -130,9 +130,26 @@ class ExternalCommandResolver(CommandResolver):
                 [command_path]
                 + get_settings_for_path("parameters", path)
             )
-            call(
-                args
+            env = {
+                (config.main_command.path + "_" + key).upper(): str(value)
+                for key, value in kwargs.items()
+            }
+            env[(config.main_command.path + "_" + "_CMD_OPTIND").upper()] = (
+                str(len(config.command_line_settings["parameters"][path]))
             )
+            env[(config.main_command.path + "_" + "_CMD_ARGS").upper()] = (
+                " ".join(quote(a) for a in config.command_line_settings["parameters"][path])
+            )
+            env[(config.main_command.path + "_" + "_OPTIND").upper()] = (
+                str(len(args[1:]))
+            )
+            env[(config.main_command.path + "_" + "_ARGS").upper()] = (
+                " ".join(quote(a) for a in args[1:])
+            )
+            with updated_env(**env):
+                call(
+                    args
+                )
         types = {
             "int": int,
             "float": float,
@@ -163,7 +180,7 @@ class ExternalCommandResolver(CommandResolver):
                 a["name"],
                 help=a["help"],
                 type=t or str,
-                nargs=int(a.get("nargs", "1")),
+                nargs=int(a["nargs"] or "1"),
             )(external_command)
         for f in flags:
             external_command = flag(
