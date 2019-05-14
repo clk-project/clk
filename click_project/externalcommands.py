@@ -86,7 +86,7 @@ class ExternalCommandResolver(CommandResolver):
                             m.groupdict()
                         )
                     if l.startswith("F:"):
-                        m = re.match("^F:(?P<name>[^:]+):(?P<help>[^:]+)$", l)
+                        m = re.match("^F:(?P<name>[^:]+):(?P<help>[^:]+)(:(?P<default>[^:]+))?$", l)
                         if m is None:
                             raise click.UsageError(
                                 "Expected format in {} is F:name:help,"
@@ -186,6 +186,7 @@ class ExternalCommandResolver(CommandResolver):
             external_command = flag(
                 f["name"],
                 help=f["help"],
+                default=f["default"] == "True",
             )(external_command)
         if remaining_args:
             external_command = argument('args', nargs=-1, help=remaining_args)(external_command)
