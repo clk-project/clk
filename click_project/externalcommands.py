@@ -131,7 +131,9 @@ class ExternalCommandResolver(CommandResolver):
                 + get_settings_for_path("parameters", path)
             )
             env = {
-                (config.main_command.path + "_" + key).upper(): str(value)
+                (config.main_command.path + "_" + key).upper(): (
+                    str(value) if value else ""
+                )
                 for key, value in kwargs.items()
             }
             env[(config.main_command.path + "_" + "_CMD_OPTIND").upper()] = (
