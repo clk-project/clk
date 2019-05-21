@@ -136,6 +136,27 @@ class ExternalCommandResolver(CommandResolver):
                 )
                 for key, value in kwargs.items()
             }
+            ctx = click.get_current_context()
+            env[(config.main_command.path + "_" + "__PATH").upper()] = (
+                ctx.command_path.replace(" ", "_").upper()
+            )
+            while ctx:
+                env.update(
+                    {
+                        (ctx.command_path.replace(
+                            " ", "_"
+                        ) + "__" + key).upper(): (
+                            (
+                                " ".join(map(quote, value))
+                                if type(value) is tuple
+                                else
+                                str(value) if value else ""
+                            )
+                        )
+                        for key, value in ctx.params.items()
+                    }
+                )
+                ctx = ctx.parent
             env[(config.main_command.path + "_" + "_CMD_OPTIND").upper()] = (
                 str(len(config.command_line_settings["parameters"][path]))
             )
