@@ -131,7 +131,7 @@ class ExternalCommandResolver(CommandResolver):
                 + get_settings_for_path("parameters", path)
             )
             env = {
-                (config.main_command.path + "_" + key).upper(): (
+                (config.main_command.path + "__" + key).upper(): (
                     str(value) if value else ""
                 )
                 for key, value in kwargs.items()
@@ -157,16 +157,16 @@ class ExternalCommandResolver(CommandResolver):
                     }
                 )
                 ctx = ctx.parent
-            env[(config.main_command.path + "_" + "_CMD_OPTIND").upper()] = (
+            env[(config.main_command.path + "_" + "__CMD_OPTIND").upper()] = (
                 str(len(config.command_line_settings["parameters"][path]))
             )
-            env[(config.main_command.path + "_" + "_CMD_ARGS").upper()] = (
+            env[(config.main_command.path + "_" + "__CMD_ARGS").upper()] = (
                 " ".join(quote(a) for a in config.command_line_settings["parameters"][path])
             )
-            env[(config.main_command.path + "_" + "_OPTIND").upper()] = (
+            env[(config.main_command.path + "_" + "__OPTIND").upper()] = (
                 str(len(args[1:]))
             )
-            env[(config.main_command.path + "_" + "_ARGS").upper()] = (
+            env[(config.main_command.path + "_" + "__ARGS").upper()] = (
                 " ".join(quote(a) for a in args[1:])
             )
             with updated_env(**env):
