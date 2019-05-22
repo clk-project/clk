@@ -131,7 +131,7 @@ class ExternalCommandResolver(CommandResolver):
                 + get_settings_for_path("parameters", path)
             )
             env = {
-                (config.main_command.path + "__" + key).upper(): (
+                (config.main_command.path + "___" + key).upper(): (
                     str(value) if value else ""
                 )
                 for key, value in kwargs.items()
