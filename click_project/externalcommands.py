@@ -137,7 +137,7 @@ class ExternalCommandResolver(CommandResolver):
                 for key, value in kwargs.items()
             }
             ctx = click.get_current_context()
-            env[(config.main_command.path + "_" + "__PATH").upper()] = (
+            env[(config.main_command.path + "___PATH").upper()] = (
                 ctx.command_path.replace(" ", "_").upper()
             )
             while ctx:
@@ -157,16 +157,16 @@ class ExternalCommandResolver(CommandResolver):
                     }
                 )
                 ctx = ctx.parent
-            env[(config.main_command.path + "_" + "__CMD_OPTIND").upper()] = (
+            env[(config.main_command.path + "___CMD_OPTIND").upper()] = (
                 str(len(config.command_line_settings["parameters"][path]))
             )
-            env[(config.main_command.path + "_" + "__CMD_ARGS").upper()] = (
+            env[(config.main_command.path + "___CMD_ARGS").upper()] = (
                 " ".join(quote(a) for a in config.command_line_settings["parameters"][path])
             )
-            env[(config.main_command.path + "_" + "__OPTIND").upper()] = (
+            env[(config.main_command.path + "___OPTIND").upper()] = (
                 str(len(args[1:]))
             )
-            env[(config.main_command.path + "_" + "__ARGS").upper()] = (
+            env[(config.main_command.path + "___ARGS").upper()] = (
                 " ".join(quote(a) for a in args[1:])
             )
             with updated_env(**env):
