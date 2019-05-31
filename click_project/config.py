@@ -81,6 +81,21 @@ class Config(object):
     app_name = "click-project"
     main_command = None
 
+    def find_project(self):
+        """Find the current project directory"""
+        dir = os.getcwd()
+        prevdir = None
+        prefix = "." + self.main_command.path
+        while dir != prevdir:
+            if (
+                    os.path.exists(dir + '/project.' + prefix)
+                    or os.path.exists(prefix)
+            ):
+                return dir
+            prevdir = dir
+            dir = os.path.dirname(dir)
+        return None
+
     def __init__(self):
         self._workgroup_profile = None
         self.settings2 = None
@@ -274,6 +289,13 @@ class Config(object):
                 LOGGER.critical("{} does not exist. It will be ignored.".format(value))
 
     @property
+    def project_bin_dirs(self):
+        return [
+            os.path.join(self.project, bin_dir)
+            for bin_dir in {"script", "bin", "scripts", "Scripts", "Bin", "Script", os.path.join(".csm", "scripts")}
+        ] + [os.path.join(self.workgroup_profile.location, "scripts")]
+
+    @property
     def profiles_per_level(self):
         res = collections.OrderedDict()
         res["global"] = config.global_profile
@@ -433,7 +455,18 @@ class Config(object):
 
     @property
     def local_context_settings(self):
-        return defaultdict(lambda: defaultdict(list))
+        res = defaultdict(lambda: defaultdict(list))
+        proj = self.find_project()
+        if proj:
+            args = []
+            LOGGER.develop(
+                "Guessing project {} from the local context".format(proj)
+            )
+            args.extend(["--project", proj])
+            res["parameters"] = {
+                self.main_command.path: args
+            }
+        return res
 
     def iter_settings(self, profiles_only=False, with_recipes=True, recipe_short_name=None):
         profiles_only = profiles_only or recipe_short_name
