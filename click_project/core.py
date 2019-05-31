@@ -334,6 +334,7 @@ def main_command_decoration(f, cls, **kwargs):
                             help="Deactivate the caching mechanism")(f)
     f = main_command_option('--autoflow/--no-autoflow', help="Automatically trigger the --flow option in"
                             " every command", is_flag=True, callback=autoflow_callback, default=None)(f)
+    f = main_command_option('-P', '--project', metavar="DIR", help="Project directory", callback=project_callback)(f)
     f = main_command_option('--persist-migration/--no-persist-migration', help=(
         "Make the profile migration persistent,"
         " using --no-persist-migration will preserve the profiles,"
