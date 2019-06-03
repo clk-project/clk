@@ -107,19 +107,13 @@ class AliasCommandResolver(CommandResolver):
             if "config" in kwargs:
                 del kwargs["config"]
             commands = list(commands_to_run)
+
             for command_ in commands[:-1]:
                 LOGGER.debug("Running command: {}".format(" ".join(quote(c) for c in command_)))
                 run(command_)
             arguments = ctx.command.complete_arguments[:]
             arguments = clean_flow_arguments(arguments)
             whole_command = commands[-1] + arguments
-            # make sure the main_command is part of the whole command, so that
-            # all the parsing is done. In particular, the parsing of the first
-            # group after the main_command won't trigger its callback if the
-            # main_command is not in the whole command.
-            if whole_command[0] != config.main_command.path:
-                whole_command = [config.main_command.path] + whole_command
-
             original_command_ctx = get_ctx(whole_command, side_effects=True)
             cur_ctx = original_command_ctx
             ctxs = []
