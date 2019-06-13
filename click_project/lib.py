@@ -1119,6 +1119,7 @@ def json_dumps(content):
 
 def grep(file_list, args=None, pager=True, ):
     args = args or []
+    args = [quote(arg) for arg in args]
     color_opt = ['--color=always'] if sys.stdout.isatty() else []
     xargs = subprocess.Popen('xargs -0 grep ' + ' '.join(color_opt + list(args)) + (' | less' if pager else ''),
                              stdin=subprocess.PIPE, shell=True)
