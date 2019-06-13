@@ -1320,6 +1320,7 @@ def flat_map(l):
     >>> flat_map([[1, 2, 3], [4, 5]])
     [1, 2, 3, 4, 5]
     """
+    l = list(l)
     return functools.reduce(list.__add__, l) if l else []
 
 
