@@ -29,6 +29,6 @@ def add_java_debug_args(
         debugger, debugger_agent_port, debugger_suspend):
     if debugger or debugger_suspend:
         debugger_suspend_string = "y" if debugger_suspend else "n"
-        return ['-agentlib:jdwp=transport=dt_socket,server=y,suspend=' + debugger_suspend_string + ',address='
+        return ['-agentlib:jdwp=transport=dt_socket,server=y,suspend=' + debugger_suspend_string + ',address=*:'
                 + str(debugger_agent_port)]
     return []
