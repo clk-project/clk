@@ -328,6 +328,8 @@ class ColorType(ParameterType):
 
 
 def main_command_decoration(f, cls, **kwargs):
+    f = main_command_option('--force-color/--no-force-color', is_flag=True, callback=force_color_callback,
+                            help="Force the color output, even if the output is not a terminal")(f)
     f = main_command_option('-n', '--dry-run/--no-dry-run', is_flag=True, callback=dry_run_callback,
                             help="Don't actually run anything")(f)
     f = main_command_option('--no-cache/--cache', is_flag=True, callback=no_cache_callback,
@@ -501,6 +503,14 @@ def action_callback(ctx, attr, value):
 def dry_run_callback(ctx, attr, value):
     if value:
         config.dry_run = True
+    return value
+
+
+@main_command_options_callback
+def force_color_callback(ctx, attr, value):
+    if value:
+        config.force_color = True
+        ctx.color = value
     return value
 
 
