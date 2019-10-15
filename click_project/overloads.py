@@ -1117,6 +1117,13 @@ class MainCommand(click_didyoumean.DYMMixin, DeprecatedMixin, TriggerMixin, Help
             return cmd.short_help if cmd else None
         return short_help(ctx.command_path, cmd_name)
 
+    def get_command_hidden(self, ctx, cmd_name):
+        @cache_disk
+        def hidden(cmd_path, name):
+            cmd = self.get_command(ctx, name)
+            return cmd.hidden if cmd else False
+        return hidden(ctx.command_path, cmd_name)
+
     def invoke(self, ctx, *args, **kwargs):
         super(MainCommand, self).invoke_handle_deprecated(ctx, *args, **kwargs)
         return super(MainCommand, self).invoke(ctx, *args, **kwargs)
