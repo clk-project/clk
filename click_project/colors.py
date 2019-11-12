@@ -27,25 +27,25 @@ class Colorer(object):
         self.level_to_color = collections.OrderedDict()
         if show_implicit:
             self.level_to_color["global/preset"] = {}
+        self.level_to_color["global"] = kwargs["global_color"]
         for recipe in config.sorted_recipes(config.filter_enabled_recipes(config.global_profile.recipes)):
             self.level_to_color[recipe.name] = kwargs[
                 recipe.name.replace("/", "_") + "_color"
             ]
-        self.level_to_color["global"] = kwargs["global_color"]
         if config.local_profile:
+            self.level_to_color["workgroup"] = kwargs.get("workgroup_color")
             for recipe in config.sorted_recipes(config.filter_enabled_recipes(config.workgroup_profile.recipes)):
                 self.level_to_color[recipe.name] = kwargs[
                     recipe.name.replace("/", "_") + "_color"
                 ]
-            self.level_to_color["workgroup"] = kwargs.get("workgroup_color")
             if show_implicit:
                 self.level_to_color["local/preset"] = {}
+            level = config.local_profile.name
+            self.level_to_color[level] = kwargs[level.replace("/", "_") + "_color"]
             for recipe in config.sorted_recipes(config.filter_enabled_recipes(config.local_profile.recipes)):
                 self.level_to_color[recipe.name] = kwargs[
                     recipe.name.replace("/", "_") + "_color"
                 ]
-            level = config.local_profile.name
-            self.level_to_color[level] = kwargs[level.replace("/", "_") + "_color"]
         if show_implicit:
             self.level_to_color["env"] = {"bold": True}
             self.level_to_color["commandline"] = {}

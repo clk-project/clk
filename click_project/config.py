@@ -247,11 +247,6 @@ class Config(object):
         ]
 
     def load_settings_from_profile(self, profile, with_recipes, recipe_short_name=None):
-        if profile is not None and with_recipes:
-            for recipe in self.filter_enabled_recipes(profile.recipes):
-                if not recipe_short_name or recipe_short_name == recipe.short_name:
-                    for settings in self.load_settings_from_profile(recipe, with_recipes):
-                        yield settings
         if profile is not None and (
                 not recipe_short_name
                 or profile.short_name == recipe_short_name
@@ -259,6 +254,11 @@ class Config(object):
             settings, path = profile.settings, profile.settings_path
             for _settings in iter_settings(settings, path):
                 yield _settings
+        if profile is not None and with_recipes:
+            for recipe in self.filter_enabled_recipes(profile.recipes):
+                if not recipe_short_name or recipe_short_name == recipe.short_name:
+                    for settings in self.load_settings_from_profile(recipe, with_recipes):
+                        yield settings
 
     def iter_recipes(self, short_name):
         for profile in self.profiles:
