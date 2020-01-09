@@ -116,7 +116,8 @@ class Config(object):
         self.persist_migration = False
         # environment values
         self.env = None
-        self.override_env = None
+        self.custom_env = {}
+        self.override_env = {}
         self.old_env = os.environ.copy()
 
     def init(self):
@@ -127,7 +128,6 @@ class Config(object):
         self.reset_env()
         self.log_level = self.log_level or 'status'
         self.env = defaultdict(list)
-        self.override_env = {}
 
     @property
     def global_context_settings(self):

@@ -379,6 +379,9 @@ def main_command_decoration(f, cls, **kwargs):
                             help="Disable this recipe for the time of the command", type=RecipeType(), multiple=True)(f)
     f = main_command_option('--profiling', is_flag=True, callback=enable_profiling_callback,
                             help="Enable profiling the application code")(f)
+    f = main_command_option('--env', callback=add_custom_env,
+                            help="Add this custom environment variable",
+                            multiple=True)(f)
     f = click.group(cls=cls, invoke_without_command=True)(f)
     prog_name = cls.path
     env_name = '_%s_COMPLETE' % prog_name.upper().replace('-', '_')
@@ -458,6 +461,16 @@ def enable_profiling_callback(ctx, attr, value):
         profiling = cProfile.Profile()
         profiling.enable()
     return value
+
+
+@main_command_options_callback
+def add_custom_env(ctx, attr, values):
+    if values is not None:
+        for value in values:
+            key, *rest = value.split("=")
+            rest = "=".join(rest)
+            config.override_env[key] = rest
+    return values
 
 
 @main_command_options_callback
