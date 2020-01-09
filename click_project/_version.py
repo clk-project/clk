@@ -43,7 +43,7 @@ def get_config():
     cfg.style = "pep440"
     cfg.tag_prefix = "v"
     cfg.parentdir_prefix = ""
-    cfg.versionfile_source = "csmcli/_version.py"
+    cfg.versionfile_source = "click_project/_version.py"
     cfg.verbose = False
     return cfg
 

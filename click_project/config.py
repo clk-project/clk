@@ -292,7 +292,15 @@ class Config(object):
     def project_bin_dirs(self):
         return [
             os.path.join(self.project, bin_dir)
-            for bin_dir in {"script", "bin", "scripts", "Scripts", "Bin", "Script", os.path.join(".csm", "scripts")}
+            for bin_dir in {
+                    "script",
+                    "bin",
+                    "scripts",
+                    "Scripts",
+                    "Bin",
+                    "Script",
+                    os.path.join(f".{self.main_command.path}", "scripts")
+            }
         ] + [os.path.join(self.workgroup_profile.location, "scripts")]
 
     @property

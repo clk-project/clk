@@ -12,7 +12,7 @@ from click_project.decorators import group, option, argument, use_settings, flag
     pass_context, settings_stores, table_fields, table_format
 from click_project.completion import startswith
 from click_project.log import get_logger
-from csmcli.config import config
+from click_project.config import config
 from click_project.colors import Colorer
 from click_project.lib import move, copy, ParameterType, json_file,\
     json_dumps, rm, call, cd, get_option_choices
