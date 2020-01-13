@@ -187,7 +187,7 @@ class ExternalCommandResolver(CommandResolver):
                 else:
                     t = types[o["type"]]
             external_command = option(
-                o["name"],
+                *(o["name"].split(",")),
                 help=o["help"],
                 type=t or str,
             )(external_command)
@@ -207,7 +207,7 @@ class ExternalCommandResolver(CommandResolver):
             )(external_command)
         for f in flags:
             external_command = flag(
-                f["name"],
+                *(f["name"].split(",")),
                 help=f["help"],
                 default=f["default"] == "True",
             )(external_command)
