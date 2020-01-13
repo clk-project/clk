@@ -77,10 +77,12 @@ class ExternalCommandResolver(CommandResolver):
                 metadata_out = out[metadata_desc:]
                 for l in metadata_out.splitlines():
                     if l.startswith("O:"):
-                        m = re.match("^O:(?P<name>[^:]+):(?P<type>[^:]+):(?P<help>[^:]+)$", l)
+                        m = re.match(
+                            "^O:(?P<name>[^:]+):(?P<type>[^:]+):(?P<help>[^:]+)(:(?P<default>[^:]+))?$",
+                            l)
                         if m is None:
                             raise click.UsageError(
-                                "Expected format in {} is O:name:type:help,"
+                                "Expected format in {} is O:name:type:help[:defautl],"
                                 " got {}".format(path, l))
                         options.append(
                             m.groupdict()
@@ -89,7 +91,7 @@ class ExternalCommandResolver(CommandResolver):
                         m = re.match("^F:(?P<name>[^:]+):(?P<help>[^:]+)(:(?P<default>[^:]+))?$", l)
                         if m is None:
                             raise click.UsageError(
-                                "Expected format in {} is F:name:help,"
+                                "Expected format in {} is F:name:help[:defautl],"
                                 " got {}".format(path, l))
                         flags.append(
                             m.groupdict()
@@ -190,6 +192,7 @@ class ExternalCommandResolver(CommandResolver):
                 *(o["name"].split(",")),
                 help=o["help"],
                 type=t or str,
+                default=o.get("default"),
             )(external_command)
         for a in arguments:
             if "type" in a:
