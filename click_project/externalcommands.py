@@ -5,6 +5,7 @@ from __future__ import print_function, absolute_import
 
 import os
 import subprocess
+import json
 import re
 import importlib
 
@@ -75,6 +76,7 @@ class ExternalCommandResolver(CommandResolver):
                 cmdhelp = "\n".join(cmdhelp_lines[index_desc:metadata_desc])
                 cmdhelp = cmdhelp.strip()
                 metadata_out = out[metadata_desc:]
+                ignore_unknown_options = False
                 for l in metadata_out.splitlines():
                     if l.startswith("O:"):
                         m = re.match(
@@ -108,6 +110,11 @@ class ExternalCommandResolver(CommandResolver):
                     m = re.match("^N:(?P<help>[^:]+)$", l)
                     if m is not None:
                         remaining_args = m.group("help")
+                    m = re.match("^M:(?P<meta>.+)$", l)
+                    if m is not None:
+                        meta = m.group("meta")
+                        if "I" in meta:
+                            ignore_unknown_options = True
                 cmdflowdepends = re.search('flowdepends: (.+)', out)
                 if cmdflowdepends:
                     cmdflowdepends = cmdflowdepends.group(1).split(', ')
@@ -182,8 +189,11 @@ class ExternalCommandResolver(CommandResolver):
         }
         for o in options:
             if "type" in o:
-                if "." in o["type"]:
-                    t = o["type"].split(".")
+                t = o["type"]
+                if t.startswith("["):
+                    t = click.Choice(json.loads(t))
+                elif "." in t:
+                    t = t.split(".")
                     m = importlib.import_module(".".join(t[:-1]))
                     t = getattr(m, t[-1])
                 else:
@@ -219,6 +229,7 @@ class ExternalCommandResolver(CommandResolver):
 
         external_command = command(
             name=name,
+            ignore_unknown_options=ignore_unknown_options,
             help=cmdhelp,
             short_help=cmdhelp.splitlines()[0] if cmdhelp else "",
             handle_dry_run=True,
