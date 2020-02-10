@@ -17,16 +17,15 @@ import appdirs
 
 from six import StringIO
 
-from click_project.log import LOG_LEVELS
+from click_project import completion
+from click_project import log
+from click_project import startup_time
+from click_project.log import LOG_LEVELS, get_logger
 from click_project.atexit import trigger
 from click_project.config import temp_config, config, Config, migrate_profiles
 from click_project.click_helpers import click_get_current_context_safe
-from click_project.log import get_logger
-from click_project import log
 from click_project.lib import main_default, natural_delta, ParameterType, makedirs
-from click_project import startup_time
 from click_project.completion import startswith
-from click_project import completion
 
 LOGGER = get_logger(__name__)
 
@@ -477,6 +476,8 @@ def add_custom_env(ctx, attr, values):
 def log_level_callback(ctx, attr, value):
     if value is not None:
         config.log_level = value
+        if value == 'develop':
+            log.default_handler.formatter = log.DevelopColorFormatter()
     return value
 
 
@@ -498,6 +499,7 @@ def debug_callback(ctx, attr, value):
 def develop_callback(ctx, attr, value):
     if value:
         config.log_level = 'develop'
+        log.default_handler.formatter = log.DevelopColorFormatter()
     elif value is not None and config.debug:
         config.log_level = 'status'
     return value
