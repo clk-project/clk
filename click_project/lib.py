@@ -857,12 +857,14 @@ def git_sync(url, directory, commit_ish='master', extra_branches=(), force=False
                     call(['git', 'fetch', '--unshallow', '--tags'] + quiet)
             prevrev = check_output(['git', 'rev-parse', 'HEAD'], internal=True)
             # just to make sure the user hasn't done anything by himself
-            call(['git', 'checkout'] + quiet + [commit_ish])
+            if commit_ish:
+                call(['git', 'checkout'] + quiet + [commit_ish])
             if check_output(['git', 'rev-parse', '--abbrev-ref', 'HEAD'], internal=True).strip() != 'HEAD':
                 # not in a detached head, ok, we can use pull
                 call(['git', 'pull'] + quiet)
             updated = prevrev != check_output(['git', 'rev-parse', 'HEAD'], internal=True)
     else:
+        commit_ish = commit_ish or 'master'
         ref_exists = check_output(['git', 'ls-remote', url, commit_ish], internal=True).strip() != ""
         if ref_exists:
             call(['git', 'clone'] + quiet + (['--depth', '1'] if use_shallow else []) + ['-b', commit_ish, url, directory])
