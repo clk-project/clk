@@ -168,7 +168,6 @@ def iter_commands(from_cmds=None, from_paths=None):
 
 def on_command_loading_error():
     LOGGER.develop(traceback.format_exc())
-
     if config.debug_on_command_load_error_callback:
         import sys
         import ipdb
@@ -709,7 +708,15 @@ class Group(click_didyoumean.DYMMixin, MissingDocumentationMixin,
                     cmd_name,
                     " ".join(cmd_name.split("."))
                 ))
-        return get_command_safe(self.path + "." + cmd_name)
+        cmd = get_command_safe(self.path + "." + cmd_name)
+        if cmd is None and cmd_name in self.list_commands(ctx):
+            raise click.ClickException(
+                f"{self.path}.{cmd_name} could not be loaded."
+                f" Re run with {config.main_command.path} --develop"
+                f" to see the stacktrace or {config.main_command.path}"
+                " --debug-on-command-load-error to debug the load error "
+            )
+        return cmd
 
 
 def eval_arg(arg):
@@ -1188,6 +1195,13 @@ class MainCommand(click_didyoumean.DYMMixin, DeprecatedMixin, TriggerMixin, Help
                     " ".join(name.split("."))
                 ))
         cmd = get_command_safe(name)
+        if cmd is None and name in self.list_commands(ctx):
+            raise click.ClickException(
+                f"{self.path}.{name} could not be loaded."
+                f" Re run with {config.main_command.path} --develop"
+                f" to see the stacktrace or {config.main_command.path}"
+                " --debug-on-command-load-error to debug the load error "
+            )
         return cmd
 
 
