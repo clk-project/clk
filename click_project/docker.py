@@ -172,7 +172,7 @@ def docker_generic_commands(group, directory, extra_options=lambda: ["-p", confi
     @group.command(ignore_unknown_options=True, flowdepends=extra_flowdepends.get('images'))
     @argument("args", nargs=-1, help="Extra arguments to pass to the images command")
     def images(args):
-        """Build the container"""
+        """List images"""
         command = ['images'] + list(args)
         docker_compose(command)
 
