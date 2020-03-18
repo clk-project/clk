@@ -877,7 +877,8 @@ def git_sync(url, directory, commit_ish='master', extra_branches=(), force=False
                 call(['git', 'remote', 'set-branches', '--add', 'origin'] + list(extra_branches))
                 call(['git', 'fetch'] + quiet)
     # save the reference used, so we can compare it with the asked reference in case of update
-    createfile(ref_file, commit_ish)
+    if commit_ish:
+        createfile(ref_file, commit_ish)
     if push_url:
         with cd(directory):
             call(['git', 'remote', 'set-url', '--push', 'origin', push_url])
