@@ -1076,7 +1076,10 @@ class CommandSettingsKeyType(ParameterType):
         self.silent_fail = silent_fail
 
     def settings(self, ctx):
-        return settings_stores[self.name].readonly
+        if self.name in settings_stores:
+            return settings_stores[self.name].readonly
+        else:
+            return {}
 
     def complete(self, ctx, incomplete):
         @cache_disk(expire=600)
