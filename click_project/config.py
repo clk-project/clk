@@ -450,7 +450,7 @@ class Config(object):
     def profiles(self):
         return [
             self.profiles_per_level[level]
-            for level in self.levels
+            for level in self.root_levels
         ]
 
     @property
@@ -488,7 +488,7 @@ class Config(object):
         lib.dry_run = value
 
     @property
-    def levels(self):
+    def root_levels(self):
         candidates = ["global"]
         if self.local_profile:
             candidates.extend(["workgroup", "local"])
