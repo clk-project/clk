@@ -80,7 +80,7 @@ class Profile(object):
         location = self.recipe_location(name)
         if os.path.exists(location):
             raise click.UsageError("{} already exists".format(location))
-        p = ProfileFactory.get(location, name=name, app_name=self.app_name)
+        p = ProfileFactory.create_or_get_by_location(location, name=name, app_name=self.app_name)
         if mkdir:
             p.write_settings()
         return p
@@ -126,7 +126,7 @@ class Profile(object):
             return []
         res = sorted(
             [
-                ProfileFactory.get(
+                ProfileFactory.create_or_get_by_location(
                     location,
                     name=self.name + "/" + os.path.basename(location),
                     app_name=self.app_name,
@@ -525,16 +525,17 @@ class Profile(object):
         return True
 
 
-profile_cache = {}
+profile_location_cache = {}
 
 
 class ProfileFactory(object):
     cls = Profile
 
     @classmethod
-    def get(klass, location, *args, **kwargs):
+    def create_or_get_by_location(klass, location, *args, **kwargs):
         if "name" not in kwargs:
             kwargs["name"] = "unnamed"
-        if location not in profile_cache:
-            profile_cache[location] = klass.cls(location, *args, **kwargs)
-        return profile_cache[location]
+        if location not in profile_location_cache:
+            profile = klass.cls(location, *args, **kwargs)
+            profile_location_cache[location] = profile
+        return profile_location_cache[location]

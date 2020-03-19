@@ -348,7 +348,7 @@ class Config(object):
     @property
     def global_profile(self):
         if self._global_profile is None:
-            self._global_profile = ProfileFactory.get(
+            self._global_profile = ProfileFactory.create_or_get_by_location(
                 self.app_dir,
                 name="global",
                 app_name=self.app_name
@@ -390,7 +390,7 @@ class Config(object):
     def workgroup_profile(self):
         if not self._workgroup_profile:
             name = self.main_command.path
-            self._workgroup_profile = ProfileFactory.get(
+            self._workgroup_profile = ProfileFactory.create_or_get_by_location(
                 os.path.dirname(self.project) + '/.{}'.format(name),
                 name="workgroup",
                 app_name=self.app_name,
@@ -407,7 +407,7 @@ class Config(object):
     @property
     def local_profile(self):
         if not self._local_profile:
-            self._local_profile = ProfileFactory.get(
+            self._local_profile = ProfileFactory.create_or_get_by_location(
                 os.path.join(
                     self.project,
                     "." + self.main_command.path
