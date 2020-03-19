@@ -119,6 +119,39 @@ class Config(object):
         self.custom_env = {}
         self.override_env = {}
         self.old_env = os.environ.copy()
+        self.implicit_levels = [
+            "global/preset",
+            "local/preset",
+            "env",
+            "commandline",
+        ]
+
+    @property
+    def all_levels(self):
+        res = []
+
+        def add_profile(profile):
+            res.append(profile.name + "/preset")
+            res.append(profile.name)
+            res.extend(
+                [
+                    recipe.name
+                    for recipe in
+                    self.sorted_recipes(
+                        self.filter_enabled_recipes(
+                            profile.recipes
+                        )
+                    )
+                ]
+            )
+
+        add_profile(self.global_profile)
+        if self.local_profile:
+            add_profile(self.workgroup_profile)
+            add_profile(self.local_profile)
+        res.append("env")
+        res.append("commandline")
+        return res
 
     def init(self):
         if self.frozen:

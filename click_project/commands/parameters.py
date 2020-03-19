@@ -172,19 +172,18 @@ def unset(cmds):
 
 @parameters.command(handle_dry_run=True)
 @flag('--name-only/--no-name-only', help="Only display the command names")
-@flag('--full', help="Show the full parameters, even those guessed from the context (implies --no-color)")
 @Colorer.color_options
 @option("--under", help="Limit the scope to the commands under the given namespace", type=CommandType())
 @table_format(default='key_value')
 @table_fields(choices=['command', 'parameters'])
 @argument('cmds', nargs=-1, default=None, type=CommandType(), help="The commands to show")
 @pass_context
-def show(ctx, name_only, cmds, full, under, fields, format, **kwargs):
+def show(ctx, name_only, cmds, under, fields, format, **kwargs):
     """Show the parameters of a command"""
     cmds = cmds or sorted(config.parameters.readonly.keys())
     if under:
         cmds = [cmd for cmd in cmds if cmd.startswith(under)]
-    with TablePrinter(fields, format) as tp, Colorer(kwargs, full) as colorer:
+    with TablePrinter(fields, format) as tp, Colorer(kwargs) as colorer:
         for cmd_name in cmds:
             if name_only:
                 click.echo(cmd_name)
@@ -204,7 +203,7 @@ def show(ctx, name_only, cmds, full, under, fields, format, **kwargs):
                 else:
                     values = {
                         level_name: get_line(level_name)
-                        for level_name in colorer.level_to_color
+                        for level_name in colorer.levels_to_show
                     }
                     args = colorer.colorize(values, config.parameters.readlevel)
                 if cmd is None:

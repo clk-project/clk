@@ -183,7 +183,7 @@ def show(name_only, aliases, under, fields, format, **kwargs):
             else:
                 all_values = [
                     (level, config.alias.all_settings.get(level, {}).get(alias))
-                    for level in colorer.level_to_color.keys()
+                    for level in colorer.levels_to_show
                 ]
                 all_values = [(level, value) for level, value in all_values
                               if value is not None]

@@ -144,7 +144,7 @@ def show(ctx, name_only, cmds, full, fields, format, **kwargs):
                                 cmd,
                                 [])
                         ])
-                        for level_name in colorer.level_to_color
+                        for level_name in colorer.levels_to_show
                     }
                     args = colorer.colorize(values, config.flowdeps.readlevel)
                     formatted = " ".join(args)

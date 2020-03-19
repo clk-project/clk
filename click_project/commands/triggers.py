@@ -118,7 +118,7 @@ def show(name_only, triggers, position, **kwargs):
                         config.triggers.all_settings[level_name].get(
                             triggers_, {}
                         ).get(position, []))
-                    for level_name in colorer.level_to_color
+                    for level_name in colorer.levels_to_show
                 }
                 args = colorer.colorize(values, config.triggers.readlevel)
                 if args and not args[0]:

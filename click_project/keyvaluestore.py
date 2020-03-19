@@ -59,9 +59,6 @@ def keyvaluestore_generic_commands(group, settings_name):
         getattr(config, settings_name).write()
 
     @group.command(handle_dry_run=True)
-    @flag('--all/--not-all', default=True, help="Show all the values,"
-          " even the default ones"
-          " or those guessed from the context (implies --no-color)")
     @Colorer.color_options
     @table_format(default='key_value')
     @table_fields(choices=['key', 'value'])
@@ -74,7 +71,7 @@ def keyvaluestore_generic_commands(group, settings_name):
             if all
             else sorted(getattr(config, settings_name).readonly.keys())
         )
-        with TablePrinter(fields, format) as tp, Colorer(kwargs, all) as colorer:
+        with TablePrinter(fields, format) as tp, Colorer(kwargs) as colorer:
             for key in keys:
                 if getattr(config, settings_name).readlevel == "settings-file":
                     args = [format(getattr(config, settings_name).readonly.get(key, {}).get("commands", []))]
@@ -91,7 +88,7 @@ def keyvaluestore_generic_commands(group, settings_name):
                 else:
                     all_values = [
                         (level, getattr(config, settings_name).all_settings.get(level, {}).get(key))
-                        for level in colorer.level_to_color.keys()
+                        for level in colorer.levels_to_show
                     ]
                     all_values = [(level, value) for level, value in all_values
                                   if value is not None]

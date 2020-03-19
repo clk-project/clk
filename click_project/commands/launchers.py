@@ -82,9 +82,6 @@ def unset(launchers):
 
 @launchers.command(handle_dry_run=True)
 @flag('--name-only/--no-name-only', help="Only display the command names")
-@flag('--all/--not-all', default=True, help="Show all the launchers,"
-      " even the default ones"
-      " or those guessed from the context (implies --no-color)")
 @Colorer.color_options
 @table_format(default='key_value')
 @table_fields(choices=['launcher', 'command'])
@@ -93,7 +90,7 @@ def unset(launchers):
 def show(ctx, name_only, launchers, all, fields, format, **kwargs):
     """Show the launchers"""
     launchers = launchers or sorted(config.settings.get("launchers", {}))
-    with TablePrinter(fields, format) as tp, Colorer(kwargs, all) as colorer:
+    with TablePrinter(fields, format) as tp, Colorer(kwargs) as colorer:
         for launcher_name in launchers:
             if name_only:
                 click.echo(launcher_name)
@@ -109,7 +106,7 @@ def show(ctx, name_only, launchers, all, fields, format, **kwargs):
                                 launcher_name,
                                 [])
                         ])
-                        for level_name in colorer.level_to_color
+                        for level_name in colorer.levels_to_show
                     }
                     args = colorer.colorize(values, config.launchers.readlevel)
                 if args and args[0]:

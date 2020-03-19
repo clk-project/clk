@@ -16,43 +16,49 @@ from click_project.core import ColorType
 
 class Colorer(object):
 
-    def __init__(self, kwargs, show_implicit=False):
+    def __init__(self, kwargs):
         with_legend = kwargs.pop("with_legend")
         self.legend = kwargs.pop("legend")
+        self.full = kwargs.pop("full")
         self.legend = self.legend or with_legend
         color = kwargs.pop("color")
         if color is False:
             self.legend = False
         self.kwargs = kwargs
-        self.level_to_color = collections.OrderedDict()
-        if show_implicit:
-            self.level_to_color["global/preset"] = {}
+
+        def compute_preset_colors(level):
+            """Return the same colors as the level, swapping the underline parameter
+
+            For example, if the level is configured to have underline on, the underlined is off.
+            """
+            colors = kwargs[f"{level}_color"].copy()
+            colors["underline"] = not colors.get("underline")
+            return colors
+
+        self.level_to_color = collections.defaultdict(dict)
         self.level_to_color["global"] = kwargs["global_color"]
-        for recipe in config.sorted_recipes(config.filter_enabled_recipes(config.global_profile.recipes)):
+        self.level_to_color["global/preset"] = compute_preset_colors("global")
+        if config.local_profile:
+            self.level_to_color["workgroup"] = kwargs.get("workgroup_color")
+            self.level_to_color["workgroup/preset"] = compute_preset_colors("workgroup")
+            self.level_to_color["local"] = kwargs.get("local_color")
+            self.level_to_color["local/preset"] = compute_preset_colors("local")
+        for recipe in config.all_recipes:
             self.level_to_color[recipe.name] = kwargs[
                 recipe.name.replace("/", "_") + "_color"
             ]
-        if config.local_profile:
-            self.level_to_color["workgroup"] = kwargs.get("workgroup_color")
-            for recipe in config.sorted_recipes(config.filter_enabled_recipes(config.workgroup_profile.recipes)):
-                self.level_to_color[recipe.name] = kwargs[
-                    recipe.name.replace("/", "_") + "_color"
-                ]
-            if show_implicit:
-                self.level_to_color["local/preset"] = {}
-            level = config.local_profile.name
-            self.level_to_color[level] = kwargs[level.replace("/", "_") + "_color"]
-            for recipe in config.sorted_recipes(config.filter_enabled_recipes(config.local_profile.recipes)):
-                self.level_to_color[recipe.name] = kwargs[
-                    recipe.name.replace("/", "_") + "_color"
-                ]
-        if show_implicit:
-            self.level_to_color["env"] = {"bold": True}
-            self.level_to_color["commandline"] = {}
+        self.level_to_color["env"] = {"bold": True}
         if not color:
             for key in self.level_to_color.copy():
                 self.level_to_color[key] = None
         self.used_levels = set()
+
+    @property
+    def levels_to_show(self):
+        return [
+            level for level in config.all_levels
+            if self.full or (level not in config.implicit_levels)
+        ]
 
     def __enter__(self):
         return self
@@ -66,19 +72,19 @@ class Colorer(object):
                         if "-" not in level
                         else config.get_recipe(level).friendly_name
                     )
-                    for level in self.level_to_color
+                    for level in self.levels_to_show
                 }
             )
             message = "Legend: " + ", ".join(
                 colored_levels[level]
-                for level in self.level_to_color
+                for level in self.levels_to_show
                 if level in self.used_levels
             )
             click.secho("-" * len(clear_ansi_color_codes(message)), dim=True)
             click.echo(message)
 
     def last_level_of_settings(self, name, all_settings):
-        for level in reversed(self.level_to_color.keys()):
+        for level in reversed(self.levels_to_show):
             if level in all_settings and name in all_settings[level]:
                 return level
 
@@ -101,6 +107,7 @@ class Colorer(object):
                  default=config.get_value('config.color.legend') or False,
                  help="Start with a legend on colors")(f)
         f = flag('--color/--no-color', default=True, help="Show levels in color")(f)
+        f = flag('--full', help="Show the full information, even those guessed from the context")(f)
         f = option('--global-color', help="Color to show the global level",
                    type=ColorType(), default="fg-cyan")(f)
         recipename_color = {}
@@ -142,7 +149,7 @@ class Colorer(object):
             args = self.combine(values)
         else:
             readlevels = [readlevel] + [
-                rl for rl in self.level_to_color
+                rl for rl in self.levels_to_show
                 if rl.startswith(readlevel + "-")
             ]
             args = self.combine(
@@ -154,7 +161,7 @@ class Colorer(object):
 
     def combine(self, values):
         args = []
-        for level_name in self.level_to_color.keys():
+        for level_name in self.levels_to_show:
             value = values.get(level_name)
             if value:
                 args.append(value)
