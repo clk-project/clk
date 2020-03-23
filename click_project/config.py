@@ -128,6 +128,8 @@ class Config(object):
         res = []
 
         def add_profile(profile):
+            if profile is None:
+                return
             res.append(profile.name + "/preset")
             res.append(profile.name)
             res.extend(
@@ -143,9 +145,8 @@ class Config(object):
             )
 
         add_profile(self.global_profile)
-        if self.local_profile:
-            add_profile(self.workgroup_profile)
-            add_profile(self.local_profile)
+        add_profile(self.workgroup_profile)
+        add_profile(self.local_profile)
         res.append("env")
         res.append("commandline")
         return res
