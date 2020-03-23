@@ -24,7 +24,7 @@ LOGGER = get_logger(__name__)
 
 def migrate_profiles():
     ctx = click_get_current_context_safe()
-    for profile in config.profiles + list(config.all_recipes):
+    for profile in config.root_profiles + list(config.all_recipes):
         if profile is not None:
             profile.migrate_if_needed(
                 config.persist_migration and
@@ -202,7 +202,7 @@ class Config(object):
                 os.environ[k] = v
 
     def get_profile(self, name):
-        for profile in self.profiles:
+        for profile in self.root_profiles:
             if profile.name == name:
                 return profile
             for recipe in profile.recipes:
@@ -235,7 +235,7 @@ class Config(object):
 
     def get_profile_containing_recipe(self, name):
         profile_level = name.split("/")[0]
-        profile = self.profiles_per_level[profile_level]
+        profile = self.root_profiles_per_level[profile_level]
         return profile
 
     def recipe_location(self, name):
@@ -244,7 +244,7 @@ class Config(object):
 
     def get_recipe(self, name):
         name, profile_level = name.split("/")
-        profile = self.profiles_per_level[profile_level]
+        profile = self.root_profiles_per_level[profile_level]
         return profile.get_recipe(name)
 
     def require_project(self):
@@ -291,7 +291,7 @@ class Config(object):
                         yield settings
 
     def iter_recipes(self, short_name):
-        for profile in self.profiles:
+        for profile in self.root_profiles:
             for recipe in self.filter_enabled_recipes(profile.recipes):
                 if recipe.short_name == short_name:
                     yield recipe
@@ -334,7 +334,7 @@ class Config(object):
         ] + [os.path.join(self.workgroup_profile.location, "scripts")]
 
     @property
-    def profiles_per_level(self):
+    def root_profiles_per_level(self):
         res = collections.OrderedDict()
         res["global"] = ProfileFactory.create_or_get_by_location(
             self.app_dir,
@@ -363,19 +363,19 @@ class Config(object):
 
     @property
     def all_disabled_recipes(self):
-        for profile in self.profiles:
+        for profile in self.root_profiles:
             for recipe in self.sorted_recipes(self.filter_disabled_recipes(profile.recipes)):
                 yield recipe
 
     @property
     def all_unset_recipes(self):
-        for profile in self.profiles:
+        for profile in self.root_profiles:
             for recipe in self.sorted_recipes(self.filter_unset_recipes(profile.recipes)):
                 yield recipe
 
     @property
     def all_recipes(self):
-        for profile in self.profiles:
+        for profile in self.root_profiles:
             for recipe in self.sorted_recipes(profile.recipes):
                 yield recipe
 
@@ -425,20 +425,20 @@ class Config(object):
 
     @property
     def all_enabled_recipes(self):
-        for profile in self.profiles:
+        for profile in self.root_profiles:
             for recipe in self.sorted_recipes(self.filter_enabled_recipes(profile.recipes)):
                 yield recipe
 
     @property
     def all_enabled_profiles_and_recipes(self):
-        for profile in self.profiles:
+        for profile in self.root_profiles:
             for recipe in self.sorted_recipes(self.filter_enabled_recipes(profile.recipes)):
                 yield recipe
             yield profile
 
     @property
-    def profiles(self):
-        return list(self.profiles_per_level.values())
+    def root_profiles(self):
+        return list(self.root_profiles_per_level.values())
 
     @property
     def log_level(self):
@@ -476,7 +476,7 @@ class Config(object):
 
     @property
     def root_levels(self):
-        return list(self.profiles_per_level.keys())
+        return list(self.root_profiles_per_level.keys())
 
     @property
     def local_context_settings(self):

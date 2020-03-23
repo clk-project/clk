@@ -59,7 +59,7 @@ class AllRecipeNameType(RecipeNameType):
     def getchoice(self, ctx):
         return super(AllRecipeNameType, self).getchoice(ctx) + [
             n
-            for p in config.profiles
+            for p in config.root_profiles
             for n in p.recipe_link_names
         ]
 
@@ -174,7 +174,7 @@ def show(fields, format, link, order, recipes, enabled_only, disabled_only, **kw
             fields.remove('order')
 
     if not recipes:
-        for profile in config.profiles:
+        for profile in config.root_profiles:
             config_recipes |= profile.recipe_link_names
         recipes = config_recipes | avail_recipes
     if not recipes:
@@ -184,12 +184,12 @@ def show(fields, format, link, order, recipes, enabled_only, disabled_only, **kw
         for recipe_name in sorted(recipes):
             profiles = ", ".join([
                 click.style(profile.name, **colorer.get_style(profile.name))
-                for profile in config.profiles
+                for profile in config.root_profiles
                 if profile.has_recipe(recipe_name)
                 ])
             link_profiles = ", ".join([
                 profile.name
-                for profile in config.profiles
+                for profile in config.root_profiles
                 if profile.has_recipe_link(recipe_name)
                 ])
             level = colorer.last_level_of_settings(
@@ -361,7 +361,7 @@ def _dump(recipe):
 def _show(**kwargs):
     """Link the list recipes"""
     with Colorer(kwargs) as colorer:
-        for profile in config.profiles:
+        for profile in config.root_profiles:
             for name in profile.recipe_link_names:
                 message = name
                 enabled = profile.recipeislinkenabled(name)

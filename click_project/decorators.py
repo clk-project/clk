@@ -119,7 +119,7 @@ def use_settings(settings_name, settings_cls, override=True, default_level='cont
                 settings_store.readlevel = level
             else:
                 compute_settings(False)
-                profile = config.profiles_per_level[level]
+                profile = config.root_profiles_per_level[level]
                 profile = profile.get_recipe(recipe) if recipe else profile
                 settings_store.readlevel = profile.name
                 settings_store.all_settings[profile.name] = profile.get_settings(settings_name)
