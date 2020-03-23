@@ -97,15 +97,12 @@ class Config(object):
         return None
 
     def __init__(self):
-        self._workgroup_profile = None
         self.settings2 = None
         self.debug_on_command_load_error_callback = False
         self.frozen = False
         self.settings = None
-        self._local_profile = None
         self.command_line_settings = defaultdict(lambda: defaultdict(list))
         self.flow_settings = defaultdict(lambda: defaultdict(list))
-        self._global_profile = None
         self.app_dir = get_appdir(self.app_dir_name)
         self.autoflow = None
         self.plugindirs = []
@@ -339,21 +336,30 @@ class Config(object):
     @property
     def profiles_per_level(self):
         res = collections.OrderedDict()
-        res["global"] = config.global_profile
-        if config.project is not None:
-            res["workgroup"] = config.workgroup_profile
-            res["local"] = config.local_profile
+        res["global"] = ProfileFactory.create_or_get_by_location(
+            self.app_dir,
+            name="global",
+            app_name=self.app_name
+        )
+        if self.project is not None:
+            res["workgroup"] = ProfileFactory.create_or_get_by_location(
+                os.path.dirname(self.project) + '/.{}'.format(self.main_command.path),
+                name="workgroup",
+                app_name=self.app_name,
+            )
+            res["local"] = ProfileFactory.create_or_get_by_location(
+                os.path.join(
+                    self.project,
+                    "." + self.main_command.path
+                ),
+                name="local",
+                app_name=self.app_name,
+            )
         return res
 
     @property
     def global_profile(self):
-        if self._global_profile is None:
-            self._global_profile = ProfileFactory.create_or_get_by_location(
-                self.app_dir,
-                name="global",
-                app_name=self.app_name
-            )
-        return self._global_profile
+        return self.root_profiles_per_level.get("global")
 
     @property
     def all_disabled_recipes(self):
@@ -388,14 +394,7 @@ class Config(object):
 
     @property
     def workgroup_profile(self):
-        if not self._workgroup_profile:
-            name = self.main_command.path
-            self._workgroup_profile = ProfileFactory.create_or_get_by_location(
-                os.path.dirname(self.project) + '/.{}'.format(name),
-                name="workgroup",
-                app_name=self.app_name,
-            ) if self.project else None
-        return self._workgroup_profile
+        return self.root_profiles_per_level.get("workgroup", None)
 
     @property
     def workgroup(self):
@@ -406,16 +405,7 @@ class Config(object):
 
     @property
     def local_profile(self):
-        if not self._local_profile:
-            self._local_profile = ProfileFactory.create_or_get_by_location(
-                os.path.join(
-                    self.project,
-                    "." + self.main_command.path
-                ),
-                name="local",
-                app_name=self.app_name,
-            ) if self.project else None
-        return self._local_profile
+        return self.root_profiles_per_level.get("local")
 
     @property
     def debug(self):
@@ -448,10 +438,7 @@ class Config(object):
 
     @property
     def profiles(self):
-        return [
-            self.profiles_per_level[level]
-            for level in self.root_levels
-        ]
+        return list(self.profiles_per_level.values())
 
     @property
     def log_level(self):
@@ -489,10 +476,7 @@ class Config(object):
 
     @property
     def root_levels(self):
-        candidates = ["global"]
-        if self.local_profile:
-            candidates.extend(["workgroup", "local"])
-        return candidates
+        return list(self.profiles_per_level.keys())
 
     @property
     def local_context_settings(self):
