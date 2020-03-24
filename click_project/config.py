@@ -13,7 +13,7 @@ from functools import update_wrapper
 import six
 import click
 
-from click_project.profile import iter_settings, ProfileFactory
+from click_project.profile import ProfileFactory
 from click_project.click_helpers import click_get_current_context_safe
 from click_project.log import LOG_LEVELS, set_level, get_logger
 from click_project.lib import updated_env, cd
@@ -292,9 +292,7 @@ class Config(object):
                 not recipe_short_name
                 or profile.short_name == recipe_short_name
         ):
-            settings, path = profile.settings, profile.settings_path
-            for _settings in iter_settings(settings, path):
-                yield _settings
+            yield profile.settings
         if profile is not None and with_recipes:
             for recipe in self.filter_enabled_recipes(profile.recipes):
                 if not recipe_short_name or recipe_short_name == recipe.short_name:

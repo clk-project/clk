@@ -29,24 +29,6 @@ def load_settings(path):
     return {}
 
 
-def get_include_settings(settings, key, path):
-    if "includes" in settings:
-        for include in settings["includes"].get(key, []):
-            if not os.path.isabs(include):
-                include = os.path.join(
-                    os.path.dirname(path),
-                    include
-                )
-            yield load_settings(include), include
-
-
-def iter_settings(settings, path):
-    for include, include_path in get_include_settings(settings, "before", path):
-        yield include
-    yield settings
-    for include, include_path in get_include_settings(settings, "after", path):
-        yield include
-
 
 def write_settings(settings_path, settings, dry_run):
     if dry_run:
