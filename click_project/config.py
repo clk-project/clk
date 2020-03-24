@@ -489,6 +489,13 @@ class Config(object):
             yield profile
 
     @property
+    def root_levels(self):
+        return [
+            level for level in self.all_levels
+            if level.is_root
+        ]
+
+    @property
     def root_profiles(self):
         return list(self.root_profiles_per_level.values())
 
@@ -525,10 +532,6 @@ class Config(object):
             self.workgroup_profile.dry_run = value
         from click_project import lib
         lib.dry_run = value
-
-    @property
-    def root_levels(self):
-        return list(self.root_profiles_per_level.keys())
 
     @property
     def local_preset_profile(self):
