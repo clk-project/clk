@@ -7,6 +7,7 @@ import importlib
 import pkgutil
 import re
 import shlex
+import functools
 import traceback
 from copy import copy, deepcopy
 from collections import OrderedDict, defaultdict
@@ -23,8 +24,8 @@ from click_project.core import get_ctx, rebuild_path, settings_stores,\
     main_command_decoration, cache_disk, run
 from click_project.triggers import TriggerMixin
 from click_project.commandresolver import CommandResolver
-from click_project.config import config, get_settings2, get_parameters, in_project
-from click_project.lib import check_output, ParameterType
+from click_project.config import config, get_settings2, get_parameters
+from click_project.lib import check_output, ParameterType, cd
 from click_project.log import get_logger
 from click_project.plugins import load_plugins
 from click_project.completion import startswith
@@ -884,6 +885,42 @@ class Argument(ParameterMixin, click.Argument):
         self.help = kwargs.pop('help', '')
         self.show_default = kwargs.pop('show_default', True)
         super(Argument, self).__init__(*args, **kwargs)
+
+
+def in_project(command):
+    options = [
+        AutomaticOption(['--in-project/--no-in-project'], group='working directory', is_flag=True,
+                        help="Run the command in the project directory"),
+        AutomaticOption(['--cwd'], group='working directory',
+                        help="Run the command in this directory. It can be used with --in-project to change to a"
+                             " directory relative to the project directory")
+    ]
+    callback = command.callback
+
+    @functools.wraps(callback)
+    def launcher(*args, **kwargs):
+        in_project = kwargs["in_project"]
+        cwd = kwargs["cwd"]
+        del kwargs["in_project"]
+        del kwargs["cwd"]
+
+        def run_in_cwd():
+            if cwd:
+                with cd(cwd):
+                    return callback(*args, **kwargs)
+            else:
+                return callback(*args, **kwargs)
+
+        if in_project:
+            config.require_project()
+            with cd(config.project):
+                res = run_in_cwd()
+        else:
+            res = run_in_cwd()
+        return res
+    command.callback = launcher
+    command.params.extend(options)
+    return command
 
 
 def command(ignore_unknown_options=False, change_directory_options=True,

@@ -3,7 +3,6 @@
 
 import os
 import json
-import functools
 from collections import defaultdict
 import collections
 from copy import deepcopy
@@ -15,7 +14,7 @@ import click
 from click_project.profile import ProfileFactory
 from click_project.click_helpers import click_get_current_context_safe
 from click_project.log import LOG_LEVELS, set_level, get_logger
-from click_project.lib import updated_env, cd
+from click_project.lib import updated_env
 
 
 LOGGER = get_logger(__name__)
@@ -622,40 +621,3 @@ def get_parameters(path, implicit=False):
         )
     else:
         return get_settings2(section).get(path, [])
-
-
-def in_project(command):
-    from click_project.overloads import AutomaticOption
-    options = [
-        AutomaticOption(['--in-project/--no-in-project'], group='working directory', is_flag=True,
-                        help="Run the command in the project directory"),
-        AutomaticOption(['--cwd'], group='working directory',
-                        help="Run the command in this directory. It can be used with --in-project to change to a"
-                             " directory relative to the project directory")
-    ]
-    callback = command.callback
-
-    @functools.wraps(callback)
-    def launcher(*args, **kwargs):
-        in_project = kwargs["in_project"]
-        cwd = kwargs["cwd"]
-        del kwargs["in_project"]
-        del kwargs["cwd"]
-
-        def run_in_cwd():
-            if cwd:
-                with cd(cwd):
-                    return callback(*args, **kwargs)
-            else:
-                return callback(*args, **kwargs)
-
-        if in_project:
-            config.require_project()
-            with cd(config.project):
-                res = run_in_cwd()
-        else:
-            res = run_in_cwd()
-        return res
-    command.callback = launcher
-    command.params.extend(options)
-    return command
