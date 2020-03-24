@@ -24,7 +24,7 @@ from click_project.core import get_ctx, rebuild_path, settings_stores,\
     main_command_decoration, cache_disk, run
 from click_project.triggers import TriggerMixin
 from click_project.commandresolver import CommandResolver
-from click_project.config import config, get_settings2, get_parameters
+from click_project.config import config, get_parameters
 from click_project.lib import check_output, ParameterType, cd
 from click_project.log import get_logger
 from click_project.plugins import load_plugins

@@ -600,16 +600,6 @@ def frozen_config():
     config.frozen = old_frozen_status
 
 
-def get_settings(section):
-    """Helper function to retrieve the settings"""
-    return config.get_settings(section)
-
-
-def get_settings2(section):
-    """Helper function to retrieve the settings"""
-    return config.get_settings2(section)
-
-
 def get_parameters(path, implicit=False):
     section = "parameters"
     if implicit:
@@ -620,4 +610,4 @@ def get_parameters(path, implicit=False):
             config.command_line_settings[section].get(path, [])
         )
     else:
-        return get_settings2(section).get(path, [])
+        return config.get_settings2(section).get(path, [])

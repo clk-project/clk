@@ -10,7 +10,7 @@ from datetime import datetime
 from pluginbase import PluginBase
 
 from click_project.click_helpers import click_get_current_context_safe
-from click_project.config import config, get_settings
+from click_project.config import config
 from click_project.log import get_logger
 
 plugin_base = PluginBase(package='click_project.plugins')
@@ -50,7 +50,7 @@ def load_plugins():
     disabled_plugins = {
         plugin.replace("/", "_")
         for plugin in
-        get_settings('plugins').get("disabled_plugins", [])
+        config.get_settings('plugins').get("disabled_plugins", [])
     }
     plugins.persist = True
     for plugin in set(plugins.list_plugins()) - disabled_plugins - plugins_cache:

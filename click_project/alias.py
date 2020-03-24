@@ -5,7 +5,7 @@ from __future__ import print_function, absolute_import
 
 import click
 
-from click_project.config import get_settings, temp_config, config
+from click_project.config import temp_config, config
 from click_project.lib import quote
 from click_project.commandresolver import CommandResolver
 from click_project.log import get_logger
@@ -43,20 +43,20 @@ class AliasCommandResolver(CommandResolver):
         if isinstance(parent, config.main_command.__class__):
             return [
                 a
-                for a in get_settings('alias').keys()
+                for a in config.get_settings('alias').keys()
             ]
         else:
             return [
                 a
-                for a in get_settings('alias').keys()
+                for a in config.get_settings('alias').keys()
                 if a.startswith(parent.path + ".")
                 and a[len(parent.path)+1:] != 0
             ]
 
     def _get_command(self, path, parent=None):
         name = path.split(".")[-1]
-        commands_to_run = get_settings('alias')[path]["commands"]
-        cmdhelp = get_settings('alias')[path]["documentation"]
+        commands_to_run = config.get_settings('alias')[path]["commands"]
+        cmdhelp = config.get_settings('alias')[path]["documentation"]
         cmdhelp = cmdhelp or "Alias for: {}".format(' , '.join(' '.join(quote(arg) for arg in cmd) for cmd in commands_to_run))
         short_help = cmdhelp.splitlines()[0]
         if len(cmdhelp) > 55:

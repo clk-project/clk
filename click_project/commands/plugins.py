@@ -9,7 +9,6 @@ import click
 
 from click_project.config import config
 from click_project.decorators import group, argument, use_settings, flag, option, pass_context, table_format, table_fields
-from click_project.config import get_settings
 from click_project.lib import rm, get_option_choices, makedirs, createfile, \
     ln, glob_first, ParameterType, TablePrinter
 from click_project.completion import startswith
@@ -66,9 +65,9 @@ class PluginsType(ParameterType):
             for plugin in plugins.list_plugins()
         }
         if self.disabled:
-            choice &= set(get_settings('plugins').get("disabled_plugins", []))
+            choice &= set(config.get_settings('plugins').get("disabled_plugins", []))
         if self.enabled:
-            choice -= set(get_settings('plugins').get("disabled_plugins", []))
+            choice -= set(config.get_settings('plugins').get("disabled_plugins", []))
         return choice
 
     def complete(self, ctx, incomplete):
