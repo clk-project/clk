@@ -140,14 +140,13 @@ class Config(object):
 
     @property
     def all_levels(self):
-        res = [
-            Level("system", False),
-        ]
+        res = []
 
-        def add_profile(profile):
+        def add_profile(profile, explicit=True):
             if profile is None:
                 return
-            res.append(Level(profile.name + "/preset", explicit=False))
+            if explicit:
+                res.append(Level(profile.name + "/preset", explicit=explicit))
             res.append(Level(profile.name, explicit=True))
             res.extend(
                 [
@@ -161,11 +160,12 @@ class Config(object):
                 ]
             )
 
+        add_profile(self.system_profile, explicit=False)
         add_profile(self.global_profile)
         add_profile(self.workgroup_profile)
         add_profile(self.local_profile)
-        res.append(Level("env", explicit=False))
-        res.append(Level("commandline", explicit=False))
+        add_profile(self.env_profile, explicit=False)
+        add_profile(self.command_line_profile, explicit=False)
         return res
 
     def init(self):
