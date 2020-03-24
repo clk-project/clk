@@ -56,7 +56,7 @@ class Colorer(object):
     @property
     def levels_to_show(self):
         return [
-            level for level in config.all_levels
+            level.name for level in config.all_levels
             if self.full or (level not in config.implicit_levels)
         ]
 

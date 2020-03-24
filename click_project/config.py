@@ -22,6 +22,12 @@ from click_project.lib import updated_env, cd
 LOGGER = get_logger(__name__)
 
 
+class Level():
+    def __init__(self, name, explicit):
+        self.name = name
+        self.explicit = explicit
+
+
 def migrate_profiles():
     ctx = click_get_current_context_safe()
     for profile in config.root_profiles + list(config.all_recipes):
@@ -116,25 +122,25 @@ class Config(object):
         self.custom_env = {}
         self.override_env = {}
         self.old_env = os.environ.copy()
-        self.implicit_levels = [
-            "global/preset",
-            "local/preset",
-            "env",
-            "commandline",
+
+    @property
+    def implicit_levels(self):
+        return [
+            level for level in self.all_levels
+            if not level.explicit
         ]
 
     @property
     def all_levels(self):
-        res = []
 
         def add_profile(profile):
             if profile is None:
                 return
-            res.append(profile.name + "/preset")
-            res.append(profile.name)
+            res.append(Level(profile.name + "/preset", explicit=False))
+            res.append(Level(profile.name, explicit=True))
             res.extend(
                 [
-                    recipe.name
+                    Level(recipe.name, explicit=True)
                     for recipe in
                     self.sorted_recipes(
                         self.filter_enabled_recipes(
@@ -147,8 +153,8 @@ class Config(object):
         add_profile(self.global_profile)
         add_profile(self.workgroup_profile)
         add_profile(self.local_profile)
-        res.append("env")
-        res.append("commandline")
+        res.append(Level("env", explicit=False))
+        res.append(Level("commandline", explicit=False))
         return res
 
     def init(self):
