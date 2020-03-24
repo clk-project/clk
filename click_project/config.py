@@ -612,7 +612,8 @@ def get_settings2(section):
     return config.get_settings2(section)
 
 
-def get_settings_for_path(section, path, implicit=False):
+def get_parameters(path, implicit=False):
+    section = "parameters"
     if implicit:
         return (
             config.global_context_settings[section].get(path, []) +

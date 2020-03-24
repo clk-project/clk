@@ -12,7 +12,7 @@ import importlib
 import click
 
 from click_project.commandresolver import CommandResolver
-from click_project.config import config, get_settings_for_path
+from click_project.config import config, get_parameters
 from click_project.lib import which, updated_env, quote
 from click_project.log import get_logger
 
@@ -137,7 +137,7 @@ class ExternalCommandResolver(CommandResolver):
             config.merge_settings()
             args = (
                 [command_path]
-                + get_settings_for_path("parameters", path)
+                + get_parameters(path)
             )
             env = {
                 (config.main_command.path + "___" + key).upper(): (
