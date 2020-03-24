@@ -21,9 +21,10 @@ LOGGER = get_logger(__name__)
 
 
 class Level():
-    def __init__(self, name, explicit):
+    def __init__(self, name, profile, explicit):
         self.name = name
         self.explicit = explicit
+        self.profile = profile
 
 
 def migrate_profiles():
@@ -146,11 +147,11 @@ class Config(object):
             if profile is None:
                 return
             if explicit:
-                res.append(Level(profile.name + "/preset", explicit=explicit))
-            res.append(Level(profile.name, explicit=True))
+                res.append(Level(profile.name + "/preset", profile, explicit=explicit))
+            res.append(Level(profile.name, profile, explicit=True))
             res.extend(
                 [
-                    Level(recipe.name, explicit=True)
+                    Level(recipe.name, recipe, explicit=True)
                     for recipe in
                     self.sorted_recipes(
                         self.filter_enabled_recipes(
