@@ -549,6 +549,18 @@ class Config(object):
     def get_value(self, path):
         return self.get_settings("value").get(path, {"value": None})["value"]
 
+    def get_parameters(self, path, implicit=False):
+        section = "parameters"
+        if implicit:
+            return (
+                self.global_context_settings[section].get(path, []) +
+                self.local_context_settings[section].get(path, []) +
+                self.env_settings[section].get(path, []) +
+                self.command_line_settings[section].get(path, [])
+            )
+        else:
+            return self.get_settings2(section).get(path, [])
+
 
 configs = []
 config_cls = None
@@ -598,16 +610,3 @@ def frozen_config():
     config.frozen = True
     yield
     config.frozen = old_frozen_status
-
-
-def get_parameters(path, implicit=False):
-    section = "parameters"
-    if implicit:
-        return (
-            config.global_context_settings[section].get(path, []) +
-            config.local_context_settings[section].get(path, []) +
-            config.env_settings[section].get(path, []) +
-            config.command_line_settings[section].get(path, [])
-        )
-    else:
-        return config.get_settings2(section).get(path, [])
