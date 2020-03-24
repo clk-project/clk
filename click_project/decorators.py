@@ -65,27 +65,10 @@ def use_settings(settings_name, settings_cls, override=True, default_level='cont
 
         def compute_settings(with_explicit=True):
             settings_store.all_settings = {
-                "global/preset": config.global_preset_profile.get_settings(settings_name),
-                "local/preset": config.local_preset_profile and config.local_preset_profile.get_settings(settings_name),
-                "env": config.env_profile.get_settings(settings_name),
-                "commandline": config.command_line_profile.get_settings(settings_name),
+                level.name: level.profile.get_settings(settings_name)
+                for level in config.all_levels
+                if with_explicit or not level.explicit
             }
-            if with_explicit:
-                settings_store.all_settings.update(
-                    {
-                        "global": config.global_profile.get_settings(settings_name),
-                        "workgroup": config.workgroup_profile and config.workgroup_profile.get_settings(settings_name),
-                        "local": config.local_profile and config.local_profile.get_settings(settings_name),
-                    }
-                )
-                for recipe in config.all_recipes:
-                    settings_store.all_settings[recipe.name] = recipe.get_settings(settings_name)
-                if config.local_profile:
-                    name = config.local_profile.name
-                    settings_store.all_settings[name] = config.local_profile.get_settings(settings_name)
-            for key, value in settings_store.all_settings.copy().items():
-                if value is None:
-                    del settings_store.all_settings[key]
 
         def setup_settings(ctx):
             if ctx is not None and hasattr(ctx, "click_project_level"):
@@ -164,7 +147,7 @@ def use_settings(settings_name, settings_cls, override=True, default_level='cont
                     if startswith(candidate, incomplete)
                 ]
 
-        for level in config.root_levels:
+        for level in [level for level in config.root_levels if level.explicit]:
             f = flag('--{}'.format(level), "level", flag_value=level, help="Consider only the {} level".format(level), callback=level_callback)(f)
         f = flag('--context', "level", flag_value="context", help="Guess the level", callback=level_callback)(f)
         f = option('--recipe', type=RecipeType(), callback=recipe_callback, help="Use this recipe")(f)

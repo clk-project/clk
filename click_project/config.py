@@ -497,7 +497,10 @@ class Config(object):
 
     @property
     def root_profiles(self):
-        return list(self.root_profiles_per_level.values())
+        return [
+            level.profile for level in self.all_levels
+            if level.is_root
+        ]
 
     @property
     def log_level(self):
