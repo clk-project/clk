@@ -8,7 +8,6 @@ from collections import defaultdict
 import collections
 from copy import deepcopy
 from contextlib import contextmanager
-from functools import update_wrapper
 
 import six
 import click
@@ -623,13 +622,6 @@ def get_parameters(path, implicit=False):
         )
     else:
         return get_settings2(section).get(path, [])
-
-
-def pass_config(f):
-    def new_func(*args, **kwargs):
-        ctx = click.get_current_context()
-        return ctx.invoke(f, config, *args[1:], **kwargs)
-    return update_wrapper(new_func, f)
 
 
 def in_project(command):
