@@ -527,6 +527,9 @@ class PresetProfile():
     def set_settings(self, section, settings):
         self.settings[section] = settings
 
+    def migrate_if_needed(self, persist=True):
+        pass
+
 
 profile_location_cache = {}
 profile_name_cache = {}
