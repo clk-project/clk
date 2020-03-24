@@ -65,14 +65,10 @@ def use_settings(settings_name, settings_cls, override=True, default_level='cont
 
         def compute_settings(context=True):
             settings_store.all_settings = {
-                "global/preset": config.global_context_settings.get(
-                    settings_name,
-                    {}),
-                "local/preset": config.local_context_settings.get(
-                    settings_name,
-                    {}),
-                "env": config.env_settings.get(settings_name, {}),
-                "commandline": config.command_line_settings.get(settings_name, {}),
+                "global/preset": config.global_preset_profile.get_settings(settings_name),
+                "local/preset": config.local_preset_profile and config.local_preset_profile.get_settings(settings_name),
+                "env": config.env_profile.get_settings(settings_name),
+                "commandline": config.command_line_profile.get_settings(settings_name),
             }
             if context:
                 settings_store.all_settings.update(

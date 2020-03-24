@@ -167,10 +167,10 @@ class ExternalCommandResolver(CommandResolver):
                 )
                 ctx = ctx.parent
             env[(config.main_command.path + "___CMD_OPTIND").upper()] = (
-                str(len(config.command_line_settings["parameters"][path]))
+                str(len(config.command_line_profile.get_settings("parameters")[path]))
             )
             env[(config.main_command.path + "___CMD_ARGS").upper()] = (
-                " ".join(quote(a) for a in config.command_line_settings["parameters"][path])
+                " ".join(quote(a) for a in config.command_line_profile.get_settings("parameters")[path])
             )
             env[(config.main_command.path + "___OPTIND").upper()] = (
                 str(len(args[1:]))

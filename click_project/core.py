@@ -55,7 +55,7 @@ def run(cmd, *args, **kwargs):
     standard output. This is exactly what run is about.
 
     """
-    cmd = config.command_line_settings["parameters"][config.main_command.path] + cmd
+    cmd = config.command_line_profile.get_settings("parameters")[config.main_command.path] + cmd
     with temp_config():
         return config.main_command(cmd, *args, **kwargs)
 
@@ -128,14 +128,14 @@ def main_command_options_callback(f):
             )
             if isinstance(env_value, tuple):
                 for val in env_value:
-                    config.env_settings["parameters"][config.main_command.path].extend(
+                    config.env_profile.get_settings("parameters")[config.main_command.path].extend(
                         [attr.opts[0], val]
                     )
             elif attr.is_bool_flag:
                 if value:
-                    config.env_settings["parameters"][config.main_command.path].append(attr.opts[0])
+                    config.env_profile.get_settings("parameters")[config.main_command.path].append(attr.opts[0])
             else:
-                config.env_settings["parameters"][config.main_command.path].extend(
+                config.env_profile.get_settings("parameters")[config.main_command.path].extend(
                     [attr.opts[0], env_value]
                 )
             config.merge_settings()
@@ -431,22 +431,22 @@ def project_callback(ctx, attr, value):
 
 @main_command_options_callback
 def recipe_callback(ctx, attr, values):
-    recipes = config.command_line_settings.get("recipe", {})
+    recipes = config.command_line_profile.get_settings("recipe")
     for value in values:
         recipe = recipes.get(value, {})
         recipe["enabled"] = True
         recipes[value] = recipe
-    config.command_line_settings["recipe"] = recipes
+    config.command_line_profile.set_settings("recipe", recipes)
     return values
 
 
 def without_recipe_callback(ctx, attr, values):
-    recipes = config.command_line_settings.get("recipe", {})
+    recipes = config.command_line_profile.get_settings("recipe")
     for value in values:
         recipe = recipes.get(value, {})
         recipe["enabled"] = False
         recipes[value] = recipe
-    config.command_line_settings["recipe"] = recipes
+    config.command_line_profile.set_settings("recipe", recipes)
     return values
 
 

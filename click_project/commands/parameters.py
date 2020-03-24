@@ -33,7 +33,7 @@ def parameters():
 
 
 def get_choices(ctx, args_, incomplete):
-    args = config.command_line_settings["parameters"][ctx.command.path][:]
+    args = config.command_line_profile.get_settings("parameters")[ctx.command.path][:]
     while args and args[0].startswith("-"):
         a = args.pop(0)
         if args and (a == "-r" or a == "--recipe"):

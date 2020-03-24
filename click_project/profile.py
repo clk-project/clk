@@ -507,7 +507,29 @@ class Profile(object):
         return True
 
 
+class PresetProfile():
+    def __init__(self, name, settings):
+        self.name = name
+        self.settings = settings
+        self.recipes = []
+
+    def get_settings(self, section):
+        if (
+                section not in self.settings
+                and not isinstance(
+                    self.settings,
+                    collections.defaultdict
+                )
+        ):
+            self.settings[section] = {}
+        return self.settings[section]
+
+    def set_settings(self, section, settings):
+        self.settings[section] = settings
+
+
 profile_location_cache = {}
+profile_name_cache = {}
 
 
 class ProfileFactory(object):
@@ -519,3 +541,10 @@ class ProfileFactory(object):
             profile = Profile(location, *args, **kwargs)
             profile_location_cache[location] = profile
         return profile_location_cache[location]
+
+    @staticmethod
+    def create_or_get_preset_profile(name, settings=None):
+        if name not in profile_name_cache:
+            profile = PresetProfile(name, settings)
+            profile_name_cache[name] = profile
+        return profile_name_cache[name]

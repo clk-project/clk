@@ -105,12 +105,21 @@ class Config(object):
         self.debug_on_command_load_error_callback = False
         self.frozen = False
         self.settings = None
-        self.command_line_settings = defaultdict(lambda: defaultdict(list))
-        self.flow_settings = defaultdict(lambda: defaultdict(list))
+        self.command_line_profile = ProfileFactory.create_or_get_preset_profile(
+            "commandline",
+            settings=defaultdict(lambda: defaultdict(list))
+            )
+        self.flow_profile = ProfileFactory.create_or_get_preset_profile(
+            "flow",
+            settings=defaultdict(lambda: defaultdict(list))
+        )
         self.app_dir = get_appdir(self.app_dir_name)
         self.autoflow = None
         self.plugindirs = []
-        self.env_settings = defaultdict(lambda: defaultdict(list))
+        self.env_profile = ProfileFactory.create_or_get_preset_profile(
+            "env",
+            settings=defaultdict(lambda: defaultdict(list))
+            )
         self._dry_run = None
         self._project = None
         self.alt_style = None
@@ -169,13 +178,16 @@ class Config(object):
         self.env = defaultdict(list)
 
     @property
-    def global_context_settings(self):
-        return {
-            "recipe": {
-                name: json.loads(open(self.global_profile.link_location(name), "rb").read().decode("utf-8"))
-                for name in self.global_profile.recipe_link_names
+    def global_preset_profile(self):
+        return ProfileFactory.create_or_get_preset_profile(
+            "global/preset",
+            settings={
+                "recipe": {
+                    name: json.loads(open(self.global_profile.link_location(name), "rb").read().decode("utf-8"))
+                    for name in self.global_profile.recipe_link_names
+                }
             }
-        }
+        )
 
     def get_settings(self, section):
         if self.settings is None:
@@ -397,16 +409,19 @@ class Config(object):
                 yield recipe
 
     @property
-    def workgroup_context_settings(self):
+    def workgroup_preset_profile(self):
         if self.workgroup_profile:
-            res = {
-                "recipe": {
-                    name: json.loads(open(self.workgroup_profile.link_location(name), "rb").read().decode("utf-8"))
-                    for name in self.workgroup_profile.recipe_link_names
+            res = ProfileFactory.create_or_get_preset_profile(
+                "workgroup/preset",
+                settings={
+                    "recipe": {
+                        name: json.loads(open(self.workgroup_profile.link_location(name), "rb").read().decode("utf-8"))
+                        for name in self.workgroup_profile.recipe_link_names
+                    }
                 }
-            }
+            )
         else:
-            res = {}
+            res = None
         return res
 
     @property
@@ -496,8 +511,8 @@ class Config(object):
         return list(self.root_profiles_per_level.keys())
 
     @property
-    def local_context_settings(self):
-        res = defaultdict(lambda: defaultdict(list))
+    def local_preset_profile(self):
+        settings = defaultdict(lambda: defaultdict(list))
         proj = self.find_project()
         if proj:
             args = []
@@ -505,34 +520,39 @@ class Config(object):
                 "Guessing project {} from the local context".format(proj)
             )
             args.extend(["--project", proj])
-            res["parameters"] = {
+            settings["parameters"] = {
                 self.main_command.path: args
             }
-        return res
+            return ProfileFactory.create_or_get_preset_profile(
+                "local/preset",
+                settings=settings
+            )
+        else:
+            return None
 
     def iter_settings(self, profiles_only=False, with_recipes=True, recipe_short_name=None):
         profiles_only = profiles_only or recipe_short_name
         if not profiles_only:
-            yield self.global_context_settings
+            yield self.global_preset_profile.settings
         for settings in self.load_settings_from_profile(self.global_profile,
                                                         with_recipes,
                                                         recipe_short_name=recipe_short_name):
             yield settings
-        if not profiles_only:
-            yield self.workgroup_context_settings
+        if not profiles_only and self.workgroup_preset_profile:
+            yield self.workgroup_preset_profile.settings
         for settings in self.load_settings_from_profile(self.workgroup_profile,
                                                         with_recipes,
                                                         recipe_short_name=recipe_short_name):
             yield settings
-        if not profiles_only:
-            yield self.local_context_settings
+        if not profiles_only and self.local_preset_profile:
+            yield self.local_preset_profile.settings
         for settings in self.load_settings_from_profile(
                 self.local_profile, with_recipes, recipe_short_name=recipe_short_name):
             yield settings
         if not profiles_only:
-            yield self.env_settings
-            yield self.command_line_settings
-            yield self.flow_settings
+            yield self.env_profile.settings
+            yield self.command_line_profile.settings
+            yield self.flow_profile.settings
 
     def merge_settings(self):
         if self.local_profile:
@@ -553,10 +573,10 @@ class Config(object):
         section = "parameters"
         if implicit:
             return (
-                self.global_context_settings[section].get(path, []) +
-                self.local_context_settings[section].get(path, []) +
-                self.env_settings[section].get(path, []) +
-                self.command_line_settings[section].get(path, [])
+                self.global_preset_profile.get_settings(section).get(path, []) +
+                self.local_context_profile.get_settings(section).get(path, []) +
+                self.env_profile.get_settings(section).get(path, []) +
+                self.command_line_profile.get_settings(section).get(path, [])
             )
         else:
             return self.get_settings2(section).get(path, [])

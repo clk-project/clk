@@ -235,25 +235,25 @@ def get_flow_wrapper(name, function):
                     if value is not None:
                         if param.target_parameter.is_flag:
                             if value:
-                                config.flow_settings['parameters'][param.target_command.path].extend(
+                                config.flow_profile.get_settings('parameters')[param.target_command.path].extend(
                                     [param.target_parameter.opts[0]])
                             else:
-                                config.flow_settings['parameters'][param.target_command.path].extend(
+                                config.flow_profile.get_settings('parameters')[param.target_command.path].extend(
                                     [param.target_parameter.secondary_opts[0]])
                         elif param.target_parameter.multiple:
-                            config.flow_settings['parameters'][param.target_command.path].extend(
+                            config.flow_profile.get_settings('parameters')[param.target_command.path].extend(
                                 flat_map((param.target_parameter.opts[0], str(v)) for v in value))
                         else:
-                            config.flow_settings['parameters'][param.target_command.path].extend(
+                            config.flow_profile.get_settings('parameters')[param.target_command.path].extend(
                                 [param.target_parameter.opts[0], str(value)])
                 if isinstance(param, FlowArgument):
                     value = kwargs[param.target_parameter.name]
                     # don't forward anything if the option was not explicitly used
                     if value is not None:
                         if param.target_parameter.nargs == 1:
-                            config.flow_settings['parameters'][param.target_command.path].append(str(value))
+                            config.flow_profile.get_settings('parameters')[param.target_command.path].append(str(value))
                         else:
-                            config.flow_settings['parameters'][param.target_command.path].extend(str(v) for v in value)
+                            config.flow_profile.get_settings('parameters')[param.target_command.path].extend(str(v) for v in value)
             # run the flow
             _in_a_flow = True
             config.autoflow = False
@@ -261,7 +261,7 @@ def get_flow_wrapper(name, function):
             execute_flow_dependencies(subpath, flow_from=flow_from, flow_after=flow_after)
             _in_a_flow = False
             # restore the flow settings
-            config.flow_settings['parameters'].clear()
+            config.flow_profile.get_settings('parameters').clear()
         res = function(*args, **kwargs)
         return res
     return flow_wrapper
