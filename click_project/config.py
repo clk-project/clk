@@ -188,15 +188,7 @@ class Config(object):
 
     @property
     def global_preset_profile(self):
-        return ProfileFactory.create_or_get_preset_profile(
-            "global/preset",
-            settings={
-                "recipe": {
-                    name: json.loads(open(self.global_profile.link_location(name), "rb").read().decode("utf-8"))
-                    for name in self.global_profile.recipe_link_names
-                }
-            }
-        )
+        return self.root_profiles_per_level["global/preset"]
 
     def get_settings(self, section):
         if self.settings is None:
@@ -375,11 +367,29 @@ class Config(object):
             name="global",
             app_name=self.app_name
         )
+        res["global/preset"] = ProfileFactory.create_or_get_preset_profile(
+            "global/preset",
+            settings={
+                "recipe": {
+                    name: json.loads(open(res["global"].link_location(name), "rb").read().decode("utf-8"))
+                    for name in res["global"].recipe_link_names
+                }
+            }
+        )
         if self.project is not None:
             res["workgroup"] = ProfileFactory.create_or_get_by_location(
                 os.path.dirname(self.project) + '/.{}'.format(self.main_command.path),
                 name="workgroup",
                 app_name=self.app_name,
+            )
+            res["workgroup/preset"] = ProfileFactory.create_or_get_preset_profile(
+                "workgroup/preset",
+                settings={
+                    "recipe": {
+                        name: json.loads(open(res["workgroup"].link_location(name), "rb").read().decode("utf-8"))
+                        for name in res["workgroup"].recipe_link_names
+                    }
+                }
             )
             res["local"] = ProfileFactory.create_or_get_by_location(
                 os.path.join(
@@ -388,6 +398,19 @@ class Config(object):
                 ),
                 name="local",
                 app_name=self.app_name,
+            )
+            proj = self.find_project()
+            settings = defaultdict(lambda: defaultdict(list))
+            if proj:
+                LOGGER.develop(
+                    "Guessing project {} from the local context".format(proj)
+                )
+                settings["parameters"] = {
+                    self.main_command.path: ["--project", proj]
+                }
+            res["local/preset"] = ProfileFactory.create_or_get_preset_profile(
+                "local/preset",
+                settings=settings
             )
         return res
 
@@ -419,19 +442,7 @@ class Config(object):
 
     @property
     def workgroup_preset_profile(self):
-        if self.workgroup_profile:
-            res = ProfileFactory.create_or_get_preset_profile(
-                "workgroup/preset",
-                settings={
-                    "recipe": {
-                        name: json.loads(open(self.workgroup_profile.link_location(name), "rb").read().decode("utf-8"))
-                        for name in self.workgroup_profile.recipe_link_names
-                    }
-                }
-            )
-        else:
-            res = None
-        return res
+        self.root_profiles_per_level.get("workgroup/preset", None)
 
     @property
     def workgroup_profile(self):
@@ -521,23 +532,7 @@ class Config(object):
 
     @property
     def local_preset_profile(self):
-        settings = defaultdict(lambda: defaultdict(list))
-        proj = self.find_project()
-        if proj:
-            args = []
-            LOGGER.develop(
-                "Guessing project {} from the local context".format(proj)
-            )
-            args.extend(["--project", proj])
-            settings["parameters"] = {
-                self.main_command.path: args
-            }
-            return ProfileFactory.create_or_get_preset_profile(
-                "local/preset",
-                settings=settings
-            )
-        else:
-            return None
+        return self.root_profiles_per_level.get("local/preset", None)
 
     def iter_settings(self, profiles_only=False, with_recipes=True, recipe_short_name=None):
         profiles_only = profiles_only or recipe_short_name
