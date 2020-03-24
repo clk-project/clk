@@ -511,13 +511,11 @@ profile_location_cache = {}
 
 
 class ProfileFactory(object):
-    cls = Profile
-
-    @classmethod
-    def create_or_get_by_location(klass, location, *args, **kwargs):
+    @staticmethod
+    def create_or_get_by_location(location, *args, **kwargs):
         if "name" not in kwargs:
             kwargs["name"] = "unnamed"
         if location not in profile_location_cache:
-            profile = klass.cls(location, *args, **kwargs)
+            profile = Profile(location, *args, **kwargs)
             profile_location_cache[location] = profile
         return profile_location_cache[location]
