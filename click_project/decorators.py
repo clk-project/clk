@@ -63,14 +63,14 @@ def use_settings(settings_name, settings_cls, override=True, default_level='cont
         settings_store = settings_stores[settings_name]
         settings_store.recipe = None
 
-        def compute_settings(context=True):
+        def compute_settings(with_explicit=True):
             settings_store.all_settings = {
                 "global/preset": config.global_preset_profile.get_settings(settings_name),
                 "local/preset": config.local_preset_profile and config.local_preset_profile.get_settings(settings_name),
                 "env": config.env_profile.get_settings(settings_name),
                 "commandline": config.command_line_profile.get_settings(settings_name),
             }
-            if context:
+            if with_explicit:
                 settings_store.all_settings.update(
                     {
                         "global": config.global_profile.get_settings(settings_name),
