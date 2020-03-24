@@ -11,7 +11,7 @@ from click_project.alias import AliasCommandResolver, AliasToGroupResolver
 from click_project.hook import HookCommandResolver, setup as setup_hook
 from click_project.overloads import Group, GroupCommandResolver
 from click_project.completion import init as completion_init
-from click_project.config import setup_config_class, Config
+from click_project.config import setup_config_class, Config, config
 from click_project.log import get_logger, basic_config
 from click_project import lib
 from click_project.core import main  # NOQA: F401
@@ -21,8 +21,9 @@ LOGGER = get_logger(__name__)
 
 
 def classic_setup(main_module=None, config_cls=Config,
-                  extra_command_packages=[], include_core_commands=None,
-                  exclude_core_commands=None, authenticator_hints={}):
+                  extra_command_packages=[], system_profile_location=None,
+                  include_core_commands=None, exclude_core_commands=None,
+                  authenticator_hints={}):
     get_authenticator_hints.update(authenticator_hints)
     lib.main_module = main_module
     completion_init()
@@ -49,6 +50,7 @@ def classic_setup(main_module=None, config_cls=Config,
         HookCommandResolver(),
         CoreCommandResolver(),
     ]
+    config.system_profile_location = system_profile_location
 
     def decorator(command):
         config_cls.main_command = command
@@ -57,6 +59,7 @@ def classic_setup(main_module=None, config_cls=Config,
 
 
 def basic_entry_point(main_module, extra_command_packages=[],
+                      system_profile_location=None,
                       include_core_commands=None, exclude_core_commands=None,
                       authenticator_hints={}):
     def decorator(f):
@@ -71,6 +74,7 @@ def basic_entry_point(main_module, extra_command_packages=[],
         )
         return classic_setup(main_module, config_cls=config_cls,
                              extra_command_packages=extra_command_packages,
+                             system_profile_location=system_profile_location,
                              include_core_commands=include_core_commands,
                              exclude_core_commands=exclude_core_commands,
                              authenticator_hints=authenticator_hints)(entry_point()(f))

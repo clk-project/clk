@@ -122,6 +122,7 @@ class Config(object):
         self.custom_env = {}
         self.override_env = {}
         self.old_env = os.environ.copy()
+        self.system_profile_location = None
 
     @property
     def implicit_levels(self):
@@ -132,6 +133,9 @@ class Config(object):
 
     @property
     def all_levels(self):
+        res = [
+            Level("system", False),
+        ]
 
         def add_profile(profile):
             if profile is None:
@@ -342,7 +346,13 @@ class Config(object):
 
     @property
     def root_profiles_per_level(self):
-        res = collections.OrderedDict()
+        res = {}
+        if self.system_profile_location is not None:
+            res["system"] = ProfileFactory.create_or_get_by_location(
+                self.system_profile_location,
+                name="system",
+                app_name=self.app_name
+            )
         res["global"] = ProfileFactory.create_or_get_by_location(
             self.app_dir,
             name="global",
@@ -367,6 +377,10 @@ class Config(object):
     @property
     def global_profile(self):
         return self.root_profiles_per_level.get("global")
+
+    @property
+    def system_profile(self):
+        return self.root_profiles_per_level.get("system")
 
     @property
     def all_disabled_recipes(self):
