@@ -27,6 +27,11 @@ class Level():
         self.profile = profile
         self.is_root = is_root
 
+    def __repr__(self):
+        return (f"<{self.__class__.__name__}:"
+                f" {self.name},"
+                f" {self.explicit}"
+                f"{', Root' if self.is_root else ''}>")
 
 def migrate_profiles():
     ctx = click_get_current_context_safe()
