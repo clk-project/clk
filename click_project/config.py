@@ -147,15 +147,6 @@ class Config(object):
         def add_profile(profile, explicit=True):
             if profile is None:
                 return
-            if explicit:
-                preset_name = profile.name + "/preset"
-                res.append(
-                    Level(
-                        preset_name,
-                        self.root_profiles_per_level[preset_name],
-                        explicit=explicit
-                    )
-                )
             res.append(Level(profile.name, profile, explicit=True))
             res.extend(
                 [
@@ -171,8 +162,11 @@ class Config(object):
 
         add_profile(self.system_profile, explicit=False)
         add_profile(self.global_profile)
+        add_profile(self.global_preset_profile, explicit=False)
         add_profile(self.workgroup_profile)
+        add_profile(self.workgroup_preset_profile, explicit=False)
         add_profile(self.local_profile)
+        add_profile(self.local_preset_profile, explicit=False)
         add_profile(self.env_profile, explicit=False)
         add_profile(self.command_line_profile, explicit=False)
         return res
@@ -188,7 +182,15 @@ class Config(object):
 
     @property
     def global_preset_profile(self):
-        return self.root_profiles_per_level["global/preset"]
+        return ProfileFactory.create_or_get_preset_profile(
+            "global/preset",
+            settings={
+                "recipe": {
+                    name: json.loads(open(self.global_profile.link_location(name), "rb").read().decode("utf-8"))
+                    for name in self.global_profile.recipe_link_names
+                }
+            }
+        )
 
     def get_settings(self, section):
         if self.settings is None:
@@ -355,72 +357,41 @@ class Config(object):
 
     @property
     def root_profiles_per_level(self):
-        res = {}
-        if self.system_profile_location is not None:
-            res["system"] = ProfileFactory.create_or_get_by_location(
-                self.system_profile_location,
-                name="system",
-                app_name=self.app_name
-            )
-        res["global"] = ProfileFactory.create_or_get_by_location(
+        res = {
+            profile.name: profile
+            for profile in self.root_profiles
+        }
+        return res
+
+    def guess_project(self):
+        candidate = None
+        if not self.project:
+            candidate = self.find_project()
+            if candidate:
+                self._project = candidate
+                LOGGER.develop(
+                    "Guessing project {} from the local context".format(candidate)
+                )
+        return candidate
+
+    @property
+    def global_profile(self):
+        return ProfileFactory.create_or_get_by_location(
             self.app_dir,
             name="global",
             app_name=self.app_name
         )
-        res["global/preset"] = ProfileFactory.create_or_get_preset_profile(
-            "global/preset",
-            settings={
-                "recipe": {
-                    name: json.loads(open(res["global"].link_location(name), "rb").read().decode("utf-8"))
-                    for name in res["global"].recipe_link_names
-                }
-            }
-        )
-        if self.project is not None:
-            res["workgroup"] = ProfileFactory.create_or_get_by_location(
-                os.path.dirname(self.project) + '/.{}'.format(self.main_command.path),
-                name="workgroup",
-                app_name=self.app_name,
-            )
-            res["workgroup/preset"] = ProfileFactory.create_or_get_preset_profile(
-                "workgroup/preset",
-                settings={
-                    "recipe": {
-                        name: json.loads(open(res["workgroup"].link_location(name), "rb").read().decode("utf-8"))
-                        for name in res["workgroup"].recipe_link_names
-                    }
-                }
-            )
-            res["local"] = ProfileFactory.create_or_get_by_location(
-                os.path.join(
-                    self.project,
-                    "." + self.main_command.path
-                ),
-                name="local",
-                app_name=self.app_name,
-            )
-            proj = self.find_project()
-            settings = defaultdict(lambda: defaultdict(list))
-            if proj:
-                LOGGER.develop(
-                    "Guessing project {} from the local context".format(proj)
-                )
-                settings["parameters"] = {
-                    self.main_command.path: ["--project", proj]
-                }
-            res["local/preset"] = ProfileFactory.create_or_get_preset_profile(
-                "local/preset",
-                settings=settings
-            )
-        return res
-
-    @property
-    def global_profile(self):
-        return self.root_profiles_per_level.get("global")
 
     @property
     def system_profile(self):
-        return self.root_profiles_per_level.get("system")
+        if self.system_profile_location is not None:
+            return ProfileFactory.create_or_get_by_location(
+                self.system_profile_location,
+                name="system",
+                app_name=self.app_name
+            )
+        else:
+            return None
 
     @property
     def all_disabled_recipes(self):
@@ -442,11 +413,31 @@ class Config(object):
 
     @property
     def workgroup_preset_profile(self):
-        self.root_profiles_per_level.get("workgroup/preset", None)
+        self.guess_project()
+        if self.project:
+            return ProfileFactory.create_or_get_preset_profile(
+                "workgroup/preset",
+                settings={
+                    "recipe": {
+                        name: json.loads(open(res["workgroup"].link_location(name), "rb").read().decode("utf-8"))
+                        for name in res["workgroup"].recipe_link_names
+                    }
+                }
+            )
+        else:
+            return None
 
     @property
     def workgroup_profile(self):
-        return self.root_profiles_per_level.get("workgroup", None)
+        self.guess_project()
+        if self.project:
+            return ProfileFactory.create_or_get_by_location(
+                os.path.dirname(self.project) + '/.{}'.format(self.main_command.path),
+                name="workgroup",
+                app_name=self.app_name,
+            )
+        else:
+            return None
 
     @property
     def workgroup(self):
@@ -457,7 +448,18 @@ class Config(object):
 
     @property
     def local_profile(self):
-        return self.root_profiles_per_level.get("local")
+        self.guess_project()
+        if self.project:
+            return ProfileFactory.create_or_get_by_location(
+                os.path.join(
+                    self.project,
+                    "." + self.main_command.path
+                ),
+                name="local",
+                app_name=self.app_name,
+            )
+        else:
+            return None
 
     @property
     def debug(self):
@@ -538,7 +540,18 @@ class Config(object):
 
     @property
     def local_preset_profile(self):
-        return self.root_profiles_per_level.get("local/preset", None)
+        self.guess_project()
+        if self.project:
+            return ProfileFactory.create_or_get_preset_profile(
+                "local/preset",
+                settings={
+                    "parameters": {
+                        self.main_command.path: ["--project", self.project]
+                    }
+                }
+            )
+        else:
+            return None
 
     def iter_settings(self, profiles_only=False, with_recipes=True, recipe_short_name=None):
         profiles_only = profiles_only or recipe_short_name
