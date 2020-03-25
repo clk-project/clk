@@ -530,6 +530,23 @@ class PresetProfile():
     def migrate_if_needed(self, persist=True):
         pass
 
+    @property
+    def recipe_link_names(self):
+        return set()
+
+    def has_recipe(self, name):
+        return False
+
+    def has_recipe_link(self, name):
+        return False
+
+    @property
+    def friendly_name(self):
+        return self.name
+
+    def write_settings(self):
+        click.UsageError("A preset profile cannot be written to")
+
 
 profile_location_cache = {}
 profile_name_cache = {}
