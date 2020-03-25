@@ -422,12 +422,12 @@ class Config(object):
             )
 
         add_profile(self.system_profile, explicit=False)
-        add_profile(self.global_profile)
         add_profile(self.global_preset_profile, explicit=False)
-        add_profile(self.workgroup_profile)
+        add_profile(self.global_profile)
         add_profile(self.workgroup_preset_profile, explicit=False)
-        add_profile(self.local_profile)
+        add_profile(self.workgroup_profile)
         add_profile(self.local_preset_profile, explicit=False)
+        add_profile(self.local_profile)
         add_profile(self.env_profile, explicit=False)
         add_profile(self.command_line_profile, explicit=False)
         return res
