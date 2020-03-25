@@ -11,7 +11,7 @@ import six
 from click.utils import make_default_short_help
 
 from click_project.lib import get_tabulate_formats, ParameterType
-from click_project.config import config,  merge_settings
+from click_project.config import config,  merge_settings, Level
 from click_project.completion import startswith
 from click_project.log import get_logger
 from click_project.overloads import command, group, option, flag, argument, flow_command, flow_option, flow_argument
@@ -122,7 +122,7 @@ def use_settings(settings_name, settings_cls, override=True, default_level='cont
 
         def level_callback(ctx, attr, value):
             if value:
-                ctx.click_project_level = value
+                ctx.click_project_level = Level.command_line_to_name(value)
                 setup_settings(ctx)
             return value
 
@@ -147,7 +147,7 @@ def use_settings(settings_name, settings_cls, override=True, default_level='cont
                     if startswith(candidate, incomplete)
                 ]
 
-        for level in [level for level in config.root_levels if level.explicit]:
+        for level in [level.command_line_name for level in config.root_levels]:
             f = flag('--{}'.format(level), "level", flag_value=level, help="Consider only the {} level".format(level), callback=level_callback)(f)
         f = flag('--context', "level", flag_value="context", help="Guess the level", callback=level_callback)(f)
         f = option('--recipe', type=RecipeType(), callback=recipe_callback, help="Use this recipe")(f)

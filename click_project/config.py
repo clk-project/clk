@@ -27,6 +27,14 @@ class Level():
         self.profile = profile
         self.is_root = is_root
 
+    @staticmethod
+    def command_line_to_name(command_line_name):
+        return command_line_name.replace("-", "/")
+
+    @property
+    def command_line_name(self):
+        return self.name.replace("/", "-")
+
     def __repr__(self):
         return (f"<{self.__class__.__name__}:"
                 f" {self.name},"
