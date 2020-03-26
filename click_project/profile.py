@@ -195,7 +195,7 @@ class Profile(object):
         self.persist = True
         self.prevented_persistence = False
         self.pluginsdir = os.path.join(self.location, "plugins")
-        self.read_only = False
+        self.frozen_during_migration = False
         self.old_version = self.version
         if self.version > self.max_version:
             LOGGER.error(
@@ -209,7 +209,7 @@ class Profile(object):
                     self.app_name,
                 )
             )
-            self.read_only = True
+            self.frozen_during_migration = True
         self.computed_location = None
         self.compute_settings()
         self.backup_location = self.location + "_backup"
@@ -404,7 +404,7 @@ class Profile(object):
         return True
 
     def write_settings(self):
-        if self.read_only:
+        if self.frozen_during_migration:
             raise click.UsageError(
                 "You cannot edit the configuration if the migration is not persisted"
             )
@@ -413,7 +413,7 @@ class Profile(object):
         return write_settings(self.settings_path, self.settings, self.dry_run)
 
     def write_version(self):
-        if self.read_only:
+        if self.frozen_during_migration:
             raise click.UsageError(
                 "You cannot edit the configuration if the migration is not persisted"
             )
@@ -444,12 +444,12 @@ class Profile(object):
                     )
             ):
                 if self.persist:
-                    self.read_only = False
+                    self.frozen_during_migration = False
                     self.prevented_persistence = False
                     self.write_settings()
                     self.write_version()
                 else:
-                    self.read_only = True
+                    self.frozen_during_migration = True
                     self.prevented_persistence = True
                     LOGGER.debug("Migration not persisted")
 
