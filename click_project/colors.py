@@ -26,38 +26,38 @@ class Colorer(object):
             self.legend = False
         self.kwargs = kwargs
 
-        def compute_preset_colors(level):
-            """Return the same colors as the level, swapping the underline parameter
+        def compute_preset_colors(profile):
+            """Return the same colors as the profile, swapping the underline parameter
 
-            For example, if the level is configured to have underline on, the underlined is off.
+            For example, if the profile is configured to have underline on, the underlined is off.
             """
-            colors = kwargs[f"{level}_color"].copy()
+            colors = kwargs[f"{profile}_color"].copy()
             colors["underline"] = not colors.get("underline")
             return colors
 
-        self.level_to_color = collections.defaultdict(dict)
-        self.level_to_color["global"] = kwargs["global_color"]
-        self.level_to_color["globalpreset"] = compute_preset_colors("global")
+        self.profile_to_color = collections.defaultdict(dict)
+        self.profile_to_color["global"] = kwargs["global_color"]
+        self.profile_to_color["globalpreset"] = compute_preset_colors("global")
         if config.local_profile:
-            self.level_to_color["workgroup"] = kwargs.get("workgroup_color")
-            self.level_to_color["workgrouppreset"] = compute_preset_colors("workgroup")
-            self.level_to_color["local"] = kwargs.get("local_color")
-            self.level_to_color["localpreset"] = compute_preset_colors("local")
+            self.profile_to_color["workgroup"] = kwargs.get("workgroup_color")
+            self.profile_to_color["workgrouppreset"] = compute_preset_colors("workgroup")
+            self.profile_to_color["local"] = kwargs.get("local_color")
+            self.profile_to_color["localpreset"] = compute_preset_colors("local")
         for recipe in config.all_recipes:
-            self.level_to_color[recipe.name] = kwargs[
+            self.profile_to_color[recipe.name] = kwargs[
                 recipe.name.replace("/", "_") + "_color"
             ]
-        self.level_to_color["env"] = {"bold": True}
+        self.profile_to_color["env"] = {"bold": True}
         if not color:
-            for key in self.level_to_color.copy():
-                self.level_to_color[key] = None
-        self.used_levels = set()
+            for key in self.profile_to_color.copy():
+                self.profile_to_color[key] = None
+        self.used_profiles = set()
 
     @property
-    def levels_to_show(self):
+    def profilenames_to_show(self):
         return [
-            level.name for level in config.all_levels
-            if self.full or (level not in config.implicit_levels)
+            profile.name for profile in config.all_profiles
+            if self.full or profile.explicit
         ]
 
     def __enter__(self):
@@ -65,28 +65,28 @@ class Colorer(object):
 
     def __exit__(self, exc_type, exc_val, exc_tb):
         if self.legend:
-            colored_levels = self.colorize_values(
+            colored_profiles = self.colorize_values(
                 {
-                    level: (
-                        level
-                        if "-" not in level
-                        else config.get_recipe(level).friendly_name
+                    profile: (
+                        profile
+                        if "-" not in profile
+                        else config.get_recipe(profile).friendly_name
                     )
-                    for level in self.levels_to_show
+                    for profile in self.profilenames_to_show
                 }
             )
             message = "Legend: " + ", ".join(
-                colored_levels[level]
-                for level in self.levels_to_show
-                if level in self.used_levels
+                colored_profiles[profile]
+                for profile in self.profilenames_to_show
+                if profile in self.used_profiles
             )
             click.secho("-" * len(clear_ansi_color_codes(message)), dim=True)
             click.echo(message)
 
-    def last_level_of_settings(self, name, all_settings):
-        for level in reversed(self.levels_to_show):
-            if level in all_settings and name in all_settings[level]:
-                return level
+    def last_profile_of_settings(self, name, all_settings):
+        for profile in reversed(self.profilenames_to_show):
+            if profile in all_settings and name in all_settings[profile]:
+                return profile
 
     @staticmethod
     def color_options(f):
@@ -106,63 +106,63 @@ class Colorer(object):
         f = flag("--legend/--no-legend",
                  default=config.get_value('config.color.legend') or False,
                  help="Start with a legend on colors")(f)
-        f = flag('--color/--no-color', default=True, help="Show levels in color")(f)
+        f = flag('--color/--no-color', default=True, help="Show profiles in color")(f)
         f = flag('--full', help="Show the full information, even those guessed from the context")(f)
-        f = option('--global-color', help="Color to show the global level",
+        f = option('--global-color', help="Color to show the global profile",
                    type=ColorType(), default="fg-cyan")(f)
         recipename_color = {}
         if config.project:
-            f = option('--workgroup-color', help="Color to show the workgroup level",
+            f = option('--workgroup-color', help="Color to show the workgroup profile",
                        type=ColorType(), default="fg-magenta")(f)
-            f = option('--local-color', help="Color to show the local level",
+            f = option('--local-color', help="Color to show the local profile",
                        type=ColorType(), default="fg-green")(f)
         for recipe in config.all_recipes:
             if recipe.short_name not in recipename_color:
                 recipename_color[recipe.short_name] = next(colors)
-            f = option('--{}-color'.format(recipe.name.replace('/', '-')), help="Color to show the {} level".format(recipe.name),
+            f = option('--{}-color'.format(recipe.name.replace('/', '-')), help="Color to show the {} profile".format(recipe.name),
                        type=ColorType(), default=recipename_color[recipe.short_name])(f)
         return f
 
-    def apply_color(self, string, level):
-        return click.style(string, **self.get_style(level))
+    def apply_color(self, string, profile):
+        return click.style(string, **self.get_style(profile))
 
-    def echo(self, message, level):
-        click.echo(self.apply_color(message, level))
+    def echo(self, message, profile):
+        click.echo(self.apply_color(message, profile))
 
-    def get_style(self, level):
-        self.used_levels.add(level)
+    def get_style(self, profile):
+        self.used_profiles.add(profile)
         style = config.alt_style.copy()
-        style.update(self.level_to_color[level] or {})
+        style.update(self.profile_to_color[profile] or {})
         return style
 
     def colorize_values(self, elems):
         return {
-            level:
-            click.style(elem, **self.get_style(level)) if elem else elem
-            for level, elem in elems.items()
+            profile:
+            click.style(elem, **self.get_style(profile)) if elem else elem
+            for profile, elem in elems.items()
         }
 
-    def colorize(self, values, readlevel):
+    def colorize(self, values, readprofile):
         args = []
         values = self.colorize_values(values)
-        if readlevel == "context":
+        if readprofile == "context":
             args = self.combine(values)
         else:
-            readlevels = [readlevel] + [
-                rl for rl in self.levels_to_show
-                if rl.startswith(readlevel + "-")
+            readprofiles = [readprofile] + [
+                rl for rl in self.profilenames_to_show
+                if rl.startswith(readprofile + "-")
             ]
             args = self.combine(
                 {
                     rl: values[rl]
-                    for rl in readlevels
+                    for rl in readprofiles
                 })
         return args
 
     def combine(self, values):
         args = []
-        for level_name in self.levels_to_show:
-            value = values.get(level_name)
+        for profile_name in self.profilenames_to_show:
+            value = values.get(profile_name)
             if value:
                 args.append(value)
         return args

@@ -60,14 +60,14 @@ def set(cmd, params):
     if old is not None:
         LOGGER.status(
             "Removing {} parameters of {}: {}".format(
-                config.parameters.writelevelname,
+                config.parameters.writeprofilename,
                 cmd,
                 format_parameters(old),
             )
         )
     LOGGER.status(
         "New {} parameters for {}: {}".format(
-            config.parameters.writelevelname,
+            config.parameters.writeprofilename,
             cmd,
             format_parameters(params),
         )
@@ -88,7 +88,7 @@ def append(cmd, params):
     if old:
         LOGGER.status(
             "New {} parameters for {}: {} (old parameters) + {}".format(
-                config.parameters.writelevelname,
+                config.parameters.writeprofilename,
                 cmd,
                 format_parameters(old),
                 format_parameters(params),
@@ -97,7 +97,7 @@ def append(cmd, params):
     else:
         LOGGER.status(
             "New {} parameters for {}: {}".format(
-                config.parameters.writelevelname,
+                config.parameters.writeprofilename,
                 cmd,
                 format_parameters(params),
             )
@@ -145,7 +145,7 @@ def remove(cmd, params):
             config.parameters.writable[cmd].remove(param)
         except ValueError:
             raise click.ClickException('%s is not in the parameters of %s' % (param, cmd))
-    LOGGER.status("Erasing {} parameters {} from {} settings".format(cmd, " ".join(params), config.parameters.writelevelname))
+    LOGGER.status("Erasing {} parameters {} from {} settings".format(cmd, " ".join(params), config.parameters.writeprofilename))
     config.parameters.write()
 
 
@@ -157,12 +157,12 @@ def unset(cmds):
     for cmd in cmds:
         if cmd not in config.parameters.writable:
             raise click.ClickException("The command %s has no parameter registered in the %s configuration."
-                                       " Try using another level option (like --local, --workgroup or --global)"
-                                       % (cmd, config.parameters.writelevelname))
+                                       " Try using another profile option (like --local, --workgroup or --global)"
+                                       % (cmd, config.parameters.writeprofilename))
     for cmd in cmds:
         LOGGER.status(
             "Erasing {} parameters of {} (was: {})".format(
-                config.parameters.writelevelname, cmd,
+                config.parameters.writeprofilename, cmd,
                 format_parameters(config.parameters.writable[cmd])
             )
         )
@@ -190,22 +190,23 @@ def show(ctx, name_only, cmds, under, fields, format, **kwargs):
             else:
                 cmd = get_command_safe(cmd_name)
 
-                def get_line(level_name):
+                def get_line(profile_name):
                     return " ".join([
                         quote(p)
                         for p in
-                        config.parameters.all_settings.get(level_name, {}).get(cmd_name, [])
+                        config.parameters.all_settings.get(profile_name, {}).get(cmd_name, [])
                     ])
-                if config.parameters.readlevel == "settings-file":
+
+                if config.parameters.readprofile == "settings-file":
                     args = config.parameters.readonly.get(cmd_name, [])
-                elif "/" in config.parameters.readlevel:
-                    args = get_line(config.parameters.readlevel)
+                elif "/" in config.parameters.readprofile:
+                    args = get_line(config.parameters.readprofile)
                 else:
                     values = {
-                        level_name: get_line(level_name)
-                        for level_name in colorer.levels_to_show
+                        profile_name: get_line(profile_name)
+                        for profile_name in colorer.profilenames_to_show
                     }
-                    args = colorer.colorize(values, config.parameters.readlevel)
+                    args = colorer.colorize(values, config.parameters.readprofile)
                 if cmd is None:
                     LOGGER.warning("You should know that the command {} does not exist".format(cmd_name))
                 args = args or 'None'

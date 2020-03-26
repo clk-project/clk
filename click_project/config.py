@@ -20,27 +20,6 @@ from click_project.lib import updated_env
 LOGGER = get_logger(__name__)
 
 
-class Level():
-    def __init__(self, name, profile, explicit, is_root=True):
-        self.name = name
-        self.explicit = explicit
-        self.profile = profile
-        self.is_root = is_root
-
-    @staticmethod
-    def command_line_to_name(command_line_name):
-        return command_line_name.replace("-", "/")
-
-    @property
-    def command_line_name(self):
-        return self.name.replace("/", "-")
-
-    def __repr__(self):
-        return (f"<{self.__class__.__name__}:"
-                f" {self.name},"
-                f" {self.explicit}"
-                f"{', Root' if self.is_root else ''}>")
-
 def migrate_profiles():
     ctx = click_get_current_context_safe()
     for profile in config.root_profiles + list(config.all_recipes):
@@ -107,7 +86,9 @@ class Config(object):
         self.settings = None
         self.command_line_profile = ProfileFactory.create_or_get_preset_profile(
             "commandline",
-            settings=defaultdict(lambda: defaultdict(list))
+            settings=defaultdict(lambda: defaultdict(list)),
+            explicit=False,
+            isroot=True,
             )
         self.flow_profile = ProfileFactory.create_or_get_preset_profile(
             "flow",
@@ -118,7 +99,9 @@ class Config(object):
         self.plugindirs = []
         self.env_profile = ProfileFactory.create_or_get_preset_profile(
             "env",
-            settings=defaultdict(lambda: defaultdict(list))
+            settings=defaultdict(lambda: defaultdict(list)),
+            explicit=False,
+            isroot=True,
             )
         self._dry_run = None
         self._project = None
@@ -288,13 +271,8 @@ class Config(object):
     def get_profile_settings2(self, section):
         return merge_settings(self.iter_settings(profiles_only=True))[1].get(section, {})
 
-    @property
-    def root_profiles_per_level(self):
-        res = {
-            profile.name: profile
-            for profile in self.root_profiles
-        }
-        return res
+    def get_profile_by_name(self, name):
+        return [profile for profile in self.all_profiles if profile.name == name][0]
 
     def get_profile(self, name):
         for profile in self.root_profiles:
@@ -336,6 +314,8 @@ class Config(object):
                 ),
                 name="local",
                 app_name=self.app_name,
+                explicit=True,
+                isroot=True,
             )
         else:
             return None
@@ -350,7 +330,9 @@ class Config(object):
                     "parameters": {
                         self.main_command.path: ["--project", self.project]
                     }
-                }
+                },
+                explicit=False,
+                isroot=True,
             )
         else:
             return None
@@ -363,6 +345,8 @@ class Config(object):
                 os.path.dirname(self.project) + '/.{}'.format(self.main_command.path),
                 name="workgroup",
                 app_name=self.app_name,
+                explicit=True,
+                isroot=True,
             )
         else:
             return None
@@ -378,7 +362,9 @@ class Config(object):
                         name: json.loads(open(self.workgroup_profile.link_location(name), "rb").read().decode("utf-8"))
                         for name in self.workgroup_profile.recipe_link_names
                     }
-                }
+                },
+                explicit=False,
+                isroot=True,
             )
         else:
             return None
@@ -388,7 +374,9 @@ class Config(object):
         return ProfileFactory.create_or_get_by_location(
             self.app_dir,
             name="global",
-            app_name=self.app_name
+            app_name=self.app_name,
+            explicit=True,
+            isroot=True,
         )
 
     @property
@@ -400,7 +388,9 @@ class Config(object):
                     name: json.loads(open(self.global_profile.link_location(name), "rb").read().decode("utf-8"))
                     for name in self.global_profile.recipe_link_names
                 }
-            }
+            },
+            explicit=False,
+            isroot=True,
         )
 
     @property
@@ -409,61 +399,52 @@ class Config(object):
             return ProfileFactory.create_or_get_by_location(
                 self.system_profile_location,
                 name="system",
-                app_name=self.app_name
+                app_name=self.app_name,
+                explicit=False,
+                isroot=True,
             )
         else:
             return None
 
     @property
-    def all_levels(self):
+    def all_profiles(self):
         res = []
 
         def add_profile(profile, explicit=True):
             if profile is None:
                 return
-            res.append(Level(profile.name, profile, explicit=explicit))
+            res.append(profile)
             res.extend(
-                [
-                    Level(recipe.name, recipe, explicit=True, is_root=False)
-                    for recipe in
-                    self.sorted_recipes(
-                        self.filter_enabled_recipes(
-                            profile.recipes
-                        )
+                self.sorted_recipes(
+                    self.filter_enabled_recipes(
+                        profile.recipes
                     )
-                ]
+                )
             )
 
-        add_profile(self.system_profile, explicit=False)
-        add_profile(self.global_preset_profile, explicit=False)
+        add_profile(self.system_profile)
+        add_profile(self.global_preset_profile)
         add_profile(self.global_profile)
-        add_profile(self.workgroup_preset_profile, explicit=False)
+        add_profile(self.workgroup_preset_profile)
         add_profile(self.workgroup_profile)
-        add_profile(self.local_preset_profile, explicit=False)
+        add_profile(self.local_preset_profile)
         add_profile(self.local_profile)
-        add_profile(self.env_profile, explicit=False)
-        add_profile(self.command_line_profile, explicit=False)
+        add_profile(self.env_profile)
+        add_profile(self.command_line_profile)
         return res
 
     @property
-    def implicit_levels(self):
+    def implicit_profiles(self):
         return [
-            level for level in self.all_levels
-            if not level.explicit
-        ]
-
-    @property
-    def root_levels(self):
-        return [
-            level for level in self.all_levels
-            if level.is_root
+            profile for profile in self.all_profiles
+            if not profile.explicit
         ]
 
     @property
     def root_profiles(self):
         return [
-            level.profile for level in self.all_levels
-            if level.is_root
+            profile for profile in self.all_profiles
+            if profile.isroot
         ]
 
     def iter_recipes(self, short_name):
@@ -507,8 +488,8 @@ class Config(object):
         return self.settings.get("recipe", {}).get(recipe, {}).get("order", 1000)
 
     def get_profile_containing_recipe(self, name):
-        profile_level = name.split("/")[0]
-        profile = self.root_profiles_per_level[profile_level]
+        profile_name = name.split("/")[0]
+        profile = self.get_profile_by_name(profile_name)
         return profile
 
     def recipe_location(self, name):
@@ -516,8 +497,8 @@ class Config(object):
         return profile.recipe_location(name)
 
     def get_recipe(self, name):
-        name, profile_level = name.split("/")
-        profile = self.root_profiles_per_level[profile_level]
+        name, profile_name = name.split("/")
+        profile = self.get_profile_by_name(profile_name)
         return profile.get_recipe(name)
 
     def is_recipe_enabled(self, shortname):

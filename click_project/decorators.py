@@ -11,7 +11,7 @@ import six
 from click.utils import make_default_short_help
 
 from click_project.lib import get_tabulate_formats, ParameterType
-from click_project.config import config,  merge_settings, Level
+from click_project.config import config,  merge_settings
 from click_project.completion import startswith
 from click_project.log import get_logger
 from click_project.overloads import command, group, option, flag, argument, flow_command, flow_option, flow_argument
@@ -56,7 +56,7 @@ def param_config(name, *args, **kwargs):
     return kls(*args, **kwargs)
 
 
-def use_settings(settings_name, settings_cls, override=True, default_level='context'):
+def use_settings(settings_name, settings_cls, override=True, default_profile='context'):
     def decorator(f):
         if settings_name not in settings_stores:
             settings_stores[settings_name] = settings_cls()
@@ -65,23 +65,23 @@ def use_settings(settings_name, settings_cls, override=True, default_level='cont
 
         def compute_settings(with_explicit=True):
             settings_store.all_settings = {
-                level.name: level.profile.get_settings(settings_name)
-                for level in config.all_levels
-                if with_explicit or not level.explicit
+                profile.name: profile.get_settings(settings_name)
+                for profile in config.all_profiles
+                if with_explicit or not profile.explicit
             }
 
         def setup_settings(ctx):
-            if ctx is not None and hasattr(ctx, "click_project_level"):
-                level = ctx.click_project_level
+            if ctx is not None and hasattr(ctx, "click_project_profile"):
+                profile_name = ctx.click_project_profile
             else:
-                level = default_level
+                profile_name = default_profile
             if ctx is not None and hasattr(ctx, "click_project_recipe"):
                 recipe = ctx.click_project_recipe
             else:
                 recipe = "main"
             if recipe == "main":
                 recipe = None
-            if level == "context":
+            if profile_name == "context":
                 compute_settings(False)
                 s1, s2 = merge_settings(config.iter_settings(
                     profiles_only=True,
@@ -95,13 +95,13 @@ def use_settings(settings_name, settings_cls, override=True, default_level='cont
                         settings_store.all_settings[r.name] = r.get_settings(settings_name)
                 else:
                     compute_settings(True)
-                settings_store.readlevel = level
+                settings_store.readprofile = profile_name
             else:
                 compute_settings(False)
-                profile = config.root_profiles_per_level[level]
+                profile = config.get_profile_by_name(profile_name)
                 profile = profile.get_recipe(recipe) if recipe else profile
-                settings_store.readlevel = profile.name
-                settings_store.all_settings[profile.name] = profile.get_settings(settings_name)
+                settings_store.readprofile = profile_name
+                settings_store.all_settings[profile_name] = profile.get_settings(settings_name)
                 s1, s2 = merge_settings(config.load_settings_from_profile(
                     profile,
                     with_recipes=True,
@@ -113,18 +113,12 @@ def use_settings(settings_name, settings_cls, override=True, default_level='cont
             readonly = s1 if override else s2
             readonly = readonly.get(settings_name, {})
 
-            settings_store.writelevel = profile.name
-            settings_store.writelevelname = profile.friendly_name
+            settings_store.writeprofile = profile.name
+            settings_store.writeprofilename = profile.friendly_name
             settings_store.profile = profile
             settings_store.readonly = readonly
             settings_store.writable = profile.get_settings(settings_name)
             settings_store.write = profile.write_settings
-
-        def level_callback(ctx, attr, value):
-            if value:
-                ctx.click_project_level = Level.command_line_to_name(value)
-                setup_settings(ctx)
-            return value
 
         def recipe_callback(ctx, attr, value):
             if value is not None:
@@ -147,9 +141,22 @@ def use_settings(settings_name, settings_cls, override=True, default_level='cont
                     if startswith(candidate, incomplete)
                 ]
 
-        for level in [level.command_line_name for level in config.root_levels]:
-            f = flag('--{}'.format(level), "level", flag_value=level, help="Consider only the {} level".format(level), callback=level_callback)(f)
-        f = flag('--context', "level", flag_value="context", help="Guess the level", callback=level_callback)(f)
+        def profile_name_to_command_line_name(name):
+            return name.replace("/", "-")
+
+        def command_line_name_to_profile_name(name):
+            return name.replace("-", "/")
+
+        def profile_callback(ctx, attr, value):
+            if value:
+                ctx.click_project_profile = command_line_name_to_profile_name(value)
+                setup_settings(ctx)
+            return value
+
+
+        for profile in [profile_name_to_command_line_name(profile.name) for profile in config.root_profiles]:
+            f = flag('--{}'.format(profile), "profile", flag_value=profile, help="Consider only the {} profile".format(profile), callback=profile_callback)(f)
+        f = flag('--context', "profile", flag_value="context", help="Guess the profile", callback=profile_callback)(f)
         f = option('--recipe', type=RecipeType(), callback=recipe_callback, help="Use this recipe")(f)
 
         setup_settings(None)
@@ -158,12 +165,12 @@ def use_settings(settings_name, settings_cls, override=True, default_level='cont
         def wrapped(*args, **kwargs):
             setattr(config, settings_name, settings_store)
             del kwargs["recipe"]
-            del kwargs["level"]
-            LOGGER.debug("Will use the settings at level {}".format(
-                settings_store.readlevel
+            del kwargs["profile"]
+            LOGGER.debug("Will use the settings at profile {}".format(
+                settings_store.readprofile
             ))
             return f(*args, **kwargs)
-        wrapped.inherited_params = ["recipe", "level"]
+        wrapped.inherited_params = ["recipe", "profile"]
         return wrapped
     return decorator
 

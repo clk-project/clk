@@ -234,8 +234,8 @@ class CoreCommandResolver(CommandResolver):
         raise CommandNotFound(path)
 
 
-class LevelChoice(click.Choice):
-    name = 'level'
+class ProfileChoice(click.Choice):
+    name = 'profile'
 
     def __init__(self, extra=None, case_sensitive=True):
         self.case_sensitive = case_sensitive
@@ -269,23 +269,23 @@ class ExtraParametersMixin(object):
         set_param_opt = AutomaticOption(['--set-parameters'], expose_value=False, callback=self.set_parameters_callback,
                                         group='parameters',
                                         help="Set the parameters for this command",
-                                        type=LevelChoice())
+                                        type=ProfileChoice())
         append_param_opt = AutomaticOption(['--append-parameters'], expose_value=False, callback=self.append_parameters_callback,
                                            group='parameters',
                                            help="append the parameters for this command",
-                                           type=LevelChoice())
+                                           type=ProfileChoice())
         remove_param_opt = AutomaticOption(['--remove-parameters'], expose_value=False, callback=self.remove_parameters_callback,
                                            group='parameters',
                                            help="remove the parameters for this command",
-                                           type=LevelChoice())
+                                           type=ProfileChoice())
         unset_param_opt = AutomaticOption(['--unset-parameters'], expose_value=False, callback=self.unset_parameters_callback,
                                           group='parameters',
                                           help="Unset the parameters for this command",
-                                          type=LevelChoice())
+                                          type=ProfileChoice())
         show_param_opt = AutomaticOption(['--show-parameters'], expose_value=False, callback=self.show_parameters_callback,
                                          group='parameters',
                                          help="Show the parameters for this command",
-                                         type=LevelChoice(extra=["context"]))
+                                         type=ProfileChoice(extra=["context"]))
         no_param_opt = AutomaticOption(['--no-parameters'], expose_value=False, is_flag=True, is_eager=True,
                                        group='parameters',
                                        help="Don't use the parameters settings for this commands")

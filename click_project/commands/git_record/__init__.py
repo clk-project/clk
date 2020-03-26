@@ -31,7 +31,7 @@ def assert_file_in_level(files):
         if file not in config.git_record.writable:
             raise click.UsageError(
                 "{} not in level {}, try to use another level".format(
-                    file, config.git_record.writelevel
+                    file, config.git_record.writeprofile
                 )
             )
 

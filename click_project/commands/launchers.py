@@ -72,10 +72,10 @@ def unset(launchers):
     for launcher in launchers:
         if launcher not in config.launchers.writable:
             raise click.ClickException("The command %s has no parameter registered in the %s configuration."
-                                       "Try using another level option (like --local, --workgroup or --global)"
-                                       % (launcher, config.launchers.writelevel))
+                                       "Try using another profile option (like --local, --workgroup or --global)"
+                                       % (launcher, config.launchers.writeprofile))
     for launcher in launchers:
-        LOGGER.status("Erasing {} launchers from {} settings".format(launcher, config.launchers.writelevel))
+        LOGGER.status("Erasing {} launchers from {} settings".format(launcher, config.launchers.writeprofile))
         del config.launchers.writable[launcher]
     config.launchers.write()
 
@@ -95,19 +95,19 @@ def show(ctx, name_only, launchers, all, fields, format, **kwargs):
             if name_only:
                 click.echo(launcher_name)
             else:
-                if config.launchers.readlevel == "settings-file":
+                if config.launchers.readprofile == "settings-file":
                     args = config.launchers.readonly.get(launcher_name, [])
                 else:
                     values = {
-                        level_name: " ".join([
+                        profile_name: " ".join([
                             quote(p)
                             for p in
-                            config.launchers.all_settings[level_name].get(
+                            config.launchers.all_settings[profile_name].get(
                                 launcher_name,
                                 [])
                         ])
-                        for level_name in colorer.levels_to_show
+                        for profile_name in colorer.profilenames_to_show
                     }
-                    args = colorer.colorize(values, config.launchers.readlevel)
+                    args = colorer.colorize(values, config.launchers.readprofile)
                 if args and args[0]:
                     tp.echo(launcher_name, args)

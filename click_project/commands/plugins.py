@@ -103,7 +103,7 @@ def load_short_help(plugin):
 
 
 @group(default_command='show')
-@use_settings("plugins", PluginsConfig, default_level='global')
+@use_settings("plugins", PluginsConfig, default_profile='global')
 def plugins():
     """Manipulate the command plugins
 

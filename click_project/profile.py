@@ -62,7 +62,10 @@ class Profile(object):
         location = self.recipe_location(name)
         if os.path.exists(location):
             raise click.UsageError("{} already exists".format(location))
-        p = ProfileFactory.create_or_get_by_location(location, name=name, app_name=self.app_name)
+        p = ProfileFactory.create_or_get_by_location(
+            location, name=name,
+            app_name=self.app_name,
+            explicit=True)
         if mkdir:
             p.write_settings()
         return p
@@ -112,6 +115,7 @@ class Profile(object):
                     location,
                     name=self.name + "/" + os.path.basename(location),
                     app_name=self.app_name,
+                    explicit=True
                 )
                 for location in glob(os.path.join(recipes_dir, "*"))
                 if not location.endswith(".json")
@@ -160,8 +164,11 @@ class Profile(object):
         else:
             return None
 
-    def __init__(self, location, app_name, dry_run=False, name=None):
+    def __init__(self, location, app_name, dry_run=False, name=None,
+                 explicit=True, isroot=True):
         self.app_name = app_name
+        self.explicit = explicit
+        self.isroot = isroot
         self.migrate_from = [
             self.alias_has_documentation,
             self.stack_of_git_records,
@@ -508,10 +515,12 @@ class Profile(object):
 
 
 class PresetProfile():
-    def __init__(self, name, settings):
+    def __init__(self, name, settings, explicit=True, isroot=True):
         self.name = name
         self.settings = settings
         self.recipes = []
+        self.isroot = isroot
+        self.explicit = explicit
 
     def get_settings(self, section):
         if (
@@ -563,8 +572,8 @@ class ProfileFactory(object):
         return profile_location_cache[location]
 
     @staticmethod
-    def create_or_get_preset_profile(name, settings=None):
+    def create_or_get_preset_profile(name, settings=None, explicit=True, isroot=True):
         if name not in profile_name_cache:
-            profile = PresetProfile(name, settings)
+            profile = PresetProfile(name, settings, explicit=explicit, isroot=isroot)
             profile_name_cache[name] = profile
         return profile_name_cache[name]

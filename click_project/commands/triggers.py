@@ -92,10 +92,10 @@ def unset(cmds, position):
     for cmd in cmds:
         if cmd not in config.triggers.writable:
             raise click.ClickException("The %s configuration has no '%s' triggers registered."
-                                       "Try using another level option (like --local, --workgroup or --global)"
-                                       % (config.triggers.writelevel, cmd))
+                                       "Try using another profile option (like --local, --workgroup or --global)"
+                                       % (config.triggers.writeprofile, cmd))
     for cmd in cmds:
-        LOGGER.status("Erasing {} triggers from {} settings".format(cmd, config.triggers.writelevel))
+        LOGGER.status("Erasing {} triggers from {} settings".format(cmd, config.triggers.writeprofile))
         del config.triggers.writable[cmd]
     config.triggers.write()
 
@@ -114,13 +114,13 @@ def show(name_only, triggers, position, **kwargs):
                 click.echo(triggers_)
             else:
                 values = {
-                    level_name: format(
-                        config.triggers.all_settings[level_name].get(
+                    profile_name: format(
+                        config.triggers.all_settings[profile_name].get(
                             triggers_, {}
                         ).get(position, []))
-                    for level_name in colorer.levels_to_show
+                    for profile_name in colorer.profilenames_to_show
                 }
-                args = colorer.colorize(values, config.triggers.readlevel)
+                args = colorer.colorize(values, config.triggers.readprofile)
                 if args and not args[0]:
                     if triggers_ in triggers:
                         args = ["None"]
@@ -149,12 +149,12 @@ def rename(origin, destination, position):
                 LOGGER.debug("%s renamed in %s" % (origin, a))
                 cmd[0] = destination
                 renamed_in.add(a)
-    # warn the user if the triggers is used at other level, and thus has not been renamed there
+    # warn the user if the triggers is used at other profile, and thus has not been renamed there
     for a, cmds in six.iteritems(config.triggers.readonly):
         cmds = data[position]
         for cmd in cmds:
             if cmd[0] == origin and a not in renamed_in:
-                LOGGER.warning("%s is still used in %s at another configuration level."
+                LOGGER.warning("%s is still used in %s at another configuration profile."
                                " You may want to correct this manually." % (origin, a))
     config.triggers.write()
 

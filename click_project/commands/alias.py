@@ -82,7 +82,7 @@ def set(alias, command, documentation, params):
     if old is not None:
         LOGGER.status(
             "Removing {} alias of {}: {}".format(
-                config.alias.writelevelname,
+                config.alias.writeprofilename,
                 alias,
                 " , ".join(
                     " ".join(command)
@@ -92,7 +92,7 @@ def set(alias, command, documentation, params):
         )
     LOGGER.status(
         "New {} alias for {}: {}".format(
-            config.alias.writelevelname,
+            config.alias.writeprofilename,
             alias,
                 " , ".join(
                     " ".join(command)
@@ -114,8 +114,8 @@ def set_documentation(alias, documentation):
     """Set the documentation of the alias"""
     if alias not in config.alias.writable:
         raise click.ClickException("The %s configuration has no '%s' alias registered."
-                                   "Try using another level option (like --local, --workgroup or --global)"
-                                   % (config.alias.writelevel, alias))
+                                   "Try using another profile option (like --local, --workgroup or --global)"
+                                   % (config.alias.writeprofile, alias))
     config.alias.writable[alias]["documentation"] = documentation
     config.alias.write()
 
@@ -127,10 +127,10 @@ def unset(aliases):
     for cmd in aliases:
         if cmd not in config.alias.writable:
             raise click.ClickException("The %s configuration has no '%s' alias registered."
-                                       "Try using another level option (like --local, --workgroup or --global)"
-                                       % (config.alias.writelevel, cmd))
+                                       "Try using another profile option (like --local, --workgroup or --global)"
+                                       % (config.alias.writeprofile, cmd))
     for cmd in aliases:
-        LOGGER.status("Erasing {} alias from {} settings".format(cmd, config.alias.writelevel))
+        LOGGER.status("Erasing {} alias from {} settings".format(cmd, config.alias.writeprofile))
         del config.alias.writable[cmd]
     config.alias.write()
 
@@ -143,10 +143,10 @@ def unset_documentation(aliases):
     for cmd in aliases:
         if cmd not in config.alias.writable:
             raise click.ClickException("The %s configuration has no '%s' alias registered."
-                                       " Try using another level option (like --local, --workgroup or --global)"
-                                       % (config.alias.writelevel, cmd))
+                                       " Try using another profile option (like --local, --workgroup or --global)"
+                                       % (config.alias.writeprofile, cmd))
     for cmd in aliases:
-        LOGGER.status("Erasing the documentation of {} alias from {} settings".format(cmd, config.alias.writelevel))
+        LOGGER.status("Erasing the documentation of {} alias from {} settings".format(cmd, config.alias.writeprofile))
         config.alias.writable[cmd]["documentation"] = None
     config.alias.write()
 
@@ -170,26 +170,26 @@ def show(name_only, aliases, under, fields, format, **kwargs):
         aliases = [alias for alias in aliases if alias.startswith(under)]
     with TablePrinter(fields, format, separator=' , ') as tp, Colorer(kwargs) as colorer:
         for alias in aliases:
-            if config.alias.readlevel == "settings-file":
+            if config.alias.readprofile == "settings-file":
                 args = [format(config.alias.readonly.get(alias, {}).get("commands", []))]
-            elif "/" in config.alias.readlevel:
+            elif "/" in config.alias.readprofile:
                 args = [
                     " ".join(command)
                     for command in
                     config.alias.all_settings.get(
-                        config.alias.readlevel,
+                        config.alias.readprofile,
                         {}).get(alias)["commands"]
                 ]
             else:
                 all_values = [
-                    (level, config.alias.all_settings.get(level, {}).get(alias))
-                    for level in colorer.levels_to_show
+                    (profile, config.alias.all_settings.get(profile, {}).get(alias))
+                    for profile in colorer.profilenames_to_show
                 ]
-                all_values = [(level, value) for level, value in all_values
+                all_values = [(profile, value) for profile, value in all_values
                               if value is not None]
-                last_level, last_value = all_values[-1]
+                last_profile, last_value = all_values[-1]
                 last_command = last_value["commands"]
-                args = [colorer.apply_color(" ".join(map(quote, token)), last_level) for token in last_command]
+                args = [colorer.apply_color(" ".join(map(quote, token)), last_profile) for token in last_command]
             tp.echo(alias, args)
 
 
@@ -211,12 +211,12 @@ def rename(source, destination):
                 LOGGER.debug("%s renamed in %s" % (source, a))
                 cmd[0] = destination
                 renamed_in.add(a)
-    # warn the user if the alias is used at other level, and thus has not been renamed there
+    # warn the user if the alias is used at other profile, and thus has not been renamed there
     for a, cmds in six.iteritems(config.alias.readonly):
         cmds = data["commands"]
         for cmd in cmds:
             if cmd[0] == source and a not in renamed_in:
-                LOGGER.warning("%s is still used in %s at another configuration level."
+                LOGGER.warning("%s is still used in %s at another configuration profile."
                                " You may want to correct this manually." % (source, a))
     config.alias.write()
 

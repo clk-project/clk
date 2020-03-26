@@ -104,10 +104,10 @@ def unset(cmds):
     for cmd in cmds:
         if cmd not in config.flowdeps.writable:
             raise click.ClickException("The %s configuration has no '%s' flow dependency registered."
-                                       "Try using another level option (like --local, --workgroup or --global)"
-                                       % (config.flowdeps.writelevel, cmd))
+                                       "Try using another profile option (like --local, --workgroup or --global)"
+                                       % (config.flowdeps.writeprofile, cmd))
     for cmd in cmds:
-        LOGGER.status("Erasing {} flow dependencies from {} settings".format(cmd, config.flowdeps.writelevel))
+        LOGGER.status("Erasing {} flow dependencies from {} settings".format(cmd, config.flowdeps.writeprofile))
         del config.flowdeps.writable[cmd]
     config.flowdeps.write()
 
@@ -137,16 +137,16 @@ def show(ctx, name_only, cmds, full, fields, format, **kwargs):
                     formatted = " ".join(quote(p) for p in deps)
                 else:
                     values = {
-                        level_name: " ".join([
+                        profile_name: " ".join([
                             quote(p)
                             for p in
-                            config.flowdeps.all_settings.get(level_name, {}).get(
+                            config.flowdeps.all_settings.get(profile_name, {}).get(
                                 cmd,
                                 [])
                         ])
-                        for level_name in colorer.levels_to_show
+                        for profile_name in colorer.profilenames_to_show
                     }
-                    args = colorer.colorize(values, config.flowdeps.readlevel)
+                    args = colorer.colorize(values, config.flowdeps.readprofile)
                     formatted = " ".join(args)
                 if show_empty:
                     formatted = formatted or "None"

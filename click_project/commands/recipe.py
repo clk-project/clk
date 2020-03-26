@@ -95,7 +95,7 @@ def recipe():
     """Recipe related commands
 
     A recipe is a set of settings that may be activated or disactivated in a project.
-    The recipes can be defined at the global, workgroup or local level."""
+    The recipes can be defined at the global, workgroup or local profile."""
     pass
 
 
@@ -192,7 +192,7 @@ def show(fields, format, link, order, recipes, enabled_only, disabled_only, **kw
                 for profile in config.root_profiles
                 if profile.has_recipe_link(recipe_name)
                 ])
-            level = colorer.last_level_of_settings(
+            profile = colorer.last_profile_of_settings(
                 recipe_name,
                 config.recipe.all_settings,
             )
@@ -207,11 +207,11 @@ def show(fields, format, link, order, recipes, enabled_only, disabled_only, **kw
                         not recipe_enabled
                     )
             ):
-                level_style = colorer.get_style(level) if level else {}
+                profile_style = colorer.get_style(profile) if profile else {}
 
                 tp.echo(
                     click.style(recipe_name, fg = "green" if recipe_enabled else "red"),
-                    (level and click.style(level, **level_style)) or "Unset",
+                    (profile and click.style(profile, **profile_style)) or "Unset",
                     profiles or "Undefined",
                     link_profiles,
                     config.get_recipe_order(recipe_name),
@@ -232,7 +232,7 @@ def disable(ctx, recipe, all):
             config.recipe.writable[cmd]["enabled"] = False
         else:
             config.recipe.writable[cmd] = {"enabled": False}
-        LOGGER.status("Disabling recipe {} in level {}".format(cmd, config.recipe.writelevel))
+        LOGGER.status("Disabling recipe {} in profile {}".format(cmd, config.recipe.writeprofile))
     config.recipe.write()
 
 
@@ -241,20 +241,20 @@ def disable(ctx, recipe, all):
 @argument("recipe", type=CommandSettingsKeyType("recipe"), nargs=-1, help="The name of the recipe to unset")
 @pass_context
 def unset(ctx, recipe, all):
-    """Don't say whether to use or not this recipe (let the upper levels decide)"""
+    """Don't say whether to use or not this recipe (let the upper profiles decide)"""
     if all:
         recipe = list(config.recipe.readonly.keys())
     for cmd in recipe:
         if cmd not in config.recipe.writable:
             raise click.UsageError(
-                "Recipe {} not set in level {}".format(
+                "Recipe {} not set in profile {}".format(
                     cmd,
-                    config.recipe.writelevel
+                    config.recipe.writeprofile
                 )
             )
     for cmd in recipe:
         del config.recipe.writable[cmd]
-        LOGGER.status("Unsetting {} from level {}".format(cmd, config.recipe.writelevel))
+        LOGGER.status("Unsetting {} from profile {}".format(cmd, config.recipe.writeprofile))
     config.recipe.write()
 
 
@@ -275,14 +275,14 @@ def enable(ctx, recipe, all, only):
                 config.recipe.writable[cmd]["enabled"] = False
             else:
                 config.recipe.writable[cmd] = {"enabled": False}
-            LOGGER.status("Disabling recipe {} in level {}".format(cmd, config.recipe.writelevel))
+            LOGGER.status("Disabling recipe {} in profile {}".format(cmd, config.recipe.writeprofile))
 
     for cmd in recipe:
         if cmd in config.recipe.writable:
             config.recipe.writable[cmd]["enabled"] = True
         else:
             config.recipe.writable[cmd] = {"enabled": True}
-        LOGGER.status("Enabling recipe {} in level {}".format(cmd, config.recipe.writelevel))
+        LOGGER.status("Enabling recipe {} in profile {}".format(cmd, config.recipe.writeprofile))
     config.recipe.write()
 
 @recipe.command(handle_dry_run=True)
@@ -310,7 +310,7 @@ def set_order(recipe, order):
             config.recipe.writable[cmd]["order"] = order
         else:
             config.recipe.writable[cmd] = {"order": order}
-        LOGGER.status("Set order of {} to {} in level {}".format(cmd, order, config.recipe.writelevel))
+        LOGGER.status("Set order of {} to {} in profile {}".format(cmd, order, config.recipe.writeprofile))
     config.recipe.write()
 
 
@@ -319,7 +319,7 @@ def link():
     """Manipulate recipes link"""
 
 
-link.inherited_params = ["level", "recipe"]
+link.inherited_params = ["profile", "recipe"]
 
 
 @link.command()
@@ -331,7 +331,7 @@ def _enable(recipes):
                 config.recipe.profile.link_location(recipe)
         ) as values:
             values["enabled"] = True
-        LOGGER.status("Enabling the link file of {} ({})".format(recipe, config.recipe.writelevel))
+        LOGGER.status("Enabling the link file of {} ({})".format(recipe, config.recipe.writeprofile))
 
 
 @link.command()
@@ -343,7 +343,7 @@ def _disable(recipes):
                 config.recipe.profile.link_location(recipe)
         ) as values:
             values["enabled"] = False
-        LOGGER.status("Disabling the link file of {} ({})".format(recipe, config.recipe.writelevel))
+        LOGGER.status("Disabling the link file of {} ({})".format(recipe, config.recipe.writeprofile))
 
 
 @link.command()
@@ -382,4 +382,4 @@ def _unset(recipes):
     """Remove the the link file"""
     for recipe in recipes:
         rm(config.recipe.profile.link_location(recipe))
-        LOGGER.status("Removing the link file of {} ({})".format(recipe, config.recipe.writelevel))
+        LOGGER.status("Removing the link file of {} ({})".format(recipe, config.recipe.writeprofile))

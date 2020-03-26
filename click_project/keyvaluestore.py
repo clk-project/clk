@@ -30,18 +30,18 @@ def keyvaluestore_generic_commands(group, settings_name):
         """Rename a key"""
         if src not in getattr(config, settings_name).writable:
             raise click.ClickException("The %s configuration has no '%s' values registered."
-                                       "Try using another level option (like --local, --workgroup or --global)"
-                                       % (getattr(config, settings_name).writelevel, src))
+                                       "Try using another profile option (like --local, --workgroup or --global)"
+                                       % (getattr(config, settings_name).writeprofile, src))
         if dst in getattr(config, settings_name).writable and not overwrite:
             LOGGER.error(
-                "{} already exists at level {}"
+                "{} already exists at profile {}"
                 " use --overwrite to perform the renaming anyway".format(
                     dst,
-                    getattr(config, settings_name).writelevel))
+                    getattr(config, settings_name).writeprofile))
             exit(1)
         getattr(config, settings_name).writable[dst] = getattr(config, settings_name).writable[src]
         del getattr(config, settings_name).writable[src]
-        LOGGER.status("Rename {} -> {} in level {}".format(src, dst, getattr(config, settings_name).writelevel))
+        LOGGER.status("Rename {} -> {} in profile {}".format(src, dst, getattr(config, settings_name).writeprofile))
         getattr(config, settings_name).write()
 
     @group.command(handle_dry_run=True)
@@ -51,10 +51,10 @@ def keyvaluestore_generic_commands(group, settings_name):
         for key in keys:
             if key not in getattr(config, settings_name).writable:
                 raise click.ClickException("The %s configuration has no '%s' value registered."
-                                           "Try using another level option (like --local, --workgroup or --global)"
-                                           % (getattr(config, settings_name).writelevel, key))
+                                           "Try using another profile option (like --local, --workgroup or --global)"
+                                           % (getattr(config, settings_name).writeprofile, key))
         for key in keys:
-            LOGGER.status("Erasing {} value from {} settings".format(key, getattr(config, settings_name).writelevel))
+            LOGGER.status("Erasing {} value from {} settings".format(key, getattr(config, settings_name).writeprofile))
             del getattr(config, settings_name).writable[key]
         getattr(config, settings_name).write()
 
@@ -73,11 +73,11 @@ def keyvaluestore_generic_commands(group, settings_name):
         )
         with TablePrinter(fields, format) as tp, Colorer(kwargs) as colorer:
             for key in keys:
-                if getattr(config, settings_name).readlevel == "settings-file":
+                if getattr(config, settings_name).readprofile == "settings-file":
                     args = [format(getattr(config, settings_name).readonly.get(key, {}).get("commands", []))]
-                elif "/" in getattr(config, settings_name).readlevel:
+                elif "/" in getattr(config, settings_name).readprofile:
                     args = getattr(config, settings_name).all_settings.get(
-                        getattr(config, settings_name).readlevel,
+                        getattr(config, settings_name).readprofile,
                         {}
                     ).get(
                         key,
@@ -87,15 +87,15 @@ def keyvaluestore_generic_commands(group, settings_name):
                         continue
                 else:
                     all_values = [
-                        (level, getattr(config, settings_name).all_settings.get(level, {}).get(key))
-                        for level in colorer.levels_to_show
+                        (profile, getattr(config, settings_name).all_settings.get(profile, {}).get(key))
+                        for profile in colorer.profilenames_to_show
                     ]
-                    all_values = [(level, value) for level, value in all_values
+                    all_values = [(profile, value) for profile, value in all_values
                                   if value is not None]
                     if not all_values:
                         # noting to show for this key
                         continue
-                    last_level, last_value = all_values[-1]
+                    last_profile, last_value = all_values[-1]
                     value = last_value["value"]
-                    args = colorer.apply_color(value, last_level)
+                    args = colorer.apply_color(value, last_profile)
                 tp.echo(key, args)
