@@ -171,8 +171,11 @@ class Profile(object):
             return None
 
     def __init__(self, location, app_name, dry_run=False, name=None,
-                 explicit=True, isroot=True, activation_level=ActivationLevel.global_):
+                 explicit=True, isroot=True,
+                 activation_level=ActivationLevel.global_,
+                 readonly=False):
         self.app_name = app_name
+        self.readonly = readonly
         self.activation_level = activation_level
         self.explicit = explicit
         self.isroot = isroot
@@ -404,6 +407,10 @@ class Profile(object):
         return True
 
     def write_settings(self):
+        if self.readonly:
+            raise click.UsageError(
+                f"Cannot write into {self.name} that is read only."
+            )
         if self.frozen_during_migration:
             raise click.UsageError(
                 "You cannot edit the configuration if the migration is not persisted"
