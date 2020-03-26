@@ -117,7 +117,7 @@ class Config(object):
         self.custom_env = {}
         self.override_env = {}
         self.old_env = os.environ.copy()
-        self.system_profile_location = None
+        self.distribution_profile_location = None
 
     @property
     def project(self):
@@ -405,11 +405,11 @@ class Config(object):
         )
 
     @property
-    def system_profile(self):
-        if self.system_profile_location is not None:
+    def distribution_profile(self):
+        if self.distribution_profile_location is not None:
             return ProfileFactory.create_or_get_by_location(
-                self.system_profile_location,
-                name="system",
+                self.distribution_profile_location,
+                name="distribution",
                 app_name=self.app_name,
                 explicit=False,
                 isroot=True,
@@ -435,7 +435,7 @@ class Config(object):
                 )
             )
 
-        add_profile(self.system_profile)
+        add_profile(self.distribution_profile)
         add_profile(self.global_preset_profile)
         add_profile(self.global_profile)
         add_profile(self.workgroup_preset_profile)
