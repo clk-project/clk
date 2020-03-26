@@ -345,7 +345,7 @@ class Config(object):
         self.guess_project()
         if self.project:
             return ProfileFactory.create_or_get_preset_profile(
-                "local/preset",
+                "localpreset",
                 settings={
                     "parameters": {
                         self.main_command.path: ["--project", self.project]
@@ -372,7 +372,7 @@ class Config(object):
         self.guess_project()
         if self.project:
             return ProfileFactory.create_or_get_preset_profile(
-                "workgroup/preset",
+                "workgrouppreset",
                 settings={
                     "recipe": {
                         name: json.loads(open(self.workgroup_profile.link_location(name), "rb").read().decode("utf-8"))
@@ -394,7 +394,7 @@ class Config(object):
     @property
     def global_preset_profile(self):
         return ProfileFactory.create_or_get_preset_profile(
-            "global/preset",
+            "globalpreset",
             settings={
                 "recipe": {
                     name: json.loads(open(self.global_profile.link_location(name), "rb").read().decode("utf-8"))

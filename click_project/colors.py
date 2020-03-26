@@ -37,12 +37,12 @@ class Colorer(object):
 
         self.level_to_color = collections.defaultdict(dict)
         self.level_to_color["global"] = kwargs["global_color"]
-        self.level_to_color["global/preset"] = compute_preset_colors("global")
+        self.level_to_color["globalpreset"] = compute_preset_colors("global")
         if config.local_profile:
             self.level_to_color["workgroup"] = kwargs.get("workgroup_color")
-            self.level_to_color["workgroup/preset"] = compute_preset_colors("workgroup")
+            self.level_to_color["workgrouppreset"] = compute_preset_colors("workgroup")
             self.level_to_color["local"] = kwargs.get("local_color")
-            self.level_to_color["local/preset"] = compute_preset_colors("local")
+            self.level_to_color["localpreset"] = compute_preset_colors("local")
         for recipe in config.all_recipes:
             self.level_to_color[recipe.name] = kwargs[
                 recipe.name.replace("/", "_") + "_color"
