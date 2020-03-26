@@ -11,7 +11,7 @@ from contextlib import contextmanager
 import six
 import click
 
-from click_project.profile import ProfileFactory
+from click_project.profile import ProfileFactory, ActivationLevel
 from click_project.click_helpers import click_get_current_context_safe
 from click_project.log import LOG_LEVELS, set_level, get_logger
 from click_project.lib import updated_env
@@ -89,10 +89,14 @@ class Config(object):
             settings=defaultdict(lambda: defaultdict(list)),
             explicit=False,
             isroot=True,
+            activation_level=ActivationLevel.global_,
             )
         self.flow_profile = ProfileFactory.create_or_get_preset_profile(
             "flow",
-            settings=defaultdict(lambda: defaultdict(list))
+            settings=defaultdict(lambda: defaultdict(list)),
+            explicit=False,
+            isroot=True,
+            activation_level=ActivationLevel.global_,
         )
         self.app_dir = get_appdir(self.app_dir_name)
         self.autoflow = None
@@ -102,6 +106,7 @@ class Config(object):
             settings=defaultdict(lambda: defaultdict(list)),
             explicit=False,
             isroot=True,
+            activation_level=ActivationLevel.global_,
             )
         self._dry_run = None
         self._project = None
@@ -316,6 +321,7 @@ class Config(object):
                 app_name=self.app_name,
                 explicit=True,
                 isroot=True,
+                activation_level=ActivationLevel.local,
             )
         else:
             return None
@@ -333,6 +339,7 @@ class Config(object):
                 },
                 explicit=False,
                 isroot=True,
+                activation_level=ActivationLevel.local,
             )
         else:
             return None
@@ -347,6 +354,7 @@ class Config(object):
                 app_name=self.app_name,
                 explicit=True,
                 isroot=True,
+                activation_level=ActivationLevel.local,
             )
         else:
             return None
@@ -365,6 +373,7 @@ class Config(object):
                 },
                 explicit=False,
                 isroot=True,
+                activation_level=ActivationLevel.local,
             )
         else:
             return None
@@ -377,6 +386,7 @@ class Config(object):
             app_name=self.app_name,
             explicit=True,
             isroot=True,
+            activation_level=ActivationLevel.global_,
         )
 
     @property
@@ -391,6 +401,7 @@ class Config(object):
             },
             explicit=False,
             isroot=True,
+            activation_level=ActivationLevel.global_,
         )
 
     @property
@@ -402,6 +413,7 @@ class Config(object):
                 app_name=self.app_name,
                 explicit=False,
                 isroot=True,
+                activation_level=ActivationLevel.global_,
             )
         else:
             return None

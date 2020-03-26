@@ -8,6 +8,7 @@ import json
 import collections
 import six
 import re
+from enum import Enum
 
 import click
 
@@ -16,6 +17,11 @@ from click_project.lib import json_dump_file, glob, rm, copy, makedirs, \
 from click_project.log import get_logger
 
 LOGGER = get_logger(__name__)
+
+
+class ActivationLevel(Enum):
+    local = "local"
+    global_ = "global"
 
 
 def load_settings(path):
@@ -165,8 +171,9 @@ class Profile(object):
             return None
 
     def __init__(self, location, app_name, dry_run=False, name=None,
-                 explicit=True, isroot=True):
+                 explicit=True, isroot=True, activation_level=ActivationLevel.global_):
         self.app_name = app_name
+        self.activation_level = activation_level
         self.explicit = explicit
         self.isroot = isroot
         self.migrate_from = [
@@ -515,12 +522,13 @@ class Profile(object):
 
 
 class PresetProfile():
-    def __init__(self, name, settings, explicit=True, isroot=True):
+    def __init__(self, name, settings, explicit=True, isroot=True, activation_level=ActivationLevel.global_):
         self.name = name
         self.settings = settings
         self.recipes = []
         self.isroot = isroot
         self.explicit = explicit
+        self.activation_level = activation_level
 
     def get_settings(self, section):
         if (
@@ -572,8 +580,14 @@ class ProfileFactory(object):
         return profile_location_cache[location]
 
     @staticmethod
-    def create_or_get_preset_profile(name, settings=None, explicit=True, isroot=True):
+    def create_or_get_preset_profile(
+            name,
+            settings=None, explicit=True, isroot=True,
+            activation_level=ActivationLevel.global_):
         if name not in profile_name_cache:
-            profile = PresetProfile(name, settings, explicit=explicit, isroot=isroot)
+            profile = PresetProfile(name, settings,
+                                    explicit=explicit, isroot=isroot,
+                                    activation_level=activation_level
+            )
             profile_name_cache[name] = profile
         return profile_name_cache[name]
