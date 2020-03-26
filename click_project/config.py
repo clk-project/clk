@@ -414,6 +414,7 @@ class Config(object):
                 explicit=False,
                 isroot=True,
                 activation_level=ActivationLevel.global_,
+                readonly=True,
             )
         else:
             return None
