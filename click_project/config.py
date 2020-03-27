@@ -107,6 +107,7 @@ class Config(object):
             explicit=False,
             isroot=True,
             activation_level=ActivationLevel.global_,
+            default_color="bold-True"
             )
         self._dry_run = None
         self._project = None

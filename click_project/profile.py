@@ -602,11 +602,13 @@ class ProfileFactory(object):
     def create_or_get_preset_profile(
             name,
             settings=None, explicit=True, isroot=True,
-            activation_level=ActivationLevel.global_):
+            activation_level=ActivationLevel.global_,
+            default_color=None):
         if name not in profile_name_cache:
             profile = PresetProfile(name, settings,
                                     explicit=explicit, isroot=isroot,
-                                    activation_level=activation_level
+                                    activation_level=activation_level,
+                                    default_color=default_color,
             )
             profile_name_cache[name] = profile
         return profile_name_cache[name]

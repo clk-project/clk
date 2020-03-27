@@ -35,19 +35,11 @@ class Colorer(object):
             colors["underline"] = not colors.get("underline")
             return colors
 
-        self.profile_to_color = collections.defaultdict(dict)
-        self.profile_to_color["global"] = kwargs["global_color"]
-        self.profile_to_color["globalpreset"] = compute_preset_colors("global")
-        if config.local_profile:
-            self.profile_to_color["workgroup"] = kwargs.get("workgroup_color")
-            self.profile_to_color["workgrouppreset"] = compute_preset_colors("workgroup")
-            self.profile_to_color["local"] = kwargs.get("local_color")
-            self.profile_to_color["localpreset"] = compute_preset_colors("local")
-        for recipe in config.all_enabled_recipes:
-            self.profile_to_color[recipe.name] = kwargs[
-                recipe.name.replace("/", "_") + "_color"
-            ]
-        self.profile_to_color["env"] = {"bold": True}
+        self.profile_to_color = {
+            name[:-len("_color")].replace("_slash_", "/"): value
+            for name, value in kwargs.items()
+            if name.endswith("_color")
+        }
         if not color:
             for key in self.profile_to_color.copy():
                 self.profile_to_color[key] = None
@@ -118,6 +110,7 @@ class Colorer(object):
             else:
                 default_color = profile.default_color
             f = option(f'--{profile.name.replace("/", "-")}-color',
+                       f"""{profile.name.replace("/", "_slash_")}_color""",
                        help=f"Color to show the {profile.name} profile",
                        type=ColorType(), default=default_color)(f)
         return f
