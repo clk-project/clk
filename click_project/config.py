@@ -209,27 +209,13 @@ class Config(object):
 
     def iter_settings(self, explicit_only=False, recurse=True, only_this_recipe=None):
         explicit_only = explicit_only or only_this_recipe
-        if not explicit_only:
-            yield self.global_preset_profile.settings
-        for settings in self.load_settings_from_profile(self.global_profile,
-                                                        recurse,
-                                                        only_this_recipe=only_this_recipe):
-            yield settings
-        if not explicit_only and self.workgroup_preset_profile:
-            yield self.workgroup_preset_profile.settings
-        for settings in self.load_settings_from_profile(self.workgroup_profile,
-                                                        recurse,
-                                                        only_this_recipe=only_this_recipe):
-            yield settings
-        if not explicit_only and self.local_preset_profile:
-            yield self.local_preset_profile.settings
-        for settings in self.load_settings_from_profile(
-                self.local_profile, recurse, only_this_recipe=only_this_recipe):
-            yield settings
-        if not explicit_only:
-            yield self.env_profile.settings
-            yield self.command_line_profile.settings
-            yield self.flow_profile.settings
+        for profile in self.all_profiles:
+            if not explicit_only or profile.explicit:
+                yield from self.load_settings_from_profile(
+                        profile,
+                        recurse,
+                        only_this_recipe=only_this_recipe
+                )
 
     def merge_settings(self):
         if self.local_profile:
