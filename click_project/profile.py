@@ -45,7 +45,11 @@ def write_settings(settings_path, settings, dry_run):
     json_dump_file(settings_path, settings, internal=True)
 
 
-class Profile(object):
+class Profile():
+    def __repr__(self):
+        return f"<{self.__class__.__name__}: {self.name}>"
+
+class DirectoryProfile(Profile):
     def __gt__(self, other):
         return self.name < other.name
 
@@ -528,7 +532,7 @@ class Profile(object):
         return True
 
 
-class PresetProfile():
+class PresetProfile(Profile):
     def __init__(self, name, settings, explicit=True, isroot=True, activation_level=ActivationLevel.global_):
         self.name = name
         self.settings = settings
@@ -582,7 +586,7 @@ class ProfileFactory(object):
         if "name" not in kwargs:
             kwargs["name"] = "unnamed"
         if location not in profile_location_cache:
-            profile = Profile(location, *args, **kwargs)
+            profile = DirectoryProfile(location, *args, **kwargs)
             profile_location_cache[location] = profile
         return profile_location_cache[location]
 
