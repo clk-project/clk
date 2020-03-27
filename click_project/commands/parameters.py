@@ -203,8 +203,8 @@ def show(ctx, name_only, cmds, under, fields, format, **kwargs):
                     args = get_line(config.parameters.readprofile)
                 else:
                     values = {
-                        profile_name: get_line(profile_name)
-                        for profile_name in colorer.profilenames_to_show
+                        profile.name: get_line(profile.name)
+                        for profile in config.all_enabled_profiles
                     }
                     args = colorer.colorize(values, config.parameters.readprofile)
                 if cmd is None:

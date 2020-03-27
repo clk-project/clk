@@ -99,14 +99,14 @@ def show(ctx, name_only, launchers, all, fields, format, **kwargs):
                     args = config.launchers.readonly.get(launcher_name, [])
                 else:
                     values = {
-                        profile_name: " ".join([
+                        profile.name: " ".join([
                             quote(p)
                             for p in
-                            config.launchers.all_settings[profile_name].get(
+                            config.launchers.all_settings[profile.name].get(
                                 launcher_name,
                                 [])
                         ])
-                        for profile_name in colorer.profilenames_to_show
+                        for profile in config.all_enabled_profiles
                     }
                     args = colorer.colorize(values, config.launchers.readprofile)
                 if args and args[0]:

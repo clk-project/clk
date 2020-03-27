@@ -114,11 +114,11 @@ def show(name_only, triggers, position, **kwargs):
                 click.echo(triggers_)
             else:
                 values = {
-                    profile_name: format(
-                        config.triggers.all_settings[profile_name].get(
+                    profile.name: format(
+                        config.triggers.all_settings[profile.name].get(
                             triggers_, {}
                         ).get(position, []))
-                    for profile_name in colorer.profilenames_to_show
+                    for profile in config.all_enabled_profiles
                 }
                 args = colorer.colorize(values, config.triggers.readprofile)
                 if args and not args[0]:

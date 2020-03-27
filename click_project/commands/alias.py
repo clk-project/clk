@@ -182,8 +182,8 @@ def show(name_only, aliases, under, fields, format, **kwargs):
                 ]
             else:
                 all_values = [
-                    (profile, config.alias.all_settings.get(profile, {}).get(alias))
-                    for profile in colorer.profilenames_to_show
+                    (profile.name, config.alias.all_settings.get(profile.name, {}).get(alias))
+                    for profile in config.all_enabled_profiles
                 ]
                 all_values = [(profile, value) for profile, value in all_values
                               if value is not None]

@@ -137,14 +137,14 @@ def show(ctx, name_only, cmds, full, fields, format, **kwargs):
                     formatted = " ".join(quote(p) for p in deps)
                 else:
                     values = {
-                        profile_name: " ".join([
+                        profile.name: " ".join([
                             quote(p)
                             for p in
-                            config.flowdeps.all_settings.get(profile_name, {}).get(
+                            config.flowdeps.all_settings.get(profile.name, {}).get(
                                 cmd,
                                 [])
                         ])
-                        for profile_name in colorer.profilenames_to_show
+                        for profile in config.all_enabled_profiles
                     }
                     args = colorer.colorize(values, config.flowdeps.readprofile)
                     formatted = " ".join(args)

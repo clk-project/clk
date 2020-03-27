@@ -87,8 +87,8 @@ def keyvaluestore_generic_commands(group, settings_name):
                         continue
                 else:
                     all_values = [
-                        (profile, getattr(config, settings_name).all_settings.get(profile, {}).get(key))
-                        for profile in colorer.profilenames_to_show
+                        (profile.name, getattr(config, settings_name).all_settings.get(profile.name, {}).get(key))
+                        for profile in config.all_enabled_profiles
                     ]
                     all_values = [(profile, value) for profile, value in all_values
                                   if value is not None]
