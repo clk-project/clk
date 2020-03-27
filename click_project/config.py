@@ -207,24 +207,24 @@ class Config(object):
             self.settings2[section] = collections.OrderedDict()
         return self.settings2[section]
 
-    def iter_settings(self, profiles_only=False, recurse=True, recipe_short_name=None):
-        profiles_only = profiles_only or recipe_short_name
+    def iter_settings(self, profiles_only=False, recurse=True, only_this_recipe=None):
+        profiles_only = profiles_only or only_this_recipe
         if not profiles_only:
             yield self.global_preset_profile.settings
         for settings in self.load_settings_from_profile(self.global_profile,
                                                         recurse,
-                                                        recipe_short_name=recipe_short_name):
+                                                        only_this_recipe=only_this_recipe):
             yield settings
         if not profiles_only and self.workgroup_preset_profile:
             yield self.workgroup_preset_profile.settings
         for settings in self.load_settings_from_profile(self.workgroup_profile,
                                                         recurse,
-                                                        recipe_short_name=recipe_short_name):
+                                                        only_this_recipe=only_this_recipe):
             yield settings
         if not profiles_only and self.local_preset_profile:
             yield self.local_preset_profile.settings
         for settings in self.load_settings_from_profile(
-                self.local_profile, recurse, recipe_short_name=recipe_short_name):
+                self.local_profile, recurse, only_this_recipe=only_this_recipe):
             yield settings
         if not profiles_only:
             yield self.env_profile.settings
@@ -258,15 +258,15 @@ class Config(object):
             }
         ] + [os.path.join(self.workgroup_profile.location, "scripts")]
 
-    def load_settings_from_profile(self, profile, recurse, recipe_short_name=None):
+    def load_settings_from_profile(self, profile, recurse, only_this_recipe=None):
         if profile is not None and (
-                not recipe_short_name
-                or profile.short_name == recipe_short_name
+                not only_this_recipe
+                or profile.short_name == only_this_recipe
         ):
             yield profile.settings
         if profile is not None and recurse:
             for recipe in self.filter_enabled_recipes(profile.recipes):
-                if not recipe_short_name or recipe_short_name == recipe.short_name:
+                if not only_this_recipe or only_this_recipe == recipe.short_name:
                     for settings in self.load_settings_from_profile(recipe, recurse):
                         yield settings
 

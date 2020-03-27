@@ -86,7 +86,7 @@ def use_settings(settings_name, settings_cls, override=True, default_profile='co
                 s1, s2 = merge_settings(config.iter_settings(
                     profiles_only=True,
                     recurse=True,
-                    recipe_short_name=recipe,
+                    only_this_recipe=recipe,
                 ))
                 profile = config.local_profile or config.global_profile
                 if recipe:
@@ -105,7 +105,7 @@ def use_settings(settings_name, settings_cls, override=True, default_profile='co
                 s1, s2 = merge_settings(config.load_settings_from_profile(
                     profile,
                     recurse=True,
-                    recipe_short_name=recipe,
+                    only_this_recipe=recipe,
                 ))
                 for recipe in config.filter_enabled_recipes(profile.recipes):
                     settings_store.all_settings[recipe.name] = recipe.get_settings(settings_name)
