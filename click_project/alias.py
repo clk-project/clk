@@ -65,7 +65,7 @@ class AliasCommandResolver(CommandResolver):
 
         for cmd in commands_to_run:
 
-            cmdctx = get_ctx(cmd)
+            cmdctx = get_ctx(cmd, resilient_parsing=True)
             # capture the flow of the aliased command only if it is not called
             # with an explicit flow
             if (
