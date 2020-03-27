@@ -84,7 +84,7 @@ def use_settings(settings_name, settings_cls, override=True, default_profile='co
             if profile_name == "context":
                 compute_settings(False)
                 s1, s2 = merge_settings(config.iter_settings(
-                    profiles_only=True,
+                    explicit_only=True,
                     recurse=True,
                     only_this_recipe=recipe,
                 ))

@@ -207,26 +207,26 @@ class Config(object):
             self.settings2[section] = collections.OrderedDict()
         return self.settings2[section]
 
-    def iter_settings(self, profiles_only=False, recurse=True, only_this_recipe=None):
-        profiles_only = profiles_only or only_this_recipe
-        if not profiles_only:
+    def iter_settings(self, explicit_only=False, recurse=True, only_this_recipe=None):
+        explicit_only = explicit_only or only_this_recipe
+        if not explicit_only:
             yield self.global_preset_profile.settings
         for settings in self.load_settings_from_profile(self.global_profile,
                                                         recurse,
                                                         only_this_recipe=only_this_recipe):
             yield settings
-        if not profiles_only and self.workgroup_preset_profile:
+        if not explicit_only and self.workgroup_preset_profile:
             yield self.workgroup_preset_profile.settings
         for settings in self.load_settings_from_profile(self.workgroup_profile,
                                                         recurse,
                                                         only_this_recipe=only_this_recipe):
             yield settings
-        if not profiles_only and self.local_preset_profile:
+        if not explicit_only and self.local_preset_profile:
             yield self.local_preset_profile.settings
         for settings in self.load_settings_from_profile(
                 self.local_profile, recurse, only_this_recipe=only_this_recipe):
             yield settings
-        if not profiles_only:
+        if not explicit_only:
             yield self.env_profile.settings
             yield self.command_line_profile.settings
             yield self.flow_profile.settings
@@ -271,10 +271,10 @@ class Config(object):
                         yield settings
 
     def get_profile_settings(self, section):
-        return merge_settings(self.iter_settings(profiles_only=True))[0].get(section, {})
+        return merge_settings(self.iter_settings(explicit_only=True))[0].get(section, {})
 
     def get_profile_settings2(self, section):
-        return merge_settings(self.iter_settings(profiles_only=True))[1].get(section, {})
+        return merge_settings(self.iter_settings(explicit_only=True))[1].get(section, {})
 
     def get_profile_by_name(self, name):
         return [profile for profile in self.all_profiles if profile.name == name][0]
