@@ -207,24 +207,24 @@ class Config(object):
             self.settings2[section] = collections.OrderedDict()
         return self.settings2[section]
 
-    def iter_settings(self, profiles_only=False, with_recipes=True, recipe_short_name=None):
+    def iter_settings(self, profiles_only=False, recurse=True, recipe_short_name=None):
         profiles_only = profiles_only or recipe_short_name
         if not profiles_only:
             yield self.global_preset_profile.settings
         for settings in self.load_settings_from_profile(self.global_profile,
-                                                        with_recipes,
+                                                        recurse,
                                                         recipe_short_name=recipe_short_name):
             yield settings
         if not profiles_only and self.workgroup_preset_profile:
             yield self.workgroup_preset_profile.settings
         for settings in self.load_settings_from_profile(self.workgroup_profile,
-                                                        with_recipes,
+                                                        recurse,
                                                         recipe_short_name=recipe_short_name):
             yield settings
         if not profiles_only and self.local_preset_profile:
             yield self.local_preset_profile.settings
         for settings in self.load_settings_from_profile(
-                self.local_profile, with_recipes, recipe_short_name=recipe_short_name):
+                self.local_profile, recurse, recipe_short_name=recipe_short_name):
             yield settings
         if not profiles_only:
             yield self.env_profile.settings
@@ -238,10 +238,10 @@ class Config(object):
             self.workgroup_profile.compute_settings()
         migrate_profiles()
         # first step to get the initial settings
-        self.settings, self.settings2 = merge_settings(self.iter_settings(with_recipes=False))
+        self.settings, self.settings2 = merge_settings(self.iter_settings(recurse=False))
         # second step now that the we have enough settings to decide which
         # recipes to enable
-        self.settings, self.settings2 = merge_settings(self.iter_settings(with_recipes=True))
+        self.settings, self.settings2 = merge_settings(self.iter_settings(recurse=True))
 
     @property
     def project_bin_dirs(self):
@@ -258,16 +258,16 @@ class Config(object):
             }
         ] + [os.path.join(self.workgroup_profile.location, "scripts")]
 
-    def load_settings_from_profile(self, profile, with_recipes, recipe_short_name=None):
+    def load_settings_from_profile(self, profile, recurse, recipe_short_name=None):
         if profile is not None and (
                 not recipe_short_name
                 or profile.short_name == recipe_short_name
         ):
             yield profile.settings
-        if profile is not None and with_recipes:
+        if profile is not None and recurse:
             for recipe in self.filter_enabled_recipes(profile.recipes):
                 if not recipe_short_name or recipe_short_name == recipe.short_name:
-                    for settings in self.load_settings_from_profile(recipe, with_recipes):
+                    for settings in self.load_settings_from_profile(recipe, recurse):
                         yield settings
 
     def get_profile_settings(self, section):
