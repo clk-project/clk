@@ -448,6 +448,12 @@ class Config(object):
             if profile.isroot
         ]
 
+    @property
+    def all_recipes(self):
+        for profile in self.root_profiles:
+            for recipe in self.sorted_recipes(profile.recipes):
+                yield recipe
+
     def iter_recipes(self, short_name):
         for profile in self.root_profiles:
             for recipe in self.filter_enabled_recipes(profile.recipes):
@@ -456,27 +462,15 @@ class Config(object):
 
     @property
     def all_disabled_recipes(self):
-        for profile in self.root_profiles:
-            for recipe in self.sorted_recipes(self.filter_disabled_recipes(profile.recipes)):
-                yield recipe
+        return map(self.filter_disabled_recipes, self.all_recipes)
 
     @property
     def all_unset_recipes(self):
-        for profile in self.root_profiles:
-            for recipe in self.sorted_recipes(self.filter_unset_recipes(profile.recipes)):
-                yield recipe
-
-    @property
-    def all_recipes(self):
-        for profile in self.root_profiles:
-            for recipe in self.sorted_recipes(profile.recipes):
-                yield recipe
+        return map(self.filter_unset_recipes, self.all_recipes)
 
     @property
     def all_enabled_recipes(self):
-        for profile in self.root_profiles:
-            for recipe in self.sorted_recipes(self.filter_enabled_recipes(profile.recipes)):
-                yield recipe
+        return map(self.filter_enabled_recipes, self.all_recipes)
 
     def sorted_recipes(self, recipes):
         return sorted(
