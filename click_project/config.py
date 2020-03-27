@@ -40,10 +40,10 @@ def get_appdir(appname):
     return click.get_app_dir(appname)
 
 
-def merge_settings(iter_settings):
+def merge_settings(settings):
     settings = collections.OrderedDict()
     settings2 = collections.OrderedDict()
-    for s in iter_settings:
+    for s in settings:
         for k, v in six.iteritems(s):
             if k == "_self":
                 # self is not mergeable, for ot gives information about the file itself
