@@ -21,13 +21,13 @@ class ScriptCommandResolver(ExternalCommandResolver):
         if config.project:
             cmddirs.append(config.project + '/scripts')
             cmddirs.append(config.local_profile.location + '/scripts')
-            for recipe in config.filter_enabled_recipes(config.local_profile.recipes):
+            for recipe in config.filter_enabled_profiles(config.local_profile.recipes):
                 cmddirs.append(os.path.join(recipe.location, "scripts"))
             cmddirs.append(config.workgroup_profile.location + '/scripts')
-            for recipe in config.filter_enabled_recipes(config.workgroup_profile.recipes):
+            for recipe in config.filter_enabled_profiles(config.workgroup_profile.recipes):
                 cmddirs.append(os.path.join(recipe.location, "scripts"))
         cmddirs.append(config.app_dir + "/scripts")
-        for recipe in config.filter_enabled_recipes(config.global_profile.recipes):
+        for recipe in config.filter_enabled_profiles(config.global_profile.recipes):
             cmddirs.append(os.path.join(recipe.location, "scripts"))
         return cmddirs
 

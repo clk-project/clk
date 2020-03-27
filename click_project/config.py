@@ -251,7 +251,7 @@ class Config(object):
         ):
             yield profile.settings
         if profile is not None and recurse:
-            for recipe in self.filter_enabled_recipes(profile.recipes):
+            for recipe in self.filter_enabled_profiles(profile.recipes):
                 if not only_this_recipe or only_this_recipe == recipe.short_name:
                     for settings in self.load_settings_from_profile(recipe, recurse):
                         yield settings
@@ -468,7 +468,7 @@ class Config(object):
 
     @property
     def all_enabled_recipes(self):
-        return self.filter_enabled_recipes(self.all_recipes)
+        return self.filter_enabled_profiles(self.all_recipes)
 
     def sorted_recipes(self, recipes):
         return sorted(
@@ -497,13 +497,6 @@ class Config(object):
     def is_recipe_enabled(self, shortname):
         return (self.settings2 or {}).get("recipe", {}).get(shortname, {}).get("enabled")
 
-    def filter_enabled_recipes(self, recipes):
-        return [
-            recipe
-            for recipe in recipes
-            if self.is_recipe_enabled(recipe.short_name)
-        ]
-
     def filter_unset_recipes(self, recipes):
         return [
             recipe
@@ -521,7 +514,7 @@ class Config(object):
     @property
     def all_enabled_profiles_and_recipes(self):
         for profile in self.root_profiles:
-            for recipe in self.sorted_recipes(self.filter_enabled_recipes(profile.recipes)):
+            for recipe in self.sorted_recipes(self.filter_enabled_profiles(profile.recipes)):
                 yield recipe
             yield profile
 

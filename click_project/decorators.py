@@ -107,7 +107,7 @@ def use_settings(settings_name, settings_cls, override=True, default_profile='co
                     recurse=True,
                     only_this_recipe=recipe,
                 ))
-                for recipe in config.filter_enabled_recipes(profile.recipes):
+                for recipe in config.filter_enabled_profiles(profile.recipes):
                     settings_store.all_settings[recipe.name] = recipe.get_settings(settings_name)
 
             readonly = s1 if override else s2
