@@ -454,11 +454,12 @@ class Config(object):
             for recipe in self.sorted_recipes(profile.recipes):
                 yield recipe
 
-    def iter_recipes(self, short_name):
-        for profile in self.root_profiles:
-            for recipe in self.filter_enabled_recipes(profile.recipes):
-                if recipe.short_name == short_name:
-                    yield recipe
+    def get_enabled_recipes_by_short_name(self, short_name):
+        return (
+            recipe
+            for recipe in self.all_enabled_recipes
+            if recipe.short_name == short_name
+        )
 
     @property
     def all_disabled_recipes(self):

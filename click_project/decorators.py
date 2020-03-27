@@ -91,7 +91,7 @@ def use_settings(settings_name, settings_cls, override=True, default_profile='co
                 profile = config.local_profile or config.global_profile
                 if recipe:
                     profile = profile.get_recipe(recipe)
-                    for r in config.iter_recipes(recipe):
+                    for r in config.get_enabled_recipes_by_short_name(recipe):
                         settings_store.all_settings[r.name] = r.get_settings(settings_name)
                 else:
                     compute_settings(True)
