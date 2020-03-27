@@ -296,6 +296,7 @@ class Config(object):
                 explicit=True,
                 isroot=True,
                 activation_level=ActivationLevel.local,
+                default_color="fg-green",
             )
         else:
             return None
@@ -329,6 +330,7 @@ class Config(object):
                 explicit=True,
                 isroot=True,
                 activation_level=ActivationLevel.local,
+                default_color="fg-magenta",
             )
         else:
             return None
@@ -361,6 +363,7 @@ class Config(object):
             explicit=True,
             isroot=True,
             activation_level=ActivationLevel.global_,
+            default_color="fg-cyan",
         )
 
     @property

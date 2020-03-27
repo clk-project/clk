@@ -43,7 +43,7 @@ class Colorer(object):
             self.profile_to_color["workgrouppreset"] = compute_preset_colors("workgroup")
             self.profile_to_color["local"] = kwargs.get("local_color")
             self.profile_to_color["localpreset"] = compute_preset_colors("local")
-        for recipe in config.all_recipes:
+        for recipe in config.all_enabled_recipes:
             self.profile_to_color[recipe.name] = kwargs[
                 recipe.name.replace("/", "_") + "_color"
             ]
@@ -108,19 +108,18 @@ class Colorer(object):
                  help="Start with a legend on colors")(f)
         f = flag('--color/--no-color', default=True, help="Show profiles in color")(f)
         f = flag('--full', help="Show the full information, even those guessed from the context")(f)
-        f = option('--global-color', help="Color to show the global profile",
-                   type=ColorType(), default="fg-cyan")(f)
-        recipename_color = {}
-        if config.project:
-            f = option('--workgroup-color', help="Color to show the workgroup profile",
-                       type=ColorType(), default="fg-magenta")(f)
-            f = option('--local-color', help="Color to show the local profile",
-                       type=ColorType(), default="fg-green")(f)
-        for recipe in config.all_recipes:
-            if recipe.short_name not in recipename_color:
-                recipename_color[recipe.short_name] = next(colors)
-            f = option('--{}-color'.format(recipe.name.replace('/', '-')), help="Color to show the {} profile".format(recipe.name),
-                       type=ColorType(), default=recipename_color[recipe.short_name])(f)
+        shortname_color = {}
+
+        for profile in config.all_profiles:
+            if profile.default_color is None:
+                if profile.short_name not in shortname_color:
+                    shortname_color[profile.short_name] = next(colors)
+                default_color = shortname_color[profile.short_name]
+            else:
+                default_color = profile.default_color
+            f = option(f'--{profile.name.replace("/", "-")}-color',
+                       help=f"Color to show the {profile.name} profile",
+                       type=ColorType(), default=default_color)(f)
         return f
 
     def apply_color(self, string, profile):

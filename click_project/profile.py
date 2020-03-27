@@ -177,8 +177,9 @@ class DirectoryProfile(Profile):
     def __init__(self, location, app_name, dry_run=False, name=None,
                  explicit=True, isroot=True,
                  activation_level=ActivationLevel.global_,
-                 readonly=False):
+                 readonly=False, default_color=None):
         self.app_name = app_name
+        self.default_color = default_color
         self.readonly = readonly
         self.activation_level = activation_level
         self.explicit = explicit
@@ -533,8 +534,10 @@ class DirectoryProfile(Profile):
 
 
 class PresetProfile(Profile):
-    def __init__(self, name, settings, explicit=True, isroot=True, activation_level=ActivationLevel.global_):
+    def __init__(self, name, settings, explicit=True, isroot=True,
+                 activation_level=ActivationLevel.global_, default_color=None):
         self.name = name
+        self.default_color = default_color
         self.settings = settings
         self.recipes = []
         self.isroot = isroot
@@ -574,6 +577,9 @@ class PresetProfile(Profile):
 
     def write_settings(self):
         click.UsageError("A preset profile cannot be written to")
+
+    def short_name(self):
+        return self.name
 
 
 profile_location_cache = {}
