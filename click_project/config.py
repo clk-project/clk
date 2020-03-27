@@ -270,16 +270,10 @@ class Config(object):
                     for settings in self.load_settings_from_profile(recipe, recurse):
                         yield settings
 
-    def get_profile_by_name(self, name):
-        return [profile for profile in self.all_profiles if profile.name == name][0]
-
     def get_profile(self, name):
-        for profile in self.root_profiles:
+        for profile in self.all_profiles:
             if profile.name == name:
                 return profile
-            for recipe in profile.recipes:
-                if recipe.name == name:
-                    return recipe
         # fallback on uniq shortnames
         recipes = list(self.all_recipes)
         shortnames = list(map(lambda r: r.short_name, recipes))
@@ -293,7 +287,7 @@ class Config(object):
                 r for r in recipes
                 if r.short_name == name
             ][0]
-        raise ValueError("Could not find recipe {}".format(name))
+        raise ValueError("Could not find profile {}".format(name))
 
     @property
     def workgroup(self):
@@ -496,7 +490,7 @@ class Config(object):
 
     def get_profile_containing_recipe(self, name):
         profile_name = name.split("/")[0]
-        profile = self.get_profile_by_name(profile_name)
+        profile = self.get_profile(profile_name)
         return profile
 
     def recipe_location(self, name):
@@ -505,7 +499,7 @@ class Config(object):
 
     def get_recipe(self, name):
         name, profile_name = name.split("/")
-        profile = self.get_profile_by_name(profile_name)
+        profile = self.get_profile(profile_name)
         return profile.get_recipe(name)
 
     def is_recipe_enabled(self, shortname):

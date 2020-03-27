@@ -98,7 +98,7 @@ def use_settings(settings_name, settings_cls, override=True, default_profile='co
                 settings_store.readprofile = profile_name
             else:
                 compute_settings(False)
-                profile = config.get_profile_by_name(profile_name)
+                profile = config.get_profile(profile_name)
                 profile = profile.get_recipe(recipe) if recipe else profile
                 settings_store.readprofile = profile_name
                 settings_store.all_settings[profile_name] = profile.get_settings(settings_name)
