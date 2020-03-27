@@ -512,13 +512,6 @@ class Config(object):
         ]
 
     @property
-    def all_enabled_profiles_and_recipes(self):
-        for profile in self.root_profiles:
-            for recipe in self.sorted_recipes(self.filter_enabled_profiles(profile.recipes)):
-                yield recipe
-            yield profile
-
-    @property
     def log_level(self):
         if hasattr(self, "_log_level"):
             return self._log_level
