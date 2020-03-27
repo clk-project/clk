@@ -270,12 +270,6 @@ class Config(object):
                     for settings in self.load_settings_from_profile(recipe, recurse):
                         yield settings
 
-    def get_profile_settings(self, section):
-        return merge_settings(self.iter_settings(explicit_only=True))[0].get(section, {})
-
-    def get_profile_settings2(self, section):
-        return merge_settings(self.iter_settings(explicit_only=True))[1].get(section, {})
-
     def get_profile_by_name(self, name):
         return [profile for profile in self.all_profiles if profile.name == name][0]
 
