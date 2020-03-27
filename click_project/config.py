@@ -463,15 +463,15 @@ class Config(object):
 
     @property
     def all_disabled_recipes(self):
-        return map(self.filter_disabled_recipes, self.all_recipes)
+        return self.filter_disabled_recipes(self.all_recipes)
 
     @property
     def all_unset_recipes(self):
-        return map(self.filter_unset_recipes, self.all_recipes)
+        return self.filter_unset_recipes(self.all_recipes)
 
     @property
     def all_enabled_recipes(self):
-        return map(self.filter_enabled_recipes, self.all_recipes)
+        return self.filter_enabled_recipes(self.all_recipes)
 
     def sorted_recipes(self, recipes):
         return sorted(
