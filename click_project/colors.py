@@ -56,7 +56,7 @@ class Colorer(object):
     @property
     def profilenames_to_show(self):
         return [
-            profile.name for profile in config.all_profiles
+            profile.name for profile in config.all_enabled_profiles
             if self.full or profile.explicit
         ]
 
@@ -110,7 +110,7 @@ class Colorer(object):
         f = flag('--full', help="Show the full information, even those guessed from the context")(f)
         shortname_color = {}
 
-        for profile in config.all_profiles:
+        for profile in config.all_enabled_profiles:
             if profile.default_color is None:
                 if profile.short_name not in shortname_color:
                     shortname_color[profile.short_name] = next(colors)

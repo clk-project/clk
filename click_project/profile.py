@@ -543,6 +543,7 @@ class PresetProfile(Profile):
         self.isroot = isroot
         self.explicit = explicit
         self.activation_level = activation_level
+        self.isrecipe = False
 
     def get_settings(self, section):
         if (
@@ -580,6 +581,7 @@ class PresetProfile(Profile):
 
     def short_name(self):
         return self.name
+
 
 
 profile_location_cache = {}

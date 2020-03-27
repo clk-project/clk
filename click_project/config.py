@@ -209,7 +209,7 @@ class Config(object):
 
     def iter_settings(self, explicit_only=False, recurse=True, only_this_recipe=None):
         explicit_only = explicit_only or only_this_recipe
-        for profile in self.all_profiles:
+        for profile in self.all_enabled_profiles:
             if not explicit_only or profile.explicit:
                 yield from self.load_settings_from_profile(
                         profile,
@@ -257,7 +257,7 @@ class Config(object):
                         yield settings
 
     def get_profile(self, name):
-        for profile in self.all_profiles:
+        for profile in self.all_enabled_profiles:
             if profile.name == name:
                 return profile
         # fallback on uniq shortnames
@@ -397,6 +397,20 @@ class Config(object):
             return None
 
     @property
+    def all_enabled_profiles(self):
+        return self.filter_enabled_profiles(self.all_profiles)
+
+    def filter_enabled_profiles(self, profiles):
+        return (
+            profile for profile in profiles
+            if (
+                    not profile.isrecipe
+                    or
+                    self.is_recipe_enabled(profile.short_name)
+            )
+        )
+
+    @property
     def all_profiles(self):
         res = []
 
@@ -404,13 +418,7 @@ class Config(object):
             if profile is None:
                 return
             res.append(profile)
-            res.extend(
-                self.sorted_recipes(
-                    self.filter_enabled_recipes(
-                        profile.recipes
-                    )
-                )
-            )
+            res.extend(self.sorted_recipes(profile.recipes))
 
         add_profile(self.distribution_profile)
         add_profile(self.global_preset_profile)
@@ -426,14 +434,14 @@ class Config(object):
     @property
     def implicit_profiles(self):
         return [
-            profile for profile in self.all_profiles
+            profile for profile in self.all_enabled_profiles
             if not profile.explicit
         ]
 
     @property
     def root_profiles(self):
         return [
-            profile for profile in self.all_profiles
+            profile for profile in self.all_enabled_profiles
             if profile.isroot
         ]
 

@@ -66,7 +66,7 @@ def use_settings(settings_name, settings_cls, override=True, default_profile='co
         def compute_settings(with_explicit=True):
             settings_store.all_settings = {
                 profile.name: profile.get_settings(settings_name)
-                for profile in config.all_profiles
+                for profile in config.all_enabled_profiles
                 if with_explicit or not profile.explicit
             }
 
