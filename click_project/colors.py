@@ -17,10 +17,8 @@ from click_project.core import ColorType
 class Colorer(object):
 
     def __init__(self, kwargs):
-        with_legend = kwargs.pop("with_legend")
         self.legend = kwargs.pop("legend")
         self.full = kwargs.pop("full")
-        self.legend = self.legend or with_legend
         color = kwargs.pop("color")
         if color is False:
             self.legend = False
@@ -94,8 +92,6 @@ class Colorer(object):
             "fg-red",
             "bold-True,fg-red",
         ])
-        f = flag("--with-legend/--without-legend", help="Start with a legend on colors",
-                 deprecated="please use --legend instead")(f)
         f = flag("--legend/--no-legend",
                  default=config.get_value('config.color.legend') or False,
                  help="Start with a legend on colors")(f)
