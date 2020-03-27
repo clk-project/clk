@@ -41,37 +41,37 @@ def get_appdir(appname):
 
 
 def merge_settings(settings):
-    settings = collections.OrderedDict()
-    settings2 = collections.OrderedDict()
+    computed_settings = collections.OrderedDict()
+    computed_settings2 = collections.OrderedDict()
     for s in settings:
         for k, v in six.iteritems(s):
             if k == "_self":
                 # self is not mergeable, for ot gives information about the file itself
                 continue
-            if k not in settings:
-                settings[k] = deepcopy(v)
-                settings2[k] = deepcopy(v)
+            if k not in computed_settings:
+                computed_settings[k] = deepcopy(v)
+                computed_settings2[k] = deepcopy(v)
             else:
                 if isinstance(v, dict):
-                    settings[k].update(v)
+                    computed_settings[k].update(v)
                     for k2, v2 in six.iteritems(v):
                         if isinstance(v2, list):
-                            settings2[k][k2] = settings2[k].get(k2, []) + v2
+                            computed_settings2[k][k2] = computed_settings2[k].get(k2, []) + v2
                         elif isinstance(v2, dict):
-                            s2v = settings2[k].get(k2)
+                            s2v = computed_settings2[k].get(k2)
                             if s2v is None:
-                                settings2[k][k2] = deepcopy(v2)
+                                computed_settings2[k][k2] = deepcopy(v2)
                             else:
                                 s2v.update(v2)
                         elif isinstance(v2, six.string_types):
-                            settings2[k] = v2
+                            computed_settings2[k] = v2
                         else:
                             raise NotImplementedError("Please help us code this part")
                 elif isinstance(v, list):
-                    settings[k].extend(v)
+                    computed_settings[k].extend(v)
                 else:
                     raise NotImplementedError("Please help us code this part")
-    return settings, settings2
+    return computed_settings, computed_settings2
 
 
 class Config(object):
