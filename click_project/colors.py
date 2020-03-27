@@ -57,6 +57,7 @@ class Colorer(object):
 
     def __exit__(self, exc_type, exc_val, exc_tb):
         if self.legend:
+            used_profiles = self.used_profiles.copy()
             colored_profiles = self.colorize_values(
                 {
                     profile: (
@@ -70,7 +71,7 @@ class Colorer(object):
             message = "Legend: " + ", ".join(
                 colored_profiles[profile]
                 for profile in self.profilenames_to_show
-                if profile in self.used_profiles
+                if profile in used_profiles
             )
             click.secho("-" * len(clear_ansi_color_codes(message)), dim=True)
             click.echo(message)
