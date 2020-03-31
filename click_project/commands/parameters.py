@@ -199,8 +199,6 @@ def show(ctx, name_only, cmds, under, fields, format, **kwargs):
 
                 if config.parameters.readprofile == "settings-file":
                     args = config.parameters.readonly.get(cmd_name, [])
-                elif "/" in config.parameters.readprofile:
-                    args = get_line(config.parameters.readprofile)
                 else:
                     values = {
                         profile.name: get_line(profile.name)
