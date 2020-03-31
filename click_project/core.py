@@ -55,7 +55,7 @@ def run(cmd, *args, **kwargs):
     standard output. This is exactly what run is about.
 
     """
-    cmd = config.command_line_profile.get_settings("parameters")[config.main_command.path] + cmd
+    cmd = config.commandline_profile.get_settings("parameters")[config.main_command.path] + cmd
     with temp_config():
         return config.main_command(cmd, *args, **kwargs)
 
@@ -431,22 +431,22 @@ def project_callback(ctx, attr, value):
 
 @main_command_options_callback
 def recipe_callback(ctx, attr, values):
-    recipes = config.command_line_profile.get_settings("recipe")
+    recipes = config.commandline_profile.get_settings("recipe")
     for value in values:
         recipe = recipes.get(value, {})
         recipe["enabled"] = True
         recipes[value] = recipe
-    config.command_line_profile.set_settings("recipe", recipes)
+    config.commandline_profile.set_settings("recipe", recipes)
     return values
 
 
 def without_recipe_callback(ctx, attr, values):
-    recipes = config.command_line_profile.get_settings("recipe")
+    recipes = config.commandline_profile.get_settings("recipe")
     for value in values:
         recipe = recipes.get(value, {})
         recipe["enabled"] = False
         recipes[value] = recipe
-    config.command_line_profile.set_settings("recipe", recipes)
+    config.commandline_profile.set_settings("recipe", recipes)
     return values
 
 

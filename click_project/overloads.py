@@ -321,50 +321,50 @@ class ExtraParametersMixin(object):
 
     def unset_parameters_callback(self, ctx, param, value):
         if value and not ctx.resilient_parsing:
-            raw_args = config.command_line_profile.get_settings("parameters")[self.path]
+            raw_args = config.commandline_profile.get_settings("parameters")[self.path]
             index = raw_args.index('--unset-parameters')
             raw_args = raw_args[:index] + raw_args[index+2:]
-            config.command_line_profile.get_settings("parameters")[self.path] = raw_args
+            config.commandline_profile.get_settings("parameters")[self.path] = raw_args
             config.merge_settings()
             run(["parameters"] + self.parameters_callback_split_value(value) + ["unset", self.path])
             exit(0)
 
     def set_parameters_callback(self, ctx, param, value):
         if value and not ctx.resilient_parsing:
-            raw_args = config.command_line_profile.get_settings("parameters")[self.path]
+            raw_args = config.commandline_profile.get_settings("parameters")[self.path]
             index = raw_args.index('--set-parameters')
             raw_args = raw_args[:index] + raw_args[index+2:]
-            config.command_line_profile.get_settings("parameters")[self.path] = raw_args
+            config.commandline_profile.get_settings("parameters")[self.path] = raw_args
             config.merge_settings()
             run(["parameters"] + self.parameters_callback_split_value(value) + ["set", self.path] + ["--"] + raw_args)
             exit(0)
 
     def append_parameters_callback(self, ctx, param, value):
         if value and not ctx.resilient_parsing:
-            raw_args = config.command_line_profile.get_settings("parameters")[self.path]
+            raw_args = config.commandline_profile.get_settings("parameters")[self.path]
             index = raw_args.index('--append-parameters')
             raw_args = raw_args[:index] + raw_args[index+2:]
-            config.command_line_profile.get_settings("parameters")[self.path] = raw_args
+            config.commandline_profile.get_settings("parameters")[self.path] = raw_args
             config.merge_settings()
             run(["parameters"] + self.parameters_callback_split_value(value) + ["append", self.path] + ["--"] + raw_args)
             exit(0)
 
     def remove_parameters_callback(self, ctx, param, value):
         if value and not ctx.resilient_parsing:
-            raw_args = config.command_line_profile.get_settings("parameters")[self.path]
+            raw_args = config.commandline_profile.get_settings("parameters")[self.path]
             index = raw_args.index('--remove-parameters')
             raw_args = raw_args[:index] + raw_args[index+2:]
-            config.command_line_profile.get_settings("parameters")[self.path] = raw_args
+            config.commandline_profile.get_settings("parameters")[self.path] = raw_args
             config.merge_settings()
             run(["parameters"] + self.parameters_callback_split_value(value) + ["remove", self.path] + ["--"] + raw_args)
             exit(0)
 
     def show_parameters_callback(self, ctx, param, value):
         if value and not ctx.resilient_parsing:
-            raw_args = config.command_line_profile.get_settings("parameters")[self.path]
+            raw_args = config.commandline_profile.get_settings("parameters")[self.path]
             index = raw_args.index('--show-parameters')
             raw_args = raw_args[:index] + raw_args[index+2:]
-            config.command_line_profile.get_settings("parameters")[self.path] = raw_args
+            config.commandline_profile.get_settings("parameters")[self.path] = raw_args
             config.merge_settings()
             run(["parameters"] + self.parameters_callback_split_value(value) + ["show", self.path])
             exit(0)
@@ -444,7 +444,7 @@ class RememberParametersMixin(object):
     """Mixin to use a parser that remembers the given parameters.
 
     Use split_args_remaining to find out what part of the command line is really
-    to be saved. The use set_command_line_settings to save whatever needs to be
+    to be saved. The use set_commandline_settings to save whatever needs to be
     saved.
 
     """
@@ -458,8 +458,8 @@ class RememberParametersMixin(object):
         else:
             return args[:-threshold], remaining
 
-    def set_command_line_settings(self, ctx, args):
-        config.command_line_profile.get_settings("parameters")[self.path] += args
+    def set_commandline_settings(self, ctx, args):
+        config.commandline_profile.get_settings("parameters")[self.path] += args
         config.merge_settings()
 
 
@@ -500,7 +500,7 @@ class Command(MissingDocumentationMixin, DeprecatedMixin, TriggerMixin, HelpMixi
         self.path = None
 
     def parse_args(self, ctx, args):
-        self.set_command_line_settings(ctx, args)
+        self.set_commandline_settings(ctx, args)
         args = self.get_extra_args(implicit=('--no-parameters' in args))
 
         self.complete_arguments = list(args)
@@ -637,7 +637,7 @@ class Group(click_didyoumean.DYMMixin, MissingDocumentationMixin,
 
     def parse_args(self, ctx, args):
         res, remaining = self.split_args_remaining(ctx, args)
-        self.set_command_line_settings(ctx, res)
+        self.set_commandline_settings(ctx, res)
 
         args = self.get_extra_args(implicit=('--no-parameters' in args)) + list(remaining)
         self.complete_arguments = args[:]
@@ -1174,7 +1174,7 @@ class MainCommand(click_didyoumean.DYMMixin, DeprecatedMixin, TriggerMixin, Help
 
     def parse_args(self, ctx, args):
         res, remaining = self.split_args_remaining(ctx, args)
-        self.set_command_line_settings(ctx, res)
+        self.set_commandline_settings(ctx, res)
         ctx.auto_envvar_prefix = self.auto_envvar_prefix
         # parse the args, injecting the extra args, till the extra args are stable
         old_extra_args = []

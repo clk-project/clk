@@ -141,20 +141,20 @@ def use_settings(settings_name, settings_cls, override=True, default_profile='co
                     if startswith(candidate, incomplete)
                 ]
 
-        def profile_name_to_command_line_name(name):
+        def profile_name_to_commandline_name(name):
             return name.replace("/", "-")
 
-        def command_line_name_to_profile_name(name):
+        def commandline_name_to_profile_name(name):
             return name.replace("-", "/")
 
         def profile_callback(ctx, attr, value):
             if value:
-                ctx.click_project_profile = command_line_name_to_profile_name(value)
+                ctx.click_project_profile = commandline_name_to_profile_name(value)
                 setup_settings(ctx)
             return value
 
 
-        for profile in [profile_name_to_command_line_name(profile.name) for profile in config.root_profiles]:
+        for profile in [profile_name_to_commandline_name(profile.name) for profile in config.root_profiles]:
             f = flag('--{}'.format(profile), "profile", flag_value=profile, help="Consider only the {} profile".format(profile), callback=profile_callback)(f)
         f = flag('--context', "profile", flag_value="context", help="Guess the profile", callback=profile_callback)(f)
         f = option('--recipe', type=RecipeType(), callback=recipe_callback, help="Use this recipe")(f)

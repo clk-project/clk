@@ -130,7 +130,7 @@ class AliasCommandResolver(CommandResolver):
             def run_callback(_ctx):
                 LOGGER.develop("Running callback of {} with args {}, params {}".format(
                     _ctx.command.path,
-                    config.command_line_profile.get_settings("parameters")[_ctx.command.path],
+                    config.commandline_profile.get_settings("parameters")[_ctx.command.path],
                     _ctx.params,
                 ))
                 with _ctx:

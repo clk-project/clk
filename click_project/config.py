@@ -99,7 +99,7 @@ class Config(object):
         self.distribution_profile_location = None
 
     @property
-    def command_line_profile(self):
+    def commandline_profile(self):
         return ProfileFactory.create_or_get_preset_profile(
             "commandline",
             settings=defaultdict(lambda: defaultdict(list)),
@@ -312,7 +312,7 @@ class Config(object):
             return None
 
     @property
-    def local_preset_profile(self):
+    def localpreset_profile(self):
         self.guess_project()
         if self.project:
             return ProfileFactory.create_or_get_preset_profile(
@@ -346,7 +346,7 @@ class Config(object):
             return None
 
     @property
-    def workgroup_preset_profile(self):
+    def workgrouppreset_profile(self):
         self.guess_project()
         if self.project:
             return ProfileFactory.create_or_get_preset_profile(
@@ -377,7 +377,7 @@ class Config(object):
         )
 
     @property
-    def global_preset_profile(self):
+    def globalpreset_profile(self):
         return ProfileFactory.create_or_get_preset_profile(
             "globalpreset",
             settings={
@@ -430,14 +430,14 @@ class Config(object):
             res.extend(self.sorted_recipes(profile.recipes))
 
         add_profile(self.distribution_profile)
-        add_profile(self.global_preset_profile)
+        add_profile(self.globalpreset_profile)
         add_profile(self.global_profile)
-        add_profile(self.workgroup_preset_profile)
+        add_profile(self.workgrouppreset_profile)
         add_profile(self.workgroup_profile)
-        add_profile(self.local_preset_profile)
+        add_profile(self.localpreset_profile)
         add_profile(self.local_profile)
         add_profile(self.env_profile)
-        add_profile(self.command_line_profile)
+        add_profile(self.commandline_profile)
         return res
 
     @property
@@ -567,10 +567,10 @@ class Config(object):
         section = "parameters"
         if implicit:
             return (
-                self.global_preset_profile.get_settings(section).get(path, []) +
+                self.globalpreset_profile.get_settings(section).get(path, []) +
                 self.local_context_profile.get_settings(section).get(path, []) +
                 self.env_profile.get_settings(section).get(path, []) +
-                self.command_line_profile.get_settings(section).get(path, [])
+                self.commandline_profile.get_settings(section).get(path, [])
             )
         else:
             return self.get_settings2(section).get(path, [])
