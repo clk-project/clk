@@ -26,14 +26,14 @@ class ActivationLevel(Enum):
 
 class ProfileFactory:
     directory_profile_cls = None
-    preset_profile_cls = None
+    directory_profile_cache = {}
 
-    profile_location_cache = {}
-    profile_name_cache = {}
+    preset_profile_cls = None
+    preset_profile_cache = {}
 
     @classmethod
     def register_directory_profile(klass, cls):
-        assert not klass.profile_location_cache, (
+        assert not klass.directory_profile_cache, (
             f"A new class ({cls}) was registered after the first instantiation"
             f" of a directory profile with class ({klass.directory_profile_cls})"
             f" This would cause unstable behavior"
@@ -43,7 +43,7 @@ class ProfileFactory:
 
     @classmethod
     def register_preset_profile(klass, cls):
-        assert not klass.profile_name_cache, (
+        assert not klass.preset_profile_cache, (
             f"A new class ({cls}) was registered after the first instantiation"
             f" of a preset profile with class ({klass.preset_profile_cls})"
             f" This would cause unstable behavior"
@@ -55,10 +55,10 @@ class ProfileFactory:
     def create_or_get_by_location(klass, location, *args, **kwargs):
         if "name" not in kwargs:
             kwargs["name"] = "unnamed"
-        if location not in klass.profile_location_cache:
+        if location not in klass.directory_profile_cache:
             profile = klass.directory_profile_cls(location, *args, **kwargs)
-            klass.profile_location_cache[location] = profile
-        return klass.profile_location_cache[location]
+            klass.directory_profile_cache[location] = profile
+        return klass.directory_profile_cache[location]
 
     @classmethod
     def create_or_get_preset_profile(
@@ -66,14 +66,14 @@ class ProfileFactory:
             settings=None, explicit=True, isroot=True,
             activation_level=ActivationLevel.global_,
             default_color=None):
-        if name not in klass.profile_name_cache:
+        if name not in klass.preset_profile_cache:
             profile = klass.preset_profile_cls(name, settings,
                                     explicit=explicit, isroot=isroot,
                                     activation_level=activation_level,
                                     default_color=default_color,
             )
-            klass.profile_name_cache[name] = profile
-        return klass.profile_name_cache[name]
+            klass.preset_profile_cache[name] = profile
+        return klass.preset_profile_cache[name]
 
 
 def load_settings(path):
