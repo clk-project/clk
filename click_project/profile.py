@@ -414,7 +414,7 @@ class DirectoryProfile(Profile):
     def write_settings(self):
         if self.readonly:
             raise click.UsageError(
-                f"Cannot write into {self.name} that is read only."
+                f"Cannot write into {self.name}. It is read only."
             )
         if self.frozen_during_migration:
             raise click.UsageError(
