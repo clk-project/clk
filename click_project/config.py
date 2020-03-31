@@ -84,31 +84,9 @@ class Config(object):
         self.debug_on_command_load_error_callback = False
         self.frozen = False
         self.settings = None
-        self.command_line_profile = ProfileFactory.create_or_get_preset_profile(
-            "commandline",
-            settings=defaultdict(lambda: defaultdict(list)),
-            explicit=False,
-            isroot=True,
-            activation_level=ActivationLevel.global_,
-            )
-        self.flow_profile = ProfileFactory.create_or_get_preset_profile(
-            "flow",
-            settings=defaultdict(lambda: defaultdict(list)),
-            explicit=False,
-            isroot=True,
-            activation_level=ActivationLevel.global_,
-        )
         self.app_dir = get_appdir(self.app_dir_name)
         self.autoflow = None
         self.plugindirs = []
-        self.env_profile = ProfileFactory.create_or_get_preset_profile(
-            "env",
-            settings=defaultdict(lambda: defaultdict(list)),
-            explicit=False,
-            isroot=True,
-            activation_level=ActivationLevel.global_,
-            default_color="bold-True"
-            )
         self._dry_run = None
         self._project = None
         self.alt_style = None
@@ -119,6 +97,37 @@ class Config(object):
         self.override_env = {}
         self.old_env = os.environ.copy()
         self.distribution_profile_location = None
+
+    @property
+    def command_line_profile(self):
+        return ProfileFactory.create_or_get_preset_profile(
+            "commandline",
+            settings=defaultdict(lambda: defaultdict(list)),
+            explicit=False,
+            isroot=True,
+            activation_level=ActivationLevel.global_,
+        )
+
+    @property
+    def flow_profile(self):
+        return ProfileFactory.create_or_get_preset_profile(
+            "flow",
+            settings=defaultdict(lambda: defaultdict(list)),
+            explicit=False,
+            isroot=True,
+            activation_level=ActivationLevel.global_,
+        )
+
+    @property
+    def env_profile(self):
+        return ProfileFactory.create_or_get_preset_profile(
+            "env",
+            settings=defaultdict(lambda: defaultdict(list)),
+            explicit=False,
+            isroot=True,
+            activation_level=ActivationLevel.global_,
+            default_color="bold-True"
+        )
 
     @property
     def project(self):
@@ -414,7 +423,6 @@ class Config(object):
     @property
     def all_profiles(self):
         res = []
-
         def add_profile(profile, explicit=True):
             if profile is None:
                 return
