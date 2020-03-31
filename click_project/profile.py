@@ -24,6 +24,48 @@ class ActivationLevel(Enum):
     global_ = "global"
 
 
+class ProfileFactory:
+    directory_profile_cls = None
+    preset_profile_cls = None
+
+    profile_location_cache = {}
+    profile_name_cache = {}
+
+    @classmethod
+    def register_directory_profile(klass, cls):
+        klass.directory_profile_cls = cls
+        return cls
+
+    @classmethod
+    def register_preset_profile(klass, cls):
+        klass.preset_profile_cls = cls
+        return cls
+
+    @classmethod
+    def create_or_get_by_location(klass, location, *args, **kwargs):
+        if "name" not in kwargs:
+            kwargs["name"] = "unnamed"
+        if location not in klass.profile_location_cache:
+            profile = klass.directory_profile_cls(location, *args, **kwargs)
+            klass.profile_location_cache[location] = profile
+        return klass.profile_location_cache[location]
+
+    @classmethod
+    def create_or_get_preset_profile(
+            klass, name,
+            settings=None, explicit=True, isroot=True,
+            activation_level=ActivationLevel.global_,
+            default_color=None):
+        if name not in klass.profile_name_cache:
+            profile = klass.preset_profile_cls(name, settings,
+                                    explicit=explicit, isroot=isroot,
+                                    activation_level=activation_level,
+                                    default_color=default_color,
+            )
+            klass.profile_name_cache[name] = profile
+        return klass.profile_name_cache[name]
+
+
 def load_settings(path):
     if path is not None and os.path.exists(path):
         with open(path) as f:
@@ -49,6 +91,8 @@ class Profile():
     def __repr__(self):
         return f"<{self.__class__.__name__}: {self.name}>"
 
+
+@ProfileFactory.register_directory_profile
 class DirectoryProfile(Profile):
     def __gt__(self, other):
         return self.name < other.name
@@ -533,6 +577,7 @@ class DirectoryProfile(Profile):
         return True
 
 
+@ProfileFactory.register_preset_profile
 class PresetProfile(Profile):
     def __init__(self, name, settings, explicit=True, isroot=True,
                  activation_level=ActivationLevel.global_, default_color=None):
@@ -581,34 +626,3 @@ class PresetProfile(Profile):
 
     def short_name(self):
         return self.name
-
-
-
-profile_location_cache = {}
-profile_name_cache = {}
-
-
-class ProfileFactory(object):
-    @staticmethod
-    def create_or_get_by_location(location, *args, **kwargs):
-        if "name" not in kwargs:
-            kwargs["name"] = "unnamed"
-        if location not in profile_location_cache:
-            profile = DirectoryProfile(location, *args, **kwargs)
-            profile_location_cache[location] = profile
-        return profile_location_cache[location]
-
-    @staticmethod
-    def create_or_get_preset_profile(
-            name,
-            settings=None, explicit=True, isroot=True,
-            activation_level=ActivationLevel.global_,
-            default_color=None):
-        if name not in profile_name_cache:
-            profile = PresetProfile(name, settings,
-                                    explicit=explicit, isroot=isroot,
-                                    activation_level=activation_level,
-                                    default_color=default_color,
-            )
-            profile_name_cache[name] = profile
-        return profile_name_cache[name]
