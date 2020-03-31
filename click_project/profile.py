@@ -33,11 +33,21 @@ class ProfileFactory:
 
     @classmethod
     def register_directory_profile(klass, cls):
+        assert not klass.profile_location_cache, (
+            f"A new class ({cls}) was registered after the first instantiation"
+            f" of a directory profile with class ({klass.directory_profile_cls})"
+            f" This would cause unstable behavior"
+        )
         klass.directory_profile_cls = cls
         return cls
 
     @classmethod
     def register_preset_profile(klass, cls):
+        assert not klass.profile_name_cache, (
+            f"A new class ({cls}) was registered after the first instantiation"
+            f" of a preset profile with class ({klass.preset_profile_cls})"
+            f" This would cause unstable behavior"
+        )
         klass.preset_profile_cls = cls
         return cls
 
