@@ -636,3 +636,6 @@ class PresetProfile(Profile):
 
     def short_name(self):
         return self.name
+
+    def compute_settings(self):
+        pass

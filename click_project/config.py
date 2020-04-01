@@ -228,10 +228,8 @@ class Config(object):
                 )
 
     def merge_settings(self):
-        if self.local_profile:
-            self.local_profile.compute_settings()
-        if self.workgroup_profile:
-            self.workgroup_profile.compute_settings()
+        for profile in self.all_enabled_profiles:
+            profile.compute_settings()
         migrate_profiles()
         # first step to get the initial settings
         self.settings, self.settings2 = merge_settings(self.iter_settings(recurse=False))
