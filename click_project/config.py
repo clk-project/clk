@@ -436,6 +436,7 @@ class Config(object):
         add_profile(self.local_profile)
         add_profile(self.env_profile)
         add_profile(self.commandline_profile)
+        add_profile(self.flow_profile)
         return res
 
     @property
