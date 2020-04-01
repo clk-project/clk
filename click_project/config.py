@@ -563,16 +563,12 @@ class Config(object):
         return self.get_settings("value").get(path, {"value": None})["value"]
 
     def get_parameters(self, path, implicit_only=False):
-        section = "paramyeters"
-        if implicit_only:
-            return (
-                self.globalpreset_profile.get_settings(section).get(path, []) +
-                self.local_context_profile.get_settings(section).get(path, []) +
-                self.env_profile.get_settings(section).get(path, []) +
-                self.commandline_profile.get_settings(section).get(path, [])
-            )
-        else:
-            return self.get_settings2(section).get(path, [])
+        return [
+            setting
+            for profile in self.all_enabled_profiles
+            if implicit_only is False or not profile.explicit
+            for setting in profile.get_settings("parameters").get(path, [])
+        ]
 
 
 configs = []
