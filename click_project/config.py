@@ -562,9 +562,9 @@ class Config(object):
     def get_value(self, path):
         return self.get_settings("value").get(path, {"value": None})["value"]
 
-    def get_parameters(self, path, implicit=False):
-        section = "parameters"
-        if implicit:
+    def get_parameters(self, path, implicit_only=False):
+        section = "paramyeters"
+        if implicit_only:
             return (
                 self.globalpreset_profile.get_settings(section).get(path, []) +
                 self.local_context_profile.get_settings(section).get(path, []) +

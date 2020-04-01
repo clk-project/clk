@@ -296,8 +296,8 @@ class ExtraParametersMixin(object):
         self.params.append(unset_param_opt)
         self.params.append(no_param_opt)
 
-    def get_extra_args(self, implicit=False):
-        return config.get_parameters(self.path, implicit=implicit)
+    def get_extra_args(self, implicit_only=False):
+        return config.get_parameters(self.path, implicit_only=implicit_only)
 
     def format_help_text(self, ctx, formatter):
         super(ExtraParametersMixin, self).format_help_text(ctx, formatter)
@@ -501,7 +501,7 @@ class Command(MissingDocumentationMixin, DeprecatedMixin, TriggerMixin, HelpMixi
 
     def parse_args(self, ctx, args):
         self.set_commandline_settings(ctx, args)
-        args = self.get_extra_args(implicit=('--no-parameters' in args))
+        args = self.get_extra_args(implicit_only=('--no-parameters' in args))
 
         self.complete_arguments = list(args)
         LOGGER.develop("In the {} '{}', parsing the args {}".format(
@@ -639,7 +639,7 @@ class Group(click_didyoumean.DYMMixin, MissingDocumentationMixin,
         res, remaining = self.split_args_remaining(ctx, args)
         self.set_commandline_settings(ctx, res)
 
-        args = self.get_extra_args(implicit=('--no-parameters' in args)) + list(remaining)
+        args = self.get_extra_args(implicit_only=('--no-parameters' in args)) + list(remaining)
         self.complete_arguments = args[:]
         LOGGER.develop("In the {} '{}', parsing the args {}".format(
             self.__class__.__name__,
@@ -1179,7 +1179,7 @@ class MainCommand(click_didyoumean.DYMMixin, DeprecatedMixin, TriggerMixin, Help
         # parse the args, injecting the extra args, till the extra args are stable
         old_extra_args = []
         if '--no-parameters' in args:
-            new_extra_args = self.get_extra_args(implicit=True)
+            new_extra_args = self.get_extra_args(implicit_only=True)
             res = click.MultiCommand.parse_args(self, ctx, new_extra_args + args)
             self.complete_arguments = list(args)
         else:
