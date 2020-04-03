@@ -3,6 +3,7 @@
 
 import versioneer
 from setuptools import setup, find_packages
+import fastentrypoint  # NOQA
 
 versions = versioneer.get_versions()
 version = versions["version"]

@@ -1,0 +1,3 @@
+[submodule "fast-entry_points"]
+	path = fast-entry_points
+	url = https://github.com/ninjaaron/fast-entry_points
