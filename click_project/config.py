@@ -160,16 +160,14 @@ class Config(object):
         """Find the current project directory"""
         dir = os.getcwd()
         prevdir = None
-        prefix = "." + self.main_command.path
+        localprofilename = "." + self.main_command.path
         while dir != prevdir:
-            if (
-                    os.path.exists(dir + '/project.' + prefix)
-                    or os.path.exists(prefix)
-            ):
+            if os.path.exists(localprofilename):
                 return dir
             prevdir = dir
             dir = os.path.dirname(dir)
         return None
+
     def require_project(self):
         """Check that a project is set and is valid"""
         if not self.project:
