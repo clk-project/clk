@@ -326,6 +326,45 @@ class ColorType(ParameterType):
         return kwargs
 
 
+class DynamicChoiceType(ParameterType):
+    """Meant to be inherited from, base class for providing computed choices
+
+Very useful to get choices not available when defining the function but
+available dynamically in the config.
+
+class SomeChoices(DynamicChoiceType):
+    def choices(self):
+         return [config.something, config.somethingelse]
+
+@option("--someoption", type=SomeChoices())
+
+"""
+    def choices(self):
+        raise NotImplementedError
+
+    def converter(self, value):
+        return value
+
+    def complete(self, ctx, incomplete):
+        return [
+            name
+            for name in self.choices()
+            if startswith(name, incomplete)
+        ]
+
+    def convert(self, value, param, ctx):
+        if ctx.resilient_parsing:
+            return value
+        choices = self.choices()
+        if value not in choices:
+            self.fail('invalid choice: %s. (choose from %s)' %
+                      (value, ', '.join(choices)), param, ctx)
+        if isinstance(choices, dict):
+            value = choices[value]
+        value = self.converter(value)
+        return value
+
+
 def main_command_decoration(f, cls, **kwargs):
     f = main_command_option('--force-color/--no-force-color', is_flag=True, callback=force_color_callback,
                             help="Force the color output, even if the output is not a terminal")(f)
