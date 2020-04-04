@@ -44,10 +44,16 @@ class Colorer(object):
         self.used_profiles = set()
 
     @property
-    def profilenames_to_show(self):
+    def default_profilenames_to_show(self):
         return [
             profile.name for profile in config.all_enabled_profiles
             if self.full or profile.explicit
+        ]
+
+    def profilenames_to_show(self, profile):
+        return [
+            profile_.name for profile_ in config.all_enabled_profiles
+            if profile_.name == profile or profile_.name.startswith(profile + "/")
         ]
 
     def __enter__(self):
@@ -63,19 +69,18 @@ class Colorer(object):
                         if "-" not in profile
                         else config.get_recipe(profile).friendly_name
                     )
-                    for profile in self.profilenames_to_show
+                    for profile in used_profiles
                 }
             )
             message = "Legend: " + ", ".join(
                 colored_profiles[profile]
-                for profile in self.profilenames_to_show
-                if profile in used_profiles
+                for profile in used_profiles
             )
             click.secho("-" * len(clear_ansi_color_codes(message)), dim=True)
             click.echo(message)
 
     def last_profile_of_settings(self, name, all_settings):
-        for profile in reversed(self.profilenames_to_show):
+        for profile in reversed(self.default_profilenames_to_show):
             if profile in all_settings and name in all_settings[profile]:
                 return profile
 
@@ -124,34 +129,20 @@ class Colorer(object):
         style.update(self.profile_to_color[profile] or {})
         return style
 
-    def colorize_values(self, elems):
+    def colorize_values(self, elems, profiles=None):
         return {
             profile:
             click.style(elem, **self.get_style(profile)) if elem else elem
             for profile, elem in elems.items()
+            if profiles is None or profile in profiles
         }
 
     def colorize(self, values, readprofile):
         args = []
-        values = self.colorize_values(values)
-        if readprofile == "context":
-            args = self.combine(values)
+        readprofiles = self.default_profilenames_to_show
+        if readprofile != "context":
+            readprofiles = self.profilenames_to_show(readprofile)
         else:
-            readprofiles = [readprofile] + [
-                rl for rl in self.profilenames_to_show
-                if rl.startswith(readprofile + "-")
-            ]
-            args = self.combine(
-                {
-                    rl: values[rl]
-                    for rl in readprofiles
-                })
-        return args
-
-    def combine(self, values):
-        args = []
-        for profile_name in self.profilenames_to_show:
-            value = values.get(profile_name)
-            if value:
-                args.append(value)
+            readprofiles = self.default_profilenames_to_show
+        args = list(self.colorize_values(values, readprofiles).values())
         return args
