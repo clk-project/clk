@@ -146,15 +146,15 @@ class Config(object):
                 LOGGER.critical("{} does not exist. It will be ignored.".format(value))
 
     def guess_project(self):
-        candidate = None
-        if not self.project:
+        if self.project:
+            return self.project
+        else:
             candidate = self.find_project()
             if candidate:
-                self._project = candidate
                 LOGGER.develop(
                     "Guessing project {} from the local context".format(candidate)
                 )
-        return candidate
+            return candidate
 
     def find_project(self):
         """Find the current project directory"""
@@ -292,7 +292,6 @@ class Config(object):
 
     @property
     def local_profile(self):
-        self.guess_project()
         if self.project:
             return ProfileFactory.create_or_get_by_location(
                 os.path.join(
@@ -327,7 +326,6 @@ class Config(object):
 
     @property
     def localpreset_profile(self):
-        self.guess_project()
         if self.project:
             return ProfileFactory.create_or_get_preset_profile(
                 "localpreset",
@@ -341,7 +339,6 @@ class Config(object):
 
     @property
     def workgroup_profile(self):
-        self.guess_project()
         if self.project:
             return ProfileFactory.create_or_get_by_location(
                 os.path.dirname(self.project) + '/.{}'.format(self.main_command.path),
@@ -357,7 +354,6 @@ class Config(object):
 
     @property
     def workgrouppreset_profile(self):
-        self.guess_project()
         if self.project:
             return ProfileFactory.create_or_get_preset_profile(
                 "workgrouppreset",
