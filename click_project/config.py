@@ -310,16 +310,28 @@ class Config(object):
             return None
 
     @property
+    def currentdirectorypreset_profile(self):
+        settings = {}
+        proj = self.guess_project()
+        if proj:
+            settings["parameters"] = {
+                    self.main_command.path: ["--project", proj]
+                }
+        return ProfileFactory.create_or_get_preset_profile(
+            "currentdirectorypreset",
+            settings=settings,
+            explicit=False,
+            isroot=True,
+            activation_level=ActivationLevel.global_,
+        )
+
+    @property
     def localpreset_profile(self):
         self.guess_project()
         if self.project:
             return ProfileFactory.create_or_get_preset_profile(
                 "localpreset",
-                settings={
-                    "parameters": {
-                        self.main_command.path: ["--project", self.project]
-                    }
-                },
+                settings={},
                 explicit=False,
                 isroot=True,
                 activation_level=ActivationLevel.local,
@@ -430,6 +442,7 @@ class Config(object):
         add_profile(self.distribution_profile)
         add_profile(self.globalpreset_profile)
         add_profile(self.global_profile)
+        add_profile(self.currentdirectorypreset_profile)
         add_profile(self.workgrouppreset_profile)
         add_profile(self.workgroup_profile)
         add_profile(self.localpreset_profile)
