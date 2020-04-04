@@ -163,13 +163,14 @@ class Config(object):
         prefix = "." + self.main_command.path
         while dir != prevdir:
             if (
-                    os.path.exists(dir + '/project.' + prefix)
+                    os.path.exists(dir + '/project' + prefix)
                     or os.path.exists(prefix)
             ):
                 return dir
             prevdir = dir
             dir = os.path.dirname(dir)
         return None
+
     def require_project(self):
         """Check that a project is set and is valid"""
         if not self.project:
