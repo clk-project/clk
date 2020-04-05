@@ -447,6 +447,25 @@ class RememberParametersMixin(object):
     to be saved. The use set_commandline_settings to save whatever needs to be
     saved.
 
+    It is needed to append the parameters instead of setting them to allow
+    complicated alias and flow scenarios. For instance, if you have group of
+    commands called something and you want to create an alias
+    something.complicatedstuff to `clk something a , clk something b`, you'd
+    want clk something --someoption complicatedstuff to pass --someoption to the
+    something call of each part of the alias. This is possible because the calls
+    to something in the alias don't erase the call of something in the
+    alias. But this logic breaks simple commands when they are parsed several
+    time (like completion does) and they have arguments. Indeed, in such cases,
+    every call to parse_args would add the argument, resulting in a messy
+    commandline_profile with several times the same arguments.
+
+    In brief, use append_commandline_settings for group stuff and
+    set_commandline_settings for commands.
+
+    It would be theoretically better to rescan the args and the command line
+    args, to remove the argument part of the args before appending, but
+    pragmatically, doing so sounds to do the job well.
+
     """
     def split_args_remaining(self, ctx, args):
         """Reconstruct parameters equivalent to those initially given to the command line"""
@@ -459,6 +478,10 @@ class RememberParametersMixin(object):
             return args[:-threshold], remaining
 
     def set_commandline_settings(self, ctx, args):
+        config.commandline_profile.get_settings("parameters")[self.path] = args
+        config.merge_settings()
+
+    def append_commandline_settings(self, ctx, args):
         config.commandline_profile.get_settings("parameters")[self.path] += args
         config.merge_settings()
 
@@ -500,6 +523,9 @@ class Command(MissingDocumentationMixin, DeprecatedMixin, TriggerMixin, HelpMixi
         self.path = None
 
     def parse_args(self, ctx, args):
+        # cannot call append_commandline_settings because the parameters can be
+        # arguments. In case the parsing is called several times, the arguments
+        # would be appended each time.
         self.set_commandline_settings(ctx, args)
         args = self.get_extra_args(implicit_only=('--no-parameters' in args))
 
@@ -637,7 +663,7 @@ class Group(click_didyoumean.DYMMixin, MissingDocumentationMixin,
 
     def parse_args(self, ctx, args):
         res, remaining = self.split_args_remaining(ctx, args)
-        self.set_commandline_settings(ctx, res)
+        self.append_commandline_settings(ctx, res)
 
         args = self.get_extra_args(implicit_only=('--no-parameters' in args)) + list(remaining)
         self.complete_arguments = args[:]
@@ -1174,7 +1200,7 @@ class MainCommand(click_didyoumean.DYMMixin, DeprecatedMixin, TriggerMixin, Help
 
     def parse_args(self, ctx, args):
         res, remaining = self.split_args_remaining(ctx, args)
-        self.set_commandline_settings(ctx, res)
+        self.append_commandline_settings(ctx, res)
         ctx.auto_envvar_prefix = self.auto_envvar_prefix
         # parse the args, injecting the extra args, till the extra args are stable
         old_extra_args = []
