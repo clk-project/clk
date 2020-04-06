@@ -38,7 +38,7 @@ class ExecutableType(ParameterType):
 @launcher
 @argument('command', nargs=-1, required=True, type=ExecutableType(), help="The command to execute")
 def exec_(launcher_command, launcher, shell, command, stdout, stderr):
-    """Run a command in the CoSMo environment"""
+    """Run a command."""
     if launcher:
         launcher_command = config.settings2["launchers"][launcher]
     if shell:
