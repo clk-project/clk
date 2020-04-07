@@ -74,14 +74,14 @@ If you are here, you might already know click. Let's use its hello exemple as a 
 
 Say you want to add a command to `clk`. `clk` is configured to import all the modules of the `clk_commands_perso` package. So start by creating this package and make it available.
 
-```
+```bash
 mkdir -p ~/python/clk_commands_perso
 export PYTHONPATH=~/python/:${PYTHONPATH}
 ```
 
 Then, create the `hello.py` file under `~/python/clk_commands_perso/` with the following content:
 
-```
+```python
 import click
 from click_project.decorators import command, option
 
