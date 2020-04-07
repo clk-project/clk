@@ -76,14 +76,15 @@ Say you want to add a command to `clk`. `clk` is configured to import all the mo
 
 ```
 mkdir -p ~/python/clk_commands_perso
-export PYTHONPATH=~/python/clk_commands_perso:${PYTHONPATH}
+export PYTHONPATH=~/python/:${PYTHONPATH}
 ```
 
-Then, create the `hello.py` file with the following content.
+Then, create the `hello.py` file under `~/python/clk_commands_perso/` with the following content:
 
 ```
 import click
-from click_project import command, option
+from click_project.decorators import command, option
+
 
 @command()
 @option("--count", default=1, help="Number of greetings.")
@@ -92,9 +93,10 @@ def hello(count, name):
     """Simple program that greets NAME for a total of COUNT times."""
     for _ in range(count):
         click.echo(f"Hello, {name}!")
+
 ```
 
-Now, you should be able to run `clk hello`.
+Now, you should be able to run `clk hello`! Also, have a look at `clk hello --help`.
 
 # Getting started with your own
 
