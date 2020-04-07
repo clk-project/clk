@@ -1,3 +1,4 @@
+*This is currently a draft of the readme of click-project*
 click-project
 =============
 
