@@ -7,11 +7,11 @@ click-project is a very *opinionated framework* to ease the creation of command 
 
 It is meant to be *batteries included*, meaning we gathered all the stuff we wanted while creating various commands.
 
-Dogfooding in mind, the developpers are extensive users of click-project. They like it and when something feels wrong, they just change it.
+Dogfooding in mind, the developers are extensive users of click-project. They like it and when something feels wrong, they just change it.
 
 # Why?
 
-* This is very related to argparse. Why not just use argparse?
+* This is very related to *argparse*. Why not just use *argparse*?
 
 See [Click - why?](https://click.palletsprojects.com/en/7.x/why/)
 
@@ -37,7 +37,7 @@ Say you want to run `clk --someoption` again and again and again. You'd like to 
 
 We decided to put all that in a single framework.
 
-- [ ]  -> gestion des logs, call_process, tableprinter, couleur, dry-run
+- [ ]  -> log management, call_process, tableprinter, couleur, dry-run
 
 
 For more information of all that comes with click-project, see [#features].
@@ -70,7 +70,7 @@ First, run `clk --help` or more simply `clk`.
 
 Let's start with the classical hello world example.
 
-If you are here, you might already know click. Let's use its hello exemple as a start.
+If you are here, you might already know click. Let's use its hello example as a start.
 
 Say you want to add a command to `clk`. `clk` is configured to import all the modules of the `clk_commands_perso` package. So start by creating this package and make it available.
 
@@ -112,7 +112,7 @@ Now, you should be able to run `clk hello`.
 
 ## logging
 
-logging should be easy to read yet provide enough information for debugging for example. Moreover, the logging should be well separated from other outputs from the command line tool. In click project, we have created several logging levels that allows to easily change the log level required for a specific use case, and the logs are displayed with colors and on the error output by default.
+Logging should be easy to read yet provide enough information for debugging for example. Moreover, the logging should be well separated from other outputs from the command line tool. In click project, we have created several logging levels that allows to easily change the log level required for a specific use case, and the logs are displayed with colors and on the error output by default.
 
 
 - [ ] bonus
