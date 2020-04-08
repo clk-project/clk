@@ -1,8 +1,7 @@
-*This is currently a draft of the readme of click-project*
-click-project
-=============
+*\(Draft\)* click-project
+==============================================================================
 
-`Click-project` makes it *easy* and *fun* for ***you*** to create *awesome* and *powerful* command line interfaces!
+Click-project makes it *easy* and fun for ***you*** to create *awesome* command line interfaces!
 
 Turn your scripts into a powerful cli without pain and get instant access to stuff like:
 
@@ -21,7 +20,7 @@ click-project is a very *opinionated framework*, and is meant to be *batteries i
 
 See [Click - why?](https://click.palletsprojects.com/en/7.x/why/)
 
-* This is very related to click. Why not just use click?
+* This is very related to *click*. Why not just use *click*?
 
 Click is very powerful when you need to create a command line tool. Yet, when we needed to create command line applications, we often wanted to reinvent the wheel by adding stuff like:
 
@@ -88,9 +87,9 @@ export PYTHONPATH=~/python/:${PYTHONPATH}
 Then, create the `hello.py` file under `~/python/clk_commands_perso/` with the following content:
 
 ```python
+# hello.py
 import click
 from click_project.decorators import command, option
-
 
 @command()
 @option("--count", default=1, help="Number of greetings.")
@@ -99,10 +98,91 @@ def hello(count, name):
     """Simple program that greets NAME for a total of COUNT times."""
     for _ in range(count):
         click.echo(f"Hello, {name}!")
-
 ```
 
 Now, you should be able to run `clk hello`! Also, have a look at `clk hello --help`.
+
+### Where is the *completion*?
+
+First, you need to install it. For example in a bash shell, you can type:
+```bash
+clk completion install
+source ~/.bash_completion
+```
+
+Now, try something like `clk hell<TAB> --co<TAB> 5`.
+
+### Where is the *option persistence*?
+
+You know your name, right?
+
+Try `clk hello --set-paramaters global --name Toto`. Here `global` is the persistence level, we will detail later. The rest should be explicit enough. (?)
+
+Now, run:
+```bash
+$ clk hello
+Hello, Toto!
+```
+
+But don't worry if you want to say hi to someone else you can still type:
+```bash
+$ clk hello --name Baba
+Hello, baba!
+```
+
+Also, have a look at `clk parameters`, or `clk parameters show --legend`.
+Hey, why doesn't the legend always appear? It's for you to decide, but there it is:
+`clk parameters show --set-parameters global --legend`
+
+Want more? See feature [#Parameters] for more info!
+
+### What is this *command flow management*?
+
+Say you made other commands `whatsup.py` and `bye.py`:
+
+```python
+# whatsup.py
+import click
+from click_project.decorators import command
+
+@command()
+def whatsup():
+    """Simple program that says bye."""
+    click.echo("What's up?!")
+    click.echo("Awesome!")
+```
+
+```python
+# bye.py
+import click
+from click_project.decorators import command
+
+@command()
+def bye():
+    """Simple program that says bye."""
+    click.echo("Bye!")
+```
+
+You might want to *chain* them and often do something like `clk hello && clk whatsup && clk bye`.
+
+Well, you can define precedence links of your commands like this:
+```
+clk flowdeps set whatsup hello
+clk flowdeps set bye whatsup
+```
+Then, try: `clk bye --flow` ! :)
+The output should look something like:
+```
+Running step 'hello'
+Hello, Toto!
+Running step 'whatsup'
+What's up?!
+Awesome!
+Bye!
+```
+Bonus: `clk flowdeps graph mycommand` let's you see the dependency graph for `mycommand` in a nice visual way!
+
+Want more? Have a look at `clk flowdeps --help`!
 
 # Getting started with your own
 
