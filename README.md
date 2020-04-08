@@ -77,14 +77,14 @@ Let's start with the classical hello world example.
 
 If you are here, you might already know click. Let's use its hello example as a start.
 
-Say you want to add a command to `clk`. `clk` is configured to import all the modules of the `clk_commands_perso` package. So start by creating this package and make it available.
+Say you want to add a command to `clk`. `clk` is configured to import all the modules of the `clk_commands` package. So start by creating this package and make it available.
 
 ```bash
-mkdir -p ~/python/clk_commands_perso
+mkdir -p ~/python/clk_commands
 export PYTHONPATH=~/python/:${PYTHONPATH}
 ```
 
-Then, create the `hello.py` file under `~/python/clk_commands_perso/` with the following content:
+Then, create the `hello.py` file under `~/python/clk_commands/` with the following content:
 
 ```python
 # hello.py
