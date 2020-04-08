@@ -2,12 +2,18 @@
 click-project
 =============
 
+`Click-project` makes it *easy* and *fun* for ***you*** to create *awesome* and *powerful* command line interfaces!
 
-click-project is a very *opinionated framework* to ease the creation of command line interfaces.
+Turn your scripts into a powerful cli without pain and get instant access to stuff like:
 
-It is meant to be *batteries included*, meaning we gathered all the stuff we wanted while creating various commands.
+- great completion support
+- persistence of options and arguments
+- commands flow management
+- launchers
+- aliases
+- and more...
 
-Dogfooding in mind, the developers are extensive users of click-project. They like it and when something feels wrong, they just change it.
+click-project is a very *opinionated framework*, and is meant to be *batteries included*, meaning we gathered all the stuff we wanted while creating various commands. Dogfooding in mind, the developers are extensive users of click-project. They like it and when something feels wrong, they just change it.
 
 # Why?
 
