@@ -187,17 +187,21 @@ class ExternalCommandResolver(CommandResolver):
             "float": float,
             "str": str,
         }
+
+        def get_type(t):
+            if t.startswith("["):
+                t = click.Choice(json.loads(t))
+            elif "." in t:
+                t = t.split(".")
+                m = importlib.import_module(".".join(t[:-1]))
+                t = getattr(m, t[-1])
+            else:
+                t = types[o["type"]]
+            return t
+
         for o in options:
             if "type" in o:
-                t = o["type"]
-                if t.startswith("["):
-                    t = click.Choice(json.loads(t))
-                elif "." in t:
-                    t = t.split(".")
-                    m = importlib.import_module(".".join(t[:-1]))
-                    t = getattr(m, t[-1])
-                else:
-                    t = types[o["type"]]
+                t = get_type(o["type"])
             external_command = option(
                 *(o["name"].split(",")),
                 help=o["help"],
@@ -206,12 +210,7 @@ class ExternalCommandResolver(CommandResolver):
             )(external_command)
         for a in arguments:
             if "type" in a:
-                if "." in a["type"]:
-                    t = a["type"].split(".")
-                    m = importlib.import_module(".".join(t[:-1]))
-                    t = getattr(m, t[-1])
-                else:
-                    t = types[a["type"]]
+                t = get_type(a["type"])
             external_command = argument(
                 a["name"],
                 help=a["help"],
