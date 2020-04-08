@@ -43,7 +43,7 @@ def flowdeps():
     first dosomething and then configure.
 
     If you feel lost about what commands will be run in a flow, for instance the
-    flow to the command ipython, run the command 'flowdeps show --full
+    flow to the command ipython, run the command 'flowdeps show --all
     ipython'. This will show you all the command that would be run with the
     command 'ipython --flow'.
 
@@ -114,16 +114,16 @@ def unset(cmds):
 
 @flowdeps.command(handle_dry_run=True)
 @flag('--name-only/--no-name-only', help="Only display the command names")
-@flag('--full', help="Show the full flowdeps, even those guessed from the context")
+@flag('--all', help="Show all the flowdeps, even those guessed from the context")
 @Colorer.color_options
 @table_format(default='key_value')
 @table_fields(choices=['command', 'dependencies'])
 @argument('cmds', nargs=-1, type=CommandType(), help="The commands to show")
 @pass_context
-def show(ctx, name_only, cmds, full, fields, format, **kwargs):
+def show(ctx, name_only, cmds, all, fields, format, **kwargs):
     """Show the flow dependencies of a command"""
     show_empty = len(cmds) > 0
-    if full:
+    if all:
         cmds = cmds or sorted(get_sub_commands(ctx, config.main_command))
     else:
         cmds = cmds or sorted(config.flowdeps.readonly.keys())
@@ -132,7 +132,7 @@ def show(ctx, name_only, cmds, full, fields, format, **kwargs):
             if name_only:
                 click.echo(cmd)
             else:
-                if full:
+                if all:
                     deps = get_flow_commands_to_run(cmd)
                     formatted = " ".join(quote(p) for p in deps)
                 else:
@@ -239,8 +239,8 @@ def compute_dot(cmds=None, strict=False, cluster=True,
 @option("--output", help="Output file instead of showing it in a web browser - not relevant with format x11")
 @option("--format", type=click.Choice(["png", "svg", "x11", "pdf", "dot"]),
         help="Format to use", default="svg")
-@flag('--strict/--full',
-      help="Show the full dependency graph or only the explicitly configured flowdeps")
+@flag('--strict/--all',
+      help="Show the all dependency graph or only the explicitly configured flowdeps")
 @flag("--left-right/--top-bottom", help="Show from left to right",
       default=True)
 @flag("--lonely/--no-lonely", help="Show lonely nodes also"
