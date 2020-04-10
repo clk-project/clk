@@ -196,7 +196,7 @@ class ExternalCommandResolver(CommandResolver):
                 m = importlib.import_module(".".join(t[:-1]))
                 t = getattr(m, t[-1])
             else:
-                t = types[o["type"]]
+                t = types[t]
             return t
 
         for o in options:
