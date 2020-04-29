@@ -7,6 +7,7 @@ from collections import defaultdict
 import collections
 from copy import deepcopy
 from contextlib import contextmanager
+import shlex
 
 import six
 import click
@@ -149,7 +150,7 @@ class Config(object):
 
     @property
     def env_profile(self):
-        return ProfileFactory.create_or_get_preset_profile(
+        profile = ProfileFactory.create_or_get_preset_profile(
             "env",
             settings=defaultdict(lambda: defaultdict(list)),
             explicit=False,
@@ -157,6 +158,13 @@ class Config(object):
             activation_level=ActivationLevel.global_,
             default_color="bold-True"
         )
+        parameters_prefix = f"{self.app_name}_P_".upper()
+        profile.settings["parameters"] = {
+            key[len(parameters_prefix):].replace("__", "-").replace("_", ".").lower(): shlex.split(value)
+            for key, value in os.environ.items()
+            if key.startswith(parameters_prefix)
+        }
+        return profile
 
     @property
     def project(self):
