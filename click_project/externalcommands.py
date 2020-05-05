@@ -208,7 +208,7 @@ class ExternalCommandResolver(CommandResolver):
                 type=t or str,
                 default=o.get("default"),
             )(external_command)
-        for a in arguments:
+        for a in reversed(arguments):
             if "type" in a:
                 t = get_type(a["type"])
             external_command = argument(
