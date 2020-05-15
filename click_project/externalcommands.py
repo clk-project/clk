@@ -202,6 +202,8 @@ class ExternalCommandResolver(CommandResolver):
                 t = types[t]
             return t
 
+        if remaining_args:
+            external_command = argument('args', nargs=-1, help=remaining_args)(external_command)
         for o in options:
             if "type" in o:
                 t = get_type(o["type"])
@@ -226,8 +228,6 @@ class ExternalCommandResolver(CommandResolver):
                 help=f["help"],
                 default=f["default"] == "True",
             )(external_command)
-        if remaining_args:
-            external_command = argument('args', nargs=-1, help=remaining_args)(external_command)
 
         external_command = command(
             name=name,
