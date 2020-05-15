@@ -58,6 +58,7 @@ class ExternalCommandResolver(CommandResolver):
         arguments = []
         flags = []
         remaining_args = "Remaining arguments"
+        ignore_unknown_options = False
         try:
             process = subprocess.Popen([command_path, "--help"], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
             out, err = process.communicate()
