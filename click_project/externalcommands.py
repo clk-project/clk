@@ -150,6 +150,8 @@ class ExternalCommandResolver(CommandResolver):
             env[(config.main_command.path + "___PATH").upper()] = (
                 ctx.command_path.replace(" ", "_").upper()
             )
+            if "args" in ctx.params:
+                env[(config.main_command.path + "___ARGS").upper()] = " ".join(map(quote, ctx.params["args"]))
             while ctx:
                 env.update(
                     {
@@ -176,7 +178,7 @@ class ExternalCommandResolver(CommandResolver):
             env[(config.main_command.path + "___OPTIND").upper()] = (
                 str(len(args[1:]))
             )
-            env[(config.main_command.path + "___ARGS").upper()] = (
+            env[(config.main_command.path + "___ALL").upper()] = (
                 " ".join(quote(a) for a in args[1:])
             )
             with updated_env(**env):
