@@ -106,7 +106,6 @@ def get_ctx(path, side_effects=False, resilient_parsing=None):
 
 
 main_command_parameters = set()
-main_command_env_paramss = {}
 
 
 def main_command_options_callback(f):
@@ -115,31 +114,6 @@ def main_command_options_callback(f):
             return value
         if value is None:
             return value
-        env_value = attr.type_cast_value(
-            ctx,
-            attr.value_from_envvar(ctx)
-        )
-
-        if env_value and attr.name not in main_command_env_paramss:
-            LOGGER.develop(
-                "Remembering the env value {}={}".format(
-                    attr.name, env_value
-                )
-            )
-            if isinstance(env_value, tuple):
-                for val in env_value:
-                    config.env_profile.get_settings("parameters")[config.main_command.path].extend(
-                        [attr.opts[0], val]
-                    )
-            elif attr.is_bool_flag:
-                if value:
-                    config.env_profile.get_settings("parameters")[config.main_command.path].append(attr.opts[0])
-            else:
-                config.env_profile.get_settings("parameters")[config.main_command.path].extend(
-                    [attr.opts[0], env_value]
-                )
-            config.merge_settings()
-            main_command_env_paramss[attr.name] = env_value
         value = f(ctx, attr, value)
         return value
     return decorator
