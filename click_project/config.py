@@ -164,6 +164,12 @@ class Config(object):
             for key, value in os.environ.items()
             if key.startswith(parameters_prefix)
         }
+        recipes_prefix = f"{self.app_name}_R_".upper()
+        profile.settings["recipe"] = {
+            key[len(recipes_prefix):]: json.loads(value)
+            for key, value in os.environ.items()
+            if key.startswith(recipes_prefix)
+        }
         return profile
 
     @property
