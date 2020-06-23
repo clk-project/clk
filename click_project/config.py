@@ -306,7 +306,7 @@ class Config(object):
                         yield settings
 
     def get_profile(self, name):
-        for profile in self.all_enabled_profiles:
+        for profile in self.all_profiles:
             if profile.name == name:
                 return profile
         # fallback on uniq shortnames
