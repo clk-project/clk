@@ -23,6 +23,7 @@ import sys
 import tempfile
 import threading
 import traceback
+from pathlib import Path
 from copy import deepcopy
 from contextlib import contextmanager
 
@@ -107,7 +108,11 @@ def move(src, dst):
         shutil.move(src, dst)
 
 
-def createfile(name, content, append=False, internal=False):
+def createfile(name, content, append=False, internal=False, force=False, makedirs=False):
+    if os.path.exists(name) and not force:
+        click.UsageError(f"{name} already exists")
+    if makedirs:
+        makedirs(Path(name).parent)
     if internal:
         logger = LOGGER.develop
     else:
