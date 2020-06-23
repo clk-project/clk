@@ -183,7 +183,8 @@ class ExternalCommandResolver(CommandResolver):
             )
             with updated_env(**env):
                 call(
-                    args
+                    args,
+                    internal=True,
                 )
         types = {
             "int": int,
