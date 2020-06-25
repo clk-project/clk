@@ -87,6 +87,7 @@ def makedirs(dir):
         LOGGER.action("create directory {}".format(dir))
         if not dry_run:
             os.makedirs(dir)
+    return Path(dir)
 
 
 def chmod(file, mode):
@@ -127,6 +128,7 @@ def createfile(name, content, append=False, internal=False, force=False, makedir
         flag = "a" if append else "w"
         flag += "b"
         open(name, flag).write(content.encode("utf-8"))
+    return Path(name)
 
 
 def copy(src, dst):
