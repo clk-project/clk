@@ -407,8 +407,8 @@ def cd(dir, internal=False, makedirs=False):
 
 def ccd(dir):
     """Create and change to a directory temporarily. To be used in a with statement"""
-    makedirs(dir)
-    return cd(dir)
+    LOGGER.deprecated("`ccd(dir)` is deprecated, use `cd(dir, makedirs=True)` instead")
+    return cd(dir, makedirs=True)
 
 
 @contextmanager
