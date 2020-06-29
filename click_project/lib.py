@@ -405,8 +405,7 @@ def cd(dir, internal=False):
 
 def ccd(dir):
     """Create and change to a directory temporarily. To be used in a with statement"""
-    if not os.path.exists(dir):
-        os.makedirs(dir)
+    makedirs(dir)
     return cd(dir)
 
 
@@ -665,8 +664,7 @@ def extract(url, dest='.'):
     import tarfile
     import zipfile
     from io import BytesIO
-    if not os.path.exists(dest):
-        os.makedirs(dest)
+    makedirs(dest)
     r = urlopen(url)
     size = int(r.headers["Content-Length"] or r.headers['content-length'])
     archname = os.path.basename(url)
