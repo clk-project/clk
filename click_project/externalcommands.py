@@ -19,23 +19,13 @@ from click_project.log import get_logger
 LOGGER = get_logger(__name__)
 
 
-def external_cmds_paths():
-    paths = []
-    if config.project:
-        paths.extend(config.project_bin_dirs)
-    paths.append(os.path.join(config.app_dir, "scripts"))
-    paths.extend(os.environ["PATH"].split(os.pathsep))
-    return paths
-
-
 class ExternalCommandResolver(CommandResolver):
 
     def _list_command_paths(self, parent=None):
         prefix = config.app_name + "-"
         if not hasattr(self, "_external_cmds"):
             self._external_cmds = []
-            paths = external_cmds_paths()
-            for path in paths:
+            for path in config.enabled_profiles_bin_dirs:
                 if os.path.isdir(path):
                     for file in os.listdir(path):
                         if file.startswith(prefix):
@@ -52,7 +42,7 @@ class ExternalCommandResolver(CommandResolver):
         name = path.replace("@", ".")
         cmdhelp = "external command"
         command_name = prefix + name
-        paths = external_cmds_paths()
+        paths = config.enabled_profiles_bin_dirs
         command_path = which(command_name, os.pathsep.join(paths))
         options = []
         arguments = []

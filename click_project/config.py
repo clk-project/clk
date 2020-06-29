@@ -12,7 +12,11 @@ import shlex
 import six
 import click
 
-from click_project.profile import ProfileFactory, ActivationLevel
+from click_project.profile import (
+    ProfileFactory,
+    ActivationLevel,
+    DirectoryProfile,
+)
 from click_project.click_helpers import click_get_current_context_safe
 from click_project.log import LOG_LEVELS, set_level, get_logger
 from click_project.lib import updated_env
@@ -279,9 +283,9 @@ class Config(object):
         self.settings, self.settings2 = merge_settings(self.iter_settings(recurse=True))
 
     @property
-    def project_bin_dirs(self):
+    def enabled_profiles_bin_dirs(self):
         return [
-            os.path.join(self.project, bin_dir)
+            os.path.join(profile.location, bin_dir)
             for bin_dir in {
                     "script",
                     "bin",
@@ -291,7 +295,9 @@ class Config(object):
                     "Script",
                     os.path.join(f".{self.main_command.path}", "scripts")
             }
-        ] + [os.path.join(self.workgroup_profile.location, "scripts")]
+            for profile in self.all_enabled_profiles
+            if isinstance(profile, DirectoryProfile)
+        ]
 
     def load_settings_from_profile(self, profile, recurse, only_this_recipe=None):
         if profile is not None and (
