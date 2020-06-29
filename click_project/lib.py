@@ -385,8 +385,10 @@ def temporary_file(dir=None, suffix=None):
 
 
 @contextmanager
-def cd(dir, internal=False):
+def cd(dir, internal=False, makedirs=False):
     u"""Change to a directory temporarily. To be used in a with statement"""
+    if makedirs:
+        _makedirs(dir)
     if internal:
         logger = LOGGER.develop
     else:
