@@ -39,6 +39,7 @@ setup(
         "ipdb",
         "humanize",
         "Pygments",
+        "cached-property",
     ],
     entry_points = {
         'console_scripts':

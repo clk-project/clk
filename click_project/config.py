@@ -11,6 +11,7 @@ import shlex
 
 import six
 import click
+from cached_property import cached_property
 
 from click_project.profile import (
     ProfileFactory,
@@ -473,7 +474,7 @@ class Config(object):
             )
         )
 
-    @property
+    @cached_property
     def all_profiles(self):
         res = []
         def add_profile(profile, explicit=True):
