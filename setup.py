@@ -3,7 +3,7 @@
 
 import versioneer
 from setuptools import setup, find_packages
-import fastentrypoints
+import fasterentrypoint
 
 versions = versioneer.get_versions()
 version = versions["version"]
