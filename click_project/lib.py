@@ -90,6 +90,9 @@ def makedirs(dir):
     return Path(dir)
 
 
+_makedirs = makedirs
+
+
 def chmod(file, mode):
     """Change the mode bits of a file"""
     LOGGER.action("chmod {} to {}".format(file, oct(mode)))
@@ -113,7 +116,7 @@ def createfile(name, content, append=False, internal=False, force=False, makedir
     if os.path.exists(name) and not force:
         click.UsageError(f"{name} already exists")
     if makedirs:
-        makedirs(Path(name).parent)
+        _makedirs(Path(name).parent)
     if internal:
         logger = LOGGER.develop
     else:
