@@ -87,7 +87,7 @@ def unset(launchers):
 @table_fields(choices=['launcher', 'command'])
 @argument('launchers', nargs=-1, default=None, type=LauncherType(), help="The launcher names")
 @pass_context
-def show(ctx, name_only, launchers, all, fields, format, **kwargs):
+def show(ctx, name_only, launchers, fields, format, **kwargs):
     """Show the launchers"""
     launchers = launchers or sorted(config.settings.get("launchers", {}))
     with TablePrinter(fields, format) as tp, Colorer(kwargs) as colorer:
