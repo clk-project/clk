@@ -9,6 +9,7 @@ import collections
 import six
 import re
 from enum import Enum
+from cached_property import cached_property
 
 import click
 
@@ -163,7 +164,7 @@ class DirectoryProfile(Profile):
         else:
             return candidates[0]
 
-    @property
+    @cached_property
     def recipes(self):
         if self.isrecipe:
             return []
