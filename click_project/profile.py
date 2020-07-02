@@ -29,7 +29,7 @@ class ProfileFactory:
     directory_profile_cache = {}
 
     preset_profile_cls = None
-    preset_profile_cache = {}
+    preset_profile_used = False
 
     @classmethod
     def register_directory_profile(klass, cls):
@@ -43,7 +43,7 @@ class ProfileFactory:
 
     @classmethod
     def register_preset_profile(klass, cls):
-        assert not klass.preset_profile_cache, (
+        assert not klass.preset_profile_used, (
             f"A new class ({cls}) was registered after the first instantiation"
             f" of a preset profile with class ({klass.preset_profile_cls})"
             f" This would cause unstable behavior"
@@ -61,19 +61,17 @@ class ProfileFactory:
         return klass.directory_profile_cache[location]
 
     @classmethod
-    def create_or_get_preset_profile(
+    def create_preset_profile(
             klass, name,
             settings=None, explicit=True, isroot=True,
             activation_level=ActivationLevel.global_,
             default_color=None):
-        if name not in klass.preset_profile_cache:
-            profile = klass.preset_profile_cls(name, settings,
-                                    explicit=explicit, isroot=isroot,
-                                    activation_level=activation_level,
-                                    default_color=default_color,
-            )
-            klass.preset_profile_cache[name] = profile
-        return klass.preset_profile_cache[name]
+        return klass.preset_profile_cls(
+            name, settings,
+            explicit=explicit, isroot=isroot,
+            activation_level=activation_level,
+            default_color=default_color,
+        )
 
 
 def load_settings(path):
@@ -85,7 +83,6 @@ def load_settings(path):
                 # just give up on the data in the file
                 LOGGER.warning("Can't read settings from %s" % path)
     return {}
-
 
 
 def write_settings(settings_path, settings, dry_run):

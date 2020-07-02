@@ -134,9 +134,9 @@ class Config(object):
         self.distribution_profile_location = None
         self._all_profiles_cache = None
 
-    @property
+    @cached_property
     def commandline_profile(self):
-        return ProfileFactory.create_or_get_preset_profile(
+        return ProfileFactory.create_preset_profile(
             "commandline",
             settings=defaultdict(lambda: defaultdict(list)),
             explicit=False,
@@ -144,9 +144,9 @@ class Config(object):
             activation_level=ActivationLevel.global_,
         )
 
-    @property
+    @cached_property
     def flow_profile(self):
-        return ProfileFactory.create_or_get_preset_profile(
+        return ProfileFactory.create_preset_profile(
             "flow",
             settings=defaultdict(lambda: defaultdict(list)),
             explicit=False,
@@ -154,9 +154,9 @@ class Config(object):
             activation_level=ActivationLevel.global_,
         )
 
-    @property
+    @cached_property
     def env_profile(self):
-        profile = ProfileFactory.create_or_get_preset_profile(
+        profile = ProfileFactory.create_preset_profile(
             "env",
             settings=defaultdict(lambda: defaultdict(list)),
             explicit=False,
@@ -358,7 +358,7 @@ class Config(object):
         else:
             return None
 
-    @property
+    @cached_property
     def currentdirectorypreset_profile(self):
         settings = {}
         proj = self.guess_project()
@@ -366,7 +366,7 @@ class Config(object):
             settings["parameters"] = {
                     self.main_command.path: ["--project", proj]
                 }
-        return ProfileFactory.create_or_get_preset_profile(
+        return ProfileFactory.create_preset_profile(
             "currentdirectorypreset",
             settings=settings,
             explicit=False,
@@ -374,10 +374,10 @@ class Config(object):
             activation_level=ActivationLevel.global_,
         )
 
-    @property
+    @cached_property
     def localpreset_profile(self):
         if self.project:
-            return ProfileFactory.create_or_get_preset_profile(
+            return ProfileFactory.create_preset_profile(
                 "localpreset",
                 settings={},
                 explicit=False,
@@ -402,10 +402,10 @@ class Config(object):
         else:
             return None
 
-    @property
+    @cached_property
     def workgrouppreset_profile(self):
         if self.project:
-            return ProfileFactory.create_or_get_preset_profile(
+            return ProfileFactory.create_preset_profile(
                 "workgrouppreset",
                 settings={
                     "recipe": {
@@ -432,9 +432,9 @@ class Config(object):
             default_color="fg-cyan",
         )
 
-    @property
+    @cached_property
     def globalpreset_profile(self):
-        return ProfileFactory.create_or_get_preset_profile(
+        return ProfileFactory.create_preset_profile(
             "globalpreset",
             settings={
                 "recipe": {
