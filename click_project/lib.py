@@ -195,7 +195,11 @@ def which(executable, path=None):
 
 
 # expose glob
-glob = glob2.glob
+@functools.wraps(glob2.glob)
+def glob(pathname, *args, **kwargs):
+    if isinstance(pathname, Path):
+        pathname = str(pathname)
+    return glob2.glob(pathname, *args, **kwargs)
 
 
 def glob_first(expr, default=None):
