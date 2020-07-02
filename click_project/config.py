@@ -132,6 +132,7 @@ class Config(object):
         self.override_env = {}
         self.old_env = os.environ.copy()
         self.distribution_profile_location = None
+        self._all_profiles_cache = None
 
     @property
     def commandline_profile(self):
@@ -222,6 +223,7 @@ class Config(object):
             raise click.UsageError("No project provided")
 
     def init(self):
+        self._all_profiles_cache = None
         if self.frozen:
             return
         self.settings = None
@@ -474,27 +476,30 @@ class Config(object):
             )
         )
 
-    @cached_property
+    @property
     def all_profiles(self):
-        res = []
-        def add_profile(profile, explicit=True):
-            if profile is None:
-                return
-            res.append(profile)
-            res.extend(self.sorted_recipes(profile.recipes))
+        if self._all_profiles_cache is None:
+            res = []
 
-        add_profile(self.distribution_profile)
-        add_profile(self.globalpreset_profile)
-        add_profile(self.global_profile)
-        add_profile(self.currentdirectorypreset_profile)
-        add_profile(self.workgrouppreset_profile)
-        add_profile(self.workgroup_profile)
-        add_profile(self.localpreset_profile)
-        add_profile(self.local_profile)
-        add_profile(self.env_profile)
-        add_profile(self.commandline_profile)
-        add_profile(self.flow_profile)
-        return res
+            def add_profile(profile, explicit=True):
+                if profile is None:
+                    return
+                res.append(profile)
+                res.extend(self.sorted_recipes(profile.recipes))
+
+            add_profile(self.distribution_profile)
+            add_profile(self.globalpreset_profile)
+            add_profile(self.global_profile)
+            add_profile(self.currentdirectorypreset_profile)
+            add_profile(self.workgrouppreset_profile)
+            add_profile(self.workgroup_profile)
+            add_profile(self.localpreset_profile)
+            add_profile(self.local_profile)
+            add_profile(self.env_profile)
+            add_profile(self.commandline_profile)
+            add_profile(self.flow_profile)
+            self._all_profiles_cache = res
+        return self._all_profiles_cache
 
     @property
     def implicit_profiles(self):
