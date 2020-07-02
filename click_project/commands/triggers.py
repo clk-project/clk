@@ -121,13 +121,7 @@ def show(name_only, triggers, position, **kwargs):
                     for profile in config.all_enabled_profiles
                 }
                 args = colorer.colorize(values, config.triggers.readprofile)
-                if args and not args[0]:
-                    if triggers_ in triggers:
-                        args = ["None"]
-                    else:
-                        args = None
-                if args:
-                    echo_key_value(triggers_, " , ".join(args), config.alt_style)
+                echo_key_value(triggers_, " , ".join(args), config.alt_style)
 
 
 @triggers.command(handle_dry_run=True)
