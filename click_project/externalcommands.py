@@ -20,12 +20,17 @@ LOGGER = get_logger(__name__)
 
 
 class ExternalCommandResolver(CommandResolver):
+    name = "external"
+
+    @property
+    def cmddirs(self):
+        return config.enabled_profiles_bin_dirs
 
     def _list_command_paths(self, parent=None):
         prefix = config.app_name + "-"
         if not hasattr(self, "_external_cmds"):
             self._external_cmds = []
-            for path in config.enabled_profiles_bin_dirs:
+            for path in self.cmddirs:
                 if os.path.isdir(path):
                     for file in os.listdir(path):
                         if file.startswith(prefix):
@@ -42,7 +47,7 @@ class ExternalCommandResolver(CommandResolver):
         name = path.replace("@", ".")
         cmdhelp = "external command"
         command_name = prefix + name
-        paths = config.enabled_profiles_bin_dirs
+        paths = self.cmddirs
         command_path = which(command_name, os.pathsep.join(paths))
         options = []
         arguments = []

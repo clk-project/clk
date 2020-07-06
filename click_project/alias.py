@@ -19,6 +19,7 @@ LOGGER = get_logger(__name__)
 
 
 class AliasToGroupResolver(CommandResolver):
+    name = "alias to group"
 
     def _list_command_paths(self, parent):
         try:
@@ -38,6 +39,7 @@ class AliasToGroupResolver(CommandResolver):
 
 
 class AliasCommandResolver(CommandResolver):
+    name = "alias"
 
     def _list_command_paths(self, parent):
         if isinstance(parent, config.main_command.__class__):

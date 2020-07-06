@@ -176,6 +176,7 @@ def on_command_loading_error():
 
 
 class CoreCommandResolver(CommandResolver):
+    name = "core command"
     commands_packages = ["click_project.commands"]
     include_core_commands = None
     exclude_core_commands = None
@@ -594,12 +595,20 @@ def get_command_with_resolvers(resolvers, parent_path, name):
         cmd_path = parent_path + "." + name
     for resolver in resolvers:
         if name in _list_matching_commands_from_resolver(resolver, parent_path):
-            cmd = resolver._get_command(cmd_path, parent)
+            try:
+                cmd = resolver._get_command(cmd_path, parent)
+            except:
+                LOGGER.error(
+                    f"Found the command {cmd_path} in the resolver {resolver.name}"
+                    " but could not load it."
+                )
+                raise
             break
     return cmd
 
 
 class GroupCommandResolver(CommandResolver):
+    name = "group"
 
     def _list_command_paths(self, parent):
         ctx = click_get_current_context_safe()
