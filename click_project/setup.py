@@ -5,7 +5,6 @@ from __future__ import print_function, absolute_import
 
 from click_project.flow import setup as setup_flow
 from click_project.overloads import CoreCommandResolver, MainCommand, entry_point
-from click_project.scriptcommands import ScriptCommandResolver
 from click_project.externalcommands import ExternalCommandResolver
 from click_project.alias import AliasCommandResolver, AliasToGroupResolver
 from click_project.hook import HookCommandResolver, setup as setup_hook
@@ -36,7 +35,6 @@ def classic_setup(main_module=None, config_cls=Config,
     CoreCommandResolver.include_core_commands = include_core_commands
     CoreCommandResolver.exclude_core_commands = exclude_core_commands
     Group.commandresolvers = [
-        ScriptCommandResolver(),
         ExternalCommandResolver(),
         AliasCommandResolver(),
         HookCommandResolver(),
@@ -44,7 +42,6 @@ def classic_setup(main_module=None, config_cls=Config,
         AliasToGroupResolver(),
     ]
     MainCommand.commandresolvers = [
-        ScriptCommandResolver(),
         ExternalCommandResolver(),
         AliasCommandResolver(),
         HookCommandResolver(),
