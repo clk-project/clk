@@ -205,6 +205,10 @@ def show(ctx, name_only, cmds, under, fields, format, **kwargs):
                         for profile in config.all_enabled_profiles
                     }
                     args = colorer.colorize(values, config.parameters.readprofile)
+                if args == [""]:
+                    # the command most likely has implicit settings and only
+                    # explicit values are asked for. Skip it
+                    continue
                 if cmd is None:
                     LOGGER.warning("You should know that the command {} does not exist".format(cmd_name))
                 args = args or 'None'
