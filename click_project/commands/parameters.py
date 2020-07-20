@@ -157,7 +157,7 @@ def unset(cmds):
     for cmd in cmds:
         if cmd not in config.parameters.writable:
             raise click.ClickException("The command %s has no parameter registered in the %s configuration."
-                                       " Try using another profile option (like --local, --workgroup or --global)"
+                                       " Try using another profile option (like --local or --global)"
                                        % (cmd, config.parameters.writeprofilename))
     for cmd in cmds:
         LOGGER.status(

@@ -114,7 +114,7 @@ def set_documentation(alias, documentation):
     """Set the documentation of the alias"""
     if alias not in config.alias.writable:
         raise click.ClickException("The %s configuration has no '%s' alias registered."
-                                   "Try using another profile option (like --local, --workgroup or --global)"
+                                   "Try using another profile option (like --local or --global)"
                                    % (config.alias.writeprofile, alias))
     config.alias.writable[alias]["documentation"] = documentation
     config.alias.write()
@@ -127,7 +127,7 @@ def unset(aliases):
     for cmd in aliases:
         if cmd not in config.alias.writable:
             raise click.ClickException("The %s configuration has no '%s' alias registered."
-                                       "Try using another profile option (like --local, --workgroup or --global)"
+                                       "Try using another profile option (like --local or --global)"
                                        % (config.alias.writeprofile, cmd))
     for cmd in aliases:
         LOGGER.status("Erasing {} alias from {} settings".format(cmd, config.alias.writeprofile))
@@ -143,7 +143,7 @@ def unset_documentation(aliases):
     for cmd in aliases:
         if cmd not in config.alias.writable:
             raise click.ClickException("The %s configuration has no '%s' alias registered."
-                                       " Try using another profile option (like --local, --workgroup or --global)"
+                                       " Try using another profile option (like --local or --global)"
                                        % (config.alias.writeprofile, cmd))
     for cmd in aliases:
         LOGGER.status("Erasing the documentation of {} alias from {} settings".format(cmd, config.alias.writeprofile))

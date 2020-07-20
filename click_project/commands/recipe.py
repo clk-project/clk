@@ -95,7 +95,7 @@ def recipe():
     """Recipe related commands
 
     A recipe is a set of settings that may be activated or disactivated in a project.
-    The recipes can be defined at the global, workgroup or local profile."""
+    The recipes can be defined at the global or local profile."""
     pass
 
 

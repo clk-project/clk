@@ -283,7 +283,7 @@ def install_plugin(profile, force, plugin, login, password, develop, no_deps):
 @option("--login", help="Login to use (instead of using the keyring)")
 @flag("-e", "--develop", help=(
     "Install in develop mode."
-    " It only makes sense with file install, and from a workgroup clone."
+    " It only makes sense with file install, and from a git clone."
     " It will be ignored in all other cases."
 ))
 @flag("--no-deps", help="Don't install the dependencies")

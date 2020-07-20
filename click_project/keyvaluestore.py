@@ -30,7 +30,7 @@ def keyvaluestore_generic_commands(group, settings_name):
         """Rename a key"""
         if src not in getattr(config, settings_name).writable:
             raise click.ClickException("The %s configuration has no '%s' values registered."
-                                       "Try using another profile option (like --local, --workgroup or --global)"
+                                       "Try using another profile option (like --local or --global)"
                                        % (getattr(config, settings_name).writeprofile, src))
         if dst in getattr(config, settings_name).writable and not overwrite:
             LOGGER.error(
@@ -51,7 +51,7 @@ def keyvaluestore_generic_commands(group, settings_name):
         for key in keys:
             if key not in getattr(config, settings_name).writable:
                 raise click.ClickException("The %s configuration has no '%s' value registered."
-                                           "Try using another profile option (like --local, --workgroup or --global)"
+                                           "Try using another profile option (like --local or --global)"
                                            % (getattr(config, settings_name).writeprofile, key))
         for key in keys:
             LOGGER.status("Erasing {} value from {} settings".format(key, getattr(config, settings_name).writeprofile))

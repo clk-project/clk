@@ -92,7 +92,7 @@ def unset(cmds, position):
     for cmd in cmds:
         if cmd not in config.triggers.writable:
             raise click.ClickException("The %s configuration has no '%s' triggers registered."
-                                       "Try using another profile option (like --local, --workgroup or --global)"
+                                       "Try using another profile option (like --local or --global)"
                                        % (config.triggers.writeprofile, cmd))
     for cmd in cmds:
         LOGGER.status("Erasing {} triggers from {} settings".format(cmd, config.triggers.writeprofile))

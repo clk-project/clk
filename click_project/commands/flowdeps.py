@@ -104,7 +104,7 @@ def unset(cmds):
     for cmd in cmds:
         if cmd not in config.flowdeps.writable:
             raise click.ClickException("The %s configuration has no '%s' flow dependency registered."
-                                       "Try using another profile option (like --local, --workgroup or --global)"
+                                       "Try using another profile option (like --local, --global)"
                                        % (config.flowdeps.writeprofile, cmd))
     for cmd in cmds:
         LOGGER.status("Erasing {} flow dependencies from {} settings".format(cmd, config.flowdeps.writeprofile))
