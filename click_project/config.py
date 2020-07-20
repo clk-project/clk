@@ -334,7 +334,7 @@ class Config(object):
         raise ValueError("Could not find profile {}".format(name))
 
     @property
-    def workgroup(self):
+    def workspace(self):
         if self.project:
             return os.path.dirname(self.project)
         else:
@@ -388,11 +388,11 @@ class Config(object):
             return None
 
     @property
-    def workgroup_profile(self):
+    def workspace_profile(self):
         if self.project:
             return ProfileFactory.create_or_get_by_location(
                 os.path.dirname(self.project) + '/.{}'.format(self.main_command.path),
-                name="workgroup",
+                name="workspace",
                 app_name=self.app_name,
                 explicit=True,
                 isroot=True,
@@ -403,14 +403,14 @@ class Config(object):
             return None
 
     @cached_property
-    def workgrouppreset_profile(self):
+    def workspacepreset_profile(self):
         if self.project:
             return ProfileFactory.create_preset_profile(
-                "workgrouppreset",
+                "workspacepreset",
                 settings={
                     "recipe": {
-                        name: json.loads(open(self.workgroup_profile.link_location(name), "rb").read().decode("utf-8"))
-                        for name in self.workgroup_profile.recipe_link_names
+                        name: json.loads(open(self.workspace_profile.link_location(name), "rb").read().decode("utf-8"))
+                        for name in self.workspace_profile.recipe_link_names
                     }
                 },
                 explicit=False,
@@ -491,8 +491,8 @@ class Config(object):
             add_profile(self.globalpreset_profile)
             add_profile(self.global_profile)
             add_profile(self.currentdirectorypreset_profile)
-            add_profile(self.workgrouppreset_profile)
-            add_profile(self.workgroup_profile)
+            add_profile(self.workspacepreset_profile)
+            add_profile(self.workspace_profile)
             add_profile(self.localpreset_profile)
             add_profile(self.local_profile)
             add_profile(self.env_profile)
