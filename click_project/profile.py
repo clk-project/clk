@@ -632,6 +632,7 @@ class PresetProfile(Profile):
     def write_settings(self):
         click.UsageError("A preset profile cannot be written to")
 
+    @property
     def short_name(self):
         return self.name
 
