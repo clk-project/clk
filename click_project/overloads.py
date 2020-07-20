@@ -247,17 +247,14 @@ class ProfileChoice(click.Choice):
 
     @property
     def choices(self):
-        res = [config.global_profile.name]
-        if config.local_profile:
-            res.append(config.workgroup_profile.name)
-            res.append(config.local_profile.name)
-        recipes = list(config.all_recipes)
-        res.extend([r.name for r in recipes])
-        shortnames = list(map(lambda r: r.short_name, recipes))
+        profile_names = [p.name for p in config.all_profiles]
+        profile_shortnames = [p.short_name for p in config.all_profiles]
+        res = []
+        res.extend(profile_names)
         uniq_shortnames = [
             name
-            for name in shortnames
-            if shortnames.count(name) == 1
+            for name in profile_shortnames
+            if profile_shortnames.count(name) == 1
         ]
         res.extend(uniq_shortnames)
         res.extend(self.extra)
