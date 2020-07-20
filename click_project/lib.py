@@ -154,7 +154,7 @@ def link(src, dst):
 
 
 def rm(*file_or_tree):
-    LOGGER.action("remove {}".format(' '.join(file_or_tree)))
+    LOGGER.action("remove {}".format(' '.join(map(str, file_or_tree))))
     if dry_run:
         return
     for f in file_or_tree:
