@@ -613,11 +613,8 @@ class Config(object):
     @dry_run.setter
     def dry_run(self, value):
         self._dry_run = value
-        self.global_profile.dry_run = value
-        if self.local_profile:
-            self.local_profile.dry_run = value
-        if self.workgroup_profile:
-            self.workgroup_profile.dry_run = value
+        for profile in self.all_profiles:
+            profile.dry_run = value
         from click_project import lib
         lib.dry_run = value
 
