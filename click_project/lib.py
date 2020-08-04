@@ -1418,8 +1418,8 @@ class TablePrinter(object):
         if self._tablefmt not in self.direct_output_formats:
             click.echo(tabulate(self._data, self._headers, tablefmt=self._tablefmt, **self._options))
 
-    def echo(self, *args):
-        if self._field_indices:
+    def echo(self, *args, stripped=False):
+        if self._field_indices and not stripped:
             args = [args[i] for i in self._field_indices]
         cleaned_args = []
         for arg in args:
