@@ -189,6 +189,9 @@ class Config(object):
             if os.path.exists(value):
                 value = os.path.abspath(value)
                 self._project = value
+                # clean the profiles cache to make sure the new profile is taken
+                # into account
+                self._all_profiles_cache = None
                 self.merge_settings()
             else:
                 self._project = value
