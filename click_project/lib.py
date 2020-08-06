@@ -603,6 +603,10 @@ def check_output(cmd, *args, **kwargs):
         internal = kwargs.pop('internal')
     except KeyError:
         internal = False
+    try:
+        safe = kwargs.pop('safe')
+    except KeyError:
+        safe = False
     # deal with backward compatibility
     if 'force' in kwargs.keys():
         LOGGER.deprecated("'force' argument is deprecated since version 0.9.0, use 'internal' instead.")
@@ -613,7 +617,7 @@ def check_output(cmd, *args, **kwargs):
         LOGGER.develop(action_message)
     else:
         LOGGER.action(action_message)
-    if not (dry_run and not internal):
+    if not (dry_run and not internal and not safe):
         if call_capture_stdout:
             kwargs["stderr"] = subprocess.PIPE
             kwargs["stdout"] = subprocess.PIPE
