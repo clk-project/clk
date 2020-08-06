@@ -634,8 +634,8 @@ class Config(object):
             from click_project import lib
             lib.dry_run = value
 
-    def get_value(self, path):
-        return self.get_settings("value").get(path, {"value": None})["value"]
+    def get_value(self, path, default=None):
+        return self.get_settings("value").get(path, {"value": default})["value"]
 
     def get_parameters(self, path, implicit_only=False):
         return [
