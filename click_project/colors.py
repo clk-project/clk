@@ -100,10 +100,15 @@ class Colorer(object):
                 "bold-True,fg-red",
             ])
             f = flag("--legend/--no-legend",
-                     default=config.get_value('config.color.legend') or False,
+                     default=config.get_value('config.show.legend', False),
                      help="Start with a legend on colors")(f)
-            f = flag('--color/--no-color', default=True, help="Show profiles in color")(f)
-            f = flag('--full/--explicit-only', default=full_default, help="Show the full information, even those guessed from the context")(f)
+            f = flag('--color/--no-color',
+                     default=config.get_value("config.show.color", True),
+                     help="Show profiles in color")(f)
+            f = flag('--full/--explicit-only',
+                     default=config.get_value('config.show.full', full_default),
+                     help="Show the full information, even those guessed from the context"
+            )(f)
             shortname_color = {}
 
             for profile in config.all_enabled_profiles:
