@@ -84,38 +84,45 @@ class Colorer(object):
             if profile in all_settings and name in all_settings[profile]:
                 return profile
 
-    @staticmethod
-    def color_options(f):
-        colors = cycle([
-            "fg-yellow",
-            "fg-blue",
-            "bold-True,fg-yellow",
-            "bold-True,fg-blue",
-            "bold-True,fg-cyan",
-            "bold-True,fg-green",
-            "bold-True,fg-magenta",
-            "fg-red",
-            "bold-True,fg-red",
-        ])
-        f = flag("--legend/--no-legend",
-                 default=config.get_value('config.color.legend') or False,
-                 help="Start with a legend on colors")(f)
-        f = flag('--color/--no-color', default=True, help="Show profiles in color")(f)
-        f = flag('--full', help="Show the full information, even those guessed from the context")(f)
-        shortname_color = {}
+    @classmethod
+    def color_options(cls, f=None, full_default=None):
 
-        for profile in config.all_enabled_profiles:
-            if profile.default_color is None:
-                if profile.short_name not in shortname_color:
-                    shortname_color[profile.short_name] = next(colors)
-                default_color = shortname_color[profile.short_name]
-            else:
-                default_color = profile.default_color
-            f = option(f'--{profile.name.replace("/", "-")}-color',
-                       f"""{profile.name.replace("/", "_slash_")}_color""",
-                       help=f"Color to show the {profile.name} profile",
-                       type=ColorType(), default=default_color)(f)
-        return f
+        def decorator(f):
+            colors = cycle([
+                "fg-yellow",
+                "fg-blue",
+                "bold-True,fg-yellow",
+                "bold-True,fg-blue",
+                "bold-True,fg-cyan",
+                "bold-True,fg-green",
+                "bold-True,fg-magenta",
+                "fg-red",
+                "bold-True,fg-red",
+            ])
+            f = flag("--legend/--no-legend",
+                     default=config.get_value('config.color.legend') or False,
+                     help="Start with a legend on colors")(f)
+            f = flag('--color/--no-color', default=True, help="Show profiles in color")(f)
+            f = flag('--full/--explicit-only', default=full_default, help="Show the full information, even those guessed from the context")(f)
+            shortname_color = {}
+
+            for profile in config.all_enabled_profiles:
+                if profile.default_color is None:
+                    if profile.short_name not in shortname_color:
+                        shortname_color[profile.short_name] = next(colors)
+                    default_color = shortname_color[profile.short_name]
+                else:
+                    default_color = profile.default_color
+                f = option(f'--{profile.name.replace("/", "-")}-color',
+                           f"""{profile.name.replace("/", "_slash_")}_color""",
+                           help=f"Color to show the {profile.name} profile",
+                           type=ColorType(), default=default_color)(f)
+            return f
+
+        if f is None:
+            return decorator
+        else:
+            return decorator(f)
 
     def apply_color(self, string, profile):
         return click.style(string, **self.get_style(profile))
