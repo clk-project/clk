@@ -64,7 +64,7 @@ def keyvaluestore_generic_commands(group, settings_name):
     @table_fields(choices=['key', 'value'])
     @argument('keys', nargs=-1, type=CommandSettingsKeyType("value"),
               help="The keys to show. When no keys are provided, all the keys are showed")
-    def show(fields, format, keys, all, **kwargs):
+    def show(fields, format, keys, **kwargs):
         """Show the values"""
         keys = keys or (
             sorted(config.settings.get(settings_name, {}))
