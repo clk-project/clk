@@ -82,7 +82,7 @@ def unset(launchers):
 
 @launchers.command(handle_dry_run=True)
 @flag('--name-only/--no-name-only', help="Only display the command names")
-@Colorer.color_options
+@Colorer.color_options(full_default=True)
 @table_format(default='key_value')
 @table_fields(choices=['launcher', 'command'])
 @argument('launchers', nargs=-1, default=None, type=LauncherType(), help="The launcher names")
