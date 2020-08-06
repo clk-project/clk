@@ -109,5 +109,5 @@ def show(ctx, name_only, launchers, fields, format, **kwargs):
                         for profile in config.all_enabled_profiles
                     }
                     args = colorer.colorize(values, config.launchers.readprofile)
-                if args and args[0]:
+                if args:
                     tp.echo(launcher_name, args)
