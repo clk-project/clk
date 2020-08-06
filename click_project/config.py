@@ -39,9 +39,9 @@ Then declare some option like
 @option("--someoption", callback=SomeConfig.get_callback())
 
 Then, get the option with config.thenameintheconfig.someoption. Because it uses
-    callbacks, the value is available very early, even before running the
-    command. Hence the name dynamic
-    """
+callbacks, the value is available very early, even before running the
+command. Hence the name dynamic
+"""
     @classmethod
     def get_callback(klass):
         def cb(ctx, attr, value):
@@ -50,7 +50,7 @@ Then, get the option with config.thenameintheconfig.someoption. Because it uses
                 setattr(config, klass.name, inst)
             else:
                 inst = getattr(config, klass, name)
-                setattr(inst, attr.name, value)
+            setattr(inst, attr.name, value)
             return value
         return cb
 
@@ -244,7 +244,7 @@ class Config(object):
         """Put the values of self.env and self.override_env into environment variables"""
         for k, v in six.iteritems(self.override_env):
             os.environ[k] = v
-            self.env = dict((k, os.pathsep.join(os.path.normpath(p) for p in ps if p)) for k, ps in six.iteritems(self.env))
+        self.env = dict((k, os.pathsep.join(os.path.normpath(p) for p in ps if p)) for k, ps in six.iteritems(self.env))
         for k, v in six.iteritems(self.env):
             sep = os.pathsep if (k.endswith("PATH") or
                                  k.endswith("DIR") or
@@ -273,16 +273,16 @@ class Config(object):
         for profile in self.all_enabled_profiles:
             if not explicit_only or profile.explicit:
                 yield from self.load_settings_from_profile(
-                    profile,
-                    recurse,
-                    only_this_recipe=only_this_recipe
+                        profile,
+                        recurse,
+                        only_this_recipe=only_this_recipe
                 )
 
     def merge_settings(self):
         for profile in self.all_enabled_profiles:
             profile.compute_settings()
-            migrate_profiles()
-            # first step to get the initial settings
+        migrate_profiles()
+        # first step to get the initial settings
         self.settings, self.settings2 = merge_settings(self.iter_settings(recurse=False))
         # second step now that the we have enough settings to decide which
         # recipes to enable
@@ -321,7 +321,7 @@ class Config(object):
         for profile in self.all_profiles:
             if profile.name == name:
                 return profile
-            # fallback on uniq shortnames
+        # fallback on uniq shortnames
         recipes = list(self.all_recipes)
         shortnames = list(map(lambda r: r.short_name, recipes))
         uniq_shortnames = [
@@ -367,8 +367,8 @@ class Config(object):
         proj = self.guess_project()
         if proj:
             settings["parameters"] = {
-                self.main_command.path: ["--project", proj]
-            }
+                    self.main_command.path: ["--project", proj]
+                }
         return ProfileFactory.create_preset_profile(
             "currentdirectorypreset",
             settings=settings,
@@ -631,8 +631,8 @@ class Config(object):
         self._dry_run = value
         for profile in self.all_profiles:
             profile.dry_run = value
-            from click_project import lib
-            lib.dry_run = value
+        from click_project import lib
+        lib.dry_run = value
 
     def get_value(self, path, default=None):
         return self.get_settings("value").get(path, {"value": default})["value"]
