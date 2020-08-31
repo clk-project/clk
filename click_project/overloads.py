@@ -49,17 +49,27 @@ commands_cache = {}
 get_command_handlers = OrderedDict()
 
 
-def get_command(path):
+def get_command(path, with_resolver=False):
+    """This deprecated wrapper is there till we migrate all the code to get_command2"""
+    cmd, resolver = get_command2(path)
+    if with_resolver:
+        return cmd, resolver
+    else:
+        return cmd
+
+
+def get_command2(path):
     if path in commands_cache:
         return commands_cache[path]
     if path == config.main_command.path:
-        return config.main_command
+        return config.main_command, None
+
     pathsplit = path.split(".")
     if pathsplit[0] == config.main_command.path:
         del pathsplit[0]
     if len(pathsplit) > 1:
         parent_path = ".".join(pathsplit[:-1])
-        parent = get_command(parent_path)
+        parent, _ = get_command2(parent_path)
         if isinstance(parent, config.main_command.__class__):
             raise CommandNotFound(
                 "The command {} was asked for. "
@@ -74,7 +84,7 @@ def get_command(path):
         resolvers = [CoreCommandResolver()]
     else:
         resolvers = parent.commandresolvers
-    cmd = get_command_with_resolvers(
+    cmd, resolver = get_command_with_resolvers(
         resolvers,
         parent.path,
         cmd_name,
@@ -95,7 +105,7 @@ def get_command(path):
     if cmd.path != path:
         cmd = copy(cmd)
         cmd.path = path
-    commands_cache[path] = cmd
+    commands_cache[path] = cmd, resolver
     for handler in get_command_handlers:
         cmd = handler(cmd)
     if hasattr(parent, "inherited_params"):
@@ -121,7 +131,7 @@ def get_command(path):
                 return f(*args, **kwargs)
             return wrapper
         cmd.callback = get_wrapper(cmd.callback)
-    return cmd
+    return cmd, resolver
 
 
 def get_command_safe(path):
@@ -601,7 +611,7 @@ def get_command_with_resolvers(resolvers, parent_path, name):
                 )
                 raise
             break
-    return cmd
+    return cmd, resolver
 
 
 class GroupCommandResolver(CommandResolver):
