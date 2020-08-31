@@ -307,17 +307,8 @@ class Config(object):
         ]
 
     @property
-    def enabled_profiles_python_dirs(self):
-        return [
-            Path(profile.location) / "python"
-            for profile in self.all_enabled_profiles
-            if isinstance(profile, DirectoryProfile)
-        ]
-
-    @property
     def custom_commands_dirs(self):
         return (
-            self.enabled_profiles_python_dirs +
             [Path(d) for d in self.get_settings2("customcommands").get("paths", [])]
         )
 
@@ -393,12 +384,20 @@ class Config(object):
             activation_level=ActivationLevel.global_,
         )
 
-    @cached_property
+    @property
     def localpreset_profile(self):
         if self.project:
             return ProfileFactory.create_preset_profile(
                 "localpreset",
-                settings={},
+                settings={
+                    "customcommands": {
+                        "paths": (
+                            [str(Path(self.local_profile.location) / "python")]
+                            if (Path(self.local_profile.location) / "python").exists()
+                            else []
+                        )
+                    }
+                },
                 explicit=False,
                 isroot=True,
                 activation_level=ActivationLevel.local,
@@ -474,6 +473,11 @@ class Config(object):
                     "gdbserver": ["gdbserver", "localhost:9999"],
                 },
                 "customcommands": {
+                    "paths": (
+                        [str(Path(self.global_profile.location) / "python")]
+                        if (Path(self.global_profile.location) / "python").exists()
+                        else []
+                    )
                 }
             },
             explicit=False,
