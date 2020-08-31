@@ -24,7 +24,14 @@ class ExternalCommandResolver(CommandResolver):
 
     @property
     def cmddirs(self):
-        return config.enabled_profiles_bin_dirs
+        return (
+            config.enabled_profiles_bin_dirs +
+            config.get_settings2(
+                "customcommands"
+            ).get(
+                "externalpaths", []
+            )
+        )
 
     def _list_command_paths(self, parent=None):
         prefix = config.app_name + "-"

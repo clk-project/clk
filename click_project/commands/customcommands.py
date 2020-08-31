@@ -43,32 +43,67 @@ def show(**kwargs):
                 config.customcommands.all_settings.get(
                     profile.name, {}
                 ).get(
-                    "paths", []
+                    "pythonpaths", []
                 )
             )
             for profile in config.all_enabled_profiles
         }
         args = colorer.colorize(values, config.customcommands.readprofile)
-        click.echo(" ".join(args))
+        click.echo("pythonpaths: " + " ".join(args))
+        values = {
+            profile.name: format_paths(
+                config.customcommands.all_settings.get(
+                    profile.name, {}
+                ).get(
+                    "externalpaths", []
+                )
+            )
+            for profile in config.all_enabled_profiles
+        }
+        args = colorer.colorize(values, config.customcommands.readprofile)
+        click.echo("externalpaths: " + " ".join(args))
 
 
 @customcommands.command()
 @argument("paths", nargs=-1, type=Path, help="The paths to add to load custom commands")
-def add(paths):
+def add_python_path(paths):
     """Show all the custom commands paths"""
     paths = [str(d) for d in paths]
-    config.customcommands.writable["paths"] = config.customcommands.writable.get("paths", []) + list(paths)
+    config.customcommands.writable["pythonpaths"] = config.customcommands.writable.get("pythonpaths", []) + list(paths)
     config.customcommands.write()
     LOGGER.info(f"Added {format_paths(paths)} to the profile {config.customcommands.writeprofile}")
 
 
 @customcommands.command()
 @argument("paths", nargs=-1, type=Path, help="The paths to remove from custom commands")
-def remove(paths):
+def remove_python_path(paths):
     """Remove all the custom commands paths from the profile"""
     paths = [str(d) for d in paths]
-    config.customcommands.writable["paths"] = [
-        path for path in config.customcommands.writable["paths"]
+    config.customcommands.writable["pythonpaths"] = [
+        path for path in config.customcommands.writable["pythonpaths"]
+        if path not in paths
+    ]
+    config.customcommands.write()
+    LOGGER.info(f"Removed {format_paths(paths)} from the profile {config.customcommands.writeprofile}")
+
+
+@customcommands.command()
+@argument("paths", nargs=-1, type=Path, help="The paths to add to load custom commands")
+def add_external_path(paths):
+    """Show all the custom commands paths"""
+    paths = [str(d) for d in paths]
+    config.customcommands.writable["externalpaths"] = config.customcommands.writable.get("externalpaths", []) + list(paths)
+    config.customcommands.write()
+    LOGGER.info(f"Added {format_paths(paths)} to the profile {config.customcommands.writeprofile}")
+
+
+@customcommands.command()
+@argument("paths", nargs=-1, type=Path, help="The paths to remove from custom commands")
+def remove_external_path(paths):
+    """Remove all the custom commands paths from the profile"""
+    paths = [str(d) for d in paths]
+    config.customcommands.writable["externalpaths"] = [
+        path for path in config.customcommands.writable["externalpaths"]
         if path not in paths
     ]
     config.customcommands.write()

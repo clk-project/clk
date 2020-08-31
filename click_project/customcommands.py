@@ -41,11 +41,7 @@ class CustomCommandResolver(CommandResolver):
     def source(self):
         if self._source is None:
             self._source = self.base.make_plugin_source(
-                searchpath=[
-                    str(d)
-                    for d in config.custom_commands_dirs
-                    if d.exists()
-                ],
+                searchpath=config.get_settings2("customcommands").get("pythonpaths", []),
             )
         return self._source
 
