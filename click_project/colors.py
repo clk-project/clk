@@ -156,5 +156,9 @@ class Colorer(object):
             readprofiles = self.profilenames_to_show(readprofile)
         else:
             readprofiles = self.default_profilenames_to_show
-        args = list(self.colorize_values(values, readprofiles).values())
+        args = [
+            value
+            for value in self.colorize_values(values, readprofiles).values()
+            if value
+        ]
         return args
