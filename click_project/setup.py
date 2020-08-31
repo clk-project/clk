@@ -6,6 +6,7 @@ from __future__ import print_function, absolute_import
 from click_project.flow import setup as setup_flow
 from click_project.overloads import CoreCommandResolver, MainCommand, entry_point
 from click_project.externalcommands import ExternalCommandResolver
+from click_project.customcommands import CustomCommandResolver
 from click_project.alias import AliasCommandResolver, AliasToGroupResolver
 from click_project.hook import HookCommandResolver, setup as setup_hook
 from click_project.overloads import Group, GroupCommandResolver
@@ -45,6 +46,7 @@ def classic_setup(main_module=None, config_cls=Config,
         ExternalCommandResolver(),
         AliasCommandResolver(),
         HookCommandResolver(),
+        CustomCommandResolver(),
         CoreCommandResolver(),
     ]
     config.distribution_profile_location = distribution_profile_location
