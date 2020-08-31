@@ -34,26 +34,23 @@ class ExternalCommandResolver(CommandResolver):
         )
 
     def _list_command_paths(self, parent=None):
-        prefix = config.app_name + "-"
         if not hasattr(self, "_external_cmds"):
             self._external_cmds = []
             for path in self.cmddirs:
                 if os.path.isdir(path):
                     for file in os.listdir(path):
-                        if file.startswith(prefix):
-                            for suffix in ".sh", ".py":
-                                if file.endswith(suffix):
-                                    self._external_cmds.append(file[len(prefix):-3] + suffix.replace(".", "@"))
-                                    break
-                            else:
-                                self._external_cmds.append(file[len(prefix):].replace(".", "@"))
+                        for suffix in ".sh", ".py":
+                            if file.endswith(suffix):
+                                self._external_cmds.append(file[:-3] + suffix.replace(".", "@"))
+                                break
+                        else:
+                            self._external_cmds.append(file.replace(".", "@"))
         return self._external_cmds
 
     def _get_command(self, path, parent=None):
-        prefix = config.app_name + "-"
         name = path.replace("@", ".")
         cmdhelp = "external command"
-        command_name = prefix + name
+        command_name = name
         paths = self.cmddirs
         command_path = which(command_name, os.pathsep.join(paths))
         options = []
