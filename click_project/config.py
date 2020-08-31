@@ -314,6 +314,13 @@ class Config(object):
             if isinstance(profile, DirectoryProfile)
         ]
 
+    @property
+    def custom_commands_dirs(self):
+        return (
+            self.enabled_profiles_python_dirs +
+            [Path(d) for d in self.get_settings2("customcommands").get("paths", [])]
+        )
+
     def load_settings_from_profile(self, profile, recurse, only_this_recipe=None):
         if profile is not None and (
                 not only_this_recipe
@@ -466,6 +473,8 @@ class Config(object):
                     "time": ["time", "-v"],
                     "gdbserver": ["gdbserver", "localhost:9999"],
                 },
+                "customcommands": {
+                }
             },
             explicit=False,
             isroot=True,

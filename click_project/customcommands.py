@@ -25,7 +25,7 @@ class BadCustomCommandError(Exception):
 
 
 class CustomCommandResolver(CommandResolver):
-    name = "external"
+    name = "customcommand"
 
     def __init__(self):
         self._base = None
@@ -43,7 +43,7 @@ class CustomCommandResolver(CommandResolver):
             self._source = self.base.make_plugin_source(
                 searchpath=[
                     str(d)
-                    for d in config.enabled_profiles_python_dirs
+                    for d in config.custom_commands_dirs
                     if d.exists()
                 ],
             )
