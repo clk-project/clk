@@ -3,6 +3,7 @@
 
 import os
 import json
+from pathlib import Path
 from collections import defaultdict
 import collections
 from copy import deepcopy
@@ -301,6 +302,14 @@ class Config(object):
                     "Script",
                     os.path.join(f".{self.main_command.path}", "scripts")
             }
+            for profile in self.all_enabled_profiles
+            if isinstance(profile, DirectoryProfile)
+        ]
+
+    @property
+    def enabled_profiles_python_dirs(self):
+        return [
+            Path(profile.location) / "python"
             for profile in self.all_enabled_profiles
             if isinstance(profile, DirectoryProfile)
         ]
