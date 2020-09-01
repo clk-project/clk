@@ -12,13 +12,23 @@ from click_project.decorators import (
     table_format,
     table_fields,
 )
-from click_project.config import config
+from click_project.config import config, merge_settings
 from click_project.lib import quote, TablePrinter
 from click_project.colors import Colorer
 from click_project.log import get_logger
+from click_project.core import DynamicChoiceType
 
 
 LOGGER = get_logger(__name__)
+
+
+class CustomCommandType(DynamicChoiceType):
+    def __init__(self, type):
+        self.type = type
+
+    def choices(self):
+        _, settings = merge_settings(config.iter_settings(explicit_only=True))
+        return settings["customcommands"].get(self.type, [])
 
 
 class CustomCommandConfig:
@@ -79,7 +89,7 @@ def add_python_path(paths):
 
 
 @customcommands.command()
-@argument("paths", nargs=-1, type=Path, help="The paths to remove from custom commands")
+@argument("paths", nargs=-1, type=CustomCommandType("pythonpaths"), help="The paths to remove from custom commands")
 def remove_python_path(paths):
     """Remove all the custom commands paths from the profile"""
     to_remove = set(config.customcommands.writable["pythonpaths"]).intersection(paths)
@@ -110,7 +120,7 @@ def add_external_path(paths):
 
 
 @customcommands.command()
-@argument("paths", nargs=-1, type=Path, help="The paths to remove from custom commands")
+@argument("paths", nargs=-1, type=CustomCommandType("externalpaths"), help="The paths to remove from custom commands")
 def remove_external_path(paths):
     """Remove all the custom commands paths from the profile"""
     paths = [str(d) for d in paths]
