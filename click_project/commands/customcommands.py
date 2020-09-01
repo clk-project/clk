@@ -8,10 +8,12 @@ import click
 from click_project.decorators import (
     argument,
     group,
-    use_settings
+    use_settings,
+    table_format,
+    table_fields,
 )
 from click_project.config import config
-from click_project.lib import quote
+from click_project.lib import quote, TablePrinter
 from click_project.colors import Colorer
 from click_project.log import get_logger
 
@@ -35,9 +37,11 @@ def customcommands():
 
 @customcommands.command()
 @Colorer.color_options
-def show(**kwargs):
+@table_format(default='key_value')
+@table_fields(choices=['name', 'paths'])
+def show(fields, format, **kwargs):
     """Show all the custom commands paths"""
-    with Colorer(kwargs) as colorer:
+    with Colorer(kwargs) as colorer, TablePrinter(fields, format) as tp:
         values = {
             profile.name: format_paths(
                 config.customcommands.all_settings.get(
@@ -49,7 +53,7 @@ def show(**kwargs):
             for profile in config.all_enabled_profiles
         }
         args = colorer.colorize(values, config.customcommands.readprofile)
-        click.echo("pythonpaths: " + " ".join(args))
+        tp.echo("pythonpaths", " ".join(args))
         values = {
             profile.name: format_paths(
                 config.customcommands.all_settings.get(
@@ -61,7 +65,7 @@ def show(**kwargs):
             for profile in config.all_enabled_profiles
         }
         args = colorer.colorize(values, config.customcommands.readprofile)
-        click.echo("externalpaths: " + " ".join(args))
+        tp.echo("externalpaths", " ".join(args))
 
 
 @customcommands.command()
