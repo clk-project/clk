@@ -585,6 +585,12 @@ Finally, remove the recipe with `clk recipe remove hello`.
 In conclusion, recipes are a powerful and practical way of grouping several
 configuration together to manipulate them as a group.
 
+# Advanced uses of parameters
+
+So far, we have seen the command `clk parameters` to play with the
+parameters. But we found out that we generally want to set a parameter once we
+have a command line already at hand. For instance, imagine you type for the third time `clk echo --style blue `, then you realize you should most likely add a parameter to avoid typing the `--style blue` again and again. With the `parameters` command, you would have to go back to the beginning of the line and type `parameters set`. As an alternative, all the command have the option `--set-parameters` to avoid moving the cursor. In the case of the example, you could type `clk echo --style blue --set-parameters global`. Likewise, you can write `clk echo --show-parameters context` to have the equivalent of `clk parameters show echo`.
+
 ## logging
 
 Logging should be easy to read yet provide enough information for debugging for example. Moreover, the logging should be well separated from other outputs from the command line tool. In click project, we have created several logging levels that allows to easily change the log level required for a specific use case, and the logs are displayed with colors and on the error output by default.
