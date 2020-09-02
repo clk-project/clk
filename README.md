@@ -89,9 +89,11 @@ to have it working. In case of doubt, make sure this file is sourced into your
 bashrc file.
 
 ## Using the `clk` executable
-`clk` is very practical to play with `click-project` before starting a real command
-line application. You can also (I do) simply use `clk` tool to automate your task
-if you don't mind starting all your calls with `clk`.
+`clk` is very practical to play with `click-project` before starting a real
+command line application. You can also (I do) simply use `clk` tool to automate
+your task if you don't mind starting all your calls with `clk`. Everything that
+is said about `clk` will be also true for a command line application based on
+`click-project`.
 ### A quick glance at the available commands
 
 Just run `clk` to see all the available commands. Those allow configuring
@@ -478,6 +480,70 @@ Bye!
 Bonus: `clk flowdeps graph mycommand` let's you see the dependency graph for `mycommand` in a nice visual way!
 
 Want more? Have a look at `clk flowdeps --help`!
+
+# Playing with the recipes
+
+Say you have several `parameters` and `aliases` that work together. For
+instance, imagine you want to have an alias and a parameters that don't make
+sense separately. For instance, add an alias and set its parameters :
+
+`clk alias set hello echo hello` and `clk parameters set hello --style red`
+
+You might want a way to make clear the fact that those two configurations work
+together. Enters the recipes.
+
+Create a new recipe with `clk recipe create hello`. By default, a recipe is disabled, so enable it with `clk recipe enable hello`.
+
+Then configure the alias and the parameter in the recipe with.
+
+`clk alias --recipe hello set hello echo hello` and `clk parameters --recipe hello set hello --style red`
+
+In case you had configured the alias outside of the recipe, run `clk alias unset
+hello` and `clk parameters unset hello` to have a better understanding of what
+will happen.
+
+Now, run `clk hello` to see it work as before. Run `clk recipe disable hello`
+and then `clk hello` to see that `clk` complains that the `hello` command is no
+more available.
+
+`clk parameters show` and `clk alias show` indeed show nothing about hello.
+
+The enable the recipe again, with `clk recipe enable hello` and take another
+look at the parameters and aliases.
+
+The legend indicates that those configuration are in the global/hello level,
+which means « the recipe hello, defined globally ». Indeed, recipes may be
+defined globally or locally and enabled or disabled globally or locally.
+
+Manipulate those two independent dimensions (definition and enabling) may be
+tricky. To find out more about the current recipes, run `clk recipe show`.
+
+```
+recipe    set_in    defined_in    link      order
+--------  --------  ------------  ------  -------
+hello     global    global                   1000
+```
+
+Disable it and run the command again.
+
+As you can see, the values did not change, the recipe remains defined globally
+and set globally (meaning it was disabled globally). Only the color indicate
+whether it is disabled or enabled.
+
+Try removing the setting (saying it was enabled or disabled) with `clk recipe unset hello`, then see
+
+```
+recipe    set_in    defined_in    link      order
+--------  --------  ------------  ------  -------
+hello     Unset     global                   1000
+```
+
+Here, the recipe is unset, then the default behavior (disabling) is used.
+
+Finally, remove the recipe with `clk recipe remove hello`.
+
+In conclusion, recipes are a powerful and practical way of grouping several
+configuration together to manipulate them as a group.
 
 # Getting started with your own
 
