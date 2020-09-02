@@ -100,7 +100,7 @@ class Colorer(object):
                 "bold-True,fg-red",
             ])
             f = flag("--legend/--no-legend",
-                     default=config.get_value('config.show.legend', False),
+                     default=config.get_value('config.show.legend', True),
                      help="Start with a legend on colors")(f)
             f = flag('--color/--no-color',
                      default=config.get_value("config.show.color", True),
