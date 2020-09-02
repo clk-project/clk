@@ -25,7 +25,6 @@ class ExternalCommandResolver(CommandResolver):
     @property
     def cmddirs(self):
         return (
-            config.enabled_profiles_bin_dirs +
             config.get_settings2(
                 "customcommands"
             ).get(

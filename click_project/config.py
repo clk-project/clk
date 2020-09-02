@@ -289,23 +289,6 @@ class Config(object):
         # recipes to enable
         self.settings, self.settings2 = merge_settings(self.iter_settings(recurse=True))
 
-    @property
-    def enabled_profiles_bin_dirs(self):
-        return [
-            os.path.join(profile.location, bin_dir)
-            for bin_dir in {
-                    "script",
-                    "bin",
-                    "scripts",
-                    "Scripts",
-                    "Bin",
-                    "Script",
-                    os.path.join(f".{self.main_command.path}", "scripts")
-            }
-            for profile in self.all_enabled_profiles
-            if isinstance(profile, DirectoryProfile)
-        ]
-
     def load_settings_from_profile(self, profile, recurse, only_this_recipe=None):
         if profile is not None and (
                 not only_this_recipe
@@ -378,19 +361,38 @@ class Config(object):
             activation_level=ActivationLevel.global_,
         )
 
+    def _get_custom_command_paths(self, profile):
+        return {
+            "pythonpaths": (
+                [
+                    str(Path(profile.location) / d)
+                    for d in ["python"]
+                    if (Path(profile.location) / "python").exists()
+                ]
+            ),
+            "externalpaths": (
+                [
+                    str(Path(profile.location) / d)
+                    for d in [
+                            "script",
+                            "bin",
+                            "scripts",
+                            "Scripts",
+                            "Bin",
+                            "Script",
+                    ]
+                    if (Path(profile.location) / d).exists()
+                ]
+            ),
+        }
+
     @property
     def localpreset_profile(self):
         if self.project:
             return ProfileFactory.create_preset_profile(
                 "localpreset",
                 settings={
-                    "customcommands": {
-                        "pythonpaths": (
-                            [str(Path(self.local_profile.location) / "python")]
-                            if (Path(self.local_profile.location) / "python").exists()
-                            else []
-                        )
-                    }
+                    "customcommands": self._get_custom_command_paths(self.local_profile)
                 },
                 explicit=False,
                 isroot=True,
@@ -466,13 +468,7 @@ class Config(object):
                     "time": ["time", "-v"],
                     "gdbserver": ["gdbserver", "localhost:9999"],
                 },
-                "customcommands": {
-                    "pythonpaths": (
-                        [str(Path(self.global_profile.location) / "python")]
-                        if (Path(self.global_profile.location) / "python").exists()
-                        else []
-                    )
-                }
+                "customcommands": self._get_custom_command_paths(self.global_profile)
             },
             explicit=False,
             isroot=True,
