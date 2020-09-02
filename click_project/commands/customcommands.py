@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding:utf-8 -*-
 
-import os
 from pathlib import Path
 
 import click
@@ -14,7 +13,7 @@ from click_project.decorators import (
     table_fields,
 )
 from click_project.config import config, merge_settings
-from click_project.lib import quote, TablePrinter, temporary_file
+from click_project.lib import quote, TablePrinter, call
 from click_project.colors import Colorer
 from click_project.log import get_logger
 from click_project.core import DynamicChoiceType
@@ -52,9 +51,8 @@ class CustomCommandType(DynamicChoiceType):
 
     def converter(self, path):
         for resolver in self.resolvers:
-            cmd = resolver._get_command(path)
-            if cmd is not None:
-                return cmd
+            if path in resolver._list_command_paths():
+                return resolver._get_command(path)
         raise Exception(f"Could not find a resolver matching {path}")
 
 
@@ -185,3 +183,17 @@ def edit(customcommand):
     else:
         path.write_text(content)
         LOGGER.info(f"Edited {path.name}")
+
+
+@customcommands.command()
+@argument("customcommand",
+          type=CustomCommandType(),
+          help="The custom command to consider")
+def open(customcommand):
+    """Edit the given custom command"""
+    path = Path(customcommand.customcommand_path)
+    call(
+        [
+            "mimeopen", path
+        ]
+    )
