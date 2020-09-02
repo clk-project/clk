@@ -5,10 +5,11 @@ from click_project.setup import basic_entry_point, main
 from click_project.decorators import flag
 
 
-def print_version(*args):
-    from click_project._version import get_versions
-    print(get_versions()["version"])
-    exit(0)
+def print_version(ctx, attr, value):
+    if value:
+        from click_project._version import get_versions
+        print(get_versions()["version"])
+        exit(0)
 
 
 @basic_entry_point(
