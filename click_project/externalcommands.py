@@ -52,7 +52,7 @@ class ExternalCommandResolver(CommandResolver):
         cmdhelp = "external command"
         command_name = name
         paths = self.cmddirs
-        command_path = which(command_name, os.pathsep.join(paths))
+        command_path = os.path.abspath(which(command_name, os.pathsep.join(paths)))
         options = []
         arguments = []
         flags = []
