@@ -11,8 +11,6 @@ from click_project import monkeypatch  # NOQA: E402
 from click_project import log  # NOQA: E402
 from click_project.overloads import entry_point  # NOQA: E402
 
-__version__ = '0.1'
-
 monkeypatch.do()
 
 LOGGER = log.get_logger(__name__)
