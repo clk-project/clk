@@ -39,12 +39,11 @@ class ExternalCommandResolver(CommandResolver):
             for path in self.cmddirs:
                 if os.path.isdir(path):
                     for file in os.listdir(path):
-                        for suffix in ".sh", ".py":
-                            if file.endswith(suffix):
-                                self._external_cmds.append(file[:-3] + suffix.replace(".", "@"))
-                                break
-                        else:
-                            self._external_cmds.append(file.replace(".", "@"))
+                        abspath = os.path.join(path, file)
+                        if os.path.isfile(abspath) and os.access(abspath, os.X_OK):
+                            cmd_name, ext = os.path.splitext(file)
+                            name = cmd_name + "@" + ext[1:]
+                            self._external_cmds.append(name)
         return self._external_cmds
 
     def _get_command(self, path, parent=None):
