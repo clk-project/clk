@@ -545,20 +545,6 @@ Finally, remove the recipe with `clk recipe remove hello`.
 In conclusion, recipes are a powerful and practical way of grouping several
 configuration together to manipulate them as a group.
 
-# Getting started with your own
-
-- [ ] cas d'une seule ligne de commande et de plusieurs lignes de commande
-
-- [ ] comment démarrer avec clk
-- [ ] la notion de project
-
-# Features
-
-- [ ] parameters
-- [ ] alias
-- [ ] externalcommands
-
-
 ## logging
 
 Logging should be easy to read yet provide enough information for debugging for example. Moreover, the logging should be well separated from other outputs from the command line tool. In click project, we have created several logging levels that allows to easily change the log level required for a specific use case, and the logs are displayed with colors and on the error output by default.
