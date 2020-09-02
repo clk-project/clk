@@ -128,6 +128,56 @@ the style afterward using the style like in the previous examples. `clk hello
 the behavior of hello. For instance, `clk parameters set echo --style yellow`
 would make the hello command print in yellow as well.
 
+### Play with the notion of project
+
+The commands like `parameters` and `alias` are only tools to edit a
+configuration file. This file is by default stored in
+`~/.config/clk/clk.json`.
+
+Like `git` with `~/.gitconfig` and `./.git/config`, one of the power of
+`click-project` lies in the fact your configuration can be stored in several
+places, the local one having the precedence over the global one.
+
+Create a directory `~/clk_project`, that we will call your project. Then create
+the directory `~/clk_project/.clk` to let `clk` understand this is a
+project. Actually, the `.clk` folder has the exact same meaning for `clk` as the
+`.git` folder for `git`.
+
+Enter the `~/clk_project/` directory and run `clk parameters set echo --style
+green`. You could achieve the same result running `clk --project
+~/clk_project parameters set echo --style green`.
+
+The configuration of the parameter is recorded locally in the project
+`~/clk_project`, more precisely in the file `~/clk_project/.clk/clk.json`.
+
+Try, running `clk echo test`, inside and outside the project to find out the
+color is different. This is because when `clk` figures out it is in the context
+of the project (for example because your current working directory is a sub
+directory of `~/clk_project/`), then the local parameters are used on top of the
+global parameters.
+
+To have a better understanding of how a command will be called, you can simply
+run `clk echo --help`. The following line should be in the output.
+
+`The current parameters set for this command are: --style yellow --style green --help`
+
+You can see that the global parameters are not forgotten, they are simply on the
+left. The magic of `click` is so the parameter on the right takes precedence.
+
+In case you want more information about the parameters of the command, simply
+run.  `clk parameters show echo`. The output should show the global parameters
+in blue and the local parameters in green.
+
+When you have several parameters, it is very useful to run this command to
+understand what has happened.
+
+This behavior of local stuff overriding local stuff is also available in aliases.
+
+In `~/clk_project/`, run `clk alias set hello echo hello from clk_project`. Now
+run the command `clk hello` from inside and outside the project to find out that
+the local alias is used instead of the global one when you are inside the
+project.
+
 ### Start adding your custom command
 
 It sounds great, but you might want to do more than saying things in your
