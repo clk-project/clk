@@ -42,11 +42,14 @@ Say you want to run `clk --someoption` again and again and again. You'd like to 
 * command flow management: TODO
 * launchers: TODO
 * alias: TODO
+* log management: TODO
+* a powerful third party lib
+* a nice tabular printer
+* native handling of the color
+* a native dry-run mode
+* ...
 
 We decided to put all that in a single framework.
-
-- [ ]  -> log management, call_process, tableprinter, couleur, dry-run
-
 
 For more information of all that comes with click-project, see [#features].
 
@@ -68,9 +71,11 @@ A classic : `python3 -m pip install click-project`
 
 # A quick tour of click-project
 
-When you install `click-project`, a command line tool called `clk` is installed also. You may want to play a little bit with it to get the look and feel.
+When you install `click-project`, a command line tool called `clk` is installed
+also. You may want to play a little bit with it to get the look and feel.
 
-First, run `clk --help` or more simply `clk`.
+First, run `clk --help` or more simply `clk`. See, there are already plenty of
+commands already available.
 
 Ok, now you have got a fresh installation of `click-project` and have access to the
 `clk` command line tool (beware pip install executable files by default in
@@ -92,61 +97,77 @@ to have it working. In case of doubt, make sure this file is sourced into your
 bashrc file.
 
 ## Using the `clk` executable
-`clk` is very practical to play with `click-project` before starting a real
-command line application. You can also (I do) simply use `clk` tool to automate
-your task if you don't mind starting all your calls with `clk`. Everything that
-is said about `clk` will be also true for a command line application based on
-`click-project`.
+`clk` is a very practical tool. It allows you to quickly play with
+`click-project` before starting a real command line application. Everything you
+will taste with `clk` will also be available to your own command line
+application based on `click-project`. You can also (like I do) simply use `clk`
+tool to manage your personal « scripts » and take advantage of all the magic of
+`click-project`, if you don't mind starting all your calls with `clk`.
+
+Because `clk` is the demonstrator and is closely related to `click-project`, we
+might mention `clk` to say `click-project` in the following documentation.
+
 ### A quick glance at the available commands
 
 Just run `clk` to see all the available commands. Those allow configuring
 precisely how you want `clk` to behave.
 
-For the sake of the example, let's play with the echo command.
+For the sake of the example, let's play with the `echo` command.
 
-`clk echo --help` tells us that the echo command simply log a message. Try `clk
+`clk echo --help` tells us that the echo command simply logs a message. Try `clk
 echo hello` for instance.
 
 Now, try using some color with `clk echo hello --style blue`. Doing so, try
 pressing sometimes the `<TAB>` character to see how `clk` tries to provide
-meaningful completion.
+meaningful completion. You can try several styles, like `bg-blue,fg-green`. The
+completion should help you write a correct style.
 
 Now imagine you always want the echo command to have the blue style. It would be
 cumbersome to add the `--style blue` everytime, wouldn't it?
 
+One of the magic of `clk` is the ability to save your default settings. That
+way, even if a command comes with a sensible default, you can always change it
+to fit your needs more precisely.
+
 Try `clk parameters set echo --style blue`, then run `clk` echo hello and see how
 it is shown in blue without you explicitly adding it.
 
-Now, let's try to create another command, based on the echo command. For
-instance, if you want a command to say hello a lot, you might want to avoid
-typing `clk echo hello` everytime. You might want to use the previous magic to
-add hello to the `echo` command. That would work, but it also would make the `echo`
-command always say hello, that would be strange. Let's use another magic feature
-of `clk`: aliases.
+Another of the magic of `clk` is the ability to construct commands from other
+commands. For instance, if you like the `echo` command and you want to use a lot
+the command `clk echo hello` you might want create a separate command to do
+so. A way to do this would be to use `parameters` to add `hello` to the `echo`
+command. That would work, but it also would make the `echo` command always say
+hello, would be strange. Let's use the other magic feature of `clk`: aliases.
 
-`clk alias set hello echo hello`. It means create the alias command named `hello`
-that runs `echo hello`. Try it with `clk` hello and see that it not only says hello,
-but still respect the style of `echo` and says it in blue. You can still change
-the style afterward using the style like in the previous examples. `clk hello
---style red` would print it in red for instance. Notice that the configuration of
-`echo` is dynamically used, meaning changing the parameters of echo would change
-the behavior of hello. For instance, `clk parameters set echo --style yellow`
-would make the hello command print in yellow as well.
+Run `clk alias set hello echo hello`. It means create the alias command named
+`hello` that runs `echo hello`. Try it with `clk hello` and see that it not only
+says hello, but still respect the style of `echo` and says it in blue. You can
+still change the style afterward using the style like in the previous
+examples. `clk hello --style red` would print it in red for instance. Notice
+that the configuration of `echo` is dynamically used, meaning changing the
+parameters of echo would change the behavior of hello. For instance,
+`clk parameters set echo --style yellow` would make the hello command print in yellow
+as well.
 
 ### Play with the notion of project
 
-The commands like `parameters` and `alias` are only tools to edit a
-configuration file. This file is by default stored in
-`~/.config/clk/clk.json`.
+The commands like `parameters` and `alias` edit a configuration file. This file
+is by default stored in `~/.config/clk/clk.json`.
 
-Like `git` with `~/.gitconfig` and `./.git/config`, one of the power of
+Do you remember how `git` stores configuration globally with `~/.gitconfig` and
+locally with `./.git/config`? `clk` does the same. One of the power of
 `click-project` lies in the fact your configuration can be stored in several
-places, the local one having the precedence over the global one.
+places, the local one having the precedence over the global one. The location
+storing local setting is what we call a project (hence the name).
 
 Create a directory `~/clk_project`, that we will call your project. Then create
 the directory `~/clk_project/.clk` to let `clk` understand this is a
 project. Actually, the `.clk` folder has the exact same meaning for `clk` as the
-`.git` folder for `git`.
+`.git` folder for `git`. To find a project, `clk` we try to find a sub-directory
+called `.clk` in the current working directory or in any of its parents, exactly
+like `git`. You can alternatively provide the option `--project ~/clk_project`
+to indicate the project for the time of the command line execution, just like
+the `-C <path>` in `git`.
 
 Enter the `~/clk_project/` directory and run `clk parameters set echo --style
 green`. You could achieve the same result running `clk --project
@@ -167,7 +188,7 @@ run `clk echo --help`. The following line should be in the output.
 `The current parameters set for this command are: --style yellow --style green --help`
 
 You can see that the global parameters are not forgotten, they are simply on the
-left. The magic of `click` is so the parameter on the right takes precedence.
+left. The magic of `click` is so that the parameter on the right takes precedence.
 
 In case you want more information about the parameters of the command, simply
 run.  `clk parameters show echo`. The output should show the global parameters
@@ -186,15 +207,21 @@ project.
 ### Start adding your custom command
 
 It sounds great, but you might want to do more than saying things in your
-scripts. For instance, you might want a cow to say something for you.
+scripts, right? For instance, you might want a cow to say something for you.
 
 Let's try to install cowsay (`python3 -m pip install cowsay`)
 and add your first custom command.
 
 The fastest way to do this it to add a custom shell script. First, decide a
-directory that would contain your `clk` commands (say `~/clk_commands`), then add
-the file cowsay.sh with the following
+directory that would contain your `clk` commands (say `~/clk_commands`).
 
+Then indicate to `clk` that this folder is meant to contain custom commands with
+`clk customcommands add-external-path ~/clk_commands`.
+
+In case you don't want to put your commands in a specific folder, you could also
+put the command in the canonical folder of `click-project` (`~/.config/clk/bin`).
+
+Add the file `cowsay.sh` with the following.
 ```bash
 #!/bin/bash -eu
 
@@ -226,7 +253,7 @@ cowsay "${WORD}"
 
 You can see here several things to consider.
 
-First, your program MUST handle being called with the argument --help so that
+First, your program MUST handle being called with the argument `--help` so that
 `clk` know how to access its documentation, process it and use its magical power
 with it.
 
@@ -234,7 +261,7 @@ Then, after the two dashes, the documentation string may contains some metadata
 to indicate `clk` how to handle it.
 
 Finally, `clk` will run the commands with several environment variables (all
-starting with CLK_). It is its way of passing information, like the arguments.
+starting with `CLK_...`). It is its way of passing information, like the arguments.
 
 With the instruction `A:word:str:The word to say` we indicated that the command
 takes one argument, named word, of type string with the documentation `The word
@@ -292,7 +319,7 @@ Try it with `clk cowsay`
 
 ## Creating a real life application
 In case you want to be able to create your own command line application, instead
-of running `clk` everytime.
+of running `clk` every time.
 
 ### (tip) An hack with aliases
 
@@ -402,6 +429,7 @@ from click_project.decorators import command, argument, flag, option
 @basic_entry_point(
 __name__,
 extra_command_packages=["cowsaycli.commands"],
+exclude_core_commands=["git-sync"],
 )
 def cowsaycli(**kwargs):
     """Make the animals talk"""
@@ -411,7 +439,13 @@ if __name__ == "__main__":
     main()
 ```
 
-Here, we simply define a function, the main entry point.
+Here, we simply define a function, the main entry point. The part
+`exclude_core_commands=["git-sync"],` indicates that this tool will behave like
+`clk`, except it wont have the command `git-sync`. This is useful in case you
+want to remove some of the commands of `click-project`. Alternatively, you can
+use a whitelist approach setting `include_core_commands` instead of
+`exclude_core_commands`, the most extreme case would be `include_core_commands`,
+indicating to use none of `clk` commands.
 
 Running `python3 -m pip install -e cowsaycli`, you can have access to the
 executable `cowsaycli`, that behave exactly like `clk`. The instruction
