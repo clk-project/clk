@@ -385,9 +385,11 @@ def temporary_file(dir=None, suffix=None, nameonly=False):
     try:
         yield d
     except Exception:
-        os.unlink(d.name)
+        if not nameonly:
+            os.unlink(d.name)
         raise
-    os.unlink(d.name)
+    if not nameonly:
+        os.unlink(d.name)
 
 
 @contextmanager
