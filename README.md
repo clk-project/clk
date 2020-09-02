@@ -37,7 +37,7 @@ Say you want to run `clk --someoption` again and again and again. You'd like to 
 * logging features: Having good logging capabilities is the basics of a suitable command line tool.
 * powerful formatting helpers: The output of command line tools should be easy to read and easy to parse by an external tool. click-project provides some formatting features that can be easily configured from the command line to achieve this goal.
 * directory based project: Say that you want to store
-* argument documentation: arguments are at least as important as options, yet they don't have any documentation associated. click-project fixes that by allowing to add an help to the arguments.
+* argument documentation: arguments are at least as important as options, yet they don't have any documentation associated. click-project fixes that by allowing to add a help message to the arguments.
 * options groups: options can be grouped to structure the help of the commands.
 * command flow management: TODO
 * launchers: TODO
@@ -72,12 +72,12 @@ A classic : `python3 -m pip install click-project`
 # A quick tour of click-project
 
 When you install `click-project`, a command line tool called `clk` is installed
-also. You may want to play a little bit with it to get the look and feel.
+also. You may want to play a bit with it to get the look and feel.
 
 First, run `clk --help` or more simply `clk`. See, there are already plenty of
 commands already available.
 
-Ok, now you have got a fresh installation of `click-project` and have access to the
+Now you have got a fresh installation of `click-project` and have access to the
 `clk` command line tool (beware pip install executable files by default in
 `~/.local/bin`. Try adding this directory in your PATH in case it is not already
 available).
@@ -88,9 +88,9 @@ own command line tools with the same awesome power.
 
 ## Setting up the completion
 
-A great command line tool comes with a great completion support. run `clk
+A great command line tool comes with a great completion support. Run `clk
 completion install bash` (or `fish` or `zsh`, your mileage may vary). If you
-want to have case insensitive completion (I do), run it like `clk completion
+want to have case-insensitive completion (I do), run it like `clk completion
 --case-insensitive install`. `click-project` will have added the completion
 content into `~/.bash_completion`. It generally needs only to start a new terminal
 to have it working. In case of doubt, make sure this file is sourced into your
@@ -123,10 +123,10 @@ meaningful completion. You can try several styles, like `bg-blue,fg-green`. The
 completion should help you write a correct style.
 
 Now imagine you always want the echo command to have the blue style. It would be
-cumbersome to add the `--style blue` everytime, wouldn't it?
+cumbersome to add the `--style blue` every time, wouldn't it?
 
 One of the magic of `clk` is the ability to save your default settings. That
-way, even if a command comes with a sensible default, you can always change it
+way, even if a command comes with sensible defaults, you can always change them
 to fit your needs more precisely.
 
 Try `clk parameters set echo --style blue`, then run `clk` echo hello and see how
@@ -273,7 +273,7 @@ cowsay@sh --help` to see how the argument was captured by `clk`.
 
 Then, simply run `clk cowsay@sh hello`.
 
-The command is integrated with the magick of `click-project`. For instance, you
+The command is integrated with the magic of `click-project`. For instance, you
 can call `clk parameters set cowsay@sh --shout` to set the value of shout as
 being true by default. To temporary disable the shouting, simply call it with
 `--dont-shout`. Of course, it can be part of an alias as well.
@@ -282,7 +282,7 @@ being true by default. To temporary disable the shouting, simply call it with
 
 Providing a bash script as a command is a very powerful way to take advantage of
 the `click-project` magic, but if you want to do more than a simple script of a
-few line of code, write it in python.
+few lines of code, *write it in python*.
 
 Let's first try to create the python equivalent of the cowsay script.
 
@@ -351,8 +351,8 @@ complete -F _clk_completion -o default clk
 By adjusting the values of the variables, you can easily create your own
 completion script. For instance, in the case of cs="clk cowsay", we must trick
 `clk` into believing the command line was "clk cowsay". This means that we must
-add "clk cowsay" in front of `COMP_WORDS` and remove its first word (which
-cs). Then, the `COMP_CWORD` must be incremented for there is one more word to take
+add "clk cowsay" in front of `COMP_WORDS` and remove its first word (which is
+"cs"). Then, the `COMP_CWORD` must be incremented for there is one more word to take
 into account.
 The script should then look like
 
@@ -370,9 +370,9 @@ complete -F _cs_completion -o default cs
 ```
 
 Of course, it is more of a dirty trick to simplify your personal commands than a
-way to produce a full blown command line application. But since several people
+way to produce a full-blown command line application. But since several people
 do that alias trick, it was worth mentioning how to get the awesome completion
-also.
+as well.
 
 ### Create your project
 
@@ -382,7 +382,7 @@ of creating a project like poetry, so we will stick here with the classical
 setuptools way.
 
 For the time being, we don't provide a way to simply create a command line
-application without subcommands.
+application without sub commands.
 
 In the example, we will create an application called cowsaycli (to avoid the
 overlap with cowsay that we will be using).
@@ -416,7 +416,7 @@ setup(
 )
 ```
 
-We opinionatedly considered the main entry point would be in
+We opinionated-ly considered the main entry point would be in
 `cowsaycli.main.main`, but feel free to do as it pleases you.
 
 Then, in the file `cowsaylib/main.py`, add the following.
@@ -444,14 +444,14 @@ if __name__ == "__main__":
 
 Here, we simply define a function, the main entry point. The part
 `exclude_core_commands=["git-sync"],` indicates that this tool will behave like
-`clk`, except it wont have the command `git-sync`. This is useful in case you
-want to remove some of the commands of `click-project`. Alternatively, you can
-use a whitelist approach setting `include_core_commands` instead of
+`clk`, except it won't have the command `git-sync`. This is useful in case you
+want to remove some commands of `click-project`. Alternatively, you can
+use a white list approach setting `include_core_commands` instead of
 `exclude_core_commands`, the most extreme case would be `include_core_commands`,
 indicating to use none of `clk` commands.
 
 Running `python3 -m pip install -e cowsaycli`, you can have access to the
-executable `cowsaycli`, that behave exactly like `clk`. The instruction
+executable `cowsaycli`, that behaves exactly like `clk`. The instruction
 `extra_command_packages=["cowsaycli.commands"]` indicates that every python
 module that can be imported as `cowsaycli.commands.<name>` and follows the exact
 same convention as custom commands will be considered a sub command of
@@ -524,7 +524,7 @@ Want more? Have a look at `clk flowdeps --help`!
 # Playing with the recipes
 
 Say you have several `parameters` and `aliases` that work together. For
-instance, imagine you want to have an alias and a parameters that don't make
+instance, imagine you want to have an alias and a parameter that don't make
 sense separately. For instance, add an alias and set its parameters :
 
 `clk alias set hello echo hello` and `clk parameters set hello --style red`
@@ -548,10 +548,10 @@ more available.
 
 `clk parameters show` and `clk alias show` indeed show nothing about hello.
 
-The enable the recipe again, with `clk recipe enable hello` and take another
+Then, enable the recipe again, with `clk recipe enable hello` and take another
 look at the parameters and aliases.
 
-The legend indicates that those configuration are in the global/hello level,
+The legend indicates that those configurations are in the global/hello level,
 which means « the recipe hello, defined globally ». Indeed, recipes may be
 defined globally or locally and enabled or disabled globally or locally.
 
