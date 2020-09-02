@@ -69,38 +69,309 @@ When you install `click-project`, a command line tool called `clk` is installed 
 
 First, run `clk --help` or more simply `clk`.
 
-...
+## A quick tour of click-project
 
-## Let's get your hands dirty: Adding your own command
+Ok, now you have got a fresh installation of `click-project` and have access to the
+`clk` command line tool (beware pip install executable files by default in
+`~/.local/bin`. Try adding this directory in your PATH in case it is not already
+available).
 
-Let's start with the classical hello world example.
+We are first going to try together the `clk` tool so that you can quickly have
+an overview of what it is capable of, then we will look into how creating your
+own command line tools with the same awesome power.
 
-If you are here, you might already know click. Let's use its hello example as a start.
+### Setting up the completion
 
-Say you want to add a command to `clk`. `clk` is configured to import all the modules of the `clk_commands` package. So start by creating this package and make it available.
+A great command line tool comes with a great completion support. run `clk
+completion install bash` (or `fish` or `zsh`, your mileage may vary). If you
+want to have case insensitive completion (I do), run it like `clk completion
+--case-insensitive install`. `click-project` will have added the completion
+content into `~/.bash_completion`. It generally needs only to start a new terminal
+to have it working. In case of doubt, make sure this file is sourced into your
+bashrc file.
+
+### Using the `clk` executable
+`clk` is very practical to play with `click-project` before starting a real command
+line application. You can also (I do) simply use `clk` tool to automate your task
+if you don't mind starting all your calls with `clk`.
+#### A quick glance at the available commands
+
+Just run `clk` to see all the available commands. Those allow configuring
+precisely how you want `clk` to behave.
+
+For the sake of the example, let's play with the echo command.
+
+`clk echo --help` tells us that the echo command simply log a message. Try `clk
+echo hello` for instance.
+
+Now, try using some color with `clk echo hello --style blue`. Doing so, try
+pressing sometimes the `<TAB>` character to see how `clk` tries to provide
+meaningful completion.
+
+Now imagine you always want the echo command to have the blue style. It would be
+cumbersome to add the `--style blue` everytime, wouldn't it?
+
+Try `clk parameters set echo --style blue`, then run `clk` echo hello and see how
+it is shown in blue without you explicitly adding it.
+
+Now, let's try to create another command, based on the echo command. For
+instance, if you want a command to say hello a lot, you might want to avoid
+typing `clk echo hello` everytime. You might want to use the previous magic to
+add hello to the `echo` command. That would work, but it also would make the `echo`
+command always say hello, that would be strange. Let's use another magic feature
+of `clk`: aliases.
+
+`clk alias set hello echo hello`. It means create the alias command named `hello`
+that runs `echo hello`. Try it with `clk` hello and see that it not only says hello,
+but still respect the style of `echo` and says it in blue. You can still change
+the style afterward using the style like in the previous examples. `clk hello
+--style red` would print it in red for instance. Notice that the configuration of
+`echo` is dynamically used, meaning changing the parameters of echo would change
+the behavior of hello. For instance, `clk parameters set echo --style yellow`
+would make the hello command print in yellow as well.
+
+#### Start adding your custom command
+
+It sounds great, but you might want to do more than saying things in your
+scripts. For instance, you might want a cow to say something for you.
+
+Let's try to install cowsay (`python3 -m pip install cowsay`)
+and add your first custom command.
+
+The fastest way to do this it to add a custom shell script. First, decide a
+directory that would contain your `clk` commands (say `~/clk_commands`), then add
+the file cowsay.sh with the following
 
 ```bash
-mkdir -p ~/python/clk_commands
-export PYTHONPATH=~/python/:${PYTHONPATH}
+#!/bin/bash -eu
+
+usage () {
+    cat<<EOF
+$0 A cow says something
+
+Make a cow say something
+--
+A:word:str:The word to say
+F:--shout/--dont-shout:Shout the word
+EOF
+}
+
+if [ $# -gt 0 ] && [ "$1" == "--help" ]
+then
+	usage
+	exit 0
+fi
+
+WORD="${CLK___WORD}"
+if [ -n "${CLK___SHOUT}" ]
+then
+    WORD="$(echo "${WORD}"|tr '[:lower:]' '[:upper:]')!"
+fi
+
+cowsay "${WORD}"
 ```
 
-Then, create the `hello.py` file under `~/python/clk_commands/` with the following content:
+You can see here several things to consider.
+
+First, your program MUST handle being called with the argument --help so that
+`clk` know how to access its documentation, process it and use its magical power
+with it.
+
+Then, after the two dashes, the documentation string may contains some metadata
+to indicate `clk` how to handle it.
+
+Finally, `clk` will run the commands with several environment variables (all
+starting with CLK_). It is its way of passing information, like the arguments.
+
+With the instruction `A:word:str:The word to say` we indicated that the command
+takes one argument, named word, of type string with the documentation `The word
+to say`. Likewise, `F:--shout/--dont-shout:Shout the word` indicates a flag
+whether to shout the word or not.
+
+`clk` is now able to call this command with `clk cowsay@sh`, try first `clk
+cowsay@sh --help` to see how the argument was captured by `clk`.
+
+Then, simply run `clk cowsay@sh hello`.
+
+The command is integrated with the magick of `click-project`. For instance, you
+can call `clk parameters set cowsay@sh --shout` to set the value of shout as
+being true by default. To temporary disable the shouting, simply call it with
+`--dont-shout`. Of course, it can be part of an alias as well.
+
+#### Adding a python custom command
+
+Providing a bash script as a command is a very powerful way to take advantage of
+the `click-project` magic, but if you want to do more than a simple script of a
+few line of code, write it in python.
+
+Let's first try to create the python equivalent of the cowsay script.
+
+Decide a location to store the python custom commands and indicate this location
+to `click-project`. For example, if you want to put your custom python commands
+into the folder `~/clk_python`, run `clk customcommands add-python-path
+~/clk_python`.
+
+Then, open the file `~/clk_python/cowsay.py` and write the following
 
 ```python
-# hello.py
+#!/usr/bin/env python3
+# -*- coding:utf-8 -*-
+
+import cowsay as cowsaylib
 import click
-from click_project.decorators import command, option
+from click_project.decorators import command, argument, flag, option
+
 
 @command()
-@option("--count", default=1, help="Number of greetings.")
-@option("--name", prompt="Your name", help="The person to greet.")
-def hello(count, name):
-    """Simple program that greets NAME for a total of COUNT times."""
-    for _ in range(count):
-        click.echo(f"Hello, {name}!")
+@argument("word", help="The word to say")
+@flag("--shout/--dont-shout", help="Shout the word")
+@option("--animal", type=click.Choice(cowsaylib.char_names),
+        help="The animal that will speak", default="cow")
+def cowsay(word, shout, animal):
+    """Let the cow say something"""
+    if shout:
+        word = word.upper() + "!"
+    speaker = getattr(cowsaylib, animal)
+    speaker(word)
 ```
 
-Now, you should be able to run `clk hello`! Also, have a look at `clk hello --help`.
+Try it with `clk cowsay`
+
+### Creating a real life application
+In case you want to be able to create your own command line application, instead
+of running `clk` everytime.
+
+#### (tip) An hack with aliases
+
+Say you are satisfied with the `clk cowsay` command and simply want to reduce it
+to `cs` for instance. You might be tempted to create an alias like `alias
+cs="clk cowsay"`. This would work but lose the awesome completion.
+
+Actually, if you get a close look at the completion script, you can find out how
+to easily trick it to get the completion for your alias.
+
+For instance, the bash completion for `clk` looks like.
+
+```bash
+_clk_completion() {
+    local IFS=$'\t'
+    COMPREPLY=( $( env COMP_WORDS="${COMP_WORDS[*]}" \
+                   COMP_CWORD=$COMP_CWORD \
+                   _CLK_CASE_INSENSITIVE_COMPLETION=ON \
+                   _CLK_COMPLETE=complete-bash $1 ) )
+    return 0
+}
+
+complete -F _clk_completion -o default clk
+```
+
+By adjusting the values of the variables, you can easily create your own
+completion script. For instance, in the case of cs="clk cowsay", we must trick
+`clk` into believing the command line was "clk cowsay". This means that we must
+add "clk cowsay" in front of `COMP_WORDS` and remove its first word (which
+cs). Then, the `COMP_CWORD` must be incremented for there is one more word to take
+into account.
+The script should then look like
+
+```bash
+_cs_completion() {
+    local IFS=$'\t'
+    COMPREPLY=( $( env COMP_WORDS="clk cowsay ${COMP_WORDS[*]:1}" \
+                   COMP_CWORD=$((COMP_CWORD + 1)) \
+                   _CLK_CASE_INSENSITIVE_COMPLETION=ON \
+                   _CLK_COMPLETE=complete-bash clk ) )
+    return 0
+}
+
+complete -F _cs_completion -o default cs
+```
+
+Of course, it is more of a dirty trick to simplify your personal commands than a
+way to produce a full blown command line application. But since several people
+do that alias trick, it was worth mentioning how to get the awesome completion
+also.
+
+#### Create your project
+
+Let's say that we want to produce a nice command line application with the look
+and feel of `clk` and distribute it. We are not up-to-date with all the fancy ways
+of creating a project like poetry, so we will stick here with the classical
+setuptools way.
+
+For the time being, we don't provide a way to simply create a command line
+application without subcommands.
+
+In the example, we will create an application called cowsaycli (to avoid the
+overlap with cowsay that we will be using).
+
+There is nothing unusual to do, write the setup.py file at the root of your
+project with a content like.
+
+```python
+#!/usr/bin/env python3
+# -*- coding:utf-8 -*-
+
+from setuptools import setup, find_packages
+
+setup(
+    name='cowsaycli',
+    version="0.0.0",
+    author='Moran Laura',
+    author_email='moranlaura@wolfe.com',
+    description='Let the animals speak',
+    packages=find_packages(),
+    zip_safe=False,
+    install_requires=[
+        "click-project~=0.12.0",
+    ],
+    entry_points={
+        'console_scripts':
+        [
+            'cowsaycli=cowsaycli.main:main',
+        ]
+    },
+)
+```
+
+We opinionatedly considered the main entry point would be in
+`cowsaycli.main.main`, but feel free to do as it pleases you.
+
+Then, in the file `cowsaylib/main.py`, add the following.
+
+```python
+#!/usr/bin/env python3
+# -*- coding:utf-8 -*-
+
+from click_project.setup import basic_entry_point, main
+from click_project.decorators import command, argument, flag, option
+
+
+@basic_entry_point(
+__name__,
+extra_command_packages=["cowsaycli.commands"],
+)
+def cowsaycli(**kwargs):
+    """Make the animals talk"""
+
+
+if __name__ == "__main__":
+    main()
+```
+
+Here, we simply define a function, the main entry point.
+
+Running `python3 -m pip install -e cowsaycli`, you can have access to the
+executable `cowsaycli`, that behave exactly like `clk`. The instruction
+`extra_command_packages=["cowsaycli.commands"]` indicates that every python
+module that can be imported as `cowsaycli.commands.<name>` and follows the exact
+same convention as custom commands will be considered a sub command of
+`cowsaycli`. This is useful, as you just have to populate the folder
+`cowsaycli/commands/` with all the commands you like.
+
+For instance, let's copy the `cowsay.py`  file made earlier into this
+folder. Great, you now have your own application, called `cowsaycli`, that can be
+run like `cowsaycli cowsay --animal cheese test` and that is ready to be
+distributed the usual way.
 
 ### Where is the *completion*?
 
@@ -111,30 +382,6 @@ source ~/.bash_completion
 ```
 
 Now, try something like `clk hell<TAB> --co<TAB> 5`.
-
-### Where is the *option persistence*?
-
-You know your name, right?
-
-Try `clk hello --set-paramaters global --name Toto`. Here `global` is the persistence level, we will detail later. The rest should be explicit enough. (?)
-
-Now, run:
-```bash
-$ clk hello
-Hello, Toto!
-```
-
-But don't worry if you want to say hi to someone else you can still type:
-```bash
-$ clk hello --name Baba
-Hello, baba!
-```
-
-Also, have a look at `clk parameters`, or `clk parameters show --legend`.
-Hey, why doesn't the legend always appear? It's for you to decide, but there it is:
-`clk parameters show --set-parameters global --legend`
-
-Want more? See feature [#Parameters] for more info!
 
 ### What is this *command flow management*?
 
@@ -174,7 +421,7 @@ Then, try: `clk bye --flow` ! :)
 The output should look something like:
 ```
 Running step 'hello'
-Hello, Toto!
+hello
 Running step 'whatsup'
 What's up?!
 Awesome!
@@ -204,8 +451,8 @@ Logging should be easy to read yet provide enough information for debugging for 
 
 
 - [ ] bonus
-  - [ ] plugins
-  - [ ] recipes
-  - [ ] niveau de log
-    - [ ] action pour voir ce qui serait fait
-    - [ ] écrire le sien
+- [ ] plugins
+- [ ] recipes
+- [ ] niveau de log
+- [ ] action pour voir ce qui serait fait
+- [ ] écrire le sien
