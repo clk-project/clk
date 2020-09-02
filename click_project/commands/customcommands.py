@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding:utf-8 -*-
 
+import os
 from pathlib import Path
 
 import click
@@ -13,7 +14,7 @@ from click_project.decorators import (
     table_fields,
 )
 from click_project.config import config, merge_settings
-from click_project.lib import quote, TablePrinter
+from click_project.lib import quote, TablePrinter, temporary_file
 from click_project.colors import Colorer
 from click_project.log import get_logger
 from click_project.core import DynamicChoiceType
@@ -166,3 +167,21 @@ def remove_external_path(paths):
 def which(customcommand):
     """Print the location of the given custom command"""
     print(customcommand.customcommand_path)
+
+
+@customcommands.command()
+@argument("customcommand",
+          type=CustomCommandType(),
+          help="The custom command to consider")
+def edit(customcommand):
+    """Edit the given custom command"""
+    path = Path(customcommand.customcommand_path)
+    oldcontent = path.read_text()
+    content = click.edit(oldcontent, extension=path.suffix)
+    if content == oldcontent or content is None:
+        LOGGER.info("Nothing changed")
+    elif content == "":
+        LOGGER.info("Aboooooort !!")
+    else:
+        path.write_text(content)
+        LOGGER.info(f"Edited {path.name}")
