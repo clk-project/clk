@@ -3,6 +3,9 @@
 
 Click-project makes it *easy* and fun for ***you*** to create *awesome* command line interfaces!
 
+For now, if is focused on command line interfaces with several groups of
+commands (like `git`, `vault`, `nomad`, `consul`, `ipfs`, `kubectl` etc).
+
 Turn your scripts into a powerful cli without pain and get instant access to stuff like:
 
 - great completion support
