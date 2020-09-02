@@ -236,4 +236,5 @@ class ExternalCommandResolver(CommandResolver):
             flowdepends=cmdflowdepends)(
                 external_command
             )
+        external_command.customcommand_path = command_path
         return external_command

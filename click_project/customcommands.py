@@ -54,4 +54,6 @@ class CustomCommandResolver(CommandResolver):
             raise BadCustomCommandError(
                 f"The file {module.__file__} must contain a command or a group named {path}"
             )
-        return getattr(module, path)
+        cmd = getattr(module, path)
+        cmd.customcommand_path = module.__file__
+        return cmd

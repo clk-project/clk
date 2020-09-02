@@ -17,18 +17,44 @@ from click_project.lib import quote, TablePrinter
 from click_project.colors import Colorer
 from click_project.log import get_logger
 from click_project.core import DynamicChoiceType
+from click_project.externalcommands import ExternalCommandResolver
+from click_project.customcommands import CustomCommandResolver
 
 
 LOGGER = get_logger(__name__)
 
 
-class CustomCommandType(DynamicChoiceType):
+class CustomCommandPathType(DynamicChoiceType):
     def __init__(self, type):
         self.type = type
 
     def choices(self):
         _, settings = merge_settings(config.iter_settings(explicit_only=True))
         return settings["customcommands"].get(self.type, [])
+
+
+class CustomCommandType(DynamicChoiceType):
+    def __init__(self):
+        self.resolvers = [
+            ExternalCommandResolver(),
+            CustomCommandResolver(),
+        ]
+
+    def choices(self):
+        return sum(
+            [
+                resolver._list_command_paths()
+                for resolver in self.resolvers
+            ],
+            []
+        )
+
+    def converter(self, path):
+        for resolver in self.resolvers:
+            cmd = resolver._get_command(path)
+            if cmd is not None:
+                return cmd
+        raise Exception(f"Could not find a resolver matching {path}")
 
 
 class CustomCommandConfig:
@@ -89,7 +115,7 @@ def add_python_path(paths):
 
 
 @customcommands.command()
-@argument("paths", nargs=-1, type=CustomCommandType("pythonpaths"), help="The paths to remove from custom commands")
+@argument("paths", nargs=-1, type=CustomCommandPathType("pythonpaths"), help="The paths to remove from custom commands")
 def remove_python_path(paths):
     """Remove all the custom commands paths from the profile"""
     to_remove = set(config.customcommands.writable.get("pythonpaths", [])).intersection(paths)
@@ -116,7 +142,7 @@ def add_external_path(paths):
 
 
 @customcommands.command()
-@argument("paths", nargs=-1, type=CustomCommandType("externalpaths"), help="The paths to remove from custom commands")
+@argument("paths", nargs=-1, type=CustomCommandPathType("externalpaths"), help="The paths to remove from custom commands")
 def remove_external_path(paths):
     """Remove all the custom commands paths from the profile"""
     paths = [str(d) for d in paths]
@@ -131,3 +157,12 @@ def remove_external_path(paths):
     ]
     config.customcommands.write()
     LOGGER.info(f"Removed {format_paths(to_remove)} from the profile {config.customcommands.writeprofile}")
+
+
+@customcommands.command()
+@argument("customcommand",
+          type=CustomCommandType(),
+          help="The custom command to consider")
+def which(customcommand):
+    """Print the location of the given custom command"""
+    print(customcommand.customcommand_path)
