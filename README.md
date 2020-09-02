@@ -291,6 +291,9 @@ to `click-project`. For example, if you want to put your custom python commands
 into the folder `~/clk_python`, run `clk customcommands add-python-path
 ~/clk_python`.
 
+In case you don't want to put your commands in a specific folder, you could also
+put the command in the canonical folder of `click-project` (`~/.config/clk/python`).
+
 Then, open the file `~/clk_python/cowsay.py` and write the following
 
 ```python
