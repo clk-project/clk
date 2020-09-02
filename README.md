@@ -63,13 +63,11 @@ click-project is inspired by several other great command line tools. Just to nam
 
 A classic : `python3 -m pip install click-project`
 
-# Getting started
+# A quick tour of click-project
 
 When you install `click-project`, a command line tool called `clk` is installed also. You may want to play a little bit with it to get the look and feel.
 
 First, run `clk --help` or more simply `clk`.
-
-## A quick tour of click-project
 
 Ok, now you have got a fresh installation of `click-project` and have access to the
 `clk` command line tool (beware pip install executable files by default in
@@ -80,7 +78,7 @@ We are first going to try together the `clk` tool so that you can quickly have
 an overview of what it is capable of, then we will look into how creating your
 own command line tools with the same awesome power.
 
-### Setting up the completion
+## Setting up the completion
 
 A great command line tool comes with a great completion support. run `clk
 completion install bash` (or `fish` or `zsh`, your mileage may vary). If you
@@ -90,11 +88,11 @@ content into `~/.bash_completion`. It generally needs only to start a new termin
 to have it working. In case of doubt, make sure this file is sourced into your
 bashrc file.
 
-### Using the `clk` executable
+## Using the `clk` executable
 `clk` is very practical to play with `click-project` before starting a real command
 line application. You can also (I do) simply use `clk` tool to automate your task
 if you don't mind starting all your calls with `clk`.
-#### A quick glance at the available commands
+### A quick glance at the available commands
 
 Just run `clk` to see all the available commands. Those allow configuring
 precisely how you want `clk` to behave.
@@ -130,7 +128,7 @@ the style afterward using the style like in the previous examples. `clk hello
 the behavior of hello. For instance, `clk parameters set echo --style yellow`
 would make the hello command print in yellow as well.
 
-#### Start adding your custom command
+### Start adding your custom command
 
 It sounds great, but you might want to do more than saying things in your
 scripts. For instance, you might want a cow to say something for you.
@@ -198,7 +196,7 @@ can call `clk parameters set cowsay@sh --shout` to set the value of shout as
 being true by default. To temporary disable the shouting, simply call it with
 `--dont-shout`. Of course, it can be part of an alias as well.
 
-#### Adding a python custom command
+### Adding a python custom command
 
 Providing a bash script as a command is a very powerful way to take advantage of
 the `click-project` magic, but if you want to do more than a simple script of a
@@ -237,11 +235,11 @@ def cowsay(word, shout, animal):
 
 Try it with `clk cowsay`
 
-### Creating a real life application
+## Creating a real life application
 In case you want to be able to create your own command line application, instead
 of running `clk` everytime.
 
-#### (tip) An hack with aliases
+### (tip) An hack with aliases
 
 Say you are satisfied with the `clk cowsay` command and simply want to reduce it
 to `cs` for instance. You might be tempted to create an alias like `alias
@@ -291,7 +289,7 @@ way to produce a full blown command line application. But since several people
 do that alias trick, it was worth mentioning how to get the awesome completion
 also.
 
-#### Create your project
+### Create your project
 
 Let's say that we want to produce a nice command line application with the look
 and feel of `clk` and distribute it. We are not up-to-date with all the fancy ways
@@ -373,7 +371,7 @@ folder. Great, you now have your own application, called `cowsaycli`, that can b
 run like `cowsaycli cowsay --animal cheese test` and that is ready to be
 distributed the usual way.
 
-### Where is the *completion*?
+## Where is the *completion*?
 
 First, you need to install it. For example in a bash shell, you can type:
 ```bash
@@ -383,7 +381,7 @@ source ~/.bash_completion
 
 Now, try something like `clk hell<TAB> --co<TAB> 5`.
 
-### What is this *command flow management*?
+## What is this *command flow management*?
 
 Say you made other commands `whatsup.py` and `bye.py`:
 
