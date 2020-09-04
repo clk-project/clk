@@ -132,18 +132,27 @@ class ExternalCommandResolver(CommandResolver):
 
         def external_command(**kwargs):
             from click_project.lib import call
+            ctx = click.get_current_context()
             config.merge_settings()
             args = (
                 [command_path]
-                + config.get_parameters(path)
+                + list(ctx.params.get("args", []))
             )
+
+            def value_to_string(value):
+                return (
+                    " ".join(map(quote, value))
+                    if type(value) is tuple
+                    else
+                    str(value) if value else ""
+                )
+
             env = {
                 (config.main_command.path + "___" + key).upper(): (
-                    str(value) if value else ""
+                    value_to_string(value)
                 )
                 for key, value in kwargs.items()
             }
-            ctx = click.get_current_context()
             env[(config.main_command.path + "___PATH").upper()] = (
                 ctx.command_path.replace(" ", "_").upper()
             )
@@ -155,12 +164,7 @@ class ExternalCommandResolver(CommandResolver):
                         (ctx.command_path.replace(
                             " ", "_"
                         ) + "__" + key).upper(): (
-                            (
-                                " ".join(map(quote, value))
-                                if type(value) is tuple
-                                else
-                                str(value) if value else ""
-                            )
+                            value_to_string(value)
                         )
                         for key, value in ctx.params.items()
                     }
