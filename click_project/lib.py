@@ -385,10 +385,10 @@ def temporary_file(dir=None, suffix=None, nameonly=False):
     try:
         yield d
     except Exception:
-        if not nameonly:
+        if os.path.exists(d.name):
             os.unlink(d.name)
         raise
-    if not nameonly:
+    if os.path.exists(d.name):
         os.unlink(d.name)
 
 
