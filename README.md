@@ -303,6 +303,10 @@ Then, open the file `~/clk_python/cowsay.py` and write the following
 import cowsay as cowsaylib
 import click
 from click_project.decorators import command, argument, flag, option
+from click_project.log import get_logger
+
+
+LOGGER = get_logger(__name__)
 
 
 @command()
@@ -312,6 +316,7 @@ from click_project.decorators import command, argument, flag, option
         help="The animal that will speak", default="cow")
 def cowsay(word, shout, animal):
     """Let the cow say something"""
+    LOGGER.debug("Running the command cowsay")
     if shout:
         word = word.upper() + "!"
     speaker = getattr(cowsaylib, animal)
@@ -319,6 +324,39 @@ def cowsay(word, shout, animal):
 ```
 
 Try it with `clk cowsay`
+
+Let's take the opportunity of this first python command to discover that `clk`
+provide a logging feature ready to use.
+
+You can see that we created a `LOGGER` object using `LOGGER = get_logger(__name__)`.
+
+This object is a traditional python logger, on which we added a few levels.
+1. `LOGGER.develop(message)`, is used to inform of very low level details of click-project, you will barely need it.
+1. `LOGGER.debug(message)`, is meant to inform about low level details about the command itself, use it to provide extra information in case something is difficult to understand.
+1. `LOGGER.action(message)` says what the command does. For instance, it is the level used to inform what happens to the filesystem or what http requests are made.
+1. `LOGGER.status(message)` informs of high level steps of the command, like the progress of a download.
+1. `LOGGER.deprecated(message)` is useful to indicate deprecated behaviors
+1. `LOGGER.info(message)` says general information. It should be the preferred level to communicate general information to the user.
+1. `LOGGER.warning(message)` is used to indicate a strange thing that happened that will not prevent the command to finish.
+1. `LOGGER.error(message)` indicates something that stopped the command from working.
+1. `LOGGER.critical(message)` is about harmful stuff
+
+Like you might expect, enabling a level of log enables all the levels below. The
+default log level is `status`, meaning that all logs of levels `status`,
+`deprecated`, `info`, `warning`, `error` and `critical` will be shown.
+
+To enable a log level, simply provide it to the call to `clk`, using `clk
+--log-level LOGLEVEL`, or more shortly `clk -L LOGLEVEL`. Because the levels
+`develop`, `debug` and `action` are often used, they also have shortcuts,
+respectively `-D`, `-d` and `-a`.
+
+If, like, us, you like the `action` log level and want to make it the new
+default, simply add it to the parameters with `clk parameters set clk -a`.
+
+If you want to see what the log levels look like, you can try them with `clk log
+--level MESSAGE`. Of course, you must also enable the associated log level. For
+instance, to play with the `develop` level, you would run `clk --log-level
+develop log --level develop message`.
 
 ## Creating a real life application
 In case you want to be able to create your own command line application, instead
