@@ -326,7 +326,7 @@ def cowsay(word, shout, animal):
 Try it with `clk cowsay`
 
 Let's take the opportunity of this first python command to discover that `clk`
-provide a logging feature ready to use.
+provides a logging feature ready to use.
 
 You can see that we created a `LOGGER` object using `LOGGER = get_logger(__name__)`.
 
