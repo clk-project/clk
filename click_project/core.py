@@ -652,7 +652,8 @@ def main():
             "This command reached a part of the code yet to implement. "
             "Please help us by either submitting patches or "
             "sending report files to us. ({} --report-file .../somefile RESTOFCOMMAND, "
-            "then send .../somefile to us)".format(config.main_command.path)
+            "then send .../somefile to us on"
+            " https://github.com/Konubinix/click-project/issues/new)".format(config.main_command.path)
         )
         LOGGER.error(str(e))
         post_mortem()
