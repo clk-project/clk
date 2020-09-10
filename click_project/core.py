@@ -666,9 +666,15 @@ def main():
         log_trace()
         LOGGER.exception(str(e))
         LOGGER.error(
-            "{} reached an error that was not properly caught."
-            " Please tell us.".format(
-                config.main_command.path)
+            "Hmm, it looks like we did not properly catch this error."
+            " Please help us improve click-project by telling us what"
+            " caused the error on"
+            " https://github.com/Konubinix/click-project/issues/new ."
+            " If you feel like a pythonista, you can try debugging"
+            " the issue yourself, running the command"
+            " with {cmd} --post-mortem or {cmd} --develop".format(
+                cmd=config.main_command.path
+            )
         )
         post_mortem()
         exitcode = 1
