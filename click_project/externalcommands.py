@@ -158,6 +158,7 @@ class ExternalCommandResolver(CommandResolver):
             )
             if "args" in ctx.params:
                 env[(config.main_command.path + "___ARGS").upper()] = " ".join(map(quote, ctx.params["args"]))
+
             while ctx:
                 env.update(
                     {
@@ -170,6 +171,18 @@ class ExternalCommandResolver(CommandResolver):
                     }
                 )
                 ctx = ctx.parent
+
+            for path, parameters in config.get_settings2("parameters").items():
+                env[
+                    (
+                        f"{config.app_name}_P_" + path.replace(
+                            "-", "__"
+                        ).replace(
+                            ".", "_"
+                        )
+                    ).upper()
+                ] = " ".join(map(quote, parameters))
+
             env[(config.main_command.path + "___CMD_OPTIND").upper()] = (
                 str(len(config.commandline_profile.get_settings("parameters")[path]))
             )
