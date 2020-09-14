@@ -264,9 +264,9 @@ Finally, `clk` will run the commands with several environment variables (all
 starting with `CLK_...`). It is its way of passing information, like the arguments.
 
 With the instruction `A:word:str:The word to say` we indicated that the command
-takes one argument, named word, of type string with the documentation `The word
-to say`. Likewise, `F:--shout/--dont-shout:Shout the word` indicates a flag
-whether to shout the word or not.
+takes one argument (more of this syntax below), named word, of type string with
+the documentation `The word to say`. Likewise, `F:--shout/--dont-shout:Shout the
+word` indicates a flag whether to shout the word or not.
 
 `clk` is now able to call this command with `clk cowsay@sh`, try first `clk
 cowsay@sh --help` to see how the argument was captured by `clk`.
@@ -277,6 +277,49 @@ The command is integrated with the magic of `click-project`. For instance, you
 can call `clk parameters set cowsay@sh --shout` to set the value of shout as
 being true by default. To temporary disable the shouting, simply call it with
 `--dont-shout`. Of course, it can be part of an alias as well.
+
+#### The parameters micro syntax
+
+As you can see in the example above, you can write the definition of your
+parameters (arguments and options) in a way that makes `clk` understand them so
+that it can show them correctly in the help.
+
+Let's see together this syntax. For the time being, it is very basic, since we
+tend to use python for more complicated use cases, but it might by extended in
+the future if use cases appear.
+
+In the help, add a line with nothing but two dashes (`--`. `clk` will try to
+parse every line below the two dashes as metadata about the command).
+
+We can define the traditional `click` parameters argument (positional) and
+option (referred to using `--OPTION-NAME`).
+
+A line starting with `A:` is an argument: it is a positional parameter. A line
+starting with a `O:` is an option: it is referred to with `--option-name
+option-value`. A line starting with a `F:` is a flag: a Boolean option. A line
+starting with `N:` indicate to let all the remaining arguments through, so that
+you can use the traditional `"$@"` construction.
+
+The syntax is
+* `A:<name>:<type>:<help>:[<nargs>]`
+* `O:<--name>:<type>:<help>:[<default-value>]`
+* `F:<--name[/--name-to-disable]>:<help>:[<default-value>]`
+* `N:<help>`
+
+The type can be either `str`, `float` or `int`. If it is a string with periods
+`.`, it is imported to be used as a subclass of
+[ParameterType](https://click.palletsprojects.com/en/7.x/parameters/#parameter-types).
+If the type starts with the character `[`, it is considered as the json
+representation of a list indicating a choice. For instance
+`O:--some-option:["a", "b", "c"]:Some option with 3 choices` will make the
+command accept the option `--some-option` with the only valid choices `a`, `b`
+and `c`.
+
+#### Other metadata of interest
+
+A line containing only `M:I` indicates `clk` to ignore the unknown options.  A
+line starting with `flowdepends: ` indicate the coma separated list of commands
+that this command has as flow dependencies.
 
 ### Adding a python custom command
 
