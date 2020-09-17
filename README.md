@@ -371,6 +371,12 @@ Try it with `clk cowsay`
 Let's take the opportunity of this first python command to discover that `clk`
 provides a logging feature ready to use.
 
+Logging should be easy to read yet provide enough information for debugging for
+example. Moreover, the logging should be well separated from other outputs from
+the command line tool. In click project, we have created several logging levels
+that allows to easily change the log level required for a specific use case, and
+the logs are displayed with colors and on the error output by default.
+
 You can see that we created a `LOGGER` object using `LOGGER = get_logger(__name__)`.
 
 This object is a traditional python logger, on which we added a few levels.
@@ -544,6 +550,29 @@ folder. Great, you now have your own application, called `cowsaycli`, that can b
 run like `cowsaycli cowsay --animal cheese test` and that is ready to be
 distributed the usual way.
 
+# FAQ
+## Why cannot I run my command that needs library X that is installed on my computer?
+Most likely you installed click-project into a virtualenv, maybe using pipx to install click-project.
+
+That is a recommended way of installing things, because virtualenv provide an
+isolated python environment. On the other hand, I guess that the library X was
+installed not inside the virtualenv, most likely with the traditional `python3
+-m pip install X`.
+
+When clk run custom commands, it simply import the python package of the custom
+command and run the command. This means that custom commands run in the same
+isolated environment as clk itself. The fact that X is not available is in the
+consequence that virtualenv mechanism works well.
+
+Yet, this sounds like a sensible question. We suggest that
+1. either reinstall click-project with `pipx install --system-site-packages click-project` for clk to be able to have access to X.
+1. either you install click-project using the traditional `python3 -m pip install click-project` command, if installing it and its dependencies outside virtual environment is not that problematic after all
+1. or you could install the dependencies of the custom command directly into the virtualenv of clk, by running the dedicated subcommand of clk: `clk pip install X`
+
+Of course, YMMV, and actually we might have forgotten another mean to make clk
+get access to X. If you have another idea that you want to share, please tell
+us.
+
 ## Where is the *completion*?
 
 First, you need to install it. For example in a bash shell, you can type:
@@ -670,16 +699,12 @@ configuration together to manipulate them as a group.
 
 So far, we have seen the command `clk parameters` to play with the
 parameters. But we found out that we generally want to set a parameter once we
-have a command line already at hand. For instance, imagine you type for the third time `clk echo --style blue `, then you realize you should most likely add a parameter to avoid typing the `--style blue` again and again. With the `parameters` command, you would have to go back to the beginning of the line and type `parameters set`. As an alternative, all the command have the option `--set-parameters` to avoid moving the cursor. In the case of the example, you could type `clk echo --style blue --set-parameters global`. Likewise, you can write `clk echo --show-parameters context` to have the equivalent of `clk parameters show echo`.
-
-## logging
-
-Logging should be easy to read yet provide enough information for debugging for example. Moreover, the logging should be well separated from other outputs from the command line tool. In click project, we have created several logging levels that allows to easily change the log level required for a specific use case, and the logs are displayed with colors and on the error output by default.
-
-
-- [ ] bonus
-- [ ] plugins
-- [ ] recipes
-- [ ] niveau de log
-- [ ] action pour voir ce qui serait fait
-- [ ] écrire le sien
+have a command line already at hand. For instance, imagine you type for the
+third time `clk echo --style blue `, then you realize you should most likely add
+a parameter to avoid typing the `--style blue` again and again. With the
+`parameters` command, you would have to go back to the beginning of the line and
+type `parameters set`. As an alternative, all the command have the option
+`--set-parameters` to avoid moving the cursor. In the case of the example, you
+could type `clk echo --style blue --set-parameters global`. Likewise, you can
+write `clk echo --show-parameters context` to have the equivalent of `clk
+parameters show echo`.
