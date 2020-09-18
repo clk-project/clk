@@ -566,7 +566,8 @@ consequence that virtualenv mechanism works well.
 
 Yet, this sounds like a sensible question. We suggest that
 1. either reinstall click-project with `pipx install --system-site-packages click-project` for clk to be able to have access to X.
-1. either you install click-project using the traditional `python3 -m pip install click-project` command, if installing it and its dependencies outside virtual environment is not that problematic after all
+1. or install X directly into the pipx environment with `pipx runpip click-project install X`
+1. or you can install click-project using the traditional `python3 -m pip install click-project` command, if installing it and its dependencies outside virtual environment is not that problematic after all
 1. or you could install the dependencies of the custom command directly into the virtualenv of clk, by running the dedicated subcommand of clk: `clk pip install X`
 
 Of course, YMMV, and actually we might have forgotten another mean to make clk
