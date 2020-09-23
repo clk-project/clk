@@ -368,6 +368,7 @@ def popen(args, internal=False, **kwargs):
 def tempdir(dir=None):
     u"""Create a temporary to use be in a with statement"""
     d = tempfile.mkdtemp(dir=dir)
+    LOGGER.action(f"Creating a temporary directory at {d}")
     try:
         yield d
     except Exception:
@@ -382,14 +383,15 @@ def temporary_file(dir=None, suffix=None, nameonly=False):
     d = tempfile.NamedTemporaryFile(delete=nameonly, suffix=suffix)
     if nameonly:
         d.close()
+    LOGGER.action(f"Creating a temporary file at {d.name}")
     try:
         yield d
     except Exception:
         if os.path.exists(d.name):
-            os.unlink(d.name)
+            rm(d.name)
         raise
     if os.path.exists(d.name):
-        os.unlink(d.name)
+        rm(d.name)
 
 
 @contextmanager
