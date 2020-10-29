@@ -522,6 +522,7 @@ class Config(object):
                             },
                             explicit=False,
                             isroot=False,
+                            isrecipe=True,
                             activation_level=ActivationLevel.global_,
                         )
                     )
