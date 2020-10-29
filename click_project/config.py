@@ -215,7 +215,7 @@ class Config(object):
         prevdir = None
         localprofilename = "." + self.main_command.path
         while dir != prevdir:
-            if os.path.exists(localprofilename):
+            if os.path.exists(os.path.join(dir, localprofilename)):
                 return dir
             prevdir = dir
             dir = os.path.dirname(dir)
