@@ -100,6 +100,14 @@ class Profile():
     def __repr__(self):
         return f"<{self.__class__.__name__}: {self.name}>"
 
+    @property
+    def short_name(self):
+        if "/" in self.name:
+            profile_name, recipe_name = self.name.split("/")
+            return recipe_name
+        else:
+            return self.name
+
 
 @ProfileFactory.register_directory_profile
 class DirectoryProfile(Profile):
@@ -210,14 +218,6 @@ class DirectoryProfile(Profile):
     @property
     def friendly_name(self):
         return self.name
-
-    @property
-    def short_name(self):
-        if "/" in self.name:
-            profile_name, recipe_name = self.name.split("/")
-            return recipe_name
-        else:
-            return self.name
 
     @property
     def parent_name(self):
@@ -633,10 +633,6 @@ class PresetProfile(Profile):
 
     def write_settings(self):
         click.UsageError("A preset profile cannot be written to")
-
-    @property
-    def short_name(self):
-        return self.name
 
     def compute_settings(self):
         pass
