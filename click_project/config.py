@@ -606,6 +606,10 @@ class Config(object):
         return profile.get_recipe(name)
 
     def is_recipe_enabled(self, shortname):
+        if shortname.endswith("preset"):
+            # the preset profile associated to a recipe must have the same
+            # enabling than the recipe itself
+            shortname = shortname[:-len("preset")]
         return (self.settings2 or {}).get("recipe", {}).get(shortname, {}).get("enabled")
 
     def filter_unset_recipes(self, recipes):
