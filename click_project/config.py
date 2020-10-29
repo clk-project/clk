@@ -513,7 +513,19 @@ class Config(object):
                 if profile is None:
                     return
                 res.append(profile)
-                res.extend(self.sorted_recipes(profile.recipes))
+                for recipe in self.sorted_recipes(profile.recipes):
+                    res.append(
+                        ProfileFactory.create_preset_profile(
+                            f"{recipe.name}preset",
+                            settings={
+                                "customcommands": self._get_custom_command_paths(recipe)
+                            },
+                            explicit=False,
+                            isroot=False,
+                            activation_level=ActivationLevel.global_,
+                        )
+                    )
+                    res.append(recipe)
 
             add_profile(self.distribution_profile)
             add_profile(self.globalpreset_profile)
