@@ -66,12 +66,13 @@ class ProfileFactory:
             klass, name,
             settings=None, explicit=True, isroot=True,
             activation_level=ActivationLevel.global_,
-            default_color=None):
+            default_color=None, isrecipe=False):
         return klass.preset_profile_cls(
             name, settings,
             explicit=explicit, isroot=isroot,
             activation_level=activation_level,
             default_color=default_color,
+            isrecipe=isrecipe
         )
 
 
@@ -588,7 +589,8 @@ class DirectoryProfile(Profile):
 @ProfileFactory.register_preset_profile
 class PresetProfile(Profile):
     def __init__(self, name, settings, explicit=True, isroot=True,
-                 activation_level=ActivationLevel.global_, default_color=None):
+                 activation_level=ActivationLevel.global_, default_color=None,
+                 isrecipe=False):
         self.name = name
         self.default_color = default_color
         self.settings = settings
@@ -596,7 +598,7 @@ class PresetProfile(Profile):
         self.isroot = isroot
         self.explicit = explicit
         self.activation_level = activation_level
-        self.isrecipe = False
+        self.isrecipe = isrecipe
 
     def get_settings(self, section):
         if (
