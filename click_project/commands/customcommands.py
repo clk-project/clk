@@ -11,9 +11,11 @@ from click_project.decorators import (
     use_settings,
     table_format,
     table_fields,
+    flag,
+    option,
 )
 from click_project.config import config, merge_settings
-from click_project.lib import quote, TablePrinter, call
+from click_project.lib import quote, TablePrinter, call, makedirs, rm
 from click_project.colors import Colorer
 from click_project.log import get_logger
 from click_project.core import DynamicChoiceType
@@ -33,7 +35,7 @@ class CustomCommandPathType(DynamicChoiceType):
         return settings["customcommands"].get(self.type, [])
 
 
-class CustomCommandType(DynamicChoiceType):
+class CustomCommandNameType(DynamicChoiceType):
     def __init__(self):
         self.resolvers = [
             ExternalCommandResolver(),
@@ -49,6 +51,8 @@ class CustomCommandType(DynamicChoiceType):
             []
         )
 
+
+class CustomCommandType(CustomCommandNameType):
     def converter(self, path):
         for resolver in self.resolvers:
             if path in resolver._list_command_paths():
@@ -189,6 +193,18 @@ def edit(customcommand):
 @argument("customcommand",
           type=CustomCommandType(),
           help="The custom command to consider")
+@flag("--force", help="Don't ask for confirmation")
+def remove(force, customcommand):
+    """Remove the given custom command"""
+    path = Path(customcommand.customcommand_path)
+    if force or click.confirm(f"This will remove {path}, are you sure ?"):
+        rm(path)
+
+
+@customcommands.command()
+@argument("customcommand",
+          type=CustomCommandType(),
+          help="The custom command to consider")
 def open(customcommand):
     """Edit the given custom command"""
     path = Path(customcommand.customcommand_path)
@@ -197,3 +213,107 @@ def open(customcommand):
             "mimeopen", path
         ]
     )
+
+
+@customcommands.command()
+@argument(
+    "name",
+    help="The name of the new command"
+)
+@flag("--open", help="Also open the file after its creation")
+@flag("--force", help="Overwrite a file if it already exists")
+@option("--body", help="The initial body to put", default="")
+@option("--description", help="The initial description to put", default="Description")
+def create_bash(name, open, force, description, body):
+    """Create a bash custom command"""
+    script_path = Path(config.customcommands.profile.location) / "bin" / name
+    makedirs(script_path.parent)
+    if script_path.exists() and not force:
+        raise click.UsageError(
+            f"Won't overwrite {script_path} unless"
+            " explicitly asked so with --force"
+        )
+    script_path.write_text(f"""#!/bin/bash -eu
+
+usage () {{
+    cat<<EOF
+$0
+
+{description}
+EOF
+}}
+
+if [ $# -gt 0 ] && [ "$1" == "--help" ]
+then
+	usage
+	exit 0
+fi
+
+{body}
+""")
+    if open:
+        call(
+            [
+                "mimeopen", str(script_path)
+            ]
+        )
+
+
+@customcommands.command()
+@argument(
+    "name",
+    help="The name of the new command"
+)
+@flag("--open", help="Also open the file after its creation")
+@flag("--force", help="Overwrite a file if it already exists")
+@option("--body", help="The initial body to put", default="")
+@option("--description", help="The initial description to put", default="Description")
+def create_python(name, open, force, description, body):
+    """Create a bash custom command"""
+    script_path = Path(config.customcommands.profile.location) / "python" / name
+    makedirs(script_path.parent)
+    if script_path.exists() and not force:
+        raise click.UsageError(
+            f"Won't overwrite {script_path} unless"
+            " explicitly asked so with --force"
+        )
+    command_name = script_path.name[:-len(".py")]
+    script_path.write_text(f"""#!/usr/bin/env python3
+# -*- coding:utf-8 -*-
+
+from pathlib import Path
+
+import click
+
+from click_project.decorators import (
+    argument,
+    flag,
+    option,
+    command,
+    use_settings,
+    table_format,
+    table_fields,
+)
+from click_project.lib import (
+    TablePrinter,
+    call,
+)
+from click_project.config import config
+from click_project.log import get_logger
+from click_project.core import DynamicChoiceType
+
+
+LOGGER = get_logger(__name__)
+
+
+@command()
+def {command_name}():
+   "{description}"
+   {body}
+""")
+    if open:
+        call(
+            [
+                "mimeopen", str(script_path)
+            ]
+        )
