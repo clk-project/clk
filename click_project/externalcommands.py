@@ -257,7 +257,7 @@ class ExternalCommandResolver(CommandResolver):
             "--edit",
             help="Edit the external command",
             expose_value=False,
-            callback=lambda *args, **kwargs: edit_external_command(command_path)
+            callback=lambda ctx, param, value: edit_external_command(command_path) if value is True else None
         )(external_command)
 
         external_command = command(
