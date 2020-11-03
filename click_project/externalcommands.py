@@ -13,10 +13,19 @@ import click
 
 from click_project.commandresolver import CommandResolver
 from click_project.config import config
-from click_project.lib import which, updated_env, quote
+from click_project.lib import which, updated_env, quote, call
 from click_project.log import get_logger
 
 LOGGER = get_logger(__name__)
+
+
+def edit_external_command(command_path):
+    call(
+        [
+            "mimeopen", command_path
+        ]
+    )
+    exit(0)
 
 
 class ExternalCommandResolver(CommandResolver):
@@ -243,6 +252,13 @@ class ExternalCommandResolver(CommandResolver):
                 help=f["help"],
                 default=f["default"] == "True",
             )(external_command)
+
+        external_command = flag(
+            "--edit",
+            help="Edit the external command",
+            expose_value=False,
+            callback=lambda *args, **kwargs: edit_external_command(command_path)
+        )(external_command)
 
         external_command = command(
             name=name,
