@@ -15,7 +15,7 @@ from click_project.decorators import (
     option,
 )
 from click_project.config import config, merge_settings
-from click_project.lib import quote, TablePrinter, call, makedirs, rm
+from click_project.lib import quote, TablePrinter, call, makedirs, rm, editor
 from click_project.colors import Colorer
 from click_project.log import get_logger
 from click_project.core import DynamicChoiceType
@@ -208,11 +208,7 @@ def remove(force, customcommand):
 def open(customcommand):
     """Edit the given custom command"""
     path = Path(customcommand.customcommand_path)
-    call(
-        [
-            "mimeopen", path
-        ]
-    )
+    editor(path)
 
 
 @customcommands.command()
@@ -252,11 +248,7 @@ fi
 {body}
 """)
     if open:
-        call(
-            [
-                "mimeopen", str(script_path)
-            ]
-        )
+        editor(str(script_path))
 
 
 @customcommands.command()
@@ -312,8 +304,4 @@ def {command_name}():
    {body}
 """)
     if open:
-        call(
-            [
-                "mimeopen", str(script_path)
-            ]
-        )
+        editor(str(script_path))
