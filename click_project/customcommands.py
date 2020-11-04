@@ -15,14 +15,14 @@ from pluginbase import PluginBase
 
 from click_project.commandresolver import CommandResolver
 from click_project.config import config
-from click_project.lib import which, updated_env, quote, call, editor
+from click_project.lib import which, updated_env, quote, call
 from click_project.log import get_logger
 
 LOGGER = get_logger(__name__)
 
 
 def edit_custom_command(path):
-    editor(path)
+    click.edit(filename=path)
     exit(0)
 
 
