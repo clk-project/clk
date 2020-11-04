@@ -10,14 +10,20 @@ import re
 import importlib
 
 import click
+from click.decorators import Option
 from pluginbase import PluginBase
 
 from click_project.commandresolver import CommandResolver
 from click_project.config import config
-from click_project.lib import which, updated_env, quote
+from click_project.lib import which, updated_env, quote, call, editor
 from click_project.log import get_logger
 
 LOGGER = get_logger(__name__)
+
+
+def edit_custom_command(path):
+    editor(path)
+    exit(0)
 
 
 class BadCustomCommandError(Exception):
@@ -56,4 +62,11 @@ class CustomCommandResolver(CommandResolver):
             )
         cmd = getattr(module, path)
         cmd.customcommand_path = module.__file__
+        cmd.params.append(
+            Option(
+                ["--edit-customcommand"], is_flag=True, expose_value=False,
+                help="Edit this command",
+                callback=lambda ctx, param, value: edit_custom_command(cmd.customcommand_path) if value is True else None
+            )
+        )
         return cmd

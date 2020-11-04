@@ -16,7 +16,7 @@ from click_project.completion import compute_choices
 from click_project.log import get_logger
 from click_project.overloads import get_ctx, CommandSettingsKeyType, CommandType
 from click_project.colors import Colorer
-from click_project.alias import format, parse
+from click_project.alias import format, parse, edit_alias_command
 
 LOGGER = get_logger(__name__)
 
@@ -88,6 +88,16 @@ def set(alias, command, documentation, params):
 
 
 set.get_choices = get_choices
+
+
+@alias.command(ignore_unknown_options=True, change_directory_options=False, handle_dry_run=True)
+@argument('alias', help="The alias name")
+def edit(alias):
+    """Set an alias"""
+    edit_alias_command(alias)
+
+
+edit.get_choices = get_choices
 
 
 @alias.command()

@@ -14,7 +14,7 @@ from click_project.log import get_logger
 from click_project.overloads import Group,\
     list_commands, get_command, command, group, get_ctx, Command
 from click_project.core import get_ctx, run, temp_config
-from click_project.decorators import pass_context
+from click_project.decorators import pass_context, flag
 from click_project.flow import get_flow_commands_to_run, clean_flow_arguments
 
 LOGGER = get_logger(__name__)
@@ -36,6 +36,34 @@ def parse(words):
 def format(cmds):
     """Format the alias command"""
     return " , ".join(" ".join(cmd) for cmd in cmds)
+
+
+def edit_alias_command_in_profile(path, profile):
+    old_value = profile.settings.get("alias", {}).get(path)
+    old_value = format(old_value["commands"])
+    value = click.edit(old_value, extension=".txt")
+    if value == old_value or value is None:
+        LOGGER.info("Nothing changed")
+    elif value == "":
+        LOGGER.info("Aboooooort !!")
+    else:
+        value = value.strip()
+        LOGGER.status(
+            f"Replacing alias {path}"
+            f" in {profile.name}"
+            f" from '{old_value}'"
+            f" to '{value}'"
+        )
+        profile.settings["alias"][path]["commands"] = parse(shlex.split(value))
+        profile.write_settings()
+
+
+def edit_alias_command(path):
+    for profile in config.all_enabled_profiles:
+        if profile.settings.get("alias", {}).get(path):
+            edit_alias_command_in_profile(path, profile)
+            break
+    exit(0)
 
 
 class AliasToGroupResolver(CommandResolver):
@@ -164,7 +192,13 @@ class AliasCommandResolver(CommandResolver):
                     _ctx.resilient_parsing = old_resilient_parsing
             for cur_ctx in ctxs:
                 run_callback(cur_ctx)
+
         alias_command = pass_context(alias_command)
+        alias_command = flag(
+            "--edit-alias", help="Edit the alias",
+            expose_value=False,
+            callback=lambda ctx, param, value: edit_alias_command(path) if value is True else None
+        )(alias_command)
         alias_command = cls(alias_command)
         if deps:
             alias_command.clickproject_flowdepends = deps
