@@ -250,7 +250,7 @@ class ExternalCommandResolver(CommandResolver):
             )(external_command)
 
         external_command = flag(
-            "--edit",
+            "--edit-customcommand",
             help="Edit the external command",
             expose_value=False,
             callback=lambda ctx, param, value: edit_external_command(command_path) if value is True else None
