@@ -294,6 +294,10 @@ class ExtraParametersMixin(object):
                                          group='parameters',
                                          help="Show the parameters for this command",
                                          type=ProfileChoice(extra=["context"]))
+        edit_param_opt = AutomaticOption(['--edit-parameters'], expose_value=False, callback=self.edit_parameters_callback,
+                                         group='parameters',
+                                         help="Edit the parameters for this command",
+                                         type=ProfileChoice(extra=["context"]))
         no_param_opt = AutomaticOption(['--no-parameters'], expose_value=False, is_flag=True, is_eager=True,
                                        group='parameters',
                                        help="Don't use the parameters settings for this commands")
@@ -302,6 +306,7 @@ class ExtraParametersMixin(object):
         self.params.append(remove_param_opt)
         self.params.append(show_param_opt)
         self.params.append(unset_param_opt)
+        self.params.append(edit_param_opt)
         self.params.append(no_param_opt)
 
     def get_extra_args(self, implicit_only=False):
@@ -375,6 +380,16 @@ class ExtraParametersMixin(object):
             config.commandline_profile.get_settings("parameters")[self.path] = raw_args
             config.merge_settings()
             run(["parameters"] + self.parameters_callback_split_value(value) + ["show", self.path])
+            exit(0)
+
+    def edit_parameters_callback(self, ctx, param, value):
+        if value and not ctx.resilient_parsing:
+            raw_args = config.commandline_profile.get_settings("parameters")[self.path]
+            index = raw_args.index('--edit-parameters')
+            raw_args = raw_args[:index] + raw_args[index+2:]
+            config.commandline_profile.get_settings("parameters")[self.path] = raw_args
+            config.merge_settings()
+            run(["parameters"] + self.parameters_callback_split_value(value) + ["edit", self.path])
             exit(0)
 
 

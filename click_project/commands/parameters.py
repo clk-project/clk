@@ -3,6 +3,8 @@
 
 from __future__ import print_function, absolute_import
 
+import shlex
+
 import click
 
 from click_project.config import config
@@ -76,6 +78,42 @@ def set(cmd, params):
 
 
 set.get_choices = get_choices
+
+
+@parameters.command(ignore_unknown_options=True, change_directory_options=False,
+                    handle_dry_run=True)
+@argument('cmd', type=CommandType(), help="The command to set")
+def edit(cmd):
+    """Set the parameters of a command"""
+    old = config.parameters.writable.get(cmd) or []
+    oldcontent = format_parameters(old)
+    content = click.edit(oldcontent, extension=f"_{config.parameters.writeprofile}.txt")
+    if content == oldcontent or content is None:
+        LOGGER.info("Nothing changed")
+    elif content == "":
+        LOGGER.info("Aboooooort !!")
+    else:
+        if old:
+            LOGGER.status(
+                "Removing {} parameters of {}: {}".format(
+                    config.parameters.writeprofilename,
+                    cmd,
+                    format_parameters(old),
+                )
+            )
+        params = shlex.split(content)
+        LOGGER.status(
+            "New {} parameters for {}: {}".format(
+                config.parameters.writeprofilename,
+                cmd,
+                format_parameters(params),
+            )
+        )
+        config.parameters.writable[cmd] = params
+        config.parameters.write()
+
+
+edit.get_choices = get_choices
 
 
 @parameters.command(ignore_unknown_options=True, handle_dry_run=True)
