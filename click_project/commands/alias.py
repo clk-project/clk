@@ -16,17 +16,13 @@ from click_project.completion import compute_choices
 from click_project.log import get_logger
 from click_project.overloads import get_ctx, CommandSettingsKeyType, CommandType
 from click_project.colors import Colorer
+from click_project.alias import format, parse
 
 LOGGER = get_logger(__name__)
 
 
 class AliasConfig(object):
     pass
-
-
-def format(cmds):
-    """Format the alias command"""
-    return " , ".join(" ".join(cmd) for cmd in cmds)
 
 
 @group(default_command='show')
@@ -65,15 +61,8 @@ def set(alias, command, documentation, params):
         raise click.UsageError("Aliases must not start with dashes (-)")
     if re.match('^\w', alias) is None:
         raise click.ClickException("Invalid alias name: " + alias)
-    commands = []
     text = [command] + list(params)
-    sep = ','
-    while sep in text:
-        index = text.index(sep)
-        commands.append(text[:index])
-        del text[:index + 1]
-    if text:
-        commands.append(text)
+    commands = parse(text)
     data = {
         "documentation": documentation,
         "commands": commands,
@@ -84,20 +73,14 @@ def set(alias, command, documentation, params):
             "Removing {} alias of {}: {}".format(
                 config.alias.writeprofilename,
                 alias,
-                " , ".join(
-                    " ".join(command)
-                    for command in old["commands"]
-                )
+                format(old["commands"])
             )
         )
     LOGGER.status(
         "New {} alias for {}: {}".format(
             config.alias.writeprofilename,
             alias,
-                " , ".join(
-                    " ".join(command)
-                    for command in data["commands"]
-                )
+            format(data["commands"])
         )
     )
     config.alias.writable[alias] = data

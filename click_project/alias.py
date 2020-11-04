@@ -3,6 +3,8 @@
 
 from __future__ import print_function, absolute_import
 
+import shlex
+
 import click
 
 from click_project.config import temp_config, config
@@ -16,6 +18,24 @@ from click_project.decorators import pass_context
 from click_project.flow import get_flow_commands_to_run, clean_flow_arguments
 
 LOGGER = get_logger(__name__)
+
+
+def parse(words):
+    """Split a list of words into a list of commands"""
+    sep = ','
+    commands = []
+    while sep in words:
+        index = words.index(sep)
+        commands.append(words[:index])
+        del words[:index + 1]
+    if words:
+        commands.append(words)
+    return commands
+
+
+def format(cmds):
+    """Format the alias command"""
+    return " , ".join(" ".join(cmd) for cmd in cmds)
 
 
 class AliasToGroupResolver(CommandResolver):
