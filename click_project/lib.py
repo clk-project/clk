@@ -76,6 +76,11 @@ def ln(src, dst):
         os.symlink(src, dst)
 
 
+def editor(path):
+    from click._termui_impl import Editor
+    Editor().edit_file(path)
+
+
 def makedirs(dir):
     """Ensure a directory is created.
 
