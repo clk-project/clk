@@ -91,7 +91,7 @@ set.get_choices = get_choices
 
 
 @alias.command(ignore_unknown_options=True, change_directory_options=False, handle_dry_run=True)
-@argument('alias', help="The alias name")
+@argument('alias', help="The alias name", type=CommandSettingsKeyType("alias"))
 def edit(alias):
     """Set an alias"""
     edit_alias_command(alias)
