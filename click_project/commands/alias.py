@@ -214,6 +214,15 @@ def rename(source, destination):
     config.alias.write()
 
 
+@alias.command(handle_dry_run=True)
+@argument('source', type=CommandSettingsKeyType("alias"), help="The alias to copy")
+@argument('destination', help="The name of the new alias")
+def copy(source, destination):
+    """Copy an alias"""
+    config.alias.writable[destination] = config.alias.readonly[source]
+    config.alias.write()
+
+
 @alias.command(ignore_unknown_options=True, handle_dry_run=True)
 @argument('alias', type=CommandType(), help="The alias to modify")
 @argument('params', nargs=-1, required=True, help="The command parameters to append to the alias command")
