@@ -33,21 +33,21 @@ def parse(words):
     return commands
 
 
-def format(cmds):
+def format(cmds, sep=" , "):
     """Format the alias command"""
-    return " , ".join(" ".join(cmd) for cmd in cmds)
+    return sep.join(" ".join(cmd) for cmd in cmds)
 
 
 def edit_alias_command_in_profile(path, profile):
     old_value = profile.settings.get("alias", {}).get(path)
-    old_value = format(old_value["commands"])
-    value = click.edit(old_value, extension=".txt")
+    old_value = format(old_value["commands"], sep="\n")
+    value = click.edit(old_value, extension=f"_{path}.txt")
     if value == old_value or value is None:
         LOGGER.info("Nothing changed")
     elif value == "":
         LOGGER.info("Aboooooort !!")
     else:
-        value = value.strip()
+        value = value.strip().replace("\n", " , ")
         LOGGER.status(
             f"Replacing alias {path}"
             f" in {profile.name}"
