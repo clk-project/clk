@@ -175,24 +175,6 @@ def which(customcommand):
 @argument("customcommand",
           type=CustomCommandType(),
           help="The custom command to consider")
-def edit(customcommand):
-    """Edit the given custom command"""
-    path = Path(customcommand.customcommand_path)
-    oldcontent = path.read_text()
-    content = click.edit(oldcontent, extension=path.suffix)
-    if content == oldcontent or content is None:
-        LOGGER.info("Nothing changed")
-    elif content == "":
-        LOGGER.info("Aboooooort !!")
-    else:
-        path.write_text(content)
-        LOGGER.info(f"Edited {path.name}")
-
-
-@customcommands.command()
-@argument("customcommand",
-          type=CustomCommandType(),
-          help="The custom command to consider")
 @flag("--force", help="Don't ask for confirmation")
 def remove(force, customcommand):
     """Remove the given custom command"""
@@ -205,7 +187,7 @@ def remove(force, customcommand):
 @argument("customcommand",
           type=CustomCommandType(),
           help="The custom command to consider")
-def open(customcommand):
+def edit(customcommand):
     """Edit the given custom command"""
     path = Path(customcommand.customcommand_path)
     click.edit(filename=path)
