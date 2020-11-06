@@ -3,6 +3,8 @@
 
 import click
 
+from click_project.core import DynamicChoiceType as DynamicChoice # NOQA: just expose the object
+
 
 class Suggestion(click.Choice):
     def convert(self, value, param, ctx):

@@ -274,7 +274,7 @@ from click_project.lib import (
 )
 from click_project.config import config
 from click_project.log import get_logger
-from click_project.core import DynamicChoiceType
+from click_project.types import DynamicChoice
 
 
 LOGGER = get_logger(__name__)
