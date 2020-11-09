@@ -21,7 +21,8 @@ from click_project.log import get_logger
 from click_project.core import DynamicChoiceType
 from click_project.externalcommands import ExternalCommandResolver
 from click_project.customcommands import CustomCommandResolver
-from click_project.overloads import CommandSettingsKeyType
+from click_project.overloads import CommandSettingsKeyType, CommandType
+from click_project.flow import get_flow_commands_to_run
 
 
 LOGGER = get_logger(__name__)
@@ -208,8 +209,9 @@ class AliasesType(DynamicChoiceType):
 @flag("--force", help="Overwrite a file if it already exists")
 @option("--body", help="The initial body to put", default="")
 @option("--from-alias", help="The alias to use as base", type=AliasesType())
+@option("--flowdeps", help="Add a flowdeps", multiple=True, type=CommandType())
 @option("--description", help="The initial description to put", default="Description")
-def create_bash(name, open, force, description, body, from_alias):
+def create_bash(name, open, force, description, body, from_alias, flowdeps):
     """Create a bash custom command"""
     script_path = Path(config.customcommands.profile.location) / "bin" / name
     makedirs(script_path.parent)
@@ -223,6 +225,11 @@ def create_bash(name, open, force, description, body, from_alias):
             config.main_command.path + " " + " ".join(map(quote, command))
             for command in config.settings["alias"][from_alias]["commands"]
         )
+        flowdeps = get_flow_commands_to_run(from_alias)
+    if flowdeps:
+        flowdeps_str = "flowdepends: " + ", ".join(flowdeps) + "\n"
+    else:
+        flowdeps_str = ""
 
     script_path.write_text(f"""#!/bin/bash -eu
 
@@ -231,6 +238,8 @@ usage () {{
 $0
 
 {description}
+--
+{flowdeps_str}
 EOF
 }}
 
