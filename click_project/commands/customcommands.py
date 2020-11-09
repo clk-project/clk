@@ -3,6 +3,8 @@
 
 from pathlib import Path
 
+import json
+
 import click
 
 from click_project.decorators import (
@@ -21,7 +23,10 @@ from click_project.log import get_logger
 from click_project.core import DynamicChoiceType
 from click_project.externalcommands import ExternalCommandResolver
 from click_project.customcommands import CustomCommandResolver
-from click_project.overloads import CommandSettingsKeyType, CommandType
+from click_project.overloads import (
+    CommandSettingsKeyType, CommandType,
+    get_command, Option, Argument
+)
 from click_project.flow import get_flow_commands_to_run
 
 
@@ -220,16 +225,81 @@ def create_bash(name, open, force, description, body, from_alias, flowdeps):
             f"Won't overwrite {script_path} unless"
             " explicitly asked so with --force"
         )
+    options = []
+    arguments = []
+    flags = []
+    remaining = ""
     if from_alias:
         body = "\n".join(
             config.main_command.path + " " + " ".join(map(quote, command))
             for command in config.settings["alias"][from_alias]["commands"]
         )
+        remaining = ""
         flowdeps = get_flow_commands_to_run(from_alias)
+        alias_cmd = get_command(from_alias)
+        description = f"Converted from the alias {from_alias}"
+
+        def guess_type(param):
+            if type(param.type) == click.Choice:
+                return json.dumps(list(param.type.choices))
+            elif param.type == int:
+                return "int"
+            elif param.type == float:
+                return "float"
+            else:
+                return "str"
+        args = ""
+        for param in alias_cmd.params:
+            if type(param) == Option:
+                if param.is_flag:
+                    flags.append(f"F:{','.join(param.opts)}:{param.help}:{param.default}")
+                    args += f"""
+if [ "${{{config.main_command.path.upper()}___{param.name.upper()}}}" == "True" ]
+then
+    args+=({param.opts[-1]})
+fi"""
+                else:
+                    options.append(f"O:{','.join(param.opts)}:{guess_type(param)}:{param.help}")
+                    args += f"""
+if [ -n "${{{config.main_command.path.upper()}___{param.name.upper()}}}" ]
+then
+    args+=({param.opts[-1]} "${{{config.main_command.path.upper()}___{param.name.upper()}}}")
+fi"""
+            elif type(param) == Argument:
+                if param.nargs == -1:
+                    remaining = param.help
+                else:
+                    arguments.append(f"A:{','.join(param.opts)}:{guess_type(param)}:{param.help}")
+                    args += f"""
+args+=("${{{config.main_command.path.upper()}___{param.name.upper()}}}")
+"""
+        if args:
+            args = """# Build the arguments of the last command of the alias
+args=()""" + args
+            body += ' "${args[@]}"'
+        if remaining:
+            body += ' "${@}"'
+
     if flowdeps:
         flowdeps_str = "flowdepends: " + ", ".join(flowdeps) + "\n"
     else:
         flowdeps_str = ""
+    if options:
+        options_str = "\n".join(options) + "\n"
+    else:
+        options_str = ""
+    if arguments:
+        arguments_str = "\n".join(arguments) + "\n"
+    else:
+        arguments_str = ""
+    if flags:
+        flags_str = "\n".join(flags) + "\n"
+    else:
+        flags_str = ""
+    if remaining:
+        remaining_str = f"N:{remaining}\n"
+    else:
+        remaining_str = ""
 
     script_path.write_text(f"""#!/bin/bash -eu
 
@@ -239,7 +309,7 @@ $0
 
 {description}
 --
-{flowdeps_str}
+{flowdeps_str}{options_str}{flags_str}{arguments_str}{remaining_str}
 EOF
 }}
 
@@ -248,6 +318,8 @@ then
 	usage
 	exit 0
 fi
+
+{args}
 
 {body}
 """)
