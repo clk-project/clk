@@ -11,8 +11,11 @@ from click_project.config import temp_config, config
 from click_project.lib import quote
 from click_project.commandresolver import CommandResolver
 from click_project.log import get_logger
-from click_project.overloads import Group,\
-    list_commands, get_command, command, group, get_ctx, Command
+from click_project.overloads import (
+    Group,
+    list_commands, get_command, command, group, get_ctx, Command,
+    AutomaticOption,
+)
 from click_project.core import get_ctx, run, temp_config
 from click_project.decorators import pass_context, flag
 from click_project.flow import get_flow_commands_to_run, clean_flow_arguments
@@ -194,12 +197,14 @@ class AliasCommandResolver(CommandResolver):
                 run_callback(cur_ctx)
 
         alias_command = pass_context(alias_command)
-        alias_command = flag(
-            "--edit-alias", help="Edit the alias",
-            expose_value=False,
-            callback=lambda ctx, param, value: edit_alias_command(path) if value is True else None
-        )(alias_command)
         alias_command = cls(alias_command)
+        alias_command.params.append(
+            AutomaticOption(
+                ["--edit-alias"], help="Edit the alias",
+                expose_value=False,
+                callback=lambda ctx, param, value: edit_alias_command(path) if value is True else None
+            )
+        )
         if deps:
             alias_command.clickproject_flowdepends = deps
 

@@ -15,6 +15,7 @@ from click_project.commandresolver import CommandResolver
 from click_project.config import config
 from click_project.lib import which, updated_env, quote, call
 from click_project.log import get_logger
+from click_project.overloads import AutomaticOption
 
 LOGGER = get_logger(__name__)
 
@@ -249,13 +250,6 @@ class ExternalCommandResolver(CommandResolver):
                 default=f["default"] == "True",
             )(external_command)
 
-        external_command = flag(
-            "--edit-customcommand",
-            help="Edit the external command",
-            expose_value=False,
-            callback=lambda ctx, param, value: edit_external_command(command_path) if value is True else None
-        )(external_command)
-
         external_command = command(
             name=name,
             ignore_unknown_options=ignore_unknown_options,
@@ -265,5 +259,14 @@ class ExternalCommandResolver(CommandResolver):
             flowdepends=cmdflowdepends)(
                 external_command
             )
+        external_command.params.append(
+            AutomaticOption(
+                ["--edit-customcommand"],
+                help="Edit the external command",
+                expose_value=False,
+                is_flag=True,
+                callback=lambda ctx, param, value: edit_external_command(command_path) if value is True else None
+            )
+        )
         external_command.customcommand_path = command_path
         return external_command
