@@ -15,12 +15,13 @@ from click_project.decorators import (
     option,
 )
 from click_project.config import config, merge_settings
-from click_project.lib import quote, TablePrinter, call, makedirs, rm
+from click_project.lib import quote, TablePrinter, call, makedirs, rm, chmod
 from click_project.colors import Colorer
 from click_project.log import get_logger
 from click_project.core import DynamicChoiceType
 from click_project.externalcommands import ExternalCommandResolver
 from click_project.customcommands import CustomCommandResolver
+from click_project.overloads import CommandSettingsKeyType
 
 
 LOGGER = get_logger(__name__)
@@ -193,6 +194,11 @@ def edit(customcommand):
     click.edit(filename=path)
 
 
+class AliasesType(DynamicChoiceType):
+    def choices(self):
+        return list(config.settings["alias"].keys())
+
+
 @customcommands.command()
 @argument(
     "name",
@@ -201,8 +207,9 @@ def edit(customcommand):
 @flag("--open", help="Also open the file after its creation")
 @flag("--force", help="Overwrite a file if it already exists")
 @option("--body", help="The initial body to put", default="")
+@option("--from-alias", help="The alias to use as base", type=AliasesType())
 @option("--description", help="The initial description to put", default="Description")
-def create_bash(name, open, force, description, body):
+def create_bash(name, open, force, description, body, from_alias):
     """Create a bash custom command"""
     script_path = Path(config.customcommands.profile.location) / "bin" / name
     makedirs(script_path.parent)
@@ -211,6 +218,12 @@ def create_bash(name, open, force, description, body):
             f"Won't overwrite {script_path} unless"
             " explicitly asked so with --force"
         )
+    if from_alias:
+        body = "\n".join(
+            config.main_command.path + " " + " ".join(map(quote, command))
+            for command in config.settings["alias"][from_alias]["commands"]
+        )
+
     script_path.write_text(f"""#!/bin/bash -eu
 
 usage () {{
@@ -229,6 +242,7 @@ fi
 
 {body}
 """)
+    chmod(script_path, 0o755)
     if open:
         click.edit(filename=str(script_path))
 
