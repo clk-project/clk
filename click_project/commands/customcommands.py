@@ -185,7 +185,12 @@ class AliasesType(DynamicChoiceType):
         return list(config.settings["alias"].keys())
 
 
-@customcommands.command()
+@customcommands.group()
+def create():
+    """Create custom commands directly from the command line."""
+
+
+@create.command()
 @argument(
     "name",
     help="The name of the new command"
@@ -196,7 +201,7 @@ class AliasesType(DynamicChoiceType):
 @option("--from-alias", help="The alias to use as base", type=AliasesType())
 @option("--flowdeps", help="Add a flowdeps", multiple=True, type=CommandType())
 @option("--description", help="The initial description to put", default="Description")
-def create_bash(name, open, force, description, body, from_alias, flowdeps):
+def bash(name, open, force, description, body, from_alias, flowdeps):
     """Create a bash custom command"""
     script_path = Path(config.customcommands.profile.location) / "bin" / name
     makedirs(script_path.parent)
@@ -308,7 +313,7 @@ fi
         click.edit(filename=str(script_path))
 
 
-@customcommands.command()
+@create.command()
 @argument(
     "name",
     help="The name of the new command"
@@ -317,7 +322,7 @@ fi
 @flag("--force", help="Overwrite a file if it already exists")
 @option("--body", help="The initial body to put", default="")
 @option("--description", help="The initial description to put", default="Description")
-def create_python(name, open, force, description, body):
+def python(name, open, force, description, body):
     """Create a bash custom command"""
     script_path = Path(config.customcommands.profile.location) / "python" / name
     makedirs(script_path.parent)
