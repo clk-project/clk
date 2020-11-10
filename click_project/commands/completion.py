@@ -55,7 +55,7 @@ def show(shell):
 @option('--last/--after', help="Complete the last argument")
 @flag("--call/--no-call",
       help="Call in a new process."
-      " --no-call is useful in combination with --post-mortem", default=True)
+      " --no-call is useful in combination with --post-mortem")
 @argument('command', type=CommandType(recursive=False))
 @argument('args', nargs=-1)
 def _try(description, last, command, args, call):
