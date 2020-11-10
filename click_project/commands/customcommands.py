@@ -203,6 +203,8 @@ def create():
 @option("--description", help="The initial description to put", default="Description")
 def bash(name, open, force, description, body, from_alias, flowdeps):
     """Create a bash custom command"""
+    if not name.endswith(".sh"):
+        name += ".sh"
     script_path = Path(config.customcommands.profile.location) / "bin" / name
     makedirs(script_path.parent)
     if script_path.exists() and not force:
