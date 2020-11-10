@@ -18,6 +18,7 @@ from click_project.lib import move, copy, ParameterType, json_file,\
     json_dumps, rm, call, cd, get_option_choices
 from click_project.lib import TablePrinter, get_authenticator
 from click_project.overloads import CommandSettingsKeyType
+from click_project.types import DirectoryProfileType
 
 LOGGER = get_logger(__name__)
 
@@ -312,6 +313,27 @@ def set_order(recipe, order):
             config.recipe.writable[cmd] = {"order": order}
         LOGGER.status("Set order of {} to {} in profile {}".format(cmd, order, config.recipe.writeprofile))
     config.recipe.write()
+
+
+@recipe.command()
+@argument("profile", type=DirectoryProfileType(),
+          help="The name of the profile to open")
+@option("--opener", help="Program to call to open the directory", default="xdg-open")
+def open(profile, opener):
+    """Open the directory containing the profile"""
+    call(
+        [
+            opener, profile.location
+        ]
+    )
+
+
+@recipe.command()
+@argument("profile", type=DirectoryProfileType(),
+          help="The name of the profile to show")
+def where_is(profile):
+    """Show where is a given recipe"""
+    print(profile.location)
 
 
 @recipe.group(default_command="show")
