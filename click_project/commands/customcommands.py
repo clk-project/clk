@@ -216,15 +216,20 @@ def bash(name, open, force, description, body, from_alias, flowdeps):
     arguments = []
     flags = []
     remaining = ""
+    args = ""
+
     if from_alias:
-        body = "\n".join(
+        if body:
+            body = body + "\n"
+        body = body + "\n".join(
             config.main_command.path + " " + " ".join(map(quote, command))
             for command in config.settings["alias"][from_alias]["commands"]
         )
-        remaining = ""
-        flowdeps = get_flow_commands_to_run(from_alias)
+        flowdeps = list(flowdeps) + get_flow_commands_to_run(from_alias)
         alias_cmd = get_command(from_alias)
-        description = f"Converted from the alias {from_alias}"
+        if description:
+            description = description + "\n"
+        description = description + f"Converted from the alias {from_alias}"
 
         def guess_type(param):
             if type(param.type) == click.Choice:
@@ -235,7 +240,7 @@ def bash(name, open, force, description, body, from_alias, flowdeps):
                 return "float"
             else:
                 return "str"
-        args = ""
+
         for param in alias_cmd.params:
             if type(param) == Option:
                 if param.is_flag:
