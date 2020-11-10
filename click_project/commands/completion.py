@@ -56,8 +56,9 @@ def show(shell):
 @flag("--call/--no-call",
       help="Call in a new process."
       " --no-call is useful in combination with --post-mortem")
-@argument('command', type=CommandType(recursive=False))
-@argument('args', nargs=-1)
+@argument('command', type=CommandType(recursive=False),
+          help="The command about which to try the completion")
+@argument('args', nargs=-1, help="The arguments to provide to the command")
 def _try(description, last, command, args, call):
     """Try the completion"""
     if command == config.main_command.path:
