@@ -370,7 +370,7 @@ class Config(object):
                     if (Path(profile.location) / "python").exists()
                 ]
             ),
-            "externalpaths": (
+            "executablepaths": (
                 [
                     str(Path(profile.location) / d)
                     for d in [

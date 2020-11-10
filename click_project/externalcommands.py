@@ -34,7 +34,7 @@ class ExternalCommandResolver(CommandResolver):
             config.get_settings2(
                 "customcommands"
             ).get(
-                "externalpaths", []
+                "executablepaths", []
             )
         )
 

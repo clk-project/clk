@@ -105,13 +105,13 @@ def show(fields, format, **kwargs):
                 config.customcommands.all_settings.get(
                     profile.name, {}
                 ).get(
-                    "externalpaths", []
+                    "executablepaths", []
                 )
             )
             for profile in config.all_enabled_profiles
         }
         args = colorer.colorize(values, config.customcommands.readprofile)
-        tp.echo("externalpaths", " ".join(args))
+        tp.echo("executablepaths", " ".join(args))
 
 
 def custom_command_type():
