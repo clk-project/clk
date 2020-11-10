@@ -244,6 +244,7 @@ class DirectoryProfile(Profile):
             self.recipes_instead_of_profiles,
             self.remove_with_legend,
             self.hooks_to_trigger,
+            self.customcommand_to_executable,
         ]
         self._version = None
         self.location = location
@@ -460,6 +461,17 @@ class DirectoryProfile(Profile):
             if "hooks" in settings:
                 settings["triggers"] = settings["hooks"]
                 del settings["hooks"]
+        self.computed_location = None
+        self.compute_settings()
+        return True
+
+    def customcommand_to_executable(self):
+        with json_file(self.settings_path) as settings:
+            if "customcommands" in settings:
+                customcommands = settings["customcommands"]
+                if "externalpaths" in customcommands:
+                    customcommands["executablepaths"] = customcommands["externalpaths"]
+                    del customcommands["externalpaths"]
         self.computed_location = None
         self.compute_settings()
         return True

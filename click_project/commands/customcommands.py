@@ -114,59 +114,39 @@ def show(fields, format, **kwargs):
         tp.echo("externalpaths", " ".join(args))
 
 
+def custom_command_type():
+    return option("--type", help="What kind of object should I find at this locations",
+                  type=click.Choice(["executable", "python"]),
+                  default="external")
+
+
 @customcommands.command()
 @argument("paths", nargs=-1, type=Path, help="The paths to add to load custom commands")
-def add_python_path(paths):
-    """Show all the custom commands paths"""
+@custom_command_type()
+def add_path(paths, type):
+    """Add custom command paths"""
     paths = [str(d) for d in paths]
-    config.customcommands.writable["pythonpaths"] = config.customcommands.writable.get("pythonpaths", []) + list(paths)
+    config.customcommands.writable[f"{type}paths"] = config.customcommands.writable.get("{type}paths", []) + list(paths)
     config.customcommands.write()
-    LOGGER.info(f"Added {format_paths(paths)} to the profile {config.customcommands.writeprofile}")
+    LOGGER.info(f"Added {format_paths(paths)} ({type}) to the profile {config.customcommands.writeprofile}")
 
 
 @customcommands.command()
 @argument("paths", nargs=-1, type=CustomCommandPathType("pythonpaths"), help="The paths to remove from custom commands")
-def remove_python_path(paths):
+@custom_command_type()
+def remove_path(paths, type):
     """Remove all the custom commands paths from the profile"""
-    to_remove = set(config.customcommands.writable.get("pythonpaths", [])).intersection(paths)
+    to_remove = set(config.customcommands.writable.get(f"{type}paths", [])).intersection(paths)
     if not to_remove:
         raise click.UsageError(
             "None of the given path is present. This command would be a no-op."
         )
-    config.customcommands.writable["pythonpaths"] = [
-        path for path in config.customcommands.writable.get("pythonpaths", [])
+    config.customcommands.writable[f"{type}paths"] = [
+        path for path in config.customcommands.writable.get(f"{type}paths", [])
         if path not in to_remove
     ]
     config.customcommands.write()
-    LOGGER.info(f"Removed {format_paths(to_remove)} from the profile {config.customcommands.writeprofile}")
-
-
-@customcommands.command()
-@argument("paths", nargs=-1, type=Path, help="The paths to add to load custom commands")
-def add_external_path(paths):
-    """Show all the custom commands paths"""
-    paths = [str(d) for d in paths]
-    config.customcommands.writable["externalpaths"] = config.customcommands.writable.get("externalpaths", []) + list(paths)
-    config.customcommands.write()
-    LOGGER.info(f"Added {format_paths(paths)} to the profile {config.customcommands.writeprofile}")
-
-
-@customcommands.command()
-@argument("paths", nargs=-1, type=CustomCommandPathType("externalpaths"), help="The paths to remove from custom commands")
-def remove_external_path(paths):
-    """Remove all the custom commands paths from the profile"""
-    paths = [str(d) for d in paths]
-    to_remove = set(config.customcommands.writable.get("externalpaths", [])).intersection(paths)
-    if not to_remove:
-        raise click.UsageError(
-            "None of the given path is present. This command would be a no-op."
-        )
-    config.customcommands.writable["externalpaths"] = [
-        path for path in config.customcommands.writable.get("externalpaths", [])
-        if path not in to_remove
-    ]
-    config.customcommands.write()
-    LOGGER.info(f"Removed {format_paths(to_remove)} from the profile {config.customcommands.writeprofile}")
+    LOGGER.info(f"Removed {format_paths(to_remove)} ({type}) from the profile {config.customcommands.writeprofile}")
 
 
 @customcommands.command()
