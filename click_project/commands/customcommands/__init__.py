@@ -201,7 +201,11 @@ def create():
 @option("--from-alias", help="The alias to use as base", type=AliasesType())
 @option("--flowdeps", help="Add a flowdeps", multiple=True, type=CommandType())
 @option("--description", help="The initial description to put", default="Description")
-def bash(name, open, force, description, body, from_alias, flowdeps):
+@option("--source-bash-helpers/--no-source-bash-helpers",
+        help="Source the bash helpers",
+        default=True
+)
+def bash(name, open, force, description, body, from_alias, flowdeps, source_bash_helpers):
     """Create a bash custom command"""
     if not name.endswith(".sh"):
         name += ".sh"
@@ -295,6 +299,8 @@ args=()""" + args
 
     script_path.write_text(f"""#!/bin/bash -eu
 
+{f"source <(_{config.main_command.path.upper()}_COMPLETE='' {config.main_command.path} customcommands bash-helpers)" if source_bash_helpers else ""}
+
 usage () {{
     cat<<EOF
 $0
@@ -312,7 +318,6 @@ then
 fi
 
 {args}
-
 {body}
 """)
     chmod(script_path, 0o755)
@@ -374,3 +379,45 @@ def {command_name}():
 """)
     if open:
         click.edit(filename=str(script_path))
+
+
+@customcommands.command()
+@flag("--force", help="Overwrite the file if it exists")
+def install_bash_helpers(force):
+    """Install an helper file in ~/bin.
+
+    It provides useful functions when writing bash custom commands.
+
+    Then, you simply have to use `source _clk.sh` to use the helper.
+
+    Because it statically points to a file in the installation of clk, you need
+    to call this command again after each new installation of clk (the path
+    might change).
+
+    If you don't mind adding another call to clk in your script, prefer the more
+    dynamic approach by using directly `source <(_CLK_COMPLETE="" clk customcommands bash-helpers)`.
+"""
+    helper_file = Path.home() / "bin" / f"_{config.main_command.path}.sh"
+    if helper_file.exists() and not force:
+        raise click.UsageError(
+            f"I won't overwrite {helper_file},"
+            " unless called with --force"
+        )
+    helper_file.write_text(
+        f"""#!/bin/bash -eu
+
+source "{Path(__file__).parent.resolve() / "_clk.sh"}"
+"""
+    )
+
+
+@customcommands.command()
+def bash_helpers():
+    """Show the content of the bash-helpers.
+
+    Useful to put in a script as `source <(_CLK_COMPLETE="" clk customcommands bash-helpers)`
+
+    But might suffer from the need to call clk to get it. If you want a more
+    static approach, consider using `clk customcommands install-bash-helpers`.
+"""
+    print((Path(__file__).parent.resolve() / "_clk.sh").read_text())
