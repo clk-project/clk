@@ -129,7 +129,9 @@ class Config(object):
         self.persist_migration = False
         # environment values
         self.env = None
-        self.override_env = {}
+        self.override_env = {
+            "CLK_INSTALL_LOCATION": str(Path(__file__).parent)
+        }
         self.old_env = os.environ.copy()
         self.distribution_profile_location = None
         self._all_profiles_cache = None
