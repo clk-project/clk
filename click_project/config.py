@@ -231,9 +231,10 @@ class Config(object):
             return
         self.settings = None
         self.merge_settings()
-        self.reset_env()
         self.log_level = self.log_level or 'status'
+        self.reset_env()
         self.env = defaultdict(list)
+        self.setup_environ()
 
     def reset_env(self):
         if self.old_env:
