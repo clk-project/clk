@@ -129,7 +129,6 @@ class Config(object):
         self.persist_migration = False
         # environment values
         self.env = None
-        self.custom_env = {}
         self.override_env = {}
         self.old_env = os.environ.copy()
         self.distribution_profile_location = None
