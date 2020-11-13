@@ -414,6 +414,7 @@ source "${CLK_INSTALL_LOCATION}/commands/customcommands/_clk.sh"
 @argument("new-name", help="The new name to use for the custom command")
 @flag("--force", help="Overwrite destination")
 def rename(customcommand, new_name, force):
+    """Rename a custom commands"""
     ext = os.path.splitext(customcommand.customcommand_path)[1]
     if not new_name.endswith(ext):
         new_name += ext
