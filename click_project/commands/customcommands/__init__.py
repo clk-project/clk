@@ -3,6 +3,7 @@
 
 from pathlib import Path
 
+import os
 import json
 
 import click
@@ -404,3 +405,23 @@ def install_bash_helpers(force):
 source "${CLK_INSTALL_LOCATION}/commands/customcommands/_clk.sh"
 """
     )
+
+
+@customcommands.command()
+@argument("customcommand",
+          type=CustomCommandType(),
+          help="The custom command to consider")
+@argument("new-name", help="The new name to use for the custom command")
+@flag("--force", help="Overwrite destination")
+def rename(customcommand, new_name, force):
+    ext = os.path.splitext(customcommand.customcommand_path)[1]
+    if not new_name.endswith(ext):
+        new_name += ext
+    new_path = Path(customcommand.customcommand_path).parent / new_name
+    if new_path.exists() and not force:
+        raise click.UsageError(
+            f"I won't overwrite {new_path},"
+            " unless called with --force"
+        )
+    Path(customcommand.customcommand_path).rename(new_path)
+    LOGGER.status(f"Renamed {customcommand.customcommand_path} into {new_path}")
