@@ -340,6 +340,8 @@ fi
 @option("--description", help="The initial description to put", default="Description")
 def python(name, open, force, description, body):
     """Create a bash custom command"""
+    if not name.endswith(".py"):
+        name += ".py"
     script_path = Path(config.customcommands.profile.location) / "python" / name
     makedirs(script_path.parent)
     if script_path.exists() and not force:
