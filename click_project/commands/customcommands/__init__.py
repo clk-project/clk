@@ -196,7 +196,7 @@ def create():
     "name",
     help="The name of the new command"
 )
-@flag("--open", help="Also open the file after its creation")
+@flag("--open/--no-open", help="Also open the file after its creation", default=True)
 @flag("--force", help="Overwrite a file if it already exists")
 @option("--body", help="The initial body to put", default="")
 @option("--from-alias", help="The alias to use as base", type=AliasesType())
@@ -334,7 +334,7 @@ fi
     "name",
     help="The name of the new command"
 )
-@flag("--open", help="Also open the file after its creation")
+@flag("--open/--no-open", help="Also open the file after its creation", default=True)
 @flag("--force", help="Overwrite a file if it already exists")
 @option("--body", help="The initial body to put", default="")
 @option("--description", help="The initial description to put", default="Description")
