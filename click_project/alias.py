@@ -201,7 +201,7 @@ class AliasCommandResolver(CommandResolver):
         alias_command.params.append(
             AutomaticOption(
                 ["--edit-alias"], help="Edit the alias",
-                expose_value=False,
+                expose_value=False, is_flag=True,
                 callback=lambda ctx, param, value: edit_alias_command(path) if value is True else None
             )
         )
