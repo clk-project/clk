@@ -305,7 +305,7 @@ source _clk.sh || {{
     exit 1
 }}
 
-usage () {{
+clk_usage () {{
     cat<<EOF
 $0
 
@@ -315,11 +315,7 @@ $0
 EOF
 }}
 
-if [ $# -gt 0 ] && [ "$1" == "--help" ]
-then
-	usage
-	exit 0
-fi
+clk_help_handler "$@"
 
 {args}
 {body}
