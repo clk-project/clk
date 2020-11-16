@@ -189,8 +189,8 @@ def show(name_only, aliases, under, fields, format, **kwargs):
 @alias.command(handle_dry_run=True)
 @argument('source', type=CommandSettingsKeyType("alias"), help="The alias to rename")
 @argument('destination', help="The new name of the alias")
-def rename(source, destination):
-    """Rename an alias"""
+def move(source, destination):
+    """Move an alias, put the new alias in the profile indicated in the command"""
     config.alias.writable[destination] = config.alias.readonly[source]
     if source in config.alias.writable:
         del config.alias.writable[source]
@@ -211,6 +211,7 @@ def rename(source, destination):
             if cmd[0] == source and a not in renamed_in:
                 LOGGER.warning("%s is still used in %s at another configuration profile."
                                " You may want to correct this manually." % (source, a))
+    LOGGER.status(f"Renamed alias {source} -> {destination} in {config.alias.writeprofile}")
     config.alias.write()
 
 
