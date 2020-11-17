@@ -17,6 +17,7 @@ from click_project.log import get_logger
 from click_project.overloads import get_ctx, CommandSettingsKeyType, CommandType
 from click_project.colors import Colorer
 from click_project.alias import format, parse, edit_alias_command
+from click_project.types import DirectoryProfileType
 
 LOGGER = get_logger(__name__)
 
@@ -189,11 +190,15 @@ def show(name_only, aliases, under, fields, format, **kwargs):
 @alias.command(handle_dry_run=True)
 @argument('source', type=CommandSettingsKeyType("alias"), help="The alias to rename")
 @argument('destination', help="The new name of the alias")
-def move(source, destination):
+def rename(source, destination):
     """Move an alias, put the new alias in the profile indicated in the command"""
-    config.alias.writable[destination] = config.alias.readonly[source]
-    if source in config.alias.writable:
-        del config.alias.writable[source]
+    for profile in reversed(list(config.all_enabled_profiles)):
+        if source in profile.settings.get("alias", {}):
+            break
+    else:
+        raise Exception(f"{source} not found")
+    profile.settings["alias"][destination] = profile.settings["alias"][source]
+    del profile.settings["alias"][source]
     # rename the alias when used in the other aliases
     from six.moves.builtins import set
     renamed_in = set()
@@ -211,8 +216,27 @@ def move(source, destination):
             if cmd[0] == source and a not in renamed_in:
                 LOGGER.warning("%s is still used in %s at another configuration profile."
                                " You may want to correct this manually." % (source, a))
-    LOGGER.status(f"Renamed alias {source} -> {destination} in {config.alias.writeprofile}")
-    config.alias.write()
+    LOGGER.status(f"Moved alias {source} -> {destination} in {profile.name}")
+    profile.write_settings()
+
+
+@alias.command(handle_dry_run=True)
+@argument('source', type=CommandSettingsKeyType("alias"), help="The alias to move")
+@argument('destination', help="The profile wher to put the new alias", type=DirectoryProfileType())
+def move(source, destination):
+    """Move an alias, put the new alias in the profile indicated in the command"""
+    for profile in reversed(list(config.all_enabled_profiles)):
+        if source in profile.settings.get("alias", {}):
+            break
+    else:
+        raise Exception(f"{source} not found")
+    destination_store = destination.settings.get("alias", {})
+    destination_store[source] = profile.settings["alias"][source]
+    destination.settings["alias"] = destination_store
+    del profile.settings["alias"][source]
+    LOGGER.status(f"Moved alias {source}, {profile.name} -> {destination.name}")
+    destination.write_settings()
+    profile.write_settings()
 
 
 @alias.command(handle_dry_run=True)
@@ -220,8 +244,14 @@ def move(source, destination):
 @argument('destination', help="The name of the new alias")
 def copy(source, destination):
     """Copy an alias"""
-    config.alias.writable[destination] = config.alias.readonly[source]
-    config.alias.write()
+    for profile in reversed(list(config.all_enabled_profiles)):
+        if source in profile.settings.get("alias", {}):
+            break
+    else:
+        raise Exception(f"{source} not found")
+    profile.settings["alias"][destination] = profile.settings["alias"][source]
+    profile.write_settings()
+    LOGGER.status(f"Copied alias {source} -> {destination} in {profile.name}")
 
 
 @alias.command(ignore_unknown_options=True, handle_dry_run=True)
