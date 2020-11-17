@@ -120,13 +120,25 @@ def unset(aliases):
     """Unset some aliases"""
     for cmd in aliases:
         if cmd not in config.alias.writable:
-            raise click.ClickException("The %s configuration has no '%s' alias registered."
-                                       "Try using another profile option (like --local or --global)"
-                                       % (config.alias.writeprofile, cmd))
+            raise click.ClickException(
+                "The %s configuration has no '%s' alias registered."
+                " And removing an alias being a destructive command, please"
+                " provide the profile option explicitely (like --local or --global)."
+                % (config.alias.writeprofile, cmd)
+            )
     for cmd in aliases:
         LOGGER.status("Erasing {} alias from {} settings".format(cmd, config.alias.writeprofile))
         del config.alias.writable[cmd]
     config.alias.write()
+
+
+config.globalpreset_profile.settings["alias"]["alias.rm"] = {
+    "commands":
+    [
+        ["alias", "unset"],
+    ],
+    "documentation": "Alias to alias rm, because we eat our own dog food."
+}
 
 
 @alias.command(handle_dry_run=True)

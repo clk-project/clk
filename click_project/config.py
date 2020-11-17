@@ -470,7 +470,8 @@ class Config(object):
                     "time": ["time", "-v"],
                     "gdbserver": ["gdbserver", "localhost:9999"],
                 },
-                "customcommands": self._get_custom_command_paths(self.global_profile)
+                "customcommands": self._get_custom_command_paths(self.global_profile),
+                "alias": {},
             },
             explicit=False,
             isroot=True,
