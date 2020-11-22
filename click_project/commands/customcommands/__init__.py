@@ -18,7 +18,7 @@ from click_project.decorators import (
     option,
 )
 from click_project.config import config, merge_settings
-from click_project.lib import quote, TablePrinter, call, makedirs, rm, chmod, createfile
+from click_project.lib import quote, TablePrinter, call, makedirs, rm, chmod, createfile, move
 from click_project.colors import Colorer
 from click_project.log import get_logger
 from click_project.core import DynamicChoiceType
@@ -29,6 +29,7 @@ from click_project.overloads import (
     get_command, Option, Argument
 )
 from click_project.flow import get_flow_commands_to_run
+from click_project.types import DirectoryProfileType
 
 
 LOGGER = get_logger(__name__)
@@ -424,3 +425,24 @@ def rename(customcommand, new_name, force):
         )
     Path(customcommand.customcommand_path).rename(new_path)
     LOGGER.status(f"Renamed {customcommand.customcommand_path} into {new_path}")
+
+
+@customcommands.command()
+@argument("customcommand",
+          type=CustomCommandType(),
+          help="The custom command to move")
+@argument("profile",
+          type=DirectoryProfileType(),
+          help="The profile where to move the command")
+@flag("--force", help="Overwrite destination")
+def _move(customcommand, profile, force):
+    """Move a custom commands"""
+    new_location = Path(profile.location) / "bin" / Path(customcommand.customcommand_path).name
+    if new_location.exists() and not force:
+        raise click.UsageError(
+            f"I won't overwrite {new_location},"
+            " unless called with --force"
+        )
+    makedirs(new_location.parent)
+    move(customcommand.customcommand_path, new_location)
+    LOGGER.status(f"Moved {customcommand.customcommand_path} into {new_location}")
