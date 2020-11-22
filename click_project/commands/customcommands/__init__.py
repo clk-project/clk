@@ -301,10 +301,7 @@ args=()""" + args
 
     script_path.write_text(f"""#!/bin/bash -eu
 
-source _clk.sh || {{
-    echo "Could not source bash-helpers, install them with clk customcommands install-bash-helpers"
-    exit 1
-}}
+source "${{CLK_INSTALL_LOCATION}}/commands/customcommands/_clk.sh"
 
 clk_usage () {{
     cat<<EOF
@@ -382,28 +379,6 @@ def {command_name}():
 """)
     if open:
         click.edit(filename=str(script_path))
-
-
-@customcommands.command()
-@flag("--force", help="Overwrite the file if it exists")
-def install_bash_helpers(force):
-    """Install an helper file in ~/bin.
-
-    It provides useful functions when writing bash custom commands.
-
-    Then, you simply have to use `source _clk.sh` to use the helper.
-"""
-    helper_file = Path.home() / "bin" / f"_{config.main_command.path}.sh"
-    if helper_file.exists() and not force:
-        raise click.UsageError(
-            f"I won't overwrite {helper_file},"
-            " unless called with --force"
-        )
-    createfile(helper_file, """#!/bin/bash -eu
-
-source "${CLK_INSTALL_LOCATION}/commands/customcommands/_clk.sh"
-"""
-    )
 
 
 @customcommands.command()
