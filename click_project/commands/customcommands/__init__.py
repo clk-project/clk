@@ -21,7 +21,7 @@ from click_project.config import config, merge_settings
 from click_project.lib import quote, TablePrinter, call, makedirs, rm, chmod, createfile, move
 from click_project.colors import Colorer
 from click_project.log import get_logger
-from click_project.core import DynamicChoiceType
+from click_project.core import DynamicChoiceType, cache_disk
 from click_project.externalcommands import ExternalCommandResolver
 from click_project.customcommands import CustomCommandResolver
 from click_project.overloads import (
@@ -421,3 +421,16 @@ def _move(customcommand, profile, force):
     makedirs(new_location.parent)
     move(customcommand.customcommand_path, new_location)
     LOGGER.status(f"Moved {customcommand.customcommand_path} into {new_location}")
+
+
+@customcommands.command()
+def list():
+    """List the path of all custom commands."""
+    type = CustomCommandType()
+
+    @cache_disk(expire=600)
+    def customcommand_path(command_path):
+        return type.converter(command_path).customcommand_path
+
+    for path in type.choices():
+        print(customcommand_path(path))
