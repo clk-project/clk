@@ -611,9 +611,7 @@ def log_trace():
 
 def post_mortem():
     if _post_mortem:
-        import sys
-        import ipdb
-        ipdb.post_mortem(sys.exc_info()[2])
+        breakpoint
 
 
 def main():
