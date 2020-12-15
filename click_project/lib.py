@@ -7,6 +7,7 @@ from __future__ import print_function, absolute_import
 
 import difflib
 import functools
+import datetime
 import hashlib
 import heapq
 import itertools
@@ -1600,3 +1601,14 @@ def to_string(s):
     if isinstance(s, six.string_types):
         return s
     return str(s)
+
+
+def parsedatetime(value):
+    if isinstance(value, datetime.datetime):
+        return value, None
+    import parsedatetime as _parsedatetime
+    cal = _parsedatetime.Calendar()
+    return cal.parseDT(
+        value,
+        sourceTime=datetime.datetime.today()
+    )
