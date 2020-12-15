@@ -18,3 +18,11 @@ clk_help_handler () {
 		exit 0
 	fi
 }
+
+_log () {
+	clk log "$@"
+}
+
+_info () {
+	_log -l info "$@"
+}
