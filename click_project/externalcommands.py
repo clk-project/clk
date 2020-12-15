@@ -60,7 +60,7 @@ class ExternalCommandResolver(CommandResolver):
         options = []
         arguments = []
         flags = []
-        remaining_args = "Remaining arguments"
+        remaining_args = False
         ignore_unknown_options = False
         try:
             process = subprocess.Popen([command_path, "--help"], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
@@ -74,9 +74,12 @@ class ExternalCommandResolver(CommandResolver):
                     index_desc = 0
                 try:
                     metadata_desc = cmdhelp_lines.index('--')
-                    remaining_args = False
                 except ValueError:
                     metadata_desc = -1
+                    # then, we don't bother parsing the arguments. Let the
+                    # remaining arguments and unknown options pass through
+                    ignore_unknown_options = True
+                    remaining_args = "Remaining arguments"
                 cmdhelp = "\n".join(cmdhelp_lines[index_desc:metadata_desc])
                 cmdhelp = cmdhelp.strip()
                 metadata_out = out[metadata_desc:]
