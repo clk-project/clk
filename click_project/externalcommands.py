@@ -222,6 +222,10 @@ class ExternalCommandResolver(CommandResolver):
                 t = t.split(".")
                 m = importlib.import_module(".".join(t[:-1]))
                 t = getattr(m, t[-1])
+            elif t.startswith("date("):
+                format = re.match("date\((?P<format>.+)\)", t).group("format")
+                from click_project.lib import parsedatetime
+                t = lambda value: parsedatetime(value)[0].strftime(format)
             else:
                 t = types[t]
             return t
