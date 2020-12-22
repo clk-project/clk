@@ -180,7 +180,9 @@ def iter_commands(from_cmds=None, from_paths=None):
 def on_command_loading_error():
     LOGGER.develop(traceback.format_exc())
     if config.debug_on_command_load_error_callback:
-        breakpoint
+        import sys
+        import ipdb
+        ipdb.post_mortem(sys.exc_info()[2])
 
 
 class CoreCommandResolver(CommandResolver):

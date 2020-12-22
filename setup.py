@@ -36,6 +36,7 @@ setup(
         "pydotplus",
         "pluginbase",
         "appdirs",
+        "ipdb",
         "humanize",
         "Pygments",
         "cached-property",
