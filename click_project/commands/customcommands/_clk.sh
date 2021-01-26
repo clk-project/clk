@@ -26,3 +26,28 @@ _log () {
 _info () {
 	_log -l info "$@"
 }
+
+clk_in_project () {
+	pushd "${CLK__PROJECT}" > /dev/null
+}
+
+clk_end_in_project () {
+	popd > /dev/null
+}
+
+clk_wait_for_line () {
+	local line="$1"
+	line="$(echo "${line}"|sed 's/\//\\\//g')"
+	exec sed -n "/${line}/q"
+}
+
+clk_wait_for_line_tee () {
+	local line="$1"
+	line="$(echo "${line}"|sed 's/\//\\\//g')"
+	exec sed "/${line}/q"
+}
+
+clk_pid_exists () {
+	local pid="$1"
+	ps -p "${1}" > /dev/null 2>&1
+}
