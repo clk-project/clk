@@ -704,7 +704,8 @@ def extract(url, dest='.'):
     return dest + '/' + archname
 
 
-def download(url, outdir=None, outfilename=None, mkdir=False, sha256=None):
+def download(url, outdir=None, outfilename=None, mkdir=False, sha256=None,
+             mode=None):
     outdir = outdir or tempfile.mkdtemp()
     outfilename = outfilename or os.path.basename(url)
     if not os.path.exists(outdir) and mkdir:
@@ -734,6 +735,8 @@ def download(url, outdir=None, outfilename=None, mkdir=False, sha256=None):
         if hashlib.sha256(open(outpath, "rb").read()).hexdigest() != sha256:
             rm(outpath)
             raise click.ClickException("The file at {} was corrupted. It was removed".format(outpath))
+    if mode is not None:
+        os.chmod(outpath, mode)
     return outpath
 
 
