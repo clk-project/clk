@@ -83,7 +83,6 @@ class ExternalCommandResolver(CommandResolver):
                 cmdhelp = "\n".join(cmdhelp_lines[index_desc:metadata_desc])
                 cmdhelp = cmdhelp.strip()
                 metadata_out = out[metadata_desc:]
-                ignore_unknown_options = False
                 for l in metadata_out.splitlines():
                     if l.startswith("O:"):
                         m = re.match(
