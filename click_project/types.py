@@ -37,6 +37,9 @@ class ProfileType(DynamicChoice):
 
 
 class DirectoryProfileType(ProfileType):
+    def __init__(self, root_only=False):
+        self.root_only = root_only
+
     @property
     def profiles(self):
         from click_project.profile import DirectoryProfile
@@ -44,4 +47,7 @@ class DirectoryProfileType(ProfileType):
             name: profile
             for name, profile in super().profiles.items()
             if isinstance(profile, DirectoryProfile)
+            and (
+                not self.root_only or profile.isroot
+            )
         }
