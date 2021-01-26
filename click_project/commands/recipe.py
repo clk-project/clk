@@ -5,6 +5,7 @@ from __future__ import print_function, absolute_import
 
 import os
 import json
+from pathlib import Path
 
 import click
 
@@ -126,6 +127,15 @@ def rename(old, new):
     if os.path.exists(new_loc):
         raise click.UsageError("{} already exists".format(new_loc))
     move(old.location, new_loc)
+
+
+@recipe.command(handle_dry_run=True)
+@argument("old", type=RecipeType(), help="The current recipe name")
+@argument("profile", type=DirectoryProfileType(root_only=True),
+          help="The profile where to move the recipe")
+def _move(old, profile):
+    """Move a recipe to another profile"""
+    move(old.location, Path(profile.location) / "recipes" / Path(old.location).name)
 
 
 @recipe.command(handle_dry_run=True)
