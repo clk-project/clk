@@ -346,6 +346,23 @@ def where_is(profile):
     print(profile.location)
 
 
+@recipe.command()
+@option("--profile", type=DirectoryProfileType(),
+          help="The profile where to install the recipe")
+@argument("url",
+          help="The url of the git repository hosting the recipe.")
+@argument("name", help="The name of the recipe")
+def clone(profile, url, name):
+    """Clone a recipe stored in github in the given profile"""
+    profile = profile or config.global_profile
+    recipe_path = Path(profile.location) / "recipes" / name
+    call(
+        [
+            "git", "clone", url, str(recipe_path)
+        ]
+    )
+
+
 @recipe.group(default_command="show")
 def link():
     """Manipulate recipes link"""
