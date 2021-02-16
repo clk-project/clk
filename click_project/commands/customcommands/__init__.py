@@ -209,8 +209,12 @@ def create():
 )
 def bash(name, open, force, description, body, from_alias, flowdeps, source_bash_helpers):
     """Create a bash custom command"""
-    if not name.endswith(".sh"):
-        name += ".sh"
+    if name.endswith(".sh"):
+        LOGGER.warning(
+            "Removing the extra .sh so that clk won't confuse it"
+            " with a command name."
+        )
+        name = name[:len(".sh")]
     script_path = Path(config.customcommands.profile.location) / "bin" / name
     makedirs(script_path.parent)
     if script_path.exists() and not force:
