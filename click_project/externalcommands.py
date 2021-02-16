@@ -47,7 +47,10 @@ class ExternalCommandResolver(CommandResolver):
                         abspath = os.path.join(path, file)
                         if os.path.isfile(abspath) and os.access(abspath, os.X_OK):
                             cmd_name, ext = os.path.splitext(file)
-                            name = cmd_name + "@" + ext[1:]
+                            if ext in (".sh", ".py"):
+                                name = cmd_name + "@" + ext[1:]
+                            else:
+                                name = file
                             self._external_cmds.append(name)
         return self._external_cmds
 
