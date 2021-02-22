@@ -27,3 +27,4 @@ def load_plugins():
         if hook not in afterloads_cache:
             hook()
             afterloads_cache.add(hook)
+    config.init()
