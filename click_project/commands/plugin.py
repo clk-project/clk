@@ -104,7 +104,7 @@ def load_short_help(plugin):
 
 @group(default_command='show')
 @use_settings("plugins", PluginsConfig, default_profile='global')
-def plugins():
+def plugin():
     """Manipulate the command plugins
 
     Plugins are single python files slightly changing the behavior of your
@@ -117,7 +117,7 @@ def plugins():
     config.plugins.plugins = plugins
 
 
-@plugins.command(handle_dry_run=True)
+@plugin.command(handle_dry_run=True)
 @table_format(default='simple')
 @table_fields(choices=['plugin', 'status', 'description', 'location'])
 @option('--remote/--no-remote', help="Display available plugins on the remote plugin store")
@@ -156,7 +156,7 @@ def show(fields, format, remote, location):
         tp.echos(vals)
 
 
-@plugins.command(handle_dry_run=True)
+@plugin.command(handle_dry_run=True)
 @argument('plugin', type=PluginsType())
 def help(plugin):
     """Show the plugin help"""
@@ -165,7 +165,7 @@ def help(plugin):
         click.echo_via_pager(doc)
 
 
-@plugins.command(handle_dry_run=True)
+@plugin.command(handle_dry_run=True)
 @flag("--all", help="Enable all plugins")
 @argument("plugin", type=PluginsType(disabled=True), nargs=-1)
 @pass_context
@@ -180,7 +180,7 @@ def enable(ctx, plugin, all):
     config.plugins.write()
 
 
-@plugins.command(handle_dry_run=True)
+@plugin.command(handle_dry_run=True)
 @flag("--all", help="Disable all plugins")
 @argument("plugin", type=PluginsType(enabled=True), nargs=-1)
 @pass_context
@@ -278,7 +278,7 @@ def install_plugin(profile, force, plugin, login, password, develop, no_deps):
             createfile(location, content)
 
 
-@plugins.command(handle_dry_run=True)
+@plugin.command(handle_dry_run=True)
 @flag("--force", '-f', help="Allow to overwrite a local plugin with the same name")
 @option("--login", help="Login to use (instead of using the keyring)")
 @flag("-e", "--develop", help=(
@@ -310,7 +310,7 @@ def install(force, plugin, login, password, develop, no_deps):
     )
 
 
-@plugins.command()
+@plugin.command()
 @argument("plugin", type=PluginsType(), nargs=-1)
 @pass_context
 def update(ctx, plugin):
@@ -318,7 +318,7 @@ def update(ctx, plugin):
     ctx.invoke(install, force=True, plugin=plugin)
 
 
-@plugins.command(handle_dry_run=True)
+@plugin.command(handle_dry_run=True)
 @argument("plugin", type=PluginsType(), nargs=-1)
 def uninstall(plugin):
     """Uninstall a plugin"""

@@ -30,7 +30,7 @@ class TriggersConfig(object):
 
 @group()
 @use_settings("triggers", TriggersConfig, override=False)
-def triggers():
+def trigger():
     """Manipulate command triggers
 
     It is mostly useful if you want to trigger specific behaviors around usual
@@ -53,7 +53,7 @@ def triggers():
     pass
 
 
-@triggers.command(ignore_unknown_options=True, change_directory_options=False, handle_dry_run=True)
+@trigger.command(ignore_unknown_options=True, change_directory_options=False, handle_dry_run=True)
 @argument('position', type=click.Choice(["pre", "post", "error", "success"]), help="The trigger position")
 @argument('cmd', type=CommandType(), help="The command to which the trigger is associated command")
 @argument('triggered-command', type=CommandType(), help="The command to trigger")
@@ -83,7 +83,7 @@ def set(cmd, triggered_command, params, position):
 set.get_choices = get_choices
 
 
-@triggers.command(handle_dry_run=True)
+@trigger.command(handle_dry_run=True)
 @argument('position', type=click.Choice(["pre", "post", "error", "success"]), help="The trigger position")
 @argument('cmds', nargs=-1, type=CommandSettingsKeyType("triggers"),
           help="The commands where the triggers will be unset")
@@ -100,7 +100,7 @@ def unset(cmds, position):
     config.triggers.write()
 
 
-@triggers.command(handle_dry_run=True)
+@trigger.command(handle_dry_run=True)
 @flag('--name-only/--no-name-only', help="Only display the triggers names",)
 @Colorer.color_options
 @argument('position', type=click.Choice(["pre", "post", "error", "success"]), help="The trigger position")
@@ -124,7 +124,7 @@ def show(name_only, triggers, position, **kwargs):
                 echo_key_value(triggers_, " , ".join(args), config.alt_style)
 
 
-@triggers.command(handle_dry_run=True)
+@trigger.command(handle_dry_run=True)
 @argument('origin', type=CommandSettingsKeyType("triggers"), help="The current trigger")
 @argument('destination', help="The new trigger")
 @argument('position', type=click.Choice(["pre", "post", "error", "success"]), help="The trigger position")
@@ -153,7 +153,7 @@ def rename(origin, destination, position):
     config.triggers.write()
 
 
-@triggers.command(ignore_unknown_options=True, handle_dry_run=True)
+@trigger.command(ignore_unknown_options=True, handle_dry_run=True)
 @argument('cmd', type=CommandType(), help="The command to modify")
 @argument('params', nargs=-1, required=True, help="The extra parameters")
 @argument('position', type=click.Choice(["pre", "post", "error", "success"]), help="The trigger position")

@@ -635,7 +635,7 @@ def main():
         if isinstance(e, click.exceptions.NoSuchOption):
             click.echo(
                 "Hint: If you don't know where this option comes from,"
-                " try checking the parameters (with {} --no-parameters"
+                " try checking the parameters (with {} --no-parameter"
                 " parameters show).".format(config.main_command.path)
             )
         post_mortem()

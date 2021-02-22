@@ -18,7 +18,7 @@ LOGGER = get_logger(__name__)
 
 
 @group()
-def passwords():
+def password():
     """Manipulate your passwords"""
 
 
@@ -27,7 +27,7 @@ class LazyChoice(click.Choice):
         return value
 
 
-@passwords.command(ignore_unknown_options=True, change_directory_options=False)
+@password.command(ignore_unknown_options=True, change_directory_options=False)
 @argument('machine', type=LazyChoice(get_authenticator_hints),
           help="The machine on which the username and password may be used")
 @argument('username', help="The login to record")
@@ -51,7 +51,7 @@ def set(machine, username, password):
         raise
 
 
-@passwords.command(ignore_unknown_options=True, change_directory_options=False)
+@password.command(ignore_unknown_options=True, change_directory_options=False)
 @argument('machine', type=LazyChoice(get_authenticator_hints),
           help="The machine for which the username and password will be removed")
 def remove(machine):
@@ -67,7 +67,7 @@ def remove(machine):
         LOGGER.info("...Just kidding! You password is safe :-)")
 
 
-@passwords.command(ignore_unknown_options=True, change_directory_options=False)
+@password.command(ignore_unknown_options=True, change_directory_options=False)
 @table_format(default='key_value')
 @table_fields(choices=['login', 'password'])
 @argument('machine', type=LazyChoice(get_authenticator_hints), help="The machine to show")
@@ -85,7 +85,7 @@ def show(machine, fields, format, password):
         LOGGER.warn("No login/password set")
 
 
-@passwords.command(ignore_unknown_options=True, change_directory_options=False)
+@password.command(ignore_unknown_options=True, change_directory_options=False)
 @argument('machine', type=LazyChoice(get_authenticator_hints),
           help="The machine on which the username and password may be used")
 @argument('username', help="The username to record")

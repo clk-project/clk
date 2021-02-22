@@ -17,11 +17,11 @@ LOGGER = get_logger(__name__)
 
 
 @group(handle_dry_run=True, default_command="display")
-def commands():
+def command():
     """Display all the available commands"""
 
 
-@commands.command()
+@command.command()
 def display():
     ctx = click.get_current_context()
     display_subcommands(ctx, config.main_command)
@@ -50,7 +50,7 @@ def cmd_format(name, cmd_help, indent):
     return indent + name + spacer + cmd_help
 
 
-@commands.command()
+@command.command()
 @argument("path", type=CommandType(), help="The command to resolve")
 def resolve(path):
     """Resolve a command to help understanding where a command comes from"""

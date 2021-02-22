@@ -29,7 +29,7 @@ def format_parameters(params):
 
 @group(default_command='show')
 @use_settings("parameters", ParametersConfig, override=False)
-def parameters():
+def parameter():
     """Manipulate command parameters"""
     pass
 
@@ -51,7 +51,7 @@ def get_choices(ctx, args_, incomplete):
         yield (item, help)
 
 
-@parameters.command(ignore_unknown_options=True, change_directory_options=False,
+@parameter.command(ignore_unknown_options=True, change_directory_options=False,
                     handle_dry_run=True)
 @argument('cmd', type=CommandType(), help="The command to set")
 @argument('params', nargs=-1, help="The command parameters")
@@ -80,7 +80,7 @@ def set(cmd, params):
 set.get_choices = get_choices
 
 
-@parameters.command(ignore_unknown_options=True, change_directory_options=False,
+@parameter.command(ignore_unknown_options=True, change_directory_options=False,
                     handle_dry_run=True)
 @argument('cmd', type=CommandType(), help="The command to set")
 def edit(cmd):
@@ -116,7 +116,7 @@ def edit(cmd):
 edit.get_choices = get_choices
 
 
-@parameters.command(ignore_unknown_options=True, handle_dry_run=True)
+@parameter.command(ignore_unknown_options=True, handle_dry_run=True)
 @argument('cmd', type=CommandType(), help="The command to which the parameters will be appended")
 @argument('params', nargs=-1, help="The parameters to append")
 def append(cmd, params):
@@ -147,7 +147,7 @@ def append(cmd, params):
 append.get_choices = get_choices
 
 
-@parameters.command(ignore_unknown_options=True, handle_dry_run=True)
+@parameter.command(ignore_unknown_options=True, handle_dry_run=True)
 @argument('cmd', type=CommandSettingsKeyType("parameters"), help="The command to which the parameters will be inserted")
 @argument('params', nargs=-1, help="The parameters to insert")
 def insert(cmd, params):
@@ -160,7 +160,7 @@ def insert(cmd, params):
 insert.get_choices = get_choices
 
 
-@parameters.command(ignore_unknown_options=True, handle_dry_run=True)
+@parameter.command(ignore_unknown_options=True, handle_dry_run=True)
 @argument('cmd', type=CommandSettingsKeyType("parameters"), help="The command to which the parameters will be removed")
 @argument('params', nargs=-1, help="The parameters to remove")
 def remove(cmd, params):
@@ -187,7 +187,7 @@ def remove(cmd, params):
     config.parameters.write()
 
 
-@parameters.command(handle_dry_run=True)
+@parameter.command(handle_dry_run=True)
 @argument('cmds', nargs=-1, type=CommandSettingsKeyType("parameters"),
           help="The commands to which the parameters will be unset")
 def unset(cmds):
@@ -208,7 +208,7 @@ def unset(cmds):
     config.parameters.write()
 
 
-@parameters.command(handle_dry_run=True)
+@parameter.command(handle_dry_run=True)
 @flag('--name-only/--no-name-only', help="Only display the command names")
 @Colorer.color_options
 @option("--under", help="Limit the scope to the commands under the given namespace", type=CommandType())

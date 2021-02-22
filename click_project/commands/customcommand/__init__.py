@@ -79,11 +79,11 @@ def format_paths(path):
 
 @group(default_command="show")
 @use_settings("customcommands", CustomCommandConfig, override=False)
-def customcommands():
+def customcommand():
     """Manipulate paths where to find extra commands"""
 
 
-@customcommands.command()
+@customcommand.command()
 @Colorer.color_options
 @table_format(default='key_value')
 @table_fields(choices=['name', 'paths'])
@@ -122,7 +122,7 @@ def custom_command_type():
                   default="external")
 
 
-@customcommands.command()
+@customcommand.command()
 @argument("paths", nargs=-1, type=Path, help="The paths to add to load custom commands")
 @custom_command_type()
 def add_path(paths, type):
@@ -133,7 +133,7 @@ def add_path(paths, type):
     LOGGER.info(f"Added {format_paths(paths)} ({type}) to the profile {config.customcommands.writeprofile}")
 
 
-@customcommands.command()
+@customcommand.command()
 @argument("paths", nargs=-1, type=CustomCommandPathType("pythonpaths"), help="The paths to remove from custom commands")
 @custom_command_type()
 def remove_path(paths, type):
@@ -151,7 +151,7 @@ def remove_path(paths, type):
     LOGGER.info(f"Removed {format_paths(to_remove)} ({type}) from the profile {config.customcommands.writeprofile}")
 
 
-@customcommands.command()
+@customcommand.command()
 @argument("customcommand",
           type=CustomCommandType(),
           help="The custom command to consider")
@@ -160,7 +160,7 @@ def which(customcommand):
     print(customcommand.customcommand_path)
 
 
-@customcommands.command()
+@customcommand.command()
 @argument("customcommand",
           type=CustomCommandType(),
           help="The custom command to consider")
@@ -172,7 +172,7 @@ def remove(force, customcommand):
         rm(path)
 
 
-@customcommands.command()
+@customcommand.command()
 @argument("customcommand",
           type=CustomCommandType(),
           help="The custom command to consider")
@@ -187,7 +187,7 @@ class AliasesType(DynamicChoiceType):
         return list(config.settings["alias"].keys())
 
 
-@customcommands.group()
+@customcommand.group()
 def create():
     """Create custom commands directly from the command line."""
 
@@ -305,7 +305,7 @@ args=()""" + args
 
     script_path.write_text(f"""#!/bin/bash -eu
 
-source "${{CLK_INSTALL_LOCATION}}/commands/customcommands/_clk.sh"
+source "${{CLK_INSTALL_LOCATION}}/commands/customcommand/_clk.sh"
 
 clk_usage () {{
     cat<<EOF
@@ -378,14 +378,14 @@ LOGGER = get_logger(__name__)
 
 @command()
 def {command_name}():
-   "{description}"
-   {body}
+    "{description}"
+    {body}
 """)
     if open:
         click.edit(filename=str(script_path))
 
 
-@customcommands.command()
+@customcommand.command()
 @argument("customcommand",
           type=CustomCommandType(),
           help="The custom command to consider")
@@ -406,7 +406,7 @@ def rename(customcommand, new_name, force):
     LOGGER.status(f"Renamed {customcommand.customcommand_path} into {new_path}")
 
 
-@customcommands.command()
+@customcommand.command()
 @argument("customcommand",
           type=CustomCommandType(),
           help="The custom command to move")
@@ -427,7 +427,7 @@ def _move(customcommand, profile, force):
     LOGGER.status(f"Moved {customcommand.customcommand_path} into {new_location}")
 
 
-@customcommands.command()
+@customcommand.command()
 def list():
     """List the path of all custom commands."""
     type = CustomCommandType()

@@ -31,19 +31,19 @@ class FlowdepsConfig(object):
 
 @group(default_command='show')
 @use_settings("flowdeps", FlowdepsConfig)
-def flowdeps():
+def flowdep():
     """Manipulate command flow dependencies.
 
     It is mostly useful if you want to run a flow and still add a custom command
     inside the flow.
 
     Say you want to run the command dosomething in between configure and build
-    in the flow, you simply issue the command 'flowdeps set build
+    in the flow, you simply issue the command 'flowdep set build
     dosomething configure'. This indicates that the flow to build will issue
     first dosomething and then configure.
 
     If you feel lost about what commands will be run in a flow, for instance the
-    flow to the command ipython, run the command 'flowdeps show --all
+    flow to the command ipython, run the command 'flowdep show --all
     ipython'. This will show you all the command that would be run with the
     command 'ipython --flow'.
 
@@ -54,7 +54,7 @@ def flowdeps():
     pass
 
 
-@flowdeps.command(handle_dry_run=True)
+@flowdep.command(handle_dry_run=True)
 @argument('cmd', type=CommandType(), help="The command to which set the flow dependencies")
 @argument('dependencies', nargs=-1, type=CommandType(), help="The flow dependencies")
 def set(cmd, dependencies):
@@ -63,27 +63,27 @@ def set(cmd, dependencies):
     config.flowdeps.write()
 
 
-@flowdeps.command(ignore_unknown_options=True, handle_dry_run=True)
+@flowdep.command(ignore_unknown_options=True, handle_dry_run=True)
 @argument('cmd', type=CommandType(), help="The command to which append the flow dependencies")
 @argument('dependencies', nargs=-1, type=CommandType(), help="The additional flow dependencies")
 def append(cmd, dependencies):
-    """Add a flow dependency after the flowdeps of a command"""
+    """Add a flow dependency after the flowdep of a command"""
     dependencies = config.flowdeps.writable.get(cmd, []) + list(dependencies)
     config.flowdeps.writable[cmd] = dependencies
     config.flowdeps.write()
 
 
-@flowdeps.command(handle_dry_run=True)
+@flowdep.command(handle_dry_run=True)
 @argument('cmd', type=CommandSettingsKeyType("flowdeps"), help="The command to which insert the flow dependencies")
 @argument('dependencies', type=CommandType(), nargs=-1, help="The additional flow dependencies")
 def insert(cmd, dependencies):
-    """Add a flow dependency before the flowdeps of a command"""
+    """Add a flow dependency before the flowdep of a command"""
     dependencies = list(dependencies) + config.flowdeps.readonly.get(cmd, [])
     config.flowdeps.writable[cmd] = dependencies
     config.flowdeps.write()
 
 
-@flowdeps.command(handle_dry_run=True)
+@flowdep.command(handle_dry_run=True)
 @argument('cmd', type=CommandSettingsKeyType("flowdeps"), help="The command to which remove the flow dependencies")
 @argument('dependencies', type=CommandType(), nargs=-1, help="The flow flow dependencies to remove")
 def remove(cmd, dependencies):
@@ -96,7 +96,7 @@ def remove(cmd, dependencies):
     config.flowdeps.write()
 
 
-@flowdeps.command(handle_dry_run=True)
+@flowdep.command(handle_dry_run=True)
 @argument('cmds', nargs=-1, type=CommandSettingsKeyType("flowdeps"),
           help="The command to which unset the flow dependencies")
 def unset(cmds):
@@ -112,7 +112,7 @@ def unset(cmds):
     config.flowdeps.write()
 
 
-@flowdeps.command(handle_dry_run=True)
+@flowdep.command(handle_dry_run=True)
 @flag('--name-only/--no-name-only', help="Only display the command names")
 @flag('--all', help="Show all the flowdeps, even those guessed from the context")
 @Colorer.color_options
@@ -235,12 +235,12 @@ def compute_dot(cmds=None, strict=False, cluster=True,
     return dot
 
 
-@flowdeps.command()
+@flowdep.command()
 @option("--output", help="Output file instead of showing it in a web browser - not relevant with format x11")
 @option("--format", type=click.Choice(["png", "svg", "x11", "pdf", "dot"]),
         help="Format to use", default="svg")
 @flag('--strict/--all',
-      help="Show the all dependency graph or only the explicitly configured flowdeps")
+      help="Show the all dependency graph or only the explicitly configured flowdep")
 @flag("--left-right/--top-bottom", help="Show from left to right",
       default=True)
 @flag("--lonely/--no-lonely", help="Show lonely nodes also"

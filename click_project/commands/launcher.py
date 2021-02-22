@@ -23,7 +23,7 @@ class LaunchersConfig(object):
 
 @group(default_command='show')
 @use_settings("launchers", LaunchersConfig, override=False)
-def launchers():
+def launcher():
     """Manipulate launchers
 
     Also called wrapper or runner, a launcher is a tool that runs other
@@ -45,7 +45,7 @@ def launchers():
     pass
 
 
-@launchers.command(ignore_unknown_options=True, change_directory_options=False,
+@launcher.command(ignore_unknown_options=True, change_directory_options=False,
                    handle_dry_run=True)
 @argument('launcher', type=LauncherType(missing_ok=True), help="The launcher name")
 @argument('command', nargs=-1, help="The launcher command")
@@ -55,7 +55,7 @@ def set(launcher, command):
     config.launchers.write()
 
 
-@launchers.command(ignore_unknown_options=True, handle_dry_run=True)
+@launcher.command(ignore_unknown_options=True, handle_dry_run=True)
 @argument('launcher', type=LauncherType(), help="The launcher name")
 @argument('params', nargs=-1, help="The parameters to append")
 def append(launcher, params):
@@ -65,7 +65,7 @@ def append(launcher, params):
     config.launchers.write()
 
 
-@launchers.command(handle_dry_run=True)
+@launcher.command(handle_dry_run=True)
 @argument('launchers', nargs=-1, type=LauncherType(), help="The launcher name")
 def unset(launchers):
     """Unset a launcher"""
@@ -80,7 +80,7 @@ def unset(launchers):
     config.launchers.write()
 
 
-@launchers.command(handle_dry_run=True)
+@launcher.command(handle_dry_run=True)
 @flag('--name-only/--no-name-only', help="Only display the command names")
 @Colorer.color_options(full_default=True)
 @table_format(default='key_value')
