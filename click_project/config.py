@@ -510,6 +510,13 @@ class Config(object):
         )
 
     @property
+    def all_directory_profiles(self):
+        return [
+            profile for profile in self.all_profiles
+            if isinstance(profile, DirectoryProfile)
+        ]
+
+    @property
     def all_profiles(self):
         if self._all_profiles_cache is None:
             res = []

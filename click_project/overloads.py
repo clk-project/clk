@@ -27,7 +27,7 @@ from click_project.commandresolver import CommandResolver
 from click_project.config import config
 from click_project.lib import check_output, ParameterType, cd
 from click_project.log import get_logger
-from click_project.plugins import load_plugins
+from click_project.plugin import load_plugins
 from click_project.completion import startswith
 import click_project.completion
 

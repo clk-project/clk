@@ -6,18 +6,32 @@ from __future__ import print_function, absolute_import
 import os
 import json
 import collections
+import traceback
+from datetime import datetime
 import six
 import re
 from enum import Enum
-from cached_property import cached_property
 
+from cached_property import cached_property
 import click
+from pluginbase import PluginBase
 
 from click_project.lib import json_dump_file, glob, rm, copy, makedirs, \
     ensure_unicode, part_of_day, createfile, move, json_file
 from click_project.log import get_logger
+from click_project.click_helpers import click_get_current_context_safe
 
 LOGGER = get_logger(__name__)
+plugin_base = PluginBase(package='click_project.plugins')
+
+
+def on_command_loading_error():
+    LOGGER.develop(traceback.format_exc())
+    from click_project.config import config
+    if config.debug_on_command_load_error_callback:
+        import sys
+        import ipdb
+        ipdb.post_mortem(sys.exc_info()[2])
 
 
 class ActivationLevel(Enum):
@@ -107,6 +121,9 @@ class Profile():
             return recipe_name
         else:
             return self.name
+
+
+plugin_sources = {}
 
 
 @ProfileFactory.register_directory_profile
@@ -258,6 +275,7 @@ class DirectoryProfile(Profile):
         self.prevented_persistence = False
         self.pluginsdir = os.path.join(self.location, "plugins")
         self.frozen_during_migration = False
+        self.plugin_cache = set()
         self.old_version = self.version
         if self.version > self.max_version:
             LOGGER.error(
@@ -288,6 +306,66 @@ class DirectoryProfile(Profile):
         ] + [
             "recipes"
         ]
+
+    @property
+    def plugin_source(self):
+        if self.name not in plugin_sources:
+            plugin_sources[self.name] = plugin_base.make_plugin_source(
+                searchpath=[self.pluginsdir]
+            )
+            plugin_sources[self.name].persist = True
+        return plugin_sources[self.name]
+
+    def plugin_doc(self, plugin):
+        try:
+            mod = self.plugin_source.load_plugin(plugin)
+            if hasattr(mod, '__doc__'):
+                return ensure_unicode(mod.__doc__)
+        except Exception:
+            pass
+        return None
+
+    def plugin_short_doc(self, plugin):
+        doc = self.plugin_doc(plugin)
+        if doc:
+            doc = doc.splitlines()[0]
+        return doc
+
+    def load_plugins(self):
+        for plugin in set(self.plugin_source.list_plugins()) - self.plugin_cache:
+            try:
+                before = datetime.now()
+                mod = self.plugin_source.load_plugin(plugin)
+                if hasattr(mod, 'load_plugin'):
+                    mod.load_plugin()
+                after = datetime.now()
+                spent_time = (after-before).total_seconds()
+                LOGGER.develop("Plugin {} loaded in {} seconds".format(plugin, spent_time))
+                threshold = 0.1
+                if spent_time > threshold:
+                    LOGGER.debug(
+                        "Plugin {} took more than {} seconds to load ({})."
+                        " You might consider disabling the plugin when you don't use it."
+                        " Or contribute to its dev to make it load faster.".format(
+                            plugin,
+                            threshold,
+                            spent_time,
+                        )
+                    )
+            except Exception as e:
+                ctx = click_get_current_context_safe()
+                if ctx is None or not ctx.resilient_parsing:
+                    plugin_name = plugin.replace("_", "/")
+                    LOGGER.warning(
+                        "Error when loading plugin {}"
+                        " (if the plugin is no more useful,"
+                        " consider uninstalling the plugins {}): {}".format(
+                            plugin_name,
+                            plugin_name,
+                            e,
+                        ))
+                    on_command_loading_error()
+            self.plugin_cache.add(plugin)
 
     def get_settings(self, section):
         assert self.settings_path is not None
