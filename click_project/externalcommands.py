@@ -41,7 +41,7 @@ class ExternalCommandResolver(CommandResolver):
     def _list_command_paths(self, parent=None):
         if not hasattr(self, "_external_cmds"):
             self._external_cmds = []
-            for path in self.cmddirs:
+            for path in reversed(self.cmddirs):
                 if os.path.isdir(path):
                     for file in os.listdir(path):
                         abspath = os.path.join(path, file)
@@ -58,7 +58,7 @@ class ExternalCommandResolver(CommandResolver):
         name = path.replace("@", ".")
         cmdhelp = "external command"
         command_name = name
-        paths = self.cmddirs
+        paths = reversed(self.cmddirs)
         command_path = os.path.abspath(which(command_name, os.pathsep.join(paths)))
         options = []
         arguments = []
