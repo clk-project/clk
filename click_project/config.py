@@ -365,38 +365,13 @@ class Config(object):
             activation_level=ActivationLevel.global_,
         )
 
-    def _get_custom_command_paths(self, profile):
-        return {
-            "pythonpaths": (
-                [
-                    str(Path(profile.location) / d)
-                    for d in ["python"]
-                    if (Path(profile.location) / "python").exists()
-                ]
-            ),
-            "executablepaths": (
-                [
-                    str(Path(profile.location) / d)
-                    for d in [
-                            "script",
-                            "bin",
-                            "scripts",
-                            "Scripts",
-                            "Bin",
-                            "Script",
-                    ]
-                    if (Path(profile.location) / d).exists()
-                ]
-            ),
-        }
-
     @property
     def localpreset_profile(self):
         if self.project:
             return ProfileFactory.create_preset_profile(
                 "localpreset",
                 settings={
-                    "customcommands": self._get_custom_command_paths(self.local_profile)
+                    "customcommands": self.local_profile.custom_command_paths
                 },
                 explicit=False,
                 isroot=True,
@@ -472,7 +447,7 @@ class Config(object):
                     "time": ["time", "-v"],
                     "gdbserver": ["gdbserver", "localhost:9999"],
                 },
-                "customcommands": self._get_custom_command_paths(self.global_profile),
+                "customcommands": self.global_profile.custom_command_paths,
                 "alias": {},
             },
             explicit=False,
@@ -530,7 +505,7 @@ class Config(object):
                         ProfileFactory.create_preset_profile(
                             f"{recipe.name}preset",
                             settings={
-                                "customcommands": self._get_custom_command_paths(recipe)
+                                "customcommands": recipe.custom_command_paths
                             },
                             explicit=False,
                             isroot=False,

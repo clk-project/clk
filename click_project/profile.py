@@ -3,6 +3,7 @@
 
 from __future__ import print_function, absolute_import
 
+from pathlib import Path
 import os
 import json
 import collections
@@ -122,6 +123,14 @@ class Profile():
         else:
             return self.name
 
+    @property
+    def executable_paths(self):
+        return []
+
+    @property
+    def python_paths(self):
+        return []
+
 
 plugin_sources = {}
 
@@ -137,6 +146,36 @@ class DirectoryProfile(Profile):
 
     def link_location(self, name):
         return self.recipe_location(name) + ".json"
+
+    @property
+    def executable_paths(self):
+        return [
+            str(Path(self.location) / d)
+            for d in [
+                    "script",
+                    "bin",
+                    "scripts",
+                    "Scripts",
+                    "Bin",
+                    "Script",
+            ]
+            if (Path(self.location) / d).exists()
+        ]
+
+    @property
+    def custom_command_paths(self):
+        return {
+            "pythonpaths": self.python_paths,
+            "executablepaths": self.executable_paths,
+        }
+
+    @property
+    def python_paths(self):
+        return [
+            str(Path(self.location) / d)
+            for d in ["python"]
+            if (Path(self.location) / "python").exists()
+        ]
 
     def create_recipe(self, name, mkdir=True):
         name = self.recipe_full_name(name)
