@@ -45,10 +45,10 @@ class CustomCommandPathType(DynamicChoiceType):
 
 
 class CustomCommandNameType(DynamicChoiceType):
-    def __init__(self):
+    def __init__(self, settings=None):
         self.resolvers = [
-            ExternalCommandResolver(),
-            CustomCommandResolver(),
+            ExternalCommandResolver(settings),
+            CustomCommandResolver(settings),
         ]
 
     def choices(self):
@@ -62,6 +62,7 @@ class CustomCommandNameType(DynamicChoiceType):
 
 
 class CustomCommandType(CustomCommandNameType):
+
     def converter(self, path):
         for resolver in self.resolvers:
             if path in resolver._list_command_paths():
@@ -430,7 +431,12 @@ def _move(customcommand, profile, force):
 @customcommand.command()
 def list():
     """List the path of all custom commands."""
-    type = CustomCommandType()
+    settings = (
+        None
+        if config.customcommands.readprofile == "context"
+        else config.customcommands.profile.settings
+    )
+    type = CustomCommandType(settings)
 
     @cache_disk(expire=600)
     def customcommand_path(command_path):

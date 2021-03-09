@@ -33,9 +33,18 @@ class BadCustomCommandError(Exception):
 class CustomCommandResolver(CommandResolver):
     name = "customcommand"
 
-    def __init__(self):
+    def __init__(self, settings=None):
         self._base = None
         self._source = None
+        self.settings = settings
+
+    @property
+    def customcommands(self):
+        return (
+            self.settings.get("customcommands")
+            if self.settings
+            else config.get_settings2("customcommands")
+        )
 
     @property
     def base(self):
@@ -47,7 +56,7 @@ class CustomCommandResolver(CommandResolver):
     def source(self):
         if self._source is None:
             self._source = self.base.make_plugin_source(
-                searchpath=list(reversed(config.get_settings2("customcommands").get("pythonpaths", []))),
+                searchpath=list(reversed(self.customcommands.get("pythonpaths", []))),
             )
         return self._source
 

@@ -28,12 +28,21 @@ def edit_external_command(command_path):
 class ExternalCommandResolver(CommandResolver):
     name = "external"
 
+    def __init__(self, settings=None):
+        self.settings = settings
+
+    @property
+    def customcommands(self):
+        return (
+            self.settings.get("customcommands")
+            if self.settings
+            else config.get_settings2("customcommands")
+        )
+
     @property
     def cmddirs(self):
         return (
-            config.get_settings2(
-                "customcommands"
-            ).get(
+            self.customcommands.get(
                 "executablepaths", []
             )
         )
