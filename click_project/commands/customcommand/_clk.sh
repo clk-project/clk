@@ -1,5 +1,10 @@
 #!/bin/bash -eu
 
+clk_import ( ) {
+    local dep="$1"
+    source "$(dirname "${0}")/lib/${dep}"
+}
+
 clk_list_to_choice () {
     echo "[$(sed -r 's-(.+)- "\1"-'| paste -s - -d,)]"
 }
