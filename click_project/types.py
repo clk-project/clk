@@ -8,6 +8,8 @@ from click_project.core import DynamicChoiceType as DynamicChoice # NOQA: just e
 
 
 class Suggestion(click.Choice):
+    name = "Suggestion"
+
     def convert(self, value, param, ctx):
         return value
 
@@ -22,6 +24,8 @@ class Suggestion(click.Choice):
 
 
 class ProfileType(DynamicChoice):
+    name = "ProfileType"
+
     def choices(self):
         return self.profiles.keys()
 
@@ -37,6 +41,8 @@ class ProfileType(DynamicChoice):
 
 
 class DirectoryProfileType(ProfileType):
+    name = "DirectoryProfileType"
+
     def __init__(self, root_only=False):
         self.root_only = root_only
 
