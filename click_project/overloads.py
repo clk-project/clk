@@ -339,7 +339,7 @@ class ExtraParametersMixin(object):
             raw_args = raw_args[:index] + raw_args[index+2:]
             config.commandline_profile.get_settings("parameters")[self.path] = raw_args
             config.merge_settings()
-            run(["parameters"] + self.parameters_callback_split_value(value) + ["unset", self.path])
+            run(["parameter"] + self.parameters_callback_split_value(value) + ["unset", self.path])
             exit(0)
 
     def set_parameter_callback(self, ctx, param, value):
@@ -349,7 +349,7 @@ class ExtraParametersMixin(object):
             raw_args = raw_args[:index] + raw_args[index+2:]
             config.commandline_profile.get_settings("parameters")[self.path] = raw_args
             config.merge_settings()
-            run(["parameters"] + self.parameters_callback_split_value(value) + ["set", self.path] + ["--"] + raw_args)
+            run(["parameter"] + self.parameters_callback_split_value(value) + ["set", self.path] + ["--"] + raw_args)
             exit(0)
 
     def append_parameter_callback(self, ctx, param, value):
@@ -359,7 +359,7 @@ class ExtraParametersMixin(object):
             raw_args = raw_args[:index] + raw_args[index+2:]
             config.commandline_profile.get_settings("parameters")[self.path] = raw_args
             config.merge_settings()
-            run(["parameters"] + self.parameters_callback_split_value(value) + ["append", self.path] + ["--"] + raw_args)
+            run(["parameter"] + self.parameters_callback_split_value(value) + ["append", self.path] + ["--"] + raw_args)
             exit(0)
 
     def remove_parameter_callback(self, ctx, param, value):
@@ -369,7 +369,7 @@ class ExtraParametersMixin(object):
             raw_args = raw_args[:index] + raw_args[index+2:]
             config.commandline_profile.get_settings("parameters")[self.path] = raw_args
             config.merge_settings()
-            run(["parameters"] + self.parameters_callback_split_value(value) + ["remove", self.path] + ["--"] + raw_args)
+            run(["parameter"] + self.parameters_callback_split_value(value) + ["remove", self.path] + ["--"] + raw_args)
             exit(0)
 
     def show_parameter_callback(self, ctx, param, value):
@@ -379,7 +379,7 @@ class ExtraParametersMixin(object):
             raw_args = raw_args[:index] + raw_args[index+2:]
             config.commandline_profile.get_settings("parameters")[self.path] = raw_args
             config.merge_settings()
-            run(["parameters"] + self.parameters_callback_split_value(value) + ["show", self.path])
+            run(["parameter"] + self.parameters_callback_split_value(value) + ["show", self.path])
             exit(0)
 
     def edit_parameter_callback(self, ctx, param, value):
@@ -389,7 +389,7 @@ class ExtraParametersMixin(object):
             raw_args = raw_args[:index] + raw_args[index+2:]
             config.commandline_profile.get_settings("parameters")[self.path] = raw_args
             config.merge_settings()
-            run(["parameters"] + self.parameters_callback_split_value(value) + ["edit", self.path])
+            run(["parameter"] + self.parameters_callback_split_value(value) + ["edit", self.path])
             exit(0)
 
 
