@@ -552,7 +552,7 @@ class Command(MissingDocumentationMixin, DeprecatedMixin, TriggerMixin, HelpMixi
         self.set_commandline_settings(ctx, args)
         args = self.get_extra_args(implicit_only=('--no-parameter' in args))
 
-        self.complete_arguments = list(args)
+        ctx.complete_arguments = list(args)
         LOGGER.develop("In the {} '{}', parsing the args {}".format(
             self.__class__.__name__,
             ctx.command.path,
@@ -697,7 +697,7 @@ class Group(click_didyoumean.DYMMixin, MissingDocumentationMixin,
         self.append_commandline_settings(ctx, res)
 
         args = self.get_extra_args(implicit_only=('--no-parameter' in args)) + list(remaining)
-        self.complete_arguments = args[:]
+        ctx.complete_arguments = args[:]
         LOGGER.develop("In the {} '{}', parsing the args {}".format(
             self.__class__.__name__,
             ctx.command.path,
@@ -707,12 +707,12 @@ class Group(click_didyoumean.DYMMixin, MissingDocumentationMixin,
             # this must be done before calling the super class to avoid the help message
             args = args or [self.default_cmd_name]
         newargs = click.Group.parse_args(self, ctx, args)
-        if ctx.protected_args and ctx.protected_args[0] in self.complete_arguments:
+        if ctx.protected_args and ctx.protected_args[0] in ctx.complete_arguments:
             # we want to record the complete arguments given to the command, except
             # for the part that starts a new subcommand. After parse_args, the
             # ctx.protected_args informs us of the part to keep away
-            index_first_subcommand = self.complete_arguments.index(ctx.protected_args[0])
-            self.complete_arguments = self.complete_arguments[:index_first_subcommand]
+            index_first_subcommand = ctx.complete_arguments.index(ctx.protected_args[0])
+            ctx.complete_arguments = ctx.complete_arguments[:index_first_subcommand]
         if self.default_cmd_name is not None and not ctx.resilient_parsing:
             # and this must be done here in case option where passed to the group
             ctx.protected_args = ctx.protected_args or [self.default_cmd_name]
@@ -1238,7 +1238,7 @@ class MainCommand(click_didyoumean.DYMMixin, DeprecatedMixin, TriggerMixin, Help
         if '--no-parameter' in args:
             new_extra_args = self.get_extra_args(implicit_only=True)
             res = click.MultiCommand.parse_args(self, ctx, new_extra_args + args)
-            self.complete_arguments = list(args)
+            ctx.complete_arguments = list(args)
         else:
             new_extra_args = self.get_extra_args()
             if new_extra_args == old_extra_args:
@@ -1255,7 +1255,7 @@ class MainCommand(click_didyoumean.DYMMixin, DeprecatedMixin, TriggerMixin, Help
                     args
                 ),
             )
-            self.complete_arguments = list(new_extra_args)
+            ctx.complete_arguments = list(new_extra_args)
 
         if not hasattr(ctx, "has_subcommands"):
             ctx.has_subcommands = True

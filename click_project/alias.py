@@ -164,7 +164,7 @@ class AliasCommandResolver(CommandResolver):
             for command_ in commands[:-1]:
                 LOGGER.debug("Running command: {}".format(" ".join(quote(c) for c in command_)))
                 run(command_)
-            arguments = ctx.command.complete_arguments[:]
+            arguments = ctx.complete_arguments[:]
             arguments = clean_flow_arguments(arguments)
             whole_command = commands[-1] + arguments
             original_command_ctx = get_ctx(whole_command, side_effects=True)
