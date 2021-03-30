@@ -120,7 +120,7 @@ def show(fields, format, **kwargs):
 def custom_command_type():
     return option("--type", help="What kind of object should I find at this locations",
                   type=click.Choice(["executable", "python"]),
-                  default="external")
+                  default="executable")
 
 
 @customcommand.command()
@@ -129,7 +129,7 @@ def custom_command_type():
 def add_path(paths, type):
     """Add custom command paths"""
     paths = [str(d) for d in paths]
-    config.customcommands.writable[f"{type}paths"] = config.customcommands.writable.get("{type}paths", []) + list(paths)
+    config.customcommands.writable[f"{type}paths"] = config.customcommands.writable.get(f"{type}paths", []) + list(paths)
     config.customcommands.write()
     LOGGER.info(f"Added {format_paths(paths)} ({type}) to the profile {config.customcommands.writeprofile}")
 
@@ -429,7 +429,7 @@ def _move(customcommand, profile, force):
 
 
 @customcommand.command()
-def list():
+def _list():
     """List the path of all custom commands."""
     settings = (
         None
