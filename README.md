@@ -38,6 +38,9 @@ The project is still considered to be in the fast development stage. But not for
 long. The main developer already has several hundreds of custom commands written
 with clk, so the main feature are now quite stable.
 
+Also take a look at a [click project 101](https://konubinix.eu/braindump/fcfaaefc-1cd7-4181-a042-6665e9a49228?title=click_project_101) made by one of the authors about
+click-project.
+
 # Why?
 
 * This is very related to *argparse*. Why not just use *argparse*?
