@@ -335,21 +335,31 @@ clk_help_handler "$@"
 )
 @flag("--open/--no-open", help="Also open the file after its creation", default=True)
 @flag("--force", help="Overwrite a file if it already exists")
+@flag("--with-data", help="Create a directory module instead of a single file."
+      " So that you can ship data with it")
 @option("--body", help="The initial body to put", default="")
 @option("--description", help="The initial description to put", default="Description")
-def python(name, open, force, description, body):
+def python(name, open, force, description, body, with_data):
     """Create a bash custom command"""
-    if not name.endswith(".py"):
-        name += ".py"
-    script_path = Path(config.customcommands.profile.location) / "python" / name
+    script_path = Path(config.customcommands.profile.location) / "python"
+    if with_data:
+        if name.endswith(".py"):
+            name = name[:-len(".py")]
+        script_path /= name
+        command_name = name
+        name = "__init__.py"
+    else:
+        if not name.endswith(".py"):
+            name += ".py"
+        command_name = name[:-len(".py")]
+    script_path /= name
     makedirs(script_path.parent)
     if script_path.exists() and not force:
         raise click.UsageError(
             f"Won't overwrite {script_path} unless"
             " explicitly asked so with --force"
         )
-    command_name = script_path.name[:-len(".py")]
-    script_path.write_text(f"""#!/usr/bin/env python3
+    script_text = f"""#!/usr/bin/env python3
 # -*- coding:utf-8 -*-
 
 from pathlib import Path
@@ -376,12 +386,20 @@ from click_project.types import DynamicChoice
 
 LOGGER = get_logger(__name__)
 
+"""
+    if with_data:
+        script_text += f"""
+def data_file(name):
+    return Path(__file__).parent / name
 
+"""
+    script_text += f"""
 @command()
 def {command_name}():
     "{description}"
     {body}
-""")
+"""
+    script_path.write_text(script_text)
     if open:
         click.edit(filename=str(script_path))
 
