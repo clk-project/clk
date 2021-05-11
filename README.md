@@ -1,12 +1,26 @@
-*\(Draft\)* click-project
+click-project
 ==============================================================================
 
 Click-project makes it *easy* and fun for ***you*** to create *awesome* command line interfaces!
 
-For now, if is focused on command line interfaces with several groups of
-commands (like `git`, `vault`, `nomad`, `consul`, `ipfs`, `kubectl` etc).
+For now, if is focused on creating command line interfaces composed of several
+groups of commands.
 
-Turn your scripts into a powerful cli without pain and get instant access to stuff like:
+groups of commands are quite classical these days, when you see
+- git commit argments>
+- valt read secret>
+- nomad alloc stop argment
+- consul info
+- ipfs files stat cid>
+- kbctl attach -t -i argment>
+- and likel man more similar tools
+
+The common aspect of those command line tools is that they all have
+subcommands. clk is meant to create such kind of command line tools, with all
+the bells and whistle that make a command line interface great.
+
+With click-project, you can turn your scripts into a powerful cli without pain and get
+instant access to stuff like:
 
 - great completion support
 - persistence of options and arguments
@@ -15,7 +29,14 @@ Turn your scripts into a powerful cli without pain and get instant access to stu
 - aliases
 - and more...
 
-click-project is a very *opinionated framework*, and is meant to be *batteries included*, meaning we gathered all the stuff we wanted while creating various commands. Dogfooding in mind, the developers are extensive users of click-project. They like it and when something feels wrong, they just change it.
+click-project is a very *opinionated framework*, and is meant to be *batteries
+included*, meaning we gathered all the stuff we wanted while creating various
+commands. Dogfooding in mind, the developers are extensive users of
+click-project. They like it and when something feels wrong, they just change it.
+
+The project is still considered to be in the fast development stage. But not for
+long. The main developer already has several hundreds of custom commands written
+with clk, so the main feature are now quite stable.
 
 # Why?
 
@@ -25,7 +46,9 @@ See [Click - why?](https://click.palletsprojects.com/en/7.x/why/)
 
 * This is very related to *click*. Why not just use *click*?
 
-Click is very powerful when you need to create a command line tool. Yet, when we needed to create command line applications, we often wanted to reinvent the wheel by adding stuff like:
+Click is very powerful when you need to create a command line tool. Yet, when we
+needed to create command line applications, we often wanted to reinvent the
+wheel by adding the same cool features. See below.
 
 # What features?
 
@@ -39,10 +62,10 @@ Say you want to run `clk --someoption` again and again and again. You'd like to 
 * directory based project: Say that you want to store
 * argument documentation: arguments are at least as important as options, yet they don't have any documentation associated. click-project fixes that by allowing to add a help message to the arguments.
 * options groups: options can be grouped to structure the help of the commands.
-* command flow management: TODO
-* launchers: TODO
-* alias: TODO
-* log management: TODO
+* command flow management: in case you tend to often call several commands in sequence. Although each command is also meaningful by itself. You can tell dependencies between command to gain kinda makefile-ish workflow when you run your commands.
+* launchers: some commands are just wrappers around other tools, in such situation, it is often practical to have launcher that are prefixes put in front of the run command (like valgrind, gdb etc.)
+* alias: in clk, the idea is that you create generic commands that fulfill a broad range of usages. Then you want to call those commands with your specific case in mind. Aliases allow you to create new commands that simply call sequences of other commands with custom parameters.
+* log management: if you want to be able to separate log errors, information, debug stuff etc and have a color scheme to make sense of the output
 * a powerful third party lib
 * a nice tabular printer
 * native handling of the color
