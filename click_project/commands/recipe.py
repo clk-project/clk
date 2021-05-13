@@ -4,6 +4,7 @@
 from __future__ import print_function, absolute_import
 
 import os
+import re
 import json
 from pathlib import Path
 
@@ -350,12 +351,22 @@ def where_is(profile):
 @option("--profile", type=DirectoryProfileType(),
           help="The profile where to install the recipe")
 @argument("url",
-          help="The url of the git repository hosting the recipe.")
+          help=(
+              "The url of the git repository hosting the recipe."
+              " Can be author/recipe for github repository."
+              " If that case, the url will become"
+              " https://github.com/{author}/clk_recipe_{recipe}"
+          ))
 @argument("name", help="The name of the recipe")
 def clone(profile, url, name):
     """Clone a recipe stored in github in the given profile"""
     profile = profile or config.global_profile
     recipe_path = Path(profile.location) / "recipes" / name
+    match = re.match("^(?P<author>[a-zA-Z0-9]+)/(?P<recipe>[a-zA-Z0-9]+)$", url)
+    if match:
+        author = match.group("author")
+        recipe = match.group("recipe")
+        url = f"https://github.com/{author}/clk_recipe_{recipe}"
     call(
         [
             "git", "clone", url, str(recipe_path)
