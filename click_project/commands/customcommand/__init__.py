@@ -355,8 +355,7 @@ clk_help_handler "$@"
 """
     if from_file:
         script_content = Path(from_file).read_text()
-    script_path.write_text(script_content)
-    chmod(script_path, 0o755)
+    createfile(script_path, script_content, mode=0o755)
     if open:
         click.edit(filename=str(script_path))
 
@@ -435,7 +434,7 @@ def {command_name}():
 """
     if from_file:
         script_text = Path(from_file).read_text()
-    script_path.write_text(script_text)
+    createfile(script_path, script_text)
     if open:
         click.edit(filename=str(script_path))
 
