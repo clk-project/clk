@@ -192,6 +192,34 @@ class AliasesType(DynamicChoiceType):
 def create():
     """Create custom commands directly from the command line."""
 
+@create.command()
+@argument("file", help="Install this file as customcommand")
+@option("--name", help="Name of the customcommand (default to the name of the file)")
+@flag("--delete", help="Delete the source file when done")
+@flag("--force", help="Overwrite a file if it already exists")
+def from_file(file, name, delete, force):
+    """Install the given file as a customcommand, infering its type.
+
+It works only for python scripts or bash scripts.
+"""
+    import mimetypes
+    type = mimetypes.guess_type(file)[0]
+    name = name or Path(file).name
+    if type == "text/x-python":
+        command = python
+    elif type == "text/x-sh":
+        command = "bash"
+    else:
+        raise click.UsageError(
+            "I can only install a python script or a bash script."
+            f" This is a script of type {type}."
+            " I don't know what to do with it."
+        )
+    ctx = click.get_current_context()
+    ctx.invoke(command, name=name, from_file=file, force=force)
+    if delete:
+        rm(file)
+
 
 @create.command()
 @argument(
@@ -208,7 +236,9 @@ def create():
         help="Source the bash helpers",
         default=True
 )
-def bash(name, open, force, description, body, from_alias, flowdeps, source_bash_helpers):
+@option("--from-file", help="Copy this file instead of using the template")
+def bash(name, open, force, description, body, from_alias, flowdeps,
+         source_bash_helpers, from_file):
     """Create a bash custom command"""
     if name.endswith(".sh"):
         LOGGER.warning(
@@ -304,7 +334,7 @@ args=()""" + args
     else:
         remaining_str = ""
 
-    script_path.write_text(f"""#!/bin/bash -eu
+    script_content = f"""#!/bin/bash -eu
 
 source "${{CLK_INSTALL_LOCATION}}/commands/customcommand/_clk.sh"
 
@@ -322,7 +352,10 @@ clk_help_handler "$@"
 
 {args}
 {body}
-""")
+"""
+    if from_file:
+        script_content = Path(from_file).read_text()
+    script_path.write_text(script_content)
     chmod(script_path, 0o755)
     if open:
         click.edit(filename=str(script_path))
@@ -339,7 +372,8 @@ clk_help_handler "$@"
       " So that you can ship data with it")
 @option("--body", help="The initial body to put", default="")
 @option("--description", help="The initial description to put", default="Description")
-def python(name, open, force, description, body, with_data):
+@option("--from-file", help="Copy this file instead of using the template")
+def python(name, open, force, description, body, with_data, from_file):
     """Create a bash custom command"""
     script_path = Path(config.customcommands.profile.location) / "python"
     if with_data:
@@ -399,6 +433,8 @@ def {command_name}():
     "{description}"
     {body}
 """
+    if from_file:
+        script_text = Path(from_file).read_text()
     script_path.write_text(script_text)
     if open:
         click.edit(filename=str(script_path))
