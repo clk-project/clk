@@ -113,7 +113,8 @@ def move(src, dst):
         shutil.move(src, dst)
 
 
-def createfile(name, content, append=False, internal=False, force=False, makedirs=False):
+def createfile(name, content, append=False, internal=False, force=False,
+               makedirs=False, mode=None):
     if os.path.exists(name) and not force:
         click.UsageError(f"{name} already exists")
     if makedirs:
@@ -132,6 +133,8 @@ def createfile(name, content, append=False, internal=False, force=False, makedir
         flag = "a" if append else "w"
         flag += "b"
         open(name, flag).write(content.encode("utf-8"))
+    if mode:
+        chmod(name, mode)
     return Path(name)
 
 
