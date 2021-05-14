@@ -22,7 +22,7 @@ setup(
     packages=find_packages(),
     zip_safe=False,
     install_requires=[
-        "click>=6.4",
+        "click>=6.4,<8",
         "click-log",
         "click-didyoumean",
         "click-completion>=0.5.0",
