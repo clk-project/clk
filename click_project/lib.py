@@ -1327,6 +1327,8 @@ class ParameterType(click.ParamType):
         click.ParamType.__init__(self)
         if not hasattr(self, "name"):
             self.name = self.__class__.__name__
+            if self.name.endswith("Type"):
+                self.name = self.name[:-len("Type")]
         if not self.name:
             class_name = self.__class__.__name__
             self.name = re.sub('(Param(eter|)|)Type$', '', class_name)
