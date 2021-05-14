@@ -16,7 +16,7 @@ from click_project.completion import startswith
 from click_project.log import get_logger
 from click_project.overloads import command, group, option, flag, argument, flow_command, flow_option, flow_argument
 from click_project.flow import flowdepends  # NOQA: F401
-from click_project.core import settings_stores
+from click_project.core import settings_stores, RecipeType
 
 LOGGER = get_logger(__name__)
 
@@ -124,21 +124,6 @@ def use_settings(settings_name, settings_cls, override=True, default_profile='co
                 ctx.click_project_recipe = value
                 setup_settings(ctx)
             return value
-
-        class RecipeType(ParameterType):
-            @property
-            def choices(self):
-                return [
-                    r.short_name
-                    for r in config.all_recipes
-                ] + ["main"]
-
-            def complete(self, ctx, incomplete):
-                return [
-                    candidate
-                    for candidate in self.choices
-                    if startswith(candidate, incomplete)
-                ]
 
         def profile_name_to_commandline_name(name):
             return name.replace("/", "-")
