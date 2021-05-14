@@ -34,7 +34,7 @@ Default type: auto
 """ % "\n  ".join('{:<12} {}'.format(k, click_completion.shells[k]) for k in sorted(click_completion.shells.keys()))
 
 
-@group(help=cmd_help, default_command='show')
+@group(help=cmd_help)
 @option('-i', '--case-insensitive/--no-case-insensitive', help="Completion will be case insensitive")
 def completion(case_insensitive):
     """Shell completion"""
