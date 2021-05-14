@@ -1325,6 +1325,8 @@ def read_cmakecache(file):
 class ParameterType(click.ParamType):
     def __init__(self):
         click.ParamType.__init__(self)
+        if not hasattr(self, "name"):
+            self.name = self.__class__.__name__
         if not self.name:
             class_name = self.__class__.__name__
             self.name = re.sub('(Param(eter|)|)Type$', '', class_name)
