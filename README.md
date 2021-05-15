@@ -3,22 +3,6 @@ click-project
 
 Click-project makes it *easy* and fun for ***you*** to create *awesome* command line interfaces!
 
-For now, if is focused on creating command line interfaces composed of several
-groups of commands.
-
-groups of commands are quite classical these days, when you see
-- git commit argments>
-- valt read secret>
-- nomad alloc stop argment
-- consul info
-- ipfs files stat cid>
-- kbctl attach -t -i argment>
-- and likel man more similar tools
-
-The common aspect of those command line tools is that they all have
-subcommands. clk is meant to create such kind of command line tools, with all
-the bells and whistle that make a command line interface great.
-
 With click-project, you can turn your scripts into a powerful cli without pain and get
 instant access to stuff like:
 
@@ -34,14 +18,198 @@ included*, meaning we gathered all the stuff we wanted while creating various
 commands. Dogfooding in mind, the developers are extensive users of
 click-project. They like it and when something feels wrong, they just change it.
 
-The project is still considered to be in the fast development stage. But not for
-long. The main developer already has several hundreds of custom commands written
-with clk, so the main feature are now quite stable.
-
 Also take a look at a [click project 101](https://konubinix.eu/braindump/fcfaaefc-1cd7-4181-a042-6665e9a49228?title=click_project_101) made by one of the authors about
 click-project.
 
-# Why?
+# Quick start
+
+Install with `python3 -m pip install click-project`
+
+Now, the `clk` tool is available in `~/.local/bin/`, if that directory is not
+already in your path, use `export PATH="${PATH}:${HOME}/.local/bin"`
+
+Let's play with this tool to have a feeling of what click-project is about.
+
+Install the completion with `clk completion --case-insensitive install` and
+start a new shell to take advantage of it.
+
+Then, run `clk` to see the available commands.
+
+Create a command with `clk customcommand create python say`. It should open
+the command with your favorite editor (or whatever is in the EDITOR environment
+variable).
+
+In the end of the file, replace this part
+
+```python
+@command()
+def say():
+    "Description"
+```
+
+With
+
+```python
+import cowsay
+
+@command()
+@argument("what", help="What to say")
+@option("--who", type=click.Choice(cowsay.char_names), help="Who says", default="cow")
+def say(what, who):
+    "Say something with style"
+    getattr(cowsay, who)(what)
+```
+
+Close your editor, install the cowsay dependency `python3 -m pip install cowsay`.
+
+And now, try:
+
+`clk say --help`
+
+`clk say hello`
+
+You have created your first command!
+
+Now, run:
+
+`clk alias set hello say hello`
+
+And you have created another command, `hello`, that says hello. Try it with.
+
+`clk hello`
+
+Now, run:
+
+`clk parameter set hello --who cheese`
+
+And now try:
+
+`clk hello`
+
+Guess what happened?
+
+Don't remember the parameters you have set or the alias you have set?
+
+Run:
+
+`clk parameter show`
+
+and
+
+`clk alias show`
+
+And remove those with
+
+`clk parameter unset hello`
+
+`clk alias unset hello`
+
+Want to put those parameters and aliases in a same place to enable them at once? Try creating a recipe with:
+
+`clk recipe create hello`
+
+By default, it is disabled, so simply enable it with.
+
+`clk recipe enable hello`
+
+And now, create the hello command again, but now in the recipe.
+
+`clk alias --global-hello set hello say hello`
+
+`clk parameter --global-hello set hello --who trex`
+
+Try the hello command again:
+
+`clk hello`
+
+Take a look at `clk alias show` and `clk parameter show` to see how those are
+nicely put in the recipe.
+
+And see how easy it is to disable the whole hello recipe at once with.
+
+`clk recipe disable hello`
+
+And see how it cleaned the parameters and the aliases.
+
+Remove the whole recipe at once with.
+
+`clk recipe remove hello`
+
+What is this global word in `--global-hello`?
+
+Try creating an empty directory in
+
+`mkdir -p ~/sometest/.clk`
+
+Then go to sometest with `cd ~/sometest`.
+
+Now, create the hello command again, with.
+
+`clk alias set hello say hello`
+
+`clk parameter set hello --who milk`
+
+See how the output of the commands is about creating a new *local* alias and a
+new *local* parameter instead of global like earlier?
+
+Try the hello command with
+
+`clk hello`
+
+Now, get out of sometest with `cd ~/` and try it again to see it fail with.
+
+`clk hello`
+
+See how it is no more available? It is available only in the sometest directory
+or any of its children directories. sometest is called a *project*.
+
+You can override whatever command you want in a project.
+
+Try `cd ~/sometest` and then override the say command with.
+
+`clk alias set say echo --style fg-yellow`
+
+Now try `clk hello`
+
+See how the used say command is now the local one instead of the global one?
+
+You can put whatever you want in the project, customcommands, parameters,
+aliases etc.
+
+Now, remove the whole stuff, with.
+
+`clk parameter unset hello`
+
+`clk alias unset hello`
+
+`clk alias unset say`
+
+`clk customcommand remove say`
+
+And simply install the recipe I created that already does all of this with.
+
+`clk recipe clone Konubinix/hello`
+
+Enable it with
+
+`clk recipe enable hello`
+
+And see how it came back to life with.
+
+`clk hello`
+
+Remove it again with.
+
+`clk recipe remove --global hello`
+
+Here, `--global` is needed or click-project will try (and fail) to delete a
+local recipe, whereas the clone command defaults to install it globally.
+
+We realize that recipes don't have yet a coherent default behavior. This is
+because there are quite new and are not thoroughly used yet. We believe that the
+sensible defaults will come naturally when recipes are used more often.
+
+# why click-project?
 
 * This is very related to *argparse*. Why not just use *argparse*?
 
