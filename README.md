@@ -18,9 +18,6 @@ included*, meaning we gathered all the stuff we wanted while creating various
 commands. Dogfooding in mind, the developers are extensive users of
 click-project. They like it and when something feels wrong, they just change it.
 
-Also take a look at a [click project 101](https://konubinix.eu/braindump/fcfaaefc-1cd7-4181-a042-6665e9a49228?title=click_project_101) made by one of the authors about
-click-project.
-
 # Quick start
 
 Install with `python3 -m pip install click-project`
@@ -208,6 +205,12 @@ local recipe, whereas the clone command defaults to install it globally.
 We realize that recipes don't have yet a coherent default behavior. This is
 because there are quite new and are not thoroughly used yet. We believe that the
 sensible defaults will come naturally when recipes are used more often.
+
+Hopefully you have started now to grab the awesomeness of click-project and are
+envisioning all the nice stuff you can do with it.
+
+Also take a look at a [click project 101](https://konubinix.eu/braindump/fcfaaefc-1cd7-4181-a042-6665e9a49228?title=click_project_101) made by one of the authors about
+click-project.
 
 # why click-project?
 
