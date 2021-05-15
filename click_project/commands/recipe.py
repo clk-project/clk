@@ -357,16 +357,23 @@ def where_is(profile):
               " If that case, the url will become"
               " https://github.com/{author}/clk_recipe_{recipe}"
           ))
-@argument("name", help="The name of the recipe")
+@argument("name", help="The name of the recipe", required=False)
 def clone(profile, url, name):
     """Clone a recipe stored in github in the given profile"""
     profile = profile or config.global_profile
-    recipe_path = Path(profile.location) / "recipes" / name
     match = re.match("^(?P<author>[a-zA-Z0-9]+)/(?P<recipe>[a-zA-Z0-9]+)$", url)
     if match:
         author = match.group("author")
         recipe = match.group("recipe")
         url = f"https://github.com/{author}/clk_recipe_{recipe}"
+        if name is None:
+            name = recipe
+    else:
+        if name is None:
+            raise click.UsageError(
+                "I cannot infer a name for your recipe. Please provide one explicitely."
+            )
+    recipe_path = Path(profile.location) / "recipes" / name
     call(
         [
             "git", "clone", url, str(recipe_path)
