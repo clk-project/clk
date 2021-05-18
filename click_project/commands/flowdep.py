@@ -263,7 +263,6 @@ def graph(output, format, cmds, strict, cluster,
         if dotpath is None:
             raise click.UsageError(
                 "You don't have graphviz installed. Therefore you cannot use dot."
-                " Hint: graphviz is shipped with CSS :-)"
             )
         args = [dotpath, "-T{}".format(format)]
         p = subprocess.Popen(
