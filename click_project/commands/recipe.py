@@ -17,7 +17,7 @@ from click_project.log import get_logger
 from click_project.config import config
 from click_project.colors import Colorer
 from click_project.lib import move, copy, ParameterType, json_file,\
-    json_dumps, rm, call, cd, get_option_choices
+    json_dumps, rm, call, cd, get_option_choices, cd
 from click_project.lib import TablePrinter, get_authenticator
 from click_project.overloads import CommandSettingsKeyType
 from click_project.types import DirectoryProfileType
@@ -358,7 +358,9 @@ def where_is(profile):
               " https://github.com/{author}/clk_recipe_{recipe}"
           ))
 @argument("name", help="The name of the recipe", required=False)
-def clone(profile, url, name):
+@flag("--enabled/--disabled", help="Automatically enable the cloned recipe", default=True)
+@pass_context
+def clone(ctx, profile, url, name, enabled):
     """Clone a recipe stored in github in the given profile"""
     profile = profile or config.global_profile
     match = re.match("^(?P<author>[a-zA-Z0-9]+)/(?P<recipe>[a-zA-Z0-9]+)$", url)
@@ -379,6 +381,45 @@ def clone(profile, url, name):
             "git", "clone", url, str(recipe_path)
         ]
     )
+    if enabled is True:
+        ctx.invoke(enable, recipe=[name])
+
+
+@recipe.command()
+@argument("recipe", type=RecipeType(), nargs=-1,
+          help="The names of the recipes to update")
+@flag("--clean/--no-clean", help="Remove local modification and update")
+def update(recipe, clean):
+    """Update this cloned recipe"""
+    for cmd in recipe:
+        root = Path(cmd.location)
+        if not (root / ".git").exists():
+            raise click.UsageError(
+                "For the time being, I only can update"
+                " cloned recipes."
+            )
+        with cd(root):
+            if clean:
+                call(
+                    [
+                        "git", "clean", "-fd"
+                    ]
+                )
+                call(
+                    [
+                        "git", "checkout", "."
+                    ]
+                )
+                call(
+                    [
+                        "git", "reset", "--hard", "HEAD"
+                    ]
+                )
+            call(
+                [
+                    "git", "pull"
+                ]
+            )
 
 
 @recipe.group(default_command="show")
