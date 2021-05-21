@@ -21,7 +21,7 @@ from click_project.lib import move, copy, ParameterType, json_file,\
     json_dumps, rm, call, cd, get_option_choices, cd
 from click_project.lib import TablePrinter, get_authenticator
 from click_project.overloads import CommandSettingsKeyType
-from click_project.types import DirectoryProfileType
+from click_project.types import DirectoryProfileType, Suggestion
 
 LOGGER = get_logger(__name__)
 
@@ -356,19 +356,24 @@ def where_is(profile):
               "The url of the git repository hosting the recipe."
               " Can be author/recipe for github repository."
               " If that case, the url will become"
-              " https://github.com/{author}/clk_recipe_{recipe}"
+              " https://github.com/{author}/clk_recipe_{recipe}."
+              " Actually, the prefix (github.com) may be changed using --url-prefix."
           ))
+@option("--url-prefix", help="The prefix to insert before the url in needed.",
+        type=Suggestion(["github.com", "gitlab.com"]), default="github.com"
+        )
 @argument("name", help="The name of the recipe", required=False)
 @flag("--enabled/--disabled", help="Automatically enable the cloned recipe", default=True)
+@flag("--install-deps/--no-install-deps", help="Automatically install the dependencies.", default=True)
 @pass_context
-def clone(ctx, profile, url, name, enabled):
+def clone(ctx, profile, url, name, enabled, url_prefix, install_deps):
     """Clone a recipe stored in github in the given profile"""
     profile = profile or config.global_profile
     match = re.match("^(?P<author>[a-zA-Z0-9]+)/(?P<recipe>[a-zA-Z0-9]+)$", url)
     if match:
         author = match.group("author")
         recipe = match.group("recipe")
-        url = f"github.com/{author}/clk_recipe_{recipe}"
+        url = f"{url_prefix}/{author}/clk_recipe_{recipe}"
         if name is None:
             name = recipe
     else:
