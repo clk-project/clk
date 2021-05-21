@@ -370,8 +370,7 @@ def where_is(profile):
 def install(ctx, profile, url, name, enabled, url_prefix, install_deps):
     """Install a recipe from outside"""
     profile = profile or config.global_profile
-    match = re.match("^(?P<author>[a-zA-Z0-9]+)/(?P<recipe>[a-zA-Z0-9]+)$", url)
-    if match:
+    if match := re.match("^(?P<author>[a-zA-Z0-9]+)/(?P<recipe>[a-zA-Z0-9]+)$", url):
         author = match.group("author")
         recipe = match.group("recipe")
         url = f"{url_prefix}/{author}/clk_recipe_{recipe}"
