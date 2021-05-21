@@ -262,6 +262,11 @@ def get_flow_wrapper(name, function):
             _in_a_flow = False
             # restore the flow settings
             config.flow_profile.get_settings('parameters').clear()
+        LOGGER.status(
+            "Ended executing the flow dependencies, back to the command '{}'".format(
+                name
+            )
+        )
         res = function(*args, **kwargs)
         return res
     return flow_wrapper
