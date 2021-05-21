@@ -367,8 +367,8 @@ def where_is(profile):
 @flag("--enabled/--disabled", help="Automatically enable the cloned recipe", default=True)
 @flag("--install-deps/--no-install-deps", help="Automatically install the dependencies.", default=True)
 @pass_context
-def clone(ctx, profile, url, name, enabled, url_prefix, install_deps):
-    """Clone a recipe stored in github in the given profile"""
+def install(ctx, profile, url, name, enabled, url_prefix, install_deps):
+    """Install a recipe from outside"""
     profile = profile or config.global_profile
     match = re.match("^(?P<author>[a-zA-Z0-9]+)/(?P<recipe>[a-zA-Z0-9]+)$", url)
     if match:
