@@ -405,6 +405,19 @@ def clone(ctx, profile, url, name, enabled, url_prefix, install_deps):
 
 
 @recipe.command()
+@argument("recipe", type=DirectoryProfileType(), nargs=-1, help="The name of the recipes to consider")
+@pass_context
+def install_deps(ctx, recipe):
+    "Install the dependencies of the recipe"
+    for rec in recipe:
+        LOGGER.status("Handling {}".format(rec.friendly_name))
+        if rec.requirements_path.exists():
+            ctx.invoke(pip, args=("install", "--upgrade", "-r", rec.requirements_path))
+        else:
+            LOGGER.info(f"Nothing to be done for {rec.friendly_name}")
+
+
+@recipe.command()
 @argument("recipe", type=RecipeType(), nargs=-1,
           help="The names of the recipes to update")
 @flag("--clean/--no-clean", help="Remove local modification and update")
