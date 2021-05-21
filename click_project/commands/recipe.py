@@ -22,6 +22,7 @@ from click_project.lib import move, copy, ParameterType, json_file,\
 from click_project.lib import TablePrinter, get_authenticator
 from click_project.overloads import CommandSettingsKeyType
 from click_project.types import DirectoryProfileType, Suggestion
+from click_project.commands.pip import pip
 
 LOGGER = get_logger(__name__)
 
@@ -402,6 +403,8 @@ def clone(ctx, profile, url, name, enabled, url_prefix, install_deps):
 
     if enabled is True:
         ctx.invoke(enable, recipe=[name])
+    if install_deps is True:
+        ctx.invoke(install_deps, recipe=[name])
 
 
 @recipe.command()
