@@ -170,6 +170,10 @@ class DirectoryProfile(Profile):
         }
 
     @property
+    def requirements_path(self):
+        return Path(self.location) / "python" / "requirements.txt"
+
+    @property
     def python_paths(self):
         return [
             str(Path(self.location) / d)
