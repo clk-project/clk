@@ -372,9 +372,14 @@ def clone(ctx, profile, url, name, enabled):
             name = recipe
     else:
         if name is None:
-            raise click.UsageError(
-                "I cannot infer a name for your recipe. Please provide one explicitely."
-            )
+            if '/' in url:
+                name = url.split('/')[-1]
+                if name.startswith('clk_recipe_'):
+                    name = name.replace('clk_recipe_', '')
+            else:
+                raise click.UsageError(
+                    "I cannot infer a name for your recipe. Please provide one explicitly."
+                )
     recipe_path = Path(profile.location) / "recipes" / name
     call(
         [
