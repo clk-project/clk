@@ -6,6 +6,7 @@ from __future__ import print_function, absolute_import
 import os
 import re
 import json
+import subprocess
 from pathlib import Path
 
 import click
@@ -367,7 +368,7 @@ def clone(ctx, profile, url, name, enabled):
     if match:
         author = match.group("author")
         recipe = match.group("recipe")
-        url = f"https://github.com/{author}/clk_recipe_{recipe}"
+        url = f"github.com/{author}/clk_recipe_{recipe}"
         if name is None:
             name = recipe
     else:
@@ -380,12 +381,20 @@ def clone(ctx, profile, url, name, enabled):
                 raise click.UsageError(
                     "I cannot infer a name for your recipe. Please provide one explicitly."
                 )
+
+    # if the url is not a valid url, suppose this is a github/gitlab/... url, and try to get it using https and ssh
+    if not re.match(r'(\w+://)(.+@)*([\w\d\.]+)(:[\d]+)?/*(.*)|(.+@)*([\w\d\.]+):(.*)', url):
+        url = f'https://{url}'
+        host = url.split('/')[0]
+        path = '/'.join(url.split('/')[1:])
+        alt_url = f'git@{host}:{path}'
+
     recipe_path = Path(profile.location) / "recipes" / name
-    call(
-        [
-            "git", "clone", url, str(recipe_path)
-        ]
-    )
+    try:
+        call(["git", "clone", url, str(recipe_path)])
+    except subprocess.CalledProcessError:
+        call(["git", "clone", alt_url, str(recipe_path)])
+
     if enabled is True:
         ctx.invoke(enable, recipe=[name])
 
