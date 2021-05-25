@@ -40,6 +40,7 @@ from click_project.lib import (
     cd,
     get_option_choices,
     ln,
+    glob,
 )
 from click_project.lib import TablePrinter
 from click_project.overloads import CommandSettingsKeyType
@@ -612,6 +613,8 @@ def install(
         LOGGER.info(f"Getting the tarfile from {url}")
         tar = tarfile.open(fileobj=io.BytesIO(requests.get(url).content))
         tar.extractall(recipe_path)
+        for file in glob(f"{recipe_path}/*/*"):
+            move(file, recipe_path)
 
     recipe = profile.get_recipe(name)
 
