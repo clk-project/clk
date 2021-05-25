@@ -93,5 +93,6 @@ fi
 echo -e "${green}clk successfully installed! Enjoy!${reset}"
 for recipe in ${CLK_RECIPES}
 do
+    echo "installing clk recipe ${recipe}... "
     "${INSTALL_PATH}/clk" recipe install "${recipe}"
 done
