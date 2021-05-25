@@ -233,7 +233,7 @@ class DirectoryProfile(Profile):
         else:
             return candidates[0]
 
-    @cached_property
+    @property
     def recipes(self):
         if self.isrecipe:
             return []
