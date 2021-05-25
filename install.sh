@@ -88,3 +88,7 @@ if ! which clk > /dev/null; then
     fi
 fi
 echo -e "${green}clk successfully installed! Enjoy!${reset}"
+for recipe in ${CLK_RECIPES}
+do
+    "${INSTALL_PATH}/clk" recipe install "${recipe}"
+done
