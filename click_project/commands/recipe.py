@@ -106,7 +106,9 @@ def recipe():
 
 @recipe.command(handle_dry_run=True)
 @argument("name", help="The recipe name")
-def create(name):
+@flag("--enable/--disable", help="Automatically enable the cloned recipe", default=True)
+@pass_context
+def create(ctx, name, enable):
     """Create a new recipe"""
     profile = config.recipe.profile
     r = profile.create_recipe(name)
@@ -114,6 +116,8 @@ def create(name):
         "Created recipe {}.".format(
             r.friendly_name
         ))
+    if enable:
+        ctx.invoke(__enable, recipe=[name])
 
 
 @recipe.command(handle_dry_run=True)
@@ -278,7 +282,7 @@ def unset(ctx, recipe, all):
 @argument("recipe", type=RecipeNameType(disabled=True, failok=False), nargs=-1,
           help="The names of the recipes to enable")
 @pass_context
-def enable(ctx, recipe, all, only):
+def __enable(ctx, recipe, all, only):
     """Use this recipe"""
     if all:
         recipe = RecipeType(disabled=True).getchoice(ctx)
@@ -308,7 +312,7 @@ def enable(ctx, recipe, all, only):
 def switch(ctx, recipe1, recipe2):
     """Switch from a recipe to another"""
     ctx.invoke(disable, recipe=[recipe1])
-    ctx.invoke(enable, recipe=[recipe2])
+    ctx.invoke(__enable, recipe=[recipe2])
 
 
 @recipe.command(handle_dry_run=True)
@@ -364,10 +368,13 @@ def where_is(profile):
         type=Suggestion(["github.com", "gitlab.com"]), default="github.com"
         )
 @argument("name", help="The name of the recipe", required=False)
-@flag("--enabled/--disabled", help="Automatically enable the cloned recipe", default=True)
+@flag("--enable/--disable", help="Automatically enable the cloned recipe", default=True)
 @flag("--install-deps/--no-install-deps", help="Automatically install the dependencies.", default=True)
+@flag("--force/--no-force", help="Overwrite the existing recipe if need be.")
+@flag("-e", "--editable",
+      help="(only for local path) Create a symbolic link rather than copying the content")
 @pass_context
-def install(ctx, profile, url, name, enabled, url_prefix, install_deps):
+def install(ctx, profile, url, name, enable, url_prefix, install_deps):
     """Install a recipe from outside"""
     profile = profile or config.global_profile
     if match := re.match("^(?P<author>[a-zA-Z0-9]+)/(?P<recipe>[a-zA-Z0-9]+)$", url):
