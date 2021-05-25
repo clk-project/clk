@@ -386,18 +386,20 @@ def install(ctx, profile, url, name, enable, url_prefix, install_deps,
     """Install a recipe from outside"""
     profile = profile or config.global_profile
     install_type = None
-    alt_url = None
+    urls = []
     if match := re.match("^(?P<author>[a-zA-Z0-9]+)/(?P<recipe>[a-zA-Z0-9]+)$", url):
         author = match.group("author")
         recipe = match.group("recipe")
-        url = f"https://{url_prefix}/{author}/clk_recipe_{recipe}"
+        urls.append(f"https://{url_prefix}/{author}/clk_recipe_{recipe}")
         install_type = "git"
         if name is None:
             name = recipe
     elif re.match(r'(\w+://)(.+@)*([\w\d\.]+)(:[\d]+)?/*(.*)|(.+@)*([\w\d\.]+):(.*)', url):
         install_type = "git"
+        urls.append(url)
     elif url.startswith("http"):
         install_type = "git"
+        urls.append(url)
     elif "/" in url:
         # fallback wild guessing it could be a github/gitlab/... url, and try to get
         # it using https and ssh
@@ -409,11 +411,12 @@ def install(ctx, profile, url, name, enable, url_prefix, install_deps,
         install_type = "git"
         host = url.split('/')[0]
         path = '/'.join(url.split('/')[1:])
-        url = f'https://{url}'
-        alt_url = f'git@{host}:{path}'
+        urls.append(f'https://{url}')
+        urls.append(f'git@{host}:{path}')
     elif Path(url).exists():
         install_type = "file"
         name = name or Path(url).name
+        urls.append(url)
     else:
         raise click.UsageError(
             "I tried hard guessing what this url is about, without success."
@@ -448,13 +451,23 @@ def install(ctx, profile, url, name, enable, url_prefix, install_deps,
                 " Use --force to override it."
             )
     if install_type == "git":
-        try:
-            call(["git", "clone", url, str(recipe_path)])
-        except subprocess.CalledProcessError:
-            if alt_url is not None:
-                call(["git", "clone", alt_url, str(recipe_path)])
+        ok = False
+        for tryurl in urls:
+            try:
+                call(["git", "clone", tryurl, str(recipe_path)])
+            except subprocess.CalledProcessError:
+                # this one did not work, go on to the next one
+                continue
             else:
-                raise
+                # found one that works, stop trying
+                ok = True
+                break
+        if ok is False:
+            raise click.UsageError(
+                "Tried git cloning the following urls, without success:"
+                f" {', '.join(urls)}. Please take a look at the documentation"
+                " to see how you can pass urls"
+            )
     elif install_type == "file":
         if editable:
             ln(Path(url).resolve(), recipe_path)
