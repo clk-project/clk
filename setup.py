@@ -40,6 +40,7 @@ setup(
         "humanize",
         "Pygments",
         "cached-property",
+        "requests",
     ],
     entry_points = {
         'console_scripts':
