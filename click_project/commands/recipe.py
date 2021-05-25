@@ -364,6 +364,12 @@ def where_is(profile):
               " If that case, the url will become"
               " https://github.com/{author}/clk_recipe_{recipe}."
               " Actually, the prefix (github.com) may be changed using --url-prefix."
+              " Can also be gitlab.com/{author}/{recipe},"
+              " github.com/{author}/{recipe},"
+              " git@...,"
+              " http://...,"
+              " a path to a local directory"
+              " (not that in that case, using --editable makes sense)."
           ))
 @option("--url-prefix", help="The prefix to insert before the url in needed.",
         type=Suggestion(["github.com", "gitlab.com"]), default="github.com"
@@ -380,16 +386,40 @@ def install(ctx, profile, url, name, enable, url_prefix, install_deps,
     """Install a recipe from outside"""
     profile = profile or config.global_profile
     install_type = None
+    alt_url = None
     if match := re.match("^(?P<author>[a-zA-Z0-9]+)/(?P<recipe>[a-zA-Z0-9]+)$", url):
         author = match.group("author")
         recipe = match.group("recipe")
-        url = f"{url_prefix}/{author}/clk_recipe_{recipe}"
+        url = f"https://{url_prefix}/{author}/clk_recipe_{recipe}"
         install_type = "git"
         if name is None:
             name = recipe
-    elif url.startswith("./"):
+    elif re.match(r'(\w+://)(.+@)*([\w\d\.]+)(:[\d]+)?/*(.*)|(.+@)*([\w\d\.]+):(.*)', url):
+        install_type = "git"
+    elif url.startswith("http"):
+        install_type = "git"
+    elif "/" in url:
+        # fallback wild guessing it could be a github/gitlab/... url, and try to get
+        # it using https and ssh
+        LOGGER.info(
+            "I don't see what this url is about."
+            " I'm wild guessing it might a gitlab/github short url style."
+            " In the form [host]/[path], without the initial https://."
+        )
+        install_type = "git"
+        host = url.split('/')[0]
+        path = '/'.join(url.split('/')[1:])
+        url = f'https://{url}'
+        alt_url = f'git@{host}:{path}'
+    elif Path(url).exists():
         install_type = "file"
         name = name or Path(url).name
+    else:
+        raise click.UsageError(
+            "I tried hard guessing what this url is about, without success."
+            " Please take a look at the documentation"
+            " to know about the supported formats"
+        )
 
     if name is None:
         if '/' in url:
@@ -400,23 +430,13 @@ def install(ctx, profile, url, name, enable, url_prefix, install_deps,
             raise click.UsageError(
                 "I cannot infer a name for your recipe. Please provide one explicitly."
             )
+
     if install_type is None:
         raise click.UsageError(
             "I cannot infer how to install the recipe"
             " Please tell us what you wanted to do"
             " so that we can fix the code and the doc."
         )
-
-    # if the url is not a valid url, suppose this is a github/gitlab/... url, and try to get it using https and ssh
-    if (
-            install_type == "git"
-            and
-            not re.match(r'(\w+://)(.+@)*([\w\d\.]+)(:[\d]+)?/*(.*)|(.+@)*([\w\d\.]+):(.*)', url)
-    ):
-        url = f'https://{url}'
-        host = url.split('/')[0]
-        path = '/'.join(url.split('/')[1:])
-        alt_url = f'git@{host}:{path}'
 
     recipe_path = Path(profile.location) / "recipes" / name
     if recipe_path.exists() or recipe_path.is_symlink():
@@ -431,7 +451,10 @@ def install(ctx, profile, url, name, enable, url_prefix, install_deps,
         try:
             call(["git", "clone", url, str(recipe_path)])
         except subprocess.CalledProcessError:
-            call(["git", "clone", alt_url, str(recipe_path)])
+            if alt_url is not None:
+                call(["git", "clone", alt_url, str(recipe_path)])
+            else:
+                raise
     elif install_type == "file":
         if editable:
             ln(Path(url).resolve(), recipe_path)
