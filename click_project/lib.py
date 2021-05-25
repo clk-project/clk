@@ -72,6 +72,10 @@ def ensure_unicode(value):
 
 def ln(src, dst):
     """Create a symbolink link src -> dst"""
+    if isinstance(src, Path):
+        src = str(src)
+    if isinstance(dst, Path):
+        dst = str(dst)
     LOGGER.action("create symlink {} -> {}".format(src, dst))
     if not dry_run:
         os.symlink(src, dst)
@@ -139,6 +143,11 @@ def createfile(name, content, append=False, internal=False, force=False,
 
 
 def copy(src, dst):
+    if isinstance(src, Path):
+        src = str(src)
+    if isinstance(dst, Path):
+        dst = str(dst)
+
     LOGGER.action("copy {} to {}".format(src, dst))
     if dry_run:
         return
