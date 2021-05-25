@@ -433,12 +433,12 @@ def install(ctx, profile, url, name, enable, url_prefix, install_deps,
     if name is None:
         if '/' in url:
             name = url.split('/')[-1]
-            if name.startswith('clk_recipe_'):
-                name = name.replace('clk_recipe_', '')
         else:
             raise click.UsageError(
                 "I cannot infer a name for your recipe. Please provide one explicitly."
             )
+    if name.startswith("clk_recipe_"):
+        name = name.replace('clk_recipe_', '')
 
     if install_type is None:
         raise click.UsageError(
