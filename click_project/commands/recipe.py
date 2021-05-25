@@ -450,7 +450,7 @@ def install(ctx, profile, url, name, enable, url_prefix, install_deps,
 @recipe.command()
 @argument("recipe", type=DirectoryProfileType(), nargs=-1, help="The name of the recipes to consider")
 @pass_context
-def install_deps(ctx, recipe):
+def _install_deps(ctx, recipe):
     "Install the dependencies of the recipe"
     for rec in recipe:
         LOGGER.status("Handling {}".format(rec.friendly_name))
