@@ -81,8 +81,11 @@ done
 echo "done"
 
 if ! which clk > /dev/null; then
-    mkdir -p "${HOME}/bin"
-    ln -s "${INSTALL_PATH}/clk" "${HOME}/bin/"
+    if ! [ -e "${HOME}/bin/clk" ]
+    then
+        mkdir -p "${HOME}/bin"
+        ln -s "${INSTALL_PATH}/clk" "${HOME}/bin/"
+    fi
     if ! which clk > /dev/null; then
         echo -e "${yellow}You will need to logout and login again!${reset}"
     fi
