@@ -18,11 +18,12 @@ from click_project.log import get_logger
 from click_project.config import config
 from click_project.colors import Colorer
 from click_project.lib import move, copy, ParameterType, json_file,\
-    json_dumps, rm, call, cd, get_option_choices, cd
+    json_dumps, rm, call, cd, get_option_choices, cd, ln
 from click_project.lib import TablePrinter, get_authenticator
 from click_project.overloads import CommandSettingsKeyType
 from click_project.types import DirectoryProfileType, Suggestion
 from click_project.commands.pip import pip
+from click_project.profile import ProfileFactory
 
 LOGGER = get_logger(__name__)
 
@@ -374,43 +375,76 @@ def where_is(profile):
 @flag("-e", "--editable",
       help="(only for local path) Create a symbolic link rather than copying the content")
 @pass_context
-def install(ctx, profile, url, name, enable, url_prefix, install_deps):
+def install(ctx, profile, url, name, enable, url_prefix, install_deps,
+            editable, force):
     """Install a recipe from outside"""
     profile = profile or config.global_profile
+    install_type = None
     if match := re.match("^(?P<author>[a-zA-Z0-9]+)/(?P<recipe>[a-zA-Z0-9]+)$", url):
         author = match.group("author")
         recipe = match.group("recipe")
         url = f"{url_prefix}/{author}/clk_recipe_{recipe}"
+        install_type = "git"
         if name is None:
             name = recipe
-    else:
-        if name is None:
-            if '/' in url:
-                name = url.split('/')[-1]
-                if name.startswith('clk_recipe_'):
-                    name = name.replace('clk_recipe_', '')
-            else:
-                raise click.UsageError(
-                    "I cannot infer a name for your recipe. Please provide one explicitly."
-                )
+    elif url.startswith("./"):
+        install_type = "file"
+        name = name or Path(url).name
+
+    if name is None:
+        if '/' in url:
+            name = url.split('/')[-1]
+            if name.startswith('clk_recipe_'):
+                name = name.replace('clk_recipe_', '')
+        else:
+            raise click.UsageError(
+                "I cannot infer a name for your recipe. Please provide one explicitly."
+            )
+    if install_type is None:
+        raise click.UsageError(
+            "I cannot infer how to install the recipe"
+            " Please tell us what you wanted to do"
+            " so that we can fix the code and the doc."
+        )
 
     # if the url is not a valid url, suppose this is a github/gitlab/... url, and try to get it using https and ssh
-    if not re.match(r'(\w+://)(.+@)*([\w\d\.]+)(:[\d]+)?/*(.*)|(.+@)*([\w\d\.]+):(.*)', url):
+    if (
+            install_type == "git"
+            and
+            not re.match(r'(\w+://)(.+@)*([\w\d\.]+)(:[\d]+)?/*(.*)|(.+@)*([\w\d\.]+):(.*)', url)
+    ):
         url = f'https://{url}'
         host = url.split('/')[0]
         path = '/'.join(url.split('/')[1:])
         alt_url = f'git@{host}:{path}'
 
     recipe_path = Path(profile.location) / "recipes" / name
-    try:
-        call(["git", "clone", url, str(recipe_path)])
-    except subprocess.CalledProcessError:
-        call(["git", "clone", alt_url, str(recipe_path)])
+    if recipe_path.exists() or recipe_path.is_symlink():
+        if force:
+            rm(recipe_path)
+        else:
+            raise click.UsageError(
+                f"A recipe already exists at location {recipe_path}"
+                " Use --force to override it."
+            )
+    if install_type == "git":
+        try:
+            call(["git", "clone", url, str(recipe_path)])
+        except subprocess.CalledProcessError:
+            call(["git", "clone", alt_url, str(recipe_path)])
+    elif install_type == "file":
+        if editable:
+            ln(Path(url).resolve(), recipe_path)
+        else:
+            copy(url, recipe_path)
+    recipe = profile.get_recipe(name)
 
-    if enabled is True:
-        ctx.invoke(enable, recipe=[name])
+    if enable is True:
+        LOGGER.status("Enabling the recipe")
+        ctx.invoke(__enable, recipe=[name])
     if install_deps is True:
-        ctx.invoke(install_deps, recipe=[name])
+        LOGGER.status("Installing the dependencies of the recipe")
+        ctx.invoke(_install_deps, recipe=[recipe])
 
 
 @recipe.command()
