@@ -94,7 +94,7 @@ _try.get_choices = get_choices
 @completion.command(handle_dry_run=True)
 @option('--append/--overwrite', help="Append the completion code to the file", default=None)
 @argument('shell', required=False, type=DocumentedChoice(click_completion.shells), help="The shell that will be used")
-@argument('path', required=False)
+@argument('path', required=False, help="Where to install the completion")
 def install(append, shell, path):
     """Install the completion"""
     extra_env = {CASE_INSENSITIVE_ENV: 'ON'} if config.completion.case_insensitive else {}
