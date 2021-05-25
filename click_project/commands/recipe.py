@@ -423,6 +423,12 @@ def install(ctx, profile, url, name, enable, url_prefix, install_deps,
             " Please take a look at the documentation"
             " to know about the supported formats"
         )
+    if editable is True and install_type != "file":
+        LOGGER.warning(
+            "Ignoring --editable for we guessed that"
+            " you did not provide a url that actually"
+            " points to a local file"
+        )
 
     if name is None:
         if '/' in url:
