@@ -20,7 +20,7 @@ click-project. They like it and when something feels wrong, they just change it.
 
 # Quick start
 
-Install with `curl -sSL https://github.com/Konubinix/click-project/install.sh | bash`
+Install with `curl -sSL https://raw.githubusercontent.com/Konubinix/click-project/master/install.sh | bash`
 or `python3 -m pip install click-project`
 
 Now, the `clk` tool is available in `~/.local/bin/`, if that directory is not
