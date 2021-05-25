@@ -137,6 +137,8 @@ plugin_sources = {}
 
 @ProfileFactory.register_directory_profile
 class DirectoryProfile(Profile):
+    recipe_name_re = "[a-z0-9_]+"
+
     def __gt__(self, other):
         return self.name < other.name
 
@@ -184,7 +186,7 @@ class DirectoryProfile(Profile):
     def create_recipe(self, name, mkdir=True):
         name = self.recipe_full_name(name)
         if not re.match(
-            "^{}/[a-z0-9_]+$".format(self.name),
+            "^{}/{}$".format(self.name, self.recipe_name_re),
             name
         ):
             raise click.UsageError(
