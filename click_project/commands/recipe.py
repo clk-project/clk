@@ -4,8 +4,11 @@
 from __future__ import print_function, absolute_import
 
 import os
+import requests
 import re
 import json
+import tarfile
+import io
 import subprocess
 from pathlib import Path
 
@@ -18,7 +21,7 @@ from click_project.log import get_logger
 from click_project.config import config
 from click_project.colors import Colorer
 from click_project.lib import move, copy, ParameterType, json_file,\
-    json_dumps, rm, call, cd, get_option_choices, cd, ln
+    json_dumps, rm, call, cd, get_option_choices, cd, ln, tempdir
 from click_project.lib import TablePrinter, get_authenticator
 from click_project.overloads import CommandSettingsKeyType
 from click_project.types import DirectoryProfileType, Suggestion
@@ -394,6 +397,10 @@ def install(ctx, profile, url, name, enable, url_prefix, install_deps,
         install_type = "git"
         if name is None:
             name = recipe
+    elif m := re.match("^https://github.com/.+/(?P<name>[^/]+)/tarball/.+$", url):
+        install_type = "webtar"
+        urls.append(url)
+        name = name or m["name"]
     elif re.match(r'(\w+://)(.+@)*([\w\d\.]+)(:[\d]+)?/*(.*)|(.+@)*([\w\d\.]+):(.*)', url):
         install_type = "git"
         urls.append(url)
@@ -479,6 +486,15 @@ def install(ctx, profile, url, name, enable, url_prefix, install_deps,
             ln(Path(url).resolve(), recipe_path)
         else:
             copy(url, recipe_path)
+    elif install_type == "webtar":
+        LOGGER.info(f"Getting the tarfile from {url}")
+        tar = tarfile.open(
+            fileobj=io.BytesIO(
+                requests.get(url).content
+            )
+        )
+        tar.extractall(recipe_path)
+
     recipe = profile.get_recipe(name)
 
     if enable is True:
