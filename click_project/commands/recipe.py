@@ -28,6 +28,7 @@ from click_project.completion import startswith
 from click_project.log import get_logger
 from click_project.config import config
 from click_project.colors import Colorer
+from click_project.profile import DirectoryProfile
 from click_project.lib import (
     move,
     copy,
@@ -562,6 +563,11 @@ def install(
             )
     if name.startswith("clk_recipe_"):
         name = name.replace("clk_recipe_", "")
+    if not re.match(f"^{DirectoryProfile.recipe_name_re}$", name):
+        raise click.UsageError(
+            f"Invalid recipe name '{name}'."
+            " A recipe's name must contain only letters or _"
+        )
 
     if install_type is None:
         raise click.UsageError(
