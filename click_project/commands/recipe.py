@@ -610,10 +610,10 @@ def install(
     recipe = profile.get_recipe(name)
 
     if enable is True:
-        LOGGER.status("Enabling the recipe")
+        LOGGER.status("-> Enabling the recipe")
         ctx.invoke(__enable, recipe=[name])
     if install_deps is True:
-        LOGGER.status("Installing the dependencies of the recipe")
+        LOGGER.status("-> Installing the dependencies of the recipe")
         ctx.invoke(_install_deps, recipe=[recipe])
 
 
