@@ -2,6 +2,17 @@
 
 set -e
 
+_check_pip () {
+    local good_version="$(python3 -c '
+import re
+import pip
+
+version_number=int(re.match("^([0-9]+)\.", pip.__version__).group(1))
+print(version_number >= 19)
+')"
+    [ "${good_version}" == "True" ]
+}
+
 
 if [ -t 1 ]; then
     green="\e[32m"
@@ -53,20 +64,28 @@ else
             sudo yum -y install curl
         fi
     fi
-    # we need to force the reinstall in order to make sure the latest version of
-    # pip is there
-    GET_PIP_TMP_DIR="${TMPDIR:-/tmp}/get-pip.py"
-    if which python3 curl > /dev/null; then
-        curl -sSL https://bootstrap.pypa.io/get-pip.py -o "${GET_PIP_TMP_DIR}"
-        python3 ${TMPDIR:-/tmp}/get-pip.py --force-reinstall --user --quiet & spin "installing pip"
-    elif which python wget > /dev/null; then
-        wget -nv https://bootstrap.pypa.io/get-pip.py -O "${GET_PIP_TMP_DIR}"
-        python3 ${TMPDIR:-/tmp}/get-pip.py --force-reinstall --user --quiet & spin "installing pip"
-    else
-        echo "Error: can't find or install pip"
+    if ! _check_pip
+    then
+        # we need to force the reinstall in order to make sure the latest version of
+        # pip is there
+        GET_PIP_TMP_DIR="${TMPDIR:-/tmp}/get-pip.py"
+        if which python3 curl > /dev/null; then
+            curl -sSL https://bootstrap.pypa.io/get-pip.py -o "${GET_PIP_TMP_DIR}"
+            python3 ${TMPDIR:-/tmp}/get-pip.py --force-reinstall --user --quiet & spin "installing pip"
+        elif which python wget > /dev/null; then
+            wget -nv https://bootstrap.pypa.io/get-pip.py -O "${GET_PIP_TMP_DIR}"
+            python3 ${TMPDIR:-/tmp}/get-pip.py --force-reinstall --user --quiet & spin "installing pip"
+        else
+            echo "Error: can't find or install pip"
+            exit 1
+        fi
+        trap "rm '${GET_PIP_TMP_DIR}'" 0
+    fi
+    if ! _check_pip
+    then
+        echo "Error: we could not install a suitable pip version..."
         exit 1
     fi
-    trap "rm '${GET_PIP_TMP_DIR}'" 0
     PIP=$HOME/.local/bin/pip3
     USER_OPT=--user
     INSTALL_PATH=$HOME/.local/bin
