@@ -91,6 +91,18 @@ else
     INSTALL_PATH=$HOME/.local/bin
 fi
 
+mkdir -p "${INSTALL_PATH}"
+touch "${INSTALL_PATH}/somedummyscripttotest"
+chmod +x "${INSTALL_PATH}/somedummyscripttotest"
+ASK_NEW_BASH=""
+if ! which somedummyscripttotest > /dev/null
+then
+    export PATH="${INSTALL_PATH}:${PATH}"
+    echo "export PATH='${INSTALL_PATH}:${PATH}'" >> "${HOME}/.bashrc"
+    ASK_NEW_BASH="1"
+fi
+rm "${INSTALL_PATH}/somedummyscripttotest"
+
 if which clk > /dev/null 2>&1
 then
     verb="updating"
@@ -106,16 +118,11 @@ for s in bash zsh fish; do
 done
 echo "done"
 
-if ! which clk > /dev/null; then
-    if ! [ -e "${HOME}/bin/clk" ]
-    then
-        mkdir -p "${HOME}/bin"
-        ln -s "${INSTALL_PATH}/clk" "${HOME}/bin/"
-    fi
-    if ! which clk > /dev/null; then
-        echo -e "${yellow}You will need to logout and login again!${reset}"
-    fi
+if [ "${ASK_NEW_BASH}" == "1" ]
+then
+    $INSTALL_PATH/clk log --level warning "You have to restart bash to see clk working"
 fi
+
 echo -e "${green}clk successfully installed! Enjoy!${reset}"
 for recipe in ${CLK_RECIPES}
 do
