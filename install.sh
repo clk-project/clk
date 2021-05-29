@@ -91,7 +91,14 @@ else
     INSTALL_PATH=$HOME/.local/bin
 fi
 
-${PIP} install ${USER_OPT} --quiet --upgrade click-project & spin "installing clk"
+if which clk > /dev/null 2>&1
+then
+    verb="updating"
+else
+    verb="installing"
+fi
+
+${PIP} install ${USER_OPT} --quiet --upgrade click-project & spin "${verb} clk"
 
 echo -n "installing clk completion... "
 for s in bash zsh fish; do
