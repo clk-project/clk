@@ -64,6 +64,21 @@ else
             sudo yum -y install curl
         fi
     fi
+
+    INSTALL_PATH=$HOME/.local/bin
+
+    mkdir -p "${INSTALL_PATH}"
+    touch "${INSTALL_PATH}/somedummyscripttotest"
+    chmod +x "${INSTALL_PATH}/somedummyscripttotest"
+    ASK_NEW_BASH=""
+    if ! which somedummyscripttotest > /dev/null
+    then
+        export PATH="${INSTALL_PATH}:${PATH}"
+        echo "export PATH='${INSTALL_PATH}:${PATH}'" >> "${HOME}/.bashrc"
+        ASK_NEW_BASH="1"
+    fi
+    rm "${INSTALL_PATH}/somedummyscripttotest"
+
     if ! _check_pip
     then
         # we need to force the reinstall in order to make sure the latest version of
@@ -88,20 +103,7 @@ else
     fi
     PIP="python3 -m pip"
     USER_OPT=--user
-    INSTALL_PATH=$HOME/.local/bin
 fi
-
-mkdir -p "${INSTALL_PATH}"
-touch "${INSTALL_PATH}/somedummyscripttotest"
-chmod +x "${INSTALL_PATH}/somedummyscripttotest"
-ASK_NEW_BASH=""
-if ! which somedummyscripttotest > /dev/null
-then
-    export PATH="${INSTALL_PATH}:${PATH}"
-    echo "export PATH='${INSTALL_PATH}:${PATH}'" >> "${HOME}/.bashrc"
-    ASK_NEW_BASH="1"
-fi
-rm "${INSTALL_PATH}/somedummyscripttotest"
 
 if which clk > /dev/null 2>&1
 then
