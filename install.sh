@@ -86,7 +86,7 @@ else
         echo "Error: we could not install a suitable pip version..."
         exit 1
     fi
-    PIP=$HOME/.local/bin/pip3
+    PIP="python3 -m pip"
     USER_OPT=--user
     INSTALL_PATH=$HOME/.local/bin
 fi
