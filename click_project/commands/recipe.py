@@ -502,9 +502,9 @@ def install(
     profile = profile or config.global_profile
     install_type = None
     urls = []
-    if match := re.match(
-        "^(?P<author>[a-zA-Z0-9]+)/(?P<recipe>[a-zA-Z0-9]+)$", url
-    ):
+    if re.match("[a-z0-9_]+", url):
+        url = f"click-project/{url}"
+    if match := re.match("^(?P<author>[a-zA-Z0-9_-]+)/(?P<recipe>[a-zA-Z0-9]+)$", url):
         author = match.group("author")
         recipe = match.group("recipe")
         urls.append(f"https://{url_prefix}/{author}/clk_recipe_{recipe}")
