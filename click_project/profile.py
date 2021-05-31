@@ -13,7 +13,6 @@ import six
 import re
 from enum import Enum
 
-from cached_property import cached_property
 import click
 from pluginbase import PluginBase
 
@@ -138,6 +137,7 @@ plugin_sources = {}
 @ProfileFactory.register_directory_profile
 class DirectoryProfile(Profile):
     recipe_name_re = "[a-z0-9_]+"
+    JSON_FILE_EXTENSION = ".json"
 
     def __gt__(self, other):
         return self.name < other.name
@@ -147,7 +147,7 @@ class DirectoryProfile(Profile):
         return os.path.join(self.location, "recipes", name)
 
     def link_location(self, name):
-        return self.recipe_location(name) + ".json"
+        return self.recipe_location(name) + self.JSON_FILE_EXTENSION
 
     @property
     def executable_paths(self):
@@ -251,7 +251,7 @@ class DirectoryProfile(Profile):
                     explicit=True
                 )
                 for location in glob(os.path.join(recipes_dir, "*"))
-                if not location.endswith(".json")
+                if not location.endswith(self.JSON_FILE_EXTENSION)
                 and not location.endswith("_backup")
             ],
             key=lambda r: r.name)
@@ -262,7 +262,7 @@ class DirectoryProfile(Profile):
         res = [
             location
             for location in glob(os.path.join(self.location, "recipes", "*"))
-            if location.endswith(".json")
+            if location.endswith(self.JSON_FILE_EXTENSION)
         ]
         return res
 
@@ -529,7 +529,7 @@ class DirectoryProfile(Profile):
             order = json.load(open(settings_level_file)).get("_self", {}).get("order", 100)
             move(settings_level_file, recipes_dir + "/" + name + "/{}.json".format(self.app_name))
             createfile(recipes_dir + "/" + name + "/version.txt", str(self.version + 1))
-            createfile(recipes_dir + "/" + name + ".json", json.dumps(
+            createfile(recipes_dir + "/" + name + self.JSON_FILE_EXTENSION, json.dumps(
                 {
                     "enabled": enabled,
                     "order": order,
