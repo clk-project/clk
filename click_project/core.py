@@ -654,7 +654,7 @@ def main():
             "Please help us by either submitting patches or "
             "sending report files to us. ({} --report-file .../somefile RESTOFCOMMAND, "
             "then send .../somefile to us on"
-            " https://github.com/Konubinix/click-project/issues/new)".format(config.main_command.path)
+            " https://github.com/click-project/click-project/issues/new)".format(config.main_command.path)
         )
         LOGGER.error(str(e))
         post_mortem()
@@ -671,7 +671,7 @@ def main():
             "Hmm, it looks like we did not properly catch this error."
             " Please help us improve click-project by telling us what"
             " caused the error on"
-            " https://github.com/Konubinix/click-project/issues/new ."
+            " https://github.com/click-project/click-project/issues/new ."
             " If you feel like a pythonista, you can try debugging"
             " the issue yourself, running the command"
             " with {cmd} --post-mortem or {cmd} --develop".format(

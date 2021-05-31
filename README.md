@@ -32,7 +32,7 @@ click-project. They like it and when something feels wrong, they just change it.
 
 # Quick start
 
-Install with `curl -sSL https://raw.githubusercontent.com/Konubinix/click-project/master/install.sh | bash`
+Install with `curl -sSL https://raw.githubusercontent.com/click-project/click-project/master/install.sh | bash`
 or `python3 -m pip install click-project`
 
 Now, the `clk` tool is available in `~/.local/bin/`, if that directory is not
@@ -198,7 +198,7 @@ Now, remove the whole stuff, with.
 
 And simply install the recipe I created that already does all of this with.
 
-`clk recipe clone Konubinix/hello`
+`clk recipe clone click-project/hello`
 
 Enable it with
 
