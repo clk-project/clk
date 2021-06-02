@@ -13,7 +13,7 @@ import click
 
 from click_project.commandresolver import CommandResolver
 from click_project.config import config
-from click_project.lib import which, updated_env, quote, call
+from click_project.lib import which, updated_env, quote, call, value_to_string
 from click_project.log import get_logger
 from click_project.overloads import AutomaticOption
 
@@ -158,14 +158,6 @@ class ExternalCommandResolver(CommandResolver):
                 [command_path]
                 + list(ctx.params.get("args", []))
             )
-
-            def value_to_string(value):
-                return (
-                    " ".join(map(quote, value))
-                    if type(value) is tuple
-                    else
-                    str(value) if value else ""
-                )
 
             env = {
                 ("CLK___" + key).upper(): (

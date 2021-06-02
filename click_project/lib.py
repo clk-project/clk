@@ -1629,3 +1629,12 @@ def parsedatetime(value):
         value,
         sourceTime=datetime.datetime.today()
     )
+
+
+def value_to_string(value):
+    return (
+        " ".join(map(quote, value))
+        if type(value) is tuple
+        else
+        str(value) if value else ""
+    )
