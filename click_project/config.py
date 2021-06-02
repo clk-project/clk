@@ -21,7 +21,7 @@ from click_project.profile import (
 )
 from click_project.click_helpers import click_get_current_context_safe
 from click_project.log import LOG_LEVELS, set_level, get_logger
-from click_project.lib import updated_env
+from click_project.lib import updated_env, quote, value_to_string
 
 
 LOGGER = get_logger(__name__)
@@ -179,6 +179,45 @@ class Config(object):
             if key.startswith(recipes_prefix)
         }
         return profile
+
+    @property
+    def context_parameters_as_environ_variables(self):
+        ctx = click.get_current_context()
+        env = {}
+
+        while ctx:
+            env.update(
+                {
+                    (ctx.command_path.replace(
+                        " ", "_"
+                    ) + "__" + key).upper(): (
+                        value_to_string(value)
+                    )
+                    for key, value in ctx.params.items()
+                }
+            )
+            ctx = ctx.parent
+        return env
+
+    @property
+    def parameters_as_environ_variables(self):
+        return {
+            (
+                "CLK_P_" + path.replace(
+                    "-", "__"
+                ).replace(
+                    ".", "_"
+                )
+            ).upper(): " ".join(map(quote, parameters))
+            for path, parameters in config.get_settings2("parameters").items()
+        }
+
+    @property
+    def external_commands_environ_variables(self):
+        return {
+            **self.context_parameters_as_environ_variables,
+            **self.parameters_as_environ_variables,
+        }
 
     @property
     def project(self):

@@ -171,30 +171,7 @@ class ExternalCommandResolver(CommandResolver):
             if "args" in ctx.params:
                 env[("CLK___ARGS").upper()] = " ".join(map(quote, ctx.params["args"]))
 
-            while ctx:
-                env.update(
-                    {
-                        (ctx.command_path.replace(
-                            " ", "_"
-                        ) + "__" + key).upper(): (
-                            value_to_string(value)
-                        )
-                        for key, value in ctx.params.items()
-                    }
-                )
-                ctx = ctx.parent
-
-            for path, parameters in config.get_settings2("parameters").items():
-                env[
-                    (
-                        f"CLK_P_" + path.replace(
-                            "-", "__"
-                        ).replace(
-                            ".", "_"
-                        )
-                    ).upper()
-                ] = " ".join(map(quote, parameters))
-
+            env.update(config.external_commands_environ_variables)
             env[("CLK___CMD_OPTIND").upper()] = (
                 str(len(config.commandline_profile.get_settings("parameters")[path]))
             )
