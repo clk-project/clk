@@ -1638,3 +1638,18 @@ def value_to_string(value):
         else
         str(value) if value else ""
     )
+
+
+def is_port_available(port, hostname="127.0.0.1"):
+    import socket
+    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    result = s.connect_ex((hostname, port))
+    s.close()
+    return result != 0
+
+
+def find_available_port(start_port, hostname="127.0.0.1"):
+    port = start_port
+    while not is_port_available(port, hostname):
+        port += 1
+    return port
