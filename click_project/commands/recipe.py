@@ -81,26 +81,6 @@ class RecipeNameType(ParameterType):
         ]
 
 
-class AllRecipeNameType(RecipeNameType):
-    def getchoice(self, ctx):
-        return super(AllRecipeNameType, self).getchoice(ctx) + [
-            n for p in config.root_profiles for n in p.recipe_link_names
-        ]
-
-
-class RecipeLinkNameType(ParameterType):
-    def getchoice(self, ctx):
-        return settings_stores["recipe"].profile.recipe_link_names
-
-    def complete(self, ctx, incomplete):
-        choice = self.getchoice(ctx)
-        return [
-            (recipe, load_short_help(recipe))
-            for recipe in choice
-            if startswith(recipe, incomplete)
-        ]
-
-
 class RecipeType(RecipeNameType):
     def convert(self, value, param, ctx):
         choice = self.getchoice(ctx)
@@ -202,10 +182,9 @@ def remove(recipe):
 
 
 @recipe.command(handle_dry_run=True)
-@table_fields(choices=["recipe", "set_in", "defined_in", "link", "order"])
+@table_fields(choices=["recipe", "set_in", "defined_in", "order"])
 @table_format(default="simple")
 @Colorer.color_options
-@flag("--link/--no-link", help="Show links also", default=False)
 @flag(
     "--enabled-only/--not-enabled-only", help="Show only the enabled recipes"
 )
@@ -221,21 +200,17 @@ def remove(recipe):
     help="The names of the recipes to show",
 )
 def show(
-    fields, format, link, order, recipes, enabled_only, disabled_only, **kwargs
+    fields, format, order, recipes, enabled_only, disabled_only, **kwargs
 ):
     """List the recipes and some info about them"""
     config_recipes = set(config.recipe.readonly.keys())
     avail_recipes = set([r.short_name for r in config.all_recipes])
     if not fields:
         fields = list(get_option_choices("fields"))
-        if not link:
-            fields.remove("link")
         if not order:
             fields.remove("order")
 
     if not recipes:
-        for profile in config.root_profiles:
-            config_recipes |= profile.recipe_link_names
         recipes = config_recipes | avail_recipes
     if not recipes:
         LOGGER.status("No recipe yet")
@@ -249,13 +224,6 @@ def show(
                     )
                     for profile in config.root_profiles
                     if profile.has_recipe(recipe_name)
-                ]
-            )
-            link_profiles = ", ".join(
-                [
-                    profile.name
-                    for profile in config.root_profiles
-                    if profile.has_recipe_link(recipe_name)
                 ]
             )
             profile = colorer.last_profile_of_settings(
@@ -275,7 +243,6 @@ def show(
                     (profile and click.style(profile, **profile_style))
                     or "Unset",
                     profiles or "Undefined",
-                    link_profiles,
                     config.get_recipe_order(recipe_name),
                 )
 
@@ -668,96 +635,3 @@ def update(recipe, clean):
                 call(["git", "checkout", "."])
                 call(["git", "reset", "--hard", "HEAD"])
             call(["git", "pull"])
-
-
-@recipe.group(default_command="show")
-def link():
-    """Manipulate recipes link"""
-
-
-link.inherited_params = ["profile", "recipe"]
-
-
-@link.command()
-@argument(
-    "recipes",
-    type=AllRecipeNameType(),
-    nargs=-1,
-    help="The names of the recipes to enable",
-)
-def _enable(recipes):
-    """Enable the given recipe in the link"""
-    for recipe in recipes:
-        with json_file(config.recipe.profile.link_location(recipe)) as values:
-            values["enabled"] = True
-        LOGGER.status(
-            "Enabling the link file of {} ({})".format(
-                recipe, config.recipe.writeprofile
-            )
-        )
-
-
-@link.command()
-@argument(
-    "recipes",
-    type=AllRecipeNameType(),
-    nargs=-1,
-    help="The names of the recipes to enable",
-)
-def _disable(recipes):
-    """Disable the given recipe in the link"""
-    for recipe in recipes:
-        with json_file(config.recipe.profile.link_location(recipe)) as values:
-            values["enabled"] = False
-        LOGGER.status(
-            "Disabling the link file of {} ({})".format(
-                recipe, config.recipe.writeprofile
-            )
-        )
-
-
-@link.command()
-@argument(
-    "recipe", type=RecipeNameType(), help="The name of the recipe to dump"
-)
-def _dump(recipe):
-    """Show the values of the link file"""
-    with json_file(config.recipe.profile.link_location(recipe)) as values:
-        click.echo(json_dumps(values))
-
-
-@link.command()
-@Colorer.color_options
-def _show(**kwargs):
-    """Link the list recipes"""
-    with Colorer(kwargs) as colorer:
-        for profile in config.root_profiles:
-            for name in profile.recipe_link_names:
-                message = name
-                enabled = profile.recipeislinkenabled(name)
-
-                message += " ({})".format(
-                    {
-                        True: "enabled",
-                        False: "disabled",
-                        None: "implicitly disabled",
-                    }[enabled]
-                )
-                colorer.echo(message, profile.name)
-
-
-@link.command()
-@argument(
-    "recipes",
-    type=RecipeLinkNameType(),
-    help="The names of the recipes to unset",
-)
-def _unset(recipes):
-    """Remove the the link file"""
-    for recipe in recipes:
-        rm(config.recipe.profile.link_location(recipe))
-        LOGGER.status(
-            "Removing the link file of {} ({})".format(
-                recipe, config.recipe.writeprofile
-            )
-        )

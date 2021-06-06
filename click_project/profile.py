@@ -146,9 +146,6 @@ class DirectoryProfile(Profile):
         name = self.recipe_short_name(name)
         return os.path.join(self.location, "recipes", name)
 
-    def link_location(self, name):
-        return self.recipe_location(name) + self.JSON_FILE_EXTENSION
-
     @property
     def executable_paths(self):
         return [
@@ -224,9 +221,6 @@ class DirectoryProfile(Profile):
         candidates = [recipe for recipe in self.recipes if recipe.name == name]
         return candidates
 
-    def has_recipe_link(self, name):
-        return os.path.exists(self.link_location(name))
-
     def get_recipe(self, name):
         name = self.recipe_full_name(name)
         candidates = [recipe for recipe in self.recipes if recipe.name == name]
@@ -256,22 +250,6 @@ class DirectoryProfile(Profile):
             ],
             key=lambda r: r.name)
         return res
-
-    @property
-    def recipe_links(self):
-        res = [
-            location
-            for location in glob(os.path.join(self.location, "recipes", "*"))
-            if location.endswith(self.JSON_FILE_EXTENSION)
-        ]
-        return res
-
-    @property
-    def recipe_link_names(self):
-        return {
-            os.path.splitext(os.path.basename(link))[0]
-            for link in self.recipe_links
-        }
 
     @property
     def recipe_names(self):
@@ -449,18 +427,6 @@ class DirectoryProfile(Profile):
     @property
     def isrecipe(self):
         return os.path.basename(os.path.dirname(self.location)) == "recipes"
-
-    def recipe_link_order(self, recipe):
-        if self.has_recipe_link(recipe):
-            link_location = self.link_location(recipe)
-            return json.load(open(link_location)).get("order", 100)
-        return 100
-
-    def recipeislinkenabled(self, recipe):
-        if self.has_recipe_link(recipe):
-            link_location = self.link_location(recipe)
-            return json.load(open(link_location)).get("enabled")
-        return None
 
     def alias_has_documentation(self):
         for settings_file in glob(self.location + "/{}*json".format(self.app_name)):
@@ -752,14 +718,7 @@ class PresetProfile(Profile):
     def migrate_if_needed(self, persist=True):
         pass
 
-    @property
-    def recipe_link_names(self):
-        return set()
-
     def has_recipe(self, name):
-        return False
-
-    def has_recipe_link(self, name):
         return False
 
     @property

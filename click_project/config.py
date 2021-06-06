@@ -439,12 +439,7 @@ class Config(object):
         if self.project:
             return ProfileFactory.create_preset_profile(
                 "workspacepreset",
-                settings={
-                    "recipe": {
-                        name: json.loads(open(self.workspace_profile.link_location(name), "rb").read().decode("utf-8"))
-                        for name in self.workspace_profile.recipe_link_names
-                    }
-                },
+                settings={},
                 explicit=False,
                 isroot=True,
                 activation_level=ActivationLevel.local,
@@ -469,10 +464,6 @@ class Config(object):
         return ProfileFactory.create_preset_profile(
             "globalpreset",
             settings={
-                "recipe": {
-                    name: json.loads(open(self.global_profile.link_location(name), "rb").read().decode("utf-8"))
-                    for name in self.global_profile.recipe_link_names
-                },
                 "launchers": {
                     "gdb": ["gdb", "--quiet", "--args"],
                     "gdb-jvm": ["gdb", "--quiet", "--eval-command=handle SIGSEGV nostop noprint pass", "--args"],
