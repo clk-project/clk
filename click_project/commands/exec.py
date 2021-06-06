@@ -5,9 +5,19 @@ from __future__ import print_function, absolute_import
 
 import os
 
-from click_project.decorators import command, option, argument
+from click_project.decorators import (
+    command,
+    option,
+    argument,
+    flag,
+)
 from click_project.core import cache_disk
-from click_project.lib import call, double_quote, ParameterType
+from click_project.lib import (
+    call,
+    double_quote,
+    ParameterType,
+    updated_env,
+)
 from click_project.completion import startswith
 from click_project.launcher import launcher
 from click_project.config import config
@@ -35,9 +45,13 @@ class ExecutableType(ParameterType):
 @option('--shell/--no-shell', help="Execute the command through the shell")
 @option('--stdout', help="File to which redirecting the standard output")
 @option('--stderr', help="File to which redirecting the standard error")
+@flag("--no-environ/--with-environ",
+      help="Disable the environment variables set automatically when running"
+      " the exec command. Might be useful if it conflits with your internal stuff"
+      )
 @launcher
 @argument('command', nargs=-1, required=True, type=ExecutableType(), help="The command to execute")
-def exec_(launcher_command, launcher, shell, command, stdout, stderr):
+def exec_(launcher_command, no_environ, launcher, shell, command, stdout, stderr):
     """Run a command."""
     if launcher:
         launcher_command = config.settings2["launchers"][launcher]
@@ -45,4 +59,5 @@ def exec_(launcher_command, launcher, shell, command, stdout, stderr):
         command = [' '.join([command[0]] + [double_quote(arg) for arg in command[1:]])]
     out = open(stdout, "wb") if stdout else None
     err = open(stderr, "wb") if stderr else None
-    call(command, shell=shell, stdout=out, stderr=err, launcher_command=launcher_command)
+    with updated_env(**({} if no_environ else config.external_commands_environ_variables)):
+        call(command, shell=shell, stdout=out, stderr=err, launcher_command=launcher_command)
