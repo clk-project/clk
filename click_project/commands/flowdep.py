@@ -59,7 +59,23 @@ def flowdep():
 @argument('dependencies', nargs=-1, type=CommandType(), help="The flow dependencies")
 def set(cmd, dependencies):
     """Set the flow dependencies of a command"""
+    if cmd in config.flowdeps.writable:
+        LOGGER.status(
+            "Removing old {} flowdep for {}: {}".format(
+                config.flowdeps.writeprofilename,
+                cmd,
+                ", ".join(config.flowdeps.writable[cmd]),
+            )
+        )
+
     config.flowdeps.writable[cmd] = dependencies
+    LOGGER.status(
+        "New {} flowdep for {}: {}".format(
+            config.flowdeps.writeprofilename,
+            cmd,
+            ", ".join(dependencies),
+        )
+    )
     config.flowdeps.write()
 
 
