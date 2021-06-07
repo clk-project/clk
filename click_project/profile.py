@@ -730,3 +730,11 @@ class PresetProfile(Profile):
 
     def compute_settings(self):
         pass
+
+
+def profile_name_to_commandline_name(name):
+    return name.replace("/", "-")
+
+
+def commandline_name_to_profile_name(name):
+    return name.replace("-", "/")

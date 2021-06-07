@@ -17,6 +17,7 @@ from click_project.log import get_logger
 from click_project.overloads import command, group, option, flag, argument, flow_command, flow_option, flow_argument
 from click_project.flow import flowdepends  # NOQA: F401
 from click_project.core import settings_stores, RecipeType
+from click_project.profile import profile_name_to_commandline_name, commandline_name_to_profile_name
 
 LOGGER = get_logger(__name__)
 
@@ -124,12 +125,6 @@ def use_settings(settings_name, settings_cls, override=True, default_profile='co
                 ctx.click_project_recipe = value
                 setup_settings(ctx)
             return value
-
-        def profile_name_to_commandline_name(name):
-            return name.replace("/", "-")
-
-        def commandline_name_to_profile_name(name):
-            return name.replace("-", "/")
 
         def profile_callback(ctx, attr, value):
             if value:
