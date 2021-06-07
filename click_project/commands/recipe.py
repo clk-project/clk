@@ -28,7 +28,10 @@ from click_project.completion import startswith
 from click_project.log import get_logger
 from click_project.config import config
 from click_project.colors import Colorer
-from click_project.profile import DirectoryProfile
+from click_project.profile import (
+    DirectoryProfile,
+    profile_name_to_commandline_name,
+)
 from click_project.lib import (
     move,
     copy,
@@ -544,7 +547,7 @@ def install(
             " so that we can fix the code and the doc."
         )
 
-    recipe_path = Path(profile.location) / "recipes" / name
+    recipe_path = (Path(profile.location) / "recipes" / name).resolve()
     if recipe_path.exists() or recipe_path.is_symlink():
         if force:
             rm(recipe_path)
@@ -635,3 +638,81 @@ def update(recipe, clean):
                 call(["git", "checkout", "."])
                 call(["git", "reset", "--hard", "HEAD"])
             call(["git", "pull"])
+
+
+@recipe.command()
+def describe():
+    """Try to give some insights into the content of the recipe"""
+    print(
+        f"The recipe {config.recipe.profile.name}"
+        f" is located at {config.recipe.profile.location} ."
+        " Let's try to see what it has to offer.")
+    print("##########")
+    for (setting, command) in [
+            ("alias", "alias"),
+            ("parameters", "parameter"),
+            ("flowdeps", "flowdep"),
+            ("triggers", "trigger"),
+            ("value", "value"),
+            ("recipe", "recipe"),
+    ]:
+        if config.recipe.profile.settings[setting]:
+            print(
+                f"I found some {command}, try running"
+                f" `clk {command} --{profile_name_to_commandline_name(config.recipe.profile.name)} show`"
+                " to know more."
+            )
+    found_some_executable = False
+    if "customcommands" in config.recipe.profile.settings:
+        if any(
+            [
+                next(Path(path).iterdir())
+                for path in (
+                        config.recipe.profile.settings["customcommands"]["executablepaths"]
+                        +
+                        config.recipe.profile.settings["customcommands"]["pythonpaths"]
+                )
+            ]
+        ):
+            print(
+                f"I found some executable commands, try running"
+                f" `clk customcommand --{profile_name_to_commandline_name(config.recipe.profile.name)} list`"
+                " to know more."
+            )
+            found_some_executable = True
+    if config.recipe.profile.name in ("local", "workspace", "global"):
+        preset_recipe = getattr(config, config.recipe.profile.name + "preset_profile")
+        if "customcommands" in preset_recipe.settings:
+            if any(
+                [
+                    next(Path(path).iterdir())
+                    for path in (
+                            preset_recipe.settings["customcommands"]["executablepaths"]
+                            +
+                            preset_recipe.settings["customcommands"]["pythonpaths"]
+                    )
+                ]
+            ):
+                print(
+                    f"I found some{ ' more' if found_some_executable else ''} executable commands, try running"
+                    f" `clk customcommand --{profile_name_to_commandline_name(preset_recipe.name)} list`"
+                    " to know more."
+                )
+    if plugins := config.recipe.profile.plugin_source.list_plugins():
+        print(
+            f"I found some plugins called {', '.join(plugins)}"
+        )
+    if remaining_config := set(config.recipe.profile.settings.keys()) - {
+            "alias",
+            "parameters",
+            "flowdeps",
+            "triggers",
+            "value",
+            "recipe",
+            "plugins",
+            "customcommands",
+    }:
+        print(
+            f"I also found some settings that I cannot explain: {', '.join(remaining_config)}."
+            " They might be set by other plugins, custom commands or recipes."
+        )
