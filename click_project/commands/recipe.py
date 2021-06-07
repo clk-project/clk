@@ -656,7 +656,7 @@ def describe():
             ("value", "value"),
             ("recipe", "recipe"),
     ]:
-        if config.recipe.profile.settings[setting]:
+        if config.recipe.profile.settings.get(setting):
             print(
                 f"I found some {command}, try running"
                 f" `clk {command} --{profile_name_to_commandline_name(config.recipe.profile.name)} show`"
