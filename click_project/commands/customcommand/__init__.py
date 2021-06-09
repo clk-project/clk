@@ -471,7 +471,11 @@ def rename(customcommand, new_name, force):
 @flag("--force", help="Overwrite destination")
 def _move(customcommand, profile, force):
     """Move a custom commands"""
-    new_location = Path(profile.location) / "bin" / Path(customcommand.customcommand_path).name
+    directory = (
+        "python" if customcommand.customcommand_path.endswith(".py")
+        else "bin"
+    )
+    new_location = Path(profile.location) / directory / Path(customcommand.customcommand_path).name
     if new_location.exists() and not force:
         raise click.UsageError(
             f"I won't overwrite {new_location},"
