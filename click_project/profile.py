@@ -139,6 +139,81 @@ class DirectoryProfile(Profile):
     recipe_name_re = "[a-z0-9_]+"
     JSON_FILE_EXTENSION = ".json"
 
+    def describe(self):
+        print(
+            f"The recipe {self.name}"
+            f" is located at {self.location} ."
+            " Let's try to see what it has to offer.")
+        print("##########")
+        for (setting, command) in [
+                ("alias", "alias"),
+                ("parameters", "parameter"),
+                ("flowdeps", "flowdep"),
+                ("triggers", "trigger"),
+                ("value", "value"),
+                ("recipe", "recipe"),
+        ]:
+            if self.settings.get(setting):
+                print(
+                    f"I found some {command}, try running"
+                    f" `clk {command} --{profile_name_to_commandline_name(self.name)} show`"
+                    " to know more."
+                )
+        found_some_executable = False
+        if "customcommands" in self.settings:
+            if any(
+                [
+                    next(Path(path).iterdir())
+                    for path in (
+                            self.settings["customcommands"]["executablepaths"]
+                            +
+                            self.settings["customcommands"]["pythonpaths"]
+                    )
+                ]
+            ):
+                print(
+                    f"I found some executable commands, try running"
+                    f" `clk customcommand --{profile_name_to_commandline_name(self.name)} list`"
+                    " to know more."
+                )
+                found_some_executable = True
+        if self.name in ("local", "workspace", "global"):
+            preset_recipe = getattr(config, self.name + "preset_profile")
+            if "customcommands" in preset_self.settings:
+                if any(
+                    [
+                        next(Path(path).iterdir())
+                        for path in (
+                                preset_self.settings["customcommands"]["executablepaths"]
+                                +
+                                preset_self.settings["customcommands"]["pythonpaths"]
+                        )
+                    ]
+                ):
+                    print(
+                        f"I found some{ ' more' if found_some_executable else ''} executable commands, try running"
+                        f" `clk customcommand --{profile_name_to_commandline_name(preset_self.name)} list`"
+                        " to know more."
+                    )
+        if plugins := self.plugin_source.list_plugins():
+            print(
+                f"I found some plugins called {', '.join(plugins)}"
+            )
+        if remaining_config := set(self.settings.keys()) - {
+                "alias",
+                "parameters",
+                "flowdeps",
+                "triggers",
+                "value",
+                "recipe",
+                "plugins",
+                "customcommands",
+        }:
+            print(
+                f"I also found some settings that I cannot explain: {', '.join(remaining_config)}."
+                " They might be set by other plugins, custom commands or recipes."
+            )
+
     def __gt__(self, other):
         return self.name < other.name
 
