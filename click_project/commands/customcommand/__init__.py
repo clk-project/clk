@@ -404,6 +404,7 @@ from click_project.decorators import (
     flag,
     option,
     command,
+    group,
     use_settings,
     table_format,
     table_fields,
