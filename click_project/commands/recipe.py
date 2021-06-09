@@ -641,11 +641,12 @@ def update(recipe, clean):
 
 
 @recipe.command()
-def describe():
+@argument("recipe", type=RecipeType(), help="The recipe to describe")
+def describe(recipe):
     """Try to give some insights into the content of the recipe"""
     print(
-        f"The recipe {config.recipe.profile.name}"
-        f" is located at {config.recipe.profile.location} ."
+        f"The recipe {recipe.name}"
+        f" is located at {recipe.location} ."
         " Let's try to see what it has to offer.")
     print("##########")
     for (setting, command) in [
@@ -656,32 +657,32 @@ def describe():
             ("value", "value"),
             ("recipe", "recipe"),
     ]:
-        if config.recipe.profile.settings.get(setting):
+        if recipe.settings.get(setting):
             print(
                 f"I found some {command}, try running"
-                f" `clk {command} --{profile_name_to_commandline_name(config.recipe.profile.name)} show`"
+                f" `clk {command} --{profile_name_to_commandline_name(recipe.name)} show`"
                 " to know more."
             )
     found_some_executable = False
-    if "customcommands" in config.recipe.profile.settings:
+    if "customcommands" in recipe.settings:
         if any(
             [
                 next(Path(path).iterdir())
                 for path in (
-                        config.recipe.profile.settings["customcommands"]["executablepaths"]
+                        recipe.settings["customcommands"]["executablepaths"]
                         +
-                        config.recipe.profile.settings["customcommands"]["pythonpaths"]
+                        recipe.settings["customcommands"]["pythonpaths"]
                 )
             ]
         ):
             print(
                 f"I found some executable commands, try running"
-                f" `clk customcommand --{profile_name_to_commandline_name(config.recipe.profile.name)} list`"
+                f" `clk customcommand --{profile_name_to_commandline_name(recipe.name)} list`"
                 " to know more."
             )
             found_some_executable = True
-    if config.recipe.profile.name in ("local", "workspace", "global"):
-        preset_recipe = getattr(config, config.recipe.profile.name + "preset_profile")
+    if recipe.name in ("local", "workspace", "global"):
+        preset_recipe = getattr(config, recipe.name + "preset_profile")
         if "customcommands" in preset_recipe.settings:
             if any(
                 [
@@ -698,11 +699,11 @@ def describe():
                     f" `clk customcommand --{profile_name_to_commandline_name(preset_recipe.name)} list`"
                     " to know more."
                 )
-    if plugins := config.recipe.profile.plugin_source.list_plugins():
+    if plugins := recipe.plugin_source.list_plugins():
         print(
             f"I found some plugins called {', '.join(plugins)}"
         )
-    if remaining_config := set(config.recipe.profile.settings.keys()) - {
+    if remaining_config := set(recipe.settings.keys()) - {
             "alias",
             "parameters",
             "flowdeps",
