@@ -594,6 +594,7 @@ def install(
     if install_deps is True:
         LOGGER.status("-> Installing the dependencies of the recipe")
         ctx.invoke(_install_deps, recipe=[recipe])
+    LOGGER.status(f"Done installing the recipe {name}")
 
 
 @recipe.command()
