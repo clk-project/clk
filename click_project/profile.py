@@ -145,6 +145,11 @@ class DirectoryProfile(Profile):
             f" is located at {self.location} ."
             " Let's try to see what it has to offer.")
         print("##########")
+        enable_argument = (
+            f" --recipe {self.short_name}"
+            if self.isrecipe
+            else ""
+        )
         for (setting, command) in [
                 ("alias", "alias"),
                 ("parameters", "parameter"),
@@ -156,7 +161,7 @@ class DirectoryProfile(Profile):
             if self.settings.get(setting):
                 print(
                     f"I found some {command}, try running"
-                    f" `clk {command} --{profile_name_to_commandline_name(self.name)} show`"
+                    f" `clk{enable_argument} {command} --{profile_name_to_commandline_name(self.name)} show`"
                     " to know more."
                 )
         found_some_executable = False
@@ -173,7 +178,7 @@ class DirectoryProfile(Profile):
             ):
                 print(
                     f"I found some executable commands, try running"
-                    f" `clk customcommand --{profile_name_to_commandline_name(self.name)} list`"
+                    f" `clk{enable_argument} customcommand --{profile_name_to_commandline_name(self.name)} list`"
                     " to know more."
                 )
                 found_some_executable = True
@@ -192,7 +197,7 @@ class DirectoryProfile(Profile):
                 ):
                     print(
                         f"I found some{ ' more' if found_some_executable else ''} executable commands, try running"
-                        f" `clk customcommand --{profile_name_to_commandline_name(preset_self.name)} list`"
+                        f" `clk{enable_argument} customcommand --{profile_name_to_commandline_name(preset_self.name)} list`"
                         " to know more."
                     )
         if plugins := self.plugin_source.list_plugins():
