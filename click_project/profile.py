@@ -184,9 +184,9 @@ class DirectoryProfile(Profile):
                     [
                         next(Path(path).iterdir())
                         for path in (
-                                preset_self.settings["customcommands"]["executablepaths"]
+                                preset_recipe.settings["customcommands"]["executablepaths"]
                                 +
-                                preset_self.settings["customcommands"]["pythonpaths"]
+                                preset_recipe.settings["customcommands"]["pythonpaths"]
                         )
                     ]
                 ):
