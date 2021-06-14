@@ -183,8 +183,9 @@ class DirectoryProfile(Profile):
                 )
                 found_some_executable = True
         if self.name in ("local", "workspace", "global"):
+            from click_project.config import config
             preset_recipe = getattr(config, self.name + "preset_profile")
-            if "customcommands" in preset_self.settings:
+            if "customcommands" in preset_recipe.settings:
                 if any(
                     [
                         next(Path(path).iterdir())
@@ -197,7 +198,7 @@ class DirectoryProfile(Profile):
                 ):
                     print(
                         f"I found some{ ' more' if found_some_executable else ''} executable commands, try running"
-                        f" `clk{enable_argument} customcommand --{profile_name_to_commandline_name(preset_self.name)} list`"
+                        f" `clk{enable_argument} customcommand --{profile_name_to_commandline_name(preset_recipe.name)} list`"
                         " to know more."
                     )
         if plugins := self.plugin_source.list_plugins():
