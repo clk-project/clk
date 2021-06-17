@@ -33,7 +33,7 @@ from click_project.profile import (
     profile_name_to_commandline_name,
 )
 from click_project.lib import (
-    move,
+    check_output, move,
     copy,
     ParameterType,
     json_file,
@@ -552,28 +552,38 @@ def install(
         if force:
             rm(recipe_path)
         else:
-            raise click.UsageError(
-                f"A recipe already exists at location {recipe_path}"
-                " Use --force to override it."
-            )
+            if not os.path.exists(f'{recipe_path}/.git'):
+                raise click.UsageError(
+                    f"A recipe already exists at location {recipe_path}"
+                    " Use --force to override it."
+                )
     if install_type == "git":
-        ok = False
-        for tryurl in urls:
-            try:
-                call(["git", "clone", tryurl, str(recipe_path)])
-            except subprocess.CalledProcessError:
-                # this one did not work, go on to the next one
-                continue
-            else:
-                # found one that works, stop trying
-                ok = True
-                break
-        if ok is False:
-            raise click.UsageError(
-                "Tried git cloning the following urls, without success:"
-                f" {', '.join(urls)}. Please take a look at the documentation"
-                " to see how you can pass urls"
-            )
+        # check if we already have that recipe locally
+        if os.path.exists(f'{recipe_path}/.git'):
+            with cd(recipe_path):
+                url = check_output(['git', 'remote', 'get-url', 'origin']).strip()
+                if url not in urls:
+                    LOGGER.debug(f"urls: {urls}")
+                    raise click.UsageError(f"Recipe {name} already exists and is not using the same URL: {url}")
+                call(['git', 'pull'])
+        else:
+            ok = False
+            for tryurl in urls:
+                try:
+                    call(["git", "clone", tryurl, str(recipe_path)])
+                except subprocess.CalledProcessError:
+                    # this one did not work, go on to the next one
+                    continue
+                else:
+                    # found one that works, stop trying
+                    ok = True
+                    break
+            if ok is False:
+                raise click.UsageError(
+                    "Tried git cloning the following urls, without success:"
+                    f" {', '.join(urls)}. Please take a look at the documentation"
+                    " to see how you can pass urls"
+                )
     elif install_type == "file":
         if editable:
             ln(Path(url).resolve(), recipe_path)
