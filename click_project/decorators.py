@@ -27,7 +27,8 @@ def param_config(name, *args, **kwargs):
     kls = kwargs.pop("kls", option)
     cls = kwargs.get("cls", {
         option: click.core.Option,
-        argument: click.core.Argument
+        argument: click.core.Argument,
+        flag: click.core.Option,
     }[kls])
 
     class Conf(typ):
