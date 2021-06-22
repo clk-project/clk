@@ -449,11 +449,6 @@ def where_is(profile):
 )
 @argument("name", help="The name of the recipe", required=False)
 @flag(
-    "--enable/--disable",
-    help="Automatically enable the cloned recipe",
-    default=True,
-)
-@flag(
     "--install-deps/--no-install-deps",
     help="Automatically install the dependencies.",
     default=True,
@@ -466,7 +461,7 @@ def where_is(profile):
 )
 @pass_context
 def install(
-    ctx, profile, url, name, enable, url_prefix, install_deps, editable, force
+    ctx, profile, url, name, url_prefix, install_deps, editable, force
 ):
     """Install a recipe from outside"""
     profile = profile or config.global_profile
@@ -598,9 +593,6 @@ def install(
 
     recipe = profile.get_recipe(name)
 
-    if enable is True:
-        LOGGER.status("-> Enabling the recipe")
-        ctx.invoke(__enable, recipe=[name])
     if install_deps is True:
         LOGGER.status("-> Installing the dependencies of the recipe")
         ctx.invoke(_install_deps, recipe=[recipe])
