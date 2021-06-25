@@ -198,11 +198,7 @@ Now, remove the whole stuff, with.
 
 And simply install the recipe I created that already does all of this with.
 
-`clk recipe clone click-project/hello`
-
-Enable it with
-
-`clk recipe enable hello`
+`clk recipe install hello`
 
 And see how it came back to life with.
 
