@@ -6,3 +6,4 @@ dist
 wheelhouse
 build
 README.html
+.tox
