@@ -1,5 +1,6 @@
 click-project
 ==============================================================================
+
 [![Vulnerabilities](https://sonarcloud.io/api/project_badges/measure?project=click-project_click-project&metric=vulnerabilities)](https://sonarcloud.io/dashboard?id=click-project_click-project)
 [![Bugs](https://sonarcloud.io/api/project_badges/measure?project=click-project_click-project&metric=bugs)](https://sonarcloud.io/dashboard?id=click-project_click-project)
 [![Code Smells](https://sonarcloud.io/api/project_badges/measure?project=click-project_click-project&metric=code_smells)](https://sonarcloud.io/dashboard?id=click-project_click-project)
@@ -11,6 +12,9 @@ click-project
 [![Reliability Rating](https://sonarcloud.io/api/project_badges/measure?project=click-project_click-project&metric=reliability_rating)](https://sonarcloud.io/dashboard?id=click-project_click-project)
 [![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=click-project_click-project&metric=security_rating)](https://sonarcloud.io/dashboard?id=click-project_click-project)
 [![Technical Debt](https://sonarcloud.io/api/project_badges/measure?project=click-project_click-project&metric=sqale_index)](https://sonarcloud.io/dashboard?id=click-project_click-project)
+
+
+[![CircleCI](https://circleci.com/gh/click-project/click-project.svg?style=svg)](https://app.circleci.com/pipelines/github/click-project/click-project)
 
 
 Click-project makes it *easy* and fun for ***you*** to create *awesome* command line interfaces!
