@@ -281,8 +281,10 @@ A classic : `python3 -m pip install click-project`
 
 # A quick tour of click-project
 
-When you install `click-project`, a command line tool called `clk` is installed
-also. You may want to play a bit with it to get the look and feel.
+When you install `click-project`, you have access to a full set of awesome
+libraries to create your own command line tool, as well as a simple command line
+tool called `clk`. You may want to play a bit with the later to grasp the look and
+feel of what `Click-project` is capable of..
 
 First, run `clk --help` or more simply `clk`. See, there are already plenty of
 commands already available.
