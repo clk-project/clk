@@ -324,13 +324,16 @@ class ExtraParametersMixin(object):
 
     def parameters_callback_split_value(self, value):
         profile = value
-        recipe = "main"
+        recipe = None
         if value != "context":
             p = config.get_profile(value)
             if p.isrecipe:
                 profile = p.parent_name
                 recipe = p.short_name
-        return ["--{}".format(profile), "--recipe", recipe]
+        res = ["--{}".format(profile)]
+        if recipe is not None:
+            res += ["--recipe", recipe]
+        return res
 
     def unset_parameter_callback(self, ctx, param, value):
         if value and not ctx.resilient_parsing:

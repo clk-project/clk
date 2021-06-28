@@ -80,8 +80,6 @@ def use_settings(settings_name, settings_cls, override=True, default_profile='co
             if ctx is not None and hasattr(ctx, "click_project_recipe"):
                 recipe = ctx.click_project_recipe
             else:
-                recipe = "main"
-            if recipe == "main":
                 recipe = None
             if profile_name == "context":
                 compute_settings(False)
