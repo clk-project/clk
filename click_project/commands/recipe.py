@@ -624,6 +624,7 @@ def _install_deps(ctx, recipe):
     "recipe",
     type=RecipeType(),
     nargs=-1,
+    required=True,
     help="The names of the recipes to update",
 )
 @flag("--clean/--no-clean", help="Remove local modification and update")
