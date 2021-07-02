@@ -633,9 +633,11 @@ def update(recipe, clean):
     for cmd in recipe:
         root = Path(cmd.location)
         if not (root / ".git").exists():
-            raise click.UsageError(
-                "For the time being, I only can update" " cloned recipes."
+            LOGGER.warning(
+                f"I cannot update the recipe {cmd.name}."
+                " For the time being, I only can update" " cloned recipes."
             )
+            continue
         with cd(root):
             if clean:
                 call(["git", "clean", "-fd"])
