@@ -632,6 +632,7 @@ def update(recipe, clean):
     """Update this cloned recipe"""
     for cmd in recipe:
         root = Path(cmd.location)
+        LOGGER.info(f"Updating {cmd.name}")
         if not (root / ".git").exists():
             LOGGER.warning(
                 f"I cannot update the recipe {cmd.name}."
