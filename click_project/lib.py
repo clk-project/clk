@@ -391,10 +391,14 @@ def tempdir(dir=None):
 
 
 @contextmanager
-def temporary_file(dir=None, suffix=None, nameonly=False):
+def temporary_file(dir=None, suffix=None, nameonly=False, content=None):
     u"""Create a temporary file to use in a with statement"""
     d = tempfile.NamedTemporaryFile(delete=nameonly, suffix=suffix)
-    if nameonly:
+    if content is not None:
+        if not isinstance(content, bytes):
+            content = content.encode('utf8')
+        d.write(content)
+    if nameonly or content is not None:
         d.close()
     LOGGER.action(f"Creating a temporary file at {d.name}")
     try:
