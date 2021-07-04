@@ -30,6 +30,7 @@ Monkey patch setuptools to write a simple bash script that run the entry point
 
 From the work of Aaron Christianson in http://github.com/ninjaaron/fast-entry_points
 '''
+import sys
 from setuptools.command import easy_install
 
 
@@ -47,7 +48,7 @@ def get_args(cls, dist, header=None):  # noqa: D205,D400
                 type_,
                 name,
                 "#!/bin/bash\n",
-                """exec python3 -m click_project.main "$@" """.rstrip()
+                f"""exec {sys.executable} -m click_project.main "$@" """.rstrip()
             )
             for res in args:
                 yield res
