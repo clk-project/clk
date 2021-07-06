@@ -621,6 +621,10 @@ def check_output(cmd, *args, **kwargs):
     except KeyError:
         nostderr = False
     try:
+        failok = kwargs.pop('failok')
+    except KeyError:
+        failok = False
+    try:
         internal = kwargs.pop('internal')
     except KeyError:
         internal = False
@@ -659,7 +663,13 @@ def check_output(cmd, *args, **kwargs):
         else:
             if nostderr:
                 kwargs['stderr'] = None
-            return subprocess.check_output(cmd, *args, **kwargs).decode('utf-8')
+            try:
+                return subprocess.check_output(cmd, *args, **kwargs).decode('utf-8')
+            except BaseException as e:
+                if failok:
+                    return e.output.decode("utf-8")
+                else:
+                    raise e
 
 
 def is_pip_install(src_dir):
