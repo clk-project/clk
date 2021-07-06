@@ -407,7 +407,7 @@ def set_order(recipe, order):
 @recipe.command()
 @argument(
     "profile",
-    type=DirectoryProfileType(),
+    type=RecipeType(),
     help="The name of the profile to open",
 )
 @option(
