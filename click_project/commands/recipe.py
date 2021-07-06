@@ -10,6 +10,7 @@ import tarfile
 import io
 import subprocess
 from pathlib import Path
+from shlex import split
 
 import click
 
@@ -638,8 +639,10 @@ def _install_deps(ctx, recipe):
     required=True,
     help="The names of the recipes to update",
 )
-@flag("--clean/--no-clean", help="Remove local modification and update")
-def update(recipe, clean):
+@flag("--clean", "method", flag_value="clean", help="Remove local modification and update")
+@flag("--stash", "method", flag_value="stash", help="Stash local modification and update")
+@flag("--no-clean", "method", flag_value="no-clean", help="Don't try cleaning the repository before pulling")
+def update(recipe, method):
     """Update this cloned recipe"""
     for cmd in recipe:
         root = Path(cmd.location)
@@ -651,11 +654,20 @@ def update(recipe, clean):
             )
             continue
         with cd(root):
-            if clean:
+            need_stash = False
+            if method == "clean":
                 call(["git", "clean", "-fd"])
                 call(["git", "checkout", "."])
                 call(["git", "reset", "--hard", "HEAD"])
+            elif method == "stash":
+                need_stash = (
+                    check_output(split("git status --porcelain --ignore-submodules --untracked-files=no")) != ""
+                )
+            if need_stash:
+                call(split("git stash"))
             call(["git", "pull"])
+            if need_stash:
+                call(split("git stash pop"))
 
 
 @recipe.command()
