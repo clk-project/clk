@@ -94,8 +94,19 @@ class RecipeType(RecipeNameType):
                 param,
                 ctx,
             )
-        profile = settings_stores["recipe"].profile
-        return profile.get_recipe(value)
+        candidates = list(reversed(list(config.all_enabled_recipes)))
+        # the algorithm here is to first prefer exact match before falling back
+        # to looser match. Both loops look alike, but the reason why they are
+        # searated is that even if a loose (based on the short_name) match
+        # occurs earlier on the list than an exact match (based on the name),
+        # the exact match should take the precedence.
+        for candidate in candidates:
+            if candidate.name == value:
+                return candidate
+        for candidate in candidates:
+            if candidate.short_name == value:
+                return candidate
+        raise NotImplementedError("This part of the code should never be reached")
 
 
 def load_short_help(recipe):
