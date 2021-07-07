@@ -33,19 +33,11 @@ class ExternalCommandResolver(CommandResolver):
 
     @property
     def customcommands(self):
-        return (
-            self.settings.get("customcommands")
-            if self.settings
-            else config.get_settings2("customcommands")
-        )
+        return (self.settings.get("customcommands") if self.settings else config.get_settings2("customcommands"))
 
     @property
     def cmddirs(self):
-        return (
-            self.customcommands.get(
-                "executablepaths", []
-            )
-        )
+        return (self.customcommands.get("executablepaths", []))
 
     def _list_command_paths(self, parent=None):
         if not hasattr(self, "_external_cmds"):
@@ -97,34 +89,23 @@ class ExternalCommandResolver(CommandResolver):
                 metadata_out = out[metadata_desc:]
                 for l in metadata_out.splitlines():
                     if l.startswith("O:"):
-                        m = re.match(
-                            "^O:(?P<name>[^:]+):(?P<type>[^:]+):(?P<help>[^:]+)(:(?P<default>[^:]+))?$",
-                            l)
+                        m = re.match("^O:(?P<name>[^:]+):(?P<type>[^:]+):(?P<help>[^:]+)(:(?P<default>[^:]+))?$", l)
                         if m is None:
-                            raise click.UsageError(
-                                "Expected format in {} is O:name:type:help[:defautl],"
-                                " got {}".format(path, l))
-                        options.append(
-                            m.groupdict()
-                        )
+                            raise click.UsageError("Expected format in {} is O:name:type:help[:defautl],"
+                                                   " got {}".format(path, l))
+                        options.append(m.groupdict())
                     if l.startswith("F:"):
                         m = re.match("^F:(?P<name>[^:]+):(?P<help>[^:]+)(:(?P<default>[^:]+))?$", l)
                         if m is None:
-                            raise click.UsageError(
-                                "Expected format in {} is F:name:help[:defautl],"
-                                " got {}".format(path, l))
-                        flags.append(
-                            m.groupdict()
-                        )
+                            raise click.UsageError("Expected format in {} is F:name:help[:defautl],"
+                                                   " got {}".format(path, l))
+                        flags.append(m.groupdict())
                     if l.startswith("A:"):
                         m = re.match("^A:(?P<name>[^:]+):(?P<type>[^:]+):(?P<help>[^:]+)(:(?P<nargs>[^:]+))?$", l)
                         if m is None:
-                            raise click.UsageError(
-                                "Expected format in {} is A:name:type:help[:nargs],"
-                                " got {}".format(path, l))
-                        arguments.append(
-                            m.groupdict()
-                        )
+                            raise click.UsageError("Expected format in {} is A:name:type:help[:nargs],"
+                                                   " got {}".format(path, l))
+                        arguments.append(m.groupdict())
                     m = re.match("^N:(?P<help>[^:]+)$", l)
                     if m is not None:
                         remaining_args = m.group("help")
@@ -154,41 +135,25 @@ class ExternalCommandResolver(CommandResolver):
             from click_project.lib import call
             ctx = click.get_current_context()
             config.merge_settings()
-            args = (
-                [command_path]
-                + list(ctx.params.get("args", []))
-            )
+            args = ([command_path] + list(ctx.params.get("args", [])))
 
-            env = {
-                ("CLK___" + key).upper(): (
-                    value_to_string(value)
-                )
-                for key, value in kwargs.items()
-            }
-            env[("CLK___PATH").upper()] = (
-                ctx.command_path.replace(" ", "_").upper()
-            )
+            env = {("CLK___" + key).upper(): (value_to_string(value)) for key, value in kwargs.items()}
+            env[("CLK___PATH").upper()] = (ctx.command_path.replace(" ", "_").upper())
             if "args" in ctx.params:
                 env[("CLK___ARGS").upper()] = " ".join(map(quote, ctx.params["args"]))
 
             env.update(config.external_commands_environ_variables)
-            env[("CLK___CMD_OPTIND").upper()] = (
-                str(len(config.commandline_profile.get_settings("parameters")[path]))
-            )
-            env[("CLK___CMD_ARGS").upper()] = (
-                " ".join(quote(a) for a in config.commandline_profile.get_settings("parameters")[path])
-            )
-            env[("CLK___OPTIND").upper()] = (
-                str(len(args[1:]))
-            )
-            env[("CLK___ALL").upper()] = (
-                " ".join(quote(a) for a in args[1:])
-            )
+            env[("CLK___CMD_OPTIND").upper()] = (str(len(config.commandline_profile.get_settings("parameters")[path])))
+            env[("CLK___CMD_ARGS").upper()] = (" ".join(
+                quote(a) for a in config.commandline_profile.get_settings("parameters")[path]))
+            env[("CLK___OPTIND").upper()] = (str(len(args[1:])))
+            env[("CLK___ALL").upper()] = (" ".join(quote(a) for a in args[1:]))
             with updated_env(**env):
                 call(
                     args,
                     internal=True,
                 )
+
         types = {
             "int": int,
             "float": float,
@@ -237,23 +202,18 @@ class ExternalCommandResolver(CommandResolver):
                 default=f["default"] == "True",
             )(external_command)
 
-        external_command = command(
-            name=name,
-            ignore_unknown_options=ignore_unknown_options,
-            help=cmdhelp,
-            short_help=cmdhelp.splitlines()[0] if cmdhelp else "",
-            handle_dry_run=True,
-            flowdepends=cmdflowdepends)(
-                external_command
-            )
+        external_command = command(name=name,
+                                   ignore_unknown_options=ignore_unknown_options,
+                                   help=cmdhelp,
+                                   short_help=cmdhelp.splitlines()[0] if cmdhelp else "",
+                                   handle_dry_run=True,
+                                   flowdepends=cmdflowdepends)(external_command)
         external_command.params.append(
-            AutomaticOption(
-                ["--edit-customcommand"],
-                help="Edit the external command",
-                expose_value=False,
-                is_flag=True,
-                callback=lambda ctx, param, value: edit_external_command(command_path) if value is True else None
-            )
-        )
+            AutomaticOption(["--edit-customcommand"],
+                            help="Edit the external command",
+                            expose_value=False,
+                            is_flag=True,
+                            callback=lambda ctx, param, value: edit_external_command(command_path)
+                            if value is True else None))
         external_command.customcommand_path = command_path
         return external_command

@@ -55,6 +55,4 @@ def cmd_format(name, cmd_help, indent):
 def resolve(path):
     """Resolve a command to help understanding where a command comes from"""
     cmd, resolver = get_command(path, True)
-    click.echo(
-        f"The command {path} is resolved by the resolver {resolver.name}"
-    )
+    click.echo(f"The command {path} is resolved by the resolver {resolver.name}")

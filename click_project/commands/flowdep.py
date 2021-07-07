@@ -60,22 +60,18 @@ def flowdep():
 def set(cmd, dependencies):
     """Set the flow dependencies of a command"""
     if cmd in config.flowdeps.writable:
-        LOGGER.status(
-            "Removing old {} flowdep for {}: {}".format(
-                config.flowdeps.writeprofilename,
-                cmd,
-                ", ".join(config.flowdeps.writable[cmd]),
-            )
-        )
-
-    config.flowdeps.writable[cmd] = dependencies
-    LOGGER.status(
-        "New {} flowdep for {}: {}".format(
+        LOGGER.status("Removing old {} flowdep for {}: {}".format(
             config.flowdeps.writeprofilename,
             cmd,
-            ", ".join(dependencies),
-        )
-    )
+            ", ".join(config.flowdeps.writable[cmd]),
+        ))
+
+    config.flowdeps.writable[cmd] = dependencies
+    LOGGER.status("New {} flowdep for {}: {}".format(
+        config.flowdeps.writeprofilename,
+        cmd,
+        ", ".join(dependencies),
+    ))
     config.flowdeps.write()
 
 
@@ -113,15 +109,17 @@ def remove(cmd, dependencies):
 
 
 @flowdep.command(handle_dry_run=True)
-@argument('cmds', nargs=-1, type=CommandSettingsKeyType("flowdeps"),
+@argument('cmds',
+          nargs=-1,
+          type=CommandSettingsKeyType("flowdeps"),
           help="The command to which unset the flow dependencies")
 def unset(cmds):
     """Unset the flow dependencies of a command"""
     for cmd in cmds:
         if cmd not in config.flowdeps.writable:
             raise click.ClickException("The %s configuration has no '%s' flow dependency registered."
-                                       "Try using another profile option (like --local, --global)"
-                                       % (config.flowdeps.writeprofile, cmd))
+                                       "Try using another profile option (like --local, --global)" %
+                                       (config.flowdeps.writeprofile, cmd))
     for cmd in cmds:
         LOGGER.status("Erasing {} flow dependencies from {} settings".format(cmd, config.flowdeps.writeprofile))
         del config.flowdeps.writable[cmd]
@@ -153,13 +151,8 @@ def show(ctx, name_only, cmds, all, fields, format, **kwargs):
                     formatted = " ".join(quote(p) for p in deps)
                 else:
                     values = {
-                        profile.name: " ".join([
-                            quote(p)
-                            for p in
-                            config.flowdeps.all_settings.get(profile.name, {}).get(
-                                cmd,
-                                [])
-                        ])
+                        profile.name:
+                        " ".join([quote(p) for p in config.flowdeps.all_settings.get(profile.name, {}).get(cmd, [])])
                         for profile in config.all_enabled_profiles
                     }
                     args = colorer.colorize(values, config.flowdeps.readprofile)
@@ -170,8 +163,7 @@ def show(ctx, name_only, cmds, all, fields, format, **kwargs):
                     tp.echo(cmd, formatted)
 
 
-def compute_dot(cmds=None, strict=False, cluster=True,
-                left_right=False, lonely=False):
+def compute_dot(cmds=None, strict=False, cluster=True, left_right=False, lonely=False):
     import networkx
     g = networkx.digraph.DiGraph()
 
@@ -220,6 +212,7 @@ def compute_dot(cmds=None, strict=False, cluster=True,
             if lonely:
                 g.add_node(cmd.path)
             register_cluster(cmd.path)
+
     fill_graph(cmds)
     nodes = g.nodes()
     adjacency = g.edges()
@@ -239,9 +232,9 @@ def compute_dot(cmds=None, strict=False, cluster=True,
             dot += """  "{}" [label= "{}{}", fillcolor = {}, style = filled];\n""".format(
                 node,
                 node,
-                "\n -> {}".format(
-                    ' , '.join(' '.join(quote(arg) for arg in cmd) for cmd in aliases[node])
-                ) if node in aliases else "",
+                "\n -> {}".format(' , '.join(' '.join(quote(arg)
+                                                      for arg in cmd)
+                                             for cmd in aliases[node])) if node in aliases else "",
                 "greenyellow" if node in aliases else "skyblue",
             )
     for src, dst in adjacency:
@@ -253,33 +246,22 @@ def compute_dot(cmds=None, strict=False, cluster=True,
 
 @flowdep.command()
 @option("--output", help="Output file instead of showing it in a web browser - not relevant with format x11")
-@option("--format", type=click.Choice(["png", "svg", "x11", "pdf", "dot"]),
-        help="Format to use", default="svg")
-@flag('--strict/--all',
-      help="Show the all dependency graph or only the explicitly configured flowdep")
-@flag("--left-right/--top-bottom", help="Show from left to right",
-      default=True)
-@flag("--lonely/--no-lonely", help="Show lonely nodes also"
-      " (it generally pollutes unnecessarily the graph)")
-@flag("--cluster/--independent",
-      help="Show all commands independently or cluster groups",
-      default=True)
+@option("--format", type=click.Choice(["png", "svg", "x11", "pdf", "dot"]), help="Format to use", default="svg")
+@flag('--strict/--all', help="Show the all dependency graph or only the explicitly configured flowdep")
+@flag("--left-right/--top-bottom", help="Show from left to right", default=True)
+@flag("--lonely/--no-lonely", help="Show lonely nodes also" " (it generally pollutes unnecessarily the graph)")
+@flag("--cluster/--independent", help="Show all commands independently or cluster groups", default=True)
 @argument('cmds', nargs=-1, type=CommandType(), help="The commands to display")
-def graph(output, format, cmds, strict, cluster,
-          left_right, lonely):
+def graph(output, format, cmds, strict, cluster, left_right, lonely):
     """Display the flow dependencies as a graph"""
-    dot = compute_dot(cmds=cmds, strict=strict,
-                      cluster=cluster, left_right=left_right,
-                      lonely=lonely)
+    dot = compute_dot(cmds=cmds, strict=strict, cluster=cluster, left_right=left_right, lonely=lonely)
     if dot is None:
         LOGGER.status("Nothing to show")
         exit(0)
     if format != 'dot':
         dotpath = which("dot")
         if dotpath is None:
-            raise click.UsageError(
-                "You don't have graphviz installed. Therefore you cannot use dot."
-            )
+            raise click.UsageError("You don't have graphviz installed. Therefore you cannot use dot.")
         args = [dotpath, "-T{}".format(format)]
         p = subprocess.Popen(
             args,

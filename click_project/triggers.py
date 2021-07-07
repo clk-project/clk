@@ -7,7 +7,6 @@ from click_project.log import get_logger
 from click_project.config import config
 from click_project.core import run
 
-
 LOGGER = get_logger(__name__)
 
 

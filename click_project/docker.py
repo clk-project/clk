@@ -22,19 +22,23 @@ def docker_command(group=None, **kwargs):
         g = group.group(**kwargs)(f) if group else group_(**kwargs)(f)
         docker_generic_commands(g, **opts)
         return g
+
     return decorator
 
 
-def docker_generic_commands(group, directory, extra_options=lambda: ["-p", config.simulator_name.lower()],
-                            extra_env=lambda: {}, extra_flowdepends={}):
+def docker_generic_commands(group,
+                            directory,
+                            extra_options=lambda: ["-p", config.simulator_name.lower()],
+                            extra_env=lambda: {},
+                            extra_flowdepends={}):
     def abs_directory():
         return os.path.abspath(directory() if callable(directory) else directory)
 
     def docker_compose(args, internal=False):
         with updated_env(**extra_env()):
-            call(["docker-compose"] +
-                 (extra_options() if callable(extra_options) else extra_options) +
-                 args, internal=internal, cwd=abs_directory())
+            call(["docker-compose"] + (extra_options() if callable(extra_options) else extra_options) + args,
+                 internal=internal,
+                 cwd=abs_directory())
 
     class DockerServices(ParameterType):
         @property
@@ -44,18 +48,14 @@ def docker_generic_commands(group, directory, extra_options=lambda: ["-p", confi
                 with cd(directory, internal=True):
                     return [
                         s.strip()
-                        for s in
-                        check_output(["docker-compose"] + args + ["config", "--services"],
-                                     internal=True).splitlines()
+                        for s in check_output(["docker-compose"] + args +
+                                              ["config", "--services"], internal=True).splitlines()
                     ]
+
             return compute(abs_directory(), extra_options() if callable(extra_options) else extra_options)
 
         def complete(self, ctx, incomplete):
-            return [
-                choice
-                for choice in self.choices
-                if startswith(choice, incomplete)
-            ]
+            return [choice for choice in self.choices if startswith(choice, incomplete)]
 
     @group.command(flowdepends=extra_flowdepends.get('up'))
     @argument("service", type=DockerServices(), nargs=-1, help="The services to spin up")
@@ -69,17 +69,12 @@ def docker_generic_commands(group, directory, extra_options=lambda: ["-p", confi
         up_args = []
         for scale in scales:
             up_args += ['--scale', scale]
-        docker_compose(
-            ['up'] +
-            (['--detach'] if detach else [])+
-            (['--build'] if build else [])+
-            up_args +
-            (["--force-recreate"] if force_recreate else []) +
-            list(service)
-        )
+        docker_compose(['up'] + (['--detach'] if detach else []) + (['--build'] if build else []) + up_args +
+                       (["--force-recreate"] if force_recreate else []) + list(service))
 
     @group.command(flowdepends=extra_flowdepends.get('down'))
-    @option('--remove-orphans/--no-remove-orphans', default=True,
+    @option('--remove-orphans/--no-remove-orphans',
+            default=True,
             help="Remove the container of the project that are not in the current config")
     @option("--timeout", "-t", help="Specify a shutdown timeout in seconds")
     @option('--volumes/--no-volumes', default=True, help="Remove the application volumes")

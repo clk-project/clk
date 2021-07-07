@@ -13,7 +13,12 @@ from click_project.commandresolver import CommandResolver
 from click_project.log import get_logger
 from click_project.overloads import (
     Group,
-    list_commands, get_command, command, group, get_ctx, Command,
+    list_commands,
+    get_command,
+    command,
+    group,
+    get_ctx,
+    Command,
     AutomaticOption,
 )
 from click_project.core import get_ctx, run, temp_config
@@ -51,12 +56,7 @@ def edit_alias_command_in_profile(path, profile):
         LOGGER.info("Aboooooort !!")
     else:
         value = value.strip().replace("\n", " , ")
-        LOGGER.status(
-            f"Replacing alias {path}"
-            f" in {profile.name}"
-            f" from '{old_value}'"
-            f" to '{value}'"
-        )
+        LOGGER.status(f"Replacing alias {path}" f" in {profile.name}" f" from '{old_value}'" f" to '{value}'")
         profile.settings["alias"][path]["commands"] = parse(shlex.split(value))
         profile.write_settings()
 
@@ -77,10 +77,7 @@ class AliasToGroupResolver(CommandResolver):
             original_command = parent.original_command
         except AttributeError:
             return []
-        return [
-            "{}.{}".format(parent.path, cmd_name)
-            for cmd_name in list_commands(original_command.path)
-        ]
+        return ["{}.{}".format(parent.path, cmd_name) for cmd_name in list_commands(original_command.path)]
 
     def _get_command(self, path, parent):
         cmd_name = path.split(".")[-1]
@@ -94,23 +91,20 @@ class AliasCommandResolver(CommandResolver):
 
     def _list_command_paths(self, parent):
         if isinstance(parent, config.main_command.__class__):
-            return [
-                a
-                for a in config.get_settings('alias').keys()
-            ]
+            return [a for a in config.get_settings('alias').keys()]
         else:
             return [
-                a
-                for a in config.get_settings('alias').keys()
-                if a.startswith(parent.path + ".")
-                and a[len(parent.path)+1:] != 0
+                a for a in config.get_settings('alias').keys()
+                if a.startswith(parent.path + ".") and a[len(parent.path) + 1:] != 0
             ]
 
     def _get_command(self, path, parent=None):
         name = path.split(".")[-1]
         commands_to_run = config.get_settings('alias')[path]["commands"]
         cmdhelp = config.get_settings('alias')[path]["documentation"]
-        cmdhelp = cmdhelp or "Alias for: {}".format(' , '.join(' '.join(quote(arg) for arg in cmd) for cmd in commands_to_run))
+        cmdhelp = cmdhelp or "Alias for: {}".format(' , '.join(' '.join(quote(arg)
+                                                                        for arg in cmd)
+                                                               for cmd in commands_to_run))
         short_help = cmdhelp.splitlines()[0]
         if len(cmdhelp) > 55:
             short_help = cmdhelp[:52] + '...'
@@ -121,21 +115,18 @@ class AliasCommandResolver(CommandResolver):
             cmdctx = get_ctx(cmd, resilient_parsing=True)
             # capture the flow of the aliased command only if it is not called
             # with an explicit flow
-            if (
-                    not cmdctx.params.get("flow") and
-                    not cmdctx.params.get("flow_from") and
-                    not cmdctx.params.get("flow_after")
-            ):
+            if (not cmdctx.params.get("flow") and not cmdctx.params.get("flow_from")
+                    and not cmdctx.params.get("flow_after")):
                 deps += get_flow_commands_to_run(cmdctx.command.path)
         c = get_ctx(commands_to_run[-1])
         kind = None
 
         def create_cls(cls):
-            return cls(
-                name=name,
-                help=cmdhelp,
-                short_help=short_help,
-                ignore_unknown_options=c is not None and c.ignore_unknown_options)
+            return cls(name=name,
+                       help=cmdhelp,
+                       short_help=short_help,
+                       ignore_unknown_options=c is not None and c.ignore_unknown_options)
+
         if c is not None:
             if isinstance(c.command, Group):
                 cls = create_cls(group)
@@ -189,22 +180,20 @@ class AliasCommandResolver(CommandResolver):
                 with _ctx:
                     old_resilient_parsing = _ctx.resilient_parsing
                     _ctx.resilient_parsing = ctx.resilient_parsing
-                    _ctx.command.callback(
-                        **_ctx.params
-                    )
+                    _ctx.command.callback(**_ctx.params)
                     _ctx.resilient_parsing = old_resilient_parsing
+
             for cur_ctx in ctxs:
                 run_callback(cur_ctx)
 
         alias_command = pass_context(alias_command)
         alias_command = cls(alias_command)
         alias_command.params.append(
-            AutomaticOption(
-                ["--edit-alias"], help="Edit the alias",
-                expose_value=False, is_flag=True,
-                callback=lambda ctx, param, value: edit_alias_command(path) if value is True else None
-            )
-        )
+            AutomaticOption(["--edit-alias"],
+                            help="Edit the alias",
+                            expose_value=False,
+                            is_flag=True,
+                            callback=lambda ctx, param, value: edit_alias_command(path) if value is True else None))
         if deps:
             alias_command.clickproject_flowdepends = deps
 
@@ -222,31 +211,21 @@ class AliasCommandResolver(CommandResolver):
                 return not (
                     # catched the default value only because it was not
                     # given to the command line
-                    param.name in c.click_project_default_catch
-                    or
+                    param.name in c.click_project_default_catch or
                     # not given for sure
-                    c.params.get(param.name) is None
-                )
+                    c.params.get(param.name) is None)
+
             alias_command.params = [
-                param
-                for param in c.command.params
-                if param.name not in alias_param_names
-                and param.name not in ("flow", "flow_from", "flow_after")
-                and (
+                param for param in c.command.params
+                if param.name not in alias_param_names and param.name not in ("flow", "flow_from", "flow_after") and (
                     # options may be given several times
-                    isinstance(param, click.Option)
-                    or
-                    (
+                    isinstance(param, click.Option) or (
                         # it is an argument then!
-                        not was_given(param)
-                        or
+                        not was_given(param) or
                         # may be given, but may be given again
-                        param.multiple
-                        or
+                        param.multiple or
                         # may be given, but may be given again
-                        param.nargs == -1
-                    )
-                )
+                        param.nargs == -1))
             ] + alias_command.params
             # any option required with nargs=-1 that was already given should be
             # no more required

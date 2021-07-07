@@ -24,10 +24,7 @@ from click_project.overloads import argument
 from click_project.log import get_logger
 from click_project.core import DynamicChoiceType, cache_disk
 from click_project.externalcommands import ExternalCommandResolver
-from click_project.overloads import (
-    CommandSettingsKeyType, CommandType,
-    get_command, Option, Argument
-)
+from click_project.overloads import (CommandSettingsKeyType, CommandType, get_command, Option, Argument)
 from click_project.flow import get_flow_commands_to_run
 from click_project.types import DirectoryProfileType, DynamicChoice
 from click_project.decorators import param_config
@@ -87,10 +84,7 @@ def _move(profile_source, plugin, profile_destination, force):
     old_location = Path(profile_source.location) / "plugins" / (plugin + ".py")
     new_location = Path(profile_destination.location) / "plugins" / (plugin + ".py")
     if new_location.exists() and not force:
-        raise click.UsageError(
-            f"I won't overwrite {new_location},"
-            " unless called with --force"
-        )
+        raise click.UsageError(f"I won't overwrite {new_location}," " unless called with --force")
     makedirs(new_location.parent)
     move(old_location, new_location)
     LOGGER.status(f"Moved {old_location} into {new_location}")
@@ -220,10 +214,7 @@ def create(profile_source, new_name, open, force, body, description):
     script_path = Path(profile_source.location) / "plugins" / (new_name + ".py")
     makedirs(script_path.parent)
     if script_path.exists() and not force:
-        raise click.UsageError(
-            f"Won't overwrite {script_path} unless"
-            " explicitly asked so with --force"
-        )
+        raise click.UsageError(f"Won't overwrite {script_path} unless" " explicitly asked so with --force")
     script_path.write_text(f"""#!/usr/bin/env python3
 # -*- coding:utf-8 -*-
 
@@ -251,7 +242,4 @@ def show(fields, format, **kwargs):
     with TablePrinter(fields, format) as tp, Colorer(kwargs) as colorer:
         for profile in config.all_directory_profiles:
             for plugin in profile.plugin_source.list_plugins():
-                tp.echo(
-                    colorer.apply_color(plugin, profile.name),
-                    profile.plugin_short_doc(plugin) or ""
-                )
+                tp.echo(colorer.apply_color(plugin, profile.name), profile.plugin_short_doc(plugin) or "")

@@ -45,8 +45,7 @@ def launcher():
     pass
 
 
-@launcher.command(ignore_unknown_options=True, change_directory_options=False,
-                   handle_dry_run=True)
+@launcher.command(ignore_unknown_options=True, change_directory_options=False, handle_dry_run=True)
 @argument('launcher', type=LauncherType(missing_ok=True), help="The launcher name")
 @argument('command', nargs=-1, help="The launcher command")
 def set(launcher, command):
@@ -72,8 +71,8 @@ def unset(launchers):
     for launcher in launchers:
         if launcher not in config.launchers.writable:
             raise click.ClickException("The command %s has no parameter registered in the %s configuration."
-                                       "Try using another profile option (like --local or --global)"
-                                       % (launcher, config.launchers.writeprofile))
+                                       "Try using another profile option (like --local or --global)" %
+                                       (launcher, config.launchers.writeprofile))
     for launcher in launchers:
         LOGGER.status("Erasing {} launchers from {} settings".format(launcher, config.launchers.writeprofile))
         del config.launchers.writable[launcher]
@@ -99,13 +98,8 @@ def show(ctx, name_only, launchers, fields, format, **kwargs):
                     args = config.launchers.readonly.get(launcher_name, [])
                 else:
                     values = {
-                        profile.name: " ".join([
-                            quote(p)
-                            for p in
-                            config.launchers.all_settings[profile.name].get(
-                                launcher_name,
-                                [])
-                        ])
+                        profile.name:
+                        " ".join([quote(p) for p in config.launchers.all_settings[profile.name].get(launcher_name, [])])
                         for profile in config.all_enabled_profiles
                     }
                     args = colorer.colorize(values, config.launchers.readprofile)

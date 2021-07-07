@@ -15,9 +15,7 @@ class NetrcKeyring(keyring.backend.KeyringBackend):
 
     def get_password(self, servicename, username):
         try:
-            authenticator = netrc.netrc(
-                os.path.expanduser("~/.netrc")
-            ).authenticators(username)
+            authenticator = netrc.netrc(os.path.expanduser("~/.netrc")).authenticators(username)
             return json.dumps((authenticator[0], authenticator[2]))
         except:  # NOQA: E722
             return None

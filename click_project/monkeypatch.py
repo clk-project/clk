@@ -3,7 +3,6 @@
 
 from click import Context
 
-
 old_lookup_default = Context.lookup_default
 
 

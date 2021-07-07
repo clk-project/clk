@@ -30,14 +30,13 @@ def keyvaluestore_generic_commands(group, settings_name):
         """Rename a key"""
         if src not in getattr(config, settings_name).writable:
             raise click.ClickException("The %s configuration has no '%s' values registered."
-                                       "Try using another profile option (like --local or --global)"
-                                       % (getattr(config, settings_name).writeprofile, src))
+                                       "Try using another profile option (like --local or --global)" %
+                                       (getattr(config, settings_name).writeprofile, src))
         if dst in getattr(config, settings_name).writable and not overwrite:
-            LOGGER.error(
-                "{} already exists at profile {}"
-                " use --overwrite to perform the renaming anyway".format(
-                    dst,
-                    getattr(config, settings_name).writeprofile))
+            LOGGER.error("{} already exists at profile {}"
+                         " use --overwrite to perform the renaming anyway".format(
+                             dst,
+                             getattr(config, settings_name).writeprofile))
             exit(1)
         getattr(config, settings_name).writable[dst] = getattr(config, settings_name).writable[src]
         del getattr(config, settings_name).writable[src]
@@ -51,8 +50,8 @@ def keyvaluestore_generic_commands(group, settings_name):
         for key in keys:
             if key not in getattr(config, settings_name).writable:
                 raise click.ClickException("The %s configuration has no '%s' value registered."
-                                           "Try using another profile option (like --local or --global)"
-                                           % (getattr(config, settings_name).writeprofile, key))
+                                           "Try using another profile option (like --local or --global)" %
+                                           (getattr(config, settings_name).writeprofile, key))
         for key in keys:
             LOGGER.status("Erasing {} value from {} settings".format(key, getattr(config, settings_name).writeprofile))
             del getattr(config, settings_name).writable[key]
@@ -62,36 +61,29 @@ def keyvaluestore_generic_commands(group, settings_name):
     @Colorer.color_options
     @table_format(default='key_value')
     @table_fields(choices=['key', 'value'])
-    @argument('keys', nargs=-1, type=CommandSettingsKeyType("value"),
+    @argument('keys',
+              nargs=-1,
+              type=CommandSettingsKeyType("value"),
               help="The keys to show. When no keys are provided, all the keys are showed")
     def show(fields, format, keys, **kwargs):
         """Show the values"""
-        keys = keys or (
-            sorted(config.settings.get(settings_name, {}))
-            if all
-            else sorted(getattr(config, settings_name).readonly.keys())
-        )
+        keys = keys or (sorted(config.settings.get(settings_name, {})) if all else sorted(
+            getattr(config, settings_name).readonly.keys()))
         with TablePrinter(fields, format) as tp, Colorer(kwargs) as colorer:
             for key in keys:
                 if getattr(config, settings_name).readprofile == "settings-file":
                     args = [format(getattr(config, settings_name).readonly.get(key, {}).get("commands", []))]
                 elif "/" in getattr(config, settings_name).readprofile:
-                    args = getattr(config, settings_name).all_settings.get(
-                        getattr(config, settings_name).readprofile,
-                        {}
-                    ).get(
-                        key,
-                        {}
-                    ).get("value")
+                    args = getattr(config,
+                                   settings_name).all_settings.get(getattr(config, settings_name).readprofile,
+                                                                   {}).get(key, {}).get("value")
                     if args is None:
                         continue
                 else:
-                    all_values = [
-                        (profile.name, getattr(config, settings_name).all_settings.get(profile.name, {}).get(key))
-                        for profile in config.all_enabled_profiles
-                    ]
-                    all_values = [(profile, value) for profile, value in all_values
-                                  if value is not None]
+                    all_values = [(profile.name, getattr(config, settings_name).all_settings.get(profile.name,
+                                                                                                 {}).get(key))
+                                  for profile in config.all_enabled_profiles]
+                    all_values = [(profile, value) for profile, value in all_values if value is not None]
                     if not all_values:
                         # noting to show for this key
                         continue

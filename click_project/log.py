@@ -46,16 +46,12 @@ class Handler(logging.Handler):
             raise
         except:
             self.handleError(record)
-        if (
-                exit_on_log_level is not None and
-                record.levelno >= LOG_LEVELS[exit_on_log_level.lower()]
-        ):
+        if (exit_on_log_level is not None and record.levelno >= LOG_LEVELS[exit_on_log_level.lower()]):
             raise LogLevelExitException()
 
 
 default_handler = Handler()
 default_handler.formatter = click_log.ColorFormatter()
-
 
 managed_loggers = set()
 
@@ -138,16 +134,7 @@ INFO = logging.INFO
 WARN = logging.WARN
 WARNING = logging.WARNING
 ERROR = logging.ERROR
-LOG_LEVELS = collections.OrderedDict(
-    [
-        ("develop", DEVELOP),
-        ("debug", logging.DEBUG),
-        ("action", ACTION),
-        ("status", STATUS),
-        ("deprecated", DEPRECATED),
-        ("info", logging.INFO),
-        ("warning", logging.WARNING),
-        ("error", logging.ERROR),
-        ("critical", logging.CRITICAL)
-    ]
-)
+LOG_LEVELS = collections.OrderedDict([("develop", DEVELOP), ("debug", logging.DEBUG), ("action", ACTION),
+                                      ("status", STATUS), ("deprecated", DEPRECATED), ("info", logging.INFO),
+                                      ("warning", logging.WARNING), ("error", logging.ERROR),
+                                      ("critical", logging.CRITICAL)])

@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
-
 """General purpose functions, not directly linked to click-project"""
 
 from __future__ import print_function, absolute_import
@@ -44,22 +43,16 @@ LOGGER = get_logger(__name__)
 dry_run = None
 main_module = None
 
-
 if six.PY3:
     unicode_ = str
 else:
     unicode_ = unicode  # NOQA: F821 undefined name 'unicode': Needed for python3 compatibility
 
-
 DocumentedChoice = DocumentedChoice
 
 
 def read_properties_file(file_name):
-    return dict([
-        line.strip().split("=")
-        for line in open(file_name, "r").readlines()
-        if "=" in line
-    ])
+    return dict([line.strip().split("=") for line in open(file_name, "r").readlines() if "=" in line])
 
 
 def ensure_unicode(value):
@@ -111,14 +104,12 @@ def move(src, dst):
     See shutil.move
 
     """
-    LOGGER.action(
-        "Move {} to {}".format(src, dst))
+    LOGGER.action("Move {} to {}".format(src, dst))
     if not dry_run:
         shutil.move(src, dst)
 
 
-def createfile(name, content, append=False, internal=False, force=False,
-               makedirs=False, mode=None):
+def createfile(name, content, append=False, internal=False, force=False, makedirs=False, mode=None):
     if os.path.exists(name) and not force:
         click.UsageError(f"{name} already exists")
     if makedirs:
@@ -223,7 +214,6 @@ def glob_first(expr, default=None):
 
 def main_default(**default_options):
     u"""Change the default values of the main method of a Command"""
-
     def decorator(f):
         oldmain = f.main
 
@@ -232,6 +222,7 @@ def main_default(**default_options):
             newopts = dict(default_options)
             newopts.update(options)
             oldmain(*args, **newopts)
+
         f.main = main
         return f
 
@@ -254,36 +245,24 @@ def check_uptodate(src, dst, src_exclude=[], dst_exclude=[]):
         src_mtime = os.stat(src).st_mtime
         src_f = src
     elif os.path.isdir(src):
-        src_mtime, src_f = max(
-            map(
-                lambda f: (os.stat(f).st_mtime, f),
-                get_all_files_recursive(src, src_exclude)
-            ),
-            key=lambda e: e[0]
-        )
+        src_mtime, src_f = max(map(lambda f: (os.stat(f).st_mtime, f), get_all_files_recursive(src, src_exclude)),
+                               key=lambda e: e[0])
     else:
         raise NotImplemented
     if os.path.isfile(dst):
         dst_mtime = os.stat(dst).st_mtime
         dst_f = dst
     elif os.path.isdir(dst):
-        dst_mtime, dst_f = min(
-            map(
-                lambda f: (os.stat(f).st_mtime, f),
-                get_all_files_recursive(dst, dst_exclude)
-            ),
-            key=lambda e: e[0]
-        )
+        dst_mtime, dst_f = min(map(lambda f: (os.stat(f).st_mtime, f), get_all_files_recursive(dst, dst_exclude)),
+                               key=lambda e: e[0])
     else:
         raise NotImplemented
-    LOGGER.debug(
-        u"Comparing mtimes of {} ({}) with {} ({})".format(
-            src_f,
-            src_mtime,
-            dst_f,
-            dst_mtime,
-        )
-    )
+    LOGGER.debug(u"Comparing mtimes of {} ({}) with {} ({})".format(
+        src_f,
+        src_mtime,
+        dst_f,
+        dst_mtime,
+    ))
     return src_mtime < dst_mtime
 
 
@@ -329,6 +308,7 @@ def _call(args, kwargs):
             signal_hook(p, num, stack)
         else:
             os.kill(p.pid, num)
+
     signal.signal(signal.SIGINT, signal_handler)
     signal.signal(signal.SIGTERM, signal_handler)
     if call_merge_stdout_and_stderr:
@@ -349,9 +329,7 @@ def _call(args, kwargs):
                     break
             p.wait()
             if p.returncode != 0:
-                raise subprocess.CalledProcessError(
-                    p.returncode, args,
-                    output=stdout)
+                raise subprocess.CalledProcessError(p.returncode, args, output=stdout)
         else:
             p = subprocess.Popen(args, **kwargs)
             p.wait()
@@ -509,7 +487,7 @@ def _parse_version_parts(s):
         if not part or part == '.':
             continue
         if part[:1] in '0123456789':
-            yield part.zfill(8)    # pad for numeric comparison
+            yield part.zfill(8)  # pad for numeric comparison
         else:
             yield '*' + part
 
@@ -550,7 +528,7 @@ def parse_version(s):
     parts = []
     for part in _parse_version_parts(s.lower()):
         if part.startswith('*'):
-            if part < '*final':   # remove '-' before a prerelease tag
+            if part < '*final':  # remove '-' before a prerelease tag
                 while parts and parts[-1] == '*final-':
                     parts.pop()
             # remove trailing zeros from each series of numeric parts
@@ -602,9 +580,7 @@ def communicate(command, *args, **kwargs):
     if "internal" in kwargs:
         del kwargs["internal"]
     try:
-        process = subprocess.Popen(command,
-                                   stdout=subprocess.PIPE,
-                                   stderr=subprocess.PIPE, *args, **kwargs)
+        process = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, *args, **kwargs)
         output, error = process.communicate()
         output = output.decode("utf-8")
         error = error.decode("utf-8")
@@ -656,9 +632,7 @@ def check_output(cmd, *args, **kwargs):
             p.wait()
             stdout = p.stdout.read().decode("utf-8")
             if p.returncode != 0:
-                raise subprocess.CalledProcessError(
-                    p.returncode, args,
-                    output=stdout)
+                raise subprocess.CalledProcessError(p.returncode, args, output=stdout)
             return stdout
         else:
             if nostderr:
@@ -728,8 +702,7 @@ def extract(url, dest='.'):
     return dest + '/' + archname
 
 
-def download(url, outdir=None, outfilename=None, mkdir=False, sha256=None,
-             mode=None):
+def download(url, outdir=None, outfilename=None, mkdir=False, sha256=None, mode=None):
     outdir = outdir or tempfile.mkdtemp()
     outfilename = outfilename or os.path.basename(url)
     if not os.path.exists(outdir) and mkdir:
@@ -874,8 +847,16 @@ def ordered_unique(ls):
     return [l for l in ls if not (l in seen or seen.add(l))]
 
 
-def git_sync(url, directory, commit_ish='master', extra_branches=(), force=False, push_url=None, quiet=False,
-             last_tag=False, reset=False, use_shallow=False):
+def git_sync(url,
+             directory,
+             commit_ish='master',
+             extra_branches=(),
+             force=False,
+             push_url=None,
+             quiet=False,
+             last_tag=False,
+             reset=False,
+             use_shallow=False):
     """Retrieve and/or update a git repository"""
     version = re.search('git version (.+)', safe_check_output(['git', '--version'], internal=True)).group(1)
     use_shallow = use_shallow and parse_version(version) >= parse_version('2.1.4') and not last_tag
@@ -890,12 +871,8 @@ def git_sync(url, directory, commit_ish='master', extra_branches=(), force=False
     if force and os.path.exists(directory):
         rm(directory)
     if os.path.exists(directory):
-        assert os.path.exists(git_dir), (
-            "Want to git sync {} in {} but {}"
-            " already exists and is not a git root".format(
-                url, directory, directory
-            )
-        )
+        assert os.path.exists(git_dir), ("Want to git sync {} in {} but {}"
+                                         " already exists and is not a git root".format(url, directory, directory))
         with cd(directory):
             if reset:
                 call(['git', 'reset', '--hard'] + quiet)
@@ -919,7 +896,8 @@ def git_sync(url, directory, commit_ish='master', extra_branches=(), force=False
         commit_ish = commit_ish or 'master'
         ref_exists = check_output(['git', 'ls-remote', url, commit_ish], internal=True).strip() != ""
         if ref_exists:
-            call(['git', 'clone'] + quiet + (['--depth', '1'] if use_shallow else []) + ['-b', commit_ish, url, directory])
+            call(['git', 'clone'] + quiet + (['--depth', '1'] if use_shallow else []) +
+                 ['-b', commit_ish, url, directory])
         else:
             call(['git', 'clone'] + quiet + ['-n', url, directory])
             with cd(directory):
@@ -974,11 +952,21 @@ def get_key_values_formats():
     return get_tabulate_formats()
 
 
-def progressbar(iterable=None, length=None, label=None, show_eta=True,
-                show_percent=None, show_pos=False,
-                item_show_func=None, fill_char='#', empty_char='-',
+def progressbar(iterable=None,
+                length=None,
+                label=None,
+                show_eta=True,
+                show_percent=None,
+                show_pos=False,
+                item_show_func=None,
+                fill_char='#',
+                empty_char='-',
                 bar_template='%(label)s  [%(bar)s]  %(info)s',
-                info_sep='  ', width=36, file=sys.stderr, color=None, clear=True,
+                info_sep='  ',
+                width=36,
+                file=sys.stderr,
+                color=None,
+                clear=True,
                 disabled=False):
     """This function creates an iterable context manager that can be used
     to iterate over something while showing a progress bar.  It will
@@ -1061,12 +1049,21 @@ def progressbar(iterable=None, length=None, label=None, show_eta=True,
     if disabled:
         return null_context
     color = click.termui.resolve_color_default(color)
-    return ProgressBar(iterable=iterable, length=length, show_eta=show_eta,
-                       show_percent=show_percent, show_pos=show_pos,
-                       item_show_func=item_show_func, fill_char=fill_char,
-                       empty_char=empty_char, bar_template=bar_template,
-                       info_sep=info_sep, file=file, label=label,
-                       width=width, color=color, clear=clear)
+    return ProgressBar(iterable=iterable,
+                       length=length,
+                       show_eta=show_eta,
+                       show_percent=show_percent,
+                       show_pos=show_pos,
+                       item_show_func=item_show_func,
+                       fill_char=fill_char,
+                       empty_char=empty_char,
+                       bar_template=bar_template,
+                       info_sep=info_sep,
+                       file=file,
+                       label=label,
+                       width=width,
+                       color=color,
+                       clear=clear)
 
 
 class ProgressBar(ProgressBar_):
@@ -1140,9 +1137,9 @@ def get_close_matches(words, possibilities, n=3, cutoff=0.6):
     """
 
     if not n > 0:
-        raise ValueError("n must be > 0: %r" % (n,))
+        raise ValueError("n must be > 0: %r" % (n, ))
     if not 0.0 <= cutoff <= 1.0:
-        raise ValueError("cutoff must be in [0.0, 1.0]: %r" % (cutoff,))
+        raise ValueError("cutoff must be in [0.0, 1.0]: %r" % (cutoff, ))
     if not isinstance(words, list):
         words = [words]
     result = []
@@ -1172,12 +1169,17 @@ def json_dumps(content):
     return json.dumps(content, indent=4, sort_keys=True).replace(' \n', '\n') + '\n'
 
 
-def grep(file_list, args=None, pager=True, ):
+def grep(
+    file_list,
+    args=None,
+    pager=True,
+):
     args = args or []
     args = [quote(arg) for arg in args]
     color_opt = ['--color=always'] if sys.stdout.isatty() else []
     xargs = subprocess.Popen('xargs -0 grep ' + ' '.join(color_opt + list(args)) + (' | less' if pager else ''),
-                             stdin=subprocess.PIPE, shell=True)
+                             stdin=subprocess.PIPE,
+                             shell=True)
     xargs.communicate(input='\0'.join(file_list).encode("utf-8"))
     xargs.wait()
 
@@ -1283,7 +1285,7 @@ def natural_delta(value):
     elif minutes:
         return "%s minute%s %s second%s" % (minutes, 's' if minutes > 1 else '', seconds, 's' if seconds > 1 else '')
     elif delta.microseconds:
-        seconds = seconds + abs(delta.microseconds)/10.**6
+        seconds = seconds + abs(delta.microseconds) / 10.**6
         return "%1.3f second%s" % (seconds, 's' if seconds > 1 else '')
     return "%s second%s" % (seconds, 's' if seconds > 1 else '')
 
@@ -1361,10 +1363,7 @@ class ParameterType(click.ParamType):
 
 @contextmanager
 def json_file(location):
-    if (
-            not os.path.exists(location) or
-            open(location, "r").read().strip() == ""
-    ):
+    if (not os.path.exists(location) or open(location, "r").read().strip() == ""):
         open(location, "w").write("{}")
     values = json.load(open(location))
     oldvalues = deepcopy(values)
@@ -1384,11 +1383,7 @@ def flat_map(l):
 
 
 def subkwargs(kwargs, params):
-    return {
-        key: value
-        for key, value in kwargs.items()
-        if key in params
-    }
+    return {key: value for key, value in kwargs.items() if key in params}
 
 
 def deprecated_module(src, dst):
@@ -1407,19 +1402,11 @@ def deprecated_module(src, dst):
 
     # find a relevant frame
     frame = [
-        frame
-        for frame in stack[:-2]
-        if "frozen" not in get_frame_info(frame)[0]
-        and "pluginbase" not in get_frame_info(frame)[0]
+        frame for frame in stack[:-2]
+        if "frozen" not in get_frame_info(frame)[0] and "pluginbase" not in get_frame_info(frame)[0]
     ][-1]
     filename, lineno, line = get_frame_info(frame)
-    return (
-        "{}:{} '{}' =>"
-        " Importing {} is deprecated, import {} instead"
-    ).format(
-        filename, lineno, line,
-        src, dst
-    )
+    return ("{}:{} '{}' =>" " Importing {} is deprecated, import {} instead").format(filename, lineno, line, src, dst)
 
 
 class TablePrinter(object):
@@ -1482,8 +1469,12 @@ class TablePrinter(object):
             self.echo(*[record[value] for value in self.headers_from_context()])
 
 
-def tabulate(tabular_data, headers=(), tablefmt="simple",
-             floatfmt="g", numalign="decimal", stralign="left",
+def tabulate(tabular_data,
+             headers=(),
+             tablefmt="simple",
+             floatfmt="g",
+             numalign="decimal",
+             stralign="left",
              missingval=""):
     """Tabulate the data"""
     from tabulate import tabulate as tabulate_
@@ -1517,7 +1508,9 @@ def tabulate(tabular_data, headers=(), tablefmt="simple",
             json_data.append(d)
         return colorize_json(json_data)
     elif tablefmt == 'json-map':
-        return colorize_json(dict((d[0], clear_ansi_color_codes(str_join(' ', d[1:])) if len(d[1:]) > 1 else d[1]) for d in tabular_data))
+        return colorize_json(
+            dict(
+                (d[0], clear_ansi_color_codes(str_join(' ', d[1:])) if len(d[1:]) > 1 else d[1]) for d in tabular_data))
     elif tablefmt == 'json-maps':
         import collections
         json_data = {}
@@ -1527,7 +1520,7 @@ def tabulate(tabular_data, headers=(), tablefmt="simple",
             d = collections.OrderedDict()
             for i, v in enumerate(ls[1:]):
                 v = clear_ansi_color_codes(v)
-                d[headers[i+1]] = v
+                d[headers[i + 1]] = v
             json_data[clear_ansi_color_codes(ls[0])] = d
         return colorize_json(json_data)
     elif tablefmt == 'plain':
@@ -1543,10 +1536,8 @@ def str_join(sep, ls):
 
 class AuthenticatorNotFound(click.UsageError):
     def __init__(self, machine, *args, **kwargs):
-        super(AuthenticatorNotFound, self).__init__(
-            "User credentials required for machine {}.".format(machine),
-            *args, **kwargs
-        )
+        super(AuthenticatorNotFound, self).__init__("User credentials required for machine {}.".format(machine), *args,
+                                                    **kwargs)
         self.machine = machine
 
 
@@ -1583,9 +1574,8 @@ def get_authenticator(machine, askpass=True, required=True):
         except:
             LOGGER.warning("I could not save your credentials.")
             if netrc_keyring:
-                LOGGER.warning(
-                    "You can save them manually by running:"
-                    " `passwords {} netrc-set {}`".format(machine, login))
+                LOGGER.warning("You can save them manually by running:"
+                               " `passwords {} netrc-set {}`".format(machine, login))
 
     if login is None or password is None:
         if required:
@@ -1597,29 +1587,17 @@ def get_authenticator(machine, askpass=True, required=True):
 
 
 def assert_main_module():
-    assert main_module != "__main__", (
-        "You cannot call the main module, for there is none."
-    )
+    assert main_module != "__main__", ("You cannot call the main module, for there is none.")
 
 
 def call_me(*cmd):
     assert_main_module()
-    return call(
-        [
-            sys.executable,
-            '-c',
-            'from {} import main; main()'.format(main_module)
-        ] + list(cmd))
+    return call([sys.executable, '-c', 'from {} import main; main()'.format(main_module)] + list(cmd))
 
 
 def check_my_output(*cmd):
     assert_main_module()
-    return safe_check_output(
-        [
-            sys.executable,
-            '-c',
-            'from {} import main; main()'.format(main_module)
-        ] + list(cmd))
+    return safe_check_output([sys.executable, '-c', 'from {} import main; main()'.format(main_module)] + list(cmd))
 
 
 def to_bool(s):
@@ -1639,19 +1617,11 @@ def parsedatetime(value):
         return value, None
     import parsedatetime as _parsedatetime
     cal = _parsedatetime.Calendar()
-    return cal.parseDT(
-        value,
-        sourceTime=datetime.datetime.today()
-    )
+    return cal.parseDT(value, sourceTime=datetime.datetime.today())
 
 
 def value_to_string(value):
-    return (
-        " ".join(map(quote, value))
-        if type(value) is tuple
-        else
-        str(value) if value else ""
-    )
+    return (" ".join(map(quote, value)) if type(value) is tuple else str(value) if value else "")
 
 
 def is_port_available(port, hostname="127.0.0.1"):

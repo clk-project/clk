@@ -12,7 +12,6 @@ from click_project.decorators import command as deco_command, group as deco_grou
 from click_project.log import get_logger
 from click_project.overloads import get_command_handlers
 
-
 LOGGER = get_logger(__name__)
 
 command_loaders = defaultdict(dict)
@@ -23,6 +22,7 @@ def command(parent=None, *args, **kwargs):
 
     def deco(command):
         return register_command(parent)(deco_command(*args, **kwargs)(command))
+
     return deco
 
 
@@ -31,6 +31,7 @@ def group(parent=None, *args, **kwargs):
 
     def deco(group):
         return register_command(parent)(deco_group(*args, **kwargs)(group))
+
     return deco
 
 
@@ -41,17 +42,15 @@ def register_command(parent=None):
         assert not parent.startswith(config.main_command.path + "."), (
             "The command {} is trying to register as subcommand of '{}'."
             " Since this is not a valid command path,"
-            " it won't do anything, try using '{}' instead :-).".format(
-                command.name,
-                parent,
-                parent[len(config.main_command.path) + 1:]
-            )
-        )
+            " it won't do anything, try using '{}' instead :-).".format(command.name, parent,
+                                                                        parent[len(config.main_command.path) + 1:]))
 
         def load_command():
             return command
+
         command_loaders[parent][command.name] = load_command
         return command
+
     return decorator
 
 

@@ -44,7 +44,7 @@ def get_choices(ctx, args_, incomplete):
     else:
         args.pop(0)
         while ',' in args:
-            args = args[args.index(',')+1:]
+            args = args[args.index(',') + 1:]
         ctx = get_ctx(args, side_effects=True)
         choices = compute_choices(ctx, args, incomplete)
     for item, help in choices:
@@ -70,20 +70,9 @@ def set(alias, command, documentation, params):
     }
     old = config.alias.writable.get(alias)
     if old is not None:
-        LOGGER.status(
-            "Removing {} alias of {}: {}".format(
-                config.alias.writeprofilename,
-                alias,
-                format(old["commands"])
-            )
-        )
-    LOGGER.status(
-        "New {} alias for {}: {}".format(
-            config.alias.writeprofilename,
-            alias,
-            format(data["commands"])
-        )
-    )
+        LOGGER.status("Removing {} alias of {}: {}".format(config.alias.writeprofilename, alias,
+                                                           format(old["commands"])))
+    LOGGER.status("New {} alias for {}: {}".format(config.alias.writeprofilename, alias, format(data["commands"])))
     config.alias.writable[alias] = data
     config.alias.write()
 
@@ -108,8 +97,8 @@ def set_documentation(alias, documentation):
     """Set the documentation of the alias"""
     if alias not in config.alias.writable:
         raise click.ClickException("The %s configuration has no '%s' alias registered."
-                                   "Try using another profile option (like --local or --global)"
-                                   % (config.alias.writeprofile, alias))
+                                   "Try using another profile option (like --local or --global)" %
+                                   (config.alias.writeprofile, alias))
     config.alias.writable[alias]["documentation"] = documentation
     config.alias.write()
 
@@ -120,12 +109,10 @@ def unset(aliases):
     """Unset some aliases"""
     for cmd in aliases:
         if cmd not in config.alias.writable:
-            raise click.ClickException(
-                "The %s configuration has no '%s' alias registered."
-                " And removing an alias being a destructive command, please"
-                " provide the profile option explicitely (like --local or --global)."
-                % (config.alias.writeprofile, cmd)
-            )
+            raise click.ClickException("The %s configuration has no '%s' alias registered."
+                                       " And removing an alias being a destructive command, please"
+                                       " provide the profile option explicitely (like --local or --global)." %
+                                       (config.alias.writeprofile, cmd))
     for cmd in aliases:
         LOGGER.status("Erasing {} alias from {} settings".format(cmd, config.alias.writeprofile))
         del config.alias.writable[cmd]
@@ -133,8 +120,7 @@ def unset(aliases):
 
 
 config.globalpreset_profile.settings["alias"]["alias.rm"] = {
-    "commands":
-    [
+    "commands": [
         ["alias", "unset"],
     ],
     "documentation": "Alias to alias rm, because we eat our own dog food."
@@ -142,15 +128,17 @@ config.globalpreset_profile.settings["alias"]["alias.rm"] = {
 
 
 @alias.command(handle_dry_run=True)
-@argument('aliases', nargs=-1, type=CommandSettingsKeyType("alias"),
+@argument('aliases',
+          nargs=-1,
+          type=CommandSettingsKeyType("alias"),
           help="The aliases where the documentation will be removed")
 def unset_documentation(aliases):
     """Unset the documentation of some aliases"""
     for cmd in aliases:
         if cmd not in config.alias.writable:
             raise click.ClickException("The %s configuration has no '%s' alias registered."
-                                       " Try using another profile option (like --local or --global)"
-                                       % (config.alias.writeprofile, cmd))
+                                       " Try using another profile option (like --local or --global)" %
+                                       (config.alias.writeprofile, cmd))
     for cmd in aliases:
         LOGGER.status("Erasing the documentation of {} alias from {} settings".format(cmd, config.alias.writeprofile))
         config.alias.writable[cmd]["documentation"] = None
@@ -158,14 +146,19 @@ def unset_documentation(aliases):
 
 
 @alias.command(handle_dry_run=True)
-@flag('--name-only/--no-name-only', help="Only display the alias names",
+@flag('--name-only/--no-name-only',
+      help="Only display the alias names",
       deprecated="please use '--field alias' instead")
 @Colorer.color_options
-@option("--under", help="Limit the scope to the commands under the given namespace",
+@option("--under",
+        help="Limit the scope to the commands under the given namespace",
         type=CommandSettingsKeyType("alias", silent_fail=True))
 @table_format(default='key_value')
 @table_fields(choices=['alias', 'commands'])
-@argument('aliases', nargs=-1, type=CommandSettingsKeyType("alias"), help="The aliases to show. All the aliases are"
+@argument('aliases',
+          nargs=-1,
+          type=CommandSettingsKeyType("alias"),
+          help="The aliases to show. All the aliases are"
           " showed when no alias is provided")
 def show(name_only, aliases, under, fields, format, **kwargs):
     """Show the aliases"""
@@ -181,18 +174,12 @@ def show(name_only, aliases, under, fields, format, **kwargs):
             elif "/" in config.alias.readprofile:
                 args = [
                     " ".join(command)
-                    for command in
-                    config.alias.all_settings.get(
-                        config.alias.readprofile,
-                        {}).get(alias)["commands"]
+                    for command in config.alias.all_settings.get(config.alias.readprofile, {}).get(alias)["commands"]
                 ]
             else:
-                all_values = [
-                    (profile.name, config.alias.all_settings.get(profile.name, {}).get(alias))
-                    for profile in config.all_enabled_profiles
-                ]
-                all_values = [(profile, value) for profile, value in all_values
-                              if value is not None]
+                all_values = [(profile.name, config.alias.all_settings.get(profile.name, {}).get(alias))
+                              for profile in config.all_enabled_profiles]
+                all_values = [(profile, value) for profile, value in all_values if value is not None]
                 last_profile, last_value = all_values[-1]
                 last_command = last_value["commands"]
                 args = [colorer.apply_color(" ".join(map(quote, token)), last_profile) for token in last_command]

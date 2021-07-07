@@ -29,7 +29,6 @@ from click_project.completion import startswith
 
 LOGGER = get_logger(__name__)
 
-
 settings_stores = {}
 
 
@@ -62,12 +61,10 @@ def run(cmd, *args, **kwargs):
 
 def resolve_context_with_side_effects(path, resilient_parsing=True):
     from click_completion import resolve_ctx
-    return resolve_ctx(
-        config.main_command,
-        config.main_command.__class__.path,
-        path,
-        resilient_parsing=resilient_parsing
-    )
+    return resolve_ctx(config.main_command,
+                       config.main_command.__class__.path,
+                       path,
+                       resilient_parsing=resilient_parsing)
 
 
 get_ctx_cache = {}
@@ -78,10 +75,7 @@ def rebuild_path(ctx):
         return None
     path = ctx.command.name
     parent_path = rebuild_path(ctx.parent)
-    if (
-            parent_path is not None and
-            not isinstance(ctx.parent.command, config.main_command.__class__)
-    ):
+    if (parent_path is not None and not isinstance(ctx.parent.command, config.main_command.__class__)):
         path = parent_path + "." + path
     return path
 
@@ -116,6 +110,7 @@ def main_command_options_callback(f):
             return value
         value = f(ctx, attr, value)
         return value
+
     return decorator
 
 
@@ -129,6 +124,7 @@ def main_command_option(*args, **kwargs):
         option = f.__click_params__[-1]
         main_command_parameters.add(option)
         return f
+
     return new_decorator
 
 
@@ -138,11 +134,7 @@ def main_command_arguments_to_dict(opts, resilient_parsing):
     try:
         while opts and pos < len(opts):
             opt = opts[pos]
-            matching_options = [
-                option
-                for option in main_command_parameters
-                if opt in option.opts
-             ]
+            matching_options = [option for option in main_command_parameters if opt in option.opts]
             assert len(matching_options) < 2
             if len(matching_options) == 0:
                 # we reached something we don't recognize, it must be the
@@ -156,10 +148,10 @@ def main_command_arguments_to_dict(opts, resilient_parsing):
                     res[option.name] = True
                     nargs = 1
                 else:
-                    res[option.name] = opts[pos+1]
+                    res[option.name] = opts[pos + 1]
                     nargs = 2
             else:
-                res[option.name] = opts[pos+1:pos+1+option.nargs]
+                res[option.name] = opts[pos + 1:pos + 1 + option.nargs]
                 nargs = option.nargs + 1
             pos += nargs
     except IndexError:
@@ -171,11 +163,7 @@ def main_command_arguments_to_dict(opts, resilient_parsing):
 def main_command_arguments_from_dict(parameters):
     res = []
     for key, value in six.iteritems(parameters):
-        matching_options = [
-            option
-            for option in main_command_parameters
-            if key == option.name
-        ]
+        matching_options = [option for option in main_command_parameters if key == option.name]
         assert len(matching_options) == 1
         option = matching_options[0]
         opt = option.opts[0]
@@ -186,8 +174,7 @@ def main_command_arguments_from_dict(parameters):
         elif isinstance(value, list):
             res += [opt] + value
         else:
-            raise NotImplementedError(
-                "Cannot build a command line with {}: {}".format(key, value))
+            raise NotImplementedError("Cannot build a command line with {}: {}".format(key, value))
     return res
 
 
@@ -197,22 +184,14 @@ class RecipeType(ParameterType):
 
     @property
     def choices(self):
-        return [
-                recipe.short_name
-                for recipe in config.all_recipes
-            ]
+        return [recipe.short_name for recipe in config.all_recipes]
 
     def complete(self, ctx, incomplete):
-        return (
-            choice
-            for choice in self.choices
-            if startswith(choice, incomplete)
-        )
+        return (choice for choice in self.choices if startswith(choice, incomplete))
 
     def convert(self, value, param, ctx):
         if value not in self.choices:
-            self.fail('invalid choice: %s. (choose from %s)' %
-                      (value, ', '.join(self.choices)), param, ctx)
+            self.fail('invalid choice: %s. (choose from %s)' % (value, ', '.join(self.choices)), param, ctx)
         return value
 
 
@@ -258,13 +237,7 @@ class ColorType(ParameterType):
             else:
                 return parts
 
-        return {
-            key: value
-            for key, value in [
-                    splitpart(part)
-                    for part in color_name.split(",")
-            ]
-        }
+        return {key: value for key, value in [splitpart(part) for part in color_name.split(",")]}
 
     def complete(self, ctx, incomplete):
         # got from click.termui.style
@@ -287,17 +260,10 @@ class ColorType(ParameterType):
             candidates = [key_ + "-" for key_ in self.args.keys()]
             tested = key
             prefix = "{},".format(prefix)
-        return [
-            prefix + str(candidate)
-            for candidate in candidates
-            if startswith(str(candidate), tested)
-        ]
+        return [prefix + str(candidate) for candidate in candidates if startswith(str(candidate), tested)]
 
     def convert(self, value, param, ctx):
-        kwargs = {
-            key: self.converters[key](value)
-            for key, value in self.get_kwargs(value).items()
-        }
+        kwargs = {key: self.converters[key](value) for key, value in self.get_kwargs(value).items()}
         return kwargs
 
 
@@ -321,19 +287,14 @@ class SomeChoices(DynamicChoiceType):
         return value
 
     def complete(self, ctx, incomplete):
-        return [
-            name
-            for name in self.choices()
-            if startswith(name, incomplete)
-        ]
+        return [name for name in self.choices() if startswith(name, incomplete)]
 
     def convert(self, value, param, ctx):
         if ctx.resilient_parsing:
             return value
         choices = self.choices()
         if value not in choices:
-            self.fail('invalid choice: %s. (choose from %s)' %
-                      (value, ', '.join(choices)), param, ctx)
+            self.fail('invalid choice: %s. (choose from %s)' % (value, ', '.join(choices)), param, ctx)
         if isinstance(choices, dict):
             value = choices[value]
         value = self.converter(value)
@@ -341,58 +302,111 @@ class SomeChoices(DynamicChoiceType):
 
 
 def main_command_decoration(f, cls, **kwargs):
-    f = main_command_option('--force-color/--no-force-color', is_flag=True, callback=force_color_callback,
-                            help="Force the color output, even if the output is not a terminal")(f)
-    f = main_command_option('-n', '--dry-run/--no-dry-run', is_flag=True, callback=dry_run_callback,
-                            help="Don't actually run anything")(f)
-    f = main_command_option('--no-cache/--cache', is_flag=True, callback=no_cache_callback,
-                            help="Deactivate the caching mechanism")(f)
-    f = main_command_option('--autoflow/--no-autoflow', help="Automatically trigger the --flow option in"
-                            " every command", is_flag=True, callback=autoflow_callback, default=None)(f)
-    f = main_command_option('-P', '--project', metavar="DIR", help="Project directory", callback=project_callback)(f)
-    f = main_command_option('--persist-migration/--no-persist-migration', help=(
-        "Make the profile migration persistent,"
-        " using --no-persist-migration will preserve the profiles,"
-        " unless you explicitly write into them."
-        " This is useful if you want to use a razor edge version of the application"
-        " without forcing peoples to move to it."),
+    f = main_command_option('--force-color/--no-force-color',
                             is_flag=True,
-                            default=True,
-                            callback=persist_migration_callback,)(f)
+                            callback=force_color_callback,
+                            help="Force the color output, even if the output is not a terminal")(f)
+    f = main_command_option('-n',
+                            '--dry-run/--no-dry-run',
+                            is_flag=True,
+                            callback=dry_run_callback,
+                            help="Don't actually run anything")(f)
+    f = main_command_option('--no-cache/--cache',
+                            is_flag=True,
+                            callback=no_cache_callback,
+                            help="Deactivate the caching mechanism")(f)
+    f = main_command_option('--autoflow/--no-autoflow',
+                            help="Automatically trigger the --flow option in"
+                            " every command",
+                            is_flag=True,
+                            callback=autoflow_callback,
+                            default=None)(f)
+    f = main_command_option('-P', '--project', metavar="DIR", help="Project directory", callback=project_callback)(f)
+    f = main_command_option(
+        '--persist-migration/--no-persist-migration',
+        help=("Make the profile migration persistent,"
+              " using --no-persist-migration will preserve the profiles,"
+              " unless you explicitly write into them."
+              " This is useful if you want to use a razor edge version of the application"
+              " without forcing peoples to move to it."),
+        is_flag=True,
+        default=True,
+        callback=persist_migration_callback,
+    )(f)
     f = main_command_option('--plugin-dirs', help="", callback=plugin_dirs_callback, multiple=True)(f)
-    f = main_command_option('--alternate-style', metavar="STYLE", help="Alternate style",
+    f = main_command_option('--alternate-style',
+                            metavar="STYLE",
+                            help="Alternate style",
                             callback=alternate_style_callback,
                             default='fg-cyan' if platform.system() == 'Windows' else 'dim-True',
                             type=ColorType())(f)
-    f = main_command_option('-L', '--log-level', default=None, type=click.Choice(LOG_LEVELS.keys()), callback=log_level_callback,
+    f = main_command_option('-L',
+                            '--log-level',
+                            default=None,
+                            type=click.Choice(LOG_LEVELS.keys()),
+                            callback=log_level_callback,
                             help="Log level (default to 'status')")(f)
-    f = main_command_option('-q', '--quiet/--no-quiet', help="Same as --log-level critical", callback=quiet_callback, is_eager=True,
+    f = main_command_option('-q',
+                            '--quiet/--no-quiet',
+                            help="Same as --log-level critical",
+                            callback=quiet_callback,
+                            is_eager=True,
                             default=None)(f)
-    f = main_command_option('-a', '--action/--no-action', help="Same as --log-level action", callback=action_callback, is_eager=True,
+    f = main_command_option('-a',
+                            '--action/--no-action',
+                            help="Same as --log-level action",
+                            callback=action_callback,
+                            is_eager=True,
                             default=None)(f)
-    f = main_command_option('-d', '--debug/--no-debug', help="Same as --log-level debug", callback=debug_callback, is_eager=True,
+    f = main_command_option('-d',
+                            '--debug/--no-debug',
+                            help="Same as --log-level debug",
+                            callback=debug_callback,
+                            is_eager=True,
                             default=None)(f)
-    f = main_command_option('-D', '--develop/--no-develop', help="Same as --log-level develop", callback=develop_callback, is_eager=True,
+    f = main_command_option('-D',
+                            '--develop/--no-develop',
+                            help="Same as --log-level develop",
+                            callback=develop_callback,
+                            is_eager=True,
                             default=None)(f)
-    f = main_command_option('--exit-on-log-level', default=None, type=click.Choice(LOG_LEVELS.keys()), callback=exit_on_log_level_callback,
+    f = main_command_option('--exit-on-log-level',
+                            default=None,
+                            type=click.Choice(LOG_LEVELS.keys()),
+                            callback=exit_on_log_level_callback,
                             help="Exit when one log of this level is issued."
                             " Useful to reproduce the -Werror behavior of gcc")(f)
-    f = main_command_option('--post-mortem/--no-post-mortem', help="Run a post-mortem debugger in case of exception",
-                            callback=post_mortem_callback, is_eager=True, default=None)(f)
-    f = main_command_option('--debug-on-command-load-error', is_flag=True,
+    f = main_command_option('--post-mortem/--no-post-mortem',
+                            help="Run a post-mortem debugger in case of exception",
+                            callback=post_mortem_callback,
+                            is_eager=True,
+                            default=None)(f)
+    f = main_command_option('--debug-on-command-load-error',
+                            is_flag=True,
                             help="Trigger a debugger whenever a command fails to load",
                             callback=debug_on_command_load_error_callback)(f)
     f = main_command_option("--report-file",
                             help="Create a report file to put with bug reports",
                             callback=report_file_callback,
                             is_eager=True)(f)
-    f = main_command_option('-r', '--recipe', callback=recipe_callback,
-                            help="Enable this recipe for the time of the command", type=RecipeType(), multiple=True)(f)
-    f = main_command_option('-u', '--without-recipe', callback=without_recipe_callback,
-                            help="Disable this recipe for the time of the command", type=RecipeType(), multiple=True)(f)
-    f = main_command_option('--profiling', is_flag=True, callback=enable_profiling_callback,
+    f = main_command_option('-r',
+                            '--recipe',
+                            callback=recipe_callback,
+                            help="Enable this recipe for the time of the command",
+                            type=RecipeType(),
+                            multiple=True)(f)
+    f = main_command_option('-u',
+                            '--without-recipe',
+                            callback=without_recipe_callback,
+                            help="Disable this recipe for the time of the command",
+                            type=RecipeType(),
+                            multiple=True)(f)
+    f = main_command_option('--profiling',
+                            is_flag=True,
+                            callback=enable_profiling_callback,
                             help="Enable profiling the application code")(f)
-    f = main_command_option('--env', callback=add_custom_env,
+    f = main_command_option('--env',
+                            callback=add_custom_env,
                             help="Add this custom environment variable",
                             multiple=True)(f)
     f = click.group(cls=cls, invoke_without_command=True)(f)
@@ -400,10 +414,7 @@ def main_command_decoration(f, cls, **kwargs):
     env_name = '_%s_COMPLETE' % prog_name.upper().replace('-', '_')
     if env_name in os.environ:
         completion.IN_COMPLETION = True
-    command = main_default(
-        prog_name=cls.path,
-        standalone_mode=False,
-        **kwargs)(f)
+    command = main_default(prog_name=cls.path, standalone_mode=False, **kwargs)(f)
     Config.main_command = command
     old_callback = command.callback
 
@@ -417,6 +428,7 @@ def main_command_decoration(f, cls, **kwargs):
             click.echo(ctx.get_help(), color=ctx.color)
             ctx.exit()
         return old_callback(*args, **kwargs)
+
     command.callback = new_callback
     return command
 
@@ -424,6 +436,7 @@ def main_command_decoration(f, cls, **kwargs):
 def main_command(cls, **kwargs):
     def decorator(f):
         return main_command_decoration(f, cls, *kwargs)
+
     return decorator
 
 
@@ -634,11 +647,9 @@ def main():
         log_trace()
         LOGGER.error(e.format_message())
         if isinstance(e, click.exceptions.NoSuchOption):
-            click.echo(
-                "Hint: If you don't know where this option comes from,"
-                " try checking the parameters (with {} --no-parameter"
-                " parameters show).".format(config.main_command.path)
-            )
+            click.echo("Hint: If you don't know where this option comes from,"
+                       " try checking the parameters (with {} --no-parameter"
+                       " parameters show).".format(config.main_command.path))
         post_mortem()
         exitcode = e.exit_code
     except subprocess.CalledProcessError as e:
@@ -649,13 +660,11 @@ def main():
         exitcode = e.returncode
     except NotImplementedError as e:
         log_trace()
-        click.echo(
-            "This command reached a part of the code yet to implement. "
-            "Please help us by either submitting patches or "
-            "sending report files to us. ({} --report-file .../somefile RESTOFCOMMAND, "
-            "then send .../somefile to us on"
-            " https://github.com/click-project/click-project/issues/new)".format(config.main_command.path)
-        )
+        click.echo("This command reached a part of the code yet to implement. "
+                   "Please help us by either submitting patches or "
+                   "sending report files to us. ({} --report-file .../somefile RESTOFCOMMAND, "
+                   "then send .../somefile to us on"
+                   " https://github.com/click-project/click-project/issues/new)".format(config.main_command.path))
         LOGGER.error(str(e))
         post_mortem()
         exitcode = 2
@@ -667,17 +676,13 @@ def main():
     except (Exception, log.LogLevelExitException) as e:
         log_trace()
         LOGGER.exception(str(e))
-        LOGGER.error(
-            "Hmm, it looks like we did not properly catch this error."
-            " Please help us improve click-project by telling us what"
-            " caused the error on"
-            " https://github.com/click-project/click-project/issues/new ."
-            " If you feel like a pythonista, you can try debugging"
-            " the issue yourself, running the command"
-            " with {cmd} --post-mortem or {cmd} --develop".format(
-                cmd=config.main_command.path
-            )
-        )
+        LOGGER.error("Hmm, it looks like we did not properly catch this error."
+                     " Please help us improve click-project by telling us what"
+                     " caused the error on"
+                     " https://github.com/click-project/click-project/issues/new ."
+                     " If you feel like a pythonista, you can try debugging"
+                     " the issue yourself, running the command"
+                     " with {cmd} --post-mortem or {cmd} --develop".format(cmd=config.main_command.path))
         post_mortem()
         exitcode = 1
     finally:
@@ -697,8 +702,7 @@ def main():
 cache_disk_deactivate = False
 
 
-def cache_disk(f=None, expire=int(os.environ.get(u'CLICK_PROJECT_CACHE_EXPIRE', 24 * 60 * 60)),
-               cache_folder_name=None):
+def cache_disk(f=None, expire=int(os.environ.get(u'CLICK_PROJECT_CACHE_EXPIRE', 24 * 60 * 60)), cache_folder_name=None):
     u"""A decorator that cache a method result to disk"""
     if cache_disk_deactivate:
         return lambda f: f
@@ -712,11 +716,7 @@ def cache_disk(f=None, expire=int(os.environ.get(u'CLICK_PROJECT_CACHE_EXPIRE', 
         def inner_function(*args, **kwargs):
             # calculate a cache key based on the decorated method signature
             key = u"{}{}{}{}".format(
-                re.sub(
-                    "pluginbase\._internalspace.[^\.]+\.",
-                    "click_project.plugins.", f.__module__),
-                f.__name__,
-                args,
+                re.sub("pluginbase\._internalspace.[^\.]+\.", "click_project.plugins.", f.__module__), f.__name__, args,
                 kwargs).encode(u"utf-8")
             # print(key)
             key = hashlib.sha1(key).hexdigest()
@@ -734,6 +734,7 @@ def cache_disk(f=None, expire=int(os.environ.get(u'CLICK_PROJECT_CACHE_EXPIRE', 
             # ... and save the cached object for next time
             pickle.dump(result, open(filepath, u"wb"))
             return result
+
         return inner_function
 
     return decorator(f) if f else decorator

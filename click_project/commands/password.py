@@ -28,38 +28,34 @@ class LazyChoice(click.Choice):
 
 
 @password.command(ignore_unknown_options=True, change_directory_options=False)
-@argument('machine', type=LazyChoice(get_authenticator_hints),
+@argument('machine',
+          type=LazyChoice(get_authenticator_hints),
           help="The machine on which the username and password may be used")
 @argument('username', help="The login to record")
-@option('--password', prompt=True,  hide_input=True, confirmation_prompt=True,
+@option('--password',
+        prompt=True,
+        hide_input=True,
+        confirmation_prompt=True,
         help="The password to record. The password will be interactively prompted if not provided. The interactive"
-             " prompt is the prefered way to set the password, because it ensures that the password won't remain in"
-             " the shell history")
+        " prompt is the prefered way to set the password, because it ensures that the password won't remain in"
+        " the shell history")
 def set(machine, username, password):
     """Set the password"""
     try:
-        get_keyring().set_password(
-            "click_project",
-            machine,
-            json.dumps((username, password))
-        )
+        get_keyring().set_password("click_project", machine, json.dumps((username, password)))
     except:  # NOQA: E722
-        LOGGER.error(
-            "Could not save your password."
-            " You might want to consider using `password netrc-set {}`".format(machine)
-        )
+        LOGGER.error("Could not save your password."
+                     " You might want to consider using `password netrc-set {}`".format(machine))
         raise
 
 
 @password.command(ignore_unknown_options=True, change_directory_options=False)
-@argument('machine', type=LazyChoice(get_authenticator_hints),
+@argument('machine',
+          type=LazyChoice(get_authenticator_hints),
           help="The machine for which the username and password will be removed")
 def remove(machine):
     """Remove the password"""
-    if click.confirm(
-        "This will definitely remove the password for {}."
-        " Are you sure?".format(machine)
-    ):
+    if click.confirm("This will definitely remove the password for {}." " Are you sure?".format(machine)):
         get_keyring().delete_password("click_project", machine)
     else:
         LOGGER.warning("Removing anyway!")
@@ -86,20 +82,21 @@ def show(machine, fields, format, password):
 
 
 @password.command(ignore_unknown_options=True, change_directory_options=False)
-@argument('machine', type=LazyChoice(get_authenticator_hints),
+@argument('machine',
+          type=LazyChoice(get_authenticator_hints),
           help="The machine on which the username and password may be used")
 @argument('username', help="The username to record")
-@option('--password', prompt=True, hide_input=True, confirmation_prompt=True,
+@option('--password',
+        prompt=True,
+        hide_input=True,
+        confirmation_prompt=True,
         help="The password to record. The password will be interactively prompted if not provided. The interactive"
-             " prompt is the prefered way to set the password, because it ensures that the password won't remain in"
-             " the shell history")
+        " prompt is the prefered way to set the password, because it ensures that the password won't remain in"
+        " the shell history")
 def netrc_set(machine, username, password):
     """Set the password in the netrc file"""
-    if click.confirm(
-            "The netrc file is an insecure way of storing passwords"
-            " Do you confirm you want to store your password in it?"
-    ):
+    if click.confirm("The netrc file is an insecure way of storing passwords"
+                     " Do you confirm you want to store your password in it?"):
         netrcfile = os.path.expanduser("~/.netrc")
-        open(netrcfile, "ab").write(
-            "\nmachine {} login {} password {}\n".format(machine, username, password).encode("utf-8")
-        )
+        open(netrcfile, "ab").write("\nmachine {} login {} password {}\n".format(machine, username,
+                                                                                 password).encode("utf-8"))

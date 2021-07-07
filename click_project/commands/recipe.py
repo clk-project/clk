@@ -34,7 +34,8 @@ from click_project.profile import (
     profile_name_to_commandline_name,
 )
 from click_project.lib import (
-    check_output, move,
+    check_output,
+    move,
     copy,
     ParameterType,
     json_file,
@@ -69,20 +70,14 @@ class RecipeNameType(ParameterType):
         if self.enabled:
             recipes = config.all_enabled_recipes
         elif self.disabled:
-            recipes = list(config.all_disabled_recipes) + list(
-                config.all_unset_recipes
-            )
+            recipes = list(config.all_disabled_recipes) + list(config.all_unset_recipes)
         else:
             recipes = config.all_recipes
         return [recipe.short_name for recipe in recipes]
 
     def complete(self, ctx, incomplete):
         choice = self.getchoice(ctx)
-        return [
-            (recipe, load_short_help(recipe))
-            for recipe in choice
-            if startswith(recipe, incomplete)
-        ]
+        return [(recipe, load_short_help(recipe)) for recipe in choice if startswith(recipe, incomplete)]
 
 
 class RecipeType(RecipeNameType):
@@ -90,8 +85,7 @@ class RecipeType(RecipeNameType):
         choice = self.getchoice(ctx)
         if value not in choice and self.failok:
             self.fail(
-                "invalid choice: %s. (choose from %s)"
-                % (value, ", ".join(choice)),
+                "invalid choice: %s. (choose from %s)" % (value, ", ".join(choice)),
                 param,
                 ctx,
             )
@@ -200,9 +194,7 @@ def remove(recipe):
 @table_fields(choices=["recipe", "set_in", "defined_in", "order"])
 @table_format(default="simple")
 @Colorer.color_options
-@flag(
-    "--enabled-only/--not-enabled-only", help="Show only the enabled recipes"
-)
+@flag("--enabled-only/--not-enabled-only", help="Show only the enabled recipes")
 @flag(
     "--disabled-only/--not-disabled-only",
     help="Show only the disabled recipes",
@@ -214,9 +206,7 @@ def remove(recipe):
     nargs=-1,
     help="The names of the recipes to show",
 )
-def show(
-    fields, format, order, recipes, enabled_only, disabled_only, **kwargs
-):
+def show(fields, format, order, recipes, enabled_only, disabled_only, **kwargs):
     """List the recipes and some info about them"""
     config_recipes = set(config.recipe.readonly.keys())
     avail_recipes = set([r.short_name for r in config.all_recipes])
@@ -232,31 +222,22 @@ def show(
         exit(0)
     with Colorer(kwargs) as colorer, TablePrinter(fields, format) as tp:
         for recipe_name in sorted(recipes):
-            profiles = ", ".join(
-                [
-                    click.style(
-                        profile.name, **colorer.get_style(profile.name)
-                    )
-                    for profile in config.root_profiles
-                    if profile.has_recipe(recipe_name)
-                ]
-            )
+            profiles = ", ".join([
+                click.style(profile.name, **colorer.get_style(profile.name))
+                for profile in config.root_profiles
+                if profile.has_recipe(recipe_name)
+            ])
             profile = colorer.last_profile_of_settings(
                 recipe_name,
                 config.recipe.all_settings,
             )
             recipe_enabled = config.is_recipe_enabled(recipe_name)
-            if (not enabled_only or recipe_enabled) and (
-                not disabled_only or not recipe_enabled
-            ):
+            if (not enabled_only or recipe_enabled) and (not disabled_only or not recipe_enabled):
                 profile_style = colorer.get_style(profile) if profile else {}
 
                 tp.echo(
-                    click.style(
-                        recipe_name, fg="green" if recipe_enabled else "red"
-                    ),
-                    (profile and click.style(profile, **profile_style))
-                    or "Unset",
+                    click.style(recipe_name, fg="green" if recipe_enabled else "red"),
+                    (profile and click.style(profile, **profile_style)) or "Unset",
                     profiles or "Undefined",
                     config.get_recipe_order(recipe_name),
                 )
@@ -280,11 +261,7 @@ def disable(ctx, recipe, all):
             config.recipe.writable[cmd]["enabled"] = False
         else:
             config.recipe.writable[cmd] = {"enabled": False}
-        LOGGER.status(
-            "Disabling recipe {} in profile {}".format(
-                cmd, config.recipe.writeprofile
-            )
-        )
+        LOGGER.status("Disabling recipe {} in profile {}".format(cmd, config.recipe.writeprofile))
     config.recipe.write()
 
 
@@ -303,18 +280,10 @@ def unset(ctx, recipe, all):
         recipe = list(config.recipe.readonly.keys())
     for cmd in recipe:
         if cmd not in config.recipe.writable:
-            raise click.UsageError(
-                "Recipe {} not set in profile {}".format(
-                    cmd, config.recipe.writeprofile
-                )
-            )
+            raise click.UsageError("Recipe {} not set in profile {}".format(cmd, config.recipe.writeprofile))
     for cmd in recipe:
         del config.recipe.writable[cmd]
-        LOGGER.status(
-            "Unsetting {} from profile {}".format(
-                cmd, config.recipe.writeprofile
-            )
-        )
+        LOGGER.status("Unsetting {} from profile {}".format(cmd, config.recipe.writeprofile))
     config.recipe.write()
 
 
@@ -342,22 +311,14 @@ def __enable(ctx, recipe, all, only):
                 config.recipe.writable[cmd]["enabled"] = False
             else:
                 config.recipe.writable[cmd] = {"enabled": False}
-            LOGGER.status(
-                "Disabling recipe {} in profile {}".format(
-                    cmd, config.recipe.writeprofile
-                )
-            )
+            LOGGER.status("Disabling recipe {} in profile {}".format(cmd, config.recipe.writeprofile))
 
     for cmd in recipe:
         if cmd in config.recipe.writable:
             config.recipe.writable[cmd]["enabled"] = True
         else:
             config.recipe.writable[cmd] = {"enabled": True}
-        LOGGER.status(
-            "Enabling recipe {} in profile {}".format(
-                cmd, config.recipe.writeprofile
-            )
-        )
+        LOGGER.status("Enabling recipe {} in profile {}".format(cmd, config.recipe.writeprofile))
     config.recipe.write()
 
 
@@ -396,11 +357,7 @@ def set_order(recipe, order):
             config.recipe.writable[cmd]["order"] = order
         else:
             config.recipe.writable[cmd] = {"order": order}
-        LOGGER.status(
-            "Set order of {} to {} in profile {}".format(
-                cmd, order, config.recipe.writeprofile
-            )
-        )
+        LOGGER.status("Set order of {} to {} in profile {}".format(cmd, order, config.recipe.writeprofile))
     config.recipe.write()
 
 
@@ -439,19 +396,17 @@ def where_is(profile):
 )
 @argument(
     "url",
-    help=(
-        "The url of the git repository hosting the recipe."
-        " Can be author/recipe for github repository."
-        " If that case, the url will become"
-        " https://github.com/{author}/clk_recipe_{recipe}."
-        " Actually, the prefix (github.com) may be changed using --url-prefix."
-        " Can also be gitlab.com/{author}/{recipe},"
-        " github.com/{author}/{recipe},"
-        " git@...,"
-        " http://...,"
-        " a path to a local directory"
-        " (not that in that case, using --editable makes sense)."
-    ),
+    help=("The url of the git repository hosting the recipe."
+          " Can be author/recipe for github repository."
+          " If that case, the url will become"
+          " https://github.com/{author}/clk_recipe_{recipe}."
+          " Actually, the prefix (github.com) may be changed using --url-prefix."
+          " Can also be gitlab.com/{author}/{recipe},"
+          " github.com/{author}/{recipe},"
+          " git@...,"
+          " http://...,"
+          " a path to a local directory"
+          " (not that in that case, using --editable makes sense)."),
 )
 @option(
     "--url-prefix",
@@ -472,9 +427,7 @@ def where_is(profile):
     help="(only for local path) Create a symbolic link rather than copying the content",
 )
 @pass_context
-def install(
-    ctx, profile, url, name, url_prefix, install_deps, editable, force
-):
+def install(ctx, profile, url, name, url_prefix, install_deps, editable, force):
     """Install a recipe from outside"""
     profile = profile or config.global_profile
     install_type = None
@@ -488,15 +441,11 @@ def install(
         install_type = "git"
         if name is None:
             name = recipe
-    elif m := re.match(
-        "^https://github.com/.+/(?P<name>[^/]+)/tarball/.+$", url
-    ):
+    elif m := re.match("^https://github.com/.+/(?P<name>[^/]+)/tarball/.+$", url):
         install_type = "webtar"
         urls.append(url)
         name = name or m["name"]
-    elif re.match(
-        r"(\w+://)(.+@)*([\w\d\.]+)(:[\d]+)?/*(.*)|(.+@)*([\w\d\.]+):(.*)", url
-    ):
+    elif re.match(r"(\w+://)(.+@)*([\w\d\.]+)(:[\d]+)?/*(.*)|(.+@)*([\w\d\.]+):(.*)", url):
         install_type = "git"
         urls.append(url)
     elif url.startswith("http"):
@@ -505,11 +454,9 @@ def install(
     elif "/" in url:
         # fallback wild guessing it could be a github/gitlab/... url, and try to get
         # it using https and ssh
-        LOGGER.info(
-            "I don't see what this url is about."
-            " I'm wild guessing it might a gitlab/github short url style."
-            " In the form [host]/[path], without the initial https://."
-        )
+        LOGGER.info("I don't see what this url is about."
+                    " I'm wild guessing it might a gitlab/github short url style."
+                    " In the form [host]/[path], without the initial https://.")
         install_type = "git"
         host = url.split("/")[0]
         path = "/".join(url.split("/")[1:])
@@ -520,39 +467,28 @@ def install(
         name = name or Path(url).name
         urls.append(url)
     else:
-        raise click.UsageError(
-            "I tried hard guessing what this url is about, without success."
-            " Please take a look at the documentation"
-            " to know about the supported formats"
-        )
+        raise click.UsageError("I tried hard guessing what this url is about, without success."
+                               " Please take a look at the documentation"
+                               " to know about the supported formats")
     if editable is True and install_type != "file":
-        LOGGER.warning(
-            "Ignoring --editable for we guessed that"
-            " you did not provide a url that actually"
-            " points to a local file"
-        )
+        LOGGER.warning("Ignoring --editable for we guessed that"
+                       " you did not provide a url that actually"
+                       " points to a local file")
 
     if name is None:
         if "/" in url:
             name = url.split("/")[-1]
         else:
-            raise click.UsageError(
-                "I cannot infer a name for your recipe. Please provide one explicitly."
-            )
+            raise click.UsageError("I cannot infer a name for your recipe. Please provide one explicitly.")
     if name.startswith("clk_recipe_"):
         name = name.replace("clk_recipe_", "")
     if not re.match(f"^{DirectoryProfile.recipe_name_re}$", name):
-        raise click.UsageError(
-            f"Invalid recipe name '{name}'."
-            " A recipe's name must contain only letters or _"
-        )
+        raise click.UsageError(f"Invalid recipe name '{name}'." " A recipe's name must contain only letters or _")
 
     if install_type is None:
-        raise click.UsageError(
-            "I cannot infer how to install the recipe"
-            " Please tell us what you wanted to do"
-            " so that we can fix the code and the doc."
-        )
+        raise click.UsageError("I cannot infer how to install the recipe"
+                               " Please tell us what you wanted to do"
+                               " so that we can fix the code and the doc.")
 
     recipe_path = (Path(profile.location) / "recipes" / name).resolve()
     if recipe_path.exists() or recipe_path.is_symlink():
@@ -560,10 +496,8 @@ def install(
             rm(recipe_path)
         else:
             if not os.path.exists(f'{recipe_path}/.git'):
-                raise click.UsageError(
-                    f"A recipe already exists at location {recipe_path}"
-                    " Use --force to override it."
-                )
+                raise click.UsageError(f"A recipe already exists at location {recipe_path}"
+                                       " Use --force to override it.")
     if install_type == "git":
         # check if we already have that recipe locally
         if os.path.exists(f'{recipe_path}/.git'):
@@ -586,11 +520,9 @@ def install(
                     ok = True
                     break
             if ok is False:
-                raise click.UsageError(
-                    "Tried git cloning the following urls, without success:"
-                    f" {', '.join(urls)}. Please take a look at the documentation"
-                    " to see how you can pass urls"
-                )
+                raise click.UsageError("Tried git cloning the following urls, without success:"
+                                       f" {', '.join(urls)}. Please take a look at the documentation"
+                                       " to see how you can pass urls")
     elif install_type == "file":
         if editable:
             ln(Path(url).resolve(), recipe_path)
@@ -624,9 +556,7 @@ def _install_deps(ctx, recipe):
     for rec in recipe:
         LOGGER.status("Handling {}".format(rec.friendly_name))
         if rec.requirements_path.exists():
-            ctx.invoke(
-                pip, args=("install", "--upgrade", "-r", rec.requirements_path)
-            )
+            ctx.invoke(pip, args=("install", "--upgrade", "-r", rec.requirements_path))
         else:
             LOGGER.info(f"Nothing to be done for {rec.friendly_name}")
 
@@ -648,10 +578,9 @@ def update(recipe, method):
         root = Path(cmd.location)
         LOGGER.info(f"Updating {cmd.name}")
         if not (root / ".git").exists():
-            LOGGER.warning(
-                f"I cannot update the recipe {cmd.name}."
-                " For the time being, I only can update" " cloned recipes."
-            )
+            LOGGER.warning(f"I cannot update the recipe {cmd.name}."
+                           " For the time being, I only can update"
+                           " cloned recipes.")
             continue
         with cd(root):
             need_stash = False
@@ -660,9 +589,8 @@ def update(recipe, method):
                 call(["git", "checkout", "."])
                 call(["git", "reset", "--hard", "HEAD"])
             elif method == "stash":
-                need_stash = (
-                    check_output(split("git status --porcelain --ignore-submodules --untracked-files=no")) != ""
-                )
+                need_stash = (check_output(split("git status --porcelain --ignore-submodules --untracked-files=no")) !=
+                              "")
             if need_stash:
                 call(split("git stash"))
             call(["git", "pull"])

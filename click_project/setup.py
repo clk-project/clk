@@ -20,9 +20,12 @@ from click_project.lib import get_authenticator_hints
 LOGGER = get_logger(__name__)
 
 
-def classic_setup(main_module=None, config_cls=Config,
-                  extra_command_packages=[], distribution_profile_location=None,
-                  include_core_commands=None, exclude_core_commands=None,
+def classic_setup(main_module=None,
+                  config_cls=Config,
+                  extra_command_packages=[],
+                  distribution_profile_location=None,
+                  include_core_commands=None,
+                  exclude_core_commands=None,
                   authenticator_hints={}):
     get_authenticator_hints.update(authenticator_hints)
     lib.main_module = main_module
@@ -54,27 +57,28 @@ def classic_setup(main_module=None, config_cls=Config,
     def decorator(command):
         config_cls.main_command = command
         return command
+
     return decorator
 
 
-def basic_entry_point(main_module, extra_command_packages=[],
+def basic_entry_point(main_module,
+                      extra_command_packages=[],
                       distribution_profile_location=None,
-                      include_core_commands=None, exclude_core_commands=None,
+                      include_core_commands=None,
+                      exclude_core_commands=None,
                       authenticator_hints={}):
     def decorator(f):
         path = f.__name__
-        config_cls = type(
-            "{}Config".format(path),
-            (Config,),
-            {
-                "app_dir_name": path,
-                "app_name": path,
-            }
-        )
-        return classic_setup(main_module, config_cls=config_cls,
+        config_cls = type("{}Config".format(path), (Config, ), {
+            "app_dir_name": path,
+            "app_name": path,
+        })
+        return classic_setup(main_module,
+                             config_cls=config_cls,
                              extra_command_packages=extra_command_packages,
                              distribution_profile_location=distribution_profile_location,
                              include_core_commands=include_core_commands,
                              exclude_core_commands=exclude_core_commands,
                              authenticator_hints=authenticator_hints)(entry_point()(f))
+
     return decorator

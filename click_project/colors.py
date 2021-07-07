@@ -15,7 +15,6 @@ from click_project.core import ColorType
 
 
 class Colorer(object):
-
     def __init__(self, kwargs):
         self.legend = kwargs.pop("legend")
         self.full = kwargs.pop("full")
@@ -45,14 +44,12 @@ class Colorer(object):
 
     @property
     def default_profilenames_to_show(self):
-        return [
-            profile.name for profile in config.all_enabled_profiles
-            if self.full or profile.explicit
-        ]
+        return [profile.name for profile in config.all_enabled_profiles if self.full or profile.explicit]
 
     def profilenames_to_show(self, profile):
         return [
-            profile_.name for profile_ in config.all_enabled_profiles
+            profile_.name
+            for profile_ in config.all_enabled_profiles
             if profile_.name == profile or profile_.name.startswith(profile + "/")
         ]
 
@@ -62,20 +59,11 @@ class Colorer(object):
     def __exit__(self, exc_type, exc_val, exc_tb):
         if self.legend:
             used_profiles = self.used_profiles.copy()
-            colored_profiles = self.colorize_values(
-                {
-                    profile: (
-                        profile
-                        if "-" not in profile
-                        else config.get_recipe(profile).friendly_name
-                    )
-                    for profile in used_profiles
-                }
-            )
-            message = "Legend: " + ", ".join(
-                colored_profiles[profile]
+            colored_profiles = self.colorize_values({
+                profile: (profile if "-" not in profile else config.get_recipe(profile).friendly_name)
                 for profile in used_profiles
-            )
+            })
+            message = "Legend: " + ", ".join(colored_profiles[profile] for profile in used_profiles)
             click.secho("-" * len(clear_ansi_color_codes(message)), dim=True)
             click.echo(message)
 
@@ -86,7 +74,6 @@ class Colorer(object):
 
     @classmethod
     def color_options(cls, f=None, full_default=None):
-
         def decorator(f):
             colors = cycle([
                 "fg-yellow",
@@ -107,8 +94,7 @@ class Colorer(object):
                      help="Show profiles in color")(f)
             f = flag('--full/--explicit-only',
                      default=config.get_value('config.show.full', full_default),
-                     help="Show the full information, even those guessed from the context"
-            )(f)
+                     help="Show the full information, even those guessed from the context")(f)
             shortname_color = {}
 
             for profile in config.all_enabled_profiles:
@@ -121,7 +107,8 @@ class Colorer(object):
                 f = option(f'--{profile.name.replace("/", "-")}-color',
                            f"""{profile.name.replace("/", "_slash_")}_color""",
                            help=f"Color to show the {profile.name} profile",
-                           type=ColorType(), default=default_color)(f)
+                           type=ColorType(),
+                           default=default_color)(f)
             return f
 
         if f is None:
@@ -143,8 +130,7 @@ class Colorer(object):
 
     def colorize_values(self, elems, profiles=None):
         return {
-            profile:
-            click.style(elem, **self.get_style(profile)) if elem else elem
+            profile: click.style(elem, **self.get_style(profile)) if elem else elem
             for profile, elem in elems.items()
             if profiles is None or profile in profiles
         }
@@ -156,9 +142,5 @@ class Colorer(object):
             readprofiles = self.profilenames_to_show(readprofile)
         else:
             readprofiles = self.default_profilenames_to_show
-        args = [
-            value
-            for value in self.colorize_values(values, readprofiles).values()
-            if value
-        ]
+        args = [value for value in self.colorize_values(values, readprofiles).values() if value]
         return args

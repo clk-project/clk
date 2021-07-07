@@ -11,11 +11,4 @@ from click_project.lib import call
 @argument("args", nargs=-1, help="The rest of the command line to provide to pip")
 def pip(args):
     """Run pip in the context of this installation of click-project"""
-    call(
-        [
-            sys.executable,
-            "-m",
-            "pip"
-        ]
-        + list(args)
-    )
+    call([sys.executable, "-m", "pip"] + list(args))

@@ -42,10 +42,7 @@ setup(
         "cached-property",
         "requests",
     ],
-    entry_points = {
-        'console_scripts':
-        [
-            'clk=click_project.main:main',
-        ]
-    },
+    entry_points={'console_scripts': [
+        'clk=click_project.main:main',
+    ]},
 )

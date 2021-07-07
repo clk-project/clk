@@ -53,11 +53,8 @@ def show(shell):
 @completion.command(handle_dry_run=True, ignore_unknown_options=True)
 @option('--description/--no-description', help="Display the argument description")
 @option('--last/--after', help="Complete the last argument")
-@flag("--call/--no-call",
-      help="Call in a new process."
-      " --no-call is useful in combination with --post-mortem")
-@argument('command', type=CommandType(recursive=False),
-          help="The command about which to try the completion")
+@flag("--call/--no-call", help="Call in a new process." " --no-call is useful in combination with --post-mortem")
+@argument('command', type=CommandType(recursive=False), help="The command about which to try the completion")
 @argument('args', nargs=-1, help="The arguments to provide to the command")
 def _try(description, last, command, args, call):
     """Try the completion"""
@@ -74,7 +71,8 @@ def _try(description, last, command, args, call):
     else:
         extra_env = {
             "COMP_WORDS": " ".join(quote(arg) for arg in args),
-            "COMP_CWORD": str(max(0, len(args) - (1 if last else 0))),
+            "COMP_CWORD": str(max(0,
+                                  len(args) - (1 if last else 0))),
             complete_envvar: "complete",
         }
     extra_env.update({CASE_INSENSITIVE_ENV: 'ON'} if config.completion.case_insensitive else {})

@@ -11,7 +11,7 @@ import six
 from click.utils import make_default_short_help
 
 from click_project.lib import get_tabulate_formats, ParameterType
-from click_project.config import config,  merge_settings
+from click_project.config import config, merge_settings
 from click_project.completion import startswith
 from click_project.log import get_logger
 from click_project.overloads import command, group, option, flag, argument, flow_command, flow_option, flow_argument
@@ -33,6 +33,7 @@ def param_config(name, *args, **kwargs):
 
     class Conf(typ):
         pass
+
     init_callback = kwargs.get("callback")
     if not hasattr(config, name):
         setattr(config, name, Conf())
@@ -101,11 +102,12 @@ def use_settings(settings_name, settings_cls, override=True, default_profile='co
                 profile = profile.get_recipe(recipe) if recipe else profile
                 settings_store.readprofile = profile_name
                 settings_store.all_settings[profile_name] = profile.get_settings(settings_name)
-                s1, s2 = merge_settings(config.load_settings_from_profile(
-                    profile,
-                    recurse=True,
-                    only_this_recipe=recipe,
-                ))
+                s1, s2 = merge_settings(
+                    config.load_settings_from_profile(
+                        profile,
+                        recurse=True,
+                        only_this_recipe=recipe,
+                    ))
                 for recipe in config.filter_enabled_profiles(profile.recipes):
                     settings_store.all_settings[recipe.name] = recipe.get_settings(settings_name)
 
@@ -131,9 +133,12 @@ def use_settings(settings_name, settings_cls, override=True, default_profile='co
                 setup_settings(ctx)
             return value
 
-
         for profile in [profile_name_to_commandline_name(profile.name) for profile in config.root_profiles]:
-            f = flag('--{}'.format(profile), "profile", flag_value=profile, help="Consider only the {} profile".format(profile), callback=profile_callback)(f)
+            f = flag('--{}'.format(profile),
+                     "profile",
+                     flag_value=profile,
+                     help="Consider only the {} profile".format(profile),
+                     callback=profile_callback)(f)
         f = flag('--context', "profile", flag_value="context", help="Guess the profile", callback=profile_callback)(f)
         f = option('--recipe', type=RecipeType(), callback=recipe_callback, help="Use this recipe")(f)
 
@@ -144,12 +149,12 @@ def use_settings(settings_name, settings_cls, override=True, default_profile='co
             setattr(config, settings_name, settings_store)
             del kwargs["recipe"]
             del kwargs["profile"]
-            LOGGER.debug("Will use the settings at profile {}".format(
-                settings_store.readprofile
-            ))
+            LOGGER.debug("Will use the settings at profile {}".format(settings_store.readprofile))
             return f(*args, **kwargs)
+
         wrapped.inherited_params = ["recipe", "profile"]
         return wrapped
+
     return decorator
 
 
@@ -162,7 +167,8 @@ def deprecated(version=None, message=None):
         help = command.help.splitlines()[0] if command.help else ""
         ref_short_help = make_default_short_help(help)
         if command.short_help == ref_short_help:
-            command.short_help = make_default_short_help(command.help.splitlines()[0], max_length=90 - len(deprecated_suffix)) + deprecated_suffix
+            command.short_help = make_default_short_help(command.help.splitlines()[0],
+                                                         max_length=90 - len(deprecated_suffix)) + deprecated_suffix
         command.deprecated = {"version": version, "message": message}
         return command
 
@@ -181,6 +187,7 @@ def table_format(func=None, default=None, config_name='config.table.format'):
         for opt in reversed(opts):
             func = opt(func)
         return func
+
     return decorator(func) if func else decorator
 
 
@@ -193,22 +200,27 @@ def table_fields(func=None, choices=(), default=None):
     def decorator(func):
         fields_type = click.Choice(choices) if choices else None
         opts = [
-            option('--field', 'fields', multiple=True, type=fields_type, default=default,
-                   help="Only display the following fields in the output", callback=callback)
+            option('--field',
+                   'fields',
+                   multiple=True,
+                   type=fields_type,
+                   default=default,
+                   help="Only display the following fields in the output",
+                   callback=callback)
         ]
         for opt in reversed(opts):
             func = opt(func)
         return func
+
     return decorator(func) if func else decorator
 
 
 # don't export the modules, so we can safely import all the decorators
-__all__ = ['get_tabulate_formats', 'startswith', 'settings_stores', 'option',
-           'argument', 'param_config', 'pass_context', 'table_fields',
-           'ParameterType', 'group', 'table_format', 'deprecated', 'flag',
-           'merge_settings', 'command', 'use_settings', 'flow_argument',
-           'flow_option', 'flow_command']
-
+__all__ = [
+    'get_tabulate_formats', 'startswith', 'settings_stores', 'option', 'argument', 'param_config', 'pass_context',
+    'table_fields', 'ParameterType', 'group', 'table_format', 'deprecated', 'flag', 'merge_settings', 'command',
+    'use_settings', 'flow_argument', 'flow_option', 'flow_command'
+]
 
 if __name__ == '__main__':
     # generate the __all__ content for this file

@@ -27,15 +27,11 @@ class TrymeType(ParameterType):
     name = "TryMe"
 
     def complete(self, ctx, incomplete):
-        return [
-            "you_got_it"
-        ]
+        return ["you_got_it"]
 
 
 @learn.command()
-@option("--try-me",
-        type=TrymeType(),
-        help="An option to try the completion")
+@option("--try-me", type=TrymeType(), help="An option to try the completion")
 def completion(try_me):
     """Let's learn the completion together"""
     if try_me == "you_got_it":
@@ -46,8 +42,7 @@ I suggest you try the exec command next.
 `clk learn exec`
 """)
     else:
-        print(
-            """The first thing you should be looking for in a command line interface
+        print("""The first thing you should be looking for in a command line interface
 is the completion.
 
 You can setup the completion for clk by running the command:
@@ -66,15 +61,13 @@ Or, if you don't want to bother with the completion, continue your journey with
 the printing stuff.
 
 `clk learn printing`
-            """
-)
+            """)
 
 
 @learn.command()
 def printing():
     """Start printing something"""
-    print(
-        """In a good command line tool, you need to have a powerful logging
+    print("""In a good command line tool, you need to have a powerful logging
 system.
 
 clk comes with one of those.
@@ -102,15 +95,13 @@ information parsed by other command line tools.
 Now that you know out to print stuff, continue your journey with
 
 `clk learn exec`
-"""
-    )
+""")
 
 
 @learn.command()
 def exec():
     """Learn the exec command"""
-    print(
-        """clk by itself only provide command line tools features. Now, we start playing
+    print("""clk by itself only provide command line tools features. Now, we start playing
 with the most basic way to make it interact with some external stuff to create
 your own tooling.
 
@@ -126,15 +117,13 @@ understood aliases and parameters.
 By the way, the next stuff to learn is
 
 `clk learn alias`
-"""
-    )
+""")
 
 
 @learn.command()
 def alias():
     """Alias"""
-    print(
-        """This is the first real feature of clk.
+    print("""This is the first real feature of clk.
 
 An alias is basically a shortcut to run another command.
 
@@ -165,19 +154,16 @@ the learning commands.
 Continue your journey with
 
 `clk learn parameter`
-  """
-    )
+  """)
 
 
 @learn.command()
 def parameter():
     """Configuring commands"""
-    print(
-"""You created your first command `readfile`.
+    print("""You created your first command `readfile`.
 
 Let's say you want the command readfile to show the line number of the file. You
 know that cat accepts the option -n to do so.
 
 You could have defined readfile to
-"""
-    )
+""")

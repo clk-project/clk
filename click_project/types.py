@@ -4,7 +4,7 @@
 import click
 
 from click_project.config import config
-from click_project.core import DynamicChoiceType as DynamicChoice # NOQA: just expose the object
+from click_project.core import DynamicChoiceType as DynamicChoice  # NOQA: just expose the object
 
 
 class Suggestion(click.Choice):
@@ -17,10 +17,7 @@ class Suggestion(click.Choice):
         return "[{}|...]".format("|".join(self.choices))
 
     def get_missing_message(self, param):
-        return (
-            "Either choose from:\n\t{}."
-            " or provide a new one".format(",\n\t".join(self.choices))
-        )
+        return ("Either choose from:\n\t{}." " or provide a new one".format(",\n\t".join(self.choices)))
 
 
 class ProfileType(DynamicChoice):
@@ -31,10 +28,7 @@ class ProfileType(DynamicChoice):
 
     @property
     def profiles(self):
-        return {
-            profile.name: profile
-            for profile in config.all_profiles
-        }
+        return {profile.name: profile for profile in config.all_profiles}
 
     def converter(self, value):
         return self.profiles[value]
@@ -52,8 +46,5 @@ class DirectoryProfileType(ProfileType):
         return {
             name: profile
             for name, profile in super().profiles.items()
-            if isinstance(profile, DirectoryProfile)
-            and (
-                not self.root_only or profile.isroot
-            )
+            if isinstance(profile, DirectoryProfile) and (not self.root_only or profile.isroot)
         }

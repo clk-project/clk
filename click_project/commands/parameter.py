@@ -51,8 +51,7 @@ def get_choices(ctx, args_, incomplete):
         yield (item, help)
 
 
-@parameter.command(ignore_unknown_options=True, change_directory_options=False,
-                    handle_dry_run=True)
+@parameter.command(ignore_unknown_options=True, change_directory_options=False, handle_dry_run=True)
 @argument('cmd', type=CommandType(), help="The command to set")
 @argument('params', nargs=-1, help="The command parameters")
 def set(cmd, params):
@@ -60,28 +59,23 @@ def set(cmd, params):
     old = config.parameters.writable.get(cmd)
     config.parameters.writable[cmd] = params
     if old is not None:
-        LOGGER.status(
-            "Removing {} parameters of {}: {}".format(
-                config.parameters.writeprofilename,
-                cmd,
-                format_parameters(old),
-            )
-        )
-    LOGGER.status(
-        "New {} parameters for {}: {}".format(
+        LOGGER.status("Removing {} parameters of {}: {}".format(
             config.parameters.writeprofilename,
             cmd,
-            format_parameters(params),
-        )
-    )
+            format_parameters(old),
+        ))
+    LOGGER.status("New {} parameters for {}: {}".format(
+        config.parameters.writeprofilename,
+        cmd,
+        format_parameters(params),
+    ))
     config.parameters.write()
 
 
 set.get_choices = get_choices
 
 
-@parameter.command(ignore_unknown_options=True, change_directory_options=False,
-                    handle_dry_run=True)
+@parameter.command(ignore_unknown_options=True, change_directory_options=False, handle_dry_run=True)
 @argument('cmd', type=CommandType(), help="The command to set")
 def edit(cmd):
     """Set the parameters of a command"""
@@ -94,21 +88,17 @@ def edit(cmd):
         LOGGER.info("Aboooooort !!")
     else:
         if old:
-            LOGGER.status(
-                "Removing {} parameters of {}: {}".format(
-                    config.parameters.writeprofilename,
-                    cmd,
-                    format_parameters(old),
-                )
-            )
-        params = shlex.split(content)
-        LOGGER.status(
-            "New {} parameters for {}: {}".format(
+            LOGGER.status("Removing {} parameters of {}: {}".format(
                 config.parameters.writeprofilename,
                 cmd,
-                format_parameters(params),
-            )
-        )
+                format_parameters(old),
+            ))
+        params = shlex.split(content)
+        LOGGER.status("New {} parameters for {}: {}".format(
+            config.parameters.writeprofilename,
+            cmd,
+            format_parameters(params),
+        ))
         config.parameters.writable[cmd] = params
         config.parameters.write()
 
@@ -124,22 +114,18 @@ def append(cmd, params):
     old = config.parameters.writable.get(cmd, [])
     new = old + list(params)
     if old:
-        LOGGER.status(
-            "New {} parameters for {}: {} (old parameters) + {}".format(
-                config.parameters.writeprofilename,
-                cmd,
-                format_parameters(old),
-                format_parameters(params),
-            )
-        )
+        LOGGER.status("New {} parameters for {}: {} (old parameters) + {}".format(
+            config.parameters.writeprofilename,
+            cmd,
+            format_parameters(old),
+            format_parameters(params),
+        ))
     else:
-        LOGGER.status(
-            "New {} parameters for {}: {}".format(
-                config.parameters.writeprofilename,
-                cmd,
-                format_parameters(params),
-            )
-        )
+        LOGGER.status("New {} parameters for {}: {}".format(
+            config.parameters.writeprofilename,
+            cmd,
+            format_parameters(params),
+        ))
     config.parameters.writable[cmd] = new
     config.parameters.write()
 
@@ -183,27 +169,27 @@ def remove(cmd, params):
             config.parameters.writable[cmd].remove(param)
         except ValueError:
             raise click.ClickException('%s is not in the parameters of %s' % (param, cmd))
-    LOGGER.status("Erasing {} parameters {} from {} settings".format(cmd, " ".join(params), config.parameters.writeprofilename))
+    LOGGER.status("Erasing {} parameters {} from {} settings".format(cmd, " ".join(params),
+                                                                     config.parameters.writeprofilename))
     config.parameters.write()
 
 
 @parameter.command(handle_dry_run=True)
-@argument('cmds', nargs=-1, type=CommandSettingsKeyType("parameters"),
+@argument('cmds',
+          nargs=-1,
+          type=CommandSettingsKeyType("parameters"),
           help="The commands to which the parameters will be unset")
 def unset(cmds):
     """Unset the parameters of a command"""
     for cmd in cmds:
         if cmd not in config.parameters.writable:
             raise click.ClickException("The command %s has no parameter registered in the %s configuration."
-                                       " Try using another profile option (like --local or --global)"
-                                       % (cmd, config.parameters.writeprofilename))
+                                       " Try using another profile option (like --local or --global)" %
+                                       (cmd, config.parameters.writeprofilename))
     for cmd in cmds:
-        LOGGER.status(
-            "Erasing {} parameters of {} (was: {})".format(
-                config.parameters.writeprofilename, cmd,
-                format_parameters(config.parameters.writable[cmd])
-            )
-        )
+        LOGGER.status("Erasing {} parameters of {} (was: {})".format(config.parameters.writeprofilename, cmd,
+                                                                     format_parameters(
+                                                                         config.parameters.writable[cmd])))
         del config.parameters.writable[cmd]
     config.parameters.write()
 
@@ -229,19 +215,13 @@ def show(ctx, name_only, cmds, under, fields, format, **kwargs):
                 cmd = get_command_safe(cmd_name)
 
                 def get_line(profile_name):
-                    return " ".join([
-                        quote(p)
-                        for p in
-                        config.parameters.all_settings.get(profile_name, {}).get(cmd_name, [])
-                    ])
+                    return " ".join(
+                        [quote(p) for p in config.parameters.all_settings.get(profile_name, {}).get(cmd_name, [])])
 
                 if config.parameters.readprofile == "settings-file":
                     args = config.parameters.readonly.get(cmd_name, [])
                 else:
-                    values = {
-                        profile.name: get_line(profile.name)
-                        for profile in config.all_enabled_profiles
-                    }
+                    values = {profile.name: get_line(profile.name) for profile in config.all_enabled_profiles}
                     args = colorer.colorize(values, config.parameters.readprofile)
                 if args == [""]:
                     # the command most likely has implicit settings and only

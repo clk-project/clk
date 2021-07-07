@@ -21,7 +21,8 @@ def fork(force, name):
         else:
             raise click.UsageError(f"{output} already exist")
     makedirs(output)
-    createfile(output / "setup.py", f"""#!/usr/bin/env python3
+    createfile(
+        output / "setup.py", f"""#!/usr/bin/env python3
 # -*- coding:utf-8 -*-
 
 from setuptools import setup, find_packages
@@ -41,12 +42,11 @@ setup(
         ]
     }},
 )
-"""
-    )
+""")
     package = (output / name)
     makedirs(package)
-    createfile(package / "main.py",
-        f"""#!/usr/bin/env python3
+    createfile(
+        package / "main.py", f"""#!/usr/bin/env python3
 # -*- coding:utf-8 -*-
 
 from click_project.setup import basic_entry_point, main
@@ -63,15 +63,11 @@ def {name}(**kwargs):
 
 if __name__ == "__main__":
     main()
-"""
-    )
-    createfile(package / "__init__.py",
-        f"""#!/usr/bin/env python3"""
-    )
+""")
+    createfile(package / "__init__.py", f"""#!/usr/bin/env python3""")
     commands = (package / "commands")
     makedirs(commands)
-    (commands / "somecommand.py",
-        """#!/usr/bin/env python3
+    (commands / "somecommand.py", """#!/usr/bin/env python3
 # -*- coding:utf-8 -*-
 
 import click
@@ -91,10 +87,7 @@ def somecommand(some_argument, some_flag, some_option):
     LOGGER.info(some_argument)
     LOGGER.info(some_flag)
     LOGGER.info(some_option)
-"""
-    )
-    print(
-        f"Now, install {name} with `python3 -m pip install {name}`,"
-        f" enable its completion with `{name} completion install`"
-        f" and don't forget to have fun"
-    )
+""")
+    print(f"Now, install {name} with `python3 -m pip install {name}`,"
+          f" enable its completion with `{name} completion install`"
+          f" and don't forget to have fun")

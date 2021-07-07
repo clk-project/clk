@@ -127,8 +127,7 @@ def cmd(ctx):
     for k, v in sorted(six.iteritems(config.override_env)):
         click.echo('SET {k}={v}'.format(k=k, v=v))
     click.echo('REM Run this command to configure your shell:')
-    click.echo('REM FOR /f "tokens=*" %i IN (\'{command}\') DO %i'.format(
-        command=ctx.command_path))
+    click.echo('REM FOR /f "tokens=*" %i IN (\'{command}\') DO %i'.format(command=ctx.command_path))
 
 
 @env.command(handle_dry_run=True)

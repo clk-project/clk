@@ -85,15 +85,17 @@ set.get_choices = get_choices
 
 @trigger.command(handle_dry_run=True)
 @argument('position', type=click.Choice(["pre", "post", "error", "success"]), help="The trigger position")
-@argument('cmds', nargs=-1, type=CommandSettingsKeyType("triggers"),
+@argument('cmds',
+          nargs=-1,
+          type=CommandSettingsKeyType("triggers"),
           help="The commands where the triggers will be unset")
 def unset(cmds, position):
     """Unset some triggers"""
     for cmd in cmds:
         if cmd not in config.triggers.writable:
             raise click.ClickException("The %s configuration has no '%s' triggers registered."
-                                       "Try using another profile option (like --local or --global)"
-                                       % (config.triggers.writeprofile, cmd))
+                                       "Try using another profile option (like --local or --global)" %
+                                       (config.triggers.writeprofile, cmd))
     for cmd in cmds:
         LOGGER.status("Erasing {} triggers from {} settings".format(cmd, config.triggers.writeprofile))
         del config.triggers.writable[cmd]
@@ -101,7 +103,10 @@ def unset(cmds, position):
 
 
 @trigger.command(handle_dry_run=True)
-@flag('--name-only/--no-name-only', help="Only display the triggers names",)
+@flag(
+    '--name-only/--no-name-only',
+    help="Only display the triggers names",
+)
 @Colorer.color_options
 @argument('position', type=click.Choice(["pre", "post", "error", "success"]), help="The trigger position")
 @argument('triggers', nargs=-1, type=CommandSettingsKeyType("triggers"), help="The commands to show")
@@ -114,10 +119,8 @@ def show(name_only, triggers, position, **kwargs):
                 click.echo(triggers_)
             else:
                 values = {
-                    profile.name: format(
-                        config.triggers.all_settings[profile.name].get(
-                            triggers_, {}
-                        ).get(position, []))
+                    profile.name: format(config.triggers.all_settings[profile.name].get(triggers_,
+                                                                                        {}).get(position, []))
                     for profile in config.all_enabled_profiles
                 }
                 args = colorer.colorize(values, config.triggers.readprofile)
@@ -172,4 +175,6 @@ def append(cmd, params, position):
     data[position] = data.get(position, []) + commands
     config.triggers.writable[cmd] = data
     config.triggers.write()
+
+
 append.get_choices = get_choices

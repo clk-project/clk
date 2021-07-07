@@ -23,7 +23,6 @@ from click_project.click_helpers import click_get_current_context_safe
 from click_project.log import LOG_LEVELS, set_level, get_logger
 from click_project.lib import updated_env, quote, value_to_string
 
-
 LOGGER = get_logger(__name__)
 
 
@@ -53,6 +52,7 @@ command. Hence the name dynamic
                 inst = getattr(config, klass, name)
             setattr(inst, attr.name, value)
             return value
+
         return cb
 
 
@@ -60,13 +60,7 @@ def migrate_profiles():
     ctx = click_get_current_context_safe()
     for profile in config.root_profiles + list(config.all_recipes):
         if profile is not None:
-            profile.migrate_if_needed(
-                config.persist_migration and
-                not (
-                    ctx is not None and
-                    ctx.resilient_parsing
-                )
-            )
+            profile.migrate_if_needed(config.persist_migration and not (ctx is not None and ctx.resilient_parsing))
 
 
 def get_appdir(appname):
@@ -129,9 +123,7 @@ class Config(object):
         self.persist_migration = False
         # environment values
         self.env = None
-        self.override_env = {
-            "CLK_INSTALL_LOCATION": str(Path(__file__).parent)
-        }
+        self.override_env = {"CLK_INSTALL_LOCATION": str(Path(__file__).parent)}
         self.old_env = os.environ.copy()
         self.distribution_profile_location = None
         self._all_profiles_cache = None
@@ -158,14 +150,12 @@ class Config(object):
 
     @cached_property
     def env_profile(self):
-        profile = ProfileFactory.create_preset_profile(
-            "env",
-            settings=defaultdict(lambda: defaultdict(list)),
-            explicit=True,
-            isroot=True,
-            activation_level=ActivationLevel.global_,
-            default_color="bold-True"
-        )
+        profile = ProfileFactory.create_preset_profile("env",
+                                                       settings=defaultdict(lambda: defaultdict(list)),
+                                                       explicit=True,
+                                                       isroot=True,
+                                                       activation_level=ActivationLevel.global_,
+                                                       default_color="bold-True")
         parameters_prefix = f"{self.app_name}_P_".upper()
         profile.settings["parameters"] = {
             key[len(parameters_prefix):].replace("__", "-").replace("_", ".").lower(): shlex.split(value)
@@ -186,31 +176,15 @@ class Config(object):
         env = {}
 
         while ctx:
-            env.update(
-                {
-                    (ctx.command_path.replace(
-                        " ", "_"
-                    ) + "__" + key).upper(): (
-                        value_to_string(value)
-                    )
-                    for key, value in ctx.params.items()
-                }
-            )
+            env.update({(ctx.command_path.replace(" ", "_") + "__" + key).upper(): (value_to_string(value))
+                        for key, value in ctx.params.items()})
             ctx = ctx.parent
         return env
 
     @property
     def parameters_as_environ_variables(self):
-        return {
-            (
-                "CLK_P_" + path.replace(
-                    "-", "__"
-                ).replace(
-                    ".", "_"
-                )
-            ).upper(): " ".join(map(quote, parameters))
-            for path, parameters in config.get_settings2("parameters").items()
-        }
+        return {("CLK_P_" + path.replace("-", "__").replace(".", "_")).upper(): " ".join(map(quote, parameters))
+                for path, parameters in config.get_settings2("parameters").items()}
 
     @property
     def external_commands_environ_variables(self):
@@ -244,9 +218,7 @@ class Config(object):
         else:
             candidate = self.find_project()
             if candidate:
-                LOGGER.develop(
-                    "Guessing project {} from the local context".format(candidate)
-                )
+                LOGGER.develop("Guessing project {} from the local context".format(candidate))
             return candidate
 
     def find_project(self):
@@ -288,9 +260,7 @@ class Config(object):
             os.environ[k] = v
         self.env = dict((k, os.pathsep.join(os.path.normpath(p) for p in ps if p)) for k, ps in six.iteritems(self.env))
         for k, v in six.iteritems(self.env):
-            sep = os.pathsep if (k.endswith("PATH") or
-                                 k.endswith("DIR") or
-                                 k.endswith("DIRS")) else " "
+            sep = os.pathsep if (k.endswith("PATH") or k.endswith("DIR") or k.endswith("DIRS")) else " "
             if k in os.environ:
                 os.environ[k] = v + sep + os.environ[k]
             else:
@@ -316,11 +286,7 @@ class Config(object):
         explicit_only = explicit_only or only_this_recipe
         for profile in self.all_enabled_profiles:
             if not explicit_only or profile.explicit:
-                yield from self.load_settings_from_profile(
-                        profile,
-                        recurse,
-                        only_this_recipe=only_this_recipe
-                )
+                yield from self.load_settings_from_profile(profile, recurse, only_this_recipe=only_this_recipe)
 
     def merge_settings(self):
         for profile in self.all_enabled_profiles:
@@ -333,10 +299,7 @@ class Config(object):
         self.settings, self.settings2 = merge_settings(self.iter_settings(recurse=True))
 
     def load_settings_from_profile(self, profile, recurse, only_this_recipe=None):
-        if profile is not None and (
-                not only_this_recipe
-                or profile.short_name == only_this_recipe
-        ):
+        if profile is not None and (not only_this_recipe or profile.short_name == only_this_recipe):
             yield profile.settings
         if profile is not None and recurse:
             for recipe in self.filter_enabled_profiles(profile.recipes):
@@ -351,16 +314,9 @@ class Config(object):
         # fallback on uniq shortnames
         recipes = list(self.all_recipes)
         shortnames = list(map(lambda r: r.short_name, recipes))
-        uniq_shortnames = [
-            nam
-            for nam in shortnames
-            if shortnames.count(nam) == 1
-        ]
+        uniq_shortnames = [nam for nam in shortnames if shortnames.count(nam) == 1]
         if name in uniq_shortnames:
-            return [
-                r for r in recipes
-                if r.short_name == name
-            ][0]
+            return [r for r in recipes if r.short_name == name][0]
         raise ValueError("Could not find profile {}".format(name))
 
     @property
@@ -374,10 +330,7 @@ class Config(object):
     def local_profile(self):
         if self.project:
             return ProfileFactory.create_or_get_by_location(
-                os.path.join(
-                    self.project,
-                    "." + self.main_command.path
-                ),
+                os.path.join(self.project, "." + self.main_command.path),
                 name="local",
                 app_name=self.app_name,
                 explicit=True,
@@ -393,9 +346,7 @@ class Config(object):
         settings = {}
         proj = self.guess_project()
         if proj:
-            settings["parameters"] = {
-                    self.main_command.path: ["--project", proj]
-                }
+            settings["parameters"] = {self.main_command.path: ["--project", proj]}
         return ProfileFactory.create_preset_profile(
             "currentdirectorypreset",
             settings=settings,
@@ -409,9 +360,7 @@ class Config(object):
         if self.project:
             return ProfileFactory.create_preset_profile(
                 "localpreset",
-                settings={
-                    "customcommands": self.local_profile.custom_command_paths
-                },
+                settings={"customcommands": self.local_profile.custom_command_paths},
                 explicit=False,
                 isroot=True,
                 activation_level=ActivationLevel.local,
@@ -505,21 +454,11 @@ class Config(object):
         return self.filter_enabled_profiles(self.all_profiles)
 
     def filter_enabled_profiles(self, profiles):
-        return (
-            profile for profile in profiles
-            if (
-                    not profile.isrecipe
-                    or
-                    self.is_recipe_enabled(profile.short_name)
-            )
-        )
+        return (profile for profile in profiles if (not profile.isrecipe or self.is_recipe_enabled(profile.short_name)))
 
     @property
     def all_directory_profiles(self):
-        return [
-            profile for profile in self.all_profiles
-            if isinstance(profile, DirectoryProfile)
-        ]
+        return [profile for profile in self.all_profiles if isinstance(profile, DirectoryProfile)]
 
     @property
     def all_profiles(self):
@@ -534,15 +473,12 @@ class Config(object):
                     res.append(
                         ProfileFactory.create_preset_profile(
                             f"{recipe.name}preset",
-                            settings={
-                                "customcommands": recipe.custom_command_paths
-                            },
+                            settings={"customcommands": recipe.custom_command_paths},
                             explicit=False,
                             isroot=False,
                             isrecipe=True,
                             activation_level=ActivationLevel.global_,
-                        )
-                    )
+                        ))
                     res.append(recipe)
 
             add_profile(self.distribution_profile)
@@ -561,17 +497,11 @@ class Config(object):
 
     @property
     def implicit_profiles(self):
-        return [
-            profile for profile in self.all_enabled_profiles
-            if not profile.explicit
-        ]
+        return [profile for profile in self.all_enabled_profiles if not profile.explicit]
 
     @property
     def root_profiles(self):
-        return [
-            profile for profile in self.all_enabled_profiles
-            if profile.isroot
-        ]
+        return [profile for profile in self.all_enabled_profiles if profile.isroot]
 
     @property
     def all_recipes(self):
@@ -580,11 +510,7 @@ class Config(object):
                 yield recipe
 
     def get_enabled_recipes_by_short_name(self, short_name):
-        return (
-            recipe
-            for recipe in self.all_enabled_recipes
-            if recipe.short_name == short_name
-        )
+        return (recipe for recipe in self.all_enabled_recipes if recipe.short_name == short_name)
 
     @property
     def all_disabled_recipes(self):
@@ -599,9 +525,7 @@ class Config(object):
         return self.filter_enabled_profiles(self.all_recipes)
 
     def sorted_recipes(self, recipes):
-        return sorted(
-            recipes,
-            key=lambda r: self.get_recipe_order(r.short_name))
+        return sorted(recipes, key=lambda r: self.get_recipe_order(r.short_name))
 
     def get_recipe_order(self, recipe):
         if self.settings is None:
@@ -630,18 +554,10 @@ class Config(object):
         return (self.settings2 or {}).get("recipe", {}).get(shortname, {}).get("enabled", True)
 
     def filter_unset_recipes(self, recipes):
-        return [
-            recipe
-            for recipe in recipes
-            if self.is_recipe_enabled(recipe.short_name) is None
-        ]
+        return [recipe for recipe in recipes if self.is_recipe_enabled(recipe.short_name) is None]
 
     def filter_disabled_recipes(self, recipes):
-        return [
-            recipe
-            for recipe in recipes
-            if self.is_recipe_enabled(recipe.short_name) is False
-        ]
+        return [recipe for recipe in recipes if self.is_recipe_enabled(recipe.short_name) is False]
 
     @property
     def log_level(self):
@@ -685,9 +601,7 @@ class Config(object):
 
     def get_parameters(self, path, implicit_only=False):
         return [
-            setting
-            for profile in self.all_enabled_profiles
-            if implicit_only is False or not profile.explicit
+            setting for profile in self.all_enabled_profiles if implicit_only is False or not profile.explicit
             for setting in profile.get_settings("parameters").get(path, [])
         ]
 
@@ -698,9 +612,7 @@ config_cls = None
 
 def setup_config_class(cls=Config):
     from click_project import completion
-    completion.CASE_INSENSITIVE_ENV = "_{}_CASE_INSENSITIVE_COMPLETION".format(
-        cls.app_name.upper().replace("-", "_")
-    )
+    completion.CASE_INSENSITIVE_ENV = "_{}_CASE_INSENSITIVE_COMPLETION".format(cls.app_name.upper().replace("-", "_"))
     global configs, config_cls
     config_cls = cls
     del configs[:]
