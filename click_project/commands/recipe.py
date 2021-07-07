@@ -432,7 +432,7 @@ def install(ctx, profile, url, name, url_prefix, install_deps, editable, force):
     profile = profile or config.global_profile
     install_type = None
     urls = []
-    if re.match("[a-z0-9_]+", url):
+    if re.match("^[a-z0-9_]+$", url):
         url = f"click-project/{url}"
     if match := re.match("^(?P<author>[a-zA-Z0-9_-]+)/(?P<recipe>[a-zA-Z0-9]+)$", url):
         author = match.group("author")
