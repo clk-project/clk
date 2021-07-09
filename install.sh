@@ -13,6 +13,36 @@ print(version_number >= 19)
     [ "${good_version}" == "True" ]
 }
 
+_check_python3 () {
+    local good_version="$(python3 -c '
+import re
+import sys
+
+version_number=int(re.match("^3\.([0-9]+)\.", sys.version).group(1))
+print(version_number >= 8)
+')"
+    [ "${good_version}" == "True" ]
+}
+
+_find_suitable_python_version ( ) {
+    if which python3 > /dev/null && _check_python3
+    then
+        PYTHON=python3
+    elif which python3.9 > /dev/null
+    then
+        PYTHON=python3.9
+    elif which python3.8 > /dev/null
+    then
+        PYTHON=python3.8
+    else
+        echo "Could not find a suitable python version (at least 3.8)."
+        echo "Make sure one is installed and available."
+        echo "Hint: on debian-like systems -> sudo apt install python3.9."
+        exit 1
+    fi
+    echo "Using this command to run python: ${PYTHON}"
+}
+
 
 if [ -t 1 ]; then
     green="\e[32m"
@@ -79,17 +109,19 @@ else
     fi
     rm "${INSTALL_PATH}/somedummyscripttotest"
 
+    _find_suitable_python_version
+
     if ! _check_pip
     then
         # we need to force the reinstall in order to make sure the latest version of
         # pip is there
         GET_PIP_TMP_DIR="${TMPDIR:-/tmp}/get-pip.py"
-        if which python3 curl > /dev/null; then
+        if which curl > /dev/null; then
             curl -sSL https://bootstrap.pypa.io/get-pip.py -o "${GET_PIP_TMP_DIR}"
-            python3 ${TMPDIR:-/tmp}/get-pip.py --force-reinstall --user --quiet & spin "installing pip"
-        elif which python wget > /dev/null; then
+            "${PYTHON}" ${TMPDIR:-/tmp}/get-pip.py --force-reinstall --user --quiet & spin "installing pip"
+        elif which wget > /dev/null; then
             wget -nv https://bootstrap.pypa.io/get-pip.py -O "${GET_PIP_TMP_DIR}"
-            python3 ${TMPDIR:-/tmp}/get-pip.py --force-reinstall --user --quiet & spin "installing pip"
+            "${PYTHON}" ${TMPDIR:-/tmp}/get-pip.py --force-reinstall --user --quiet & spin "installing pip"
         else
             echo "Error: can't find or install pip"
             exit 1
@@ -101,7 +133,7 @@ else
         echo "Error: we could not install a suitable pip version..."
         exit 1
     fi
-    PIP="python3 -m pip"
+    PIP="${PYTHON} -m pip"
     USER_OPT=--user
 fi
 
