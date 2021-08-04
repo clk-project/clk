@@ -362,38 +362,28 @@ def set_order(recipe, order):
 
 
 @recipe.command()
-@argument(
-    "profile",
-    type=RecipeType(),
-    help="The name of the profile to open",
-)
-@option(
-    "--opener",
-    help="Program to call to open the directory",
-    default="xdg-open",
-)
+@argument("profile", type=RecipeType(), help="The name of the profile to open")
+@option("--opener", help="Program to call to open the directory", default="xdg-open")
 def open(profile, opener):
     """Open the directory containing the profile"""
     call([opener, profile.location])
 
 
 @recipe.command()
-@argument(
-    "profile",
-    type=DirectoryProfileType(),
-    help="The name of the profile to show",
-)
+@argument("profile", type=DirectoryProfileType(), help="The name of the profile to show")
 def where_is(profile):
     """Show where is a given recipe"""
     print(profile.location)
 
 
+predefined_hosts = [
+    'github.com',
+    'gitlab.com',
+    'bitbucket.org',
+]
+
 @recipe.command()
-@option(
-    "--profile",
-    type=DirectoryProfileType(),
-    help="The profile where to install the recipe",
-)
+@option("--profile", type=DirectoryProfileType(), help="The profile where to install the recipe")
 @argument(
     "url",
     help=("The url of the git repository hosting the recipe."
@@ -408,68 +398,62 @@ def where_is(profile):
           " a path to a local directory"
           " (not that in that case, using --editable makes sense)."),
 )
-@option(
-    "--url-prefix",
-    help="The prefix to insert before the url in needed.",
-    type=Suggestion(["github.com", "gitlab.com"]),
-    default="github.com",
-)
 @argument("name", help="The name of the recipe", required=False)
-@flag(
-    "--install-deps/--no-install-deps",
-    help="Automatically install the dependencies.",
-    default=True,
-)
+@flag("--install-deps/--no-install-deps", help="Automatically install the dependencies.", default=True)
 @flag("--force/--no-force", help="Overwrite the existing recipe if need be.")
-@flag(
-    "-e",
-    "--editable",
-    help="(only for local path) Create a symbolic link rather than copying the content",
-)
+@flag("-e", "--editable", help="(only for local path) Create a symbolic link rather than copying the content")
 @pass_context
-def install(ctx, profile, url, name, url_prefix, install_deps, editable, force):
+def install(ctx, profile, url, name, install_deps, editable, force):
     """Install a recipe from outside"""
     profile = profile or config.global_profile
-    install_type = None
     urls = []
-    if re.match("^[a-z0-9_]+$", url):
-        url = f"click-project/{url}"
-    if match := re.match("^(?P<author>[a-zA-Z0-9_-]+)/(?P<recipe>[a-zA-Z0-9]+)$", url):
+    profile = profile or config.global_profile
+    urls = []
+    if re.match("^[a-zA-Z0-9]+$", url):
+        urls.append(f"git@github.com:click-project/clk_recipe_{url}")
+        urls.append(f"https://github.com/click-project/clk_recipe_{url}")
+        install_type = "git"
+        if name is None:
+            name = url
+    elif match := re.match("^(?P<author>[a-zA-Z0-9_-]+)/(?P<recipe>[a-zA-Z0-9]+)$", url):
         author = match.group("author")
         recipe = match.group("recipe")
-        urls.append(f"https://{url_prefix}/{author}/clk_recipe_{recipe}")
+        for host in predefined_hosts:
+            urls.append(f"git@{host}:{author}/clk_recipe_{recipe}")
+            urls.append(f"https://{host}/{author}/clk_recipe_{recipe}")
+            urls.append(f"git@{host}:{author}/{recipe}")
+            urls.append(f"https://{host}/{author}/{recipe}")
         install_type = "git"
         if name is None:
             name = recipe
-    elif m := re.match("^https://github.com/.+/(?P<name>[^/]+)/tarball/.+$", url):
+    elif match := re.match("^(?P<host>[a-zA-Z0-9_.-]+)/(?P<path>[a-zA-Z0-9_/-]+)/(?P<recipe>[a-zA-Z0-9]+)$", url):
+        host = match.group("host")
+        path = match.group("path")
+        recipe = match.group("recipe")
+        urls.append(f"git@{host}:{path}/clk_recipe_{recipe}")
+        urls.append(f"https://{host}/{path}/clk_recipe_{recipe}")
+        urls.append(f"git@{host}:{path}/{recipe}")
+        urls.append(f"https://{host}/{path}/{recipe}")
+        install_type = "git"
+        if name is None:
+            name = recipe
+    elif m := re.match(
+        "^https://github.com/.+/(?P<name>[^/]+)/tarball/.+$", url
+    ):
         install_type = "webtar"
         urls.append(url)
         name = name or m["name"]
     elif re.match(r"(\w+://)(.+@)*([\w\d\.]+)(:[\d]+)?/*(.*)|(.+@)*([\w\d\.]+):(.*)", url):
         install_type = "git"
         urls.append(url)
-    elif url.startswith("http"):
-        install_type = "git"
-        urls.append(url)
-    elif "/" in url:
-        # fallback wild guessing it could be a github/gitlab/... url, and try to get
-        # it using https and ssh
-        LOGGER.info("I don't see what this url is about."
-                    " I'm wild guessing it might a gitlab/github short url style."
-                    " In the form [host]/[path], without the initial https://.")
-        install_type = "git"
-        host = url.split("/")[0]
-        path = "/".join(url.split("/")[1:])
-        urls.append(f"https://{url}")
-        urls.append(f"git@{host}:{path}")
     elif Path(url).exists():
         install_type = "file"
         name = name or Path(url).name
         urls.append(url)
     else:
-        raise click.UsageError("I tried hard guessing what this url is about, without success."
-                               " Please take a look at the documentation"
-                               " to know about the supported formats")
+        install_type = "git"
+        urls.append(url)
+
     if editable is True and install_type != "file":
         LOGGER.warning("Ignoring --editable for we guessed that"
                        " you did not provide a url that actually"
