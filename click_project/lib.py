@@ -162,7 +162,7 @@ def rm(*file_or_tree):
     if dry_run:
         return
     for f in file_or_tree:
-        if os.path.isdir(f):
+        if os.path.isdir(f) and not os.path.islink(f):
             shutil.rmtree(f)
         else:
             os.unlink(f)
