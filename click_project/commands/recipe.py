@@ -449,7 +449,7 @@ def install(ctx, profile, url, name, install_deps, editable, force):
     elif Path(url).exists():
         install_type = "file"
         name = name or Path(url).name
-        urls.append(url)
+        urls.append(os.path.abspath(url))
     else:
         install_type = "git"
         urls.append(url)
