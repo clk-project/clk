@@ -6,6 +6,7 @@ from __future__ import print_function, absolute_import
 
 import difflib
 import functools
+import shlex
 import datetime
 import hashlib
 import heapq
@@ -591,6 +592,8 @@ def communicate(command, *args, **kwargs):
 
 def check_output(cmd, *args, **kwargs):
     """Return the process output"""
+    if isinstance(cmd, str):
+        cmd = shlex.split(cmd)
     message = ' '.join(quote(str(arg)) for arg in cmd)
     try:
         nostderr = kwargs.pop('nostderr')
