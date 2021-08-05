@@ -517,11 +517,11 @@ def install(ctx, profile, url, name, install_deps, editable, force):
         for file in glob(f"{recipe_path}/*/*"):
             move(file, recipe_path)
 
-    recipe = profile.get_recipe(name)
+    extension = profile.get_recipe(name)
 
     if install_deps is True:
         LOGGER.status("-> Installing the dependencies of the extension")
-        ctx.invoke(_install_deps, recipe=[recipe])
+        ctx.invoke(_install_deps, extension=[extension])
     LOGGER.status(f"Done installing the extension {name}")
 
 
