@@ -3,9 +3,6 @@
 
 from pathlib import Path
 
-import os
-import json
-
 import click
 
 from click_project.decorators import (

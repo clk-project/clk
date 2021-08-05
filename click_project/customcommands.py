@@ -3,12 +3,6 @@
 
 from __future__ import print_function, absolute_import
 
-import os
-import subprocess
-import json
-import re
-import importlib
-
 import click
 from pluginbase import PluginBase
 
