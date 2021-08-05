@@ -35,7 +35,11 @@ jobs:
           command: |
             python3 -m pip install pipenv
             pipenv install .
-            pipenv install pytest
+            pipenv install pytest pre-commit
+      - run:
+          name: Check code quality
+          command: |
+            pipenv run pre-commit run -a
       - run:
           name: Run tests
           # This assumes pytest is installed via the install-package step above
