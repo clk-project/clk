@@ -121,18 +121,17 @@ def recipe():
 @recipe.command(handle_dry_run=True)
 @argument("name", help="The recipe name")
 @flag(
-    "--enable/--disable",
-    help="Automatically enable the cloned recipe",
-    default=True,
+    "--disable/--enable",
+    help="Automatically disable the cloned recipe",
 )
 @pass_context
-def create(ctx, name, enable):
+def create(ctx, name, disable):
     """Create a new recipe"""
     profile = config.recipe.profile
     r = profile.create_recipe(name)
     LOGGER.status("Created recipe {}.".format(r.friendly_name))
-    if enable:
-        ctx.invoke(__enable, recipe=[name])
+    if disable:
+        ctx.invoke(_disable, recipe=[name])
 
 
 @recipe.command(handle_dry_run=True)
@@ -252,7 +251,7 @@ def show(fields, format, order, recipes, enabled_only, disabled_only, **kwargs):
     help="The names of the recipes to disable",
 )
 @pass_context
-def disable(ctx, recipe, all):
+def _disable(ctx, recipe, all):
     """Don't use this recipe"""
     if all:
         recipe = RecipeType(disabled=True).getchoice(ctx)
@@ -381,6 +380,7 @@ predefined_hosts = [
     'gitlab.com',
     'bitbucket.org',
 ]
+
 
 @recipe.command()
 @option("--profile", type=DirectoryProfileType(), help="The profile where to install the recipe")
