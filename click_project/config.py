@@ -105,8 +105,8 @@ def merge_settings(settings):
 
 
 class Config(object):
-    app_dir_name = "click-project"
-    app_name = "click-project"
+    app_dir_name = "clk"
+    app_name = "clk"
     main_command = None
 
     def __init__(self):

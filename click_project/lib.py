@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
-"""General purpose functions, not directly linked to click-project"""
+"""General purpose functions, not directly linked to clk"""
 
 from __future__ import print_function, absolute_import
 
@@ -862,7 +862,7 @@ def git_sync(url,
     use_shallow = use_shallow and parse_version(version) >= parse_version('2.1.4') and not last_tag
     directory = os.path.abspath(directory or re.split('[:/]', url)[-1])
     git_dir = os.path.join(directory, ".git")
-    ref_file = os.path.abspath(directory + '/.git/click-project-git-sync-reference')
+    ref_file = os.path.abspath(directory + '/.git/clk-git-sync-reference')
     updated = False
     quiet = ['--quiet'] if quiet else []
     parent = os.path.dirname(directory)

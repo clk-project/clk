@@ -16,7 +16,7 @@ def print_version(ctx, attr, value):
     __name__,
     extra_command_packages=["clk_commands", "clk_commands_perso"],
 )
-@flag("--version", help="Print the version of click-project and exits", callback=print_version)
+@flag("--version", help="Print the version of clk and exits", callback=print_version)
 def clk(**kwargs):
     """This is the click project (a.k.a. clk) entry point.
 

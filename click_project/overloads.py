@@ -1148,7 +1148,7 @@ class CommandSettingsKeyType(ParameterType):
 class MainCommand(click_didyoumean.DYMMixin, DeprecatedMixin, TriggerMixin, HelpMixin, ExtraParametersMixin,
                   RememberParametersMixin, click.MultiCommand):
     auto_envvar_prefix = "CLICK_PROJECT"
-    path = "click-project"
+    path = "clk"
     commandresolvers = [CoreCommandResolver()]
 
     def __init__(self, *args, **kwargs):

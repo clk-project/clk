@@ -1,4 +1,4 @@
-click-project
+clk
 ==============================================================================
 
 [![Vulnerabilities](https://sonarcloud.io/api/project_badges/measure?project=click-project_click-project&metric=vulnerabilities)](https://sonarcloud.io/dashboard?id=click-project_click-project)
@@ -14,12 +14,12 @@ click-project
 [![Technical Debt](https://sonarcloud.io/api/project_badges/measure?project=click-project_click-project&metric=sqale_index)](https://sonarcloud.io/dashboard?id=click-project_click-project)
 
 
-[![CircleCI](https://circleci.com/gh/click-project/click-project.svg?style=svg)](https://app.circleci.com/pipelines/github/click-project/click-project)
+[![CircleCI](https://circleci.com/gh/clk-project/clk.svg?style=svg)](https://app.circleci.com/pipelines/github/clk-project/clk)
 
 
-Click-project makes it *easy* and fun for ***you*** to create *awesome* command line interfaces!
+clk makes it *easy* and fun for ***you*** to create *awesome* command line interfaces!
 
-With click-project, you can turn your scripts into a powerful cli without pain and get
+With clk, you can turn your scripts into a powerful cli without pain and get
 instant access to stuff like:
 
 - great completion support
@@ -29,20 +29,20 @@ instant access to stuff like:
 - aliases
 - and more...
 
-click-project is a very *opinionated framework*, and is meant to be *batteries
+clk is a very *opinionated framework*, and is meant to be *batteries
 included*, meaning we gathered all the stuff we wanted while creating various
 commands. Dogfooding in mind, the developers are extensive users of
-click-project. They like it and when something feels wrong, they just change it.
+clk. They like it and when something feels wrong, they just change it.
 
 # Quick start
 
-Install with `curl -sSL https://raw.githubusercontent.com/click-project/click-project/master/install.sh | bash`
-or `python3 -m pip install click-project`
+Install with `curl -sSL https://raw.githubusercontent.com/clk-project/clk/master/install.sh | bash`
+or `python3 -m pip install clk`
 
 Now, the `clk` tool is available in `~/.local/bin/`, if that directory is not
 already in your path, use `export PATH="${PATH}:${HOME}/.local/bin"`
 
-Let's play with this tool to have a feeling of what click-project is about.
+Let's play with this tool to have a feeling of what clk is about.
 
 Install the completion with `clk completion --case-insensitive install` and
 start a new shell to take advantage of it.
@@ -212,20 +212,20 @@ Remove it again with.
 
 `clk recipe remove --global hello`
 
-Here, `--global` is needed or click-project will try (and fail) to delete a
+Here, `--global` is needed or clk will try (and fail) to delete a
 local recipe, whereas the clone command defaults to install it globally.
 
 We realize that recipes don't have yet a coherent default behavior. This is
 because there are quite new and are not thoroughly used yet. We believe that the
 sensible defaults will come naturally when recipes are used more often.
 
-Hopefully you have started now to grab the awesomeness of click-project and are
+Hopefully you have started now to grab the awesomeness of clk and are
 envisioning all the nice stuff you can do with it.
 
 Also take a look at a [click project 101](https://konubinix.eu/braindump/fcfaaefc-1cd7-4181-a042-6665e9a49228?title=click_project_101) made by one of the authors about
-click-project.
+clk.
 
-# why click-project?
+# why clk?
 
 * This is very related to *argparse*. Why not just use *argparse*?
 
@@ -245,9 +245,9 @@ Let's consider the example of a command line tool, say `clk`.
 * persistence of options and arguments:
 Say you want to run `clk --someoption` again and again and again. You'd like to record `--someoption` somewhere so that all the calls to `clk` will behave like `clk --someoption`.
 * logging features: Having good logging capabilities is the basics of a suitable command line tool.
-* powerful formatting helpers: The output of command line tools should be easy to read and easy to parse by an external tool. click-project provides some formatting features that can be easily configured from the command line to achieve this goal.
+* powerful formatting helpers: The output of command line tools should be easy to read and easy to parse by an external tool. clk provides some formatting features that can be easily configured from the command line to achieve this goal.
 * directory based project: Say that you want to store
-* argument documentation: arguments are at least as important as options, yet they don't have any documentation associated. click-project fixes that by allowing to add a help message to the arguments.
+* argument documentation: arguments are at least as important as options, yet they don't have any documentation associated. clk fixes that by allowing to add a help message to the arguments.
 * options groups: options can be grouped to structure the help of the commands.
 * command flow management: in case you tend to often call several commands in sequence. Although each command is also meaningful by itself. You can tell dependencies between command to gain kinda makefile-ish workflow when you run your commands.
 * launchers: some commands are just wrappers around other tools, in such situation, it is often practical to have launcher that are prefixes put in front of the run command (like valgrind, gdb etc.)
@@ -261,11 +261,11 @@ Say you want to run `clk --someoption` again and again and again. You'd like to 
 
 We decided to put all that in a single framework.
 
-For more information of all that comes with click-project, see [#features].
+For more information of all that comes with clk, see [#features].
 
 # Inspirations?
 
-click-project is inspired by several other great command line tools. Just to name a few of them:
+clk is inspired by several other great command line tools. Just to name a few of them:
 
 * [git](https://git-scm.com/)
 * [homebrew](http://brew.sh/)
@@ -277,19 +277,19 @@ click-project is inspired by several other great command line tools. Just to nam
 
 # Installing
 
-A classic : `python3 -m pip install click-project`
+A classic : `python3 -m pip install clk`
 
-# A quick tour of click-project
+# A quick tour of clk
 
-When you install `click-project`, you have access to a full set of awesome
+When you install `clk`, you have access to a full set of awesome
 libraries to create your own command line tool, as well as a simple command line
 tool called `clk`. You may want to play a bit with the later to grasp the look and
-feel of what `Click-project` is capable of..
+feel of what `clk` is capable of..
 
 First, run `clk --help` or more simply `clk`. See, there are already plenty of
 commands already available.
 
-Now you have got a fresh installation of `click-project` and have access to the
+Now you have got a fresh installation of `clk` and have access to the
 `clk` command line tool (beware pip install executable files by default in
 `~/.local/bin`. Try adding this directory in your PATH in case it is not already
 available).
@@ -303,21 +303,21 @@ own command line tools with the same awesome power.
 A great command line tool comes with a great completion support. Run `clk
 completion install bash` (or `fish` or `zsh`, your mileage may vary). If you
 want to have case-insensitive completion (I do), run it like `clk completion
---case-insensitive install`. `click-project` will have added the completion
+--case-insensitive install`. `clk` will have added the completion
 content into `~/.bash_completion`. It generally needs only to start a new terminal
 to have it working. In case of doubt, make sure this file is sourced into your
 bashrc file.
 
 ## Using the `clk` executable
 `clk` is a very practical tool. It allows you to quickly play with
-`click-project` before starting a real command line application. Everything you
+`clk` before starting a real command line application. Everything you
 will taste with `clk` will also be available to your own command line
-application based on `click-project`. You can also (like I do) simply use `clk`
+application based on `clk`. You can also (like I do) simply use `clk`
 tool to manage your personal « scripts » and take advantage of all the magic of
-`click-project`, if you don't mind starting all your calls with `clk`.
+`clk`, if you don't mind starting all your calls with `clk`.
 
-Because `clk` is the demonstrator and is closely related to `click-project`, we
-might mention `clk` to say `click-project` in the following documentation.
+Because `clk` is the demonstrator and is closely related to `clk`, we
+might mention `clk` to say `clk` in the following documentation.
 
 ### A quick glance at the available commands
 
@@ -368,7 +368,7 @@ is by default stored in `~/.config/clk/clk.json`.
 
 Do you remember how `git` stores configuration globally with `~/.gitconfig` and
 locally with `./.git/config`? `clk` does the same. One of the power of
-`click-project` lies in the fact your configuration can be stored in several
+`clk` lies in the fact your configuration can be stored in several
 places, the local one having the precedence over the global one. The location
 storing local setting is what we call a project (hence the name).
 
@@ -431,7 +431,7 @@ Then indicate to `clk` that this folder is meant to contain custom commands with
 `clk customcommands add-external-path ~/clk_commands`.
 
 In case you don't want to put your commands in a specific folder, you could also
-put the command in the canonical folder of `click-project` (`~/.config/clk/bin`).
+put the command in the canonical folder of `clk` (`~/.config/clk/bin`).
 
 Add the file `cowsay.sh` with the following.
 ```bash
@@ -485,7 +485,7 @@ cowsay@sh --help` to see how the argument was captured by `clk`.
 
 Then, simply run `clk cowsay@sh hello`.
 
-The command is integrated with the magic of `click-project`. For instance, you
+The command is integrated with the magic of `clk`. For instance, you
 can call `clk parameters set cowsay@sh --shout` to set the value of shout as
 being true by default. To temporary disable the shouting, simply call it with
 `--dont-shout`. Of course, it can be part of an alias as well.
@@ -536,18 +536,18 @@ that this command has as flow dependencies.
 ### Adding a python custom command
 
 Providing a bash script as a command is a very powerful way to take advantage of
-the `click-project` magic, but if you want to do more than a simple script of a
+the `clk` magic, but if you want to do more than a simple script of a
 few lines of code, *write it in python*.
 
 Let's first try to create the python equivalent of the cowsay script.
 
 Decide a location to store the python custom commands and indicate this location
-to `click-project`. For example, if you want to put your custom python commands
+to `clk`. For example, if you want to put your custom python commands
 into the folder `~/clk_python`, run `clk customcommands add-python-path
 ~/clk_python`.
 
 In case you don't want to put your commands in a specific folder, you could also
-put the command in the canonical folder of `click-project` (`~/.config/clk/python`).
+put the command in the canonical folder of `clk` (`~/.config/clk/python`).
 
 Then, open the file `~/clk_python/cowsay.py` and write the following
 
@@ -592,7 +592,7 @@ the logs are displayed with colors and on the error output by default.
 You can see that we created a `LOGGER` object using `LOGGER = get_logger(__name__)`.
 
 This object is a traditional python logger, on which we added a few levels.
-1. `LOGGER.develop(message)`, is used to inform of very low level details of click-project, you will barely need it.
+1. `LOGGER.develop(message)`, is used to inform of very low level details of clk, you will barely need it.
 1. `LOGGER.debug(message)`, is meant to inform about low level details about the command itself, use it to provide extra information in case something is difficult to understand.
 1. `LOGGER.action(message)` says what the command does. For instance, it is the level used to inform what happens to the filesystem or what http requests are made.
 1. `LOGGER.status(message)` informs of high level steps of the command, like the progress of a download.
@@ -704,7 +704,7 @@ setup(
     packages=find_packages(),
     zip_safe=False,
     install_requires=[
-        "click-project~=0.12.0",
+        "clk~=0.21.0",
     ],
     entry_points={
         'console_scripts':
@@ -744,7 +744,7 @@ if __name__ == "__main__":
 Here, we simply define a function, the main entry point. The part
 `exclude_core_commands=["git-sync"],` indicates that this tool will behave like
 `clk`, except it won't have the command `git-sync`. This is useful in case you
-want to remove some commands of `click-project`. Alternatively, you can
+want to remove some commands of `clk`. Alternatively, you can
 use a white list approach setting `include_core_commands` instead of
 `exclude_core_commands`, the most extreme case would be `include_core_commands`,
 indicating to use none of `clk` commands.
@@ -764,7 +764,7 @@ distributed the usual way.
 
 # FAQ
 ## Why cannot I run my command that needs library X that is installed on my computer?
-Most likely you installed click-project into a virtualenv, maybe using pipx to install click-project.
+Most likely you installed clk into a virtualenv, maybe using pipx to install clk.
 
 That is a recommended way of installing things, because virtualenv provide an
 isolated python environment. On the other hand, I guess that the library X was
@@ -777,9 +777,9 @@ isolated environment as clk itself. The fact that X is not available is in the
 consequence that virtualenv mechanism works well.
 
 Yet, this sounds like a sensible question. We suggest that
-1. either reinstall click-project with `pipx install --system-site-packages click-project` for clk to be able to have access to X.
-1. or install X directly into the pipx environment with `pipx runpip click-project install X`
-1. or you can install click-project using the traditional `python3 -m pip install click-project` command, if installing it and its dependencies outside virtual environment is not that problematic after all
+1. either reinstall clk with `pipx install --system-site-packages clk` for clk to be able to have access to X.
+1. or install X directly into the pipx environment with `pipx runpip clk install X`
+1. or you can install clk using the traditional `python3 -m pip install clk` command, if installing it and its dependencies outside virtual environment is not that problematic after all
 1. or you could install the dependencies of the custom command directly into the virtualenv of clk, by running the dedicated subcommand of clk: `clk pip install X`
 
 Of course, YMMV, and actually we might have forgotten another mean to make clk

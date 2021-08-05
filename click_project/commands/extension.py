@@ -409,8 +409,8 @@ def install(ctx, profile, url, name, install_deps, editable, force):
     profile = profile or config.global_profile
     urls = []
     if re.match("^[a-zA-Z0-9]+$", url):
-        urls.append(f"git@github.com:click-project/clk_extension_{url}")
-        urls.append(f"https://github.com/click-project/clk_extension_{url}")
+        urls.append(f"git@github.com:clk-project/clk_extension_{url}")
+        urls.append(f"https://github.com/clk-project/clk_extension_{url}")
         install_type = "git"
         if name is None:
             name = url

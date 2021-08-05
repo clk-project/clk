@@ -31,7 +31,7 @@ exit_on_log_level = None
 
 
 class Handler(logging.Handler):
-    """click-project log handler
+    """clk log handler
 
     It puts everything in the error output. Also, it allow to exit abruptly when
     a log of some level is issued"""

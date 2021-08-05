@@ -33,7 +33,7 @@ setup(
     packages=find_packages(),
     zip_safe=False,
     install_requires=[
-        "click-project",
+        "clk",
     ],
     entry_points={{
         'console_scripts':

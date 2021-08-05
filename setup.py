@@ -13,7 +13,7 @@ if version == u"0+unknown":
 cmdclass = versioneer.get_cmdclass()
 
 setup(
-    name='click-project',
+    name='clk',
     cmdclass=cmdclass,
     version=version,
     author='Samuel Loury',
