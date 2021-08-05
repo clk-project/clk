@@ -158,8 +158,8 @@ then
 fi
 
 echo -e "${green}clk successfully installed! Enjoy!${reset}"
-for recipe in ${CLK_RECIPES}
+for extension in ${CLK_EXTENSIONaS}
 do
-    echo "installing clk recipe ${recipe}... "
-    "${INSTALL_PATH}/clk" recipe install "${recipe}"
+    echo "installing clk extension ${extension}... "
+    "${INSTALL_PATH}/clk" extension install "${extension}"
 done
