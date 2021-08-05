@@ -39,15 +39,15 @@ def classic_setup(main_module=None,
     CoreCommandResolver.include_core_commands = include_core_commands
     CoreCommandResolver.exclude_core_commands = exclude_core_commands
     Group.commandresolvers = [
-        ExternalCommandResolver(),
         AliasCommandResolver(),
+        ExternalCommandResolver(),
         HookCommandResolver(),
         GroupCommandResolver(),
         AliasToGroupResolver(),
     ]
     MainCommand.commandresolvers = [
-        ExternalCommandResolver(),
         AliasCommandResolver(),
+        ExternalCommandResolver(),
         HookCommandResolver(),
         CustomCommandResolver(),
         CoreCommandResolver(),
