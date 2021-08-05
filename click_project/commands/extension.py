@@ -334,7 +334,7 @@ def __enable(ctx, extension, all, only):
 @pass_context
 def switch(ctx, extension1, extension2):
     """Switch from an extension to another"""
-    ctx.invoke(disable, extension=[extension1])
+    ctx.invoke(_disable, extension=[extension1])
     ctx.invoke(__enable, extension=[extension2])
 
 
