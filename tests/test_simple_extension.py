@@ -2,7 +2,7 @@
 # -*- coding:utf-8 -*-
 
 from shlex import split
-from subprocess import check_output
+from subprocess import check_call
 
 
 def test_simple_extension():
