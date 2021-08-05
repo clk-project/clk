@@ -110,35 +110,35 @@ def load_short_help(recipe):
 
 @group(default_command="show")
 @use_settings("recipe", RecipeConfig)
-def recipe():
-    """Recipe related commands
+def extension():
+    """Extension related commands
 
-    A recipe is a set of settings that may be activated or disactivated in a project.
-    The recipes can be defined at the global or local profile."""
+    An extension is a set of settings that may be activated or disactivated in a project.
+    The extensions can be defined at the global or local profile."""
     pass
 
 
-@recipe.command(handle_dry_run=True)
-@argument("name", help="The recipe name")
+@extension.command(handle_dry_run=True)
+@argument("name", help="The extension name")
 @flag(
     "--disable/--enable",
-    help="Automatically disable the cloned recipe",
+    help="Automatically disable the cloned extension",
 )
 @pass_context
 def create(ctx, name, disable):
-    """Create a new recipe"""
+    """Create a new extension"""
     profile = config.recipe.profile
     r = profile.create_recipe(name)
-    LOGGER.status("Created recipe {}.".format(r.friendly_name))
+    LOGGER.status("Created extension {}.".format(r.friendly_name))
     if disable:
         ctx.invoke(_disable, recipe=[name])
 
 
-@recipe.command(handle_dry_run=True)
-@argument("old", type=RecipeType(), help="The current recipe name")
-@argument("new", help="The new recipe name")
+@extension.command(handle_dry_run=True)
+@argument("old", type=RecipeType(), help="The current extension name")
+@argument("new", help="The new extension name")
 def rename(old, new):
-    """Rename a recipe"""
+    """Rename an extension"""
     if "/" not in new:
         new = "{}/{}".format(old.name.split("/")[0], new)
     new_loc = config.recipe_location(new)
@@ -147,26 +147,26 @@ def rename(old, new):
     move(old.location, new_loc)
 
 
-@recipe.command(handle_dry_run=True)
-@argument("old", type=RecipeType(), help="The current recipe name")
+@extension.command(handle_dry_run=True)
+@argument("old", type=RecipeType(), help="The current extension name")
 @argument(
     "profile",
     type=DirectoryProfileType(root_only=True),
-    help="The profile where to move the recipe",
+    help="The profile where to move the extension",
 )
 def _move(old, profile):
-    """Move a recipe to another profile"""
+    """Move an extension to another profile"""
     move(
         old.location,
         Path(profile.location) / "recipes" / Path(old.location).name,
     )
 
 
-@recipe.command(handle_dry_run=True)
-@argument("src", type=RecipeType(), help="The source recipe name")
-@argument("dest", help="The destination recipe name")
+@extension.command(handle_dry_run=True)
+@argument("src", type=RecipeType(), help="The source extension name")
+@argument("dest", help="The destination extension name")
 def _copy(src, dest):
-    """Copy a recipe"""
+    """Copy an extension"""
     if "/" not in dest:
         dest = "{}/{}".format(src.name.split("/")[0], dest)
     new_loc = config.recipe_location(dest)
@@ -175,38 +175,38 @@ def _copy(src, dest):
     copy(src.location, new_loc)
 
 
-@recipe.command(handle_dry_run=True)
+@extension.command(handle_dry_run=True)
 @argument(
-    "recipe",
+    "extension",
     type=RecipeType(),
     nargs=-1,
-    help="The name of the recipes to remove",
+    help="The name of the extensions to remove",
 )
-def remove(recipe):
-    """Remove a recipe"""
-    for rec in recipe:
+def remove(extension):
+    """Remove an extension"""
+    for rec in extension:
         LOGGER.status("Removing {}".format(rec.friendly_name))
         config.get_profile_containing_recipe(rec.name).remove_recipe(rec.name)
 
 
-@recipe.command(handle_dry_run=True)
-@table_fields(choices=["recipe", "set_in", "defined_in", "order"])
+@extension.command(handle_dry_run=True)
+@table_fields(choices=["extension", "set_in", "defined_in", "order"])
 @table_format(default="simple")
 @Colorer.color_options
-@flag("--enabled-only/--not-enabled-only", help="Show only the enabled recipes")
+@flag("--enabled-only/--not-enabled-only", help="Show only the enabled extensions")
 @flag(
     "--disabled-only/--not-disabled-only",
-    help="Show only the disabled recipes",
+    help="Show only the disabled extensions",
 )
-@option("--order/--no-order", help="Display the priority of the recipe")
+@option("--order/--no-order", help="Display the priority of the extension")
 @argument(
-    "recipes",
+    "extensions",
     type=RecipeNameType(disabled=True, failok=False),
     nargs=-1,
-    help="The names of the recipes to show",
+    help="The names of the extensions to show",
 )
-def show(fields, format, order, recipes, enabled_only, disabled_only, **kwargs):
-    """List the recipes and some info about them"""
+def show(fields, format, order, extensions, enabled_only, disabled_only, **kwargs):
+    """List the extensions and some info about them"""
     config_recipes = set(config.recipe.readonly.keys())
     avail_recipes = set([r.short_name for r in config.all_recipes])
     if not fields:
@@ -214,13 +214,13 @@ def show(fields, format, order, recipes, enabled_only, disabled_only, **kwargs):
         if not order:
             fields.remove("order")
 
-    if not recipes:
-        recipes = config_recipes | avail_recipes
-    if not recipes:
-        LOGGER.status("No recipe yet")
+    if not extensions:
+        extensions = config_recipes | avail_recipes
+    if not extensions:
+        LOGGER.status("No extension yet")
         exit(0)
     with Colorer(kwargs) as colorer, TablePrinter(fields, format) as tp:
-        for recipe_name in sorted(recipes):
+        for recipe_name in sorted(extensions):
             profiles = ", ".join([
                 click.style(profile.name, **colorer.get_style(profile.name))
                 for profile in config.root_profiles
@@ -242,116 +242,115 @@ def show(fields, format, order, recipes, enabled_only, disabled_only, **kwargs):
                 )
 
 
-@recipe.command(handle_dry_run=True)
-@flag("--all", help="On all recipes")
+@extension.command(handle_dry_run=True)
+@flag("--all", help="On all extensions")
 @argument(
-    "recipe",
+    "extension",
     type=RecipeNameType(enabled=True, failok=False),
     nargs=-1,
-    help="The names of the recipes to disable",
+    help="The names of the extensions to disable",
 )
 @pass_context
-def _disable(ctx, recipe, all):
-    """Don't use this recipe"""
+def _disable(ctx, extension, all):
+    """Don't use this extension"""
     if all:
-        recipe = RecipeType(disabled=True).getchoice(ctx)
-    for cmd in recipe:
+        extension = RecipeType(disabled=True).getchoice(ctx)
+    for cmd in extension:
         if cmd in config.recipe.writable:
             config.recipe.writable[cmd]["enabled"] = False
         else:
             config.recipe.writable[cmd] = {"enabled": False}
-        LOGGER.status("Disabling recipe {} in profile {}".format(cmd, config.recipe.writeprofile))
+        LOGGER.status("Disabling extension {} in profile {}".format(cmd, config.recipe.writeprofile))
     config.recipe.write()
 
 
-@recipe.command(handle_dry_run=True)
-@flag("--all", help="On all recipes")
+@extension.command(handle_dry_run=True)
+@flag("--all", help="On all extensions")
 @argument(
-    "recipe",
+    "extension",
     type=CommandSettingsKeyType("recipe"),
     nargs=-1,
-    help="The name of the recipe to unset",
+    help="The name of the extension to unset",
 )
 @pass_context
-def unset(ctx, recipe, all):
-    """Don't say whether to use or not this recipe (let the upper profiles decide)"""
+def unset(ctx, extension, all):
+    """Don't say whether to use or not this extension (let the upper profiles decide)"""
     if all:
-        recipe = list(config.recipe.readonly.keys())
-    for cmd in recipe:
+        extension = list(config.recipe.readonly.keys())
+    for cmd in extension:
         if cmd not in config.recipe.writable:
-            raise click.UsageError("Recipe {} not set in profile {}".format(cmd, config.recipe.writeprofile))
-    for cmd in recipe:
+            raise click.UsageError("Extension {} not set in profile {}".format(cmd, config.recipe.writeprofile))
+    for cmd in extension:
         del config.recipe.writable[cmd]
         LOGGER.status("Unsetting {} from profile {}".format(cmd, config.recipe.writeprofile))
     config.recipe.write()
 
 
-@recipe.command(handle_dry_run=True)
-@flag("--all", help="On all recipes")
+@extension.command(handle_dry_run=True)
+@flag("--all", help="On all extensions")
 @option(
     "--only/--no-only",
-    help="Use only the provided recipe, and disable the others",
+    help="Use only the provided extension, and disable the others",
 )
 @argument(
-    "recipe",
+    "extension",
     type=RecipeNameType(disabled=True, failok=False),
     nargs=-1,
-    help="The names of the recipes to enable",
+    help="The names of the extensions to enable",
 )
 @pass_context
-def __enable(ctx, recipe, all, only):
-    """Use this recipe"""
+def __enable(ctx, extension, all, only):
+    """Use this extension"""
     if all:
-        recipe = RecipeType(disabled=True).getchoice(ctx)
-
+        extension = RecipeType(disabled=True).getchoice(ctx)
     if only:
-        for cmd in set(RecipeType().getchoice(ctx)) - set(recipe):
+        for cmd in set(RecipeType().getchoice(ctx)) - set(extension):
             if cmd in config.recipe.writable:
                 config.recipe.writable[cmd]["enabled"] = False
             else:
                 config.recipe.writable[cmd] = {"enabled": False}
-            LOGGER.status("Disabling recipe {} in profile {}".format(cmd, config.recipe.writeprofile))
+            LOGGER.status("Disabling extension {} in profile {}".format(cmd, config.recipe.writeprofile))
 
-    for cmd in recipe:
+    for cmd in extension:
         if cmd in config.recipe.writable:
             config.recipe.writable[cmd]["enabled"] = True
         else:
             config.recipe.writable[cmd] = {"enabled": True}
-        LOGGER.status("Enabling recipe {} in profile {}".format(cmd, config.recipe.writeprofile))
+        LOGGER.status("Enabling extension {} in profile {}".format(cmd, config.recipe.writeprofile))
     config.recipe.write()
 
 
-@recipe.command(handle_dry_run=True)
+@extension.command(handle_dry_run=True)
 @argument(
-    "recipe1",
+    "extension1",
     type=RecipeNameType(enabled=True, failok=False),
-    help="The name of the recipe to disable",
+    help="The name of the extension to disable",
 )
 @argument(
-    "recipe2",
+    "extension2",
     type=RecipeNameType(disabled=True, failok=False),
-    help="The name of the recipe to enable",
+    help="The name of the extension to enable",
 )
 @pass_context
-def switch(ctx, recipe1, recipe2):
-    """Switch from a recipe to another"""
-    ctx.invoke(disable, recipe=[recipe1])
-    ctx.invoke(__enable, recipe=[recipe2])
+def switch(ctx, extension1, extension2):
+    """Switch from an extension to another"""
+    ctx.invoke(disable, extension=[extension1])
+    ctx.invoke(__enable, extension=[extension2])
 
 
-@recipe.command(handle_dry_run=True)
+@extension.command(handle_dry_run=True)
 @argument(
-    "recipe",
+    "extension",
     type=RecipeNameType(failok=False),
     nargs=-1,
-    help="The names of the recipes to which the order will be set",
+    help="The names of the extensions to which the order will be set",
 )
-@argument("order", type=int, help="The order to be set on the recipes")
-def set_order(recipe, order):
-    """Set the order of the recipes"""
-    if not recipe:
-        recipe = config.all_recipes
-    for cmd in recipe:
+@argument("order", type=int, help="The order to be set on the extensions")
+def set_order(extension, order):
+    """Set the order of the extensions"""
+    if not extension:
+        extension = config.all_recipes
+    for cmd in extension:
         if cmd in config.recipe.writable:
             config.recipe.writable[cmd]["order"] = order
         else:
@@ -360,7 +359,7 @@ def set_order(recipe, order):
     config.recipe.write()
 
 
-@recipe.command()
+@extension.command()
 @argument("profile", type=RecipeType(), help="The name of the profile to open")
 @option("--opener", help="Program to call to open the directory", default="xdg-open")
 def open(profile, opener):
@@ -368,10 +367,10 @@ def open(profile, opener):
     call([opener, profile.location])
 
 
-@recipe.command()
+@extension.command()
 @argument("profile", type=DirectoryProfileType(), help="The name of the profile to show")
 def where_is(profile):
-    """Show where is a given recipe"""
+    """Show where is a given extension"""
     print(profile.location)
 
 
@@ -382,64 +381,62 @@ predefined_hosts = [
 ]
 
 
-@recipe.command()
-@option("--profile", type=DirectoryProfileType(), help="The profile where to install the recipe")
+@extension.command()
+@option("--profile", type=DirectoryProfileType(), help="The profile where to install the extension")
 @argument(
     "url",
-    help=("The url of the git repository hosting the recipe."
-          " Can be author/recipe for github repository."
+    help=("The url of the git repository hosting the extension."
+          " Can be author/extension for github repository."
           " If that case, the url will become"
-          " https://github.com/{author}/clk_recipe_{recipe}."
+          " https://github.com/{author}/clk_extension_{extension}."
           " Actually, the prefix (github.com) may be changed using --url-prefix."
-          " Can also be gitlab.com/{author}/{recipe},"
-          " github.com/{author}/{recipe},"
+          " Can also be gitlab.com/{author}/{extension},"
+          " github.com/{author}/{extension},"
           " git@...,"
           " http://...,"
           " a path to a local directory"
           " (not that in that case, using --editable makes sense)."),
 )
-@argument("name", help="The name of the recipe", required=False)
+@argument("name", help="The name of the extension", required=False)
 @flag("--install-deps/--no-install-deps", help="Automatically install the dependencies.", default=True)
-@flag("--force/--no-force", help="Overwrite the existing recipe if need be.")
+@flag("--force/--no-force", help="Overwrite the existing extension if need be.")
 @flag("-e", "--editable", help="(only for local path) Create a symbolic link rather than copying the content")
 @pass_context
 def install(ctx, profile, url, name, install_deps, editable, force):
-    """Install a recipe from outside"""
+    """Install an extension from outside"""
     profile = profile or config.global_profile
     urls = []
     profile = profile or config.global_profile
     urls = []
     if re.match("^[a-zA-Z0-9]+$", url):
-        urls.append(f"git@github.com:click-project/clk_recipe_{url}")
-        urls.append(f"https://github.com/click-project/clk_recipe_{url}")
+        urls.append(f"git@github.com:click-project/clk_extension_{url}")
+        urls.append(f"https://github.com/click-project/clk_extension_{url}")
         install_type = "git"
         if name is None:
             name = url
-    elif match := re.match("^(?P<author>[a-zA-Z0-9_-]+)/(?P<recipe>[a-zA-Z0-9]+)$", url):
+    elif match := re.match("^(?P<author>[a-zA-Z0-9_-]+)/(?P<extension>[a-zA-Z0-9]+)$", url):
         author = match.group("author")
-        recipe = match.group("recipe")
+        extension = match.group("extension")
         for host in predefined_hosts:
-            urls.append(f"git@{host}:{author}/clk_recipe_{recipe}")
-            urls.append(f"https://{host}/{author}/clk_recipe_{recipe}")
-            urls.append(f"git@{host}:{author}/{recipe}")
-            urls.append(f"https://{host}/{author}/{recipe}")
+            urls.append(f"git@{host}:{author}/clk_extension_{extension}")
+            urls.append(f"https://{host}/{author}/clk_extension_{extension}")
+            urls.append(f"git@{host}:{author}/{extension}")
+            urls.append(f"https://{host}/{author}/{extension}")
         install_type = "git"
         if name is None:
-            name = recipe
-    elif match := re.match("^(?P<host>[a-zA-Z0-9_.-]+)/(?P<path>[a-zA-Z0-9_/-]+)/(?P<recipe>[a-zA-Z0-9]+)$", url):
+            name = extension
+    elif match := re.match("^(?P<host>[a-zA-Z0-9_.-]+)/(?P<path>[a-zA-Z0-9_/-]+)/(?P<extension>[a-zA-Z0-9]+)$", url):
         host = match.group("host")
         path = match.group("path")
-        recipe = match.group("recipe")
-        urls.append(f"git@{host}:{path}/clk_recipe_{recipe}")
-        urls.append(f"https://{host}/{path}/clk_recipe_{recipe}")
-        urls.append(f"git@{host}:{path}/{recipe}")
-        urls.append(f"https://{host}/{path}/{recipe}")
+        extension = match.group("extension")
+        urls.append(f"git@{host}:{path}/clk_extension_{extension}")
+        urls.append(f"https://{host}/{path}/clk_extension_{extension}")
+        urls.append(f"git@{host}:{path}/{extension}")
+        urls.append(f"https://{host}/{path}/{extension}")
         install_type = "git"
         if name is None:
-            name = recipe
-    elif m := re.match(
-        "^https://github.com/.+/(?P<name>[^/]+)/tarball/.+$", url
-    ):
+            name = extension
+    elif m := re.match("^https://github.com/.+/(?P<name>[^/]+)/tarball/.+$", url):
         install_type = "webtar"
         urls.append(url)
         name = name or m["name"]
@@ -463,14 +460,15 @@ def install(ctx, profile, url, name, install_deps, editable, force):
         if "/" in url:
             name = url.split("/")[-1]
         else:
-            raise click.UsageError("I cannot infer a name for your recipe. Please provide one explicitly.")
-    if name.startswith("clk_recipe_"):
-        name = name.replace("clk_recipe_", "")
+            raise click.UsageError("I cannot infer a name for your extension. Please provide one explicitly.")
+    if name.startswith("clk_extension_"):
+        name = name.replace("clk_extension_", "")
     if not re.match(f"^{DirectoryProfile.recipe_name_re}$", name):
-        raise click.UsageError(f"Invalid recipe name '{name}'." " A recipe's name must contain only letters or _")
+        raise click.UsageError(f"Invalid extension name '{name}'."
+                               " an extension's name must contain only letters or _")
 
     if install_type is None:
-        raise click.UsageError("I cannot infer how to install the recipe"
+        raise click.UsageError("I cannot infer how to install the extension"
                                " Please tell us what you wanted to do"
                                " so that we can fix the code and the doc.")
 
@@ -480,7 +478,7 @@ def install(ctx, profile, url, name, install_deps, editable, force):
             rm(recipe_path)
         else:
             if not os.path.exists(f'{recipe_path}/.git'):
-                raise click.UsageError(f"A recipe already exists at location {recipe_path}"
+                raise click.UsageError(f"An extension already exists at location {recipe_path}"
                                        " Use --force to override it.")
     if install_type == "git":
         # check if we already have that recipe locally
@@ -489,7 +487,7 @@ def install(ctx, profile, url, name, install_deps, editable, force):
                 url = check_output(['git', 'remote', 'get-url', 'origin']).strip()
                 if url not in urls:
                     LOGGER.debug(f"urls: {urls}")
-                    raise click.UsageError(f"Recipe {name} already exists and is not using the same URL: {url}")
+                    raise click.UsageError(f"Extension {name} already exists and is not using the same URL: {url}")
                 call(['git', 'pull'])
         else:
             ok = False
@@ -522,22 +520,22 @@ def install(ctx, profile, url, name, install_deps, editable, force):
     recipe = profile.get_recipe(name)
 
     if install_deps is True:
-        LOGGER.status("-> Installing the dependencies of the recipe")
+        LOGGER.status("-> Installing the dependencies of the extension")
         ctx.invoke(_install_deps, recipe=[recipe])
-    LOGGER.status(f"Done installing the recipe {name}")
+    LOGGER.status(f"Done installing the extension {name}")
 
 
-@recipe.command()
+@extension.command()
 @argument(
-    "recipe",
+    "extension",
     type=DirectoryProfileType(),
     nargs=-1,
-    help="The name of the recipes to consider",
+    help="The name of the extensions to consider",
 )
 @pass_context
-def _install_deps(ctx, recipe):
-    "Install the dependencies of the recipe"
-    for rec in recipe:
+def _install_deps(ctx, extension):
+    "Install the dependencies of the extension"
+    for rec in extension:
         LOGGER.status("Handling {}".format(rec.friendly_name))
         if rec.requirements_path.exists():
             ctx.invoke(pip, args=("install", "--upgrade", "-r", rec.requirements_path))
@@ -545,26 +543,26 @@ def _install_deps(ctx, recipe):
             LOGGER.info(f"Nothing to be done for {rec.friendly_name}")
 
 
-@recipe.command()
+@extension.command()
 @argument(
-    "recipe",
+    "extension",
     type=RecipeType(),
     nargs=-1,
     required=True,
-    help="The names of the recipes to update",
+    help="The names of the extensions to update",
 )
 @flag("--clean", "method", flag_value="clean", help="Remove local modification and update")
 @flag("--stash", "method", flag_value="stash", help="Stash local modification and update")
 @flag("--no-clean", "method", flag_value="no-clean", help="Don't try cleaning the repository before pulling")
-def update(recipe, method):
-    """Update this cloned recipe"""
-    for cmd in recipe:
+def update(extension, method):
+    """Update this cloned extension"""
+    for cmd in extension:
         root = Path(cmd.location)
         LOGGER.info(f"Updating {cmd.name}")
         if not (root / ".git").exists():
-            LOGGER.warning(f"I cannot update the recipe {cmd.name}."
+            LOGGER.warning(f"I cannot update the extension {cmd.name}."
                            " For the time being, I only can update"
-                           " cloned recipes.")
+                           " cloned extensions.")
             continue
         with cd(root):
             need_stash = False
@@ -582,8 +580,8 @@ def update(recipe, method):
                 call(split("git stash pop"))
 
 
-@recipe.command()
-@argument("recipe", type=RecipeType(), help="The recipe to describe")
-def describe(recipe):
-    """Try to give some insights into the content of the recipe"""
-    recipe.describe()
+@extension.command()
+@argument("extension", type=RecipeType(), help="The extension to describe")
+def describe(extension):
+    """Try to give some insights into the content of the extension"""
+    extension.describe()
