@@ -20,7 +20,7 @@ setup(
     author_email='konubinixweb@gmail.com',
     description='A framework to help you have an awesome CLI',
     packages=find_packages(),
-    long_description="See https://clk-project.github.io/clk/",
+    long_description="See https://clk-project.org/ or https://github.com/clk-project/clk",
     zip_safe=False,
     python_requires='>=3',
     install_requires=[
