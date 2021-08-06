@@ -140,19 +140,19 @@ def use_settings(settings_name, settings_cls, override=True, default_profile='co
                      help="Consider only the {} profile".format(profile),
                      callback=profile_callback)(f)
         f = flag('--context', "profile", flag_value="context", help="Guess the profile", callback=profile_callback)(f)
-        f = option('--recipe', type=RecipeType(), callback=recipe_callback, help="Use this recipe")(f)
+        f = option('--extension', type=RecipeType(), callback=recipe_callback, help="Use this extension")(f)
 
         setup_settings(None)
 
         @functools.wraps(f)
         def wrapped(*args, **kwargs):
             setattr(config, settings_name, settings_store)
-            del kwargs["recipe"]
+            del kwargs["extension"]
             del kwargs["profile"]
             LOGGER.debug("Will use the settings at profile {}".format(settings_store.readprofile))
             return f(*args, **kwargs)
 
-        wrapped.inherited_params = ["recipe", "profile"]
+        wrapped.inherited_params = ["extension", "profile"]
         return wrapped
 
     return decorator

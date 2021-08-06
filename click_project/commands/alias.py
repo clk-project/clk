@@ -37,7 +37,7 @@ def get_choices(ctx, args_, incomplete):
     args = config.commandline_profile.get_settings("parameters")[ctx.command.path][:]
     while args and args[0].startswith("-"):
         a = args.pop(0)
-        if args and (a == "-r" or a == "--recipe"):
+        if args and (a == "-e" or a == "--extension"):
             args.pop(0)
     if not args:
         choices = compute_choices(ctx, args_, incomplete)

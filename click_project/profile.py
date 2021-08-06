@@ -141,14 +141,14 @@ class DirectoryProfile(Profile):
     def describe(self):
         print(f"The recipe {self.name}" f" is located at {self.location} ." " Let's try to see what it has to offer.")
         print("##########")
-        enable_argument = (f" --recipe {self.short_name}" if self.isrecipe else "")
+        enable_argument = (f" --extension {self.short_name}" if self.isrecipe else "")
         for (setting, command) in [
             ("alias", "alias"),
             ("parameters", "parameter"),
             ("flowdeps", "flowdep"),
             ("triggers", "trigger"),
             ("value", "value"),
-            ("recipe", "recipe"),
+            ("recipe", "extension"),
         ]:
             if self.settings.get(setting):
                 print(f"I found some {command}, try running"
@@ -190,7 +190,7 @@ class DirectoryProfile(Profile):
                 "customcommands",
         }:
             print(f"I also found some settings that I cannot explain: {', '.join(remaining_config)}."
-                  " They might be set by other plugins, custom commands or recipes.")
+                  " They might be set by other plugins, custom commands or extensions.")
 
     def __gt__(self, other):
         return self.name < other.name
@@ -230,7 +230,8 @@ class DirectoryProfile(Profile):
     def create_recipe(self, name, mkdir=True):
         name = self.recipe_full_name(name)
         if not re.match("^{}/{}$".format(self.name, self.recipe_name_re), name):
-            raise click.UsageError("Invalid recipe name: %s. A recipe's name must contain only letters or _" % name)
+            raise click.UsageError("Invalid extension name: %s. An extension's name must contain only letters or _" %
+                                   name)
         location = self.recipe_location(name)
         if os.path.exists(location):
             raise click.UsageError("{} already exists".format(location))

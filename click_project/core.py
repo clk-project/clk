@@ -389,16 +389,16 @@ def main_command_decoration(f, cls, **kwargs):
                             help="Create a report file to put with bug reports",
                             callback=report_file_callback,
                             is_eager=True)(f)
-    f = main_command_option('-r',
-                            '--recipe',
+    f = main_command_option('-e',
+                            '--extension',
                             callback=recipe_callback,
-                            help="Enable this recipe for the time of the command",
+                            help="Enable this extension for the time of the command",
                             type=RecipeType(),
                             multiple=True)(f)
     f = main_command_option('-u',
-                            '--without-recipe',
+                            '--without-extension',
                             callback=without_recipe_callback,
-                            help="Disable this recipe for the time of the command",
+                            help="Disable this extension for the time of the command",
                             type=RecipeType(),
                             multiple=True)(f)
     f = main_command_option('--profiling',

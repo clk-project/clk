@@ -321,7 +321,7 @@ class ExtraParametersMixin(object):
                 recipe = p.short_name
         res = ["--{}".format(profile)]
         if recipe is not None:
-            res += ["--recipe", recipe]
+            res += ["--extension", recipe]
         return res
 
     def unset_parameter_callback(self, ctx, param, value):

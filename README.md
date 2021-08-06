@@ -855,7 +855,7 @@ Create a new extension with `clk extension create hello`.
 
 Then configure the alias and the parameter in the extension with.
 
-`clk alias --recipe hello set hello echo hello` and `clk parameters --recipe hello set hello --style red`
+`clk alias --extension hello set hello echo hello` and `clk parameters --extension hello set hello --style red`
 
 In case you had configured the alias outside of the extension, run `clk alias unset
 hello` and `clk parameters unset hello` to have a better understanding of what
