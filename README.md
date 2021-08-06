@@ -36,7 +36,7 @@ clk. They like it and when something feels wrong, they just change it.
 
 # Quick start
 
-Install with `curl -sSL https://raw.githubusercontent.com/clk-project/clk/master/install.sh | bash`
+Install with `curl -sSL https://clk-project.github.io/clk/install.sh | bash`
 or `python3 -m pip install clk`
 
 Now, the `clk` tool is available in `~/.local/bin/`, if that directory is not
