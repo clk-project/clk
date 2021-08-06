@@ -195,6 +195,11 @@ class RecipeType(ParameterType):
         return value
 
 
+class RecipeTypeSuggestion(RecipeType):
+    def convert(self, value, param, ctx):
+        return value
+
+
 class ColorType(ParameterType):
     name = "color"
     colors = [
@@ -393,13 +398,13 @@ def main_command_decoration(f, cls, **kwargs):
                             '--extension',
                             callback=recipe_callback,
                             help="Enable this extension for the time of the command",
-                            type=RecipeType(),
+                            type=RecipeTypeSuggestion(),
                             multiple=True)(f)
     f = main_command_option('-u',
                             '--without-extension',
                             callback=without_recipe_callback,
                             help="Disable this extension for the time of the command",
-                            type=RecipeType(),
+                            type=RecipeTypeSuggestion(),
                             multiple=True)(f)
     f = main_command_option('--profiling',
                             is_flag=True,
