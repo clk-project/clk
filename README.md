@@ -118,15 +118,11 @@ And remove those with
 
 `clk alias unset hello`
 
-Want to put those parameters and aliases in a same place to enable them at once? Try creating a recipe with:
+Want to put those parameters and aliases in a same place to enable them at once? Try creating a extension with:
 
-`clk recipe create hello`
+`clk extension create hello`
 
-By default, it is disabled, so simply enable it with.
-
-`clk recipe enable hello`
-
-And now, create the hello command again, but now in the recipe.
+And now, create the hello command again, but now in the extension.
 
 `clk alias --global-hello set hello say hello`
 
@@ -137,17 +133,17 @@ Try the hello command again:
 `clk hello`
 
 Take a look at `clk alias show` and `clk parameter show` to see how those are
-nicely put in the recipe.
+nicely put in the extension.
 
-And see how easy it is to disable the whole hello recipe at once with.
+And see how easy it is to disable the whole hello extension at once with.
 
-`clk recipe disable hello`
+`clk extension disable hello`
 
 And see how it cleaned the parameters and the aliases.
 
-Remove the whole recipe at once with.
+Remove the whole extension at once with.
 
-`clk recipe remove hello`
+`clk extension remove hello`
 
 What is this global word in `--global-hello`?
 
@@ -200,9 +196,9 @@ Now, remove the whole stuff, with.
 
 `clk customcommand remove say`
 
-And simply install the recipe I created that already does all of this with.
+And simply install the extension I created that already does all of this with.
 
-`clk recipe install hello`
+`clk extension install hello`
 
 And see how it came back to life with.
 
@@ -210,14 +206,14 @@ And see how it came back to life with.
 
 Remove it again with.
 
-`clk recipe remove --global hello`
+`clk extension remove --global hello`
 
 Here, `--global` is needed or clk will try (and fail) to delete a
-local recipe, whereas the clone command defaults to install it globally.
+local extension, whereas the clone command defaults to install it globally.
 
-We realize that recipes don't have yet a coherent default behavior. This is
+We realize that extensions don't have yet a coherent default behavior. This is
 because there are quite new and are not thoroughly used yet. We believe that the
-sensible defaults will come naturally when recipes are used more often.
+sensible defaults will come naturally when extensions are used more often.
 
 Hopefully you have started now to grab the awesomeness of clk and are
 envisioning all the nice stuff you can do with it.
@@ -844,7 +840,7 @@ Bonus: `clk flowdeps graph mycommand` let's you see the dependency graph for `my
 
 Want more? Have a look at `clk flowdeps --help`!
 
-# Playing with the recipes
+# Playing with the extensions
 
 Say you have several `parameters` and `aliases` that work together. For
 instance, imagine you want to have an alias and a parameter that don't make
@@ -853,59 +849,59 @@ sense separately. For instance, add an alias and set its parameters :
 `clk alias set hello echo hello` and `clk parameters set hello --style red`
 
 You might want a way to make clear the fact that those two configurations work
-together. Enters the recipes.
+together. Enters the extensions.
 
-Create a new recipe with `clk recipe create hello`. By default, a recipe is disabled, so enable it with `clk recipe enable hello`.
+Create a new extension with `clk extension create hello`.
 
-Then configure the alias and the parameter in the recipe with.
+Then configure the alias and the parameter in the extension with.
 
 `clk alias --recipe hello set hello echo hello` and `clk parameters --recipe hello set hello --style red`
 
-In case you had configured the alias outside of the recipe, run `clk alias unset
+In case you had configured the alias outside of the extension, run `clk alias unset
 hello` and `clk parameters unset hello` to have a better understanding of what
 will happen.
 
-Now, run `clk hello` to see it work as before. Run `clk recipe disable hello`
+Now, run `clk hello` to see it work as before. Run `clk extension disable hello`
 and then `clk hello` to see that `clk` complains that the `hello` command is no
 more available.
 
 `clk parameters show` and `clk alias show` indeed show nothing about hello.
 
-Then, enable the recipe again, with `clk recipe enable hello` and take another
+Then, enable the extension again, with `clk extension enable hello` and take another
 look at the parameters and aliases.
 
 The legend indicates that those configurations are in the global/hello level,
-which means « the recipe hello, defined globally ». Indeed, recipes may be
+which means « the extension hello, defined globally ». Indeed, extensions may be
 defined globally or locally and enabled or disabled globally or locally.
 
 Manipulate those two independent dimensions (definition and enabling) may be
-tricky. To find out more about the current recipes, run `clk recipe show`.
+tricky. To find out more about the current extensions, run `clk extension show`.
 
 ```
-recipe    set_in    defined_in    link      order
+extension    set_in    defined_in    link      order
 --------  --------  ------------  ------  -------
 hello     global    global                   1000
 ```
 
 Disable it and run the command again.
 
-As you can see, the values did not change, the recipe remains defined globally
+As you can see, the values did not change, the extension remains defined globally
 and set globally (meaning it was disabled globally). Only the color indicate
 whether it is disabled or enabled.
 
-Try removing the setting (saying it was enabled or disabled) with `clk recipe unset hello`, then see
+Try removing the setting (saying it was enabled or disabled) with `clk extension unset hello`, then see
 
 ```
-recipe    set_in    defined_in    link      order
+extension    set_in    defined_in    link      order
 --------  --------  ------------  ------  -------
 hello     Unset     global                   1000
 ```
 
-Here, the recipe is unset, then the default behavior (disabling) is used.
+Here, the extension is unset, then the default behavior (disabling) is used.
 
-Finally, remove the recipe with `clk recipe remove hello`.
+Finally, remove the extension with `clk extension remove hello`.
 
-In conclusion, recipes are a powerful and practical way of grouping several
+In conclusion, extensions are a powerful and practical way of grouping several
 configuration together to manipulate them as a group.
 
 # Advanced uses of parameters
