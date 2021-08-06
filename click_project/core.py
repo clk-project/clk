@@ -180,7 +180,7 @@ def main_command_arguments_from_dict(parameters):
 
 class RecipeType(ParameterType):
     envvar_list_splitter = ","
-    name = "recipe"
+    name = "extension"
 
     @property
     def choices(self):
