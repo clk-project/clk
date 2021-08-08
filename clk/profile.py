@@ -325,6 +325,7 @@ class DirectoryProfile(Profile):
             self.remove_with_legend,
             self.hooks_to_trigger,
             self.customcommand_to_executable,
+            self.recipe_to_extension,
         ]
         self._version = None
         self.location = location
@@ -580,6 +581,16 @@ class DirectoryProfile(Profile):
                     del customcommands["externalpaths"]
         self.computed_location = None
         self.compute_settings()
+        return True
+
+    def recipe_to_extension(self):
+        recipes_dir = Path(self.location) / 'recipes'
+        if os.path.exists(recipes_dir):
+            extensions_dir = Path(self.location) / 'extensions'
+            move(recipes_dir, extensions_dir)
+            for recipe in glob(f'{extensions_dir}/clk_recipe_*'):
+                extension = re.sub('/clk_recipe_([^/]+)', r'/clk_extension_\1', recipe)
+                move(recipe, extension)
         return True
 
     def write_settings(self):
