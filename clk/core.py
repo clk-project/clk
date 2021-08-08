@@ -624,7 +624,7 @@ def report_file_callback(ctx, attr, value):
 
 def log_trace():
     import traceback
-    log = LOGGER.error if os.environ.get('clk_LOG_TRACE') is not None else LOGGER.develop
+    log = LOGGER.error if os.environ.get('CLK_LOG_TRACE') is not None else LOGGER.develop
     log(traceback.format_exc())
 
 
