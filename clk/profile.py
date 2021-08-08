@@ -79,14 +79,14 @@ class ProfileFactory:
                               isroot=True,
                               activation_level=ActivationLevel.global_,
                               default_color=None,
-                              isrecipe=False):
+                              isextension=False):
         return klass.preset_profile_cls(name,
                                         settings,
                                         explicit=explicit,
                                         isroot=isroot,
                                         activation_level=activation_level,
                                         default_color=default_color,
-                                        isrecipe=isrecipe)
+                                        isextension=isextension)
 
 
 def load_settings(path):
@@ -116,8 +116,8 @@ class Profile():
     @property
     def short_name(self):
         if "/" in self.name:
-            profile_name, recipe_name = self.name.split("/")
-            return recipe_name
+            profile_name, extension_name = self.name.split("/")
+            return extension_name
         else:
             return self.name
 
@@ -135,20 +135,20 @@ plugin_sources = {}
 
 @ProfileFactory.register_directory_profile
 class DirectoryProfile(Profile):
-    recipe_name_re = "[a-z0-9_]+"
+    extension_name_re = "[a-z0-9_]+"
     JSON_FILE_EXTENSION = ".json"
 
     def describe(self):
-        print(f"The recipe {self.name}" f" is located at {self.location} ." " Let's try to see what it has to offer.")
+        print(f"The extension {self.name}" f" is located at {self.location} ." " Let's try to see what it has to offer.")
         print("##########")
-        enable_argument = (f" --extension {self.short_name}" if self.isrecipe else "")
+        enable_argument = (f" --extension {self.short_name}" if self.isextension else "")
         for (setting, command) in [
             ("alias", "alias"),
             ("parameters", "parameter"),
             ("flowdeps", "flowdep"),
             ("triggers", "trigger"),
             ("value", "value"),
-            ("recipe", "extension"),
+            ("extension", "extension"),
         ]:
             if self.settings.get(setting):
                 print(f"I found some {command}, try running"
@@ -166,16 +166,16 @@ class DirectoryProfile(Profile):
                 found_some_executable = True
         if self.name in ("local", "workspace", "global"):
             from clk.config import config
-            preset_recipe = getattr(config, self.name + "preset_profile")
-            if "customcommands" in preset_recipe.settings:
+            preset_extension = getattr(config, self.name + "preset_profile")
+            if "customcommands" in preset_extension.settings:
                 if any([
                         next(Path(path).iterdir())
-                        for path in (preset_recipe.settings["customcommands"]["executablepaths"] +
-                                     preset_recipe.settings["customcommands"]["pythonpaths"])
+                        for path in (preset_extension.settings["customcommands"]["executablepaths"] +
+                                     preset_extension.settings["customcommands"]["pythonpaths"])
                 ]):
                     print(
                         f"I found some{ ' more' if found_some_executable else ''} executable commands, try running"
-                        f" `clk{enable_argument} customcommand --{profile_name_to_commandline_name(preset_recipe.name)} list`"
+                        f" `clk{enable_argument} customcommand --{profile_name_to_commandline_name(preset_extension.name)} list`"
                         " to know more.")
         if plugins := self.plugin_source.list_plugins():
             print(f"I found some plugins called {', '.join(plugins)}")
@@ -185,7 +185,7 @@ class DirectoryProfile(Profile):
                 "flowdeps",
                 "triggers",
                 "value",
-                "recipe",
+                "extension",
                 "plugins",
                 "customcommands",
         }:
@@ -195,9 +195,9 @@ class DirectoryProfile(Profile):
     def __gt__(self, other):
         return self.name < other.name
 
-    def recipe_location(self, name):
-        name = self.recipe_short_name(name)
-        return os.path.join(self.location, "recipes", name)
+    def extension_location(self, name):
+        name = self.extension_short_name(name)
+        return os.path.join(self.location, "extensions", name)
 
     @property
     def executable_paths(self):
@@ -227,12 +227,12 @@ class DirectoryProfile(Profile):
     def python_paths(self):
         return [str(Path(self.location) / d) for d in ["python"] if (Path(self.location) / "python").exists()]
 
-    def create_recipe(self, name, mkdir=True):
-        name = self.recipe_full_name(name)
-        if not re.match("^{}/{}$".format(self.name, self.recipe_name_re), name):
+    def create_extension(self, name, mkdir=True):
+        name = self.extension_full_name(name)
+        if not re.match("^{}/{}$".format(self.name, self.extension_name_re), name):
             raise click.UsageError("Invalid extension name: %s. An extension's name must contain only letters or _" %
                                    name)
-        location = self.recipe_location(name)
+        location = self.extension_location(name)
         if os.path.exists(location):
             raise click.UsageError("{} already exists".format(location))
         p = ProfileFactory.create_or_get_by_location(location, name=name, app_name=self.app_name, explicit=True)
@@ -240,54 +240,54 @@ class DirectoryProfile(Profile):
             p.write_settings()
         return p
 
-    def recipe_full_name(self, name):
+    def extension_full_name(self, name):
         if name.startswith(self.name + "/"):
             return name
         else:
             return self.name + "/" + name
 
-    def recipe_short_name(self, name):
+    def extension_short_name(self, name):
         if name.startswith(self.name + "/"):
             return name[len(self.name) + 1:]
         else:
             return name
 
-    def remove_recipe(self, name):
-        r = self.get_recipe(name)
+    def remove_extension(self, name):
+        r = self.get_extension(name)
         rm(r.location)
 
-    def has_recipe(self, name):
-        name = self.recipe_full_name(name)
-        candidates = [recipe for recipe in self.recipes if recipe.name == name]
+    def has_extension(self, name):
+        name = self.extension_full_name(name)
+        candidates = [extension for extension in self.extensions if extension.name == name]
         return candidates
 
-    def get_recipe(self, name):
-        name = self.recipe_full_name(name)
-        candidates = [recipe for recipe in self.recipes if recipe.name == name]
+    def get_extension(self, name):
+        name = self.extension_full_name(name)
+        candidates = [extension for extension in self.extensions if extension.name == name]
         if not candidates:
-            return self.create_recipe(name, mkdir=False)
+            return self.create_extension(name, mkdir=False)
         else:
             return candidates[0]
 
     @property
-    def recipes(self):
-        if self.isrecipe:
+    def extensions(self):
+        if self.isextension:
             return []
-        recipes_dir = os.path.join(self.location, "recipes")
-        if not os.path.exists(recipes_dir):
+        extensions_dir = os.path.join(self.location, "extensions")
+        if not os.path.exists(extensions_dir):
             return []
         res = sorted([
             ProfileFactory.create_or_get_by_location(
                 location, name=self.name + "/" + os.path.basename(location), app_name=self.app_name, explicit=True)
-            for location in glob(os.path.join(recipes_dir, "*"))
+            for location in glob(os.path.join(extensions_dir, "*"))
             if not location.endswith(self.JSON_FILE_EXTENSION) and not location.endswith("_backup")
         ],
                      key=lambda r: r.name)
         return res
 
     @property
-    def recipe_names(self):
-        return [r.name for r in self.recipes]
+    def extension_names(self):
+        return [r.name for r in self.extensions]
 
     @property
     def friendly_name(self):
@@ -296,7 +296,7 @@ class DirectoryProfile(Profile):
     @property
     def parent_name(self):
         if "/" in self.name:
-            profile_name, recipe_name = self.name.split("/")
+            profile_name, extension_name = self.name.split("/")
             return profile_name
         else:
             return None
@@ -320,8 +320,8 @@ class DirectoryProfile(Profile):
         self.migrate_from = [
             self.alias_has_documentation,
             self.stack_of_git_records,
-            self.recipes_instead_of_settings_level,
-            self.recipes_instead_of_profiles,
+            self.extensions_instead_of_settings_level,
+            self.extensions_instead_of_profiles,
             self.remove_with_legend,
             self.hooks_to_trigger,
             self.customcommand_to_executable,
@@ -359,7 +359,7 @@ class DirectoryProfile(Profile):
             LOGGER.warning("The backup directory for profile" " in location {} already exist".format(self.location))
         self.migration_impact = [
             os.path.basename(self.version_file_name),
-        ] + [os.path.basename(f) for f in glob(self.location + "/{}*json".format(self.app_name))] + ["recipes"]
+        ] + [os.path.basename(f) for f in glob(self.location + "/{}*json".format(self.app_name))] + ["extensions"]
 
     @property
     def plugin_source(self):
@@ -451,8 +451,8 @@ class DirectoryProfile(Profile):
         self.computed_location = self.location
 
     @property
-    def isrecipe(self):
-        return os.path.basename(os.path.dirname(self.location)) == "recipes"
+    def isextension(self):
+        return os.path.basename(os.path.dirname(self.location)) == "extensions"
 
     def alias_has_documentation(self):
         for settings_file in glob(self.location + "/{}*json".format(self.app_name)):
@@ -486,37 +486,37 @@ class DirectoryProfile(Profile):
         self.compute_settings()
         return True
 
-    def recipes_instead_of_profiles(self):
-        if self.isrecipe:
+    def extensions_instead_of_profiles(self):
+        if self.isextension:
             return True
-        recipes_dir = self.location + "/recipes/"
+        extensions_dir = self.location + "/extensions/"
         warn = False
         for profile in glob(self.location + "/../.csm-*"):
             profile_name = re.sub("^.+csm-(.+)$", r"\1", profile)
-            recipe_location = recipes_dir + "/" + profile_name + "_from_profile"
-            move(profile, recipe_location)
+            extension_location = extensions_dir + "/" + profile_name + "_from_profile"
+            move(profile, extension_location)
             warn = True
         if warn:
-            LOGGER.warning("The profiles were migrated as recipes."
+            LOGGER.warning("The profiles were migrated as extensions."
                            " As we could not maintain backward compatibility,"
                            " please see with SLO or GLE to understand how"
                            " to make use of this new setup")
         return True
 
-    def recipes_instead_of_settings_level(self):
-        if self.isrecipe:
+    def extensions_instead_of_settings_level(self):
+        if self.isextension:
             return True
-        recipes_dir = self.location + "/recipes/"
+        extensions_dir = self.location + "/extensions/"
 
-        def migrate_settings_to_recipe(settings_level_file, name):
+        def migrate_settings_to_extension(settings_level_file, name):
             if open(settings_level_file, "rb").read().decode("utf-8").strip() == "{}":
                 return False
-            makedirs(recipes_dir + "/" + name)
+            makedirs(extensions_dir + "/" + name)
             enabled = not json.load(open(settings_level_file)).get("_self", {}).get("disabled", False)
             order = json.load(open(settings_level_file)).get("_self", {}).get("order", 100)
-            move(settings_level_file, recipes_dir + "/" + name + "/{}.json".format(self.app_name))
-            createfile(recipes_dir + "/" + name + "/version.txt", str(self.version + 1))
-            createfile(recipes_dir + "/" + name + self.JSON_FILE_EXTENSION,
+            move(settings_level_file, extensions_dir + "/" + name + "/{}.json".format(self.app_name))
+            createfile(extensions_dir + "/" + name + "/version.txt", str(self.version + 1))
+            createfile(extensions_dir + "/" + name + self.JSON_FILE_EXTENSION,
                        json.dumps({
                            "enabled": enabled,
                            "order": order,
@@ -529,7 +529,7 @@ class DirectoryProfile(Profile):
             name = name.replace("-", "_")
             if name == "private":
                 continue
-            migrate_something |= migrate_settings_to_recipe(settings_level_file, name + "_from_settings")
+            migrate_something |= migrate_settings_to_extension(settings_level_file, name + "_from_settings")
         private = self.location + "/{}-private.json".format(self.app_name)
         local = self.location + "/{}.json".format(self.app_name)
         if os.path.exists(private):
@@ -540,15 +540,15 @@ class DirectoryProfile(Profile):
         if migrate_something is True:
             name = "migrated_local"
             if os.path.exists(local) and not open(local, "rb").read().decode("utf-8").strip() == "{}":
-                migrate_settings_to_recipe(local, name)
+                migrate_settings_to_extension(local, name)
             if os.path.exists(private):
                 move(private, local)
             with json_file(local) as values:
-                recipes = values.get("recipe", {})
-                local_order = recipes.get(name, {})
+                extensions = values.get("extension", {})
+                local_order = extensions.get(name, {})
                 local_order["order"] = 0
-                recipes[name] = local_order
-                values["recipe"] = recipes
+                extensions[name] = local_order
+                values["extension"] = extensions
             self.computed_location = None
             self.compute_settings()
         return True
@@ -681,15 +681,15 @@ class PresetProfile(Profile):
                  isroot=True,
                  activation_level=ActivationLevel.global_,
                  default_color=None,
-                 isrecipe=False):
+                 isextension=False):
         self.name = name
         self.default_color = default_color
         self.settings = settings
-        self.recipes = []
+        self.extensions = []
         self.isroot = isroot
         self.explicit = explicit
         self.activation_level = activation_level
-        self.isrecipe = isrecipe
+        self.isextension = isextension
 
     def get_settings(self, section):
         if (section not in self.settings and not isinstance(self.settings, collections.defaultdict)):
@@ -702,7 +702,7 @@ class PresetProfile(Profile):
     def migrate_if_needed(self, persist=True):
         pass
 
-    def has_recipe(self, name):
+    def has_extension(self, name):
         return False
 
     @property

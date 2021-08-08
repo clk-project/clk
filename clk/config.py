@@ -58,7 +58,7 @@ command. Hence the name dynamic
 
 def migrate_profiles():
     ctx = click_get_current_context_safe()
-    for profile in config.root_profiles + list(config.all_recipes):
+    for profile in config.root_profiles + list(config.all_extensions):
         if profile is not None:
             profile.migrate_if_needed(config.persist_migration and not (ctx is not None and ctx.resilient_parsing))
 
@@ -162,11 +162,11 @@ class Config(object):
             for key, value in os.environ.items()
             if key.startswith(parameters_prefix)
         }
-        recipes_prefix = f"{self.app_name}_R_".upper()
-        profile.settings["recipe"] = {
-            key[len(recipes_prefix):]: json.loads(value)
+        extensions_prefix = f"{self.app_name}_R_".upper()
+        profile.settings["extension"] = {
+            key[len(extensions_prefix):]: json.loads(value)
             for key, value in os.environ.items()
-            if key.startswith(recipes_prefix)
+            if key.startswith(extensions_prefix)
         }
         return profile
 
@@ -282,11 +282,11 @@ class Config(object):
             self.settings2[section] = collections.OrderedDict()
         return self.settings2[section]
 
-    def iter_settings(self, explicit_only=False, recurse=True, only_this_recipe=None):
-        explicit_only = explicit_only or only_this_recipe
+    def iter_settings(self, explicit_only=False, recurse=True, only_this_extension=None):
+        explicit_only = explicit_only or only_this_extension
         for profile in self.all_enabled_profiles:
             if not explicit_only or profile.explicit:
-                yield from self.load_settings_from_profile(profile, recurse, only_this_recipe=only_this_recipe)
+                yield from self.load_settings_from_profile(profile, recurse, only_this_extension=only_this_extension)
 
     def merge_settings(self):
         for profile in self.all_enabled_profiles:
@@ -295,16 +295,16 @@ class Config(object):
         # first step to get the initial settings
         self.settings, self.settings2 = merge_settings(self.iter_settings(recurse=False))
         # second step now that the we have enough settings to decide which
-        # recipes to enable
+        # extensions to enable
         self.settings, self.settings2 = merge_settings(self.iter_settings(recurse=True))
 
-    def load_settings_from_profile(self, profile, recurse, only_this_recipe=None):
-        if profile is not None and (not only_this_recipe or profile.short_name == only_this_recipe):
+    def load_settings_from_profile(self, profile, recurse, only_this_extension=None):
+        if profile is not None and (not only_this_extension or profile.short_name == only_this_extension):
             yield profile.settings
         if profile is not None and recurse:
-            for recipe in self.filter_enabled_profiles(profile.recipes):
-                if not only_this_recipe or only_this_recipe == recipe.short_name:
-                    for settings in self.load_settings_from_profile(recipe, recurse):
+            for extension in self.filter_enabled_profiles(profile.extensions):
+                if not only_this_extension or only_this_extension == extension.short_name:
+                    for settings in self.load_settings_from_profile(extension, recurse):
                         yield settings
 
     def get_profile(self, name):
@@ -312,11 +312,11 @@ class Config(object):
             if profile.name == name:
                 return profile
         # fallback on uniq shortnames
-        recipes = list(self.all_recipes)
-        shortnames = list(map(lambda r: r.short_name, recipes))
+        extensions = list(self.all_extensions)
+        shortnames = list(map(lambda r: r.short_name, extensions))
         uniq_shortnames = [nam for nam in shortnames if shortnames.count(nam) == 1]
         if name in uniq_shortnames:
-            return [r for r in recipes if r.short_name == name][0]
+            return [r for r in extensions if r.short_name == name][0]
         raise ValueError("Could not find profile {}".format(name))
 
     @property
@@ -454,7 +454,7 @@ class Config(object):
         return self.filter_enabled_profiles(self.all_profiles)
 
     def filter_enabled_profiles(self, profiles):
-        return (profile for profile in profiles if (not profile.isrecipe or self.is_recipe_enabled(profile.short_name)))
+        return (profile for profile in profiles if (not profile.isextension or self.is_extension_enabled(profile.short_name)))
 
     @property
     def all_directory_profiles(self):
@@ -469,17 +469,17 @@ class Config(object):
                 if profile is None:
                     return
                 res.append(profile)
-                for recipe in self.sorted_recipes(profile.recipes):
+                for extension in self.sorted_extensions(profile.extensions):
                     res.append(
                         ProfileFactory.create_preset_profile(
-                            f"{recipe.name}preset",
-                            settings={"customcommands": recipe.custom_command_paths},
+                            f"{extension.name}preset",
+                            settings={"customcommands": extension.custom_command_paths},
                             explicit=False,
                             isroot=False,
-                            isrecipe=True,
+                            isextension=True,
                             activation_level=ActivationLevel.global_,
                         ))
-                    res.append(recipe)
+                    res.append(extension)
 
             add_profile(self.distribution_profile)
             add_profile(self.globalpreset_profile)
@@ -504,60 +504,60 @@ class Config(object):
         return [profile for profile in self.all_enabled_profiles if profile.isroot]
 
     @property
-    def all_recipes(self):
+    def all_extensions(self):
         for profile in self.root_profiles:
-            for recipe in self.sorted_recipes(profile.recipes):
-                yield recipe
+            for extension in self.sorted_extensions(profile.extensions):
+                yield extension
 
-    def get_enabled_recipes_by_short_name(self, short_name):
-        return (recipe for recipe in self.all_enabled_recipes if recipe.short_name == short_name)
-
-    @property
-    def all_disabled_recipes(self):
-        return self.filter_disabled_recipes(self.all_recipes)
+    def get_enabled_extensions_by_short_name(self, short_name):
+        return (extension for extension in self.all_enabled_extensions if extension.short_name == short_name)
 
     @property
-    def all_unset_recipes(self):
-        return self.filter_unset_recipes(self.all_recipes)
+    def all_disabled_extensions(self):
+        return self.filter_disabled_extensions(self.all_extensions)
 
     @property
-    def all_enabled_recipes(self):
-        return self.filter_enabled_profiles(self.all_recipes)
+    def all_unset_extensions(self):
+        return self.filter_unset_extensions(self.all_extensions)
 
-    def sorted_recipes(self, recipes):
-        return sorted(recipes, key=lambda r: self.get_recipe_order(r.short_name))
+    @property
+    def all_enabled_extensions(self):
+        return self.filter_enabled_profiles(self.all_extensions)
 
-    def get_recipe_order(self, recipe):
+    def sorted_extensions(self, extensions):
+        return sorted(extensions, key=lambda r: self.get_extension_order(r.short_name))
+
+    def get_extension_order(self, extension):
         if self.settings is None:
             return 0
-        return self.settings.get("recipe", {}).get(recipe, {}).get("order", 1000)
+        return self.settings.get("extension", {}).get(extension, {}).get("order", 1000)
 
-    def get_profile_containing_recipe(self, name):
+    def get_profile_containing_extension(self, name):
         profile_name = name.split("/")[0]
         profile = self.get_profile(profile_name)
         return profile
 
-    def recipe_location(self, name):
-        profile = self.get_profile_containing_recipe(name)
-        return profile.recipe_location(name)
+    def extension_location(self, name):
+        profile = self.get_profile_containing_extension(name)
+        return profile.extension_location(name)
 
-    def get_recipe(self, name):
+    def get_extension(self, name):
         name, profile_name = name.split("/")
         profile = self.get_profile(profile_name)
-        return profile.get_recipe(name)
+        return profile.get_extension(name)
 
-    def is_recipe_enabled(self, shortname):
+    def is_extension_enabled(self, shortname):
         if shortname.endswith("preset"):
-            # the preset profile associated to a recipe must have the same
-            # enabling than the recipe itself
+            # the preset profile associated to a extension must have the same
+            # enabling than the extension itself
             shortname = shortname[:-len("preset")]
-        return (self.settings2 or {}).get("recipe", {}).get(shortname, {}).get("enabled", True)
+        return (self.settings2 or {}).get("extension", {}).get(shortname, {}).get("enabled", True)
 
-    def filter_unset_recipes(self, recipes):
-        return [recipe for recipe in recipes if self.is_recipe_enabled(recipe.short_name) is None]
+    def filter_unset_extensions(self, extensions):
+        return [extension for extension in extensions if self.is_extension_enabled(extension.short_name) is None]
 
-    def filter_disabled_recipes(self, recipes):
-        return [recipe for recipe in recipes if self.is_recipe_enabled(recipe.short_name) is False]
+    def filter_disabled_extensions(self, extensions):
+        return [extension for extension in extensions if self.is_extension_enabled(extension.short_name) is False]
 
     @property
     def log_level(self):

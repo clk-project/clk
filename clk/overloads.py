@@ -313,15 +313,15 @@ class ExtraParametersMixin(object):
 
     def parameters_callback_split_value(self, value):
         profile = value
-        recipe = None
+        extension = None
         if value != "context":
             p = config.get_profile(value)
-            if p.isrecipe:
+            if p.isextension:
                 profile = p.parent_name
-                recipe = p.short_name
+                extension = p.short_name
         res = ["--{}".format(profile)]
-        if recipe is not None:
-            res += ["--extension", recipe]
+        if extension is not None:
+            res += ["--extension", extension]
         return res
 
     def unset_parameter_callback(self, ctx, param, value):

@@ -59,7 +59,7 @@ class Colorer(object):
         if self.legend:
             used_profiles = self.used_profiles.copy()
             colored_profiles = self.colorize_values({
-                profile: (profile if "-" not in profile else config.get_recipe(profile).friendly_name)
+                profile: (profile if "-" not in profile else config.get_extension(profile).friendly_name)
                 for profile in used_profiles
             })
             message = "Legend: " + ", ".join(colored_profiles[profile] for profile in used_profiles)

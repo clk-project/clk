@@ -64,7 +64,7 @@ def use_settings(settings_name, settings_cls, override=True, default_profile='co
         if settings_name not in settings_stores:
             settings_stores[settings_name] = settings_cls()
         settings_store = settings_stores[settings_name]
-        settings_store.recipe = None
+        settings_store.extension = None
 
         def compute_settings(with_explicit=True):
             settings_store.all_settings = {
@@ -78,20 +78,20 @@ def use_settings(settings_name, settings_cls, override=True, default_profile='co
                 profile_name = ctx.clk_profile
             else:
                 profile_name = default_profile
-            if ctx is not None and hasattr(ctx, "clk_recipe"):
-                recipe = ctx.clk_recipe
+            if ctx is not None and hasattr(ctx, "clk_extension"):
+                extension = ctx.clk_extension
             else:
-                recipe = None
+                extension = None
             if profile_name == "context":
                 compute_settings(False)
                 s1, s2 = merge_settings(config.iter_settings(
                     recurse=True,
-                    only_this_recipe=recipe,
+                    only_this_extension=extension,
                 ))
                 profile = config.local_profile or config.global_profile
-                if recipe:
-                    profile = profile.get_recipe(recipe)
-                    for r in config.get_enabled_recipes_by_short_name(recipe):
+                if extension:
+                    profile = profile.get_extension(extension)
+                    for r in config.get_enabled_extensions_by_short_name(extension):
                         settings_store.all_settings[r.name] = r.get_settings(settings_name)
                 else:
                     compute_settings(True)
@@ -99,17 +99,17 @@ def use_settings(settings_name, settings_cls, override=True, default_profile='co
             else:
                 compute_settings(False)
                 profile = config.get_profile(profile_name)
-                profile = profile.get_recipe(recipe) if recipe else profile
+                profile = profile.get_extension(extension) if extension else profile
                 settings_store.readprofile = profile_name
                 settings_store.all_settings[profile_name] = profile.get_settings(settings_name)
                 s1, s2 = merge_settings(
                     config.load_settings_from_profile(
                         profile,
                         recurse=True,
-                        only_this_recipe=recipe,
+                        only_this_extension=extension,
                     ))
-                for recipe in config.filter_enabled_profiles(profile.recipes):
-                    settings_store.all_settings[recipe.name] = recipe.get_settings(settings_name)
+                for extension in config.filter_enabled_profiles(profile.extensions):
+                    settings_store.all_settings[extension.name] = extension.get_settings(settings_name)
 
             readonly = s1 if override else s2
             readonly = readonly.get(settings_name, {})
@@ -121,9 +121,9 @@ def use_settings(settings_name, settings_cls, override=True, default_profile='co
             settings_store.writable = profile.get_settings(settings_name)
             settings_store.write = profile.write_settings
 
-        def recipe_callback(ctx, attr, value):
+        def extension_callback(ctx, attr, value):
             if value is not None:
-                ctx.clk_recipe = value
+                ctx.clk_extension = value
                 setup_settings(ctx)
             return value
 
@@ -140,7 +140,7 @@ def use_settings(settings_name, settings_cls, override=True, default_profile='co
                      help="Consider only the {} profile".format(profile),
                      callback=profile_callback)(f)
         f = flag('--context', "profile", flag_value="context", help="Guess the profile", callback=profile_callback)(f)
-        f = option('--extension', type=RecipeType(), callback=recipe_callback, help="Use this extension")(f)
+        f = option('--extension', type=RecipeType(), callback=extension_callback, help="Use this extension")(f)
 
         setup_settings(None)
 

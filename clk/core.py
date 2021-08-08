@@ -184,7 +184,7 @@ class RecipeType(ParameterType):
 
     @property
     def choices(self):
-        return [recipe.short_name for recipe in config.all_recipes]
+        return [extension.short_name for extension in config.all_extensions]
 
     def complete(self, ctx, incomplete):
         return (choice for choice in self.choices if startswith(choice, incomplete))
@@ -396,13 +396,13 @@ def main_command_decoration(f, cls, **kwargs):
                             is_eager=True)(f)
     f = main_command_option('-e',
                             '--extension',
-                            callback=recipe_callback,
+                            callback=extension_callback,
                             help="Enable this extension for the time of the command",
                             type=RecipeTypeSuggestion(),
                             multiple=True)(f)
     f = main_command_option('-u',
                             '--without-extension',
-                            callback=without_recipe_callback,
+                            callback=without_extension_callback,
                             help="Disable this extension for the time of the command",
                             type=RecipeTypeSuggestion(),
                             multiple=True)(f)
@@ -462,23 +462,23 @@ def project_callback(ctx, attr, value):
 
 
 @main_command_options_callback
-def recipe_callback(ctx, attr, values):
-    recipes = config.commandline_profile.get_settings("recipe")
+def extension_callback(ctx, attr, values):
+    extensions = config.commandline_profile.get_settings("extension")
     for value in values:
-        recipe = recipes.get(value, {})
-        recipe["enabled"] = True
-        recipes[value] = recipe
-    config.commandline_profile.set_settings("recipe", recipes)
+        extension = extensions.get(value, {})
+        extension["enabled"] = True
+        extensions[value] = extension
+    config.commandline_profile.set_settings("extension", extensions)
     return values
 
 
-def without_recipe_callback(ctx, attr, values):
-    recipes = config.commandline_profile.get_settings("recipe")
+def without_extension_callback(ctx, attr, values):
+    extensions = config.commandline_profile.get_settings("extension")
     for value in values:
-        recipe = recipes.get(value, {})
-        recipe["enabled"] = False
-        recipes[value] = recipe
-    config.commandline_profile.set_settings("recipe", recipes)
+        extension = extensions.get(value, {})
+        extension["enabled"] = False
+        extensions[value] = extension
+    config.commandline_profile.set_settings("extension", extensions)
     return values
 
 

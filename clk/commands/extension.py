@@ -68,16 +68,16 @@ class RecipeNameType(ParameterType):
 
     def getchoice(self, ctx):
         if self.enabled:
-            recipes = config.all_enabled_recipes
+            extensions = config.all_enabled_extensions
         elif self.disabled:
-            recipes = list(config.all_disabled_recipes) + list(config.all_unset_recipes)
+            extensions = list(config.all_disabled_extensions) + list(config.all_unset_extensions)
         else:
-            recipes = config.all_recipes
-        return [recipe.short_name for recipe in recipes]
+            extensions = config.all_extensions
+        return [extension.short_name for extension in extensions]
 
     def complete(self, ctx, incomplete):
         choice = self.getchoice(ctx)
-        return [(recipe, load_short_help(recipe)) for recipe in choice if startswith(recipe, incomplete)]
+        return [(extension, load_short_help(extension)) for extension in choice if startswith(extension, incomplete)]
 
 
 class RecipeType(RecipeNameType):
@@ -89,7 +89,7 @@ class RecipeType(RecipeNameType):
                 param,
                 ctx,
             )
-        candidates = list(reversed(list(config.all_enabled_recipes)))
+        candidates = list(reversed(list(config.all_enabled_extensions)))
         # the algorithm here is to first prefer exact match before falling back
         # to looser match. Both loops look alike, but the reason why they are
         # searated is that even if a loose (based on the short_name) match
@@ -104,12 +104,12 @@ class RecipeType(RecipeNameType):
         raise NotImplementedError("This part of the code should never be reached")
 
 
-def load_short_help(recipe):
-    return recipe
+def load_short_help(extension):
+    return extension
 
 
 @group(default_command="show")
-@use_settings("recipe", RecipeConfig)
+@use_settings("extension", RecipeConfig)
 def extension():
     """Extension related commands
 
@@ -127,11 +127,11 @@ def extension():
 @pass_context
 def create(ctx, name, disable):
     """Create a new extension"""
-    profile = config.recipe.profile
-    r = profile.create_recipe(name)
+    profile = config.extension.profile
+    r = profile.create_extension(name)
     LOGGER.status("Created extension {}.".format(r.friendly_name))
     if disable:
-        ctx.invoke(_disable, recipe=[name])
+        ctx.invoke(_disable, extension=[name])
 
 
 @extension.command(handle_dry_run=True)
@@ -141,7 +141,7 @@ def rename(old, new):
     """Rename an extension"""
     if "/" not in new:
         new = "{}/{}".format(old.name.split("/")[0], new)
-    new_loc = config.recipe_location(new)
+    new_loc = config.extension_location(new)
     if os.path.exists(new_loc):
         raise click.UsageError("{} already exists".format(new_loc))
     move(old.location, new_loc)
@@ -158,7 +158,7 @@ def _move(old, profile):
     """Move an extension to another profile"""
     move(
         old.location,
-        Path(profile.location) / "recipes" / Path(old.location).name,
+        Path(profile.location) / "extensions" / Path(old.location).name,
     )
 
 
@@ -169,7 +169,7 @@ def _copy(src, dest):
     """Copy an extension"""
     if "/" not in dest:
         dest = "{}/{}".format(src.name.split("/")[0], dest)
-    new_loc = config.recipe_location(dest)
+    new_loc = config.extension_location(dest)
     if os.path.exists(new_loc):
         raise click.UsageError("{} already exists".format(new_loc))
     copy(src.location, new_loc)
@@ -186,7 +186,7 @@ def remove(extension):
     """Remove an extension"""
     for rec in extension:
         LOGGER.status("Removing {}".format(rec.friendly_name))
-        config.get_profile_containing_recipe(rec.name).remove_recipe(rec.name)
+        config.get_profile_containing_extension(rec.name).remove_extension(rec.name)
 
 
 @extension.command(handle_dry_run=True)
@@ -207,38 +207,38 @@ def remove(extension):
 )
 def show(fields, format, order, extensions, enabled_only, disabled_only, **kwargs):
     """List the extensions and some info about them"""
-    config_recipes = set(config.recipe.readonly.keys())
-    avail_recipes = set([r.short_name for r in config.all_recipes])
+    config_extensions = set(config.extension.readonly.keys())
+    avail_extensions = set([r.short_name for r in config.all_extensions])
     if not fields:
         fields = list(get_option_choices("fields"))
         if not order:
             fields.remove("order")
 
     if not extensions:
-        extensions = config_recipes | avail_recipes
+        extensions = config_extensions | avail_extensions
     if not extensions:
         LOGGER.status("No extension yet")
         exit(0)
     with Colorer(kwargs) as colorer, TablePrinter(fields, format) as tp:
-        for recipe_name in sorted(extensions):
+        for extension_name in sorted(extensions):
             profiles = ", ".join([
                 click.style(profile.name, **colorer.get_style(profile.name))
                 for profile in config.root_profiles
-                if profile.has_recipe(recipe_name)
+                if profile.has_extension(extension_name)
             ])
             profile = colorer.last_profile_of_settings(
-                recipe_name,
-                config.recipe.all_settings,
+                extension_name,
+                config.extension.all_settings,
             )
-            recipe_enabled = config.is_recipe_enabled(recipe_name)
-            if (not enabled_only or recipe_enabled) and (not disabled_only or not recipe_enabled):
+            extension_enabled = config.is_extension_enabled(extension_name)
+            if (not enabled_only or extension_enabled) and (not disabled_only or not extension_enabled):
                 profile_style = colorer.get_style(profile) if profile else {}
 
                 tp.echo(
-                    click.style(recipe_name, fg="green" if recipe_enabled else "red"),
+                    click.style(extension_name, fg="green" if extension_enabled else "red"),
                     (profile and click.style(profile, **profile_style)) or "Unset",
                     profiles or "Undefined",
-                    config.get_recipe_order(recipe_name),
+                    config.get_extension_order(extension_name),
                 )
 
 
@@ -256,19 +256,19 @@ def _disable(ctx, extension, all):
     if all:
         extension = RecipeType(disabled=True).getchoice(ctx)
     for cmd in extension:
-        if cmd in config.recipe.writable:
-            config.recipe.writable[cmd]["enabled"] = False
+        if cmd in config.extension.writable:
+            config.extension.writable[cmd]["enabled"] = False
         else:
-            config.recipe.writable[cmd] = {"enabled": False}
-        LOGGER.status("Disabling extension {} in profile {}".format(cmd, config.recipe.writeprofile))
-    config.recipe.write()
+            config.extension.writable[cmd] = {"enabled": False}
+        LOGGER.status("Disabling extension {} in profile {}".format(cmd, config.extension.writeprofile))
+    config.extension.write()
 
 
 @extension.command(handle_dry_run=True)
 @flag("--all", help="On all extensions")
 @argument(
     "extension",
-    type=CommandSettingsKeyType("recipe"),
+    type=CommandSettingsKeyType("extension"),
     nargs=-1,
     help="The name of the extension to unset",
 )
@@ -276,14 +276,14 @@ def _disable(ctx, extension, all):
 def unset(ctx, extension, all):
     """Don't say whether to use or not this extension (let the upper profiles decide)"""
     if all:
-        extension = list(config.recipe.readonly.keys())
+        extension = list(config.extension.readonly.keys())
     for cmd in extension:
-        if cmd not in config.recipe.writable:
-            raise click.UsageError("Extension {} not set in profile {}".format(cmd, config.recipe.writeprofile))
+        if cmd not in config.extension.writable:
+            raise click.UsageError("Extension {} not set in profile {}".format(cmd, config.extension.writeprofile))
     for cmd in extension:
-        del config.recipe.writable[cmd]
-        LOGGER.status("Unsetting {} from profile {}".format(cmd, config.recipe.writeprofile))
-    config.recipe.write()
+        del config.extension.writable[cmd]
+        LOGGER.status("Unsetting {} from profile {}".format(cmd, config.extension.writeprofile))
+    config.extension.write()
 
 
 @extension.command(handle_dry_run=True)
@@ -305,19 +305,19 @@ def __enable(ctx, extension, all, only):
         extension = RecipeType(disabled=True).getchoice(ctx)
     if only:
         for cmd in set(RecipeType().getchoice(ctx)) - set(extension):
-            if cmd in config.recipe.writable:
-                config.recipe.writable[cmd]["enabled"] = False
+            if cmd in config.extension.writable:
+                config.extension.writable[cmd]["enabled"] = False
             else:
-                config.recipe.writable[cmd] = {"enabled": False}
-            LOGGER.status("Disabling extension {} in profile {}".format(cmd, config.recipe.writeprofile))
+                config.extension.writable[cmd] = {"enabled": False}
+            LOGGER.status("Disabling extension {} in profile {}".format(cmd, config.extension.writeprofile))
 
     for cmd in extension:
-        if cmd in config.recipe.writable:
-            config.recipe.writable[cmd]["enabled"] = True
+        if cmd in config.extension.writable:
+            config.extension.writable[cmd]["enabled"] = True
         else:
-            config.recipe.writable[cmd] = {"enabled": True}
-        LOGGER.status("Enabling extension {} in profile {}".format(cmd, config.recipe.writeprofile))
-    config.recipe.write()
+            config.extension.writable[cmd] = {"enabled": True}
+        LOGGER.status("Enabling extension {} in profile {}".format(cmd, config.extension.writeprofile))
+    config.extension.write()
 
 
 @extension.command(handle_dry_run=True)
@@ -349,14 +349,14 @@ def switch(ctx, extension1, extension2):
 def set_order(extension, order):
     """Set the order of the extensions"""
     if not extension:
-        extension = config.all_recipes
+        extension = config.all_extensions
     for cmd in extension:
-        if cmd in config.recipe.writable:
-            config.recipe.writable[cmd]["order"] = order
+        if cmd in config.extension.writable:
+            config.extension.writable[cmd]["order"] = order
         else:
-            config.recipe.writable[cmd] = {"order": order}
-        LOGGER.status("Set order of {} to {} in profile {}".format(cmd, order, config.recipe.writeprofile))
-    config.recipe.write()
+            config.extension.writable[cmd] = {"order": order}
+        LOGGER.status("Set order of {} to {} in profile {}".format(cmd, order, config.extension.writeprofile))
+    config.extension.write()
 
 
 @extension.command()
@@ -463,7 +463,7 @@ def install(ctx, profile, url, name, install_deps, editable, force):
             raise click.UsageError("I cannot infer a name for your extension. Please provide one explicitly.")
     if name.startswith("clk_extension_"):
         name = name.replace("clk_extension_", "")
-    if not re.match(f"^{DirectoryProfile.recipe_name_re}$", name):
+    if not re.match(f"^{DirectoryProfile.extension_name_re}$", name):
         raise click.UsageError(f"Invalid extension name '{name}'."
                                " an extension's name must contain only letters or _")
 
@@ -472,18 +472,18 @@ def install(ctx, profile, url, name, install_deps, editable, force):
                                " Please tell us what you wanted to do"
                                " so that we can fix the code and the doc.")
 
-    recipe_path = (Path(profile.location) / "recipes" / name).resolve()
-    if recipe_path.exists() or recipe_path.is_symlink():
+    extension_path = (Path(profile.location) / "extensions" / name).resolve()
+    if extension_path.exists() or extension_path.is_symlink():
         if force:
-            rm(recipe_path)
+            rm(extension_path)
         else:
-            if not os.path.exists(f'{recipe_path}/.git'):
-                raise click.UsageError(f"An extension already exists at location {recipe_path}"
+            if not os.path.exists(f'{extension_path}/.git'):
+                raise click.UsageError(f"An extension already exists at location {extension_path}"
                                        " Use --force to override it.")
     if install_type == "git":
-        # check if we already have that recipe locally
-        if os.path.exists(f'{recipe_path}/.git'):
-            with cd(recipe_path):
+        # check if we already have that extension locally
+        if os.path.exists(f'{extension_path}/.git'):
+            with cd(extension_path):
                 url = check_output(['git', 'remote', 'get-url', 'origin']).strip()
                 if url not in urls:
                     LOGGER.debug(f"urls: {urls}")
@@ -493,7 +493,7 @@ def install(ctx, profile, url, name, install_deps, editable, force):
             ok = False
             for tryurl in urls:
                 try:
-                    call(["git", "clone", tryurl, str(recipe_path)])
+                    call(["git", "clone", tryurl, str(extension_path)])
                 except subprocess.CalledProcessError:
                     # this one did not work, go on to the next one
                     continue
@@ -507,17 +507,17 @@ def install(ctx, profile, url, name, install_deps, editable, force):
                                        " to see how you can pass urls")
     elif install_type == "file":
         if editable:
-            ln(Path(url).resolve(), recipe_path)
+            ln(Path(url).resolve(), extension_path)
         else:
-            copy(url, recipe_path)
+            copy(url, extension_path)
     elif install_type == "webtar":
         LOGGER.info(f"Getting the tarfile from {url}")
         tar = tarfile.open(fileobj=io.BytesIO(requests.get(url).content))
-        tar.extractall(recipe_path)
-        for file in glob(f"{recipe_path}/*/*"):
-            move(file, recipe_path)
+        tar.extractall(extension_path)
+        for file in glob(f"{extension_path}/*/*"):
+            move(file, extension_path)
 
-    extension = profile.get_recipe(name)
+    extension = profile.get_extension(name)
 
     if install_deps is True:
         LOGGER.status("-> Installing the dependencies of the extension")
