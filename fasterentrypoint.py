@@ -45,7 +45,7 @@ def get_args(cls, dist, header=None):  # noqa: D205,D400
         for name, ep in dist.get_entry_map(group).items():
             # pylint: disable=E1101
             args = cls._get_script_args(type_, name, "#!/bin/bash\n",
-                                        f"""exec {sys.executable} -m click_project.main "$@" """.rstrip())
+                                        f"""exec {sys.executable} -m clk.main "$@" """.rstrip())
             for res in args:
                 yield res
 

@@ -44,6 +44,6 @@ setup(
         "requests",
     ],
     entry_points={'console_scripts': [
-        'clk=click_project.main:main',
+        'clk=clk.main:main',
     ]},
 )
