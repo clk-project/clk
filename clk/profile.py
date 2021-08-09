@@ -138,7 +138,9 @@ class DirectoryProfile(Profile):
     JSON_FILE_EXTENSION = ".json"
 
     def describe(self):
-        print(f"The extension {self.name}" f" is located at {self.location} ." " Let's try to see what it has to offer.")
+        print(f"The extension {self.name}"
+              f" is located at {self.location} ."
+              " Let's try to see what it has to offer.")
         print("##########")
         enable_argument = (f" --extension {self.short_name}" if self.isextension else "")
         for (setting, command) in [

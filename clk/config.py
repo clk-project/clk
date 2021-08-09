@@ -453,7 +453,8 @@ class Config(object):
         return self.filter_enabled_profiles(self.all_profiles)
 
     def filter_enabled_profiles(self, profiles):
-        return (profile for profile in profiles if (not profile.isextension or self.is_extension_enabled(profile.short_name)))
+        return (profile for profile in profiles
+                if (not profile.isextension or self.is_extension_enabled(profile.short_name)))
 
     @property
     def all_directory_profiles(self):
