@@ -10,7 +10,6 @@ from collections import defaultdict
 import os
 
 import click
-import six
 
 from clk.decorators import group, flag, argument, use_settings, option, pass_context, table_format, table_fields
 from clk.lib import TablePrinter
@@ -173,7 +172,7 @@ def compute_dot(cmds=None, strict=False, cluster=True, left_right=False, lonely=
     dot = """digraph {\n"""
     if left_right:
         dot += """  rankdir = LR;\n"""
-    clusters = defaultdict(six.moves.builtins.set)
+    clusters = defaultdict(set)
 
     def register_cluster(cmd_path):
         if "." in cmd_path:
@@ -219,7 +218,7 @@ def compute_dot(cmds=None, strict=False, cluster=True, left_right=False, lonely=
     if not adjacency:
         return None
     if cluster:
-        for parent_path, cmds in six.iteritems(clusters):
+        for parent_path, cmds in clusters.items():
             if lonely or len(cmds.intersection(nodes)) > 1:
                 dot += """  subgraph cluster_{} {{\n""".format(cluster_replace(parent_path))
                 dot += """    label="{}";\n""".format(parent_path)

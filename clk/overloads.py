@@ -14,7 +14,6 @@ from collections import OrderedDict, defaultdict
 
 import click
 import click_didyoumean
-import six
 from click.utils import make_default_short_help
 from click.exceptions import MissingParameter
 
@@ -666,7 +665,7 @@ class Group(click_didyoumean.DYMMixin, MissingDocumentationMixin, DeprecatedMixi
                                      " the sub-command '{}' is implicitly run".format(self.default_cmd_name))
 
     def set_default_command(self, command):
-        if isinstance(command, six.string_types):
+        if isinstance(command, str):
             cmd_name = command
         else:
             cmd_name = command.name
@@ -755,7 +754,7 @@ class Group(click_didyoumean.DYMMixin, MissingDocumentationMixin, DeprecatedMixi
 
 
 def eval_arg(arg):
-    if not isinstance(arg, six.string_types):
+    if not isinstance(arg, str):
         return arg
     eval_match = re.match('eval(\(\d+\)|):(.+)', arg)
     nexteval_match = re.match('nexteval(\(\d+\)|):(.+)', arg)
@@ -868,7 +867,7 @@ class ParameterMixin(click.Parameter):
                 if self.default:
                     res1 += " and overriding static one: " + canon_default
                 res1 += ")"
-            elif isinstance(canon_default, six.string_types) and canon_default.startswith("value:"):
+            elif isinstance(canon_default, str) and canon_default.startswith("value:"):
                 res1 += config.get_settings("value").get(canon_default[len("value:"):], {"value": "None"}).get("value")
                 res1 += " (computed from {})".format(canon_default)
             else:
@@ -1268,7 +1267,7 @@ class FlowOption(Option):
         try:
             name, opts, secondary_opts = Option._parse_decls(self, decls, expose_value)
         except TypeError as e:
-            message = e.message if six.PY2 else e.args[0]
+            message = e.args[0]
             re_match = re.match('No options defined but a name was passed \((\S+)\)\.', message)
             if re_match:
                 name = re_match.group(1)

@@ -2,7 +2,6 @@
 # -*- coding:utf-8 -*-
 
 import click
-import six
 import platform
 import os
 import subprocess
@@ -14,8 +13,7 @@ import hashlib
 import pickle
 from datetime import datetime
 import appdirs
-
-from six import StringIO
+from io import StringIO
 
 from clk import completion
 from clk import log
@@ -162,14 +160,14 @@ def main_command_arguments_to_dict(opts, resilient_parsing):
 
 def main_command_arguments_from_dict(parameters):
     res = []
-    for key, value in six.iteritems(parameters):
+    for key, value in parameters.items():
         matching_options = [option for option in main_command_parameters if key == option.name]
         assert len(matching_options) == 1
         option = matching_options[0]
         opt = option.opts[0]
         if value is True:
             res.append(opt)
-        elif isinstance(value, six.string_types):
+        elif isinstance(value, str):
             res.extend([opt, value])
         elif isinstance(value, list):
             res += [opt] + value

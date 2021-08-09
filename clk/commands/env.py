@@ -6,7 +6,6 @@ from __future__ import print_function, absolute_import
 import os
 
 import click
-import six
 
 from clk.config import config
 from clk.decorators import group, pass_context, table_format, table_fields, use_settings
@@ -71,9 +70,9 @@ def extended(fields, format):
 @pass_context
 def sh(ctx):
     """Show how to set the environment in the Bourne shell"""
-    for k, v in sorted(six.iteritems(config.env)):
+    for k, v in sorted(config.env.items()):
         click.echo('{k}={v}:${k}'.format(k=k, v=double_quote(v)))
-    for k, v in sorted(six.iteritems(config.override_env)):
+    for k, v in sorted(config.override_env.items()):
         click.echo('{k}={v}'.format(k=k, v=double_quote(v)))
     for k in sorted(list(config.env.keys()) + list(config.override_env.keys())):
         click.echo('export {k}'.format(k=k))
@@ -85,9 +84,9 @@ def sh(ctx):
 @pass_context
 def bash(ctx):
     """Show how to set the environment in the Bourne again shell"""
-    for k, v in sorted(six.iteritems(config.env)):
+    for k, v in sorted(config.env.items()):
         click.echo('export {k}={v}:${k}'.format(k=k, v=double_quote(v)))
-    for k, v in sorted(six.iteritems(config.override_env)):
+    for k, v in sorted(config.override_env.items()):
         click.echo('export {k}={v}'.format(k=k, v=double_quote(v)))
     click.echo('# Run this command to configure your shell:')
     click.echo('# eval $({command})'.format(command=ctx.command_path))
@@ -97,9 +96,9 @@ def bash(ctx):
 @pass_context
 def zsh(ctx):
     """Show how to set the environment in the Z shell"""
-    for k, v in sorted(six.iteritems(config.env)):
+    for k, v in sorted(config.env.items()):
         click.echo('export {k}={v}:${k}'.format(k=k, v=double_quote(v)))
-    for k, v in sorted(six.iteritems(config.override_env)):
+    for k, v in sorted(config.override_env.items()):
         click.echo('export {k}={v}'.format(k=k, v=double_quote(v)))
     click.echo('# Run this command to configure your shell:')
     click.echo('# eval $({command})'.format(command=ctx.command_path))
@@ -109,10 +108,10 @@ def zsh(ctx):
 @pass_context
 def fish(ctx):
     """Show how to set the environment in the Friendly interactive shell"""
-    for k, v in sorted(six.iteritems(config.env)):
+    for k, v in sorted(config.env.items()):
         v = v.replace(os.pathsep, ' ') if k == 'PATH' else v
         click.echo('set -x {k} {v} ${k};'.format(k=k, v=double_quote(v)))
-    for k, v in sorted(six.iteritems(config.override_env)):
+    for k, v in sorted(config.override_env.items()):
         click.echo('set -x {k} {v};'.format(k=k, v=double_quote(v)))
     click.echo('# Run this command to configure your shell:')
     click.echo('# eval ({command})'.format(command=ctx.command_path))
@@ -122,9 +121,9 @@ def fish(ctx):
 @pass_context
 def cmd(ctx):
     """Show how to set the environment in the Windows Command Prompt"""
-    for k, v in sorted(six.iteritems(config.env)):
+    for k, v in sorted(config.env.items()):
         click.echo('SET {k}={v};%{k}%'.format(k=k, v=v))
-    for k, v in sorted(six.iteritems(config.override_env)):
+    for k, v in sorted(config.override_env.items()):
         click.echo('SET {k}={v}'.format(k=k, v=v))
     click.echo('REM Run this command to configure your shell:')
     click.echo('REM FOR /f "tokens=*" %i IN (\'{command}\') DO %i'.format(command=ctx.command_path))
@@ -134,9 +133,9 @@ def cmd(ctx):
 @pass_context
 def powershell(ctx):
     """Show how to set the environment in the Windows PowerShell"""
-    for k, v in sorted(six.iteritems(config.env)):
+    for k, v in sorted(config.env.items()):
         click.echo('$Env:{k} = "{v};" + $Env:{k}'.format(k=k, v=double_quote(v)))
-    for k, v in sorted(six.iteritems(config.override_env)):
+    for k, v in sorted(config.override_env.items()):
         click.echo('$Env:{k} = "{v}"'.format(k=k, v=double_quote(v)))
     click.echo('# Run this command to configure your shell:')
     click.echo('# & {command} | Invoke-Expression'.format(command=ctx.command_path))

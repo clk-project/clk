@@ -9,7 +9,6 @@ import json
 import collections
 import traceback
 from datetime import datetime
-import six
 import re
 from enum import Enum
 
@@ -467,7 +466,7 @@ class DirectoryProfile(Profile):
                         "commands": commands,
                         "documentation": None,
                     }
-                    for alias, commands in six.iteritems(aliases)
+                    for alias, commands in aliases.items()
                 }
                 settings["alias"] = new_aliases
         self.computed_location = None
@@ -481,7 +480,7 @@ class DirectoryProfile(Profile):
                     continue
 
                 git_records = settings["git_record"]
-                new_git_records = {key: [record] for key, record in six.iteritems(git_records)}
+                new_git_records = {key: [record] for key, record in git_records.items()}
                 settings["git_record"] = new_git_records
         self.computed_location = None
         self.compute_settings()

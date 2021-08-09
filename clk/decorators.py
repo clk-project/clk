@@ -7,7 +7,6 @@ import functools
 import types
 
 import click
-import six
 from click.utils import make_default_short_help
 
 from clk.lib import get_tabulate_formats, ParameterType
@@ -224,7 +223,7 @@ __all__ = [
 
 if __name__ == '__main__':
     # generate the __all__ content for this file
-    symbols = [k for k, v in six.iteritems(dict(globals())) if not isinstance(v, types.ModuleType)]
+    symbols = [k for k, v in dict(globals()).items() if not isinstance(v, types.ModuleType)]
     symbols = [k for k in symbols if not k.startswith('_')]
     symbols = [k for k in symbols if k not in ['print_function', 'absolute_import']]
     print('__all__ = %s' % repr(symbols))

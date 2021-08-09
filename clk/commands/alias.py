@@ -6,7 +6,6 @@ from __future__ import print_function, absolute_import
 import re
 
 import click
-import six
 
 from clk.config import config
 from clk.decorators import group, flag, argument, use_settings, option, table_format, table_fields
@@ -199,9 +198,8 @@ def rename(source, destination):
     profile.settings["alias"][destination] = profile.settings["alias"][source]
     del profile.settings["alias"][source]
     # rename the alias when used in the other aliases
-    from six.moves.builtins import set
     renamed_in = set()
-    for a, data in six.iteritems(config.alias.writable):
+    for a, data in config.alias.writable.items():
         cmds = data["commands"]
         for cmd in cmds:
             if cmd[0] == source:
@@ -209,7 +207,7 @@ def rename(source, destination):
                 cmd[0] = destination
                 renamed_in.add(a)
     # warn the user if the alias is used at other profile, and thus has not been renamed there
-    for a, cmds in six.iteritems(config.alias.readonly):
+    for a, cmds in config.alias.readonly.items():
         cmds = data["commands"]
         for cmd in cmds:
             if cmd[0] == source and a not in renamed_in:

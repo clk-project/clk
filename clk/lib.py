@@ -27,12 +27,11 @@ import traceback
 from pathlib import Path
 from copy import deepcopy
 from contextlib import contextmanager
+from urllib.request import urlopen
 
 import click
 import colorama
 import glob2
-import six
-from six.moves.urllib.request import urlopen
 from click._termui_impl import ProgressBar as ProgressBar_
 
 from clk.click_helpers import click_get_current_context_safe
@@ -44,11 +43,6 @@ LOGGER = get_logger(__name__)
 dry_run = None
 main_module = None
 
-if six.PY3:
-    unicode_ = str
-else:
-    unicode_ = unicode  # NOQA: F821 undefined name 'unicode': Needed for python3 compatibility
-
 DocumentedChoice = DocumentedChoice
 
 
@@ -58,7 +52,7 @@ def read_properties_file(file_name):
 
 def ensure_unicode(value):
     """Convert a string in unicode"""
-    if not isinstance(value, unicode_):
+    if not isinstance(value, str):
         return value.decode("utf-8")
     else:
         return value
@@ -421,7 +415,7 @@ def ccd(dir):
 def updated_env(**kwargs):
     u"""Temporarily update the environment. To be used in a with statement"""
     oldenv = dict(os.environ)
-    for k, v in six.iteritems(kwargs):
+    for k, v in kwargs.items():
         if v is None and k in os.environ:
             LOGGER.debug('environment %s removed' % k)
             del os.environ[k]
@@ -451,7 +445,7 @@ def format_opt(opt):
 def format_options(options, glue=False):
     """Transform the dictionary in a list of options usable in call"""
     cmd = []
-    for opt, value in six.iteritems(options):
+    for opt, value in options.items():
         if value is True:
             cmd.append(format_opt(opt))
         elif isinstance(value, list) or isinstance(value, tuple):
@@ -940,7 +934,7 @@ def get_option_choices(option_name):
 
 def clear_ansi_color_codes(v):
     """make sure we don't have any terminal chars"""
-    if isinstance(v, six.string_types):
+    if isinstance(v, str):
         v = colorama.AnsiToWin32.ANSI_CSI_RE.sub('', v)
         v = colorama.AnsiToWin32.ANSI_OSC_RE.sub('', v)
     return v
@@ -1089,7 +1083,7 @@ class ProgressBar(ProgressBar_):
         self.render_progress()
         return self
 
-    def next(self):
+    def __next__(self):
         if self.is_hidden:
             return next(self.iter)
         try:
@@ -1104,10 +1098,6 @@ class ProgressBar(ProgressBar_):
         else:
             self.update(1)
             return rv
-
-    if not six.PY2:
-        __next__ = next
-        del next
 
 
 def get_close_matches(words, possibilities, n=3, cutoff=0.6):
@@ -1393,14 +1383,9 @@ def deprecated_module(src, dst):
     stack = traceback.extract_stack()
 
     def get_frame_info(frame):
-        if six.PY2 or sys.version_info.minor <= 4:
-            filename = frame[0]
-            lineno = frame[1]
-            line = frame[3]
-        else:
-            filename = frame.filename
-            lineno = frame.lineno
-            line = frame.line
+        filename = frame.filename
+        lineno = frame.lineno
+        line = frame.line
         return filename, lineno, line
 
     # find a relevant frame
@@ -1505,7 +1490,7 @@ def tabulate(tabular_data,
         for ls in tabular_data:
             d = collections.OrderedDict()
             for i, v in enumerate(ls):
-                if isinstance(v, six.string_types):
+                if isinstance(v, str):
                     v = clear_ansi_color_codes(v)
                 d[headers[i]] = v
             json_data.append(d)
@@ -1569,7 +1554,7 @@ def get_authenticator(machine, askpass=True, required=True):
         LOGGER.info("Please enter your username and password for {}".format(machine))
         if machine in get_authenticator_hints:
             LOGGER.info("Hint: {}".format(get_authenticator_hints[machine]))
-        login = six.moves.input("%s username: " % machine)
+        login = input("%s username: " % machine)
         password = getpass.getpass("%s password: " % machine)
         try:
             LOGGER.info("Saving the credentials in your keyring: {}".format(keyring.name))
@@ -1610,7 +1595,7 @@ def to_bool(s):
 
 
 def to_string(s):
-    if isinstance(s, six.string_types):
+    if isinstance(s, str):
         return s
     return str(s)
 

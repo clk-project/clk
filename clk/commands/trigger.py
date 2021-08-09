@@ -6,8 +6,6 @@ from __future__ import print_function, absolute_import
 import click
 import re
 
-import six
-
 from clk.config import config
 from clk.decorators import group, flag, argument, use_settings
 from clk.lib import quote, echo_key_value
@@ -137,9 +135,8 @@ def rename(origin, destination, position):
     if origin in config.triggers.writable:
         del config.triggers.writable[origin]
     # rename the triggers when used in the other triggers
-    from six.moves.builtins import set
     renamed_in = set()
-    for a, data in six.iteritems(config.triggers.writable):
+    for a, data in config.triggers.writable.items():
         cmds = data[position]
         for cmd in cmds:
             if cmd[0] == origin:
@@ -147,7 +144,7 @@ def rename(origin, destination, position):
                 cmd[0] = destination
                 renamed_in.add(a)
     # warn the user if the triggers is used at other profile, and thus has not been renamed there
-    for a, cmds in six.iteritems(config.triggers.readonly):
+    for a, cmds in config.triggers.readonly.items():
         cmds = data[position]
         for cmd in cmds:
             if cmd[0] == origin and a not in renamed_in:

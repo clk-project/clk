@@ -10,7 +10,6 @@ from copy import deepcopy
 from contextlib import contextmanager
 import shlex
 
-import six
 import click
 from cached_property import cached_property
 
@@ -74,7 +73,7 @@ def merge_settings(settings):
     computed_settings = collections.OrderedDict()
     computed_settings2 = collections.OrderedDict()
     for s in settings:
-        for k, v in six.iteritems(s):
+        for k, v in s.items():
             if k == "_self":
                 # self is not mergeable, for ot gives information about the file itself
                 continue
@@ -84,7 +83,7 @@ def merge_settings(settings):
             else:
                 if isinstance(v, dict):
                     computed_settings[k].update(v)
-                    for k2, v2 in six.iteritems(v):
+                    for k2, v2 in v.items():
                         if isinstance(v2, list):
                             computed_settings2[k][k2] = computed_settings2[k].get(k2, []) + v2
                         elif isinstance(v2, dict):
@@ -93,7 +92,7 @@ def merge_settings(settings):
                                 computed_settings2[k][k2] = deepcopy(v2)
                             else:
                                 s2v.update(v2)
-                        elif isinstance(v2, six.string_types):
+                        elif isinstance(v2, str):
                             computed_settings2[k] = v2
                         else:
                             raise NotImplementedError("Please help us code this part")
@@ -256,10 +255,10 @@ class Config(object):
 
     def setup_environ(self):
         """Put the values of self.env and self.override_env into environment variables"""
-        for k, v in six.iteritems(self.override_env):
+        for k, v in self.override_env.items():
             os.environ[k] = v
-        self.env = dict((k, os.pathsep.join(os.path.normpath(p) for p in ps if p)) for k, ps in six.iteritems(self.env))
-        for k, v in six.iteritems(self.env):
+        self.env = dict((k, os.pathsep.join(os.path.normpath(p) for p in ps if p)) for k, ps in self.env.items())
+        for k, v in self.env.items():
             sep = os.pathsep if (k.endswith("PATH") or k.endswith("DIR") or k.endswith("DIRS")) else " "
             if k in os.environ:
                 os.environ[k] = v + sep + os.environ[k]
