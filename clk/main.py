@@ -3,6 +3,33 @@
 
 from clk.setup import basic_entry_point, main
 from clk.decorators import flag
+from importlib.abc import MetaPathFinder, Loader
+import sys
+
+
+class DeprecatedLoader(Loader):
+    def create_module(self, spec):
+        from importlib import import_module
+        assert spec.name.startswith(
+            "click_project"), f"This loader is only meant to load click-project modules, {spec.name} was given"
+        name = "clk" + spec.name[len("click_project"):]
+        module = import_module(name)
+        return module
+
+    def exec_module(self, module):
+        return
+
+
+class DeprecatedFinder(MetaPathFinder):
+    def find_spec(self, fullname, path, target=None):
+        if fullname.startswith("click_project"):
+            from importlib.machinery import ModuleSpec
+            return ModuleSpec(fullname, DeprecatedLoader())
+        else:
+            return None
+
+
+sys.meta_path.insert(0, DeprecatedFinder())
 
 
 def print_version(ctx, attr, value):
