@@ -7,11 +7,35 @@ from importlib.abc import MetaPathFinder, Loader
 import sys
 
 
+def warn_about_bad_import():
+    import os
+    ignore_value = "idontcarefornowbutishoulddefinitelyfixthoseimportssomeday"
+    if os.environ.get("CLK_IGNORE_IMPORT_WARNINGS") == ignore_value:
+        return
+    from traceback import extract_stack
+    stack = extract_stack()
+    from clk.log import get_logger
+    LOGGER = get_logger("clk.BADIMPORT")
+    for frame in reversed(stack):
+        if "click_project" in frame.line:
+            LOGGER.deprecated(
+                f"""BAD IMPORT in file {frame.filename} at line {frame.lineno}: You should fix the line from
+      {frame.line}
+to
+      {frame.line.replace('click_project', 'clk')}
+""")
+    LOGGER.deprecated("To silence those warning, fix the problem!..."
+                      " or set the environment variable"
+                      " CLK_IGNORE_IMPORT_WARNINGS to the value"
+                      f" '{ignore_value}'")
+
+
 class DeprecatedLoader(Loader):
     def create_module(self, spec):
         from importlib import import_module
         assert spec.name.startswith(
             "click_project"), f"This loader is only meant to load click-project modules, {spec.name} was given"
+        warn_about_bad_import()
         name = "clk" + spec.name[len("click_project"):]
         module = import_module(name)
         return module
