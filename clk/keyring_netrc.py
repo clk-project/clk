@@ -2,7 +2,11 @@
 # -*- coding:utf-8 -*-
 
 import netrc
-import keyring.backend
+import click
+try:
+    import keyring.backend
+except ModuleNotFoundError:
+    raise click.UsageError("You have to install keyring `pip install keyring` for this to work")
 import json
 import os
 

@@ -31,7 +31,6 @@ setup(
         "glob2",
         "colorama",
         "python-dateutil",
-        "keyring",
         "tabulate",
         "networkx",
         "pydotplus",
