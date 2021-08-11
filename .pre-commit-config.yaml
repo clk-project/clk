@@ -13,6 +13,6 @@ repos:
   hooks:
   - id: yapf
 - repo: https://github.com/hadialqattan/pycln
-  rev: v0.0.4
+  rev: v0.0.5
   hooks:
   - id: pycln
