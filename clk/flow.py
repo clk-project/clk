@@ -9,9 +9,11 @@ from clk import overloads
 from clk.config import config
 from clk.core import run
 from clk.lib import flat_map, ordered_unique
+from clk.log import get_logger
 from clk.overloads import AutomaticOption, CommandNotFound, FlowArgument, FlowOption, get_command, get_command_handlers
 
 flowdeps = defaultdict(list)
+LOGGER = get_logger(__name__)
 
 
 def setup_flow_params(cmd):
