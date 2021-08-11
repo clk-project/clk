@@ -9,6 +9,8 @@ import sys
 
 def warn_about_bad_import():
     import os
+    if not os.environ.get("CLK_WARN_ABOUT_BAD_IMPORT"):
+        return
     ignore_value = "idontcarefornowbutishoulddefinitelyfixthoseimportssomeday"
     if os.environ.get("CLK_IGNORE_IMPORT_WARNINGS") == ignore_value:
         return
