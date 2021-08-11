@@ -17,6 +17,8 @@ from clk.commands.pip import pip
 from clk.completion import startswith
 from clk.config import config
 from clk.decorators import argument, flag, group, option, pass_context, table_fields, table_format, use_settings
+from clk.lib import ParameterType, TablePrinter, call, cd, check_output, copy, get_option_choices, glob, ln, move, rm
+from clk.log import get_logger
 from clk.overloads import CommandSettingsKeyType
 from clk.profile import DirectoryProfile
 from clk.types import DirectoryProfileType
@@ -84,6 +86,7 @@ def extension():
 
     An extension is a set of settings that may be activated or disactivated in a project.
     The extensions can be defined at the global or local profile."""
+    pass
 
 
 @extension.command(handle_dry_run=True)
