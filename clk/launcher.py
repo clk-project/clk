@@ -3,8 +3,6 @@
 
 import shlex
 
-import click
-
 from clk.completion import startswith
 from clk.config import config
 from clk.lib import ParameterType, quote

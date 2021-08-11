@@ -14,9 +14,9 @@ from clk.customcommands import CustomCommandResolver
 from clk.decorators import argument, flag, group, option, table_fields, table_format, use_settings
 from clk.externalcommands import ExternalCommandResolver
 from clk.flow import get_flow_commands_to_run
-from clk.lib import TablePrinter, call, chmod, createfile, makedirs, move, quote, rm
+from clk.lib import TablePrinter, createfile, makedirs, move, quote, rm
 from clk.log import get_logger
-from clk.overloads import Argument, CommandSettingsKeyType, CommandType, Group, Option, get_command
+from clk.overloads import Argument, CommandType, Group, Option, get_command
 from clk.types import DirectoryProfileType
 
 LOGGER = get_logger(__name__)

@@ -6,14 +6,11 @@ from pathlib import Path
 import click
 
 from clk.colors import Colorer
-from clk.config import config, merge_settings
-from clk.core import DynamicChoiceType, cache_disk
+from clk.config import config
 from clk.decorators import argument, flag, group, option, param_config, table_fields, table_format, use_settings
-from clk.externalcommands import ExternalCommandResolver
-from clk.flow import get_flow_commands_to_run
-from clk.lib import TablePrinter, call, chmod, createfile, makedirs, move, quote, rm
+from clk.lib import TablePrinter, makedirs, move, rm
 from clk.log import get_logger
-from clk.overloads import Argument, CommandSettingsKeyType, CommandType, Option, argument, get_command
+from clk.overloads import argument
 from clk.profile import DirectoryProfile
 from clk.types import DirectoryProfileType, DynamicChoice
 

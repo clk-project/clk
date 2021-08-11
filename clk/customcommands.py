@@ -6,7 +6,6 @@ from pluginbase import PluginBase
 
 from clk.commandresolver import CommandResolver
 from clk.config import config
-from clk.lib import call, quote, updated_env, which
 from clk.log import get_logger
 from clk.overloads import AutomaticOption
 

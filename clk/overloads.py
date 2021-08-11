@@ -20,8 +20,7 @@ from clk.click_helpers import click_get_current_context_safe
 from clk.commandresolver import CommandResolver
 from clk.completion import startswith
 from clk.config import config
-from clk.core import (cache_disk, get_ctx, main_command_arguments_from_dict, main_command_arguments_to_dict,
-                      main_command_decoration, rebuild_path, run, settings_stores)
+from clk.core import cache_disk, get_ctx, main_command_decoration, rebuild_path, run, settings_stores
 from clk.lib import ParameterType, cd, check_output
 from clk.log import get_logger
 from clk.plugin import load_plugins

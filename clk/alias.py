@@ -6,9 +6,9 @@ import shlex
 import click
 
 from clk.commandresolver import CommandResolver
-from clk.config import config, temp_config
-from clk.core import get_ctx, run, temp_config
-from clk.decorators import flag, pass_context
+from clk.config import config
+from clk.core import get_ctx, run
+from clk.decorators import pass_context
 from clk.flow import clean_flow_arguments, get_flow_commands_to_run
 from clk.lib import quote
 from clk.log import get_logger

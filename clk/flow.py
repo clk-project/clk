@@ -8,12 +8,8 @@ import click
 from clk import overloads
 from clk.config import config
 from clk.core import run
-from clk.lib import flat_map, ordered_unique, quote
-from clk.log import get_logger
-from clk.overloads import (AutomaticOption, CommandNotFound, FlowArgument, FlowOption, Option, get_command,
-                           get_command_handlers)
-
-LOGGER = get_logger(__name__)
+from clk.lib import flat_map, ordered_unique
+from clk.overloads import AutomaticOption, CommandNotFound, FlowArgument, FlowOption, get_command, get_command_handlers
 
 flowdeps = defaultdict(list)
 
