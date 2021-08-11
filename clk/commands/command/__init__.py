@@ -324,7 +324,7 @@ args=()""" + args
 
     script_content = f"""#!/bin/bash -eu
 
-source "${{CLK_INSTALL_LOCATION}}/commands/customcommand/_clk.sh"
+source "_clk.sh"
 
 clk_usage () {{
     cat<<EOF

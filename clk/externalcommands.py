@@ -6,6 +6,7 @@ import json
 import os
 import re
 import subprocess
+from pathlib import Path
 
 import click
 
@@ -146,6 +147,7 @@ class ExternalCommandResolver(CommandResolver):
                 quote(a) for a in config.commandline_profile.get_settings("parameters")[path]))
             env[("CLK___OPTIND").upper()] = (str(len(args[1:])))
             env[("CLK___ALL").upper()] = (" ".join(quote(a) for a in args[1:]))
+            env["PATH"] = str(Path(__file__).parent / "commands/command") + ":" + os.environ["PATH"]
             with updated_env(**env):
                 call(
                     args,
