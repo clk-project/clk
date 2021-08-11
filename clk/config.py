@@ -44,7 +44,7 @@ command. Hence the name dynamic
                 inst = klass()
                 setattr(config, klass.name, inst)
             else:
-                inst = getattr(config, klass, name)
+                inst = getattr(config, klass.name)
             setattr(inst, attr.name, value)
             return value
 
