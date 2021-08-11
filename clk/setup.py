@@ -1,21 +1,21 @@
 #!/usr/bin/env python3
 # -*- coding:utf-8 -*-
 
-from __future__ import print_function, absolute_import
+from __future__ import absolute_import, print_function
 
-from clk.flow import setup as setup_flow
-from clk.overloads import CoreCommandResolver, MainCommand, entry_point
-from clk.externalcommands import ExternalCommandResolver
-from clk.customcommands import CustomCommandResolver
-from clk.alias import AliasCommandResolver, AliasToGroupResolver
-from clk.hook import HookCommandResolver, setup as setup_hook
-from clk.overloads import Group, GroupCommandResolver
-from clk.completion import init as completion_init
-from clk.config import setup_config_class, Config, config
-from clk.log import get_logger, basic_config
 from clk import lib
+from clk.alias import AliasCommandResolver, AliasToGroupResolver
+from clk.completion import init as completion_init
+from clk.config import Config, config, setup_config_class
 from clk.core import main  # NOQA: F401
+from clk.customcommands import CustomCommandResolver
+from clk.externalcommands import ExternalCommandResolver
+from clk.flow import setup as setup_flow
+from clk.hook import HookCommandResolver
+from clk.hook import setup as setup_hook
 from clk.lib import get_authenticator_hints
+from clk.log import basic_config, get_logger
+from clk.overloads import CoreCommandResolver, Group, GroupCommandResolver, MainCommand, entry_point
 
 LOGGER = get_logger(__name__)
 

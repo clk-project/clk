@@ -31,6 +31,7 @@ Monkey patch setuptools to write a simple bash script that run the entry point
 From the work of Aaron Christianson in http://github.com/ninjaaron/fast-entry_points
 '''
 import sys
+
 from setuptools.command import easy_install
 
 

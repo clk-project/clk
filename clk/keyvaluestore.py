@@ -3,12 +3,12 @@
 
 import click
 
+from clk.colors import Colorer
 from clk.config import config
 from clk.decorators import argument, flag, table_fields, table_format
 from clk.lib import TablePrinter
 from clk.log import get_logger
 from clk.overloads import CommandSettingsKeyType
-from clk.colors import Colorer
 
 LOGGER = get_logger(__name__)
 

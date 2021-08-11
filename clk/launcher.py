@@ -1,14 +1,15 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
 
-from __future__ import print_function, absolute_import
+from __future__ import absolute_import, print_function
 
 import shlex
+
 import click
 
-from clk.lib import ParameterType, quote
-from clk.config import config
 from clk.completion import startswith
+from clk.config import config
+from clk.lib import ParameterType, quote
 from clk.overloads import option
 
 

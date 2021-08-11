@@ -1,17 +1,16 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
 
-from __future__ import print_function, absolute_import
+from __future__ import absolute_import, print_function
 
 import json
-import time
 import os
+import time
 
 import click
 
-from clk.decorators import group, option, flag, argument, table_format, table_fields
-from clk.lib import get_keyring
-from clk.lib import TablePrinter, get_authenticator_hints
+from clk.decorators import argument, flag, group, option, table_fields, table_format
+from clk.lib import TablePrinter, get_authenticator_hints, get_keyring
 from clk.log import get_logger
 
 LOGGER = get_logger(__name__)

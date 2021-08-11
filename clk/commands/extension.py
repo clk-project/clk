@@ -1,56 +1,31 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
 
-from __future__ import print_function, absolute_import
+from __future__ import absolute_import, print_function
 
-import os
-import requests
-import re
-import tarfile
 import io
+import os
+import re
 import subprocess
+import tarfile
 from pathlib import Path
 from shlex import split
 
 import click
+import requests
 
-from clk.decorators import (
-    group,
-    option,
-    argument,
-    use_settings,
-    flag,
-    pass_context,
-    settings_stores,
-    table_fields,
-    table_format,
-)
-from clk.completion import startswith
-from clk.log import get_logger
-from clk.config import config
 from clk.colors import Colorer
-from clk.profile import (
-    DirectoryProfile,
-    profile_name_to_commandline_name,
-)
-from clk.lib import (
-    check_output,
-    move,
-    copy,
-    ParameterType,
-    json_file,
-    json_dumps,
-    rm,
-    call,
-    cd,
-    get_option_choices,
-    ln,
-    glob,
-)
-from clk.lib import TablePrinter
-from clk.overloads import CommandSettingsKeyType
-from clk.types import DirectoryProfileType, Suggestion
 from clk.commands.pip import pip
+from clk.completion import startswith
+from clk.config import config
+from clk.decorators import (argument, flag, group, option, pass_context, settings_stores, table_fields, table_format,
+                            use_settings)
+from clk.lib import (ParameterType, TablePrinter, call, cd, check_output, copy, get_option_choices, glob, json_dumps,
+                     json_file, ln, move, rm)
+from clk.log import get_logger
+from clk.overloads import CommandSettingsKeyType
+from clk.profile import DirectoryProfile, profile_name_to_commandline_name
+from clk.types import DirectoryProfileType, Suggestion
 
 LOGGER = get_logger(__name__)
 

@@ -1,26 +1,22 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
 
-import os
-import json
-from pathlib import Path
-from collections import defaultdict
 import collections
-from copy import deepcopy
-from contextlib import contextmanager
+import json
+import os
 import shlex
+from collections import defaultdict
+from contextlib import contextmanager
+from copy import deepcopy
+from pathlib import Path
 
 import click
 from cached_property import cached_property
 
-from clk.profile import (
-    ProfileFactory,
-    ActivationLevel,
-    DirectoryProfile,
-)
 from clk.click_helpers import click_get_current_context_safe
-from clk.log import LOG_LEVELS, set_level, get_logger
-from clk.lib import updated_env, quote, value_to_string
+from clk.lib import quote, updated_env, value_to_string
+from clk.log import LOG_LEVELS, get_logger, set_level
+from clk.profile import ActivationLevel, DirectoryProfile, ProfileFactory
 
 LOGGER = get_logger(__name__)
 

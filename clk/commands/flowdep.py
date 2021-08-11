@@ -1,25 +1,24 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
 
-from __future__ import print_function, absolute_import
+from __future__ import absolute_import, print_function
 
+import os
 import subprocess
 import tempfile
 import webbrowser
 from collections import defaultdict
-import os
 
 import click
 
-from clk.decorators import group, flag, argument, use_settings, option, pass_context, table_format, table_fields
-from clk.lib import TablePrinter
-from clk.lib import quote, which
-from clk.log import get_logger
-from clk.overloads import CommandType, CommandSettingsKeyType
-from clk.flow import get_flow_commands_to_run, flowdeps as _flowdeps
 from clk.colors import Colorer
-from clk.overloads import iter_commands
 from clk.config import config
+from clk.decorators import argument, flag, group, option, pass_context, table_fields, table_format, use_settings
+from clk.flow import flowdeps as _flowdeps
+from clk.flow import get_flow_commands_to_run
+from clk.lib import TablePrinter, quote, which
+from clk.log import get_logger
+from clk.overloads import CommandSettingsKeyType, CommandType, iter_commands
 
 LOGGER = get_logger(__name__)
 

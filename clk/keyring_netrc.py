@@ -2,7 +2,9 @@
 # -*- coding:utf-8 -*-
 
 import netrc
+
 import click
+
 try:
     import keyring.backend
 except ModuleNotFoundError:

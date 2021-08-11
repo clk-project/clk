@@ -2,41 +2,40 @@
 # -*- coding:utf-8 -*-
 """General purpose functions, not directly linked to clk"""
 
-from __future__ import print_function, absolute_import
+from __future__ import absolute_import, print_function
 
+import datetime
 import difflib
 import functools
-import shlex
-import datetime
+import getpass
 import hashlib
 import heapq
 import itertools
-import time
 import json
-import getpass
 import os
 import platform
 import re
+import shlex
 import shutil
 import signal
 import subprocess
 import sys
 import tempfile
 import threading
+import time
 import traceback
-from pathlib import Path
-from copy import deepcopy
 from contextlib import contextmanager
+from copy import deepcopy
+from pathlib import Path
 from urllib.request import urlopen
 
 import click
 import colorama
 import glob2
 from click._termui_impl import ProgressBar as ProgressBar_
-
-from clk.click_helpers import click_get_current_context_safe
 from click_completion import DocumentedChoice
 
+from clk.click_helpers import click_get_current_context_safe
 from clk.log import get_logger
 
 LOGGER = get_logger(__name__)
@@ -837,7 +836,7 @@ def echo_json(v):
 
 def colorize_json(v):
     """Format and colorize in json"""
-    from pygments import highlight, lexers, formatters
+    from pygments import formatters, highlight, lexers
     return highlight(json_dumps(v), lexers.JsonLexer(), formatters.TerminalFormatter())
 
 
@@ -1293,9 +1292,10 @@ def natural_time(value, future=False, months=True):
     datetimes, where the tense is always figured out based on the current time.
     If an integer is passed, the return value will be past tense by default,
     unless ``future`` is set to True."""
-    from humanize.time import naturaldelta, _
     from datetime import datetime, timedelta
+
     import dateutil.tz
+    from humanize.time import _, naturaldelta
     now = datetime.now(dateutil.tz.tzlocal())
     date, delta = date_and_delta(value)
     if date is None:
@@ -1316,9 +1316,10 @@ def natural_time(value, future=False, months=True):
 def date_and_delta(value):
     """Turn a value into a date and a timedelta which represents how long ago
     it was.  If that's not possible, return (None, value)."""
-    from humanize.time import abs_timedelta
     from datetime import datetime, timedelta
+
     import dateutil.tz
+    from humanize.time import abs_timedelta
     now = datetime.now(dateutil.tz.tzlocal())
     if isinstance(value, datetime):
         date = value

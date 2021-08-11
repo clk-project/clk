@@ -3,7 +3,7 @@
 
 import sys
 
-from clk.decorators import command, argument
+from clk.decorators import argument, command
 from clk.lib import call
 
 

@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
 
-from __future__ import print_function, absolute_import
+from __future__ import absolute_import, print_function
 
 import functools
 import types
@@ -9,14 +9,14 @@ import types
 import click
 from click.utils import make_default_short_help
 
-from clk.lib import get_tabulate_formats, ParameterType
-from clk.config import config, merge_settings
 from clk.completion import startswith
-from clk.log import get_logger
-from clk.overloads import command, group, option, flag, argument, flow_command, flow_option, flow_argument
+from clk.config import config, merge_settings
+from clk.core import RecipeType, settings_stores
 from clk.flow import flowdepends  # NOQA: F401
-from clk.core import settings_stores, RecipeType
-from clk.profile import profile_name_to_commandline_name, commandline_name_to_profile_name
+from clk.lib import ParameterType, get_tabulate_formats
+from clk.log import get_logger
+from clk.overloads import argument, command, flag, flow_argument, flow_command, flow_option, group, option
+from clk.profile import commandline_name_to_profile_name, profile_name_to_commandline_name
 
 LOGGER = get_logger(__name__)
 

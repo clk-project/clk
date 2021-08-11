@@ -1,24 +1,23 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
 
-from __future__ import print_function, absolute_import
+from __future__ import absolute_import, print_function
 
-from pathlib import Path
-import os
-import json
 import collections
+import json
+import os
+import re
 import traceback
 from datetime import datetime
-import re
 from enum import Enum
+from pathlib import Path
 
 import click
 from pluginbase import PluginBase
 
-from clk.lib import json_dump_file, glob, rm, copy, makedirs, \
-    ensure_unicode, part_of_day, createfile, move, json_file
-from clk.log import get_logger
 from clk.click_helpers import click_get_current_context_safe
+from clk.lib import copy, createfile, ensure_unicode, glob, json_dump_file, json_file, makedirs, move, part_of_day, rm
+from clk.log import get_logger
 
 LOGGER = get_logger(__name__)
 plugin_base = PluginBase(package='clk.plugins')
@@ -29,6 +28,7 @@ def on_command_loading_error():
     from clk.config import config
     if config.debug_on_command_load_error_callback:
         import sys
+
         import ipdb
         ipdb.post_mortem(sys.exc_info()[2])
 

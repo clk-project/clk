@@ -1,41 +1,23 @@
 #!/usr/bin/env python3
 # -*- coding:utf-8 -*-
 
-import click
+import json
+import os
 from pathlib import Path
 
-import os
-import json
-
 import click
 
-from clk.decorators import (
-    argument,
-    group,
-    use_settings,
-    table_format,
-    table_fields,
-    flag,
-    option,
-)
-from clk.config import config, merge_settings
-from clk.lib import quote, TablePrinter, call, makedirs, rm, chmod, createfile, move
 from clk.colors import Colorer
-from clk.log import get_logger
+from clk.config import config, merge_settings
 from clk.core import DynamicChoiceType, cache_disk
-from clk.externalcommands import ExternalCommandResolver
 from clk.customcommands import CustomCommandResolver
-from clk.overloads import (CommandSettingsKeyType, CommandType, get_command, Option, Argument)
+from clk.decorators import argument, flag, group, option, table_fields, table_format, use_settings
+from clk.externalcommands import ExternalCommandResolver
 from clk.flow import get_flow_commands_to_run
-from clk.types import DirectoryProfileType
-
-from clk.config import config
-from clk.decorators import (
-    group,
-    argument,
-)
+from clk.lib import TablePrinter, call, chmod, createfile, makedirs, move, quote, rm
 from clk.log import get_logger
-from clk.overloads import Group, CommandType, get_command
+from clk.overloads import Argument, CommandSettingsKeyType, CommandType, Group, Option, get_command
+from clk.types import DirectoryProfileType
 
 LOGGER = get_logger(__name__)
 

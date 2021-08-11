@@ -3,32 +3,31 @@
 
 from __future__ import absolute_import, print_function
 
+import functools
 import importlib
 import pkgutil
 import re
 import shlex
-import functools
 import traceback
-from copy import copy, deepcopy
 from collections import OrderedDict, defaultdict
+from copy import copy, deepcopy
 
 import click
 import click_didyoumean
-from click.utils import make_default_short_help
 from click.exceptions import MissingParameter
+from click.utils import make_default_short_help
 
+import clk.completion
 from clk.click_helpers import click_get_current_context_safe
-from clk.core import get_ctx, rebuild_path, settings_stores,\
-    main_command_arguments_to_dict, main_command_arguments_from_dict,\
-    main_command_decoration, cache_disk, run
-from clk.triggers import TriggerMixin
 from clk.commandresolver import CommandResolver
+from clk.completion import startswith
 from clk.config import config
-from clk.lib import check_output, ParameterType, cd
+from clk.core import (cache_disk, get_ctx, main_command_arguments_from_dict, main_command_arguments_to_dict,
+                      main_command_decoration, rebuild_path, run, settings_stores)
+from clk.lib import ParameterType, cd, check_output
 from clk.log import get_logger
 from clk.plugin import load_plugins
-from clk.completion import startswith
-import clk.completion
+from clk.triggers import TriggerMixin
 
 LOGGER = get_logger(__name__)
 
@@ -164,6 +163,7 @@ def on_command_loading_error():
     LOGGER.develop(traceback.format_exc())
     if config.debug_on_command_load_error_callback:
         import sys
+
         import ipdb
         ipdb.post_mortem(sys.exc_info()[2])
 

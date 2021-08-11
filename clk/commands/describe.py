@@ -1,13 +1,10 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
 
-from __future__ import print_function, absolute_import
+from __future__ import absolute_import, print_function
 
+from clk.decorators import argument, command
 from clk.types import DirectoryProfileType
-from clk.decorators import (
-    command,
-    argument,
-)
 
 
 @command()

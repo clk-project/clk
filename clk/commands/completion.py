@@ -1,17 +1,17 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
 
-from __future__ import print_function, absolute_import
+from __future__ import absolute_import, print_function
 
 import click
-
-from clk.config import config
-from clk.decorators import group, option, argument, flag
-from clk.lib import updated_env, quote, DocumentedChoice, call_me
-from clk.completion import CASE_INSENSITIVE_ENV
-import clk.completion
 import click_completion
+
+import clk.completion
 from clk.commands.parameter import get_choices
+from clk.completion import CASE_INSENSITIVE_ENV
+from clk.config import config
+from clk.decorators import argument, flag, group, option
+from clk.lib import DocumentedChoice, call_me, quote, updated_env
 from clk.log import get_logger
 from clk.overloads import CommandType
 

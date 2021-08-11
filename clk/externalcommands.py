@@ -1,19 +1,19 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
 
-from __future__ import print_function, absolute_import
+from __future__ import absolute_import, print_function
 
-import os
-import subprocess
-import json
-import re
 import importlib
+import json
+import os
+import re
+import subprocess
 
 import click
 
 from clk.commandresolver import CommandResolver
 from clk.config import config
-from clk.lib import which, updated_env, quote, call, value_to_string
+from clk.lib import call, quote, updated_env, value_to_string, which
 from clk.log import get_logger
 from clk.overloads import AutomaticOption
 
@@ -129,7 +129,7 @@ class ExternalCommandResolver(CommandResolver):
             on_command_loading_error()
             raise
 
-        from clk.decorators import command, argument, option, flag
+        from clk.decorators import argument, command, flag, option
 
         def external_command(**kwargs):
             from clk.lib import call

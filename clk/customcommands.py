@@ -1,14 +1,14 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
 
-from __future__ import print_function, absolute_import
+from __future__ import absolute_import, print_function
 
 import click
 from pluginbase import PluginBase
 
 from clk.commandresolver import CommandResolver
 from clk.config import config
-from clk.lib import which, updated_env, quote, call
+from clk.lib import call, quote, updated_env, which
 from clk.log import get_logger
 from clk.overloads import AutomaticOption
 

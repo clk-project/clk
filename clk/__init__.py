@@ -1,15 +1,15 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
 
-from __future__ import print_function, absolute_import
+from __future__ import absolute_import, print_function
 
 # keep it at the begin in order to get an accurate startup time
 from datetime import datetime
 
 startup_time = datetime.now()
 
-from clk import monkeypatch  # NOQA: E402
 from clk import log  # NOQA: E402
+from clk import monkeypatch  # NOQA: E402
 from clk.overloads import entry_point  # NOQA: E402
 
 monkeypatch.do()

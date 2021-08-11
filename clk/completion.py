@@ -1,13 +1,13 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
 
-from __future__ import print_function, absolute_import
+from __future__ import absolute_import, print_function
 
+import fnmatch as fnmatchlib
 import os
 
 import click_completion
-from click import MultiCommand, Option, Argument
-import fnmatch as fnmatchlib
+from click import Argument, MultiCommand, Option
 
 from clk.lib import to_bool
 

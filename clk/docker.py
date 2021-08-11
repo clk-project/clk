@@ -1,16 +1,18 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
 
-import os
-import click
 import getpass
+import os
 
-from clk.lib import cd, call, updated_env
-from clk.decorators import option, argument, flag, group as group_
-from clk.core import cache_disk
-from clk.lib import ParameterType, check_output
+import click
+
 from clk.completion import startswith
 from clk.config import config
+from clk.core import cache_disk
+from clk.decorators import argument, flag
+from clk.decorators import group as group_
+from clk.decorators import option
+from clk.lib import ParameterType, call, cd, check_output, updated_env
 
 
 def docker_command(group=None, **kwargs):

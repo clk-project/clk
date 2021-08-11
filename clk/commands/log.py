@@ -1,12 +1,12 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
 
-from __future__ import print_function, absolute_import
+from __future__ import absolute_import, print_function
 
 import click
 
+from clk.decorators import argument, command, option
 from clk.log import LOG_LEVELS, get_logger
-from clk.decorators import command, argument, option
 
 LOGGER = get_logger(__name__)
 

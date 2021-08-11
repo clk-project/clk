@@ -1,10 +1,11 @@
 #!/usr/bin/env python3
 # -*- coding:utf-8 -*-
 
-from clk.setup import basic_entry_point, main
-from clk.decorators import flag
-from importlib.abc import MetaPathFinder, Loader
 import sys
+from importlib.abc import Loader, MetaPathFinder
+
+from clk.decorators import flag
+from clk.setup import basic_entry_point, main
 
 
 def warn_about_bad_import():

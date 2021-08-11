@@ -1,29 +1,20 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
 
-from __future__ import print_function, absolute_import
+from __future__ import absolute_import, print_function
 
 import shlex
 
 import click
 
-from clk.config import temp_config, config
-from clk.lib import quote
 from clk.commandresolver import CommandResolver
-from clk.log import get_logger
-from clk.overloads import (
-    Group,
-    list_commands,
-    get_command,
-    command,
-    group,
-    get_ctx,
-    Command,
-    AutomaticOption,
-)
+from clk.config import config, temp_config
 from clk.core import get_ctx, run, temp_config
-from clk.decorators import pass_context, flag
-from clk.flow import get_flow_commands_to_run, clean_flow_arguments
+from clk.decorators import flag, pass_context
+from clk.flow import clean_flow_arguments, get_flow_commands_to_run
+from clk.lib import quote
+from clk.log import get_logger
+from clk.overloads import AutomaticOption, Command, Group, command, get_command, get_ctx, group, list_commands
 
 LOGGER = get_logger(__name__)
 

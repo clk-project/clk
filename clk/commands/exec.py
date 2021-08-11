@@ -1,26 +1,16 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
 
-from __future__ import print_function, absolute_import
+from __future__ import absolute_import, print_function
 
 import os
 
-from clk.decorators import (
-    command,
-    option,
-    argument,
-    flag,
-)
-from clk.core import cache_disk
-from clk.lib import (
-    call,
-    double_quote,
-    ParameterType,
-    updated_env,
-)
 from clk.completion import startswith
-from clk.launcher import launcher
 from clk.config import config
+from clk.core import cache_disk
+from clk.decorators import argument, command, flag, option
+from clk.launcher import launcher
+from clk.lib import ParameterType, call, double_quote, updated_env
 
 
 class ExecutableType(ParameterType):

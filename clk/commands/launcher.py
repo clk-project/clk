@@ -1,17 +1,15 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
 
-from __future__ import print_function, absolute_import
+from __future__ import absolute_import, print_function
 
 import click
 
-from clk.config import config
-from clk.decorators import group, flag, argument, use_settings, table_format, table_fields
-from clk.lib import TablePrinter
-from clk.lib import quote
-from clk.decorators import pass_context
 from clk.colors import Colorer
+from clk.config import config
+from clk.decorators import argument, flag, group, pass_context, table_fields, table_format, use_settings
 from clk.launcher import LauncherType
+from clk.lib import TablePrinter, quote
 from clk.log import get_logger
 
 LOGGER = get_logger(__name__)

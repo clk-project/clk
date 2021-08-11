@@ -1,18 +1,19 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
 
-from __future__ import print_function, absolute_import
+from __future__ import absolute_import, print_function
 
-import click
 from collections import defaultdict
 
-from clk.lib import ordered_unique, quote, flat_map
-from clk.config import config
-from clk.log import get_logger
-from clk.overloads import get_command, CommandNotFound, get_command_handlers, Option, FlowOption, \
-    FlowArgument, AutomaticOption
+import click
+
 from clk import overloads
+from clk.config import config
 from clk.core import run
+from clk.lib import flat_map, ordered_unique, quote
+from clk.log import get_logger
+from clk.overloads import (AutomaticOption, CommandNotFound, FlowArgument, FlowOption, Option, get_command,
+                           get_command_handlers)
 
 LOGGER = get_logger(__name__)
 

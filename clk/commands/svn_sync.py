@@ -1,14 +1,14 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
 
-from __future__ import print_function, absolute_import
+from __future__ import absolute_import, print_function
 
 import os
 import re
 
 from clk.config import config
-from clk.decorators import command, option, argument
-from clk.lib import cd, call
+from clk.decorators import argument, command, option
+from clk.lib import call, cd
 
 
 @command(ignore_unknown_options=True, handle_dry_run=True)

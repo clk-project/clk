@@ -1,16 +1,16 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
 
-from __future__ import print_function, absolute_import
+from __future__ import absolute_import, print_function
 
 import os
 
 import click
 
 from clk.config import config
-from clk.decorators import group, pass_context, table_format, table_fields, use_settings
-from clk.lib import double_quote, TablePrinter
+from clk.decorators import group, pass_context, table_fields, table_format, use_settings
 from clk.keyvaluestore import keyvaluestore_generic_commands
+from clk.lib import TablePrinter, double_quote
 
 
 class EnvConfig(object):

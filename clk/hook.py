@@ -1,14 +1,15 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
 
-from __future__ import print_function, absolute_import
+from __future__ import absolute_import, print_function
 
 from collections import defaultdict
 
-from clk.commandresolver import CommandResolver
 from clk import plugin
+from clk.commandresolver import CommandResolver
 from clk.config import config
-from clk.decorators import command as deco_command, group as deco_group
+from clk.decorators import command as deco_command
+from clk.decorators import group as deco_group
 from clk.log import get_logger
 from clk.overloads import get_command_handlers
 

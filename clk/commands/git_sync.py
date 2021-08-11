@@ -1,9 +1,9 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
 
-from __future__ import print_function, absolute_import
+from __future__ import absolute_import, print_function
 
-from clk.decorators import command, option, argument
+from clk.decorators import argument, command, option
 from clk.lib import git_sync as git_sync_
 
 

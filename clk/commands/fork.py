@@ -5,8 +5,8 @@ from pathlib import Path
 
 import click
 
-from clk.decorators import command, argument, flag
-from clk.lib import rm, makedirs, createfile
+from clk.decorators import argument, command, flag
+from clk.lib import createfile, makedirs, rm
 
 
 @command()

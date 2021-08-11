@@ -1,12 +1,12 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
 
-from __future__ import print_function, absolute_import
+from __future__ import absolute_import, print_function
 
 import click
 
-from clk.decorators import command, argument, option, flag
 from clk.colors import ColorType
+from clk.decorators import argument, command, flag, option
 
 
 @command(ignore_unknown_options=True, handle_dry_run=True)

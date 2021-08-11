@@ -1,21 +1,20 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
 
-from __future__ import print_function, absolute_import
+from __future__ import absolute_import, print_function
 
 import re
 
 import click
 
-from clk.config import config
-from clk.decorators import group, flag, argument, use_settings, option, table_format, table_fields
-from clk.lib import TablePrinter
-from clk.lib import quote
-from clk.completion import compute_choices
-from clk.log import get_logger
-from clk.overloads import get_ctx, CommandSettingsKeyType, CommandType
+from clk.alias import edit_alias_command, format, parse
 from clk.colors import Colorer
-from clk.alias import format, parse, edit_alias_command
+from clk.completion import compute_choices
+from clk.config import config
+from clk.decorators import argument, flag, group, option, table_fields, table_format, use_settings
+from clk.lib import TablePrinter, quote
+from clk.log import get_logger
+from clk.overloads import CommandSettingsKeyType, CommandType, get_ctx
 from clk.types import DirectoryProfileType
 
 LOGGER = get_logger(__name__)

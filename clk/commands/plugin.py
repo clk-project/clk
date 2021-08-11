@@ -5,27 +5,17 @@ from pathlib import Path
 
 import click
 
-from clk.decorators import (
-    argument,
-    group,
-    use_settings,
-    table_format,
-    table_fields,
-    flag,
-    option,
-)
-from clk.config import config, merge_settings
-from clk.lib import quote, TablePrinter, call, makedirs, rm, chmod, createfile, move
 from clk.colors import Colorer
-from clk.overloads import argument
-from clk.log import get_logger
+from clk.config import config, merge_settings
 from clk.core import DynamicChoiceType, cache_disk
+from clk.decorators import argument, flag, group, option, param_config, table_fields, table_format, use_settings
 from clk.externalcommands import ExternalCommandResolver
-from clk.overloads import (CommandSettingsKeyType, CommandType, get_command, Option, Argument)
 from clk.flow import get_flow_commands_to_run
-from clk.types import DirectoryProfileType, DynamicChoice
-from clk.decorators import param_config
+from clk.lib import TablePrinter, call, chmod, createfile, makedirs, move, quote, rm
+from clk.log import get_logger
+from clk.overloads import Argument, CommandSettingsKeyType, CommandType, Option, argument, get_command
 from clk.profile import DirectoryProfile
+from clk.types import DirectoryProfileType, DynamicChoice
 
 LOGGER = get_logger(__name__)
 

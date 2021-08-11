@@ -1,16 +1,16 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
 
-from __future__ import print_function, absolute_import
+from __future__ import absolute_import, print_function
 
 from itertools import cycle
 
 import click
 
-from clk.decorators import flag, option
 from clk.config import config
-from clk.lib import clear_ansi_color_codes
 from clk.core import ColorType
+from clk.decorators import flag, option
+from clk.lib import clear_ansi_color_codes
 
 
 class Colorer(object):

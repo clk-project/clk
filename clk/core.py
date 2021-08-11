@@ -1,29 +1,28 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
 
-import click
-import platform
-import os
-import subprocess
-import pstats
-import time
-import logging
-import re
 import hashlib
+import logging
+import os
 import pickle
+import platform
+import pstats
+import re
+import subprocess
+import time
 from datetime import datetime
-import appdirs
 from io import StringIO
 
-from clk import completion
-from clk import log
-from clk import startup_time
-from clk.log import LOG_LEVELS, get_logger
+import appdirs
+import click
+
+from clk import completion, log, startup_time
 from clk.atexit import trigger
-from clk.config import temp_config, config, Config, migrate_profiles
 from clk.click_helpers import click_get_current_context_safe
-from clk.lib import main_default, natural_delta, ParameterType, makedirs
 from clk.completion import startswith
+from clk.config import Config, config, migrate_profiles, temp_config
+from clk.lib import ParameterType, main_default, makedirs, natural_delta
+from clk.log import LOG_LEVELS, get_logger
 
 LOGGER = get_logger(__name__)
 
@@ -629,6 +628,7 @@ def log_trace():
 def post_mortem():
     if _post_mortem:
         import sys
+
         import ipdb
         ipdb.post_mortem(sys.exc_info()[2])
 

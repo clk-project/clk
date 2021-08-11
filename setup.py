@@ -1,9 +1,10 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
 
-import versioneer
-from setuptools import setup, find_packages
+from setuptools import find_packages, setup
+
 import fasterentrypoint
+import versioneer
 
 versions = versioneer.get_versions()
 version = versions["version"]
