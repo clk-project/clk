@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding:utf-8 -*-
 
+import click
 from pathlib import Path
 
 import os
@@ -28,7 +29,62 @@ from clk.overloads import (CommandSettingsKeyType, CommandType, get_command, Opt
 from clk.flow import get_flow_commands_to_run
 from clk.types import DirectoryProfileType
 
+from clk.config import config
+from clk.decorators import (
+    group,
+    argument,
+)
+from clk.log import get_logger
+from clk.overloads import Group, CommandType, get_command
+
 LOGGER = get_logger(__name__)
+
+
+class CustomCommandConfig:
+    pass
+
+
+@group(handle_dry_run=True)
+@use_settings("customcommands", CustomCommandConfig, override=False)
+def command():
+    """Display all the available commands"""
+
+
+@command.command()
+def display():
+    ctx = click.get_current_context()
+    display_subcommands(ctx, config.main_command)
+
+
+def display_subcommands(ctx, cmd, indent=''):
+    # type: (click.Context, Group, str) -> None
+    for sub_cmd_name in cmd.list_commands(ctx):
+        sub_cmd = cmd.get_command(ctx, sub_cmd_name)
+        if sub_cmd:
+            click.echo(cmd_format(sub_cmd_name, sub_cmd.short_help, indent))
+            for param in sub_cmd.params:
+                if not hasattr(param, 'help') or not param.help:
+                    LOGGER.warn("no help message in parameter %s" % param.name)
+            if isinstance(sub_cmd, click.Group):
+                if not hasattr(sub_cmd, "original_command"):
+                    display_subcommands(ctx, sub_cmd, indent + '  ')
+        else:
+            LOGGER.warn("Can't get " + sub_cmd_name)
+
+
+def cmd_format(name, cmd_help, indent):
+    cmd_help = cmd_help or ''
+    end = len(indent) + len(name)
+    spacer = ' ' * max(20 - end, 1)
+    return indent + name + spacer + cmd_help
+
+
+@command.command()
+@argument("path", type=CommandType(), help="The command to resolve")
+def resolve(path):
+    """Resolve a command to help understanding where a command comes from"""
+    cmd, resolver = get_command(path, True)
+    click.echo(f"The command {path} is resolved by the resolver {resolver.name}")
 
 
 class CustomCommandPathType(DynamicChoiceType):
@@ -59,21 +115,16 @@ class CustomCommandType(CustomCommandNameType):
         raise Exception(f"Could not find a resolver matching {path}")
 
 
-class CustomCommandConfig:
-    pass
-
-
 def format_paths(path):
     return " ".join(map(quote, path))
 
 
-@group(default_command="show")
-@use_settings("customcommands", CustomCommandConfig, override=False)
-def customcommand():
+@command.group(default_command="show")
+def path():
     """Manipulate paths where to find extra commands"""
 
 
-@customcommand.command()
+@path.command()
 @Colorer.color_options
 @table_format(default='key_value')
 @table_fields(choices=['name', 'paths'])
@@ -102,10 +153,10 @@ def custom_command_type():
                   default="executable")
 
 
-@customcommand.command()
+@path.command()
 @argument("paths", nargs=-1, type=Path, help="The paths to add to load custom commands")
 @custom_command_type()
-def add_path(paths, type):
+def add(paths, type):
     """Add custom command paths"""
     paths = [str(d) for d in paths]
     config.customcommands.writable[f"{type}paths"] = config.customcommands.writable.get(f"{type}paths",
@@ -114,10 +165,10 @@ def add_path(paths, type):
     LOGGER.info(f"Added {format_paths(paths)} ({type}) to the profile {config.customcommands.writeprofile}")
 
 
-@customcommand.command()
+@path.command()
 @argument("paths", nargs=-1, type=CustomCommandPathType("pythonpaths"), help="The paths to remove from custom commands")
 @custom_command_type()
-def remove_path(paths, type):
+def remove(paths, type):
     """Remove all the custom commands paths from the profile"""
     to_remove = set(config.customcommands.writable.get(f"{type}paths", [])).intersection(paths)
     if not to_remove:
@@ -129,14 +180,14 @@ def remove_path(paths, type):
     LOGGER.info(f"Removed {format_paths(to_remove)} ({type}) from the profile {config.customcommands.writeprofile}")
 
 
-@customcommand.command()
+@command.command()
 @argument("customcommand", type=CustomCommandType(), help="The custom command to consider")
 def which(customcommand):
     """Print the location of the given custom command"""
     print(customcommand.customcommand_path)
 
 
-@customcommand.command()
+@command.command()
 @argument("customcommand", type=CustomCommandType(), help="The custom command to consider")
 @flag("--force", help="Don't ask for confirmation")
 def remove(force, customcommand):
@@ -146,7 +197,7 @@ def remove(force, customcommand):
         rm(path)
 
 
-@customcommand.command()
+@command.command()
 @argument("customcommand", type=CustomCommandType(), help="The custom command to consider")
 def edit(customcommand):
     """Edit the given custom command"""
@@ -159,7 +210,7 @@ class AliasesType(DynamicChoiceType):
         return list(config.settings["alias"].keys())
 
 
-@customcommand.group()
+@command.group()
 def create():
     """Create custom commands directly from the command line."""
 
@@ -388,7 +439,7 @@ def {command_name}():
         click.edit(filename=str(script_path))
 
 
-@customcommand.command()
+@command.command()
 @argument("customcommand", type=CustomCommandType(), help="The custom command to consider")
 @argument("new-name", help="The new name to use for the custom command")
 @flag("--force", help="Overwrite destination")
@@ -404,7 +455,7 @@ def rename(customcommand, new_name, force):
     LOGGER.status(f"Renamed {customcommand.customcommand_path} into {new_path}")
 
 
-@customcommand.command()
+@command.command()
 @argument("customcommand", type=CustomCommandType(), help="The custom command to move")
 @argument("profile", type=DirectoryProfileType(), help="The profile where to move the command")
 @flag("--force", help="Overwrite destination")
@@ -419,7 +470,7 @@ def _move(customcommand, profile, force):
     LOGGER.status(f"Moved {customcommand.customcommand_path} into {new_location}")
 
 
-@customcommand.command()
+@command.command()
 def _list():
     """List the path of all custom commands."""
     settings = (None if config.customcommands.readprofile == "context" else config.customcommands.profile.settings)
