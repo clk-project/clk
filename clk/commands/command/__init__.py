@@ -428,7 +428,7 @@ def {command_name}():
 def rename(customcommand, new_name, force):
     """Rename a custom commands"""
     ext = os.path.splitext(customcommand.customcommand_path)[1]
-    if not new_name.endswith(ext):
+    if ext in {".sh", ".py"} and not new_name.endswith(ext):
         new_name += ext
     new_path = Path(customcommand.customcommand_path).parent / new_name
     if new_path.exists() and not force:
