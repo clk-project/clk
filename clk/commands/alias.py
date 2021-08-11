@@ -55,7 +55,7 @@ def get_choices(ctx, args_, incomplete):
 @argument('alias', help="The alias name")
 @argument('command', type=CommandType(), help="The alias command")
 @argument('params', nargs=-1, help="The command parameters")
-def set(alias, command, documentation, params):
+def _set(alias, command, documentation, params):
     """Set an alias"""
     if alias.startswith("-"):
         raise click.UsageError("Aliases must not start with dashes (-)")
@@ -76,7 +76,7 @@ def set(alias, command, documentation, params):
     config.alias.write()
 
 
-set.get_choices = get_choices
+_set.get_choices = get_choices
 
 
 @alias.command(ignore_unknown_options=True, change_directory_options=False, handle_dry_run=True)
