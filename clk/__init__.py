@@ -8,7 +8,7 @@ startup_time = datetime.now()
 
 from clk import log  # NOQA: E402
 from clk import monkeypatch  # NOQA: E402
-from clk.overloads import entry_point  # NOQA: E402
+from clk.overloads import entry_point  # NOQA: E402, F401
 
 monkeypatch.do()
 
