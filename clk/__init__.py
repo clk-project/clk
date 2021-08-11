@@ -1,8 +1,6 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
 
-from __future__ import absolute_import, print_function
-
 # keep it at the begin in order to get an accurate startup time
 from datetime import datetime
 

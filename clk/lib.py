@@ -2,8 +2,6 @@
 # -*- coding:utf-8 -*-
 """General purpose functions, not directly linked to clk"""
 
-from __future__ import absolute_import, print_function
-
 import datetime
 import difflib
 import functools

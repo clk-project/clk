@@ -1,8 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding:utf-8 -*-
 
-from __future__ import absolute_import, print_function
-
 from clk import lib
 from clk.alias import AliasCommandResolver, AliasToGroupResolver
 from clk.completion import init as completion_init

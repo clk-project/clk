@@ -1,8 +1,6 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
 
-from __future__ import absolute_import, print_function
-
 from clk.decorators import group, use_settings
 from clk.keyvaluestore import keyvaluestore_generic_commands
 from clk.log import get_logger
