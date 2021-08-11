@@ -26,16 +26,16 @@ from clk.types import DirectoryProfileType
 LOGGER = get_logger(__name__)
 
 
-class RecipeConfig(object):
+class ExtensionConfig(object):
     pass
 
 
-class RecipeNameType(ParameterType):
+class ExtensionNameType(ParameterType):
     def __init__(self, enabled=False, disabled=False, failok=True):
         self.disabled = disabled
         self.enabled = enabled
         self.failok = failok
-        super(RecipeNameType, self).__init__()
+        super(ExtensionNameType, self).__init__()
 
     def getchoice(self, ctx):
         if self.enabled:
@@ -51,7 +51,7 @@ class RecipeNameType(ParameterType):
         return [(extension, load_short_help(extension)) for extension in choice if startswith(extension, incomplete)]
 
 
-class RecipeType(RecipeNameType):
+class ExtensionType(ExtensionNameType):
     def convert(self, value, param, ctx):
         choice = self.getchoice(ctx)
         if value not in choice and self.failok:
@@ -80,7 +80,7 @@ def load_short_help(extension):
 
 
 @group(default_command="show")
-@use_settings("extension", RecipeConfig)
+@use_settings("extension", ExtensionConfig)
 def extension():
     """Extension related commands
 
@@ -106,7 +106,7 @@ def create(ctx, name, disable):
 
 
 @extension.command(handle_dry_run=True)
-@argument("old", type=RecipeType(), help="The current extension name")
+@argument("old", type=ExtensionType(), help="The current extension name")
 @argument("new", help="The new extension name")
 def rename(old, new):
     """Rename an extension"""
@@ -119,7 +119,7 @@ def rename(old, new):
 
 
 @extension.command(handle_dry_run=True)
-@argument("old", type=RecipeType(), help="The current extension name")
+@argument("old", type=ExtensionType(), help="The current extension name")
 @argument(
     "profile",
     type=DirectoryProfileType(root_only=True),
@@ -134,7 +134,7 @@ def _move(old, profile):
 
 
 @extension.command(handle_dry_run=True)
-@argument("src", type=RecipeType(), help="The source extension name")
+@argument("src", type=ExtensionType(), help="The source extension name")
 @argument("dest", help="The destination extension name")
 def _copy(src, dest):
     """Copy an extension"""
@@ -149,7 +149,7 @@ def _copy(src, dest):
 @extension.command(handle_dry_run=True)
 @argument(
     "extension",
-    type=RecipeType(),
+    type=ExtensionType(),
     nargs=-1,
     help="The name of the extensions to remove",
 )
@@ -172,7 +172,7 @@ def remove(extension):
 @option("--order/--no-order", help="Display the priority of the extension")
 @argument(
     "extensions",
-    type=RecipeNameType(disabled=True, failok=False),
+    type=ExtensionNameType(disabled=True, failok=False),
     nargs=-1,
     help="The names of the extensions to show",
 )
@@ -217,7 +217,7 @@ def show(fields, format, order, extensions, enabled_only, disabled_only, **kwarg
 @flag("--all", help="On all extensions")
 @argument(
     "extension",
-    type=RecipeNameType(enabled=True, failok=False),
+    type=ExtensionNameType(enabled=True, failok=False),
     nargs=-1,
     help="The names of the extensions to disable",
 )
@@ -225,7 +225,7 @@ def show(fields, format, order, extensions, enabled_only, disabled_only, **kwarg
 def _disable(ctx, extension, all):
     """Don't use this extension"""
     if all:
-        extension = RecipeType(disabled=True).getchoice(ctx)
+        extension = ExtensionType(disabled=True).getchoice(ctx)
     for cmd in extension:
         if cmd in config.extension.writable:
             config.extension.writable[cmd]["enabled"] = False
@@ -265,7 +265,7 @@ def unset(ctx, extension, all):
 )
 @argument(
     "extension",
-    type=RecipeNameType(disabled=True, failok=False),
+    type=ExtensionNameType(disabled=True, failok=False),
     nargs=-1,
     help="The names of the extensions to enable",
 )
@@ -273,9 +273,9 @@ def unset(ctx, extension, all):
 def __enable(ctx, extension, all, only):
     """Use this extension"""
     if all:
-        extension = RecipeType(disabled=True).getchoice(ctx)
+        extension = ExtensionType(disabled=True).getchoice(ctx)
     if only:
-        for cmd in set(RecipeType().getchoice(ctx)) - set(extension):
+        for cmd in set(ExtensionType().getchoice(ctx)) - set(extension):
             if cmd in config.extension.writable:
                 config.extension.writable[cmd]["enabled"] = False
             else:
@@ -294,12 +294,12 @@ def __enable(ctx, extension, all, only):
 @extension.command(handle_dry_run=True)
 @argument(
     "extension1",
-    type=RecipeNameType(enabled=True, failok=False),
+    type=ExtensionNameType(enabled=True, failok=False),
     help="The name of the extension to disable",
 )
 @argument(
     "extension2",
-    type=RecipeNameType(disabled=True, failok=False),
+    type=ExtensionNameType(disabled=True, failok=False),
     help="The name of the extension to enable",
 )
 @pass_context
@@ -312,7 +312,7 @@ def switch(ctx, extension1, extension2):
 @extension.command(handle_dry_run=True)
 @argument(
     "extension",
-    type=RecipeNameType(failok=False),
+    type=ExtensionNameType(failok=False),
     nargs=-1,
     help="The names of the extensions to which the order will be set",
 )
@@ -331,7 +331,7 @@ def set_order(extension, order):
 
 
 @extension.command()
-@argument("profile", type=RecipeType(), help="The name of the profile to open")
+@argument("profile", type=ExtensionType(), help="The name of the profile to open")
 @option("--opener", help="Program to call to open the directory", default="xdg-open")
 def open(profile, opener):
     """Open the directory containing the profile"""
@@ -517,7 +517,7 @@ def _install_deps(ctx, extension):
 @extension.command()
 @argument(
     "extension",
-    type=RecipeType(),
+    type=ExtensionType(),
     nargs=-1,
     required=True,
     help="The names of the extensions to update",
@@ -552,7 +552,7 @@ def update(extension, method):
 
 
 @extension.command()
-@argument("extension", type=RecipeType(), help="The extension to describe")
+@argument("extension", type=ExtensionType(), help="The extension to describe")
 def describe(extension):
     """Try to give some insights into the content of the extension"""
     extension.describe()

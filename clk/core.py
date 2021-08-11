@@ -175,7 +175,7 @@ def main_command_arguments_from_dict(parameters):
     return res
 
 
-class RecipeType(ParameterType):
+class ExtensionType(ParameterType):
     envvar_list_splitter = ","
     name = "extension"
 
@@ -192,7 +192,7 @@ class RecipeType(ParameterType):
         return value
 
 
-class RecipeTypeSuggestion(RecipeType):
+class ExtensionTypeSuggestion(ExtensionType):
     def convert(self, value, param, ctx):
         return value
 
@@ -395,13 +395,13 @@ def main_command_decoration(f, cls, **kwargs):
                             '--extension',
                             callback=extension_callback,
                             help="Enable this extension for the time of the command",
-                            type=RecipeTypeSuggestion(),
+                            type=ExtensionTypeSuggestion(),
                             multiple=True)(f)
     f = main_command_option('-u',
                             '--without-extension',
                             callback=without_extension_callback,
                             help="Disable this extension for the time of the command",
-                            type=RecipeTypeSuggestion(),
+                            type=ExtensionTypeSuggestion(),
                             multiple=True)(f)
     f = main_command_option('--profiling',
                             is_flag=True,
