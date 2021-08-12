@@ -21,13 +21,13 @@ def warn_about_bad_import():
     LOGGER = get_logger("clk.BADIMPORT")
     for frame in reversed(stack):
         if "click_project" in frame.line:
-            LOGGER.debug(
+            LOGGER.deprecated(
                 f"""BAD IMPORT in file {frame.filename} at line {frame.lineno}: You should fix the line from
       {frame.line}
 to
       {frame.line.replace('click_project', 'clk')}
 """)
-    LOGGER.debug("To silence those warning, fix the problem!..."
+    LOGGER.deprecated("To silence those warning, fix the problem!..."
                       " or set the environment variable"
                       " CLK_IGNORE_IMPORT_WARNINGS to the value"
                       f" '{ignore_value}'")
