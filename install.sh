@@ -158,7 +158,7 @@ then
 fi
 
 echo -e "${green}clk successfully installed! Enjoy!${reset}"
-for extension in ${CLK_EXTENSIONaS}
+for extension in ${CLK_EXTENSIONS}
 do
     echo "installing clk extension ${extension}... "
     "${INSTALL_PATH}/clk" extension install "${extension}"
