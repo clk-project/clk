@@ -55,15 +55,15 @@ def ensure_unicode(value):
         return value
 
 
-def ln(src, dst):
-    """Create a symbolink link src -> dst"""
+def ln(src, link_name):
+    """Create a symbolink link link_name -> src"""
     if isinstance(src, Path):
         src = str(src)
-    if isinstance(dst, Path):
-        dst = str(dst)
-    LOGGER.action("create symlink {} -> {}".format(src, dst))
+    if isinstance(link_name, Path):
+        link_name = str(link_name)
+    LOGGER.action("create symlink {} -> {}".format(link_name, src))
     if not dry_run:
-        os.symlink(src, dst)
+        os.symlink(src, link_name)
 
 
 def makedirs(dir):
