@@ -441,7 +441,7 @@ def install(ctx, profile, url, name, install_deps, editable, force):
                                " Please tell us what you wanted to do"
                                " so that we can fix the code and the doc.")
 
-    extension_path = (Path(profile.location) / "extensions" / name).resolve()
+    extension_path = (Path(profile.location) / "extensions").resolve() / name
     if extension_path.exists() or extension_path.is_symlink():
         if force:
             rm(extension_path)
