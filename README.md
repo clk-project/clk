@@ -49,7 +49,7 @@ start a new shell to take advantage of it.
 
 Then, run `clk` to see the available commands.
 
-Create a command with `clk customcommand create python say`. It should open
+Create a command with `clk command create python say`. It should open
 the command with your favorite editor (or whatever is in the EDITOR environment
 variable).
 
@@ -183,7 +183,7 @@ Now try `clk hello`
 
 See how the used say command is now the local one instead of the global one?
 
-You can put whatever you want in the project, customcommands, parameters,
+You can put whatever you want in the project, commands, parameters,
 aliases etc.
 
 Now, remove the whole stuff, with.
@@ -194,7 +194,7 @@ Now, remove the whole stuff, with.
 
 `clk alias unset say`
 
-`clk customcommand remove say`
+`clk command remove say`
 
 And simply install the extension I created that already does all of this with.
 
@@ -424,7 +424,7 @@ The fastest way to do this it to add a custom shell script. First, decide a
 directory that would contain your `clk` commands (say `~/clk_commands`).
 
 Then indicate to `clk` that this folder is meant to contain custom commands with
-`clk customcommands add-external-path ~/clk_commands`.
+`clk command path add ~/clk_commands`.
 
 In case you don't want to put your commands in a specific folder, you could also
 put the command in the canonical folder of `clk` (`~/.config/clk/bin`).
@@ -539,7 +539,7 @@ Let's first try to create the python equivalent of the cowsay script.
 
 Decide a location to store the python custom commands and indicate this location
 to `clk`. For example, if you want to put your custom python commands
-into the folder `~/clk_python`, run `clk customcommands add-python-path
+into the folder `~/clk_python`, run `clk command path add --type python
 ~/clk_python`.
 
 In case you don't want to put your commands in a specific folder, you could also

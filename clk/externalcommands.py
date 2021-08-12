@@ -209,7 +209,7 @@ class ExternalCommandResolver(CommandResolver):
                                    handle_dry_run=True,
                                    flowdepends=cmdflowdepends)(external_command)
         external_command.params.append(
-            AutomaticOption(["--edit-customcommand"],
+            AutomaticOption(["--edit-command"],
                             help="Edit the external command",
                             expose_value=False,
                             is_flag=True,
