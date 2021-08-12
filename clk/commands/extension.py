@@ -409,6 +409,11 @@ def install(ctx, profile, url, name, install_deps, editable, force):
         install_type = "webtar"
         urls.append(url)
         name = name or m["name"]
+    elif url.startswith("file:"):
+        url = str(Path(url[len("file:"):]).absolute())
+        install_type = "file"
+        name = name or Path(url).name
+        urls.append(os.path.abspath(url))
     elif re.match(r"(\w+://)(.+@)*([\w\d\.]+)(:[\d]+)?/*(.*)|(.+@)*([\w\d\.]+):(.*)", url):
         install_type = "git"
         urls.append(url)
