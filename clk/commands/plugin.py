@@ -12,7 +12,8 @@ from clk.lib import TablePrinter, makedirs, move, rm
 from clk.log import get_logger
 from clk.overloads import argument
 from clk.profile import DirectoryProfile
-from clk.types import DirectoryProfileType, DynamicChoice
+from clk.types import DirectoryProfile as DirectoryProfileType
+from clk.types import DynamicChoice
 
 LOGGER = get_logger(__name__)
 

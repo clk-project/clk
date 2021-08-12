@@ -21,7 +21,7 @@ from clk.lib import ParameterType, TablePrinter, call, cd, check_output, copy, g
 from clk.log import get_logger
 from clk.overloads import CommandSettingsKeyType
 from clk.profile import DirectoryProfile
-from clk.types import DirectoryProfileType
+from clk.types import DirectoryProfile as DirectoryProfileType
 
 LOGGER = get_logger(__name__)
 

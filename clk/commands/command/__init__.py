@@ -17,7 +17,7 @@ from clk.flow import get_flow_commands_to_run
 from clk.lib import TablePrinter, createfile, makedirs, move, quote, rm
 from clk.log import get_logger
 from clk.overloads import Argument, CommandType, Group, Option, get_command
-from clk.types import DirectoryProfileType
+from clk.types import DirectoryProfile as DirectoryProfileType
 
 LOGGER = get_logger(__name__)
 

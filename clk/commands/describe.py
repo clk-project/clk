@@ -2,7 +2,7 @@
 # -*- coding:utf-8 -*-
 
 from clk.decorators import argument, command
-from clk.types import DirectoryProfileType
+from clk.types import DirectoryProfile as DirectoryProfileType
 
 
 @command()

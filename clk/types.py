@@ -4,7 +4,14 @@
 import click
 
 from clk.config import config
+from clk.core import ColorType as Color  # NOQA: just expose the object
 from clk.core import DynamicChoiceType as DynamicChoice  # NOQA: just expose the object
+from clk.core import ExtensionType as Extension  # NOQA: just expose the object
+from clk.core import ExtensionTypeSuggestion as ExtensionSuggestion  # NOQA: just expose the object
+from clk.launcher import LauncherCommandType as LauncherCommand  # NOQA: just expose the object
+from clk.launcher import LauncherType as launcher  # NOQA: just expose the object
+from clk.lib import ParameterType as Parameter  # NOQA: just expose the object
+from clk.overloads import CommandSettingsKeyType, CommandType  # NOQA: just expose the object
 
 
 class Suggestion(click.Choice):
@@ -20,7 +27,7 @@ class Suggestion(click.Choice):
         return ("Either choose from:\n\t{}." " or provide a new one".format(",\n\t".join(self.choices)))
 
 
-class ProfileType(DynamicChoice):
+class Profile(DynamicChoice):
     name = "ProfileType"
 
     def choices(self):
@@ -34,7 +41,7 @@ class ProfileType(DynamicChoice):
         return self.profiles[value]
 
 
-class DirectoryProfileType(ProfileType):
+class DirectoryProfile(Profile):
     name = "DirectoryProfileType"
 
     def __init__(self, root_only=False):

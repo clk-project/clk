@@ -13,7 +13,7 @@ from clk.decorators import argument, flag, group, option, table_fields, table_fo
 from clk.lib import TablePrinter, quote
 from clk.log import get_logger
 from clk.overloads import CommandSettingsKeyType, CommandType, get_ctx
-from clk.types import DirectoryProfileType
+from clk.types import DirectoryProfile as DirectoryProfileType
 
 LOGGER = get_logger(__name__)
 
