@@ -7,6 +7,8 @@ from importlib.abc import Loader, MetaPathFinder
 from clk.decorators import flag
 from clk.setup import basic_entry_point, main
 
+warned_cache = []
+
 
 def warn_about_bad_import():
     import os
@@ -19,18 +21,26 @@ def warn_about_bad_import():
     stack = extract_stack()
     from clk.log import get_logger
     LOGGER = get_logger("clk.BADIMPORT")
+    warning_number = 0
     for frame in reversed(stack):
         if "click_project" in frame.line:
+            if frame in warned_cache:
+                continue
+            else:
+                warned_cache.append(frame)
+                warning_number += 1
             LOGGER.deprecated(
                 f"""BAD IMPORT in file {frame.filename} at line {frame.lineno}: You should fix the line from
       {frame.line}
 to
       {frame.line.replace('click_project', 'clk')}
 """)
-    LOGGER.deprecated("To silence those warning, fix the problem!..."
-                      " or set the environment variable"
-                      " CLK_IGNORE_IMPORT_WARNINGS to the value"
-                      f" '{ignore_value}'")
+    if warning_number > 0:
+        LOGGER.deprecated(f"To silence {'this' if warning_number == 1 else 'those'}"
+                          f" warning{'' if warning_number == 1 else 's'}, fix the problem!..."
+                          " or set the environment variable"
+                          " CLK_IGNORE_IMPORT_WARNINGS to the value"
+                          f" '{ignore_value}'")
 
 
 class DeprecatedLoader(Loader):
