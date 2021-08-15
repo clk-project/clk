@@ -172,7 +172,7 @@ def which(customcommand):
 @command.command()
 @argument("customcommand", type=CustomCommandType(), help="The custom command to consider")
 @flag("--force", help="Don't ask for confirmation")
-def remove(force, customcommand):
+def _remove(force, customcommand):
     """Remove the given custom command"""
     path = Path(customcommand.customcommand_path)
     if force or click.confirm(f"This will remove {path}, are you sure ?"):
@@ -373,7 +373,7 @@ def python(name, open, force, description, body, with_data, from_file):
     makedirs(script_path.parent)
     if script_path.exists() and not force:
         raise click.UsageError(f"Won't overwrite {script_path} unless" " explicitly asked so with --force")
-    script_text = f"""#!/usr/bin/env python3
+    script_text = """#!/usr/bin/env python3
 # -*- coding:utf-8 -*-
 
 from pathlib import Path
@@ -403,7 +403,7 @@ LOGGER = get_logger(__name__)
 
 """
     if with_data:
-        script_text += f"""
+        script_text += """
 def data_file(name):
     return Path(__file__).parent / name
 

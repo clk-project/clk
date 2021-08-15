@@ -240,7 +240,7 @@ def check_uptodate(src, dst, src_exclude=[], dst_exclude=[]):
         src_mtime, src_f = max(map(lambda f: (os.stat(f).st_mtime, f), get_all_files_recursive(src, src_exclude)),
                                key=lambda e: e[0])
     else:
-        raise NotImplemented
+        raise NotImplementedError
     if os.path.isfile(dst):
         dst_mtime = os.stat(dst).st_mtime
         dst_f = dst
@@ -248,7 +248,7 @@ def check_uptodate(src, dst, src_exclude=[], dst_exclude=[]):
         dst_mtime, dst_f = min(map(lambda f: (os.stat(f).st_mtime, f), get_all_files_recursive(dst, dst_exclude)),
                                key=lambda e: e[0])
     else:
-        raise NotImplemented
+        raise NotImplementedError
     LOGGER.debug(u"Comparing mtimes of {} ({}) with {} ({})".format(
         src_f,
         src_mtime,
@@ -558,7 +558,7 @@ def safe_check_output(*args, **kwargs):
             return ""
         else:
             return output.decode('utf-8')
-    except:
+    except BaseException:
         return ""
 
 
@@ -577,7 +577,7 @@ def communicate(command, *args, **kwargs):
         output = output.decode("utf-8")
         error = error.decode("utf-8")
         return output, error, process.returncode
-    except:
+    except BaseException:
         return "", "", 1
 
 
@@ -719,7 +719,7 @@ def download(url, outdir=None, outfilename=None, mkdir=False, sha256=None, mode=
                 outfile.write(chunk)
                 bar.update(1024)
                 chunk = r.read(1024)
-    except:
+    except BaseException:
         outfile.close()
         rm(outpath)
         raise
@@ -783,7 +783,7 @@ def username():
     try:
         import pwd
         return pwd.getpwuid(os.getuid()).pw_name
-    except:
+    except BaseException:
         import getpass
         return getpass.getuser()
 
@@ -841,7 +841,7 @@ def colorize_json(v):
 def ordered_unique(ls):
     """Return the list with unique elements while keeping the elements ordered by first appearance"""
     seen = set()
-    return [l for l in ls if not (l in seen or seen.add(l))]
+    return [elem for elem in ls if not (elem in seen or seen.add(elem))]
 
 
 def git_sync(url,
@@ -1367,14 +1367,14 @@ def json_file(location):
         json.dump(values, open(location, "w"))
 
 
-def flat_map(l):
+def flat_map(elem):
     """Transform a list of list in a list with all the elements of the nested lists
 
     >>> flat_map([[1, 2, 3], [4, 5]])
     [1, 2, 3, 4, 5]
     """
-    l = list(l)
-    return functools.reduce(list.__add__, l) if l else []
+    elem = list(elem)
+    return functools.reduce(list.__add__, elem) if elem else []
 
 
 def subkwargs(kwargs, params):
@@ -1451,8 +1451,8 @@ class TablePrinter(object):
             self._data.append(cleaned_args)
 
     def echos(self, ls):
-        for l in ls:
-            self.echo(*l)
+        for elem in ls:
+            self.echo(*elem)
 
     def echo_records(self, records):
         for record in records:
@@ -1521,7 +1521,7 @@ def tabulate(tabular_data,
 
 def str_join(sep, ls):
     """Return a joined string of all the members of the list converted in strings"""
-    return sep.join(str(l) for l in ls)
+    return sep.join(str(elem) for elem in ls)
 
 
 class AuthenticatorNotFound(click.UsageError):
@@ -1561,7 +1561,7 @@ def get_authenticator(machine, askpass=True, required=True):
         try:
             LOGGER.info("Saving the credentials in your keyring: {}".format(keyring.name))
             keyring.set_password("clk", machine, json.dumps((login, password)))
-        except:
+        except BaseException:
             LOGGER.warning("I could not save your credentials.")
             if netrc_keyring:
                 LOGGER.warning("You can save them manually by running:"

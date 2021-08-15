@@ -607,7 +607,7 @@ def get_command_with_resolvers(resolvers, parent_path, name):
         if name in _list_matching_commands_from_resolver(resolver, parent_path):
             try:
                 cmd = resolver._get_command(cmd_path, parent)
-            except:
+            except BaseException:
                 LOGGER.error(f"Found the command {cmd_path} in the resolver {resolver.name}" " but could not load it.")
                 raise
             break
@@ -753,8 +753,8 @@ class Group(click_didyoumean.DYMMixin, MissingDocumentationMixin, DeprecatedMixi
 def eval_arg(arg):
     if not isinstance(arg, str):
         return arg
-    eval_match = re.match('eval(\(\d+\)|):(.+)', arg)
-    nexteval_match = re.match('nexteval(\(\d+\)|):(.+)', arg)
+    eval_match = re.match(r'eval(\(\d+\)|):(.+)', arg)
+    nexteval_match = re.match(r'nexteval(\(\d+\)|):(.+)', arg)
     if arg.startswith("noeval:"):
         arg = arg[len("noeval:"):]
     elif nexteval_match:
@@ -1265,7 +1265,7 @@ class FlowOption(Option):
             name, opts, secondary_opts = Option._parse_decls(self, decls, expose_value)
         except TypeError as e:
             message = e.args[0]
-            re_match = re.match('No options defined but a name was passed \((\S+)\)\.', message)
+            re_match = re.match(r'No options defined but a name was passed \((\S+)\)\.', message)
             if re_match:
                 name = re_match.group(1)
                 opts = []

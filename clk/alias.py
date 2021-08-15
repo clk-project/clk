@@ -12,7 +12,7 @@ from clk.decorators import pass_context
 from clk.flow import clean_flow_arguments, get_flow_commands_to_run
 from clk.lib import quote
 from clk.log import get_logger
-from clk.overloads import AutomaticOption, Command, Group, command, get_command, get_ctx, group, list_commands
+from clk.overloads import AutomaticOption, Command, Group, command, get_command, group, list_commands
 
 LOGGER = get_logger(__name__)
 

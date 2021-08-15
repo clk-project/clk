@@ -59,7 +59,7 @@ def set(cmd, triggered_command, params, position):
     """Set a triggers"""
     if cmd.startswith("-"):
         raise click.UsageError("triggers must not start with dashes (-)")
-    if re.match('^\w', cmd) is None:
+    if re.match(r'^\w', cmd) is None:
         raise click.ClickException("Invalid triggers name: " + cmd)
     commands = []
     text = [triggered_command] + list(params)

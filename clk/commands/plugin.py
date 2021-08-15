@@ -10,7 +10,6 @@ from clk.config import config
 from clk.decorators import argument, flag, group, option, param_config, table_fields, table_format, use_settings
 from clk.lib import TablePrinter, makedirs, move, rm
 from clk.log import get_logger
-from clk.overloads import argument
 from clk.profile import DirectoryProfile
 from clk.types import DirectoryProfile as DirectoryProfileType
 from clk.types import DynamicChoice

@@ -64,7 +64,7 @@ def {name}(**kwargs):
 if __name__ == "__main__":
     main()
 """)
-    createfile(package / "__init__.py", f"""#!/usr/bin/env python3""")
+    createfile(package / "__init__.py", """#!/usr/bin/env python3""")
     commands = (package / "commands")
     makedirs(commands)
     (commands / "somecommand.py", """#!/usr/bin/env python3

@@ -89,29 +89,29 @@ class ExternalCommandResolver(CommandResolver):
                 cmdhelp = "\n".join(cmdhelp_lines[index_desc:metadata_desc])
                 cmdhelp = cmdhelp.strip()
                 metadata_out = out[metadata_desc:]
-                for l in metadata_out.splitlines():
-                    if l.startswith("O:"):
-                        m = re.match("^O:(?P<name>[^:]+):(?P<type>[^:]+):(?P<help>[^:]+)(:(?P<default>[^:]+))?$", l)
+                for line in metadata_out.splitlines():
+                    if line.startswith("O:"):
+                        m = re.match("^O:(?P<name>[^:]+):(?P<type>[^:]+):(?P<help>[^:]+)(:(?P<default>[^:]+))?$", line)
                         if m is None:
                             raise click.UsageError("Expected format in {} is O:name:type:help[:defautl],"
-                                                   " got {}".format(path, l))
+                                                   " got {}".format(path, line))
                         options.append(m.groupdict())
-                    if l.startswith("F:"):
-                        m = re.match("^F:(?P<name>[^:]+):(?P<help>[^:]+)(:(?P<default>[^:]+))?$", l)
+                    if line.startswith("F:"):
+                        m = re.match("^F:(?P<name>[^:]+):(?P<help>[^:]+)(:(?P<default>[^:]+))?$", line)
                         if m is None:
                             raise click.UsageError("Expected format in {} is F:name:help[:defautl],"
-                                                   " got {}".format(path, l))
+                                                   " got {}".format(path, line))
                         flags.append(m.groupdict())
-                    if l.startswith("A:"):
-                        m = re.match("^A:(?P<name>[^:]+):(?P<type>[^:]+):(?P<help>[^:]+)(:(?P<nargs>[^:]+))?$", l)
+                    if line.startswith("A:"):
+                        m = re.match("^A:(?P<name>[^:]+):(?P<type>[^:]+):(?P<help>[^:]+)(:(?P<nargs>[^:]+))?$", line)
                         if m is None:
                             raise click.UsageError("Expected format in {} is A:name:type:help[:nargs],"
-                                                   " got {}".format(path, l))
+                                                   " got {}".format(path, line))
                         arguments.append(m.groupdict())
-                    m = re.match("^N:(?P<help>[^:]+)$", l)
+                    m = re.match("^N:(?P<help>[^:]+)$", line)
                     if m is not None:
                         remaining_args = m.group("help")
-                    m = re.match("^M:(?P<meta>.+)$", l)
+                    m = re.match("^M:(?P<meta>.+)$", line)
                     if m is not None:
                         meta = m.group("meta")
                         if "I" in meta:
@@ -134,7 +134,6 @@ class ExternalCommandResolver(CommandResolver):
         from clk.decorators import argument, command, flag, option
 
         def external_command(**kwargs):
-            from clk.lib import call
             ctx = click.get_current_context()
             config.merge_settings()
             args = ([command_path] + list(ctx.params.get("args", [])))
@@ -171,9 +170,9 @@ class ExternalCommandResolver(CommandResolver):
                 m = importlib.import_module(".".join(t[:-1]))
                 t = getattr(m, t[-1])
             elif t.startswith("date("):
-                format = re.match("date\((?P<format>.+)\)", t).group("format")
+                format = re.match(r"date\((?P<format>.+)\)", t).group("format")
                 from clk.lib import parsedatetime
-                t = lambda value: parsedatetime(value)[0].strftime(format)
+                t = lambda value: parsedatetime(value)[0].strftime(format)  # NOQA: E731
             else:
                 t = types[t]
             return t

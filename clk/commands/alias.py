@@ -56,7 +56,7 @@ def _set(alias, command, documentation, params):
     """Set an alias"""
     if alias.startswith("-"):
         raise click.UsageError("Aliases must not start with dashes (-)")
-    if re.match('^\w', alias) is None:
+    if re.match(r'^\w', alias) is None:
         raise click.ClickException("Invalid alias name: " + alias)
     text = [command] + list(params)
     commands = parse(text)

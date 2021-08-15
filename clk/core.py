@@ -718,7 +718,7 @@ def cache_disk(f=None, expire=int(os.environ.get(u'CLK_CACHE_EXPIRE', 24 * 60 * 
 
         def inner_function(*args, **kwargs):
             # calculate a cache key based on the decorated method signature
-            key = u"{}{}{}{}".format(re.sub("pluginbase\._internalspace.[^\.]+\.", "clk.plugins.", f.__module__),
+            key = u"{}{}{}{}".format(re.sub(r"pluginbase\._internalspace.[^\.]+\.", "clk.plugins.", f.__module__),
                                      f.__name__, args, kwargs).encode(u"utf-8")
             # print(key)
             key = hashlib.sha1(key).hexdigest()

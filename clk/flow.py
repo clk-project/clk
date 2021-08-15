@@ -116,7 +116,7 @@ def execute_flow_step(cmd, args=None):
     overloads.allow_dotted_commands = True
     try:
         run(cmd)
-    except:
+    except BaseException:
         raise
     finally:
         overloads.allow_dotted_commands = old_allow

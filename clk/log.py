@@ -42,7 +42,7 @@ class Handler(logging.Handler):
             click.echo(msg, err=True)
         except (KeyboardInterrupt, SystemExit):
             raise
-        except:
+        except BaseException:
             self.handleError(record)
         if (exit_on_log_level is not None and record.levelno >= LOG_LEVELS[exit_on_log_level.lower()]):
             raise LogLevelExitException()
@@ -74,7 +74,7 @@ def get_logger(name):
     # type: (str) -> Logger
     if name.startswith("pluginbase."):
         name = name.replace("_", "|")
-        name = re.sub("^pluginbase\.\|internalspace.[^.]+\.", "clk.plugins.", name)
+        name = re.sub(r"^pluginbase\.\|internalspace.[^.]+\.", "clk.plugins.", name)
         name = name.replace("|", "_")
     return logging.getLogger(name)
 
