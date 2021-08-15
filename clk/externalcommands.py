@@ -66,8 +66,11 @@ class ExternalCommandResolver(CommandResolver):
         remaining_args = False
         ignore_unknown_options = False
         try:
-            process = subprocess.Popen([command_path, "--help"], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-            out, err = process.communicate()
+            env = {}
+            env["PATH"] = str(Path(__file__).parent / "commands/command") + ":" + os.environ["PATH"]
+            with updated_env(**env):
+                process = subprocess.Popen([command_path, "--help"], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+                out, err = process.communicate()
             if process.returncode == 0:
                 out = out.decode("utf-8")
                 cmdhelp_lines = out.splitlines() + ['']
