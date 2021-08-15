@@ -153,11 +153,14 @@ def _copy(src, dest):
     nargs=-1,
     help="The name of the extensions to remove",
 )
-def remove(extension):
+@flag("--force", help="Don't ask for confirmation")
+def remove(extension, force):
     """Remove an extension"""
     for rec in extension:
-        LOGGER.status("Removing {}".format(rec.friendly_name))
-        config.get_profile_containing_extension(rec.name).remove_extension(rec.name)
+        profile = config.get_profile_containing_extension(rec.name)
+        path = profile.get_extension(rec.name).location
+        if force or click.confirm(f"Removing {path}, are you sure ?"):
+            rm(path)
 
 
 @extension.command(handle_dry_run=True)
