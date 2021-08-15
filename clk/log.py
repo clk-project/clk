@@ -73,9 +73,7 @@ def set_level(level):
 def get_logger(name):
     # type: (str) -> Logger
     if name.startswith("pluginbase."):
-        name = name.replace("_", "|")
-        name = re.sub(r"^pluginbase\.\|internalspace.[^.]+\.", "clk.plugins.", name)
-        name = name.replace("|", "_")
+        name = re.sub(r"^pluginbase\._internalspace.[^.]+\.", "clk.plugins.", name)
     return logging.getLogger(name)
 
 
