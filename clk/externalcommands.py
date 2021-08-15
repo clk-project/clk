@@ -126,7 +126,7 @@ class ExternalCommandResolver(CommandResolver):
                 cmdhelp = "No help found... (the command is most likely broken)"
             process.wait()
         except Exception as e:
-            LOGGER.warning("When loading command {}: {}".format(name, e))
+            LOGGER.warning(f"When loading command {name} at path {command_path}: {e}")
             from clk.overloads import on_command_loading_error
             on_command_loading_error()
             raise
