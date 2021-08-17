@@ -16,6 +16,7 @@ clk
 
 [![CircleCI](https://circleci.com/gh/clk-project/clk.svg?style=svg)](https://app.circleci.com/pipelines/github/clk-project/clk)
 
+Come and discuss clk with us on IRC on channel #clk at [libera](https://libera.chat/).
 
 clk makes it *easy* and fun for ***you*** to create *awesome* command line interfaces!
 
