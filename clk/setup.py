@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# -*- coding:utf-8 -*-
+# -*- coding: utf-8 -*-
 
 from clk import lib
 from clk.alias import AliasCommandResolver, AliasToGroupResolver
@@ -33,7 +33,7 @@ def classic_setup(main_module=None,
     setup_hook()
     for package in extra_command_packages:
         basic_config(package)
-    CoreCommandResolver.commands_packages = extra_command_packages + ["clk.commands"]
+    CoreCommandResolver.commands_packages = extra_command_packages + ['clk.commands']
     CoreCommandResolver.include_core_commands = include_core_commands
     CoreCommandResolver.exclude_core_commands = exclude_core_commands
     Group.commandresolvers = [
@@ -67,9 +67,9 @@ def basic_entry_point(main_module,
                       authenticator_hints={}):
     def decorator(f):
         path = f.__name__
-        config_cls = type("{}Config".format(path), (Config, ), {
-            "app_dir_name": path,
-            "app_name": path,
+        config_cls = type('{}Config'.format(path), (Config, ), {
+            'app_dir_name': path,
+            'app_name': path,
         })
         return classic_setup(main_module,
                              config_cls=config_cls,

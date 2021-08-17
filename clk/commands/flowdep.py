@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-# -*- coding:utf-8 -*-
+# -*- coding: utf-8 -*-
 
 import os
 import subprocess
@@ -26,7 +26,7 @@ class FlowdepsConfig(object):
 
 
 @group(default_command='show')
-@use_settings("flowdeps", FlowdepsConfig)
+@use_settings('flowdeps', FlowdepsConfig)
 def flowdep():
     """Manipulate command flow dependencies.
 
@@ -51,29 +51,29 @@ def flowdep():
 
 
 @flowdep.command(handle_dry_run=True)
-@argument('cmd', type=CommandType(), help="The command to which set the flow dependencies")
-@argument('dependencies', nargs=-1, type=CommandType(), help="The flow dependencies")
+@argument('cmd', type=CommandType(), help='The command to which set the flow dependencies')
+@argument('dependencies', nargs=-1, type=CommandType(), help='The flow dependencies')
 def set(cmd, dependencies):
     """Set the flow dependencies of a command"""
     if cmd in config.flowdeps.writable:
-        LOGGER.status("Removing old {} flowdep for {}: {}".format(
+        LOGGER.status('Removing old {} flowdep for {}: {}'.format(
             config.flowdeps.writeprofilename,
             cmd,
-            ", ".join(config.flowdeps.writable[cmd]),
+            ', '.join(config.flowdeps.writable[cmd]),
         ))
 
     config.flowdeps.writable[cmd] = dependencies
-    LOGGER.status("New {} flowdep for {}: {}".format(
+    LOGGER.status('New {} flowdep for {}: {}'.format(
         config.flowdeps.writeprofilename,
         cmd,
-        ", ".join(dependencies),
+        ', '.join(dependencies),
     ))
     config.flowdeps.write()
 
 
 @flowdep.command(ignore_unknown_options=True, handle_dry_run=True)
-@argument('cmd', type=CommandType(), help="The command to which append the flow dependencies")
-@argument('dependencies', nargs=-1, type=CommandType(), help="The additional flow dependencies")
+@argument('cmd', type=CommandType(), help='The command to which append the flow dependencies')
+@argument('dependencies', nargs=-1, type=CommandType(), help='The additional flow dependencies')
 def append(cmd, dependencies):
     """Add a flow dependency after the flowdep of a command"""
     dependencies = config.flowdeps.writable.get(cmd, []) + list(dependencies)
@@ -82,8 +82,8 @@ def append(cmd, dependencies):
 
 
 @flowdep.command(handle_dry_run=True)
-@argument('cmd', type=CommandSettingsKeyType("flowdeps"), help="The command to which insert the flow dependencies")
-@argument('dependencies', type=CommandType(), nargs=-1, help="The additional flow dependencies")
+@argument('cmd', type=CommandSettingsKeyType('flowdeps'), help='The command to which insert the flow dependencies')
+@argument('dependencies', type=CommandType(), nargs=-1, help='The additional flow dependencies')
 def insert(cmd, dependencies):
     """Add a flow dependency before the flowdep of a command"""
     dependencies = list(dependencies) + config.flowdeps.readonly.get(cmd, [])
@@ -92,8 +92,8 @@ def insert(cmd, dependencies):
 
 
 @flowdep.command(handle_dry_run=True)
-@argument('cmd', type=CommandSettingsKeyType("flowdeps"), help="The command to which remove the flow dependencies")
-@argument('dependencies', type=CommandType(), nargs=-1, help="The flow flow dependencies to remove")
+@argument('cmd', type=CommandSettingsKeyType('flowdeps'), help='The command to which remove the flow dependencies')
+@argument('dependencies', type=CommandType(), nargs=-1, help='The flow flow dependencies to remove')
 def remove(cmd, dependencies):
     """Remove some flow dependencies of a command"""
     for param in dependencies:
@@ -107,28 +107,28 @@ def remove(cmd, dependencies):
 @flowdep.command(handle_dry_run=True)
 @argument('cmds',
           nargs=-1,
-          type=CommandSettingsKeyType("flowdeps"),
-          help="The command to which unset the flow dependencies")
+          type=CommandSettingsKeyType('flowdeps'),
+          help='The command to which unset the flow dependencies')
 def unset(cmds):
     """Unset the flow dependencies of a command"""
     for cmd in cmds:
         if cmd not in config.flowdeps.writable:
             raise click.ClickException("The %s configuration has no '%s' flow dependency registered."
-                                       "Try using another profile option (like --local, --global)" %
+                                       'Try using another profile option (like --local, --global)' %
                                        (config.flowdeps.writeprofile, cmd))
     for cmd in cmds:
-        LOGGER.status("Erasing {} flow dependencies from {} settings".format(cmd, config.flowdeps.writeprofile))
+        LOGGER.status('Erasing {} flow dependencies from {} settings'.format(cmd, config.flowdeps.writeprofile))
         del config.flowdeps.writable[cmd]
     config.flowdeps.write()
 
 
 @flowdep.command(handle_dry_run=True)
-@flag('--name-only/--no-name-only', help="Only display the command names")
-@flag('--all', help="Show all the flowdeps, even those guessed from the context")
+@flag('--name-only/--no-name-only', help='Only display the command names')
+@flag('--all', help='Show all the flowdeps, even those guessed from the context')
 @Colorer.color_options
 @table_format(default='key_value')
 @table_fields(choices=['command', 'dependencies'])
-@argument('cmds', nargs=-1, type=CommandType(), help="The commands to show")
+@argument('cmds', nargs=-1, type=CommandType(), help='The commands to show')
 @pass_context
 def show(ctx, name_only, cmds, all, fields, format, **kwargs):
     """Show the flow dependencies of a command"""
@@ -144,17 +144,17 @@ def show(ctx, name_only, cmds, all, fields, format, **kwargs):
             else:
                 if all:
                     deps = get_flow_commands_to_run(cmd)
-                    formatted = " ".join(quote(p) for p in deps)
+                    formatted = ' '.join(quote(p) for p in deps)
                 else:
                     values = {
                         profile.name:
-                        " ".join([quote(p) for p in config.flowdeps.all_settings.get(profile.name, {}).get(cmd, [])])
+                        ' '.join([quote(p) for p in config.flowdeps.all_settings.get(profile.name, {}).get(cmd, [])])
                         for profile in config.all_enabled_profiles
                     }
                     args = colorer.colorize(values, config.flowdeps.readprofile)
-                    formatted = " ".join(args)
+                    formatted = ' '.join(args)
                 if show_empty:
-                    formatted = formatted or "None"
+                    formatted = formatted or 'None'
                 if formatted:
                     tp.echo(cmd, formatted)
 
@@ -164,7 +164,7 @@ def compute_dot(cmds=None, strict=False, cluster=True, left_right=False, lonely=
     g = networkx.digraph.DiGraph()
 
     def cluster_replace(str):
-        return str.replace(".", "_").replace("-", "_")
+        return str.replace('.', '_').replace('-', '_')
 
     dot = """digraph {\n"""
     if left_right:
@@ -172,24 +172,24 @@ def compute_dot(cmds=None, strict=False, cluster=True, left_right=False, lonely=
     clusters = defaultdict(set)
 
     def register_cluster(cmd_path):
-        if "." in cmd_path:
-            parent_path = ".".join([part for part in cmd_path.split(".")[:-1]])
+        if '.' in cmd_path:
+            parent_path = '.'.join([part for part in cmd_path.split('.')[:-1]])
             clusters[parent_path].add(cmd_path)
 
     aliases = {}
 
     def fill_graph(cmds):
         for cmd in iter_commands(from_paths=cmds):
-            if hasattr(cmd, "commands_to_run"):
+            if hasattr(cmd, 'commands_to_run'):
                 aliases[cmd.path] = cmd.commands_to_run
-            LOGGER.develop("Looking at {}".format(cmd.path))
+            LOGGER.develop('Looking at {}'.format(cmd.path))
             if strict:
                 deps = config.flowdeps.readonly.get(cmd.path, [])
             else:
                 path = cmd.path
                 deps = list(_flowdeps[path])
-                while "." in path:
-                    path = ".".join(path.split(".")[:-1])
+                while '.' in path:
+                    path = '.'.join(path.split('.')[:-1])
                     deps += _flowdeps[path]
             for dep in deps:
                 g.add_node(dep)
@@ -203,7 +203,7 @@ def compute_dot(cmds=None, strict=False, cluster=True, left_right=False, lonely=
                 g.add_edge(dep, cmd.path)
                 register_cluster(dep)
                 register_cluster(cmd.path)
-                if not dep.startswith("["):
+                if not dep.startswith('['):
                     fill_graph([dep])
             if lonely:
                 g.add_node(cmd.path)
@@ -222,55 +222,55 @@ def compute_dot(cmds=None, strict=False, cluster=True, left_right=False, lonely=
                 for cmd in cmds:
                     if (lonely or cmd in nodes) and cmd not in clusters.keys():
                         dot += """    "{}";\n""".format(cmd)
-                dot += "  }\n"
+                dot += '  }\n'
     for node in nodes:
         if node not in clusters.keys():
             dot += """  "{}" [label= "{}{}", fillcolor = {}, style = filled];\n""".format(
                 node,
                 node,
-                "\n -> {}".format(' , '.join(' '.join(quote(arg)
+                '\n -> {}'.format(' , '.join(' '.join(quote(arg)
                                                       for arg in cmd)
-                                             for cmd in aliases[node])) if node in aliases else "",
-                "greenyellow" if node in aliases else "skyblue",
+                                             for cmd in aliases[node])) if node in aliases else '',
+                'greenyellow' if node in aliases else 'skyblue',
             )
     for src, dst in adjacency:
         dot += """  "{}" -> "{}";\n""".format(src, dst)
-    dot += "}"
+    dot += '}'
     LOGGER.develop(dot)
     return dot
 
 
 @flowdep.command()
-@option("--output", help="Output file instead of showing it in a web browser - not relevant with format x11")
-@option("--format", type=click.Choice(["png", "svg", "x11", "pdf", "dot"]), help="Format to use", default="svg")
-@flag('--strict/--all', help="Show the all dependency graph or only the explicitly configured flowdep")
-@flag("--left-right/--top-bottom", help="Show from left to right", default=True)
-@flag("--lonely/--no-lonely", help="Show lonely nodes also" " (it generally pollutes unnecessarily the graph)")
-@flag("--cluster/--independent", help="Show all commands independently or cluster groups", default=True)
-@argument('cmds', nargs=-1, type=CommandType(), help="The commands to display")
+@option('--output', help='Output file instead of showing it in a web browser - not relevant with format x11')
+@option('--format', type=click.Choice(['png', 'svg', 'x11', 'pdf', 'dot']), help='Format to use', default='svg')
+@flag('--strict/--all', help='Show the all dependency graph or only the explicitly configured flowdep')
+@flag('--left-right/--top-bottom', help='Show from left to right', default=True)
+@flag('--lonely/--no-lonely', help='Show lonely nodes also' ' (it generally pollutes unnecessarily the graph)')
+@flag('--cluster/--independent', help='Show all commands independently or cluster groups', default=True)
+@argument('cmds', nargs=-1, type=CommandType(), help='The commands to display')
 def graph(output, format, cmds, strict, cluster, left_right, lonely):
     """Display the flow dependencies as a graph"""
     dot = compute_dot(cmds=cmds, strict=strict, cluster=cluster, left_right=left_right, lonely=lonely)
     if dot is None:
-        LOGGER.status("Nothing to show")
+        LOGGER.status('Nothing to show')
         exit(0)
     if format != 'dot':
-        dotpath = which("dot")
+        dotpath = which('dot')
         if dotpath is None:
             raise click.UsageError("You don't have graphviz installed. Therefore you cannot use dot.")
-        args = [dotpath, "-T{}".format(format)]
+        args = [dotpath, '-T{}'.format(format)]
         p = subprocess.Popen(
             args,
             stdin=subprocess.PIPE,
             stdout=subprocess.PIPE,
         )
-        out, _ = p.communicate(dot.encode("utf-8"))
+        out, _ = p.communicate(dot.encode('utf-8'))
     else:
-        out = dot.encode("utf-8")
+        out = dot.encode('utf-8')
     if output == '-':
         click.echo(out)
     elif output:
-        open(output, "wb").write(out)
+        open(output, 'wb').write(out)
     elif format not in ['x11']:
         path = os.path.join(tempfile.gettempdir(), 'flow.{}'.format(format))
         with open(path, 'wb') as f:
@@ -285,7 +285,7 @@ def get_sub_commands(ctx, cmd, prefix=''):
         sub_cmd = cmd.get_command(ctx, sub_cmd_name)
         if sub_cmd:
             if isinstance(sub_cmd, click.Group):
-                if not hasattr(sub_cmd, "original_command"):
+                if not hasattr(sub_cmd, 'original_command'):
                     res += get_sub_commands(ctx, sub_cmd, prefix='%s%s.' % (prefix, sub_cmd_name))
         else:
             LOGGER.warn("Can't get " + sub_cmd_name)

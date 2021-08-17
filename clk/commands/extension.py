@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-# -*- coding:utf-8 -*-
+# -*- coding: utf-8 -*-
 
 import io
 import os
@@ -56,7 +56,7 @@ class ExtensionType(ExtensionNameType):
         choice = self.getchoice(ctx)
         if value not in choice and self.failok:
             self.fail(
-                "invalid choice: %s. (choose from %s)" % (value, ", ".join(choice)),
+                'invalid choice: %s. (choose from %s)' % (value, ', '.join(choice)),
                 param,
                 ctx,
             )
@@ -72,15 +72,15 @@ class ExtensionType(ExtensionNameType):
         for candidate in candidates:
             if candidate.short_name == value:
                 return candidate
-        raise NotImplementedError("This part of the code should never be reached")
+        raise NotImplementedError('This part of the code should never be reached')
 
 
 def load_short_help(extension):
     return extension
 
 
-@group(default_command="show")
-@use_settings("extension", ExtensionConfig)
+@group(default_command='show')
+@use_settings('extension', ExtensionConfig)
 def extension():
     """Extension related commands
 
@@ -90,112 +90,112 @@ def extension():
 
 
 @extension.command(handle_dry_run=True)
-@argument("name", help="The extension name")
+@argument('name', help='The extension name')
 @flag(
-    "--disable/--enable",
-    help="Automatically disable the cloned extension",
+    '--disable/--enable',
+    help='Automatically disable the cloned extension',
 )
 @pass_context
 def create(ctx, name, disable):
     """Create a new extension"""
     profile = config.extension.profile
     r = profile.create_extension(name)
-    LOGGER.status("Created extension {}.".format(r.friendly_name))
+    LOGGER.status('Created extension {}.'.format(r.friendly_name))
     if disable:
         ctx.invoke(_disable, extension=[name])
 
 
 @extension.command(handle_dry_run=True)
-@argument("old", type=ExtensionType(), help="The current extension name")
-@argument("new", help="The new extension name")
+@argument('old', type=ExtensionType(), help='The current extension name')
+@argument('new', help='The new extension name')
 def rename(old, new):
     """Rename an extension"""
-    if "/" not in new:
-        new = "{}/{}".format(old.name.split("/")[0], new)
+    if '/' not in new:
+        new = '{}/{}'.format(old.name.split('/')[0], new)
     new_loc = config.extension_location(new)
     if os.path.exists(new_loc):
-        raise click.UsageError("{} already exists".format(new_loc))
+        raise click.UsageError('{} already exists'.format(new_loc))
     move(old.location, new_loc)
 
 
 @extension.command(handle_dry_run=True)
-@argument("old", type=ExtensionType(), help="The current extension name")
+@argument('old', type=ExtensionType(), help='The current extension name')
 @argument(
-    "profile",
+    'profile',
     type=DirectoryProfileType(root_only=True),
-    help="The profile where to move the extension",
+    help='The profile where to move the extension',
 )
 def _move(old, profile):
     """Move an extension to another profile"""
     move(
         old.location,
-        Path(profile.location) / "extensions" / Path(old.location).name,
+        Path(profile.location) / 'extensions' / Path(old.location).name,
     )
 
 
 @extension.command(handle_dry_run=True)
-@argument("src", type=ExtensionType(), help="The source extension name")
-@argument("dest", help="The destination extension name")
+@argument('src', type=ExtensionType(), help='The source extension name')
+@argument('dest', help='The destination extension name')
 def _copy(src, dest):
     """Copy an extension"""
-    if "/" not in dest:
-        dest = "{}/{}".format(src.name.split("/")[0], dest)
+    if '/' not in dest:
+        dest = '{}/{}'.format(src.name.split('/')[0], dest)
     new_loc = config.extension_location(dest)
     if os.path.exists(new_loc):
-        raise click.UsageError("{} already exists".format(new_loc))
+        raise click.UsageError('{} already exists'.format(new_loc))
     copy(src.location, new_loc)
 
 
 @extension.command(handle_dry_run=True)
 @argument(
-    "extension",
+    'extension',
     type=ExtensionType(),
     nargs=-1,
-    help="The name of the extensions to remove",
+    help='The name of the extensions to remove',
 )
-@flag("--force", help="Don't ask for confirmation")
+@flag('--force', help="Don't ask for confirmation")
 def remove(extension, force):
     """Remove an extension"""
     for rec in extension:
         profile = config.get_profile_containing_extension(rec.name)
         path = profile.get_extension(rec.name).location
-        if force or click.confirm(f"Removing {path}, are you sure ?"):
+        if force or click.confirm(f'Removing {path}, are you sure ?'):
             rm(path)
 
 
 @extension.command(handle_dry_run=True)
-@table_fields(choices=["extension", "set_in", "defined_in", "order"])
-@table_format(default="simple")
+@table_fields(choices=['extension', 'set_in', 'defined_in', 'order'])
+@table_format(default='simple')
 @Colorer.color_options
-@flag("--enabled-only/--not-enabled-only", help="Show only the enabled extensions")
+@flag('--enabled-only/--not-enabled-only', help='Show only the enabled extensions')
 @flag(
-    "--disabled-only/--not-disabled-only",
-    help="Show only the disabled extensions",
+    '--disabled-only/--not-disabled-only',
+    help='Show only the disabled extensions',
 )
-@option("--order/--no-order", help="Display the priority of the extension")
+@option('--order/--no-order', help='Display the priority of the extension')
 @argument(
-    "extensions",
+    'extensions',
     type=ExtensionNameType(disabled=True, failok=False),
     nargs=-1,
-    help="The names of the extensions to show",
+    help='The names of the extensions to show',
 )
 def show(fields, format, order, extensions, enabled_only, disabled_only, **kwargs):
     """List the extensions and some info about them"""
     config_extensions = set(config.extension.readonly.keys())
     avail_extensions = set([r.short_name for r in config.all_extensions])
     if not fields:
-        fields = list(get_option_choices("fields"))
+        fields = list(get_option_choices('fields'))
         if not order:
-            fields.remove("order")
+            fields.remove('order')
 
     if not extensions:
         extensions = config_extensions | avail_extensions
     if not extensions:
-        LOGGER.status("No extension yet")
+        LOGGER.status('No extension yet')
         exit(0)
     with Colorer(kwargs) as colorer, TablePrinter(fields, format) as tp:
         for extension_name in sorted(extensions):
-            profiles = ", ".join([
+            profiles = ', '.join([
                 click.style(profile.name, **colorer.get_style(profile.name))
                 for profile in config.root_profiles
                 if profile.has_extension(extension_name)
@@ -209,20 +209,20 @@ def show(fields, format, order, extensions, enabled_only, disabled_only, **kwarg
                 profile_style = colorer.get_style(profile) if profile else {}
 
                 tp.echo(
-                    click.style(extension_name, fg="green" if extension_enabled else "red"),
-                    (profile and click.style(profile, **profile_style)) or "Unset",
-                    profiles or "Undefined",
+                    click.style(extension_name, fg='green' if extension_enabled else 'red'),
+                    (profile and click.style(profile, **profile_style)) or 'Unset',
+                    profiles or 'Undefined',
                     config.get_extension_order(extension_name),
                 )
 
 
 @extension.command(handle_dry_run=True)
-@flag("--all", help="On all extensions")
+@flag('--all', help='On all extensions')
 @argument(
-    "extension",
+    'extension',
     type=ExtensionNameType(enabled=True, failok=False),
     nargs=-1,
-    help="The names of the extensions to disable",
+    help='The names of the extensions to disable',
 )
 @pass_context
 def _disable(ctx, extension, all):
@@ -231,20 +231,20 @@ def _disable(ctx, extension, all):
         extension = ExtensionType(disabled=True).getchoice(ctx)
     for cmd in extension:
         if cmd in config.extension.writable:
-            config.extension.writable[cmd]["enabled"] = False
+            config.extension.writable[cmd]['enabled'] = False
         else:
-            config.extension.writable[cmd] = {"enabled": False}
-        LOGGER.status("Disabling extension {} in profile {}".format(cmd, config.extension.writeprofile))
+            config.extension.writable[cmd] = {'enabled': False}
+        LOGGER.status('Disabling extension {} in profile {}'.format(cmd, config.extension.writeprofile))
     config.extension.write()
 
 
 @extension.command(handle_dry_run=True)
-@flag("--all", help="On all extensions")
+@flag('--all', help='On all extensions')
 @argument(
-    "extension",
-    type=CommandSettingsKeyType("extension"),
+    'extension',
+    type=CommandSettingsKeyType('extension'),
     nargs=-1,
-    help="The name of the extension to unset",
+    help='The name of the extension to unset',
 )
 @pass_context
 def unset(ctx, extension, all):
@@ -253,24 +253,24 @@ def unset(ctx, extension, all):
         extension = list(config.extension.readonly.keys())
     for cmd in extension:
         if cmd not in config.extension.writable:
-            raise click.UsageError("Extension {} not set in profile {}".format(cmd, config.extension.writeprofile))
+            raise click.UsageError('Extension {} not set in profile {}'.format(cmd, config.extension.writeprofile))
     for cmd in extension:
         del config.extension.writable[cmd]
-        LOGGER.status("Unsetting {} from profile {}".format(cmd, config.extension.writeprofile))
+        LOGGER.status('Unsetting {} from profile {}'.format(cmd, config.extension.writeprofile))
     config.extension.write()
 
 
 @extension.command(handle_dry_run=True)
-@flag("--all", help="On all extensions")
+@flag('--all', help='On all extensions')
 @option(
-    "--only/--no-only",
-    help="Use only the provided extension, and disable the others",
+    '--only/--no-only',
+    help='Use only the provided extension, and disable the others',
 )
 @argument(
-    "extension",
+    'extension',
     type=ExtensionNameType(disabled=True, failok=False),
     nargs=-1,
-    help="The names of the extensions to enable",
+    help='The names of the extensions to enable',
 )
 @pass_context
 def __enable(ctx, extension, all, only):
@@ -280,30 +280,30 @@ def __enable(ctx, extension, all, only):
     if only:
         for cmd in set(ExtensionType().getchoice(ctx)) - set(extension):
             if cmd in config.extension.writable:
-                config.extension.writable[cmd]["enabled"] = False
+                config.extension.writable[cmd]['enabled'] = False
             else:
-                config.extension.writable[cmd] = {"enabled": False}
-            LOGGER.status("Disabling extension {} in profile {}".format(cmd, config.extension.writeprofile))
+                config.extension.writable[cmd] = {'enabled': False}
+            LOGGER.status('Disabling extension {} in profile {}'.format(cmd, config.extension.writeprofile))
 
     for cmd in extension:
         if cmd in config.extension.writable:
-            config.extension.writable[cmd]["enabled"] = True
+            config.extension.writable[cmd]['enabled'] = True
         else:
-            config.extension.writable[cmd] = {"enabled": True}
-        LOGGER.status("Enabling extension {} in profile {}".format(cmd, config.extension.writeprofile))
+            config.extension.writable[cmd] = {'enabled': True}
+        LOGGER.status('Enabling extension {} in profile {}'.format(cmd, config.extension.writeprofile))
     config.extension.write()
 
 
 @extension.command(handle_dry_run=True)
 @argument(
-    "extension1",
+    'extension1',
     type=ExtensionNameType(enabled=True, failok=False),
-    help="The name of the extension to disable",
+    help='The name of the extension to disable',
 )
 @argument(
-    "extension2",
+    'extension2',
     type=ExtensionNameType(disabled=True, failok=False),
-    help="The name of the extension to enable",
+    help='The name of the extension to enable',
 )
 @pass_context
 def switch(ctx, extension1, extension2):
@@ -314,35 +314,35 @@ def switch(ctx, extension1, extension2):
 
 @extension.command(handle_dry_run=True)
 @argument(
-    "extension",
+    'extension',
     type=ExtensionNameType(failok=False),
     nargs=-1,
-    help="The names of the extensions to which the order will be set",
+    help='The names of the extensions to which the order will be set',
 )
-@argument("order", type=int, help="The order to be set on the extensions")
+@argument('order', type=int, help='The order to be set on the extensions')
 def set_order(extension, order):
     """Set the order of the extensions"""
     if not extension:
         extension = config.all_extensions
     for cmd in extension:
         if cmd in config.extension.writable:
-            config.extension.writable[cmd]["order"] = order
+            config.extension.writable[cmd]['order'] = order
         else:
-            config.extension.writable[cmd] = {"order": order}
-        LOGGER.status("Set order of {} to {} in profile {}".format(cmd, order, config.extension.writeprofile))
+            config.extension.writable[cmd] = {'order': order}
+        LOGGER.status('Set order of {} to {} in profile {}'.format(cmd, order, config.extension.writeprofile))
     config.extension.write()
 
 
 @extension.command()
-@argument("profile", type=ExtensionType(), help="The name of the profile to open")
-@option("--opener", help="Program to call to open the directory", default="xdg-open")
+@argument('profile', type=ExtensionType(), help='The name of the profile to open')
+@option('--opener', help='Program to call to open the directory', default='xdg-open')
 def open(profile, opener):
     """Open the directory containing the profile"""
     call([opener, profile.location])
 
 
 @extension.command()
-@argument("profile", type=DirectoryProfileType(), help="The name of the profile to show")
+@argument('profile', type=DirectoryProfileType(), help='The name of the profile to show')
 def where_is(profile):
     """Show where is a given extension"""
     print(profile.location)
@@ -356,121 +356,121 @@ predefined_hosts = [
 
 
 @extension.command()
-@option("--profile", type=DirectoryProfileType(), help="The profile where to install the extension")
+@option('--profile', type=DirectoryProfileType(), help='The profile where to install the extension')
 @argument(
-    "url",
-    help=("The url of the git repository hosting the extension."
-          " Can be author/extension for github repository."
-          " If that case, the url will become"
-          " https://github.com/{author}/clk_extension_{extension}."
-          " Actually, the prefix (github.com) may be changed using --url-prefix."
-          " Can also be gitlab.com/{author}/{extension},"
-          " github.com/{author}/{extension},"
-          " git@...,"
-          " http://...,"
-          " a path to a local directory"
-          " (not that in that case, using --editable makes sense)."),
+    'url',
+    help=('The url of the git repository hosting the extension.'
+          ' Can be author/extension for github repository.'
+          ' If that case, the url will become'
+          ' https://github.com/{author}/clk_extension_{extension}.'
+          ' Actually, the prefix (github.com) may be changed using --url-prefix.'
+          ' Can also be gitlab.com/{author}/{extension},'
+          ' github.com/{author}/{extension},'
+          ' git@...,'
+          ' http://...,'
+          ' a path to a local directory'
+          ' (not that in that case, using --editable makes sense).'),
 )
-@argument("name", help="The name of the extension", required=False)
-@flag("--install-deps/--no-install-deps", help="Automatically install the dependencies.", default=True)
-@flag("--force/--no-force", help="Overwrite the existing extension if need be.")
-@flag("-e", "--editable", help="(only for local path) Create a symbolic link rather than copying the content")
+@argument('name', help='The name of the extension', required=False)
+@flag('--install-deps/--no-install-deps', help='Automatically install the dependencies.', default=True)
+@flag('--force/--no-force', help='Overwrite the existing extension if need be.')
+@flag('-e', '--editable', help='(only for local path) Create a symbolic link rather than copying the content')
 @pass_context
 def install(ctx, profile, url, name, install_deps, editable, force):
     """Install an extension from outside"""
     profile = profile or config.global_profile
     urls = []
-    if re.match("^[a-zA-Z0-9]+$", url):
-        urls.append(f"git@github.com:clk-project/clk_extension_{url}")
-        urls.append(f"https://github.com/clk-project/clk_extension_{url}")
-        install_type = "git"
+    if re.match('^[a-zA-Z0-9]+$', url):
+        urls.append(f'git@github.com:clk-project/clk_extension_{url}')
+        urls.append(f'https://github.com/clk-project/clk_extension_{url}')
+        install_type = 'git'
         if name is None:
             name = url
-    elif match := re.match("^(?P<author>[a-zA-Z0-9_-]+)/(?P<extension>[a-zA-Z0-9]+)$", url):
-        author = match.group("author")
-        extension = match.group("extension")
+    elif match := re.match('^(?P<author>[a-zA-Z0-9_-]+)/(?P<extension>[a-zA-Z0-9]+)$', url):
+        author = match.group('author')
+        extension = match.group('extension')
         for host in predefined_hosts:
-            urls.append(f"git@{host}:{author}/clk_extension_{extension}")
-            urls.append(f"https://{host}/{author}/clk_extension_{extension}")
-            urls.append(f"git@{host}:{author}/{extension}")
-            urls.append(f"https://{host}/{author}/{extension}")
-        install_type = "git"
+            urls.append(f'git@{host}:{author}/clk_extension_{extension}')
+            urls.append(f'https://{host}/{author}/clk_extension_{extension}')
+            urls.append(f'git@{host}:{author}/{extension}')
+            urls.append(f'https://{host}/{author}/{extension}')
+        install_type = 'git'
         if name is None:
             name = extension
-    elif match := re.match("^(?P<host>[a-zA-Z0-9_.-]+)/(?P<path>[a-zA-Z0-9_/-]+)/(?P<extension>[a-zA-Z0-9]+)$", url):
-        host = match.group("host")
-        path = match.group("path")
-        extension = match.group("extension")
-        urls.append(f"git@{host}:{path}/clk_extension_{extension}")
-        urls.append(f"https://{host}/{path}/clk_extension_{extension}")
-        urls.append(f"git@{host}:{path}/{extension}")
-        urls.append(f"https://{host}/{path}/{extension}")
-        install_type = "git"
+    elif match := re.match('^(?P<host>[a-zA-Z0-9_.-]+)/(?P<path>[a-zA-Z0-9_/-]+)/(?P<extension>[a-zA-Z0-9]+)$', url):
+        host = match.group('host')
+        path = match.group('path')
+        extension = match.group('extension')
+        urls.append(f'git@{host}:{path}/clk_extension_{extension}')
+        urls.append(f'https://{host}/{path}/clk_extension_{extension}')
+        urls.append(f'git@{host}:{path}/{extension}')
+        urls.append(f'https://{host}/{path}/{extension}')
+        install_type = 'git'
         if name is None:
             name = extension
-    elif m := re.match("^https://github.com/.+/(?P<name>[^/]+)/tarball/.+$", url):
-        install_type = "webtar"
+    elif m := re.match('^https://github.com/.+/(?P<name>[^/]+)/tarball/.+$', url):
+        install_type = 'webtar'
         urls.append(url)
-        name = name or m["name"]
-    elif url.startswith("file:"):
-        url = str(Path(url[len("file:"):]).absolute())
-        install_type = "file"
+        name = name or m['name']
+    elif url.startswith('file:'):
+        url = str(Path(url[len('file:'):]).absolute())
+        install_type = 'file'
         name = name or Path(url).name
         urls.append(os.path.abspath(url))
-    elif re.match(r"(\w+://)(.+@)*([\w\d\.]+)(:[\d]+)?/*(.*)|(.+@)*([\w\d\.]+):(.*)", url):
-        install_type = "git"
+    elif re.match(r'(\w+://)(.+@)*([\w\d\.]+)(:[\d]+)?/*(.*)|(.+@)*([\w\d\.]+):(.*)', url):
+        install_type = 'git'
         urls.append(url)
     elif Path(url).exists():
-        install_type = "file"
+        install_type = 'file'
         name = name or Path(url).name
         urls.append(os.path.abspath(url))
     else:
-        install_type = "git"
+        install_type = 'git'
         urls.append(url)
 
-    if editable is True and install_type != "file":
-        LOGGER.warning("Ignoring --editable for we guessed that"
-                       " you did not provide a url that actually"
-                       " points to a local file")
+    if editable is True and install_type != 'file':
+        LOGGER.warning('Ignoring --editable for we guessed that'
+                       ' you did not provide a url that actually'
+                       ' points to a local file')
 
     if name is None:
-        if "/" in url:
-            name = url.split("/")[-1]
+        if '/' in url:
+            name = url.split('/')[-1]
         else:
-            raise click.UsageError("I cannot infer a name for your extension. Please provide one explicitly.")
-    if name.startswith("clk_extension_"):
-        name = name.replace("clk_extension_", "")
-    if not re.match(f"^{DirectoryProfile.extension_name_re}$", name):
+            raise click.UsageError('I cannot infer a name for your extension. Please provide one explicitly.')
+    if name.startswith('clk_extension_'):
+        name = name.replace('clk_extension_', '')
+    if not re.match(f'^{DirectoryProfile.extension_name_re}$', name):
         raise click.UsageError(f"Invalid extension name '{name}'."
                                " an extension's name must contain only letters or _")
 
     if install_type is None:
-        raise click.UsageError("I cannot infer how to install the extension"
-                               " Please tell us what you wanted to do"
-                               " so that we can fix the code and the doc.")
+        raise click.UsageError('I cannot infer how to install the extension'
+                               ' Please tell us what you wanted to do'
+                               ' so that we can fix the code and the doc.')
 
-    extension_path = (Path(profile.location) / "extensions").resolve() / name
+    extension_path = (Path(profile.location) / 'extensions').resolve() / name
     if extension_path.exists() or extension_path.is_symlink():
         if force:
             rm(extension_path)
         else:
             if not os.path.exists(f'{extension_path}/.git'):
-                raise click.UsageError(f"An extension already exists at location {extension_path}"
-                                       " Use --force to override it.")
-    if install_type == "git":
+                raise click.UsageError(f'An extension already exists at location {extension_path}'
+                                       ' Use --force to override it.')
+    if install_type == 'git':
         # check if we already have that extension locally
         if os.path.exists(f'{extension_path}/.git'):
             with cd(extension_path):
                 url = check_output(['git', 'remote', 'get-url', 'origin']).strip()
                 if url not in urls:
-                    LOGGER.debug(f"urls: {urls}")
-                    raise click.UsageError(f"Extension {name} already exists and is not using the same URL: {url}")
+                    LOGGER.debug(f'urls: {urls}')
+                    raise click.UsageError(f'Extension {name} already exists and is not using the same URL: {url}')
                 call(['git', 'pull'])
         else:
             ok = False
             for tryurl in urls:
                 try:
-                    call(["git", "clone", tryurl, str(extension_path)])
+                    call(['git', 'clone', tryurl, str(extension_path)])
                 except subprocess.CalledProcessError:
                     # this one did not work, go on to the next one
                     continue
@@ -479,86 +479,86 @@ def install(ctx, profile, url, name, install_deps, editable, force):
                     ok = True
                     break
             if ok is False:
-                raise click.UsageError("Tried git cloning the following urls, without success:"
+                raise click.UsageError('Tried git cloning the following urls, without success:'
                                        f" {', '.join(urls)}. Please take a look at the documentation"
-                                       " to see how you can pass urls")
-    elif install_type == "file":
+                                       ' to see how you can pass urls')
+    elif install_type == 'file':
         if editable:
             ln(Path(url).resolve(), extension_path)
         else:
             copy(url, extension_path)
-    elif install_type == "webtar":
-        LOGGER.info(f"Getting the tarfile from {url}")
+    elif install_type == 'webtar':
+        LOGGER.info(f'Getting the tarfile from {url}')
         tar = tarfile.open(fileobj=io.BytesIO(requests.get(url).content))
         tar.extractall(extension_path)
-        for file in glob(f"{extension_path}/*/*"):
+        for file in glob(f'{extension_path}/*/*'):
             move(file, extension_path)
 
     extension = profile.get_extension(name)
 
     if install_deps is True:
-        LOGGER.status("-> Installing the dependencies of the extension")
+        LOGGER.status('-> Installing the dependencies of the extension')
         ctx.invoke(_install_deps, extension=[extension])
-    LOGGER.status(f"Done installing the extension {name}")
+    LOGGER.status(f'Done installing the extension {name}')
 
 
 @extension.command()
 @argument(
-    "extension",
+    'extension',
     type=DirectoryProfileType(),
     nargs=-1,
-    help="The name of the extensions to consider",
+    help='The name of the extensions to consider',
 )
 @pass_context
 def _install_deps(ctx, extension):
-    "Install the dependencies of the extension"
+    'Install the dependencies of the extension'
     for rec in extension:
-        LOGGER.status("Handling {}".format(rec.friendly_name))
+        LOGGER.status('Handling {}'.format(rec.friendly_name))
         if rec.requirements_path.exists():
-            ctx.invoke(pip, args=("install", "--upgrade", "-r", rec.requirements_path))
+            ctx.invoke(pip, args=('install', '--upgrade', '-r', rec.requirements_path))
         else:
-            LOGGER.info(f"Nothing to be done for {rec.friendly_name}")
+            LOGGER.info(f'Nothing to be done for {rec.friendly_name}')
 
 
 @extension.command()
 @argument(
-    "extension",
+    'extension',
     type=ExtensionType(),
     nargs=-1,
     required=True,
-    help="The names of the extensions to update",
+    help='The names of the extensions to update',
 )
-@flag("--clean", "method", flag_value="clean", help="Remove local modification and update")
-@flag("--stash", "method", flag_value="stash", help="Stash local modification and update")
-@flag("--no-clean", "method", flag_value="no-clean", help="Don't try cleaning the repository before pulling")
+@flag('--clean', 'method', flag_value='clean', help='Remove local modification and update')
+@flag('--stash', 'method', flag_value='stash', help='Stash local modification and update')
+@flag('--no-clean', 'method', flag_value='no-clean', help="Don't try cleaning the repository before pulling")
 def update(extension, method):
     """Update this cloned extension"""
     for cmd in extension:
         root = Path(cmd.location)
-        LOGGER.info(f"Updating {cmd.name}")
-        if not (root / ".git").exists():
-            LOGGER.warning(f"I cannot update the extension {cmd.name}."
-                           " For the time being, I only can update"
-                           " cloned extensions.")
+        LOGGER.info(f'Updating {cmd.name}')
+        if not (root / '.git').exists():
+            LOGGER.warning(f'I cannot update the extension {cmd.name}.'
+                           ' For the time being, I only can update'
+                           ' cloned extensions.')
             continue
         with cd(root):
             need_stash = False
-            if method == "clean":
-                call(["git", "clean", "-fd"])
-                call(["git", "checkout", "."])
-                call(["git", "reset", "--hard", "HEAD"])
-            elif method == "stash":
-                need_stash = (check_output(split("git status --porcelain --ignore-submodules --untracked-files=no")) !=
-                              "")
+            if method == 'clean':
+                call(['git', 'clean', '-fd'])
+                call(['git', 'checkout', '.'])
+                call(['git', 'reset', '--hard', 'HEAD'])
+            elif method == 'stash':
+                need_stash = (check_output(split('git status --porcelain --ignore-submodules --untracked-files=no')) !=
+                              '')
             if need_stash:
-                call(split("git stash"))
-            call(["git", "pull"])
+                call(split('git stash'))
+            call(['git', 'pull'])
             if need_stash:
-                call(split("git stash pop"))
+                call(split('git stash pop'))
 
 
 @extension.command()
-@argument("extension", type=ExtensionType(), help="The extension to describe")
+@argument('extension', type=ExtensionType(), help='The extension to describe')
 def describe(extension):
     """Try to give some insights into the content of the extension"""
     extension.describe()

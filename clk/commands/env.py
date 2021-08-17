@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-# -*- coding:utf-8 -*-
+# -*- coding: utf-8 -*-
 
 import os
 
@@ -16,7 +16,7 @@ class EnvConfig(object):
 
 
 @group(default_command='dump')
-@use_settings("environment", EnvConfig)
+@use_settings('environment', EnvConfig)
 def env():
     """Show the environment"""
     pass
@@ -139,4 +139,4 @@ def powershell(ctx):
     click.echo('# & {command} | Invoke-Expression'.format(command=ctx.command_path))
 
 
-keyvaluestore_generic_commands(env, "environment")
+keyvaluestore_generic_commands(env, 'environment')

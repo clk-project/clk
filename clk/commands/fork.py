@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# -*- coding:utf-8 -*-
+# -*- coding: utf-8 -*-
 
 from pathlib import Path
 
@@ -10,8 +10,8 @@ from clk.lib import createfile, makedirs, rm
 
 
 @command()
-@argument("name", help="The name of the new project, also the name of the output directory")
-@flag("--force/--no-force", help="Remove the output directory if it exist before proceeding")
+@argument('name', help='The name of the new project, also the name of the output directory')
+@flag('--force/--no-force', help='Remove the output directory if it exist before proceeding')
 def fork(force, name):
     """Create a brand new project, based on clk that can be used by itself."""
     output = Path(name)
@@ -19,10 +19,10 @@ def fork(force, name):
         if force:
             rm(output)
         else:
-            raise click.UsageError(f"{output} already exist")
+            raise click.UsageError(f'{output} already exist')
     makedirs(output)
     createfile(
-        output / "setup.py", f"""#!/usr/bin/env python3
+        output / 'setup.py', f"""#!/usr/bin/env python3
 # -*- coding:utf-8 -*-
 
 from setuptools import setup, find_packages
@@ -46,7 +46,7 @@ setup(
     package = (output / name)
     makedirs(package)
     createfile(
-        package / "main.py", f"""#!/usr/bin/env python3
+        package / 'main.py', f"""#!/usr/bin/env python3
 # -*- coding:utf-8 -*-
 
 from clk.setup import basic_entry_point, main
@@ -64,10 +64,10 @@ def {name}(**kwargs):
 if __name__ == "__main__":
     main()
 """)
-    createfile(package / "__init__.py", """#!/usr/bin/env python3""")
-    commands = (package / "commands")
+    createfile(package / '__init__.py', """#!/usr/bin/env python3""")
+    commands = (package / 'commands')
     makedirs(commands)
-    (commands / "somecommand.py", """#!/usr/bin/env python3
+    (commands / 'somecommand.py', """#!/usr/bin/env python3
 # -*- coding:utf-8 -*-
 
 import click
@@ -88,6 +88,6 @@ def somecommand(some_argument, some_flag, some_option):
     LOGGER.info(some_flag)
     LOGGER.info(some_option)
 """)
-    print(f"Now, install {name} with `python3 -m pip install {name}`,"
-          f" enable its completion with `{name} completion install`"
+    print(f'Now, install {name} with `python3 -m pip install {name}`,'
+          f' enable its completion with `{name} completion install`'
           f" and don't forget to have fun")

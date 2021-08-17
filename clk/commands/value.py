@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-# -*- coding:utf-8 -*-
+# -*- coding: utf-8 -*-
 
 from clk.decorators import group, use_settings
 from clk.keyvaluestore import keyvaluestore_generic_commands
@@ -13,7 +13,7 @@ class ValueConfig(object):
 
 
 @group(default_command='show')
-@use_settings("value", ValueConfig)
+@use_settings('value', ValueConfig)
 def value():
     """Manipulate the values
 
@@ -27,4 +27,4 @@ def value():
     """
 
 
-keyvaluestore_generic_commands(value, "value")
+keyvaluestore_generic_commands(value, 'value')

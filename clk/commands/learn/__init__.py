@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
-# -*- coding:utf-8 -*-
+# -*- coding: utf-8 -*-
 
 from clk.decorators import group, option
 from clk.lib import ParameterType
 
 
-@group(default_command="intro")
+@group(default_command='intro')
 def learn():
     """The commands to learn the concepts and tooling around clk"""
 
@@ -24,17 +24,17 @@ I suggest you start playing with the completion with `clk learn completion`.
 
 
 class TrymeType(ParameterType):
-    name = "TryMe"
+    name = 'TryMe'
 
     def complete(self, ctx, incomplete):
-        return ["you_got_it"]
+        return ['you_got_it']
 
 
 @learn.command()
-@option("--try-me", type=TrymeType(), help="An option to try the completion")
+@option('--try-me', type=TrymeType(), help='An option to try the completion')
 def completion(try_me):
     """Let's learn the completion together"""
-    if try_me == "you_got_it":
+    if try_me == 'you_got_it':
         print("""Awesome, you got the completion working!
 
 I suggest you try the exec command next.

@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-# -*- coding:utf-8 -*-
+# -*- coding: utf-8 -*-
 
 import functools
 import importlib
@@ -58,20 +58,20 @@ def get_command2(path):
     if path == config.main_command.path:
         return config.main_command, None
 
-    pathsplit = path.split(".")
+    pathsplit = path.split('.')
     if pathsplit[0] == config.main_command.path:
         del pathsplit[0]
     if len(pathsplit) > 1:
-        parent_path = ".".join(pathsplit[:-1])
+        parent_path = '.'.join(pathsplit[:-1])
         parent, _ = get_command2(parent_path)
         if isinstance(parent, config.main_command.__class__):
-            raise CommandNotFound("The command {} was asked for. "
-                                  "Because it starts with an alias to the root command,"
-                                  " I deliberately chose to ignore it.".format(path))
+            raise CommandNotFound('The command {} was asked for. '
+                                  'Because it starts with an alias to the root command,'
+                                  ' I deliberately chose to ignore it.'.format(path))
     else:
         parent = config.main_command
     cmd_name = pathsplit[-1]
-    if cmd_name.startswith("_"):
+    if cmd_name.startswith('_'):
         cmd_name = cmd_name[1:]
         resolvers = [CoreCommandResolver()]
     else:
@@ -83,8 +83,8 @@ def get_command2(path):
     )
     if cmd is None:
         for subcmd in list_commands_with_resolvers(resolvers, parent.path, True):
-            if subcmd.startswith(cmd_name + "."):
-                cmd = group(name=cmd_name, help="Group of commands")(lambda: None)
+            if subcmd.startswith(cmd_name + '.'):
+                cmd = group(name=cmd_name, help='Group of commands')(lambda: None)
     if cmd is None:
         raise CommandNotFound(cmd_name)
     # adjust the path
@@ -96,7 +96,7 @@ def get_command2(path):
     commands_cache[path] = cmd, resolver
     for handler in get_command_handlers:
         cmd = handler(cmd)
-    if hasattr(parent, "inherited_params"):
+    if hasattr(parent, 'inherited_params'):
         inherited_params = parent.inherited_params
         cmd_param_names = [param.name for param in cmd.params]
         new_param_names = [
@@ -123,7 +123,7 @@ def get_command_safe(path):
     try:
         return get_command(path)
     except Exception:
-        LOGGER.debug("Failed to get the command {}".format(path))
+        LOGGER.debug('Failed to get the command {}'.format(path))
         LOGGER.develop(traceback.format_exc())
         on_command_loading_error()
         return None
@@ -143,7 +143,7 @@ def iter_commands(from_cmds=None, from_paths=None):
     while commands_to_add:
         command = commands_to_add.pop(0)
         yield command
-        if (hasattr(command, "list_commands") and command.path not in _commands_cache):
+        if (hasattr(command, 'list_commands') and command.path not in _commands_cache):
             new_commands = [command.get_command(ctx, name) for name in command.list_commands(ctx)]
             if command is not config.main_command:
                 # prevent infinite recursion with alias having self as
@@ -166,8 +166,8 @@ def on_command_loading_error():
 
 
 class CoreCommandResolver(CommandResolver):
-    name = "core command"
-    commands_packages = ["clk.commands"]
+    name = 'core command'
+    commands_packages = ['clk.commands']
     include_core_commands = None
     exclude_core_commands = None
 
@@ -193,7 +193,7 @@ class CoreCommandResolver(CommandResolver):
         return res
 
     def _get_command(self, path, parent=None):
-        name = path.split(".")[-1]
+        name = path.split('.')[-1]
         attrname = name.replace('-', '_')
         for i, package in enumerate(self.commands_packages):
             # last iteration -> core package
@@ -207,9 +207,9 @@ class CoreCommandResolver(CommandResolver):
             else:
                 if attrname in modules_names:
                     try:
-                        mod = importlib.import_module("{}.{}".format(package, attrname))
+                        mod = importlib.import_module('{}.{}'.format(package, attrname))
                     except Exception as e:
-                        LOGGER.warning("When loading command {}: {}".format(name, e))
+                        LOGGER.warning('When loading command {}: {}'.format(name, e))
                         on_command_loading_error()
                         raise
                     if mod is not None:
@@ -249,38 +249,38 @@ class ExtraParametersMixin(object):
                                         expose_value=False,
                                         callback=self.set_parameter_callback,
                                         group='parameters',
-                                        help="Set the parameters for this command",
+                                        help='Set the parameters for this command',
                                         type=ProfileChoice())
         append_param_opt = AutomaticOption(['--append-parameter'],
                                            expose_value=False,
                                            callback=self.append_parameter_callback,
                                            group='parameters',
-                                           help="append the parameters for this command",
+                                           help='append the parameters for this command',
                                            type=ProfileChoice())
         remove_param_opt = AutomaticOption(['--remove-parameter'],
                                            expose_value=False,
                                            callback=self.remove_parameter_callback,
                                            group='parameters',
-                                           help="remove the parameters for this command",
+                                           help='remove the parameters for this command',
                                            type=ProfileChoice())
         unset_param_opt = AutomaticOption(['--unset-parameter'],
                                           expose_value=False,
                                           callback=self.unset_parameter_callback,
                                           group='parameters',
-                                          help="Unset the parameters for this command",
+                                          help='Unset the parameters for this command',
                                           type=ProfileChoice())
         show_param_opt = AutomaticOption(['--show-parameter'],
                                          expose_value=False,
                                          callback=self.show_parameter_callback,
                                          group='parameters',
-                                         help="Show the parameters for this command",
-                                         type=ProfileChoice(extra=["context"]))
+                                         help='Show the parameters for this command',
+                                         type=ProfileChoice(extra=['context']))
         edit_param_opt = AutomaticOption(['--edit-parameter'],
                                          expose_value=False,
                                          callback=self.edit_parameter_callback,
                                          group='parameters',
-                                         help="Edit the parameters for this command",
-                                         type=ProfileChoice(extra=["context"]))
+                                         help='Edit the parameters for this command',
+                                         type=ProfileChoice(extra=['context']))
         no_param_opt = AutomaticOption(['--no-parameter'],
                                        expose_value=False,
                                        is_flag=True,
@@ -304,80 +304,80 @@ class ExtraParametersMixin(object):
         if extra_args:
             formatter.write_paragraph()
             with formatter.indentation():
-                parameters_help = ("The current parameters set for this command are: {}").format(" ".join(extra_args))
+                parameters_help = ('The current parameters set for this command are: {}').format(' '.join(extra_args))
                 formatter.write_text(parameters_help)
 
     def parameters_callback_split_value(self, value):
         profile = value
         extension = None
-        if value != "context":
+        if value != 'context':
             p = config.get_profile(value)
             if p.isextension:
                 profile = p.parent_name
                 extension = p.short_name
-        res = ["--{}".format(profile)]
+        res = ['--{}'.format(profile)]
         if extension is not None:
-            res += ["--extension", extension]
+            res += ['--extension', extension]
         return res
 
     def unset_parameter_callback(self, ctx, param, value):
         if value and not ctx.resilient_parsing:
-            raw_args = config.commandline_profile.get_settings("parameters")[self.path]
+            raw_args = config.commandline_profile.get_settings('parameters')[self.path]
             index = raw_args.index('--unset-parameter')
             raw_args = raw_args[:index] + raw_args[index + 2:]
-            config.commandline_profile.get_settings("parameters")[self.path] = raw_args
+            config.commandline_profile.get_settings('parameters')[self.path] = raw_args
             config.merge_settings()
-            run(["parameter"] + self.parameters_callback_split_value(value) + ["unset", self.path])
+            run(['parameter'] + self.parameters_callback_split_value(value) + ['unset', self.path])
             exit(0)
 
     def set_parameter_callback(self, ctx, param, value):
         if value and not ctx.resilient_parsing:
-            raw_args = config.commandline_profile.get_settings("parameters")[self.path]
+            raw_args = config.commandline_profile.get_settings('parameters')[self.path]
             index = raw_args.index('--set-parameter')
             raw_args = raw_args[:index] + raw_args[index + 2:]
-            config.commandline_profile.get_settings("parameters")[self.path] = raw_args
+            config.commandline_profile.get_settings('parameters')[self.path] = raw_args
             config.merge_settings()
-            run(["parameter"] + self.parameters_callback_split_value(value) + ["set", self.path] + ["--"] + raw_args)
+            run(['parameter'] + self.parameters_callback_split_value(value) + ['set', self.path] + ['--'] + raw_args)
             exit(0)
 
     def append_parameter_callback(self, ctx, param, value):
         if value and not ctx.resilient_parsing:
-            raw_args = config.commandline_profile.get_settings("parameters")[self.path]
+            raw_args = config.commandline_profile.get_settings('parameters')[self.path]
             index = raw_args.index('--append-parameter')
             raw_args = raw_args[:index] + raw_args[index + 2:]
-            config.commandline_profile.get_settings("parameters")[self.path] = raw_args
+            config.commandline_profile.get_settings('parameters')[self.path] = raw_args
             config.merge_settings()
-            run(["parameter"] + self.parameters_callback_split_value(value) + ["append", self.path] + ["--"] + raw_args)
+            run(['parameter'] + self.parameters_callback_split_value(value) + ['append', self.path] + ['--'] + raw_args)
             exit(0)
 
     def remove_parameter_callback(self, ctx, param, value):
         if value and not ctx.resilient_parsing:
-            raw_args = config.commandline_profile.get_settings("parameters")[self.path]
+            raw_args = config.commandline_profile.get_settings('parameters')[self.path]
             index = raw_args.index('--remove-parameter')
             raw_args = raw_args[:index] + raw_args[index + 2:]
-            config.commandline_profile.get_settings("parameters")[self.path] = raw_args
+            config.commandline_profile.get_settings('parameters')[self.path] = raw_args
             config.merge_settings()
-            run(["parameter"] + self.parameters_callback_split_value(value) + ["remove", self.path] + ["--"] + raw_args)
+            run(['parameter'] + self.parameters_callback_split_value(value) + ['remove', self.path] + ['--'] + raw_args)
             exit(0)
 
     def show_parameter_callback(self, ctx, param, value):
         if value and not ctx.resilient_parsing:
-            raw_args = config.commandline_profile.get_settings("parameters")[self.path]
+            raw_args = config.commandline_profile.get_settings('parameters')[self.path]
             index = raw_args.index('--show-parameter')
             raw_args = raw_args[:index] + raw_args[index + 2:]
-            config.commandline_profile.get_settings("parameters")[self.path] = raw_args
+            config.commandline_profile.get_settings('parameters')[self.path] = raw_args
             config.merge_settings()
-            run(["parameter"] + self.parameters_callback_split_value(value) + ["show", self.path])
+            run(['parameter'] + self.parameters_callback_split_value(value) + ['show', self.path])
             exit(0)
 
     def edit_parameter_callback(self, ctx, param, value):
         if value and not ctx.resilient_parsing:
-            raw_args = config.commandline_profile.get_settings("parameters")[self.path]
+            raw_args = config.commandline_profile.get_settings('parameters')[self.path]
             index = raw_args.index('--edit-parameter')
             raw_args = raw_args[:index] + raw_args[index + 2:]
-            config.commandline_profile.get_settings("parameters")[self.path] = raw_args
+            config.commandline_profile.get_settings('parameters')[self.path] = raw_args
             config.merge_settings()
-            run(["parameter"] + self.parameters_callback_split_value(value) + ["edit", self.path])
+            run(['parameter'] + self.parameters_callback_split_value(value) + ['edit', self.path])
             exit(0)
 
 
@@ -494,11 +494,11 @@ class RememberParametersMixin(object):
             return args[:-threshold], remaining
 
     def set_commandline_settings(self, ctx, args):
-        config.commandline_profile.get_settings("parameters")[self.path] = args
+        config.commandline_profile.get_settings('parameters')[self.path] = args
         config.merge_settings()
 
     def append_commandline_settings(self, ctx, args):
-        config.commandline_profile.get_settings("parameters")[self.path] += args
+        config.commandline_profile.get_settings('parameters')[self.path] += args
         config.merge_settings()
 
 
@@ -523,12 +523,12 @@ class DeprecatedMixin(object):
     def invoke_handle_deprecated(self, ctx, *args, **kwargs):
         if self.deprecated:
             msg = "'%s' is deprecated" % self.path.replace('.', ' ')
-            version = self.deprecated.get("version")
-            message = self.deprecated.get("message")
+            version = self.deprecated.get('version')
+            message = self.deprecated.get('message')
             if version:
-                msg += " since version %s" % version
+                msg += ' since version %s' % version
             if message:
-                msg += ". " + message
+                msg += '. ' + message
             LOGGER.deprecated(msg)
 
 
@@ -574,13 +574,13 @@ class Command(MissingDocumentationMixin, DeprecatedMixin, TriggerMixin, HelpMixi
 def _list_matching_commands_from_resolver(resolver, parent_path, include_subcommands=False):
     parent = get_command(parent_path)
     if isinstance(parent, config.main_command.__class__):
-        res = {command for command in resolver._list_command_paths(parent) if include_subcommands or "." not in command}
+        res = {command for command in resolver._list_command_paths(parent) if include_subcommands or '.' not in command}
     else:
         res = {
             command[len(parent_path) + 1:]
             for command in resolver._list_command_paths(parent)
             if command.startswith(parent_path +
-                                  ".") and (include_subcommands or "." not in command[len(parent_path) + 1:])
+                                  '.') and (include_subcommands or '.' not in command[len(parent_path) + 1:])
         }
     return res
 
@@ -602,28 +602,28 @@ def get_command_with_resolvers(resolvers, parent_path, name):
         cmd_path = name
     else:
         parent = get_command(parent_path)
-        cmd_path = parent_path + "." + name
+        cmd_path = parent_path + '.' + name
     for resolver in resolvers:
         if name in _list_matching_commands_from_resolver(resolver, parent_path):
             try:
                 cmd = resolver._get_command(cmd_path, parent)
             except BaseException:
-                LOGGER.error(f"Found the command {cmd_path} in the resolver {resolver.name}" " but could not load it.")
+                LOGGER.error(f'Found the command {cmd_path} in the resolver {resolver.name}' ' but could not load it.')
                 raise
             break
     return cmd, resolver
 
 
 class GroupCommandResolver(CommandResolver):
-    name = "group"
+    name = 'group'
 
     def _list_command_paths(self, parent):
         ctx = click_get_current_context_safe()
-        res = {parent.path + "." + cmd for cmd in super(Group, parent).list_commands(ctx)}
+        res = {parent.path + '.' + cmd for cmd in super(Group, parent).list_commands(ctx)}
         return res
 
     def _get_command(self, path, parent):
-        path = path.split(".")
+        path = path.split('.')
         cmd_name = path[-1]
         ctx = click_get_current_context_safe()
         return super(Group, parent).get_command(ctx, cmd_name)
@@ -658,7 +658,7 @@ class Group(click_didyoumean.DYMMixin, MissingDocumentationMixin, DeprecatedMixi
         if self.default_cmd_name is not None:
             formatter.write_paragraph()
             with formatter.indentation():
-                formatter.write_text("When run without sub-command,"
+                formatter.write_text('When run without sub-command,'
                                      " the sub-command '{}' is implicitly run".format(self.default_cmd_name))
 
     def set_default_command(self, command):
@@ -731,22 +731,22 @@ class Group(click_didyoumean.DYMMixin, MissingDocumentationMixin, DeprecatedMixi
     def list_commands(self, ctx):
         # type: (click.Context) -> [Command]
         res = list_commands_with_resolvers(self.commandresolvers, self.path, include_subcommands=True)
-        if hasattr(self, "original_command"):
+        if hasattr(self, 'original_command'):
             res += self.original_command.list_commands(ctx)
-        res = [(c.split(".")[0] if "." in c else c) for c in res]
+        res = [(c.split('.')[0] if '.' in c else c) for c in res]
         return sorted(set(res))
 
     def get_command(self, ctx, cmd_name):
         # type: (click.Context, str) -> Command
-        if "." in cmd_name and not allow_dotted_commands:
-            raise click.UsageError("{} is not a valid command name,"
-                                   " did you mean '{}'?".format(cmd_name, " ".join(cmd_name.split("."))))
-        cmd = get_command_safe(self.path + "." + cmd_name)
+        if '.' in cmd_name and not allow_dotted_commands:
+            raise click.UsageError('{} is not a valid command name,'
+                                   " did you mean '{}'?".format(cmd_name, ' '.join(cmd_name.split('.'))))
+        cmd = get_command_safe(self.path + '.' + cmd_name)
         if cmd is None and cmd_name in self.list_commands(ctx):
-            raise click.ClickException(f"{self.path}.{cmd_name} could not be loaded."
-                                       f" Re run with {config.main_command.path} --develop"
-                                       f" to see the stacktrace or {config.main_command.path}"
-                                       " --debug-on-command-load-error to debug the load error ")
+            raise click.ClickException(f'{self.path}.{cmd_name} could not be loaded.'
+                                       f' Re run with {config.main_command.path} --develop'
+                                       f' to see the stacktrace or {config.main_command.path}'
+                                       ' --debug-on-command-load-error to debug the load error ')
         return cmd
 
 
@@ -755,24 +755,24 @@ def eval_arg(arg):
         return arg
     eval_match = re.match(r'eval(\(\d+\)|):(.+)', arg)
     nexteval_match = re.match(r'nexteval(\(\d+\)|):(.+)', arg)
-    if arg.startswith("noeval:"):
-        arg = arg[len("noeval:"):]
+    if arg.startswith('noeval:'):
+        arg = arg[len('noeval:'):]
     elif nexteval_match:
         arg = 'eval%s:%s' % (
             ('(%s)' % nexteval_match.group(1) if nexteval_match.group(1) else ''), nexteval_match.group(2))
-    elif arg.startswith("value:"):
-        key = arg[len("value:"):]
-        arg = config.get_settings("value").get(key, {"value": None})["value"]
-    elif arg.startswith("pyeval:"):
+    elif arg.startswith('value:'):
+        key = arg[len('value:'):]
+        arg = config.get_settings('value').get(key, {'value': None})['value']
+    elif arg.startswith('pyeval:'):
         try:
-            evaluated_arg = str(eval(arg[len("pyeval:"):]))
-            LOGGER.develop("%s evaluated to %s" % (arg, evaluated_arg))
+            evaluated_arg = str(eval(arg[len('pyeval:'):]))
+            LOGGER.develop('%s evaluated to %s' % (arg, evaluated_arg))
             arg = evaluated_arg
         except Exception:
             LOGGER.develop(traceback.format_exc())
-            LOGGER.error("Something went wrong when evaluating {}."
-                         " If you did not want it to be evaluated"
-                         " please use the following syntax: noeval:{}".format(arg, arg))
+            LOGGER.error('Something went wrong when evaluating {}.'
+                         ' If you did not want it to be evaluated'
+                         ' please use the following syntax: noeval:{}'.format(arg, arg))
             exit(1)
     elif eval_match:
         try:
@@ -782,20 +782,20 @@ def eval_arg(arg):
                 return check_output(shlex.split(expr)).strip()
 
             evaluated_arg = evaluate(config.project, eval_match.group(2))
-            LOGGER.develop("%s evaluated to %s" % (arg, evaluated_arg))
+            LOGGER.develop('%s evaluated to %s' % (arg, evaluated_arg))
             arg = evaluated_arg
         except Exception:
             LOGGER.develop(traceback.format_exc())
-            LOGGER.error("Something went wrong when evaluating {}."
-                         " If you did not want it to be evaluated"
-                         " please use the following syntax: noeval:{}".format(arg, arg))
+            LOGGER.error('Something went wrong when evaluating {}.'
+                         ' If you did not want it to be evaluated'
+                         ' please use the following syntax: noeval:{}'.format(arg, arg))
             exit(1)
     return arg
 
 
 class ParameterMixin(click.Parameter):
     def __init__(self, *args, **kwargs):
-        self.deprecated = kwargs.pop("deprecated", None)
+        self.deprecated = kwargs.pop('deprecated', None)
         super(ParameterMixin, self).__init__(*args, **kwargs)
 
     def __process_value(self, ctx, value):
@@ -821,17 +821,17 @@ class ParameterMixin(click.Parameter):
 
     def get_path(self, ctx):
         path = ctx.command.path or rebuild_path(ctx)
-        return path + "." + self.name.replace("_", "-")
+        return path + '.' + self.name.replace('_', '-')
 
     def _get_default_from_values(self, ctx):
-        return config.get_settings("value").get("default." + self.get_path(ctx), {}).get("value")
+        return config.get_settings('value').get('default.' + self.get_path(ctx), {}).get('value')
 
     def get_default(self, ctx):
         value = self._get_default_from_values(ctx)
         if value is None:
             value = super(ParameterMixin, self).get_default(ctx)
         else:
-            LOGGER.develop("Getting default value {}={}".format(self.get_path(ctx), value))
+            LOGGER.develop('Getting default value {}={}'.format(self.get_path(ctx), value))
             value = self.__process_value(ctx, value)
             value = self.type_cast_value(ctx, value)
         return value
@@ -844,7 +844,7 @@ class ParameterMixin(click.Parameter):
         if res is None:
             metavar = self.type.get_metavar(ctx)
             if metavar:
-                metavar = "%s %s" % (self.human_readable_name, metavar)
+                metavar = '%s %s' % (self.human_readable_name, metavar)
             else:
                 metavar = self.human_readable_name
             res = (metavar, self.help)
@@ -858,18 +858,18 @@ class ParameterMixin(click.Parameter):
 
         if self.default is not None and self.show_default:
             res1 = res[1]
-            res1 += "  [default: "
+            res1 += '  [default: '
             if default:
-                res1 += default + " (computed from value.default.{}".format(self.get_path(ctx))
+                res1 += default + ' (computed from value.default.{}'.format(self.get_path(ctx))
                 if self.default:
-                    res1 += " and overriding static one: " + canon_default
-                res1 += ")"
-            elif isinstance(canon_default, str) and canon_default.startswith("value:"):
-                res1 += config.get_settings("value").get(canon_default[len("value:"):], {"value": "None"}).get("value")
-                res1 += " (computed from {})".format(canon_default)
+                    res1 += ' and overriding static one: ' + canon_default
+                res1 += ')'
+            elif isinstance(canon_default, str) and canon_default.startswith('value:'):
+                res1 += config.get_settings('value').get(canon_default[len('value:'):], {'value': 'None'}).get('value')
+                res1 += ' (computed from {})'.format(canon_default)
             else:
                 res1 += canon_default
-            res1 += "]"
+            res1 += ']'
             res = (
                 res[0],
                 res1,
@@ -877,7 +877,7 @@ class ParameterMixin(click.Parameter):
         if self.deprecated:
             res = (
                 res[0],
-                res[1] + " (deprecated: {})".format(self.deprecated),
+                res[1] + ' (deprecated: {})'.format(self.deprecated),
             )
         return res
 
@@ -907,20 +907,20 @@ def in_project(command):
         AutomaticOption(['--in-project/--no-in-project'],
                         group='working directory',
                         is_flag=True,
-                        help="Run the command in the project directory"),
+                        help='Run the command in the project directory'),
         AutomaticOption(['--cwd'],
                         group='working directory',
-                        help="Run the command in this directory. It can be used with --in-project to change to a"
-                        " directory relative to the project directory")
+                        help='Run the command in this directory. It can be used with --in-project to change to a'
+                        ' directory relative to the project directory')
     ]
     callback = command.callback
 
     @functools.wraps(callback)
     def launcher(*args, **kwargs):
-        in_project = kwargs["in_project"]
-        cwd = kwargs["cwd"]
-        del kwargs["in_project"]
-        del kwargs["cwd"]
+        in_project = kwargs['in_project']
+        cwd = kwargs['cwd']
+        del kwargs['in_project']
+        del kwargs['cwd']
 
         def run_in_cwd():
             if cwd:
@@ -962,7 +962,7 @@ def command(ignore_unknown_options=False,
         f = click_command(f)
         if change_directory_options:
             f = in_project(f)
-        if hasattr(f.callback, "inherited_params"):
+        if hasattr(f.callback, 'inherited_params'):
             f.inherited_params = f.callback.inherited_params
         if flowdepends is not None:
             f.clickproject_flowdepends = flowdepends
@@ -980,19 +980,19 @@ def group(*args, **kwargs):
 
 def option(*args, **kwargs):
     """Declare on new option"""
-    deprecated = kwargs.get("deprecated")
-    callback = kwargs.get("callback")
+    deprecated = kwargs.get('deprecated')
+    callback = kwargs.get('callback')
     if deprecated:
 
         def new_callback(ctx, attr, value):
             if attr.name not in ctx.clk_default_catch:
-                LOGGER.warning("{} is deprecated: {}".format(attr.opts[0], deprecated))
+                LOGGER.warning('{} is deprecated: {}'.format(attr.opts[0], deprecated))
             if callback:
                 return callback(ctx, attr, value)
             else:
                 return value
 
-        kwargs["callback"] = new_callback
+        kwargs['callback'] = new_callback
     kwargs.setdefault('cls', Option)
     return click.option(*args, **kwargs)
 
@@ -1005,19 +1005,19 @@ def flag(*args, **kwargs):
 
 def argument(*args, **kwargs):
     """Declare on new argument"""
-    deprecated = kwargs.get("deprecated")
-    callback = kwargs.get("callback")
+    deprecated = kwargs.get('deprecated')
+    callback = kwargs.get('callback')
     if deprecated:
 
         def new_callback(ctx, attr, value):
             if attr.name not in ctx.clk_default_catch:
-                LOGGER.warning("{} is deprecated: {}".format(attr.opts[0], deprecated))
+                LOGGER.warning('{} is deprecated: {}'.format(attr.opts[0], deprecated))
             if callback:
                 return callback(ctx, attr, value)
             else:
                 return value
 
-        kwargs["callback"] = new_callback
+        kwargs['callback'] = new_callback
     kwargs.setdefault('cls', Argument)
     return click.argument(*args, **kwargs)
 
@@ -1074,37 +1074,37 @@ class CommandType(ParameterType):
         def get_candidates(parent_path):
             if parent_path != config.main_command.path:
                 candidates = [
-                    (parent_path + "." + cmd,
-                     (get_command_safe(parent_path + "." +
-                                       cmd).short_help if get_command_safe(parent_path + "." +
-                                                                           cmd) is not None else "Broken command"))
+                    (parent_path + '.' + cmd,
+                     (get_command_safe(parent_path + '.' +
+                                       cmd).short_help if get_command_safe(parent_path + '.' +
+                                                                           cmd) is not None else 'Broken command'))
                     for cmd in list_commands(parent_path)
                 ]
             else:
                 candidates = [
-                    (cmd, (get_command_safe(cmd).short_help if get_command_safe(cmd) is not None else "Broken command"))
+                    (cmd, (get_command_safe(cmd).short_help if get_command_safe(cmd) is not None else 'Broken command'))
                     for cmd in list_commands(config.main_command.path)
-                ] + [(config.main_command.path, "Main parameters")]
-            period_candidates = [(elem[0] + ".", None)
+                ] + [(config.main_command.path, 'Main parameters')]
+            period_candidates = [(elem[0] + '.', None)
                                  for elem in candidates
                                  if isinstance(get_command_safe(elem[0]), Group)]
             candidates += period_candidates
             return candidates
 
-        if "." in incomplete:
-            split = incomplete.split(".")
-            parent_path = ".".join(split[:-1])
+        if '.' in incomplete:
+            split = incomplete.split('.')
+            parent_path = '.'.join(split[:-1])
         else:
             parent_path = config.main_command.path
         candidates = get_candidates(parent_path)
         return [(cmd, cmd_help)
                 for cmd, cmd_help in candidates
-                if startswith(cmd, incomplete) and (self.recursive or "." not in cmd)]
+                if startswith(cmd, incomplete) and (self.recursive or '.' not in cmd)]
 
     def convert(self, value, param, ctx):
         if get_command_safe(value) is None:
-            if "." in value:
-                parent_path = ".".join(value.split(".")[:-1])
+            if '.' in value:
+                parent_path = '.'.join(value.split('.')[:-1])
             else:
                 parent_path = config.main_command.path
             choices = list_commands(parent_path)
@@ -1127,7 +1127,7 @@ class CommandSettingsKeyType(ParameterType):
         def get_shortdoc(path):
             cmd = get_command_safe(path)
             if cmd is None:
-                return "Broken command"
+                return 'Broken command'
             else:
                 return cmd.short_help
 
@@ -1143,8 +1143,8 @@ class CommandSettingsKeyType(ParameterType):
 
 class MainCommand(click_didyoumean.DYMMixin, DeprecatedMixin, TriggerMixin, HelpMixin, ExtraParametersMixin,
                   RememberParametersMixin, click.MultiCommand):
-    auto_envvar_prefix = "CLK"
-    path = "clk"
+    auto_envvar_prefix = 'CLK'
+    path = 'clk'
     commandresolvers = [CoreCommandResolver()]
 
     def __init__(self, *args, **kwargs):
@@ -1199,7 +1199,7 @@ class MainCommand(click_didyoumean.DYMMixin, DeprecatedMixin, TriggerMixin, Help
                                                                             new_extra_args, args), )
             ctx.complete_arguments = list(new_extra_args)
 
-        if not hasattr(ctx, "has_subcommands"):
+        if not hasattr(ctx, 'has_subcommands'):
             ctx.has_subcommands = True
         if not ctx.resilient_parsing:
             if ctx.protected_args:
@@ -1216,19 +1216,19 @@ class MainCommand(click_didyoumean.DYMMixin, DeprecatedMixin, TriggerMixin, Help
 
     def list_commands(self, ctx):
         return sorted(
-            set([(c.split(".")[0] if "." in c else c)
+            set([(c.split('.')[0] if '.' in c else c)
                  for c in list_commands_with_resolvers(self.commandresolvers, self.path, include_subcommands=True)]))
 
     def get_command(self, ctx, name):
-        if "." in name and not allow_dotted_commands:
-            raise click.UsageError("{} is not a valid command name,"
-                                   " did you mean '{}'?".format(name, " ".join(name.split("."))))
+        if '.' in name and not allow_dotted_commands:
+            raise click.UsageError('{} is not a valid command name,'
+                                   " did you mean '{}'?".format(name, ' '.join(name.split('.'))))
         cmd = get_command_safe(name)
         if cmd is None and name in self.list_commands(ctx):
-            raise click.ClickException(f"{self.path}.{name} could not be loaded."
-                                       f" Re run with {config.main_command.path} --develop"
-                                       f" to see the stacktrace or {config.main_command.path}"
-                                       " --debug-on-command-load-error to debug the load error ")
+            raise click.ClickException(f'{self.path}.{name} could not be loaded.'
+                                       f' Re run with {config.main_command.path} --develop'
+                                       f' to see the stacktrace or {config.main_command.path}'
+                                       ' --debug-on-command-load-error to debug the load error ')
         return cmd
 
 
@@ -1301,9 +1301,9 @@ def entry_point(cls=None, **kwargs):
     def decorator(f):
         if cls is None:
             path = f.__name__
-            _cls = type("{}Main".format(path), (MainCommand, ), {
-                "path": path,
-                "auto_envvar_prefix": path.upper(),
+            _cls = type('{}Main'.format(path), (MainCommand, ), {
+                'path': path,
+                'auto_envvar_prefix': path.upper(),
             })
         else:
             _cls = cls

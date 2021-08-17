@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-# -*- coding:utf-8 -*-
+# -*- coding: utf-8 -*-
 
 # keep it at the begin in order to get an accurate startup time
 from datetime import datetime

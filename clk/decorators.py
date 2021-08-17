@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-# -*- coding:utf-8 -*-
+# -*- coding: utf-8 -*-
 
 import functools
 import types
@@ -20,9 +20,9 @@ LOGGER = get_logger(__name__)
 
 
 def param_config(name, *args, **kwargs):
-    typ = kwargs.pop("typ", object)
-    kls = kwargs.pop("kls", option)
-    cls = kwargs.get("cls", {
+    typ = kwargs.pop('typ', object)
+    kls = kwargs.pop('kls', option)
+    cls = kwargs.get('cls', {
         option: click.core.Option,
         argument: click.core.Argument,
         flag: click.core.Option,
@@ -31,7 +31,7 @@ def param_config(name, *args, **kwargs):
     class Conf(typ):
         pass
 
-    init_callback = kwargs.get("callback")
+    init_callback = kwargs.get('callback')
     if not hasattr(config, name):
         setattr(config, name, Conf())
 
@@ -44,11 +44,11 @@ def param_config(name, *args, **kwargs):
             setattr(getattr(config, name), attr.name, value)
         return value
 
-    kwargs["expose_value"] = kwargs.get("expose_value", False)
-    kwargs["callback"] = _subcommand_config_callback
+    kwargs['expose_value'] = kwargs.get('expose_value', False)
+    kwargs['callback'] = _subcommand_config_callback
     # find out the name of the param to setup the default value
     o = cls(args)
-    default = kwargs.get("default")
+    default = kwargs.get('default')
     if callable(default):
         default = default()
     setattr(getattr(config, name), o.name, default)
@@ -71,15 +71,15 @@ def use_settings(settings_name, settings_cls, override=True, default_profile='co
             }
 
         def setup_settings(ctx):
-            if ctx is not None and hasattr(ctx, "clk_profile"):
+            if ctx is not None and hasattr(ctx, 'clk_profile'):
                 profile_name = ctx.clk_profile
             else:
                 profile_name = default_profile
-            if ctx is not None and hasattr(ctx, "clk_extension"):
+            if ctx is not None and hasattr(ctx, 'clk_extension'):
                 extension = ctx.clk_extension
             else:
                 extension = None
-            if profile_name == "context":
+            if profile_name == 'context':
                 compute_settings(False)
                 s1, s2 = merge_settings(config.iter_settings(
                     recurse=True,
@@ -132,24 +132,24 @@ def use_settings(settings_name, settings_cls, override=True, default_profile='co
 
         for profile in [profile_name_to_commandline_name(profile.name) for profile in config.root_profiles]:
             f = flag('--{}'.format(profile),
-                     "profile",
+                     'profile',
                      flag_value=profile,
-                     help="Consider only the {} profile".format(profile),
+                     help='Consider only the {} profile'.format(profile),
                      callback=profile_callback)(f)
-        f = flag('--context', "profile", flag_value="context", help="Guess the profile", callback=profile_callback)(f)
-        f = option('--extension', type=ExtensionType(), callback=extension_callback, help="Use this extension")(f)
+        f = flag('--context', 'profile', flag_value='context', help='Guess the profile', callback=profile_callback)(f)
+        f = option('--extension', type=ExtensionType(), callback=extension_callback, help='Use this extension')(f)
 
         setup_settings(None)
 
         @functools.wraps(f)
         def wrapped(*args, **kwargs):
             setattr(config, settings_name, settings_store)
-            del kwargs["extension"]
-            del kwargs["profile"]
-            LOGGER.debug("Will use the settings at profile {}".format(settings_store.readprofile))
+            del kwargs['extension']
+            del kwargs['profile']
+            LOGGER.debug('Will use the settings at profile {}'.format(settings_store.readprofile))
             return f(*args, **kwargs)
 
-        wrapped.inherited_params = ["extension", "profile"]
+        wrapped.inherited_params = ['extension', 'profile']
         return wrapped
 
     return decorator
@@ -160,13 +160,13 @@ pass_context = click.pass_context
 
 def deprecated(version=None, message=None):
     def deprecated_decorator(command):
-        deprecated_suffix = " (deprecated)"
-        help = command.help.splitlines()[0] if command.help else ""
+        deprecated_suffix = ' (deprecated)'
+        help = command.help.splitlines()[0] if command.help else ''
         ref_short_help = make_default_short_help(help)
         if command.short_help == ref_short_help:
             command.short_help = make_default_short_help(command.help.splitlines()[0],
                                                          max_length=90 - len(deprecated_suffix)) + deprecated_suffix
-        command.deprecated = {"version": version, "message": message}
+        command.deprecated = {'version': version, 'message': message}
         return command
 
     return deprecated_decorator
@@ -202,7 +202,7 @@ def table_fields(func=None, choices=(), default=None):
                    multiple=True,
                    type=fields_type,
                    default=default,
-                   help="Only display the following fields in the output",
+                   help='Only display the following fields in the output',
                    callback=callback)
         ]
         for opt in reversed(opts):

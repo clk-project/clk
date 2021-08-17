@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# -*- coding:utf-8 -*-
+# -*- coding: utf-8 -*-
 
 import click
 
@@ -15,20 +15,20 @@ from clk.overloads import CommandSettingsKeyType, CommandType  # NOQA: just expo
 
 
 class Suggestion(click.Choice):
-    name = "Suggestion"
+    name = 'Suggestion'
 
     def convert(self, value, param, ctx):
         return value
 
     def get_metavar(self, param):
-        return "[{}|...]".format("|".join(self.choices))
+        return '[{}|...]'.format('|'.join(self.choices))
 
     def get_missing_message(self, param):
-        return ("Either choose from:\n\t{}." " or provide a new one".format(",\n\t".join(self.choices)))
+        return ('Either choose from:\n\t{}.' ' or provide a new one'.format(',\n\t'.join(self.choices)))
 
 
 class Profile(DynamicChoice):
-    name = "ProfileType"
+    name = 'ProfileType'
 
     def choices(self):
         return self.profiles.keys()
@@ -42,7 +42,7 @@ class Profile(DynamicChoice):
 
 
 class DirectoryProfile(Profile):
-    name = "DirectoryProfileType"
+    name = 'DirectoryProfileType'
 
     def __init__(self, root_only=False):
         self.root_only = root_only

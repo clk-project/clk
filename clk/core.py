@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-# -*- coding:utf-8 -*-
+# -*- coding: utf-8 -*-
 
 import hashlib
 import logging
@@ -51,7 +51,7 @@ def run(cmd, *args, **kwargs):
     standard output. This is exactly what run is about.
 
     """
-    cmd = config.commandline_profile.get_settings("parameters")[config.main_command.path] + cmd
+    cmd = config.commandline_profile.get_settings('parameters')[config.main_command.path] + cmd
     with temp_config():
         return config.main_command(cmd, *args, **kwargs)
 
@@ -73,7 +73,7 @@ def rebuild_path(ctx):
     path = ctx.command.name
     parent_path = rebuild_path(ctx.parent)
     if (parent_path is not None and not isinstance(ctx.parent.command, config.main_command.__class__)):
-        path = parent_path + "." + path
+        path = parent_path + '.' + path
     return path
 
 
@@ -89,7 +89,7 @@ def get_ctx(path, side_effects=False, resilient_parsing=None):
         else:
             with temp_config():
                 res = resolve_context_with_side_effects(path, resilient_parsing=resilient_parsing)
-        assert res is not None, "Could not interpret the command {}".format(".".join(path))
+        assert res is not None, 'Could not interpret the command {}'.format('.'.join(path))
         get_ctx_cache[key] = res
     else:
         res = get_ctx_cache[key]
@@ -153,7 +153,7 @@ def main_command_arguments_to_dict(opts, resilient_parsing):
             pos += nargs
     except IndexError:
         if not resilient_parsing:
-            raise click.UsageError("%s option requires an argument" % opts[pos])
+            raise click.UsageError('%s option requires an argument' % opts[pos])
     return res
 
 
@@ -171,13 +171,13 @@ def main_command_arguments_from_dict(parameters):
         elif isinstance(value, list):
             res += [opt] + value
         else:
-            raise NotImplementedError("Cannot build a command line with {}: {}".format(key, value))
+            raise NotImplementedError('Cannot build a command line with {}: {}'.format(key, value))
     return res
 
 
 class ExtensionType(ParameterType):
-    envvar_list_splitter = ","
-    name = "extension"
+    envvar_list_splitter = ','
+    name = 'extension'
 
     @property
     def choices(self):
@@ -198,70 +198,70 @@ class ExtensionTypeSuggestion(ExtensionType):
 
 
 class ColorType(ParameterType):
-    name = "color"
+    name = 'color'
     colors = [
-        "black",
-        "red",
-        "green",
-        "yellow",
-        "blue",
-        "magenta",
-        "cyan",
-        "white",
+        'black',
+        'red',
+        'green',
+        'yellow',
+        'blue',
+        'magenta',
+        'cyan',
+        'white',
     ]
     args = {
-        "fg": colors,
-        "bg": colors,
-        "dim": [True, False],
-        "bold": [True, False],
-        "underline": [True, False],
-        "blink": [True, False],
-        "reverse": [True, False],
-        "reset": [True, False],
+        'fg': colors,
+        'bg': colors,
+        'dim': [True, False],
+        'bold': [True, False],
+        'underline': [True, False],
+        'blink': [True, False],
+        'reverse': [True, False],
+        'reset': [True, False],
     }
     converters = {
-        "fg": lambda e: e,
-        "bg": lambda e: e,
-        "dim": lambda e: True if e == "True" else False,
-        "bold": lambda e: True if e == "True" else False,
-        "underline": lambda e: True if e == "True" else False,
-        "blink": lambda e: True if e == "True" else False,
-        "reverse": lambda e: True if e == "True" else False,
-        "reset": lambda e: True if e == "True" else False,
+        'fg': lambda e: e,
+        'bg': lambda e: e,
+        'dim': lambda e: True if e == 'True' else False,
+        'bold': lambda e: True if e == 'True' else False,
+        'underline': lambda e: True if e == 'True' else False,
+        'blink': lambda e: True if e == 'True' else False,
+        'reverse': lambda e: True if e == 'True' else False,
+        'reset': lambda e: True if e == 'True' else False,
     }
 
     @staticmethod
     def get_kwargs(color_name):
         def splitpart(part):
-            parts = part.split("-")
+            parts = part.split('-')
             if len(parts) == 1:
-                return ["fg", part]
+                return ['fg', part]
             else:
                 return parts
 
-        return {key: value for key, value in [splitpart(part) for part in color_name.split(",")]}
+        return {key: value for key, value in [splitpart(part) for part in color_name.split(',')]}
 
     def complete(self, ctx, incomplete):
         # got from click.termui.style
-        if "," not in incomplete and ":" not in incomplete:
-            candidates = self.colors + [key + "-" for key in self.args.keys()]
+        if ',' not in incomplete and ':' not in incomplete:
+            candidates = self.colors + [key + '-' for key in self.args.keys()]
             candidates = [candidate for candidate in candidates if startswith(candidate, incomplete)]
             if len(candidates) == 1:
                 incomplete = candidates[0]
             tested = incomplete
-            prefix = ""
-        valuematch = re.match("^(?P<prefix>.*?)(?P<key>[^,:]+)-(?P<value>[^,]*)$", incomplete)
-        keymatch = re.match("^(?P<prefix>.*?),(?P<key>[^,:]*)$", incomplete)
+            prefix = ''
+        valuematch = re.match('^(?P<prefix>.*?)(?P<key>[^,:]+)-(?P<value>[^,]*)$', incomplete)
+        keymatch = re.match('^(?P<prefix>.*?),(?P<key>[^,:]*)$', incomplete)
         if valuematch:
             prefix, key, value = valuematch.groups()
             candidates = self.args.get(key, [])
-            tested = value or ""
-            prefix = "{}{}-".format(prefix, key)
+            tested = value or ''
+            prefix = '{}{}-'.format(prefix, key)
         elif keymatch:
             prefix, key = keymatch.groups()
-            candidates = [key_ + "-" for key_ in self.args.keys()]
+            candidates = [key_ + '-' for key_ in self.args.keys()]
             tested = key
-            prefix = "{},".format(prefix)
+            prefix = '{},'.format(prefix)
         return [prefix + str(candidate) for candidate in candidates if startswith(str(candidate), tested)]
 
     def convert(self, value, param, ctx):
@@ -307,7 +307,7 @@ def main_command_decoration(f, cls, **kwargs):
     f = main_command_option('--force-color/--no-force-color',
                             is_flag=True,
                             callback=force_color_callback,
-                            help="Force the color output, even if the output is not a terminal")(f)
+                            help='Force the color output, even if the output is not a terminal')(f)
     f = main_command_option('-n',
                             '--dry-run/--no-dry-run',
                             is_flag=True,
@@ -316,29 +316,29 @@ def main_command_decoration(f, cls, **kwargs):
     f = main_command_option('--no-cache/--cache',
                             is_flag=True,
                             callback=no_cache_callback,
-                            help="Deactivate the caching mechanism")(f)
+                            help='Deactivate the caching mechanism')(f)
     f = main_command_option('--autoflow/--no-autoflow',
-                            help="Automatically trigger the --flow option in"
-                            " every command",
+                            help='Automatically trigger the --flow option in'
+                            ' every command',
                             is_flag=True,
                             callback=autoflow_callback,
                             default=None)(f)
-    f = main_command_option('-P', '--project', metavar="DIR", help="Project directory", callback=project_callback)(f)
+    f = main_command_option('-P', '--project', metavar='DIR', help='Project directory', callback=project_callback)(f)
     f = main_command_option(
         '--persist-migration/--no-persist-migration',
-        help=("Make the profile migration persistent,"
-              " using --no-persist-migration will preserve the profiles,"
-              " unless you explicitly write into them."
-              " This is useful if you want to use a razor edge version of the application"
-              " without forcing peoples to move to it."),
+        help=('Make the profile migration persistent,'
+              ' using --no-persist-migration will preserve the profiles,'
+              ' unless you explicitly write into them.'
+              ' This is useful if you want to use a razor edge version of the application'
+              ' without forcing peoples to move to it.'),
         is_flag=True,
         default=True,
         callback=persist_migration_callback,
     )(f)
-    f = main_command_option('--plugin-dirs', help="", callback=plugin_dirs_callback, multiple=True)(f)
+    f = main_command_option('--plugin-dirs', help='', callback=plugin_dirs_callback, multiple=True)(f)
     f = main_command_option('--alternate-style',
-                            metavar="STYLE",
-                            help="Alternate style",
+                            metavar='STYLE',
+                            help='Alternate style',
                             callback=alternate_style_callback,
                             default='fg-cyan' if platform.system() == 'Windows' else 'dim-True',
                             type=ColorType())(f)
@@ -350,25 +350,25 @@ def main_command_decoration(f, cls, **kwargs):
                             help="Log level (default to 'status')")(f)
     f = main_command_option('-q',
                             '--quiet/--no-quiet',
-                            help="Same as --log-level critical",
+                            help='Same as --log-level critical',
                             callback=quiet_callback,
                             is_eager=True,
                             default=None)(f)
     f = main_command_option('-a',
                             '--action/--no-action',
-                            help="Same as --log-level action",
+                            help='Same as --log-level action',
                             callback=action_callback,
                             is_eager=True,
                             default=None)(f)
     f = main_command_option('-d',
                             '--debug/--no-debug',
-                            help="Same as --log-level debug",
+                            help='Same as --log-level debug',
                             callback=debug_callback,
                             is_eager=True,
                             default=None)(f)
     f = main_command_option('-D',
                             '--develop/--no-develop',
-                            help="Same as --log-level develop",
+                            help='Same as --log-level develop',
                             callback=develop_callback,
                             is_eager=True,
                             default=None)(f)
@@ -376,40 +376,40 @@ def main_command_decoration(f, cls, **kwargs):
                             default=None,
                             type=click.Choice(LOG_LEVELS.keys()),
                             callback=exit_on_log_level_callback,
-                            help="Exit when one log of this level is issued."
-                            " Useful to reproduce the -Werror behavior of gcc")(f)
+                            help='Exit when one log of this level is issued.'
+                            ' Useful to reproduce the -Werror behavior of gcc')(f)
     f = main_command_option('--post-mortem/--no-post-mortem',
-                            help="Run a post-mortem debugger in case of exception",
+                            help='Run a post-mortem debugger in case of exception',
                             callback=post_mortem_callback,
                             is_eager=True,
                             default=None)(f)
     f = main_command_option('--debug-on-command-load-error',
                             is_flag=True,
-                            help="Trigger a debugger whenever a command fails to load",
+                            help='Trigger a debugger whenever a command fails to load',
                             callback=debug_on_command_load_error_callback)(f)
-    f = main_command_option("--report-file",
-                            help="Create a report file to put with bug reports",
+    f = main_command_option('--report-file',
+                            help='Create a report file to put with bug reports',
                             callback=report_file_callback,
                             is_eager=True)(f)
     f = main_command_option('-e',
                             '--extension',
                             callback=extension_callback,
-                            help="Enable this extension for the time of the command",
+                            help='Enable this extension for the time of the command',
                             type=ExtensionTypeSuggestion(),
                             multiple=True)(f)
     f = main_command_option('-u',
                             '--without-extension',
                             callback=without_extension_callback,
-                            help="Disable this extension for the time of the command",
+                            help='Disable this extension for the time of the command',
                             type=ExtensionTypeSuggestion(),
                             multiple=True)(f)
     f = main_command_option('--profiling',
                             is_flag=True,
                             callback=enable_profiling_callback,
-                            help="Enable profiling the application code")(f)
+                            help='Enable profiling the application code')(f)
     f = main_command_option('--env',
                             callback=add_custom_env,
-                            help="Add this custom environment variable",
+                            help='Add this custom environment variable',
                             multiple=True)(f)
     f = click.group(cls=cls, invoke_without_command=True)(f)
     prog_name = cls.path
@@ -422,11 +422,11 @@ def main_command_decoration(f, cls, **kwargs):
 
     def new_callback(*args, **kwargs):
         migrate_profiles()
-        LOGGER.develop("Global profile: {}".format(config.global_profile.location))
+        LOGGER.develop('Global profile: {}'.format(config.global_profile.location))
         if config.local_profile:
-            LOGGER.develop("Local profile: {}".format(config.local_profile.location))
+            LOGGER.develop('Local profile: {}'.format(config.local_profile.location))
         ctx = click.get_current_context()
-        if kwargs.get("help") or not ctx.has_subcommands:
+        if kwargs.get('help') or not ctx.has_subcommands:
             click.echo(ctx.get_help(), color=ctx.color)
             ctx.exit()
         return old_callback(*args, **kwargs)
@@ -460,22 +460,22 @@ def project_callback(ctx, attr, value):
 
 @main_command_options_callback
 def extension_callback(ctx, attr, values):
-    extensions = config.commandline_profile.get_settings("extension")
+    extensions = config.commandline_profile.get_settings('extension')
     for value in values:
         extension = extensions.get(value, {})
-        extension["enabled"] = True
+        extension['enabled'] = True
         extensions[value] = extension
-    config.commandline_profile.set_settings("extension", extensions)
+    config.commandline_profile.set_settings('extension', extensions)
     return values
 
 
 def without_extension_callback(ctx, attr, values):
-    extensions = config.commandline_profile.get_settings("extension")
+    extensions = config.commandline_profile.get_settings('extension')
     for value in values:
         extension = extensions.get(value, {})
-        extension["enabled"] = False
+        extension['enabled'] = False
         extensions[value] = extension
-    config.commandline_profile.set_settings("extension", extensions)
+    config.commandline_profile.set_settings('extension', extensions)
     return values
 
 
@@ -495,8 +495,8 @@ def enable_profiling_callback(ctx, attr, value):
 def add_custom_env(ctx, attr, values):
     if values is not None:
         for value in values:
-            key, *rest = value.split("=")
-            rest = "=".join(rest)
+            key, *rest = value.split('=')
+            rest = '='.join(rest)
             config.override_env[key] = rest
     return values
 
@@ -570,8 +570,8 @@ def no_cache_callback(ctx, attr, value):
 def quiet_callback(ctx, attr, value):
     if value:
         config.log_level = 'critical'
-    elif value is not None and config.log_level == "critical":
-        config.log_level = "command"
+    elif value is not None and config.log_level == 'critical':
+        config.log_level = 'command'
     return value
 
 
@@ -642,7 +642,7 @@ def main():
             log.exit_on_log_level = None
             raise
     except click.exceptions.Abort:
-        LOGGER.debug("Abooooooooort!!")
+        LOGGER.debug('Abooooooooort!!')
         exitcode = 1
     except click.ClickException as e:
         if isinstance(e, click.UsageError) and e.ctx is not None:
@@ -651,8 +651,8 @@ def main():
         LOGGER.error(e.format_message())
         if isinstance(e, click.exceptions.NoSuchOption):
             click.echo("Hint: If you don't know where this option comes from,"
-                       " try checking the parameters (with {} --no-parameter"
-                       " parameters show).".format(config.main_command.path))
+                       ' try checking the parameters (with {} --no-parameter'
+                       ' parameters show).'.format(config.main_command.path))
         post_mortem()
         exitcode = e.exit_code
     except subprocess.CalledProcessError as e:
@@ -663,11 +663,11 @@ def main():
         exitcode = e.returncode
     except NotImplementedError as e:
         log_trace()
-        click.echo("This command reached a part of the code yet to implement. "
-                   "Please help us by either submitting patches or "
-                   "sending report files to us. ({} --report-file .../somefile RESTOFCOMMAND, "
-                   "then send .../somefile to us on"
-                   " https://github.com/clk-project/clk/issues/new)".format(config.main_command.path))
+        click.echo('This command reached a part of the code yet to implement. '
+                   'Please help us by either submitting patches or '
+                   'sending report files to us. ({} --report-file .../somefile RESTOFCOMMAND, '
+                   'then send .../somefile to us on'
+                   ' https://github.com/clk-project/clk/issues/new)'.format(config.main_command.path))
         LOGGER.error(str(e))
         post_mortem()
         exitcode = 2
@@ -679,13 +679,13 @@ def main():
     except (Exception, log.LogLevelExitException) as e:
         log_trace()
         LOGGER.exception(str(e))
-        LOGGER.error("Hmm, it looks like we did not properly catch this error."
-                     " Please help us improve clk by telling us what"
-                     " caused the error on"
-                     " https://github.com/clk-project/clk/issues/new ."
-                     " If you feel like a pythonista, you can try debugging"
-                     " the issue yourself, running the command"
-                     " with {cmd} --post-mortem or {cmd} --develop".format(cmd=config.main_command.path))
+        LOGGER.error('Hmm, it looks like we did not properly catch this error.'
+                     ' Please help us improve clk by telling us what'
+                     ' caused the error on'
+                     ' https://github.com/clk-project/clk/issues/new .'
+                     ' If you feel like a pythonista, you can try debugging'
+                     ' the issue yourself, running the command'
+                     ' with {cmd} --post-mortem or {cmd} --develop'.format(cmd=config.main_command.path))
         post_mortem()
         exitcode = 1
     finally:
@@ -698,7 +698,7 @@ def main():
             print(s.getvalue())
         trigger()
         end_time = datetime.now()
-        LOGGER.debug("command run in %s" % natural_delta(end_time - startup_time))
+        LOGGER.debug('command run in %s' % natural_delta(end_time - startup_time))
     exit(exitcode)
 
 
@@ -718,8 +718,8 @@ def cache_disk(f=None, expire=int(os.environ.get(u'CLK_CACHE_EXPIRE', 24 * 60 * 
 
         def inner_function(*args, **kwargs):
             # calculate a cache key based on the decorated method signature
-            key = u"{}{}{}{}".format(re.sub(r"pluginbase\._internalspace.[^\.]+\.", "clk.plugins.", f.__module__),
-                                     f.__name__, args, kwargs).encode(u"utf-8")
+            key = u'{}{}{}{}'.format(re.sub(r'pluginbase\._internalspace.[^\.]+\.', 'clk.plugins.', f.__module__),
+                                     f.__name__, args, kwargs).encode(u'utf-8')
             # print(key)
             key = hashlib.sha1(key).hexdigest()
             if not os.path.exists(cache_folder):
@@ -730,11 +730,11 @@ def cache_disk(f=None, expire=int(os.environ.get(u'CLK_CACHE_EXPIRE', 24 * 60 * 
                 modified = os.path.getmtime(filepath)
                 age_seconds = time.time() - modified
                 if expire is None or age_seconds < expire:
-                    return pickle.load(open(filepath, u"rb"))
+                    return pickle.load(open(filepath, u'rb'))
             # call the decorated function...
             result = f(*args, **kwargs)
             # ... and save the cached object for next time
-            pickle.dump(result, open(filepath, u"wb"))
+            pickle.dump(result, open(filepath, u'wb'))
             return result
 
         return inner_function

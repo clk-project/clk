@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-# -*- coding:utf-8 -*-
+# -*- coding: utf-8 -*-
 """General purpose functions, not directly linked to clk"""
 
 import datetime
@@ -44,13 +44,13 @@ DocumentedChoice = DocumentedChoice
 
 
 def read_properties_file(file_name):
-    return dict([line.strip().split("=") for line in open(file_name, "r").readlines() if "=" in line])
+    return dict([line.strip().split('=') for line in open(file_name, 'r').readlines() if '=' in line])
 
 
 def ensure_unicode(value):
     """Convert a string in unicode"""
     if not isinstance(value, str):
-        return value.decode("utf-8")
+        return value.decode('utf-8')
     else:
         return value
 
@@ -61,7 +61,7 @@ def ln(src, link_name):
         src = str(src)
     if isinstance(link_name, Path):
         link_name = str(link_name)
-    LOGGER.action("create symlink {} -> {}".format(link_name, src))
+    LOGGER.action('create symlink {} -> {}'.format(link_name, src))
     if not dry_run:
         os.symlink(src, link_name)
 
@@ -74,7 +74,7 @@ def makedirs(dir):
 
     """
     if not os.path.exists(dir):
-        LOGGER.action("create directory {}".format(dir))
+        LOGGER.action('create directory {}'.format(dir))
         if not dry_run:
             os.makedirs(dir)
     return Path(dir)
@@ -85,7 +85,7 @@ _makedirs = makedirs
 
 def chmod(file, mode):
     """Change the mode bits of a file"""
-    LOGGER.action("chmod {} to {}".format(file, oct(mode)))
+    LOGGER.action('chmod {} to {}'.format(file, oct(mode)))
     if not dry_run:
         os.chmod(file, mode)
 
@@ -96,14 +96,14 @@ def move(src, dst):
     See shutil.move
 
     """
-    LOGGER.action("Move {} to {}".format(src, dst))
+    LOGGER.action('Move {} to {}'.format(src, dst))
     if not dry_run:
         shutil.move(src, dst)
 
 
 def createfile(name, content, append=False, internal=False, force=False, makedirs=False, mode=None):
     if os.path.exists(name) and not force:
-        click.UsageError(f"{name} already exists")
+        click.UsageError(f'{name} already exists')
     if makedirs:
         _makedirs(Path(name).parent)
     if internal:
@@ -111,15 +111,15 @@ def createfile(name, content, append=False, internal=False, force=False, makedir
     else:
         logger = LOGGER.action
     if append:
-        logger("appending to the file {}".format(name))
+        logger('appending to the file {}'.format(name))
     else:
-        logger("writing to the file {}".format(name))
+        logger('writing to the file {}'.format(name))
     if dry_run:
-        logger("with content {}".format(content))
+        logger('with content {}'.format(content))
     else:
-        flag = "a" if append else "w"
-        flag += "b"
-        open(name, flag).write(content.encode("utf-8"))
+        flag = 'a' if append else 'w'
+        flag += 'b'
+        open(name, flag).write(content.encode('utf-8'))
     if mode:
         chmod(name, mode)
     return Path(name)
@@ -131,7 +131,7 @@ def copy(src, dst):
     if isinstance(dst, Path):
         dst = str(dst)
 
-    LOGGER.action("copy {} to {}".format(src, dst))
+    LOGGER.action('copy {} to {}'.format(src, dst))
     if dry_run:
         return
     if os.path.isdir(src):
@@ -143,14 +143,14 @@ def copy(src, dst):
 def link(src, dst):
     if platform.system() == 'Windows':
         return copy(src, dst)
-    LOGGER.action("hard link {} to {}".format(src, dst))
+    LOGGER.action('hard link {} to {}'.format(src, dst))
     if dry_run:
         return
     os.link(src, dst)
 
 
 def rm(*file_or_tree):
-    LOGGER.action("remove {}".format(' '.join(map(str, file_or_tree))))
+    LOGGER.action('remove {}'.format(' '.join(map(str, file_or_tree))))
     if dry_run:
         return
     for f in file_or_tree:
@@ -174,7 +174,7 @@ def which(executable, path=None):
 
     exts = ['']
     if (sys.platform == 'win32' or os.name == 'os2') and (ext != '.exe'):
-        exts = [".cmd", ".bat", ".exe", ".com"] + exts
+        exts = ['.cmd', '.bat', '.exe', '.com'] + exts
 
     for ext in exts:
         e = executable + ext
@@ -210,7 +210,7 @@ def main_default(**default_options):
         oldmain = f.main
 
         def main(*args, **options):
-            LOGGER.develop("Calling with args: {}".format(args))
+            LOGGER.develop('Calling with args: {}'.format(args))
             newopts = dict(default_options)
             newopts.update(options)
             oldmain(*args, **newopts)
@@ -230,7 +230,7 @@ def get_all_files_recursive(dir, exclude):
 
 
 def check_uptodate(src, dst, src_exclude=[], dst_exclude=[]):
-    assert os.path.exists(src), u"{} must exist".format(src)
+    assert os.path.exists(src), u'{} must exist'.format(src)
     if not os.path.exists(dst):
         return False
     if os.path.isfile(src):
@@ -249,7 +249,7 @@ def check_uptodate(src, dst, src_exclude=[], dst_exclude=[]):
                                key=lambda e: e[0])
     else:
         raise NotImplementedError
-    LOGGER.debug(u"Comparing mtimes of {} ({}) with {} ({})".format(
+    LOGGER.debug(u'Comparing mtimes of {} ({}) with {} ({})'.format(
         src_f,
         src_mtime,
         dst_f,
@@ -276,10 +276,10 @@ def call(args, **kwargs):
         args = launcher + args
     args = [str(arg) for arg in args]
     message = ' '.join(quote(arg) for arg in args)
-    action_message = "run: {}".format(message)
+    action_message = 'run: {}'.format(message)
     cwd = kwargs.get('cwd')
     if cwd:
-        action_message = "in %s, %s" % (cwd, action_message)
+        action_message = 'in %s, %s' % (cwd, action_message)
     if internal:
         LOGGER.develop(action_message)
     else:
@@ -293,7 +293,7 @@ call_merge_stdout_and_stderr = False
 
 
 def _call(args, kwargs):
-    signal_hook = kwargs.pop("signal_hook", None)
+    signal_hook = kwargs.pop('signal_hook', None)
 
     def signal_handler(num, stack):
         if signal_hook:
@@ -304,17 +304,17 @@ def _call(args, kwargs):
     signal.signal(signal.SIGINT, signal_handler)
     signal.signal(signal.SIGTERM, signal_handler)
     if call_merge_stdout_and_stderr:
-        kwargs["stderr"] = subprocess.STDOUT
-    if kwargs.pop("to_stderr", False):
-        kwargs["stdout"] = subprocess.PIPE
+        kwargs['stderr'] = subprocess.STDOUT
+    if kwargs.pop('to_stderr', False):
+        kwargs['stdout'] = subprocess.PIPE
     if call_capture_stdout:
-        kwargs["stdout"] = subprocess.PIPE
+        kwargs['stdout'] = subprocess.PIPE
     try:
         if call_capture_stdout:
             p = subprocess.Popen(args, **kwargs)
             stdout = []
             while True:
-                line = p.stdout.readline().decode("utf-8")
+                line = p.stdout.readline().decode('utf-8')
                 print(line[:-1])
                 stdout.append(line)
                 if line == u'' and p.poll() is not None:
@@ -328,7 +328,7 @@ def _call(args, kwargs):
             if p.returncode:
                 raise subprocess.CalledProcessError(p.returncode, args)
     except OSError as e:
-        raise click.ClickException(u"Failed to call %s: %s" % (args[0], e.strerror))
+        raise click.ClickException(u'Failed to call %s: %s' % (args[0], e.strerror))
     finally:
         signal.signal(signal.SIGINT, signal.SIG_DFL)
         signal.signal(signal.SIGTERM, signal.SIG_DFL)
@@ -338,7 +338,7 @@ def popen(args, internal=False, **kwargs):
     """Run a program and deal with debugging and signals"""
     args = [str(arg) for arg in args]
     message = ' '.join(quote(arg) for arg in args)
-    action_message = "run: {}".format(message)
+    action_message = 'run: {}'.format(message)
     if internal:
         LOGGER.develop(action_message)
     else:
@@ -351,7 +351,7 @@ def popen(args, internal=False, **kwargs):
 def tempdir(dir=None):
     u"""Create a temporary to use be in a with statement"""
     d = tempfile.mkdtemp(dir=dir)
-    LOGGER.action(f"Creating a temporary directory at {d}")
+    LOGGER.action(f'Creating a temporary directory at {d}')
     try:
         yield d
     except Exception:
@@ -370,7 +370,7 @@ def temporary_file(dir=None, suffix=None, nameonly=False, content=None):
         d.write(content)
     if nameonly or content is not None:
         d.close()
-    LOGGER.action(f"Creating a temporary file at {d.name}")
+    LOGGER.action(f'Creating a temporary file at {d.name}')
     try:
         yield d
     except Exception:
@@ -391,20 +391,20 @@ def cd(dir, internal=False, makedirs=False):
     else:
         logger = LOGGER.action
     prevdir = os.getcwd()
-    logger(u"go to directory {}".format(dir))
+    logger(u'go to directory {}'.format(dir))
     if not dry_run:
         os.chdir(dir)
-        LOGGER.debug(u"In directory {}".format(dir))
+        LOGGER.debug(u'In directory {}'.format(dir))
     yield os.path.realpath(dir)
-    logger(u"go back into directory {}".format(prevdir))
+    logger(u'go back into directory {}'.format(prevdir))
     if not dry_run:
-        LOGGER.debug("Back to directory {}".format(prevdir))
+        LOGGER.debug('Back to directory {}'.format(prevdir))
     os.chdir(prevdir)
 
 
 def ccd(dir):
     """Create and change to a directory temporarily. To be used in a with statement"""
-    LOGGER.deprecated("`ccd(dir)` is deprecated, use `cd(dir, makedirs=True)` instead")
+    LOGGER.deprecated('`ccd(dir)` is deprecated, use `cd(dir, makedirs=True)` instead')
     return cd(dir, makedirs=True)
 
 
@@ -449,12 +449,12 @@ def format_options(options, glue=False):
             # this is a multi value option
             for v in value:
                 if glue:
-                    cmd.append("{}={}".format(format_opt(opt), v))
+                    cmd.append('{}={}'.format(format_opt(opt), v))
                 else:
                     cmd.extend([format_opt(opt), v])
         elif value:
             if glue:
-                cmd.append("{}={}".format(format_opt(opt), value))
+                cmd.append('{}={}'.format(format_opt(opt), value))
             else:
                 cmd.extend([format_opt(opt), value])
     return cmd
@@ -536,7 +536,7 @@ def safe_check_output(*args, **kwargs):
         raise ValueError('stdout argument not allowed, it will be overridden.')
     if 'stderr' not in kwargs:
         kwargs['stderr'] = subprocess.PIPE
-    internal = kwargs.get("internal")
+    internal = kwargs.get('internal')
     if 'internal' in kwargs:
         del kwargs['internal']
     # deal with backward compatibility
@@ -544,41 +544,41 @@ def safe_check_output(*args, **kwargs):
         LOGGER.deprecated("'force' argument is deprecated since version 0.9.0, use 'internal' instead.")
         internal = kwargs['force']
         del kwargs['force']
-    action_message = "run: {}".format(" ".join(args[0]))
+    action_message = 'run: {}'.format(' '.join(args[0]))
     if internal:
         LOGGER.develop(action_message)
     else:
         LOGGER.action(action_message)
     if dry_run and not internal:
-        return ""
+        return ''
     try:
         process = subprocess.Popen(stdout=subprocess.PIPE, *args, **kwargs)
         output, _ = process.communicate()
         if process.poll():
-            return ""
+            return ''
         else:
             return output.decode('utf-8')
     except BaseException:
-        return ""
+        return ''
 
 
 def communicate(command, *args, **kwargs):
     """Return the process output, error and returncode of the command"""
-    LOGGER.action("run: {}".format(" ".join(command)))
-    if dry_run and not kwargs.get("internal"):
-        return "", "", 0
+    LOGGER.action('run: {}'.format(' '.join(command)))
+    if dry_run and not kwargs.get('internal'):
+        return '', '', 0
     else:
-        LOGGER.debug("Calling: {}".format(' '.join(quote(arg) for arg in command)))
-    if "internal" in kwargs:
-        del kwargs["internal"]
+        LOGGER.debug('Calling: {}'.format(' '.join(quote(arg) for arg in command)))
+    if 'internal' in kwargs:
+        del kwargs['internal']
     try:
         process = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, *args, **kwargs)
         output, error = process.communicate()
-        output = output.decode("utf-8")
-        error = error.decode("utf-8")
+        output = output.decode('utf-8')
+        error = error.decode('utf-8')
         return output, error, process.returncode
     except BaseException:
-        return "", "", 1
+        return '', '', 1
 
 
 def check_output(cmd, *args, **kwargs):
@@ -607,24 +607,24 @@ def check_output(cmd, *args, **kwargs):
         LOGGER.deprecated("'force' argument is deprecated since version 0.9.0, use 'internal' instead.")
         internal = kwargs['force']
         del kwargs['force']
-    action_message = "run: {}".format(message)
+    action_message = 'run: {}'.format(message)
     if internal:
         LOGGER.develop(action_message)
     else:
         LOGGER.action(action_message)
     if not (dry_run and not internal and not safe):
         if call_capture_stdout:
-            kwargs["stderr"] = subprocess.PIPE
-            kwargs["stdout"] = subprocess.PIPE
+            kwargs['stderr'] = subprocess.PIPE
+            kwargs['stdout'] = subprocess.PIPE
             p = subprocess.Popen(cmd, *args, **kwargs)
             while True:
-                line = p.stderr.readline().decode("utf-8")
+                line = p.stderr.readline().decode('utf-8')
                 if not nostderr:
                     sys.stderr.write(line)
                 if line == u'' and p.poll() is not None:
                     break
             p.wait()
-            stdout = p.stdout.read().decode("utf-8")
+            stdout = p.stdout.read().decode('utf-8')
             if p.returncode != 0:
                 raise subprocess.CalledProcessError(p.returncode, args, output=stdout)
             return stdout
@@ -635,7 +635,7 @@ def check_output(cmd, *args, **kwargs):
                 return subprocess.check_output(cmd, *args, **kwargs).decode('utf-8')
             except BaseException as e:
                 if failok:
-                    return e.output.decode("utf-8")
+                    return e.output.decode('utf-8')
                 else:
                     raise e
 
@@ -652,7 +652,7 @@ def is_pip_install(src_dir):
 
 
 def get_netrc_keyring():
-    netrcfile = os.path.expanduser("~/.netrc")
+    netrcfile = os.path.expanduser('~/.netrc')
     if os.path.exists(netrcfile) and platform.system() != 'Windows':
         chmod(netrcfile, 0o600)
     from clk.keyring_netrc import NetrcKeyring
@@ -663,9 +663,9 @@ def get_keyring():
     try:
         import keyring
     except ModuleNotFoundError:
-        raise click.UsageError("You have to install keyring `pip install keyring` for this to work")
+        raise click.UsageError('You have to install keyring `pip install keyring` for this to work')
     if isinstance(keyring.core.get_keyring(), keyring.backends.fail.Keyring):
-        LOGGER.debug("could not find a correct keyring backend, fallback on the netrc one")
+        LOGGER.debug('could not find a correct keyring backend, fallback on the netrc one')
         from clk.keyring_netrc import NetrcKeyring
         keyring.core.set_keyring(NetrcKeyring())
     return keyring.core.get_keyring()
@@ -678,10 +678,10 @@ def extract(url, dest='.'):
     from io import BytesIO
     makedirs(dest)
     r = urlopen(url)
-    size = int(r.headers["Content-Length"] or r.headers['content-length'])
+    size = int(r.headers['Content-Length'] or r.headers['content-length'])
     archname = os.path.basename(url)
     archive = BytesIO()
-    with progressbar(length=size, label="Downloading %s" % archname) as bar:
+    with progressbar(length=size, label='Downloading %s' % archname) as bar:
         chunk = r.read(1024)
         while chunk:
             archive.write(chunk)
@@ -705,15 +705,15 @@ def download(url, outdir=None, outfilename=None, mkdir=False, sha256=None, mode=
     if not os.path.exists(outdir) and mkdir:
         makedirs(outdir)
     outpath = os.path.join(outdir, outfilename)
-    LOGGER.action("download %s" % url)
+    LOGGER.action('download %s' % url)
     if dry_run:
         return outpath
 
     r = urlopen(url)
-    size = int(r.headers["Content-Length"] or r.headers['content-length'])
-    outfile = open(outpath, "wb")
+    size = int(r.headers['Content-Length'] or r.headers['content-length'])
+    outfile = open(outpath, 'wb')
     try:
-        with progressbar(length=size, label="Downloading %s" % os.path.basename(url)) as bar:
+        with progressbar(length=size, label='Downloading %s' % os.path.basename(url)) as bar:
             chunk = r.read(1024)
             while chunk:
                 outfile.write(chunk)
@@ -725,10 +725,10 @@ def download(url, outdir=None, outfilename=None, mkdir=False, sha256=None, mode=
         raise
     outfile.close()
     if sha256 is not None:
-        LOGGER.debug("Checking for corruption")
-        if hashlib.sha256(open(outpath, "rb").read()).hexdigest() != sha256:
+        LOGGER.debug('Checking for corruption')
+        if hashlib.sha256(open(outpath, 'rb').read()).hexdigest() != sha256:
             rm(outpath)
-            raise click.ClickException("The file at {} was corrupted. It was removed".format(outpath))
+            raise click.ClickException('The file at {} was corrupted. It was removed'.format(outpath))
     if mode is not None:
         os.chmod(outpath, mode)
     return outpath
@@ -738,20 +738,20 @@ def part_of_day():
     import datetime
     hour = datetime.datetime.now().hour
     if hour < 11:
-        return "morning"
+        return 'morning'
     elif 11 <= hour < 13:
-        return "lunch"
+        return 'lunch'
     elif 13 <= hour < 17:
-        return "afternoon"
+        return 'afternoon'
     elif 17 <= hour < 18:
-        return "tea"
+        return 'tea'
     else:
-        return "night"
+        return 'night'
 
 
 def pid_exists(pidpath):
     """Check whether a program is running or not, based on its pid file"""
-    LOGGER.develop("Checking %s" % pidpath)
+    LOGGER.develop('Checking %s' % pidpath)
     running = False
     if os.path.exists(pidpath):
         with open(pidpath) as f:
@@ -771,10 +771,10 @@ def pid_exists(pidpath):
 
 def pid_kill(pidpath, signal=signal.SIGTERM):
     """Send a signal to a process, based on its pid file"""
-    LOGGER.develop("Checking %s" % pidpath)
+    LOGGER.develop('Checking %s' % pidpath)
     if os.path.exists(pidpath):
         pid = int(read(pidpath))
-        LOGGER.action("kill -{} {}".format(signal, pid))
+        LOGGER.action('kill -{} {}'.format(signal, pid))
         os.kill(pid, signal)
 
 
@@ -824,7 +824,7 @@ def quote(s):
 
 def echo_key_value(k, v, alt_style={'dim': True}):
     """Print a key and its associated value with a common style"""
-    click.echo("%s %s" % (k, click.style(v, **alt_style)))
+    click.echo('%s %s' % (k, click.style(v, **alt_style)))
 
 
 def echo_json(v):
@@ -858,7 +858,7 @@ def git_sync(url,
     version = re.search('git version (.+)', safe_check_output(['git', '--version'], internal=True)).group(1)
     use_shallow = use_shallow and parse_version(version) >= parse_version('2.1.4') and not last_tag
     directory = os.path.abspath(directory or re.split('[:/]', url)[-1])
-    git_dir = os.path.join(directory, ".git")
+    git_dir = os.path.join(directory, '.git')
     ref_file = os.path.abspath(directory + '/.git/clk-git-sync-reference')
     updated = False
     quiet = ['--quiet'] if quiet else []
@@ -868,8 +868,8 @@ def git_sync(url,
     if force and os.path.exists(directory):
         rm(directory)
     if os.path.exists(directory):
-        assert os.path.exists(git_dir), ("Want to git sync {} in {} but {}"
-                                         " already exists and is not a git root".format(url, directory, directory))
+        assert os.path.exists(git_dir), ('Want to git sync {} in {} but {}'
+                                         ' already exists and is not a git root'.format(url, directory, directory))
         with cd(directory):
             if reset:
                 call(['git', 'reset', '--hard'] + quiet)
@@ -891,7 +891,7 @@ def git_sync(url,
             updated = prevrev != check_output(['git', 'rev-parse', 'HEAD'], internal=True)
     else:
         commit_ish = commit_ish or 'master'
-        ref_exists = check_output(['git', 'ls-remote', url, commit_ish], internal=True).strip() != ""
+        ref_exists = check_output(['git', 'ls-remote', url, commit_ish], internal=True).strip() != ''
         if ref_exists:
             call(['git', 'clone'] + quiet + (['--depth', '1'] if use_shallow else []) +
                  ['-b', commit_ish, url, directory])
@@ -1130,9 +1130,9 @@ def get_close_matches(words, possibilities, n=3, cutoff=0.6):
     """
 
     if not n > 0:
-        raise ValueError("n must be > 0: %r" % (n, ))
+        raise ValueError('n must be > 0: %r' % (n, ))
     if not 0.0 <= cutoff <= 1.0:
-        raise ValueError("cutoff must be in [0.0, 1.0]: %r" % (cutoff, ))
+        raise ValueError('cutoff must be in [0.0, 1.0]: %r' % (cutoff, ))
     if not isinstance(words, list):
         words = [words]
     result = []
@@ -1173,7 +1173,7 @@ def grep(
     xargs = subprocess.Popen('xargs -0 grep ' + ' '.join(color_opt + list(args)) + (' | less' if pager else ''),
                              stdin=subprocess.PIPE,
                              shell=True)
-    xargs.communicate(input='\0'.join(file_list).encode("utf-8"))
+    xargs.communicate(input='\0'.join(file_list).encode('utf-8'))
     xargs.wait()
 
 
@@ -1270,17 +1270,17 @@ def natural_delta(value):
     days = days % 365
 
     if years:
-        return "%s year%s %s day%s" % (years, 's' if years > 1 else '', days, 's' if days > 1 else '')
+        return '%s year%s %s day%s' % (years, 's' if years > 1 else '', days, 's' if days > 1 else '')
     elif days:
-        return "%s day%s %s hour%s" % (days, 's' if days > 1 else '', hours, 's' if hours > 1 else '')
+        return '%s day%s %s hour%s' % (days, 's' if days > 1 else '', hours, 's' if hours > 1 else '')
     elif hours:
-        return "%s hour%s %s minute%s" % (hours, 's' if hours > 1 else '', minutes, 's' if minutes > 1 else '')
+        return '%s hour%s %s minute%s' % (hours, 's' if hours > 1 else '', minutes, 's' if minutes > 1 else '')
     elif minutes:
-        return "%s minute%s %s second%s" % (minutes, 's' if minutes > 1 else '', seconds, 's' if seconds > 1 else '')
+        return '%s minute%s %s second%s' % (minutes, 's' if minutes > 1 else '', seconds, 's' if seconds > 1 else '')
     elif delta.microseconds:
         seconds = seconds + abs(delta.microseconds) / 10.**6
-        return "%1.3f second%s" % (seconds, 's' if seconds > 1 else '')
-    return "%s second%s" % (seconds, 's' if seconds > 1 else '')
+        return '%1.3f second%s' % (seconds, 's' if seconds > 1 else '')
+    return '%s second%s' % (seconds, 's' if seconds > 1 else '')
 
 
 def natural_time(value, future=False, months=True):
@@ -1305,8 +1305,8 @@ def natural_time(value, future=False, months=True):
     ago = _('%s from now') if future else _('%s ago')
     delta = naturaldelta(delta, months)
 
-    if delta == _("a moment"):
-        return _("now")
+    if delta == _('a moment'):
+        return _('now')
 
     return ago % delta
 
@@ -1343,10 +1343,10 @@ def read_cmakecache(file):
 class ParameterType(click.ParamType):
     def __init__(self):
         click.ParamType.__init__(self)
-        if not hasattr(self, "name"):
+        if not hasattr(self, 'name'):
             self.name = self.__class__.__name__
-            if self.name.endswith("Type"):
-                self.name = self.name[:-len("Type")]
+            if self.name.endswith('Type'):
+                self.name = self.name[:-len('Type')]
         if not self.name:
             class_name = self.__class__.__name__
             self.name = re.sub('(Param(eter|)|)Type$', '', class_name)
@@ -1358,13 +1358,13 @@ class ParameterType(click.ParamType):
 
 @contextmanager
 def json_file(location):
-    if (not os.path.exists(location) or open(location, "r").read().strip() == ""):
-        open(location, "w").write("{}")
+    if (not os.path.exists(location) or open(location, 'r').read().strip() == ''):
+        open(location, 'w').write('{}')
     values = json.load(open(location))
     oldvalues = deepcopy(values)
     yield values
     if values != oldvalues:
-        json.dump(values, open(location, "w"))
+        json.dump(values, open(location, 'w'))
 
 
 def flat_map(elem):
@@ -1393,10 +1393,10 @@ def deprecated_module(src, dst):
     # find a relevant frame
     frame = [
         frame for frame in stack[:-2]
-        if "frozen" not in get_frame_info(frame)[0] and "pluginbase" not in get_frame_info(frame)[0]
+        if 'frozen' not in get_frame_info(frame)[0] and 'pluginbase' not in get_frame_info(frame)[0]
     ][-1]
     filename, lineno, line = get_frame_info(frame)
-    return ("{}:{} '{}' =>" " Importing {} is deprecated, import {} instead").format(filename, lineno, line, src, dst)
+    return ("{}:{} '{}' =>" ' Importing {} is deprecated, import {} instead').format(filename, lineno, line, src, dst)
 
 
 class TablePrinter(object):
@@ -1461,11 +1461,11 @@ class TablePrinter(object):
 
 def tabulate(tabular_data,
              headers=(),
-             tablefmt="simple",
-             floatfmt="g",
-             numalign="decimal",
-             stralign="left",
-             missingval=""):
+             tablefmt='simple',
+             floatfmt='g',
+             numalign='decimal',
+             stralign='left',
+             missingval=''):
     """Tabulate the data"""
     from tabulate import tabulate as tabulate_
     if tablefmt == 'key_value':
@@ -1473,7 +1473,7 @@ def tabulate(tabular_data,
         data = []
         for kv in tabular_data:
             if len(kv) > 1:
-                data.append("%s %s" % (kv[0], click.style(u' '.join(to_string(v) for v in kv[1:]), **config.alt_style)))
+                data.append('%s %s' % (kv[0], click.style(u' '.join(to_string(v) for v in kv[1:]), **config.alt_style)))
             else:
                 data.append(kv[0])
         return '\n'.join(data)
@@ -1526,7 +1526,7 @@ def str_join(sep, ls):
 
 class AuthenticatorNotFound(click.UsageError):
     def __init__(self, machine, *args, **kwargs):
-        super(AuthenticatorNotFound, self).__init__("User credentials required for machine {}.".format(machine), *args,
+        super(AuthenticatorNotFound, self).__init__('User credentials required for machine {}.'.format(machine), *args,
                                                     **kwargs)
         self.machine = machine
 
@@ -1543,29 +1543,29 @@ def get_authenticator(machine, askpass=True, required=True):
         if isinstance(keyring, NetrcKeyring):
             netrc_keyring = True
         try:
-            login, password = json.loads(keyring.get_password("clk", machine))
+            login, password = json.loads(keyring.get_password('clk', machine))
         except Exception:
             netrc = get_netrc_keyring()
             netrc_keyring = True
-            login, password = json.loads(netrc.get_password("clk", machine))
+            login, password = json.loads(netrc.get_password('clk', machine))
     except Exception:
-        LOGGER.warning("I could not automatically find your login/password for {}.".format(machine))
+        LOGGER.warning('I could not automatically find your login/password for {}.'.format(machine))
 
     from clk import completion
     if (login is None or password is None) and askpass and not completion.IN_COMPLETION:
-        LOGGER.info("Please enter your username and password for {}".format(machine))
+        LOGGER.info('Please enter your username and password for {}'.format(machine))
         if machine in get_authenticator_hints:
-            LOGGER.info("Hint: {}".format(get_authenticator_hints[machine]))
-        login = input("%s username: " % machine)
-        password = getpass.getpass("%s password: " % machine)
+            LOGGER.info('Hint: {}'.format(get_authenticator_hints[machine]))
+        login = input('%s username: ' % machine)
+        password = getpass.getpass('%s password: ' % machine)
         try:
-            LOGGER.info("Saving the credentials in your keyring: {}".format(keyring.name))
-            keyring.set_password("clk", machine, json.dumps((login, password)))
+            LOGGER.info('Saving the credentials in your keyring: {}'.format(keyring.name))
+            keyring.set_password('clk', machine, json.dumps((login, password)))
         except BaseException:
-            LOGGER.warning("I could not save your credentials.")
+            LOGGER.warning('I could not save your credentials.')
             if netrc_keyring:
-                LOGGER.warning("You can save them manually by running:"
-                               " `passwords {} netrc-set {}`".format(machine, login))
+                LOGGER.warning('You can save them manually by running:'
+                               ' `passwords {} netrc-set {}`'.format(machine, login))
 
     if login is None or password is None:
         if required:
@@ -1577,7 +1577,7 @@ def get_authenticator(machine, askpass=True, required=True):
 
 
 def assert_main_module():
-    assert main_module != "__main__", ("You cannot call the main module, for there is none.")
+    assert main_module != '__main__', ('You cannot call the main module, for there is none.')
 
 
 def call_me(*cmd):
@@ -1611,10 +1611,10 @@ def parsedatetime(value):
 
 
 def value_to_string(value):
-    return (" ".join(map(quote, value)) if type(value) is tuple else str(value) if value else "")
+    return (' '.join(map(quote, value)) if type(value) is tuple else str(value) if value else '')
 
 
-def is_port_available(port, hostname="127.0.0.1"):
+def is_port_available(port, hostname='127.0.0.1'):
     import socket
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     result = s.connect_ex((hostname, port))
@@ -1622,7 +1622,7 @@ def is_port_available(port, hostname="127.0.0.1"):
     return result != 0
 
 
-def find_available_port(start_port, hostname="127.0.0.1"):
+def find_available_port(start_port, hostname='127.0.0.1'):
     port = start_port
     while not is_port_available(port, hostname):
         port += 1

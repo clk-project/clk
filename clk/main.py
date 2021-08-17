@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# -*- coding:utf-8 -*-
+# -*- coding: utf-8 -*-
 
 import sys
 from importlib.abc import Loader, MetaPathFinder
@@ -12,18 +12,18 @@ warned_cache = []
 
 def warn_about_bad_import():
     import os
-    if not os.environ.get("CLK_WARN_ABOUT_BAD_IMPORT"):
+    if not os.environ.get('CLK_WARN_ABOUT_BAD_IMPORT'):
         return
-    ignore_value = "idontcarefornowbutishoulddefinitelyfixthoseimportssomeday"
-    if os.environ.get("CLK_IGNORE_IMPORT_WARNINGS") == ignore_value:
+    ignore_value = 'idontcarefornowbutishoulddefinitelyfixthoseimportssomeday'
+    if os.environ.get('CLK_IGNORE_IMPORT_WARNINGS') == ignore_value:
         return
     from traceback import extract_stack
     stack = extract_stack()
     from clk.log import get_logger
-    LOGGER = get_logger("clk.BADIMPORT")
+    LOGGER = get_logger('clk.BADIMPORT')
     warning_number = 0
     for frame in reversed(stack):
-        if "click_project" in frame.line:
+        if 'click_project' in frame.line:
             if frame in warned_cache:
                 continue
             else:
@@ -38,8 +38,8 @@ to
     if warning_number > 0:
         LOGGER.deprecated(f"To silence {'this' if warning_number == 1 else 'those'}"
                           f" warning{'' if warning_number == 1 else 's'}, fix the problem!..."
-                          " or set the environment variable"
-                          " CLK_IGNORE_IMPORT_WARNINGS to the value"
+                          ' or set the environment variable'
+                          ' CLK_IGNORE_IMPORT_WARNINGS to the value'
                           f" '{ignore_value}'")
 
 
@@ -47,9 +47,9 @@ class DeprecatedLoader(Loader):
     def create_module(self, spec):
         from importlib import import_module
         assert spec.name.startswith(
-            "click_project"), f"This loader is only meant to load click-project modules, {spec.name} was given"
+            'click_project'), f'This loader is only meant to load click-project modules, {spec.name} was given'
         warn_about_bad_import()
-        name = "clk" + spec.name[len("click_project"):]
+        name = 'clk' + spec.name[len('click_project'):]
         module = import_module(name)
         return module
 
@@ -59,7 +59,7 @@ class DeprecatedLoader(Loader):
 
 class DeprecatedFinder(MetaPathFinder):
     def find_spec(self, fullname, path, target=None):
-        if fullname.startswith("click_project"):
+        if fullname.startswith('click_project'):
             from importlib.machinery import ModuleSpec
             return ModuleSpec(fullname, DeprecatedLoader())
         else:
@@ -72,12 +72,12 @@ sys.meta_path.insert(0, DeprecatedFinder())
 def print_version(ctx, attr, value):
     if value:
         from clk._version import get_versions
-        print(get_versions()["version"])
+        print(get_versions()['version'])
         exit(0)
 
 
 @basic_entry_point(__name__)
-@flag("--version", help="Print the version of clk and exits", callback=print_version)
+@flag('--version', help='Print the version of clk and exits', callback=print_version)
 def clk(**kwargs):
     """This is the click project (a.k.a. clk) entry point.
 
@@ -100,5 +100,5 @@ can learn the concepts and the tooling around them.
     """
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     main()

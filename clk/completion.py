@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-# -*- coding:utf-8 -*-
+# -*- coding: utf-8 -*-
 
 import fnmatch as fnmatchlib
 import os
@@ -9,8 +9,8 @@ from click import Argument, MultiCommand, Option
 
 from clk.lib import to_bool
 
-CASE_INSENSITIVE_ENV = "_CLK_CASE_INSENSITIVE_COMPLETION"
-COMPLETE_OPTIONS = "_CLK_COMPLETE_OPTIONS"
+CASE_INSENSITIVE_ENV = '_CLK_CASE_INSENSITIVE_COMPLETION'
+COMPLETE_OPTIONS = '_CLK_COMPLETE_OPTIONS'
 
 
 def startswith(string, incomplete):
@@ -36,7 +36,7 @@ def get_choices(cli, prog_name, args, incomplete):
     ctx = resolve_ctx(cli, prog_name, args)
     if ctx is None:
         return
-    if hasattr(ctx.command, "get_choices"):
+    if hasattr(ctx.command, 'get_choices'):
         choices = ctx.command.get_choices(ctx, args, incomplete)
     else:
         choices = _get_choices(cli, prog_name, args, incomplete)
@@ -79,5 +79,5 @@ def compute_choices(ctx, args, incomplete):
 
 def init():
     click_completion.core.get_choices = get_choices
-    click_completion.init(complete_options=to_bool(os.environ.get(COMPLETE_OPTIONS, "off")),
+    click_completion.init(complete_options=to_bool(os.environ.get(COMPLETE_OPTIONS, 'off')),
                           match_incomplete=startswith)

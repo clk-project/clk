@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-# -*- coding:utf-8 -*-
+# -*- coding: utf-8 -*-
 
 import collections
 import logging
@@ -21,7 +21,7 @@ class DevelopColorFormatter(click_log.core.ColorFormatter):
 
 class LogLevelExitException(BaseException):
     def __init__(self):
-        message = "Aborting because log level greater than {}".format(exit_on_log_level)
+        message = 'Aborting because log level greater than {}'.format(exit_on_log_level)
         super(LogLevelExitException, self).__init__(message)
 
 
@@ -72,8 +72,8 @@ def set_level(level):
 
 def get_logger(name):
     # type: (str) -> Logger
-    if name.startswith("pluginbase."):
-        name = re.sub(r"^pluginbase\._internalspace.[^.]+\.", "clk.plugins.", name)
+    if name.startswith('pluginbase.'):
+        name = re.sub(r'^pluginbase\._internalspace.[^.]+\.', 'clk.plugins.', name)
     return logging.getLogger(name)
 
 
@@ -82,7 +82,7 @@ LOGGER = get_logger(__name__)
 
 def getLogger(name):
     # type: (str) -> Logger
-    LOGGER.deprecated("getLogger is deprecated. Please use get_logger instead")
+    LOGGER.deprecated('getLogger is deprecated. Please use get_logger instead')
     return get_logger(name)
 
 
@@ -94,7 +94,7 @@ class Logger(logging.getLoggerClass()):
     def action(self, msg, *args, **kwargs):
         from clk import lib
         if lib.dry_run:
-            click.echo("(dry-run) {}".format(msg))
+            click.echo('(dry-run) {}'.format(msg))
         elif self.isEnabledFor(ACTION):
             self._log(ACTION, msg, args, **kwargs)
 
@@ -110,27 +110,27 @@ class Logger(logging.getLoggerClass()):
 logging.setLoggerClass(Logger)
 
 DEVELOP = 5
-logging.addLevelName(DEVELOP, "DEVELOP")
-DevelopColorFormatter.colors["develop"] = DevelopColorFormatter.colors["debug"]
+logging.addLevelName(DEVELOP, 'DEVELOP')
+DevelopColorFormatter.colors['develop'] = DevelopColorFormatter.colors['debug']
 
 ACTION = 15
-logging.addLevelName(ACTION, "ACTION")
-DevelopColorFormatter.colors["action"] = dict(fg='green')
+logging.addLevelName(ACTION, 'ACTION')
+DevelopColorFormatter.colors['action'] = dict(fg='green')
 
 STATUS = 17
-logging.addLevelName(STATUS, "STATUS")
+logging.addLevelName(STATUS, 'STATUS')
 # don't register the colors dict in order to avoid the 'status: ' prefix
 
 DEPRECATED = 18
-logging.addLevelName(DEPRECATED, "DEPRECATED")
-DevelopColorFormatter.colors["deprecated"] = dict(fg='magenta')
+logging.addLevelName(DEPRECATED, 'DEPRECATED')
+DevelopColorFormatter.colors['deprecated'] = dict(fg='magenta')
 
 DEBUG = logging.DEBUG
 INFO = logging.INFO
 WARN = logging.WARN
 WARNING = logging.WARNING
 ERROR = logging.ERROR
-LOG_LEVELS = collections.OrderedDict([("develop", DEVELOP), ("debug", logging.DEBUG), ("action", ACTION),
-                                      ("status", STATUS), ("deprecated", DEPRECATED), ("info", logging.INFO),
-                                      ("warning", logging.WARNING), ("error", logging.ERROR),
-                                      ("critical", logging.CRITICAL)])
+LOG_LEVELS = collections.OrderedDict([('develop', DEVELOP), ('debug', logging.DEBUG), ('action', ACTION),
+                                      ('status', STATUS), ('deprecated', DEPRECATED), ('info', logging.INFO),
+                                      ('warning', logging.WARNING), ('error', logging.ERROR),
+                                      ('critical', logging.CRITICAL)])
