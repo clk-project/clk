@@ -164,7 +164,11 @@ def remove(extension, force):
 
 
 @extension.command(handle_dry_run=True)
-@table_fields(choices=['extension', 'set_in', 'defined_in', 'order'])
+@table_fields(choices=['extension', 'set_in', 'defined_in', 'order'], default=[
+    'extension',
+    'set_in',
+    'defined_in',
+])
 @table_format(default='simple')
 @Colorer.color_options
 @flag('--enabled-only/--not-enabled-only', help='Show only the enabled extensions')
