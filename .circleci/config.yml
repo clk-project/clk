@@ -14,6 +14,10 @@ workflows:
     jobs:
       - test
 
+notify:
+  webhooks:
+    # gitter notifications
+    - url: https://webhooks.gitter.im/e/16634961392360db480a
 
 jobs:
   test:  # This is the name of the job, feel free to change it to better match what you're trying to do!
