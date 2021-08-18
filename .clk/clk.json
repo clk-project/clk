@@ -1,0 +1,67 @@
+{
+    "alias": {
+        "build": {
+            "commands": [
+                [
+                    "exec",
+                    "--in-project",
+                    "python3",
+                    "setup.py",
+                    "bdist_wheel"
+                ]
+            ],
+            "documentation": null
+        },
+        "clean": {
+            "commands": [
+                [
+                    "exec",
+                    "--in-project",
+                    "rm",
+                    "-rf",
+                    "dist"
+                ]
+            ],
+            "documentation": null
+        },
+        "flow": {
+            "commands": [
+                [
+                    "upload"
+                ]
+            ],
+            "documentation": null
+        },
+        "test": {
+            "commands": [
+                [
+                    "exec",
+                    "--in-project",
+                    "pytest"
+                ]
+            ],
+            "documentation": null
+        },
+        "upload": {
+            "commands": [
+                [
+                    "exec",
+                    "--in-project",
+                    "twine",
+                    "upload",
+                    "dist/*"
+                ]
+            ],
+            "documentation": null
+        }
+    },
+    "flowdeps": {
+        "build": [
+            "clean"
+        ],
+        "upload": [
+            "build"
+        ]
+    },
+    "parameters": {}
+}
