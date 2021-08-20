@@ -56,7 +56,7 @@ class CustomCommandResolver(CommandResolver):
         cmd = getattr(module, path)
         cmd.customcommand_path = module.__file__
         cmd.params.append(
-            AutomaticOption(['--edit-customcommand'],
+            AutomaticOption(['--edit-command'],
                             is_flag=True,
                             expose_value=False,
                             help='Edit this command',
