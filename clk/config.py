@@ -21,6 +21,23 @@ from clk.profile import ActivationLevel, DirectoryProfile, ProfileFactory
 LOGGER = get_logger(__name__)
 
 
+class Value:
+    def __getattr__(self, name):
+        try:
+            return config.settings2['value'][name]['value']
+        except BaseException:
+            return getattr(super(), name)
+
+    def __getitem__(self, name):
+        try:
+            return self.__getattr__(name)
+        except BaseException:
+            return super()[name]
+
+    def __dir__(self):
+        return list(config.settings2['value'].keys())
+
+
 class DynamicConfigBase:
     """Base class meant to be inherited from and used in callbacks
 
@@ -122,6 +139,7 @@ class Config(object):
         self.old_env = os.environ.copy()
         self.distribution_profile_location = None
         self._all_profiles_cache = None
+        self.value = Value()
 
     @cached_property
     def commandline_profile(self):
