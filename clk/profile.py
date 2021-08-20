@@ -147,7 +147,7 @@ class DirectoryProfile(Profile):
             ('flowdeps', 'flowdep'),
             ('triggers', 'trigger'),
             ('value', 'value'),
-            ('extension', 'extension'),
+            ('recipe', 'extension'),
         ]:
             if self.settings.get(setting):
                 print(f'I found some {command}, try running'
