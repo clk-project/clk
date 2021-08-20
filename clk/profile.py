@@ -189,7 +189,7 @@ class DirectoryProfile(Profile):
                 'customcommands',
         }:
             print(f"I also found some settings that I cannot explain: {', '.join(remaining_config)}."
-                  ' They might be set by other plugins, custom commands or extensions.')
+                  ' They might have been set by other plugins, custom commands or extensions.')
 
     def __gt__(self, other):
         return self.name < other.name
