@@ -159,6 +159,24 @@ def has_flow(cmd):
     return get_flow_commands_to_run(cmd) != []
 
 
+def build_show_flow_callback(cmd):
+    def callback(ctx, param, value):
+        if value and not ctx.resilient_parsing:
+            run(['flowdep', 'show', '--all', cmd])
+            exit(0)
+
+    return callback
+
+
+def build_show_flowgraph_callback(cmd):
+    def callback(ctx, param, value):
+        if value and not ctx.resilient_parsing:
+            run(['flowdep', 'graph', cmd])
+            exit(0)
+
+    return callback
+
+
 def get_flow_params(cmd, flow_default=None, flowfrom_default=None, flowafter_default=None):
     deps = get_flow_commands_to_run(cmd)
     return [
@@ -180,6 +198,22 @@ def get_flow_params(cmd, flow_default=None, flowfrom_default=None, flowafter_def
             default=flowafter_default,
             type=click.Choice(deps),
             help='Trigger the dependency flow after the given step (overrides --flow-from)',
+        ),
+        AutomaticOption(
+            ['--show-flow'],
+            group='flow',
+            help='Show the flow toward this command instead of running it',
+            expose_value=False,
+            is_flag=True,
+            callback=build_show_flow_callback(cmd),
+        ),
+        AutomaticOption(
+            ['--show-flow-graph'],
+            group='flow',
+            help='Show the flow graph toward this command instead of running it',
+            expose_value=False,
+            is_flag=True,
+            callback=build_show_flowgraph_callback(cmd),
         ),
     ]
 
