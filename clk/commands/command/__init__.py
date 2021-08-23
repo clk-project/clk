@@ -14,7 +14,7 @@ from clk.customcommands import CustomCommandResolver
 from clk.decorators import argument, flag, group, option, table_fields, table_format, use_settings
 from clk.externalcommands import ExternalCommandResolver
 from clk.flow import get_flow_commands_to_run
-from clk.lib import TablePrinter, createfile, makedirs, move, quote, rm
+from clk.lib import TablePrinter, copy, createfile, makedirs, move, quote, rm
 from clk.log import get_logger
 from clk.overloads import Argument, CommandType, Group, Option, get_command
 from clk.types import DirectoryProfile as DirectoryProfileType
@@ -450,6 +450,22 @@ def _move(customcommand, profile, force):
     makedirs(new_location.parent)
     move(customcommand.customcommand_path, new_location)
     LOGGER.status(f'Moved {customcommand.customcommand_path} into {new_location}')
+
+
+@command.command()
+@argument('customcommand', type=CustomCommandType(), help='The custom command to copy')
+@argument('profile', type=DirectoryProfileType(), help='The profile where to copy the command')
+@argument('name', help='The new name')
+@flag('--force', help='Overwrite destination')
+def _copy(customcommand, profile, force, name):
+    """copy a custom commands"""
+    directory = ('python' if customcommand.customcommand_path.endswith('.py') else 'bin')
+    new_location = Path(profile.location) / directory / name
+    if new_location.exists() and not force:
+        raise click.UsageError(f"I won't overwrite {new_location}," ' unless called with --force')
+    makedirs(new_location.parent)
+    copy(customcommand.customcommand_path, new_location)
+    LOGGER.status(f'copied {customcommand.customcommand_path} into {new_location}')
 
 
 @command.command()
