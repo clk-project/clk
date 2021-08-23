@@ -229,7 +229,7 @@ def show(fields, format, order, extensions, enabled_only, disabled_only, **kwarg
 @flag('--all', help='On all extensions')
 @argument(
     'extension',
-    type=ExtensionNameType(enabled=True),
+    type=ExtensionNameType(enabled=True, shortonly=True),
     nargs=-1,
     help='The names of the extensions to disable',
 )
@@ -237,7 +237,7 @@ def show(fields, format, order, extensions, enabled_only, disabled_only, **kwarg
 def _disable(ctx, extension, all):
     """Don't use this extension"""
     if all:
-        extension = ExtensionType(disabled=True).getchoice(ctx)
+        extension = ExtensionNameType(disabled=True, shortonly=True).getchoice(ctx)
     for cmd in extension:
         if cmd in config.extension.writable:
             config.extension.writable[cmd]['enabled'] = False
@@ -277,7 +277,7 @@ def unset(ctx, extension, all):
 )
 @argument(
     'extension',
-    type=ExtensionNameType(disabled=True),
+    type=ExtensionNameType(disabled=True, shortonly=True),
     nargs=-1,
     help='The names of the extensions to enable',
 )
@@ -285,9 +285,9 @@ def unset(ctx, extension, all):
 def __enable(ctx, extension, all, only):
     """Use this extension"""
     if all:
-        extension = ExtensionType(disabled=True).getchoice(ctx)
+        extension = ExtensionNameType(disabled=True, shortonly=True).getchoice(ctx)
     if only:
-        for cmd in set(ExtensionType().getchoice(ctx)) - set(extension):
+        for cmd in set(ExtensionNameType(shortonly=True).getchoice(ctx)) - set(extension):
             if cmd in config.extension.writable:
                 config.extension.writable[cmd]['enabled'] = False
             else:
@@ -306,12 +306,12 @@ def __enable(ctx, extension, all, only):
 @extension.command(handle_dry_run=True)
 @argument(
     'extension1',
-    type=ExtensionNameType(enabled=True),
+    type=ExtensionNameType(enabled=True, shortonly=True),
     help='The name of the extension to disable',
 )
 @argument(
     'extension2',
-    type=ExtensionNameType(disabled=True),
+    type=ExtensionNameType(disabled=True, shortonly=True),
     help='The name of the extension to enable',
 )
 @pass_context
@@ -324,7 +324,7 @@ def switch(ctx, extension1, extension2):
 @extension.command(handle_dry_run=True)
 @argument(
     'extension',
-    type=ExtensionNameType(),
+    type=ExtensionNameType(shortonly=True),
     nargs=-1,
     help='The names of the extensions to which the order will be set',
 )
