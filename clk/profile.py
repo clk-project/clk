@@ -126,6 +126,9 @@ class Profile():
     def python_paths(self):
         return []
 
+    def contains(self, path):
+        return False
+
 
 plugin_sources = {}
 
@@ -197,6 +200,12 @@ class DirectoryProfile(Profile):
     def extension_location(self, name):
         name = self.extension_short_name(name)
         return os.path.join(self.location, 'extensions', name)
+
+    def contains(self, path):
+        """Indicate whether or not this profile contains this path"""
+        canonlocation = Path(self.location).resolve()
+        canonpath = Path(path).resolve()
+        return os.path.commonprefix([canonpath, canonlocation]) == str(canonlocation)
 
     @property
     def executable_paths(self):
