@@ -31,10 +31,11 @@ class ExtensionConfig(object):
 
 
 class ExtensionNameType(ParameterType):
-    def __init__(self, enabled=False, disabled=False, failok=True):
+    def __init__(self, enabled=False, disabled=False, failok=True, shortonly=False):
         self.disabled = disabled
         self.enabled = enabled
         self.failok = failok
+        self.shortonly = shortonly
         super(ExtensionNameType, self).__init__()
 
     def getchoice(self, ctx):
@@ -44,7 +45,11 @@ class ExtensionNameType(ParameterType):
             extensions = list(config.all_disabled_extensions) + list(config.all_unset_extensions)
         else:
             extensions = config.all_extensions
-        return [extension.short_name for extension in extensions]
+        extensions = list(extensions)  # capture a list out of the generator
+        names = [extension.short_name for extension in extensions]
+        if not self.shortonly:
+            names += [extension.name for extension in extensions]
+        return names
 
     def complete(self, ctx, incomplete):
         choice = self.getchoice(ctx)
@@ -60,6 +65,7 @@ class ExtensionType(ExtensionNameType):
                 param,
                 ctx,
             )
+
         candidates = list(reversed(list(config.all_enabled_extensions)))
         # the algorithm here is to first prefer exact match before falling back
         # to looser match. Both loops look alike, but the reason why they are
@@ -179,7 +185,7 @@ def remove(extension, force):
 @option('--order/--no-order', help='Display the priority of the extension')
 @argument(
     'extensions',
-    type=ExtensionNameType(disabled=True, failok=False),
+    type=ExtensionNameType(disabled=True, failok=False, shortonly=True),
     nargs=-1,
     help='The names of the extensions to show',
 )
