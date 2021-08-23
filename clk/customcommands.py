@@ -6,6 +6,7 @@ from pluginbase import PluginBase
 
 from clk.commandresolver import CommandResolver
 from clk.config import config
+from clk.core import run
 from clk.log import get_logger
 from clk.overloads import AutomaticOption
 
@@ -19,6 +20,15 @@ def edit_custom_command(path):
 
 class BadCustomCommandError(Exception):
     pass
+
+
+def build_update_extension_callback(profile):
+    def callback(ctx, param, value):
+        if value and not ctx.resilient_parsing:
+            run(['extension', 'update', profile.name])
+            exit(0)
+
+    return callback
 
 
 class CustomCommandResolver(CommandResolver):
@@ -62,4 +72,16 @@ class CustomCommandResolver(CommandResolver):
                             help='Edit this command',
                             callback=lambda ctx, param, value: edit_custom_command(cmd.customcommand_path)
                             if value is True else None))
+        profile = config.get_profile_that_contains(cmd.customcommand_path)
+        if profile.explicit:
+            cmd.params.append(
+                AutomaticOption(
+                    ['--update-extension'],
+                    is_flag=True,
+                    expose_value=False,
+                    help=('Update the extension'
+                          ' that contains this command'
+                          f' ({profile.location})'),
+                    callback=build_update_extension_callback(profile),
+                ))
         return cmd
