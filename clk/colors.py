@@ -54,7 +54,7 @@ class Colorer(object):
         return self
 
     def __exit__(self, exc_type, exc_val, exc_tb):
-        if self.legend:
+        if self.legend and self.used_profiles:
             used_profiles = self.used_profiles.copy()
             colored_profiles = self.colorize_values({
                 profile: (profile if '-' not in profile else config.get_extension(profile).friendly_name)
