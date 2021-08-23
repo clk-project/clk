@@ -73,7 +73,7 @@ class CustomCommandResolver(CommandResolver):
                             callback=lambda ctx, param, value: edit_custom_command(cmd.customcommand_path)
                             if value is True else None))
         profile = config.get_profile_that_contains(cmd.customcommand_path)
-        if profile.explicit:
+        if profile is not None and profile.explicit:
             cmd.params.append(
                 AutomaticOption(
                     ['--update-extension'],

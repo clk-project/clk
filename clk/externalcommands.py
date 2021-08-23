@@ -220,7 +220,7 @@ class ExternalCommandResolver(CommandResolver):
                             if value is True else None))
         external_command.customcommand_path = command_path
         profile = config.get_profile_that_contains(command_path)
-        if profile.explicit:
+        if profile is not None and profile.explicit:
             external_command.params.append(
                 AutomaticOption(
                     ['--update-extension'],
