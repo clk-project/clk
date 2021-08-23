@@ -12,6 +12,7 @@ import click
 
 from clk.commandresolver import CommandResolver
 from clk.config import config
+from clk.customcommands import build_update_extension_callback
 from clk.lib import call, quote, updated_env, value_to_string, which
 from clk.log import get_logger
 from clk.overloads import AutomaticOption
@@ -218,4 +219,16 @@ class ExternalCommandResolver(CommandResolver):
                             callback=lambda ctx, param, value: edit_external_command(command_path)
                             if value is True else None))
         external_command.customcommand_path = command_path
+        profile = config.get_profile_that_contains(command_path)
+        if profile.explicit:
+            external_command.params.append(
+                AutomaticOption(
+                    ['--update-extension'],
+                    is_flag=True,
+                    expose_value=False,
+                    help=('Update the extension'
+                          ' that contains this command'
+                          f' ({profile.location})'),
+                    callback=build_update_extension_callback(profile),
+                ))
         return external_command
