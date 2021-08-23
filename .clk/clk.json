@@ -63,5 +63,9 @@
             "build"
         ]
     },
-    "parameters": {}
+    "parameters": {
+        "flow": [
+            "--flow"
+        ]
+    }
 }
