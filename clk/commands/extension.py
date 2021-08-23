@@ -259,7 +259,7 @@ def _disable(ctx, extension, all):
 def unset(ctx, extension, all):
     """Don't say whether to use or not this extension (let the upper profiles decide)"""
     if all:
-        extension = list(config.extension.readonly.keys())
+        extension = list(config.extension.profile.settings['extension'].keys())
     for cmd in extension:
         if cmd not in config.extension.writable:
             raise click.UsageError('Extension {} not set in profile {}'.format(cmd, config.extension.writeprofile))
