@@ -271,10 +271,9 @@ def unset(ctx, extension, all):
 
 @extension.command(handle_dry_run=True)
 @flag('--all', help='On all extensions')
-@option(
-    '--only/--no-only',
-    help='Use only the provided extension, and disable the others',
-)
+@option('--only',
+        help='Use only the provided extension, and disable the others',
+        type=ExtensionNameType(shortonly=True))
 @argument(
     'extension',
     type=ExtensionNameType(disabled=True, shortonly=True),
@@ -284,9 +283,12 @@ def unset(ctx, extension, all):
 @pass_context
 def __enable(ctx, extension, all, only):
     """Use this extension"""
+    if only and extension:
+        raise click.UsageError('You can only provide one of --only extension or simply extension')
     if all:
         extension = ExtensionNameType(disabled=True, shortonly=True).getchoice(ctx)
     if only:
+        extension = [only]
         for cmd in set(ExtensionNameType(shortonly=True).getchoice(ctx)) - set(extension):
             if cmd in config.extension.writable:
                 config.extension.writable[cmd]['enabled'] = False
