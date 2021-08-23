@@ -344,7 +344,7 @@ def set_order(extension, order):
 
 
 @extension.command()
-@argument('profile', type=ExtensionType(), help='The name of the profile to open')
+@argument('extension', type=ExtensionType(), help='The name of the extension to open')
 @option('--opener', help='Program to call to open the directory', default='xdg-open')
 def open(profile, opener):
     """Open the directory containing the profile"""
@@ -354,7 +354,7 @@ def open(profile, opener):
 @extension.command()
 @argument('profile', type=DirectoryProfileType(), help='The name of the profile to show')
 def where_is(profile):
-    """Show where is a given extension"""
+    """Show where is a given profile"""
     print(profile.location)
 
 
