@@ -21,7 +21,7 @@ from clk.commandresolver import CommandResolver
 from clk.completion import startswith
 from clk.config import config
 from clk.core import cache_disk, get_ctx, main_command_decoration, rebuild_path, run, settings_stores
-from clk.lib import ParameterType, cd, check_output
+from clk.lib import ParameterType, cd, check_output, ordered_unique
 from clk.log import get_logger
 from clk.plugin import load_plugins
 from clk.triggers import TriggerMixin
@@ -1023,17 +1023,20 @@ def argument(*args, **kwargs):
 
 
 def flow_command(flowdepends=(), flow_from=None, flow_after=None, **kwargs):
+    closure_flowdepends = flowdepends
+
     def decorator(f):
         try:
             params = list(f.__click_params__)
             params.reverse()
         except AttributeError:
             params = []
-        flowdepends_set = set(flowdepends)
+        flowdepends = closure_flowdepends
         for p in params:
             if isinstance(p, (FlowOption, FlowArgument)):
-                flowdepends_set.add(p.target_command.path)
-        c = command(flowdepends=list(flowdepends_set), **kwargs)(f)
+                flowdepends.append(p.target_command.path)
+        flowdepends = ordered_unique(flowdepends)
+        c = command(flowdepends=flowdepends, **kwargs)(f)
         c.clickproject_flow = (not flow_from and not flow_after) or None
         c.clickproject_flowfrom = flow_from
         c.clickproject_flowafter = flow_after
