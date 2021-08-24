@@ -100,13 +100,18 @@ class AliasCommandResolver(CommandResolver):
         deps = []
 
         for cmd in commands_to_run:
-
-            cmdctx = get_ctx(cmd, resilient_parsing=True)
+            # get the context allowing the side effects. Because whatever stuff
+            # was done to the config is part of the life of the alias. If a
+            # command has set. This is in particular important for completion,
+            # because this is the only way the impact of the command parsing on
+            # the config will be captured for the completion of the alias
+            cmdctx = get_ctx(cmd, resilient_parsing=True, side_effects=True)
             # capture the flow of the aliased command only if it is not called
             # with an explicit flow
             if (not cmdctx.params.get('flow') and not cmdctx.params.get('flow_from')
                     and not cmdctx.params.get('flow_after')):
                 deps += get_flow_commands_to_run(cmdctx.command.path)
+
         c = get_ctx(commands_to_run[-1])
         kind = None
 
