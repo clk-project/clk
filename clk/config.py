@@ -140,6 +140,7 @@ class Config(object):
         self.distribution_profile_location = None
         self._all_profiles_cache = None
         self.value = Value()
+        self.groups = set()
 
     @cached_property
     def commandline_profile(self):
@@ -195,15 +196,16 @@ class Config(object):
         return env
 
     @property
-    def parameters_as_environ_variables(self):
+    def group_command_line_parameters_as_environ_variables(self):
         return {('CLK_P_' + path.replace('-', '__').replace('.', '_')).upper(): ' '.join(map(quote, parameters))
-                for path, parameters in config.get_settings2('parameters').items()}
+                for path, parameters in self.commandline_profile.settings['parameters'].items()
+                if path in self.groups}
 
     @property
     def external_commands_environ_variables(self):
         return {
             **self.context_parameters_as_environ_variables,
-            **self.parameters_as_environ_variables,
+            **self.group_command_line_parameters_as_environ_variables,
         }
 
     @property

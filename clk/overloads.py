@@ -623,6 +623,7 @@ class GroupCommandResolver(CommandResolver):
         return res
 
     def _get_command(self, path, parent):
+        config.groups.add(path)
         path = path.split('.')
         cmd_name = path[-1]
         ctx = click_get_current_context_safe()
