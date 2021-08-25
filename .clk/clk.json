@@ -32,12 +32,41 @@
             ],
             "documentation": null
         },
-        "test": {
+        "test.create-docker-image": {
             "commands": [
                 [
                     "exec",
                     "--in-project",
-                    "pytest"
+                    "docker",
+                    "build",
+                    "-t",
+                    "clk",
+                    "."
+                ]
+            ],
+            "documentation": null
+        },
+        "test.flow": {
+            "commands": [
+                [
+                    "test",
+                    "run"
+                ]
+            ],
+            "documentation": null
+        },
+        "test.run": {
+            "commands": [
+                [
+                    "exec",
+                    "docker",
+                    "run",
+                    "--rm",
+                    "--name",
+                    "clk-test",
+                    "clk",
+                    "pytest",
+                    "/src/"
                 ]
             ],
             "documentation": null
@@ -59,12 +88,18 @@
         "build": [
             "clean"
         ],
+        "test.run": [
+            "test.create-docker-image"
+        ],
         "upload": [
             "build"
         ]
     },
     "parameters": {
         "flow": [
+            "--flow"
+        ],
+        "test.flow": [
             "--flow"
         ]
     }
