@@ -31,6 +31,9 @@ def alias():
 
 def get_choices(ctx, args_, incomplete):
     args = config.commandline_profile.get_settings('parameters')[ctx.command.path][:]
+    separator_index = args.index('--')
+    if separator_index is not None and separator_index != len(args) - 1:
+        args = args[:separator_index] + args[separator_index + 1:]
     while args and args[0].startswith('-'):
         a = args.pop(0)
         if args and (a == '-e' or a == '--extension'):
