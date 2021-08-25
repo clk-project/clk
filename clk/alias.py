@@ -98,21 +98,26 @@ class AliasCommandResolver(CommandResolver):
         if len(cmdhelp) > 55:
             short_help = cmdhelp[:52] + '...'
         deps = []
-
-        for cmd in commands_to_run:
-            # get the context allowing the side effects. Because whatever stuff
-            # was done to the config is part of the life of the alias. If a
-            # command has set. This is in particular important for completion,
-            # because this is the only way the impact of the command parsing on
-            # the config will be captured for the completion of the alias
-            cmdctx = get_ctx(cmd, resilient_parsing=True, side_effects=True)
+        for cmd in commands_to_run[:-1]:
+            # get the contexts of the commands to capture the flow. I don't want
+            # to allow side effects because they are only supposed to be run,
+            # not to impact how the alias will behave in completion, parameters
+            # etc.
+            cmdctx = get_ctx(cmd, resilient_parsing=True, side_effects=False)
             # capture the flow of the aliased command only if it is not called
             # with an explicit flow
             if (not cmdctx.params.get('flow') and not cmdctx.params.get('flow_from')
                     and not cmdctx.params.get('flow_after')):
                 deps += get_flow_commands_to_run(cmdctx.command.path)
 
-        c = get_ctx(commands_to_run[-1])
+        # also get the context of the last command to capture its flow. In that
+        # case, I wan't to allow side effects because I want this command to
+        # impact the behavior of the generated alias. Its parameters, completion
+        # or whatever should transpire in the aliased command.
+        c = get_ctx(commands_to_run[-1], side_effects=True)
+        if (not c.params.get('flow') and not c.params.get('flow_from') and not c.params.get('flow_after')):
+            deps += get_flow_commands_to_run(c.command.path)
+
         kind = None
 
         def create_cls(cls):
