@@ -347,9 +347,9 @@ def set_order(extension, order):
 @extension.command()
 @argument('extension', type=ExtensionType(), help='The name of the extension to open')
 @option('--opener', help='Program to call to open the directory', default='xdg-open')
-def open(profile, opener):
+def _open(extension, opener):
     """Open the directory containing the profile"""
-    call([opener, profile.location])
+    call([opener, extension.location])
 
 
 @extension.command()
