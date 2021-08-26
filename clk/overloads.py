@@ -116,6 +116,8 @@ def get_command2(path):
             return wrapper
 
         cmd.callback = get_wrapper(cmd.callback)
+    if isinstance(cmd, Group):
+        config.groups.add(cmd.path)
     return cmd, resolver
 
 
@@ -623,7 +625,6 @@ class GroupCommandResolver(CommandResolver):
         return res
 
     def _get_command(self, path, parent):
-        config.groups.add(path)
         path = path.split('.')
         cmd_name = path[-1]
         ctx = click_get_current_context_safe()
