@@ -187,7 +187,7 @@ class DirectoryProfile(Profile):
                 'flowdeps',
                 'triggers',
                 'value',
-                'extension',
+                'recipe',
                 'plugins',
                 'customcommands',
         }:
