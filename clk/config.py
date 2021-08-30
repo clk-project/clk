@@ -177,7 +177,7 @@ class Config(object):
             if key.startswith(parameters_prefix)
         }
         extensions_prefix = f'{self.app_name}_R_'.upper()
-        profile.settings['extension'] = {
+        profile.settings['recipe'] = {
             key[len(extensions_prefix):]: json.loads(value)
             for key, value in os.environ.items()
             if key.startswith(extensions_prefix)

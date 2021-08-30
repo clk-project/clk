@@ -460,22 +460,22 @@ def project_callback(ctx, attr, value):
 
 @main_command_options_callback
 def extension_callback(ctx, attr, values):
-    extensions = config.commandline_profile.get_settings('extension')
+    extensions = config.commandline_profile.get_settings('recipe')
     for value in values:
         extension = extensions.get(value, {})
         extension['enabled'] = True
         extensions[value] = extension
-    config.commandline_profile.set_settings('extension', extensions)
+    config.commandline_profile.set_settings('recipe', extensions)
     return values
 
 
 def without_extension_callback(ctx, attr, values):
-    extensions = config.commandline_profile.get_settings('extension')
+    extensions = config.commandline_profile.get_settings('recipe')
     for value in values:
         extension = extensions.get(value, {})
         extension['enabled'] = False
         extensions[value] = extension
-    config.commandline_profile.set_settings('extension', extensions)
+    config.commandline_profile.set_settings('recipe', extensions)
     return values
 
 

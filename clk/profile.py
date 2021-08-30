@@ -555,11 +555,11 @@ class DirectoryProfile(Profile):
             if os.path.exists(private):
                 move(private, local)
             with json_file(local) as values:
-                extensions = values.get('extension', {})
+                extensions = values.get('recipe', {})
                 local_order = extensions.get(name, {})
                 local_order['order'] = 0
                 extensions[name] = local_order
-                values['extension'] = extensions
+                values['recipe'] = extensions
             self.computed_location = None
             self.compute_settings()
         return True
