@@ -151,6 +151,7 @@ class DirectoryProfile(Profile):
             ('triggers', 'trigger'),
             ('value', 'value'),
             ('recipe', 'extension'),
+            ('environment', 'env'),
         ]:
             if self.settings.get(setting):
                 print(f'I found some {command}, try running'
@@ -189,6 +190,7 @@ class DirectoryProfile(Profile):
                 'value',
                 'recipe',
                 'plugins',
+                'environment',
                 'customcommands',
         }:
             print(f"I also found some settings that I cannot explain: {', '.join(remaining_config)}."
