@@ -24,6 +24,14 @@
             ],
             "documentation": null
         },
+        "deploy": {
+            "commands": [
+                [
+                    "upload"
+                ]
+            ],
+            "documentation": null
+        },
         "flow": {
             "commands": [
                 [
