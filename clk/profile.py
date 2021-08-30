@@ -163,7 +163,7 @@ class DirectoryProfile(Profile):
                                                             self.settings['customcommands']['pythonpaths'])
             ]):
                 print(f'I found some executable commands, try running'
-                      f' `clk{enable_argument} customcommand --{profile_name_to_commandline_name(self.name)} list`'
+                      f' `clk{enable_argument} command --{profile_name_to_commandline_name(self.name)} list`'
                       ' to know more.')
                 found_some_executable = True
         if self.name in ('local', 'workspace', 'global'):
@@ -177,7 +177,7 @@ class DirectoryProfile(Profile):
                 ]):
                     print(
                         f"I found some{ ' more' if found_some_executable else ''} executable commands, try running"
-                        f' `clk{enable_argument} customcommand --{profile_name_to_commandline_name(preset_extension.name)} list`'
+                        f' `clk{enable_argument} command --{profile_name_to_commandline_name(preset_extension.name)} list`'
                         ' to know more.')
         if plugins := self.plugin_source.list_plugins():
             print(f"I found some plugins called {', '.join(plugins)}")
