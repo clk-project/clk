@@ -30,7 +30,7 @@
                     "upload"
                 ]
             ],
-            "documentation": null
+            "documentation": "Another name for uploading the package"
         },
         "flow": {
             "commands": [
