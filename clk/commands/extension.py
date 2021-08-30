@@ -85,7 +85,7 @@ def load_short_help(extension):
 
 
 @group(default_command='show')
-@use_settings('extension', ExtensionConfig)
+@use_settings('recipe', ExtensionConfig)
 def extension():
     """Extension related commands
 
@@ -103,7 +103,7 @@ def extension():
 @pass_context
 def create(ctx, name, disable):
     """Create a new extension"""
-    profile = config.extension.profile
+    profile = config.recipe.profile
     r = profile.create_extension(name)
     LOGGER.status('Created extension {}.'.format(r.friendly_name))
     if disable:
@@ -117,7 +117,7 @@ def rename(old, new):
     """Rename an extension"""
     if '/' not in new:
         new = '{}/{}'.format(old.name.split('/')[0], new)
-    new_loc = config.extension_location(new)
+    new_loc = config.recipe_location(new)
     if os.path.exists(new_loc):
         raise click.UsageError('{} already exists'.format(new_loc))
     move(old.location, new_loc)
@@ -145,7 +145,7 @@ def _copy(src, dest):
     """Copy an extension"""
     if '/' not in dest:
         dest = '{}/{}'.format(src.name.split('/')[0], dest)
-    new_loc = config.extension_location(dest)
+    new_loc = config.recipe_location(dest)
     if os.path.exists(new_loc):
         raise click.UsageError('{} already exists'.format(new_loc))
     copy(src.location, new_loc)
@@ -190,7 +190,7 @@ def remove(extension, force):
 )
 def show(fields, format, order, extensions, enabled_only, disabled_only, **kwargs):
     """List the extensions and some info about them"""
-    config_extensions = set(config.extension.readonly.keys())
+    config_extensions = set(config.recipe.readonly.keys())
     avail_extensions = set([r.short_name for r in config.all_extensions])
     if not fields:
         fields = list(get_option_choices('fields'))
@@ -211,7 +211,7 @@ def show(fields, format, order, extensions, enabled_only, disabled_only, **kwarg
             ])
             profile = colorer.last_profile_of_settings(
                 extension_name,
-                config.extension.all_settings,
+                config.recipe.all_settings,
             )
             extension_enabled = config.is_extension_enabled(extension_name)
             if (not enabled_only or extension_enabled) and (not disabled_only or not extension_enabled):
@@ -239,19 +239,19 @@ def _disable(ctx, extension, all):
     if all:
         extension = ExtensionNameType(disabled=True, shortonly=True).getchoice(ctx)
     for cmd in extension:
-        if cmd in config.extension.writable:
-            config.extension.writable[cmd]['enabled'] = False
+        if cmd in config.recipe.writable:
+            config.recipe.writable[cmd]['enabled'] = False
         else:
-            config.extension.writable[cmd] = {'enabled': False}
-        LOGGER.status('Disabling extension {} in profile {}'.format(cmd, config.extension.writeprofile))
-    config.extension.write()
+            config.recipe.writable[cmd] = {'enabled': False}
+        LOGGER.status('Disabling extension {} in profile {}'.format(cmd, config.recipe.writeprofile))
+    config.recipe.write()
 
 
 @extension.command(handle_dry_run=True)
 @flag('--all', help='On all extensions')
 @argument(
     'extension',
-    type=CommandSettingsKeyType('extension'),
+    type=CommandSettingsKeyType('recipe'),
     nargs=-1,
     help='The name of the extension to unset',
 )
@@ -259,14 +259,14 @@ def _disable(ctx, extension, all):
 def unset(ctx, extension, all):
     """Don't say whether to use or not this extension (let the upper profiles decide)"""
     if all:
-        extension = list(config.extension.profile.settings['extension'].keys())
+        extension = list(config.recipe.profile.settings['recipe'].keys())
     for cmd in extension:
-        if cmd not in config.extension.writable:
-            raise click.UsageError('Extension {} not set in profile {}'.format(cmd, config.extension.writeprofile))
+        if cmd not in config.recipe.writable:
+            raise click.UsageError('Extension {} not set in profile {}'.format(cmd, config.recipe.writeprofile))
     for cmd in extension:
-        del config.extension.writable[cmd]
-        LOGGER.status('Unsetting {} from profile {}'.format(cmd, config.extension.writeprofile))
-    config.extension.write()
+        del config.recipe.writable[cmd]
+        LOGGER.status('Unsetting {} from profile {}'.format(cmd, config.recipe.writeprofile))
+    config.recipe.write()
 
 
 @extension.command(handle_dry_run=True)
@@ -290,19 +290,19 @@ def __enable(ctx, extension, all, only):
     if only:
         extension = [only]
         for cmd in set(ExtensionNameType(shortonly=True).getchoice(ctx)) - set(extension):
-            if cmd in config.extension.writable:
-                config.extension.writable[cmd]['enabled'] = False
+            if cmd in config.recipe.writable:
+                config.recipe.writable[cmd]['enabled'] = False
             else:
-                config.extension.writable[cmd] = {'enabled': False}
-            LOGGER.status('Disabling extension {} in profile {}'.format(cmd, config.extension.writeprofile))
+                config.recipe.writable[cmd] = {'enabled': False}
+            LOGGER.status('Disabling extension {} in profile {}'.format(cmd, config.recipe.writeprofile))
 
     for cmd in extension:
-        if cmd in config.extension.writable:
-            config.extension.writable[cmd]['enabled'] = True
+        if cmd in config.recipe.writable:
+            config.recipe.writable[cmd]['enabled'] = True
         else:
-            config.extension.writable[cmd] = {'enabled': True}
-        LOGGER.status('Enabling extension {} in profile {}'.format(cmd, config.extension.writeprofile))
-    config.extension.write()
+            config.recipe.writable[cmd] = {'enabled': True}
+        LOGGER.status('Enabling extension {} in profile {}'.format(cmd, config.recipe.writeprofile))
+    config.recipe.write()
 
 
 @extension.command(handle_dry_run=True)
@@ -336,12 +336,12 @@ def set_order(extension, order):
     if not extension:
         extension = config.all_extensions
     for cmd in extension:
-        if cmd in config.extension.writable:
-            config.extension.writable[cmd]['order'] = order
+        if cmd in config.recipe.writable:
+            config.recipe.writable[cmd]['order'] = order
         else:
-            config.extension.writable[cmd] = {'order': order}
-        LOGGER.status('Set order of {} to {} in profile {}'.format(cmd, order, config.extension.writeprofile))
-    config.extension.write()
+            config.recipe.writable[cmd] = {'order': order}
+        LOGGER.status('Set order of {} to {} in profile {}'.format(cmd, order, config.recipe.writeprofile))
+    config.recipe.write()
 
 
 @extension.command()

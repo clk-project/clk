@@ -551,7 +551,7 @@ class Config(object):
     def get_extension_order(self, extension):
         if self.settings is None:
             return 0
-        return self.settings.get('extension', {}).get(extension, {}).get('order', 1000)
+        return self.settings.get('recipe', {}).get(extension, {}).get('order', 1000)
 
     def get_profile_containing_extension(self, name):
         profile_name = name.split('/')[0]
@@ -572,7 +572,7 @@ class Config(object):
             # the preset profile associated to a extension must have the same
             # enabling than the extension itself
             shortname = shortname[:-len('preset')]
-        return (self.settings2 or {}).get('extension', {}).get(shortname, {}).get('enabled', True)
+        return (self.settings2 or {}).get('recipe', {}).get(shortname, {}).get('enabled', True)
 
     def filter_unset_extensions(self, extensions):
         return [extension for extension in extensions if self.is_extension_enabled(extension.short_name) is None]
