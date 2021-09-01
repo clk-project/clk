@@ -1,0 +1,41 @@
+#!/bin/bash -eu
+
+source "_clk.sh"
+
+list_tests ( ) {
+    pushd "tests" > /dev/null
+    {
+        ls test_*|sed -r 's/^test_(.+).py$/\1/'
+    }
+    popd > /dev/null
+}
+
+clk_usage () {
+    cat<<EOF
+$0
+
+Description
+--
+A:test:$(list_tests|clk_list_to_choice):Tests to run:-1
+flowdepends: test.create-docker-image
+M:I
+EOF
+}
+
+clk_help_handler "$@"
+
+
+if [ "${CLK___TEST}" ]
+then
+    args="${CLK___TEST}"
+else
+    args="$(list_tests)"
+fi
+tests=()
+for t in ${args}
+do
+    tests+=(/src/tests/test_${t}.py)
+done
+
+
+clk test run-in-docker-image pytest "${tests[@]}"

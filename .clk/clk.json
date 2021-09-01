@@ -63,22 +63,6 @@
             ],
             "documentation": null
         },
-        "test.run": {
-            "commands": [
-                [
-                    "exec",
-                    "docker",
-                    "run",
-                    "--rm",
-                    "--name",
-                    "clk-test",
-                    "clk",
-                    "pytest",
-                    "/src/"
-                ]
-            ],
-            "documentation": null
-        },
         "upload": {
             "commands": [
                 [
@@ -95,9 +79,6 @@
     "flowdeps": {
         "build": [
             "clean"
-        ],
-        "test.run": [
-            "test.create-docker-image"
         ],
         "upload": [
             "build"
