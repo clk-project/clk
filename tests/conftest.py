@@ -7,6 +7,16 @@ from pathlib import Path
 import pytest
 
 
+@pytest.fixture()
+def project():
+    root = tempfile.mkdtemp(dir=os.getcwd())
+    os.makedirs(Path(root) / '.clk')
+    return root
+
+
+project1 = project
+
+
 @pytest.fixture(autouse=True)
 def move_somewhere():
     root = tempfile.mkdtemp()
