@@ -244,7 +244,8 @@ def _disable(ctx, extension, all):
             config.recipe.writable[cmd]['enabled'] = False
         else:
             config.recipe.writable[cmd] = {'enabled': False}
-        LOGGER.status('Disabling extension {} in profile {}'.format(cmd, config.recipe.writeprofile))
+        LOGGER.status('Disabling extension {} in profile {}'.format(
+            cmd, Colorer.apply_color_profilename(config.recipe.writeprofilename)))
     config.recipe.write()
 
 
@@ -263,10 +264,12 @@ def unset(ctx, extension, all):
         extension = list(config.recipe.profile.settings['recipe'].keys())
     for cmd in extension:
         if cmd not in config.recipe.writable:
-            raise click.UsageError('Extension {} not set in profile {}'.format(cmd, config.recipe.writeprofile))
+            raise click.UsageError('Extension {} not set in profile {}'.format(
+                cmd, Colorer.apply_color_profilename(config.recipe.writeprofilename)))
     for cmd in extension:
         del config.recipe.writable[cmd]
-        LOGGER.status('Unsetting {} from profile {}'.format(cmd, config.recipe.writeprofile))
+        LOGGER.status('Unsetting {} from profile {}'.format(
+            cmd, Colorer.apply_color_profilename(config.recipe.writeprofilename)))
     config.recipe.write()
 
 
@@ -295,14 +298,16 @@ def __enable(ctx, extension, all, only):
                 config.recipe.writable[cmd]['enabled'] = False
             else:
                 config.recipe.writable[cmd] = {'enabled': False}
-            LOGGER.status('Disabling extension {} in profile {}'.format(cmd, config.recipe.writeprofile))
+            LOGGER.status('Disabling extension {} in profile {}'.format(
+                cmd, Colorer.apply_color_profilename(config.recipe.writeprofilename)))
 
     for cmd in extension:
         if cmd in config.recipe.writable:
             config.recipe.writable[cmd]['enabled'] = True
         else:
             config.recipe.writable[cmd] = {'enabled': True}
-        LOGGER.status('Enabling extension {} in profile {}'.format(cmd, config.recipe.writeprofile))
+        LOGGER.status('Enabling extension {} in profile {}'.format(
+            cmd, Colorer.apply_color_profilename(config.recipe.writeprofilename)))
     config.recipe.write()
 
 
@@ -341,7 +346,8 @@ def set_order(extension, order):
             config.recipe.writable[cmd]['order'] = order
         else:
             config.recipe.writable[cmd] = {'order': order}
-        LOGGER.status('Set order of {} to {} in profile {}'.format(cmd, order, config.recipe.writeprofile))
+        LOGGER.status('Set order of {} to {} in profile {}'.format(
+            cmd, order, Colorer.apply_color_profilename(config.recipe.writeprofilename)))
     config.recipe.write()
 
 
