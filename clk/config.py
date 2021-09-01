@@ -76,7 +76,7 @@ def migrate_profiles():
 
 
 def get_appdir(appname):
-    config = os.environ.get('CLICKPROJECTCONFIGDIR')
+    config = os.environ.get('CLKCONFIGDIR')
     if config:
         return config
     return click.get_app_dir(appname)
