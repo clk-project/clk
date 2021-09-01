@@ -69,6 +69,8 @@ class ExternalCommandResolver(CommandResolver):
         try:
             env = {}
             env['PATH'] = str(Path(__file__).parent / 'commands/command') + ':' + os.environ['PATH']
+            if config.project:
+                env['CLK__PROJECT'] = config.project
             with updated_env(**env):
                 process = subprocess.Popen([command_path, '--help'], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
                 out, err = process.communicate()
