@@ -140,16 +140,10 @@ class ExternalCommandResolver(CommandResolver):
             args = ([command_path] + list(ctx.params.get('args', [])))
 
             env = {('CLK___' + key).upper(): (value_to_string(value)) for key, value in kwargs.items()}
-            env[('CLK___PATH').upper()] = (ctx.command_path.replace(' ', '_').upper())
             if 'args' in ctx.params:
                 env[('CLK___ARGS').upper()] = ' '.join(map(quote, ctx.params['args']))
 
             env.update(config.external_commands_environ_variables)
-            env[('CLK___CMD_OPTIND').upper()] = (str(len(config.commandline_profile.get_settings('parameters')[path])))
-            env[('CLK___CMD_ARGS').upper()] = (' '.join(
-                quote(a) for a in config.commandline_profile.get_settings('parameters')[path]))
-            env[('CLK___OPTIND').upper()] = (str(len(args[1:])))
-            env[('CLK___ALL').upper()] = (' '.join(quote(a) for a in args[1:]))
             env['PATH'] = str(Path(__file__).parent / 'commands/command') + ':' + os.environ['PATH']
             with updated_env(**env):
                 call(
