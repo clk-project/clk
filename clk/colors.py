@@ -129,6 +129,10 @@ class Colorer(object):
         style = ColorType.unpack_styles(profiles_colors[profile])
         return click.style(string, **style)
 
+    @classmethod
+    def apply_color_profilename(cls, profilename):
+        return cls.apply_color_default_value(profilename, profilename)
+
     def apply_color(self, string, profile):
         return click.style(string, **self.get_style(profile))
 
