@@ -72,19 +72,34 @@ class Colorer(object):
                 return profile
 
     @classmethod
+    def build_color_options_default_values(cls):
+        colors = cycle([
+            'fg-yellow',
+            'fg-blue',
+            'bold-True,fg-yellow',
+            'bold-True,fg-blue',
+            'bold-True,fg-cyan',
+            'bold-True,fg-green',
+            'bold-True,fg-magenta',
+            'fg-red',
+            'bold-True,fg-red',
+        ])
+        profile_colors = {}
+        shortname_color = {}
+        for profile in config.all_enabled_profiles:
+            if profile.default_color is None:
+                if profile.short_name not in shortname_color:
+                    shortname_color[profile.short_name] = next(colors)
+                color = shortname_color[profile.short_name]
+            else:
+                color = profile.default_color
+            profile_colors[profile.short_name] = color
+        return profile_colors
+
+    @classmethod
     def color_options(cls, f=None, full_default=None):
         def decorator(f):
-            colors = cycle([
-                'fg-yellow',
-                'fg-blue',
-                'bold-True,fg-yellow',
-                'bold-True,fg-blue',
-                'bold-True,fg-cyan',
-                'bold-True,fg-green',
-                'bold-True,fg-magenta',
-                'fg-red',
-                'bold-True,fg-red',
-            ])
+            profiles_colors = cls.build_color_options_default_values()
             f = flag('--legend/--no-legend',
                      default=config.get_value('config.show.legend', True),
                      help='Start with a legend on colors')(f)
@@ -94,26 +109,25 @@ class Colorer(object):
             f = flag('--full/--explicit-only',
                      default=config.get_value('config.show.full', full_default),
                      help='Show the full information, even those guessed from the context')(f)
-            shortname_color = {}
 
             for profile in config.all_enabled_profiles:
-                if profile.default_color is None:
-                    if profile.short_name not in shortname_color:
-                        shortname_color[profile.short_name] = next(colors)
-                    default_color = shortname_color[profile.short_name]
-                else:
-                    default_color = profile.default_color
                 f = option(f'--{profile.name.replace("/", "-")}-color',
                            f"""{profile.name.replace("/", "_slash_")}_color""",
                            help=f'Color to show the {profile.name} profile',
                            type=ColorType(),
-                           default=default_color)(f)
+                           default=profiles_colors[profile.short_name])(f)
             return f
 
         if f is None:
             return decorator
         else:
             return decorator(f)
+
+    @classmethod
+    def apply_color_default_value(cls, string, profile):
+        profiles_colors = cls.build_color_options_default_values()
+        style = ColorType.unpack_styles(profiles_colors[profile])
+        return click.style(string, **style)
 
     def apply_color(self, string, profile):
         return click.style(string, **self.get_style(profile))
