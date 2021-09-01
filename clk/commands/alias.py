@@ -123,7 +123,7 @@ config.globalpreset_profile.settings['alias']['alias.rm'] = {
     'commands': [
         ['alias', 'unset'],
     ],
-    'documentation': 'Alias to alias rm, because we eat our own dog food.'
+    'documentation': 'Alias to alias unset, because we eat our own dog food.'
 }
 
 
