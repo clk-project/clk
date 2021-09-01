@@ -676,16 +676,16 @@ class Group(click_didyoumean.DYMMixin, MissingDocumentationMixin, DeprecatedMixi
         return super(Group, self).invoke(ctx, *args, **kwargs)
 
     def parse_args(self, ctx, args):
-        has_help = '--help' in args
-        if has_help:
-            index_help = args.index('--help')
-            args = args[:index_help] + args[index_help + 1:]
         res, remaining = self.split_args_remaining(ctx, args)
+        help_option = (('--help' in res) and '--help' or ('--help-all' in res) and '--help-all')
+        if help_option:
+            index_help = res.index(help_option)
+            res = res[:index_help] + res[index_help + 1:]
         self.append_commandline_settings(ctx, res)
 
         args = self.get_extra_args(implicit_only=('--no-parameter' in args)) + list(remaining)
-        if has_help:
-            args = ['--help'] + args
+        if help_option:
+            args = [help_option] + args
         ctx.complete_arguments = args[:]
         LOGGER.develop("In the {} '{}', parsing the args {}".format(
             self.__class__.__name__,
