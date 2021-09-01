@@ -178,7 +178,9 @@ class Config(object):
         }
         extensions_prefix = f'{self.app_name}_E_'.upper()
         profile.settings['recipe'] = {
-            key[len(extensions_prefix):]: json.loads(value)
+            key[len(extensions_prefix):]: {
+                'enabled': json.loads(value)
+            }
             for key, value in os.environ.items()
             if key.startswith(extensions_prefix)
         }
