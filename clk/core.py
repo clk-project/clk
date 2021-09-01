@@ -230,8 +230,8 @@ class ColorType(ParameterType):
         'reset': lambda e: True if e == 'True' else False,
     }
 
-    @staticmethod
-    def get_kwargs(color_name):
+    @classmethod
+    def get_kwargs(cls, color_name):
         def splitpart(part):
             parts = part.split('-')
             if len(parts) == 1:
@@ -264,9 +264,12 @@ class ColorType(ParameterType):
             prefix = '{},'.format(prefix)
         return [prefix + str(candidate) for candidate in candidates if startswith(str(candidate), tested)]
 
+    @classmethod
+    def unpack_styles(cls, value):
+        return {key: cls.converters[key](value) for key, value in cls.get_kwargs(value).items()}
+
     def convert(self, value, param, ctx):
-        kwargs = {key: self.converters[key](value) for key, value in self.get_kwargs(value).items()}
-        return kwargs
+        return self.unpack_styles(value)
 
 
 class DynamicChoiceType(ParameterType):
