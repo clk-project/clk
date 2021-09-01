@@ -1,2 +1,3 @@
 include versioneer.py
 include fastentrypoint.py
+include clk/commands/command/_clk.sh

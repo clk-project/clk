@@ -24,6 +24,7 @@ setup(
     long_description='See https://clk-project.org/ or https://github.com/clk-project/clk',
     zip_safe=False,
     python_requires='>=3',
+    include_package_data=True,
     install_requires=[
         'click>=6.4,<8',
         'click-log',
