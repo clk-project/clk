@@ -70,9 +70,10 @@ def _set(alias, command, documentation, params):
     }
     old = config.alias.writable.get(alias)
     if old is not None:
-        LOGGER.status('Removing {} alias of {}: {}'.format(config.alias.writeprofilename, alias,
-                                                           format(old['commands'])))
-    LOGGER.status('New {} alias for {}: {}'.format(config.alias.writeprofilename, alias, format(data['commands'])))
+        LOGGER.status('Removing {} alias of {}: {}'.format(
+            Colorer.apply_color_profilename(config.alias.writeprofilename), alias, format(old['commands'])))
+    LOGGER.status('New {} alias for {}: {}'.format(Colorer.apply_color_profilename(config.alias.writeprofilename),
+                                                   alias, format(data['commands'])))
     config.alias.writable[alias] = data
     config.alias.write()
 
@@ -98,7 +99,7 @@ def set_documentation(alias, documentation):
     if alias not in config.alias.writable:
         raise click.ClickException("The %s configuration has no '%s' alias registered."
                                    'Try using another profile option (like --local or --global)' %
-                                   (config.alias.writeprofile, alias))
+                                   (Colorer.apply_color_profilename(config.alias.writeprofilename), alias))
     config.alias.writable[alias]['documentation'] = documentation
     config.alias.write()
 
@@ -112,9 +113,10 @@ def unset(aliases):
             raise click.ClickException("The %s configuration has no '%s' alias registered."
                                        ' And removing an alias being a destructive command, please'
                                        ' provide the profile option explicitely (like --local or --global).' %
-                                       (config.alias.writeprofile, cmd))
+                                       (Colorer.apply_color_profilename(config.alias.writeprofilename), cmd))
     for cmd in aliases:
-        LOGGER.status('Erasing {} alias from {} settings'.format(cmd, config.alias.writeprofile))
+        LOGGER.status('Erasing {} alias from {} settings'.format(
+            cmd, Colorer.apply_color_profilename(config.alias.writeprofilename)))
         del config.alias.writable[cmd]
     config.alias.write()
 
@@ -138,9 +140,10 @@ def unset_documentation(aliases):
         if cmd not in config.alias.writable:
             raise click.ClickException("The %s configuration has no '%s' alias registered."
                                        ' Try using another profile option (like --local or --global)' %
-                                       (config.alias.writeprofile, cmd))
+                                       (Colorer.apply_color_profilename(config.alias.writeprofilename), cmd))
     for cmd in aliases:
-        LOGGER.status('Erasing the documentation of {} alias from {} settings'.format(cmd, config.alias.writeprofile))
+        LOGGER.status('Erasing the documentation of {} alias from {} settings'.format(
+            cmd, Colorer.apply_color_profilename(config.alias.writeprofilename)))
         config.alias.writable[cmd]['documentation'] = None
     config.alias.write()
 

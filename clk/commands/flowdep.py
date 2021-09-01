@@ -57,14 +57,14 @@ def _set(cmd, dependencies):
     """Set the flow dependencies of a command"""
     if cmd in config.flowdeps.writable:
         LOGGER.status('Removing old {} flowdep for {}: {}'.format(
-            config.flowdeps.writeprofilename,
+            Colorer.apply_color_profilename(config.flowdeps.writeprofilename),
             cmd,
             ', '.join(config.flowdeps.writable[cmd]),
         ))
 
     config.flowdeps.writable[cmd] = dependencies
     LOGGER.status('New {} flowdep for {}: {}'.format(
-        config.flowdeps.writeprofilename,
+        Colorer.apply_color_profilename(config.flowdeps.writeprofilename),
         cmd,
         ', '.join(dependencies),
     ))
@@ -115,9 +115,10 @@ def unset(cmds):
         if cmd not in config.flowdeps.writable:
             raise click.ClickException("The %s configuration has no '%s' flow dependency registered."
                                        'Try using another profile option (like --local, --global)' %
-                                       (config.flowdeps.writeprofile, cmd))
+                                       (Colorer.apply_color_profilename(config.flowdeps.writeprofilename), cmd))
     for cmd in cmds:
-        LOGGER.status('Erasing {} flow dependencies from {} settings'.format(cmd, config.flowdeps.writeprofile))
+        LOGGER.status('Erasing {} flow dependencies from {} settings'.format(
+            cmd, Colorer.apply_color_profilename(config.flowdeps.writeprofilename)))
         del config.flowdeps.writable[cmd]
     config.flowdeps.write()
 

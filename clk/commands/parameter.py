@@ -57,12 +57,12 @@ def set(cmd, params):
     config.parameters.writable[cmd] = params
     if old is not None:
         LOGGER.status('Removing {} parameters of {}: {}'.format(
-            config.parameters.writeprofilename,
+            Colorer.apply_color_profilename(config.parameters.writeprofilename),
             cmd,
             format_parameters(old),
         ))
     LOGGER.status('New {} parameters for {}: {}'.format(
-        config.parameters.writeprofilename,
+        Colorer.apply_color_profilename(config.parameters.writeprofilename),
         cmd,
         format_parameters(params),
     ))
@@ -78,7 +78,7 @@ def edit(cmd):
     """Set the parameters of a command"""
     old = config.parameters.writable.get(cmd) or []
     oldcontent = format_parameters(old)
-    content = click.edit(oldcontent, extension=f'_{config.parameters.writeprofile}.txt')
+    content = click.edit(oldcontent, extension=f'_{config.parameters.writeprofilename}.txt')
     if content == oldcontent or content is None:
         LOGGER.info('Nothing changed')
     elif content == '':
@@ -86,13 +86,13 @@ def edit(cmd):
     else:
         if old:
             LOGGER.status('Removing {} parameters of {}: {}'.format(
-                config.parameters.writeprofilename,
+                Colorer.apply_color_profilename(config.parameters.writeprofilename),
                 cmd,
                 format_parameters(old),
             ))
         params = shlex.split(content)
         LOGGER.status('New {} parameters for {}: {}'.format(
-            config.parameters.writeprofilename,
+            Colorer.apply_color_profilename(config.parameters.writeprofilename),
             cmd,
             format_parameters(params),
         ))
@@ -112,14 +112,14 @@ def append(cmd, params):
     new = old + list(params)
     if old:
         LOGGER.status('New {} parameters for {}: {} (old parameters) + {}'.format(
-            config.parameters.writeprofilename,
+            Colorer.apply_color_profilename(config.parameters.writeprofilename),
             cmd,
             format_parameters(old),
             format_parameters(params),
         ))
     else:
         LOGGER.status('New {} parameters for {}: {}'.format(
-            config.parameters.writeprofilename,
+            Colorer.apply_color_profilename(config.parameters.writeprofilename),
             cmd,
             format_parameters(params),
         ))
@@ -166,8 +166,8 @@ def remove(cmd, params):
             config.parameters.writable[cmd].remove(param)
         except ValueError:
             raise click.ClickException('%s is not in the parameters of %s' % (param, cmd))
-    LOGGER.status('Erasing {} parameters {} from {} settings'.format(cmd, ' '.join(params),
-                                                                     config.parameters.writeprofilename))
+    LOGGER.status('Erasing {} parameters {} from {} settings'.format(
+        cmd, ' '.join(params), Colorer.apply_color_profilename(config.parameters.writeprofilename)))
     config.parameters.write()
 
 
@@ -182,11 +182,11 @@ def unset(cmds):
         if cmd not in config.parameters.writable:
             raise click.ClickException('The command %s has no parameter registered in the %s configuration.'
                                        ' Try using another profile option (like --local or --global)' %
-                                       (cmd, config.parameters.writeprofilename))
+                                       (cmd, Colorer.apply_color_profilename(config.parameters.writeprofilename)))
     for cmd in cmds:
-        LOGGER.status('Erasing {} parameters of {} (was: {})'.format(config.parameters.writeprofilename, cmd,
-                                                                     format_parameters(
-                                                                         config.parameters.writable[cmd])))
+        LOGGER.status('Erasing {} parameters of {} (was: {})'.format(
+            Colorer.apply_color_profilename(config.parameters.writeprofilename), cmd,
+            format_parameters(config.parameters.writable[cmd])))
         del config.parameters.writable[cmd]
     config.parameters.write()
 
