@@ -352,11 +352,12 @@ clk_help_handler "$@"
 @argument('name', help='The name of the new command')
 @flag('--open/--no-open', help='Also open the file after its creation', default=True)
 @flag('--force', help='Overwrite a file if it already exists')
+@flag('--group/--command', help='Bootstrap a command or a group of commands')
 @flag('--with-data', help='Create a directory module instead of a single file.' ' So that you can ship data with it')
 @option('--body', help='The initial body to put', default='')
 @option('--description', help='The initial description to put', default='Description')
 @option('--from-file', help='Copy this file instead of using the template')
-def python(name, open, force, description, body, with_data, from_file):
+def python(name, open, force, description, body, with_data, from_file, group):
     """Create a bash custom command"""
     script_path = Path(config.customcommands.profile.location) / 'python'
     if with_data:
@@ -373,7 +374,7 @@ def python(name, open, force, description, body, with_data, from_file):
     makedirs(script_path.parent)
     if script_path.exists() and not force:
         raise click.UsageError(f"Won't overwrite {script_path} unless" ' explicitly asked so with --force')
-    script_text = """#!/usr/bin/env python3
+    script_text = f"""#!/usr/bin/env python3
 # -*- coding:utf-8 -*-
 
 from pathlib import Path
@@ -384,8 +385,7 @@ from clk.decorators import (
     argument,
     flag,
     option,
-    command,
-    group,
+    {'group' if group else 'command'},
     use_settings,
     table_format,
     table_fields,
@@ -409,7 +409,7 @@ def data_file(name):
 
 """
     script_text += f"""
-@command()
+@{'group' if group else 'command'}()
 def {command_name}():
     "{description}"
     {body}
