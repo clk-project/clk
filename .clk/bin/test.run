@@ -3,7 +3,7 @@
 source "_clk.sh"
 
 list_tests ( ) {
-    pushd "tests" > /dev/null
+    pushd "${CLK__PROJECT}/tests" > /dev/null
     {
         ls test_*|sed -r 's/^test_(.+).py$/\1/'
     }
