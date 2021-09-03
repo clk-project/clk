@@ -11,3 +11,7 @@ def run(cmd, *args, **kwargs):
 
 def out(cmd, *args, **kwargs):
     return check_output(split(cmd), *args, encoding='utf-8', **kwargs).strip()
+
+
+def cmd(remaining, *args, **kwargs):
+    return out('clk ' + remaining, *args, **kwargs)
