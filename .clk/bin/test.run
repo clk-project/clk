@@ -18,6 +18,7 @@ Description
 --
 A:test:$(list_tests|clk_list_to_choice):Tests to run:-1
 flowdepends: test.create-docker-image
+F:--pdb/--no-pdb:Stop using pdb
 M:I
 EOF
 }
@@ -37,5 +38,11 @@ do
     tests+=(/src/tests/test_${t}.py)
 done
 
+args=()
+if [ -n "${CLK___PDB}" ]
+then
+    args+=(--pdb)
+fi
 
-clk test run-in-docker-image pytest "${tests[@]}"
+
+clk test run-in-docker-image pytest "${args[@]}" "${tests[@]}"
