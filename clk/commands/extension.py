@@ -366,37 +366,7 @@ def where_is(profile):
     print(profile.location)
 
 
-predefined_hosts = [
-    'github.com',
-    'gitlab.com',
-    'bitbucket.org',
-]
-
-
-@extension.command()
-@option('--profile', type=DirectoryProfileType(), help='The profile where to install the extension')
-@argument(
-    'url',
-    help=('The url of the git repository hosting the extension.'
-          ' Can be author/extension for github repository.'
-          ' If that case, the url will become'
-          ' https://github.com/{author}/clk_extension_{extension}.'
-          ' Actually, the prefix (github.com) may be changed using --url-prefix.'
-          ' Can also be gitlab.com/{author}/{extension},'
-          ' github.com/{author}/{extension},'
-          ' git@...,'
-          ' http://...,'
-          ' a path to a local directory'
-          ' (not that in that case, using --editable makes sense).'),
-)
-@argument('name', help='The name of the extension', required=False)
-@flag('--install-deps/--no-install-deps', help='Automatically install the dependencies.', default=True)
-@flag('--force/--no-force', help='Overwrite the existing extension if need be.')
-@flag('-e', '--editable', help='(only for local path) Create a symbolic link rather than copying the content')
-@pass_context
-def install(ctx, profile, url, name, install_deps, editable, force):
-    """Install an extension from outside"""
-    profile = profile or config.global_profile
+def process_url(name, url):
     urls = []
     if re.match('^[a-zA-Z0-9]+$', url):
         urls.append(f'git@github.com:clk-project/clk_extension_{url}')
@@ -445,22 +415,56 @@ def install(ctx, profile, url, name, install_deps, editable, force):
     else:
         install_type = 'git'
         urls.append(url)
+    if name is None and '/' in url:
+        name = url.split('/')[-1]
+    if name.startswith('clk_extension_'):
+        name = name.replace('clk_extension_', '')
+    return name, urls, install_type
+
+
+predefined_hosts = [
+    'github.com',
+    'gitlab.com',
+    'bitbucket.org',
+]
+
+
+@extension.command()
+@option('--profile', type=DirectoryProfileType(), help='The profile where to install the extension')
+@argument(
+    'url',
+    help=('The url of the git repository hosting the extension.'
+          ' Can be author/extension for github repository.'
+          ' If that case, the url will become'
+          ' https://github.com/{author}/clk_extension_{extension}.'
+          ' Actually, the prefix (github.com) may be changed using --url-prefix.'
+          ' Can also be gitlab.com/{author}/{extension},'
+          ' github.com/{author}/{extension},'
+          ' git@...,'
+          ' http://...,'
+          ' a path to a local directory'
+          ' (not that in that case, using --editable makes sense).'),
+)
+@argument('name', help='The name of the extension', required=False)
+@flag('--install-deps/--no-install-deps', help='Automatically install the dependencies.', default=True)
+@flag('--force/--no-force', help='Overwrite the existing extension if need be.')
+@flag('-e', '--editable', help='(only for local path) Create a symbolic link rather than copying the content')
+@pass_context
+def install(ctx, profile, url, name, install_deps, editable, force):
+    """Install an extension from outside"""
+    profile = profile or config.global_profile
+    name, urls, install_type = process_url(name, url)
+    if name is None:
+        raise click.UsageError('I cannot infer a name for your extension. Please provide one explicitly.')
+
+    if not re.match(f'^{DirectoryProfile.extension_name_re}$', name):
+        raise click.UsageError(f"Invalid extension name '{name}'."
+                               " an extension's name must contain only letters or _")
 
     if editable is True and install_type != 'file':
         LOGGER.warning('Ignoring --editable for we guessed that'
                        ' you did not provide a url that actually'
                        ' points to a local file')
-
-    if name is None:
-        if '/' in url:
-            name = url.split('/')[-1]
-        else:
-            raise click.UsageError('I cannot infer a name for your extension. Please provide one explicitly.')
-    if name.startswith('clk_extension_'):
-        name = name.replace('clk_extension_', '')
-    if not re.match(f'^{DirectoryProfile.extension_name_re}$', name):
-        raise click.UsageError(f"Invalid extension name '{name}'."
-                               " an extension's name must contain only letters or _")
 
     if install_type is None:
         raise click.UsageError('I cannot infer how to install the extension'
@@ -505,12 +509,14 @@ def install(ctx, profile, url, name, install_deps, editable, force):
             ln(Path(url).resolve(), extension_path)
         else:
             copy(url, extension_path)
+            (extension_path / 'url').write_text(url)
     elif install_type == 'webtar':
         LOGGER.info(f'Getting the tarfile from {url}')
         tar = tarfile.open(fileobj=io.BytesIO(requests.get(url).content))
         tar.extractall(extension_path)
         for file in glob(f'{extension_path}/*/*'):
             move(file, extension_path)
+        (extension_path / 'url').write_text(url)
 
     extension = profile.get_extension(name)
 
