@@ -7,6 +7,37 @@ from subprocess import check_call, check_output
 from lib import cmd, out, run
 
 
+def test_alias_overrides_parameters(pythondir):
+    # given a group of commands that allows playing with http, using
+    # param_config for very reactive completion
+    (pythondir / 'http.py').write_text("""
+from clk.config import config
+from clk.decorators import group, param_config
+@group()
+@param_config('http', '--url')
+def http():
+    ""
+
+@http.command()
+def get():
+    print("Getting " + config.http.url)
+""")
+    assert cmd('http --url http://a.com get') == 'Getting http://a.com'
+    # and the url being saved in the parameters
+    cmd('parameter set http --url http://a.com')
+    assert cmd('http get') == 'Getting http://a.com'
+    # when I create an alias called h to shorten the call to http
+    cmd('alias set h http')
+    # and save another url as parameter of the alias
+    cmd('parameter set h --url http://b.com')
+    # then I can call h without parameters and still see it use http://b.com
+    assert cmd('h get') == 'Getting http://b.com'
+    # when I create an alias called h.g to shorten even more the call to http get
+    cmd('alias set h.g h get')
+    # then I can call h g without parameters and still see it use http://b.com
+    assert cmd('h g') == 'Getting http://b.com'
+
+
 def test_alias_conserves_parameters_of_group_with_param_config(pythondir):
     # given a group of commands that allows playing with http, using
     # param_config for very reactive completion
