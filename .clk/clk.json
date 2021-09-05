@@ -40,6 +40,16 @@
             ],
             "documentation": null
         },
+        "test.bash": {
+            "commands": [
+                [
+                    "test",
+                    "exec",
+                    "bash"
+                ]
+            ],
+            "documentation": null
+        },
         "test.create-docker-image": {
             "commands": [
                 [
@@ -50,6 +60,18 @@
                     "-t",
                     "clk",
                     "."
+                ]
+            ],
+            "documentation": null
+        },
+        "test.exec": {
+            "commands": [
+                [
+                    "exec",
+                    "docker",
+                    "exec",
+                    "-ti",
+                    "clk-test"
                 ]
             ],
             "documentation": null
