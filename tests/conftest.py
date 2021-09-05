@@ -26,3 +26,11 @@ def move_somewhere():
     yield
     del os.environ['CLKCONFIGDIR']
     os.chdir(prev)
+
+
+@pytest.fixture()
+def pythondir():
+    res = Path('.') / 'clk' / 'python'
+    if not res.exists():
+        os.makedirs(res)
+    return res
