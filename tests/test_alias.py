@@ -25,22 +25,28 @@ def test_alias_conserves_parameters():
 
 
 def test_alias_conserves_parameters_of_group(pythondir):
-    (pythondir / 'a.py').write_text("""
+    # given a group of commands that allows playing with http
+    (pythondir / 'http.py').write_text("""
 from clk.config import config
 from clk.decorators import group, option
 @group()
-@option('-a')
-def a(a):
-    config.a = a
+@option('--url')
+def http(url):
+    config.url = url
 
-@a.command()
-def b():
-    print(config.a)
-    print("b")""")
-    assert cmd('a -a a b') == 'a\nb'
-    cmd('parameter set a -a a')
-    assert cmd('a b') == 'a\nb'
-    cmd('alias set b a')
-    assert cmd('b b') == 'a\nb'
-    cmd('alias set a.c a b')
-    assert cmd('a c') == 'a\nb'
+@http.command()
+def get():
+    print("Getting " + config.url)
+""")
+    assert cmd('http --url http://a.com get') == 'Getting http://a.com'
+    # and the url being saved in the parameters
+    cmd('parameter set http --url http://a.com')
+    assert cmd('http get') == 'Getting http://a.com'
+    # when I create an alias called h to shorten the call to http
+    cmd('alias set h http')
+    # then I can call h without parameters and still see it use http://a.com
+    assert cmd('h get') == 'Getting http://a.com'
+    # when I create an alias called h.g to shorten even more the call to http get
+    cmd('alias set h.g h get')
+    # then I can call h g without parameters and still see it use http://a.com
+    assert cmd('h g') == 'Getting http://a.com'
