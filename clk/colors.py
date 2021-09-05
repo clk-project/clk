@@ -94,6 +94,7 @@ class Colorer(object):
             else:
                 color = profile.default_color
             profile_colors[profile.short_name] = color
+            profile_colors[profile.name] = color
         return profile_colors
 
     @classmethod
