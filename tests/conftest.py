@@ -18,8 +18,8 @@ project1 = project
 
 
 @pytest.fixture(autouse=True)
-def move_somewhere():
-    root = tempfile.mkdtemp()
+def move_somewhere(request):
+    root = tempfile.mkdtemp(prefix=request.node.name + '_')
     prev = os.getcwd()
     os.chdir(root)
     os.environ['CLKCONFIGDIR'] = str(Path(root) / 'clk')
