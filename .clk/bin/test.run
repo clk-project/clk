@@ -35,7 +35,7 @@ fi
 tests=()
 for t in ${args}
 do
-    tests+=(/src/tests/test_${t}.py)
+    tests+=(/home/sam/src/tests/test_${t}.py)
 done
 
 args=()

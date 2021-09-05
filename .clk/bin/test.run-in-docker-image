@@ -19,4 +19,4 @@ clk_help_handler "$@"
 
 
 clk exec docker run -ti --rm --name clk-test \
-    -v "${CLK__PROJECT}:/src/" clk "${@}"
+    -v "${CLK__PROJECT}:/home/sam/src/" clk "${@}"
