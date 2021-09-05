@@ -5,6 +5,7 @@ import tempfile
 from pathlib import Path
 
 import pytest
+from lib import run
 
 
 @pytest.fixture()
@@ -19,10 +20,12 @@ project1 = project
 
 @pytest.fixture(autouse=True)
 def move_somewhere(request):
-    root = tempfile.mkdtemp(prefix=request.node.name + '_')
+    root = tempfile.mkdtemp(prefix=request.node.name[len('test_'):] + '_')
     prev = os.getcwd()
     os.chdir(root)
     os.environ['CLKCONFIGDIR'] = str(Path(root) / 'clk')
+    (Path(root) / '.envrc').write_text(f"export CLKCONFIGDIR={os.environ['CLKCONFIGDIR']}")
+    run('direnv allow')
     yield
     del os.environ['CLKCONFIGDIR']
     os.chdir(prev)

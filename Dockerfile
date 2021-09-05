@@ -1,6 +1,7 @@
 FROM python:alpine
 # dependencies
-RUN apk add --update git bash
+RUN apk add --update git bash curl
+RUN curl -sfL https://direnv.net/install.sh | bash
 # setup-user
 ARG uid=1000
 ARG username=sam
@@ -31,6 +32,8 @@ COPY ./ $HOME/src/
 ARG install_args=-e
 RUN python3 -m pip install $install_args $HOME/src/
 
-WORKDIR $HOME
-RUN clk completion show bash > ~/.bashrc
+WORKDIR /tmp
+ENV PYTHONBREAKPOINT=ipdb.set_trace
+RUN clk completion show bash >> ~/.bashrc
+RUN echo 'eval "$(direnv hook bash)"' >> ~/.bashrc
 CMD bash
