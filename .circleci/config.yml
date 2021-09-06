@@ -37,6 +37,8 @@ jobs:
       - checkout
       - run:
           command: |
+            curl -sfL https://direnv.net/install.sh | bash
+            eval "$(direnv hook bash)"
             python3 -m pip install pipenv
             pipenv install .
             pipenv install pytest pre-commit
