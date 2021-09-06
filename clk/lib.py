@@ -1475,7 +1475,7 @@ def tabulate(tabular_data,
             if len(kv) > 1:
                 data.append('%s %s' % (kv[0], click.style(u' '.join(to_string(v) for v in kv[1:]), **config.alt_style)))
             else:
-                data.append(kv[0])
+                data.append(str(kv[0]))
         return '\n'.join(data)
     elif tablefmt == 'csv':
         import csv
