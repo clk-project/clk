@@ -437,6 +437,8 @@ class Config(object):
             settings={
                 'launchers': {
                     'gdb': ['gdb', '--quiet', '--args'],
+                    'dlvdebug': ['dlv', 'debug'],
+                    'gorun': ['go', 'run'],
                     'gdb-jvm': ['gdb', '--quiet', '--eval-command=handle SIGSEGV nostop noprint pass', '--args'],
                     'lldb': ['lldb', '--'],
                     'memcheck': ['valgrind', '--tool=memcheck', '--leak-check=full'],
