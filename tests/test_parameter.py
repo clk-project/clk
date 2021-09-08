@@ -22,3 +22,16 @@ def test_parameter_to_alias():
     run('clk parameter set a foo')
     run('clk parameter set echo bar')
     assert out('clk a') == 'bar foo'
+
+
+def test_parameter_before_the_ignore_section():
+    """A command line stuff after the -- is not processed"""
+    assert cmd('exec echo -- foo --launcher-command echo') == 'foo --launcher-command echo'
+    """But a command line stuff before the -- is processed"""
+    assert cmd('exec echo --launcher-command echo -- foo') == 'echo foo'
+    """When setting a parameter without, I expect it to be processed"""
+    cmd('parameter set exec --launcher-command echo')
+    assert cmd('exec echo') == 'echo'
+    """When setting a parameter without --, I expect it to be put in the
+    processed even though the command contains -- in it"""
+    assert cmd('exec echo -- foo') == 'echo foo'
