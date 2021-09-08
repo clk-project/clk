@@ -156,7 +156,13 @@ class AliasCommandResolver(CommandResolver):
                 run(command_)
             arguments = ctx.complete_arguments[:]
             arguments = clean_flow_arguments(arguments)
-            whole_command = commands[-1] + arguments
+            if '--' in commands[-1]:
+                separator_index = commands[-1].index('--')
+                processed_part = commands[-1][:separator_index]
+                ignored_part = commands[-1][separator_index + 1:]
+                whole_command = processed_part + arguments + ['--'] + ignored_part
+            else:
+                whole_command = commands[-1] + arguments
             original_command_ctx = get_ctx(whole_command, side_effects=True)
             cur_ctx = original_command_ctx
             ctxs = []
