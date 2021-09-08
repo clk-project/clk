@@ -110,3 +110,12 @@ def get():
     cmd('alias set h.g h get')
     # then I can call h g without parameters and still see it use http://a.com
     assert cmd('h g') == 'Getting http://a.com'
+
+
+def test_alias_preserves_ignored_section_in_the_command_line():
+    # given an alias that contains an ignored section (meaning with -- in the
+    # command line)
+    cmd('alias set foo exec -- -- foo')
+    # when I run the alias with a command line stuff to be processed
+    # then the stuff given to the alias is actually processed
+    assert cmd('foo --launcher-command echo') == 'foo'
