@@ -158,15 +158,11 @@ class DirectoryProfile(Profile):
                       f' `clk{enable_argument} {command} --{profile_name_to_commandline_name(self.name)} show`'
                       ' to know more.')
         found_some_executable = False
-        if 'customcommands' in self.settings:
-            if any([
-                    next(Path(path).iterdir()) for path in (self.settings['customcommands']['executablepaths'] +
-                                                            self.settings['customcommands']['pythonpaths'])
-            ]):
-                print(f'I found some executable commands, try running'
-                      f' `clk{enable_argument} command --{profile_name_to_commandline_name(self.name)} list`'
-                      ' to know more.')
-                found_some_executable = True
+        if any([next(Path(path).iterdir()) for path in (self.executable_paths + self.python_paths)]):
+            print(f'I found some executable commands, try running'
+                  f' `clk{enable_argument} command --{profile_name_to_commandline_name(self.name)} list`'
+                  ' to know more.')
+            found_some_executable = True
         if self.name in ('local', 'workspace', 'global'):
             from clk.config import config
             preset_extension = getattr(config, self.name + 'preset_profile')
