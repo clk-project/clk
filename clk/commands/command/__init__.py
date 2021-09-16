@@ -230,12 +230,15 @@ It works only for python scripts or bash scripts.
 @flag('--force', help='Overwrite a file if it already exists')
 @option('--body', help='The initial body to put', default='')
 @option('--from-alias', help='The alias to use as base', type=AliasesType())
+@flag('--replace-alias', help='Use an alias of the same name and replace it')
 @option('--flowdeps', help='Add a flowdeps', multiple=True, type=CommandType())
 @option('--description', help='The initial description to put', default='Description')
 @option('--source-bash-helpers/--no-source-bash-helpers', help='Source the bash helpers', default=True)
 @option('--from-file', help='Copy this file instead of using the template')
-def bash(name, open, force, description, body, from_alias, flowdeps, source_bash_helpers, from_file):
+def bash(name, open, force, description, body, from_alias, replace_alias, flowdeps, source_bash_helpers, from_file):
     """Create a bash custom command"""
+    if from_alias and replace_alias:
+        raise click.UsageError('You can only set --from-alias or --from-alias-move,' ' not both at the same time.')
     if name.endswith('.sh'):
         LOGGER.warning("Removing the extra .sh so that clk won't confuse it" ' with a command name.')
         name = name[:len('.sh')]
@@ -248,7 +251,7 @@ def bash(name, open, force, description, body, from_alias, flowdeps, source_bash
     flags = []
     remaining = ''
     args = ''
-
+    from_alias = from_alias or (replace_alias and name)
     if from_alias:
         if body:
             body = body + '\n'
@@ -344,6 +347,9 @@ clk_help_handler "$@"
     if from_file:
         script_content = Path(from_file).read_text()
     createfile(script_path, script_content, mode=0o755)
+    if replace_alias:
+        from clk.core import run
+        run(['alias', 'unset', name])
     if open:
         click.edit(filename=str(script_path))
 
