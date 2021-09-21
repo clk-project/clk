@@ -40,7 +40,10 @@ def param_config(name, *args, **kwargs):
             setattr(config, name, Conf())
         if init_callback is not None:
             value = init_callback(ctx, attr, value)
-        if not hasattr(getattr(config, name), attr.name) or value is not None:
+        # use name in dir(class) instead of hasattr(class, name) because the
+        # later will try to get class.name and may trigger lazy behavior that
+        # are generally wanted to be trigger as late as possible.
+        if attr.name not in dir(getattr(config, name)) or value is not None:
             setattr(getattr(config, name), attr.name, value)
         return value
 
