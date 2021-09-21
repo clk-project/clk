@@ -9,8 +9,8 @@ from clk.commandresolver import CommandResolver
 from clk.config import config
 from clk.core import get_ctx, run
 from clk.decorators import pass_context
-from clk.flow import clean_flow_arguments, get_flow_commands_to_run
-from clk.lib import quote
+from clk.flow import clean_flow_arguments, flowdeps
+from clk.lib import ordered_unique, quote
 from clk.log import get_logger
 from clk.overloads import AutomaticOption, Command, Group, command, get_command, group, list_commands
 
@@ -108,7 +108,7 @@ class AliasCommandResolver(CommandResolver):
             # with an explicit flow
             if (not cmdctx.params.get('flow') and not cmdctx.params.get('flow_from')
                     and not cmdctx.params.get('flow_after')):
-                deps += get_flow_commands_to_run(cmdctx.command.path)
+                deps += flowdeps[cmdctx.command.path]
 
         # also get the context of the last command to capture its flow. In that
         # case, I wan't to allow side effects because I want this command to
@@ -116,7 +116,8 @@ class AliasCommandResolver(CommandResolver):
         # or whatever should transpire in the aliased command.
         c = get_ctx(commands_to_run[-1], side_effects=True)
         if (not c.params.get('flow') and not c.params.get('flow_from') and not c.params.get('flow_after')):
-            deps += get_flow_commands_to_run(c.command.path)
+            deps += flowdeps[c.command.path]
+        deps = ordered_unique(deps)
 
         kind = None
 
