@@ -630,7 +630,7 @@ def check_output(cmd, *args, **kwargs):
             return stdout
         else:
             if nostderr:
-                kwargs['stderr'] = None
+                kwargs['stderr'] = subprocess.PIPE
             try:
                 return subprocess.check_output(cmd, *args, **kwargs).decode('utf-8')
             except BaseException as e:
