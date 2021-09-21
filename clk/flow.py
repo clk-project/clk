@@ -120,6 +120,13 @@ def execute_flow_step(cmd, args=None):
         raise
     finally:
         overloads.allow_dotted_commands = old_allow
+    if config.flowstep:
+        click.prompt(
+            f"End of the step {' '.join(cmd)}.\n"
+            'Press Enter to continue',
+            default='',
+            show_default=False,
+        )
 
 
 def all_part(path):

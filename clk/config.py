@@ -128,6 +128,7 @@ class Config(object):
         self.settings = None
         self.app_dir = get_appdir(self.app_dir_name)
         self.autoflow = None
+        self.flowstep = None
         self.plugindirs = []
         self._dry_run = None
         self._project = None

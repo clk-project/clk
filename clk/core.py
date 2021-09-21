@@ -326,6 +326,12 @@ def main_command_decoration(f, cls, **kwargs):
                             is_flag=True,
                             callback=autoflow_callback,
                             default=None)(f)
+    f = main_command_option('--flow-step/--no-flow-step',
+                            help='Make a pause in between the flow steps.'
+                            ' Useful to make demonstrations.',
+                            is_flag=True,
+                            callback=flowstep_callback,
+                            default=None)(f)
     f = main_command_option('-P', '--project', metavar='DIR', help='Project directory', callback=project_callback)(f)
     f = main_command_option(
         '--persist-migration/--no-persist-migration',
@@ -590,6 +596,11 @@ def post_mortem_callback(ctx, attr, value):
 @main_command_options_callback
 def autoflow_callback(ctx, attr, value):
     config.autoflow = value
+
+
+@main_command_options_callback
+def flowstep_callback(ctx, attr, value):
+    config.flowstep = value
 
 
 @main_command_options_callback
