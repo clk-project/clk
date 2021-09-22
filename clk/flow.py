@@ -244,7 +244,7 @@ def get_flow_wrapper(name, function):
         ctx = click.get_current_context()
         flow = flow if flow is not None else config.autoflow
         global _in_a_flow
-        if flow or flow_from or flow_after:
+        if not _in_a_flow and (flow or flow_from or flow_after):
             # forward the parameter values the the other commands in the flow
             for param in ctx.command.params:
                 if isinstance(param, FlowOption):
