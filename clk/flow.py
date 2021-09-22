@@ -112,7 +112,7 @@ def get_flow_commands_to_run(cmd_path, flow_from=None, flow_after=None, flow_tru
 def execute_flow_step(cmd, args=None):
     cmd.extend(args or [])
     LOGGER.status('--------------')
-    LOGGER.status("About to run step '{}'".format(' '.join(cmd)))
+    LOGGER.status(f"{'About to run' if config.flowstep else 'Running'} step '{' '.join(cmd)}'")
     if config.flowstep:
         click.prompt(
             'Press Enter to start this step',
