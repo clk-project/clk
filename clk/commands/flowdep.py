@@ -160,7 +160,7 @@ def show(ctx, name_only, cmds, all, fields, format, **kwargs):
                     tp.echo(cmd, formatted)
 
 
-def compute_dot(cmds=None, strict=False, cluster=True, left_right=False, lonely=False):
+def compute_dot(cmds=None, strict=False, cluster=True, left_right=False, lonely=False, show_aliases=False):
     import networkx
     g = networkx.digraph.DiGraph()
 
@@ -229,13 +229,14 @@ def compute_dot(cmds=None, strict=False, cluster=True, left_right=False, lonely=
             dot += """  "{}" [label= "{}{}", fillcolor = {}, style = filled];\n""".format(
                 node,
                 node,
-                '\n -> {}'.format(' , '.join(' '.join(quote(arg)
-                                                      for arg in cmd)
-                                             for cmd in aliases[node])) if node in aliases else '',
-                'greenyellow' if node in aliases else 'skyblue',
+                '\n -> {}'.format(' , '.join(' '.join(quote(arg) for arg in cmd) for cmd in aliases[node])) if
+                (show_aliases and node in aliases) else '',
+                'greenyellow' if (show_aliases and node in aliases) else 'skyblue',
             )
+    source_order = defaultdict(int)
     for src, dst in adjacency:
-        dot += """  "{}" -> "{}";\n""".format(src, dst)
+        source_order[dst] = source_order[dst] + 1
+        dot += f"""  "{src}" -> "{dst}" [headlabel="{source_order[dst]}"];\n"""
     dot += '}'
     LOGGER.develop(dot)
     return dot
@@ -246,12 +247,19 @@ def compute_dot(cmds=None, strict=False, cluster=True, left_right=False, lonely=
 @option('--format', type=click.Choice(['png', 'svg', 'x11', 'pdf', 'dot']), help='Format to use', default='svg')
 @flag('--strict/--all', help='Show the all dependency graph or only the explicitly configured flowdep')
 @flag('--left-right/--top-bottom', help='Show from left to right', default=True)
+@flag('--show-aliases/--hide-aliases',
+      help='Show the details of the aliases instead of making them look like other nodes')
 @flag('--lonely/--no-lonely', help='Show lonely nodes also' ' (it generally pollutes unnecessarily the graph)')
 @flag('--cluster/--independent', help='Show all commands independently or cluster groups', default=True)
 @argument('cmds', nargs=-1, type=CommandType(), help='The commands to display')
-def graph(output, format, cmds, strict, cluster, left_right, lonely):
+def graph(output, format, cmds, show_aliases, strict, cluster, left_right, lonely):
     """Display the flow dependencies as a graph"""
-    dot = compute_dot(cmds=cmds, strict=strict, cluster=cluster, left_right=left_right, lonely=lonely)
+    dot = compute_dot(cmds=cmds,
+                      strict=strict,
+                      cluster=cluster,
+                      left_right=left_right,
+                      lonely=lonely,
+                      show_aliases=show_aliases)
     if dot is None:
         LOGGER.status('Nothing to show')
         exit(0)
