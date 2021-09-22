@@ -246,9 +246,9 @@ def compute_dot(cmds=None, strict=False, cluster=True, left_right=False, lonely=
 @option('--output', help='Output file instead of showing it in a web browser - not relevant with format x11')
 @option('--format', type=click.Choice(['png', 'svg', 'x11', 'pdf', 'dot']), help='Format to use', default='svg')
 @flag('--strict/--all', help='Show the all dependency graph or only the explicitly configured flowdep')
-@flag('--left-right/--top-bottom', help='Show from left to right', default=True)
 @flag('--show-aliases/--hide-aliases',
       help='Show the details of the aliases instead of making them look like other nodes')
+@flag('--left-right/--top-bottom', help='Show from left to right')
 @flag('--lonely/--no-lonely', help='Show lonely nodes also' ' (it generally pollutes unnecessarily the graph)')
 @flag('--cluster/--independent', help='Show all commands independently or cluster groups', default=True)
 @argument('cmds', nargs=-1, type=CommandType(), help='The commands to display')
