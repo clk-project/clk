@@ -111,7 +111,13 @@ def get_flow_commands_to_run(cmd_path, flow_from=None, flow_after=None, flow_tru
 
 def execute_flow_step(cmd, args=None):
     cmd.extend(args or [])
-    LOGGER.status("Running step '{}'".format(' '.join(cmd)))
+    LOGGER.status("About to run step '{}'".format(' '.join(cmd)))
+    if config.flowstep:
+        click.prompt(
+            'Press Enter to start this step',
+            default='',
+            show_default=False,
+        )
     old_allow = overloads.allow_dotted_commands
     overloads.allow_dotted_commands = True
     try:
@@ -120,13 +126,7 @@ def execute_flow_step(cmd, args=None):
         raise
     finally:
         overloads.allow_dotted_commands = old_allow
-    if config.flowstep:
-        click.prompt(
-            f"End of the step {' '.join(cmd)}.\n"
-            'Press Enter to continue',
-            default='',
-            show_default=False,
-        )
+    LOGGER.status("End of step '{}'".format(' '.join(cmd)))
 
 
 def all_part(path):
