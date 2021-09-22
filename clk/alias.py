@@ -178,6 +178,11 @@ class AliasCommandResolver(CommandResolver):
                     config.commandline_profile.get_settings('parameters')[_ctx.command.path],
                     _ctx.params,
                 ))
+                # this alias already captured the complete flow, hence we should
+                # not trigger any flow behavior of the aliased commands
+                for flow_param in 'flow', 'flow_from', 'flow_after':
+                    if flow_param in _ctx.params:
+                        _ctx.params[flow_param] = None
                 with _ctx:
                     old_resilient_parsing = _ctx.resilient_parsing
                     _ctx.resilient_parsing = ctx.resilient_parsing
@@ -197,6 +202,9 @@ class AliasCommandResolver(CommandResolver):
                             callback=lambda ctx, param, value: edit_alias_command(path) if value is True else None))
         if deps:
             alias_command.clickproject_flowdepends = deps
+            alias_command.clickproject_flow = c.params['flow']
+            alias_command.clickproject_flow_from = c.params['flow_from']
+            alias_command.clickproject_flow_after = c.params['flow_after']
 
         alias_command.commands_to_run = commands_to_run
         if c is not None:
