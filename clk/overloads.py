@@ -973,7 +973,7 @@ def command(ignore_unknown_options=False,
         if hasattr(f.callback, 'inherited_params'):
             f.inherited_params = f.callback.inherited_params
         if flowdepends is not None:
-            f.clickproject_flowdepends = flowdepends
+            f.clk_flowdepends = flowdepends
         f.handle_dry_run = handle_dry_run
         return f
 
@@ -1045,9 +1045,9 @@ def flow_command(flowdepends=(), flow_from=None, flow_after=None, **kwargs):
                 flowdepends.append(p.target_command.path)
         flowdepends = ordered_unique(flowdepends)
         c = command(flowdepends=flowdepends, **kwargs)(f)
-        c.clickproject_flow = (not flow_from and not flow_after) or None
-        c.clickproject_flowfrom = flow_from
-        c.clickproject_flowafter = flow_after
+        c.clk_flow = (not flow_from and not flow_after) or None
+        c.clk_flowfrom = flow_from
+        c.clk_flowafter = flow_after
         return c
 
     return decorator

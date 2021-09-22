@@ -22,9 +22,9 @@ def setup_flow_params(cmd):
         param for param in cmd.params
         if '--flow' not in param.opts and '--flow-from' not in param.opts and '--flow-after' not in param.opts
     ]
-    flow_default = cmd.clickproject_flow if hasattr(cmd, 'clickproject_flow') else None
-    flowfrom_default = cmd.clickproject_flowfrom if hasattr(cmd, 'clickproject_flowfrom') else None
-    flowafter_default = cmd.clickproject_flowafter if hasattr(cmd, 'clickproject_flowafter') else None
+    flow_default = cmd.clk_flow if hasattr(cmd, 'clk_flow') else None
+    flowfrom_default = cmd.clk_flowfrom if hasattr(cmd, 'clk_flowfrom') else None
+    flowafter_default = cmd.clk_flowafter if hasattr(cmd, 'clk_flowafter') else None
     cmd.params.extend(get_flow_params(cmd.path, flow_default, flowfrom_default, flowafter_default))
 
 
@@ -48,16 +48,16 @@ def clean_flow_arguments(arguments):
 
 
 def get_command_handler(cmd):
-    if hasattr(cmd, 'clickproject_flow_already_setup'):
+    if hasattr(cmd, 'clk_flow_already_setup'):
         return cmd
-    if hasattr(cmd.callback, 'clickproject_flowdepends'):
+    if hasattr(cmd.callback, 'clk_flowdepends'):
         LOGGER.warn('Using the decorator @flowdepends is deprecated'
                     ' and will be removed in the future.'
                     ' Please specify the flow dependencies in the'
                     ' flowdepends keyword argument of @command or @group.')
-        flowdeps[cmd.path] = cmd.callback.clickproject_flowdepends
-    if hasattr(cmd, 'clickproject_flowdepends'):
-        flowdeps[cmd.path] = cmd.clickproject_flowdepends
+        flowdeps[cmd.path] = cmd.callback.clk_flowdepends
+    if hasattr(cmd, 'clk_flowdepends'):
+        flowdeps[cmd.path] = cmd.clk_flowdepends
     flowdeps_settings = config.settings.get('flowdeps')
     if flowdeps_settings and cmd.path in flowdeps_settings:
         LOGGER.debug('Overriding flow dependencies of {} with {}'.format(cmd.path, flowdeps_settings[cmd.path]))
@@ -70,7 +70,7 @@ def get_command_handler(cmd):
     if cmd_has_flow:
         setup_flow_params(cmd)
         cmd.callback = get_flow_wrapper(cmd.name, cmd.callback)
-        cmd.clickproject_flow_already_setup = True
+        cmd.clk_flow_already_setup = True
     return cmd
 
 
@@ -295,7 +295,7 @@ class flowdepends(object):
 
     def __call__(self, function):
         flowdeps[self.name or function.__name__].extend(self.depends)
-        function.clickproject_flowdepends = self.depends
+        function.clk_flowdepends = self.depends
         return function
 
 

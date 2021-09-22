@@ -201,10 +201,10 @@ class AliasCommandResolver(CommandResolver):
                             is_flag=True,
                             callback=lambda ctx, param, value: edit_alias_command(path) if value is True else None))
         if deps:
-            alias_command.clickproject_flowdepends = deps
-            alias_command.clickproject_flow = c.params['flow']
-            alias_command.clickproject_flow_from = c.params['flow_from']
-            alias_command.clickproject_flow_after = c.params['flow_after']
+            alias_command.clk_flowdepends = deps
+            alias_command.clk_flow = c.params['flow']
+            alias_command.clk_flow_from = c.params['flow_from']
+            alias_command.clk_flow_after = c.params['flow_after']
 
         alias_command.commands_to_run = commands_to_run
         if c is not None:
