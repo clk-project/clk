@@ -9,10 +9,12 @@ from clk.alias import edit_alias_command, format, parse
 from clk.colors import Colorer
 from clk.completion import compute_choices
 from clk.config import config
+from clk.core import run
 from clk.decorators import argument, flag, group, option, table_fields, table_format, use_settings
 from clk.lib import TablePrinter, quote
 from clk.log import get_logger
 from clk.overloads import CommandSettingsKeyType, CommandType, get_ctx
+from clk.profile import profile_name_to_commandline_name
 from clk.types import DirectoryProfile as DirectoryProfileType
 
 LOGGER = get_logger(__name__)
@@ -53,10 +55,11 @@ def get_choices(ctx, args_, incomplete):
 
 @alias.command(ignore_unknown_options=True, change_directory_options=False, handle_dry_run=True)
 @option('--documentation', help='Documentation to display')
+@option('--flowdep', help='The flowdep to set', multiple=True, type=CommandType())
 @argument('alias', help='The alias name')
 @argument('command', type=CommandType(), help='The alias command')
 @argument('params', nargs=-1, help='The command parameters')
-def _set(alias, command, documentation, params):
+def _set(alias, command, documentation, params, flowdep):
     """Set an alias"""
     if alias.startswith('-'):
         raise click.UsageError('Aliases must not start with dashes (-)')
@@ -76,6 +79,13 @@ def _set(alias, command, documentation, params):
                                                    alias, format(data['commands'])))
     config.alias.writable[alias] = data
     config.alias.write()
+    if flowdep:
+        run([
+            'flowdep',
+            '--' + profile_name_to_commandline_name(config.alias.writeprofilename),
+            'set',
+            alias,
+        ] + list(flowdep), )
 
 
 _set.get_choices = get_choices
