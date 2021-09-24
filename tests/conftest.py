@@ -32,8 +32,8 @@ def root_dir(request):
 
 
 @pytest.fixture()
-def pythondir():
-    res = Path('.') / 'clk' / 'python'
+def pythondir(root_dir):
+    res = Path(root_dir) / 'clk' / 'python'
     if not res.exists():
         os.makedirs(res)
     return res
