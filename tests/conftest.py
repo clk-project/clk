@@ -21,10 +21,11 @@ project1 = project
 
 @pytest.fixture(autouse=True)
 def rootdir(request):
-    root = tempfile.mkdtemp(prefix=request.node.name[len('test_'):] + '_')
+    root = tempfile.mkdtemp(prefix='clk-test-' + request.node.name[len('test_'):] + '_')
     prev = os.getcwd()
     os.chdir(root)
     os.environ['CLKCONFIGDIR'] = str(Path(root) / 'clk')
+    print(root)
     (Path(root) / '.envrc').write_text(f"export CLKCONFIGDIR={os.environ['CLKCONFIGDIR']}")
     Lib.run('direnv allow')
     yield root
