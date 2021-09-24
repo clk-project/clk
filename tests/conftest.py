@@ -50,6 +50,9 @@ def bindir(rootdir):
 
 
 class Lib:
+    def __init__(self, bindir):
+        self.bindir = bindir
+
     @staticmethod
     def run(cmd, *args, **kwargs):
         return check_call(split(cmd), *args, **kwargs)
@@ -62,7 +65,12 @@ class Lib:
     def cmd(remaining, *args, **kwargs):
         return Lib.out('clk ' + remaining, *args, **kwargs)
 
+    def create_bash_command(self, name, content):
+        path = self.bindir / name
+        path.write_text(content)
+        path.chmod(0o755)
+
 
 @pytest.fixture
-def lib():
-    return Lib
+def lib(bindir):
+    return Lib(bindir)
