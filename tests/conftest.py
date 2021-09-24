@@ -20,7 +20,7 @@ project1 = project
 
 
 @pytest.fixture(autouse=True)
-def root_dir(request):
+def rootdir(request):
     root = tempfile.mkdtemp(prefix=request.node.name[len('test_'):] + '_')
     prev = os.getcwd()
     os.chdir(root)
@@ -33,16 +33,16 @@ def root_dir(request):
 
 
 @pytest.fixture()
-def pythondir(root_dir):
-    res = Path(root_dir) / 'clk' / 'python'
+def pythondir(rootdir):
+    res = Path(rootdir) / 'clk' / 'python'
     if not res.exists():
         os.makedirs(res)
     return res
 
 
 @pytest.fixture()
-def bindir(root_dir):
-    res = Path(root_dir) / 'clk' / 'bin'
+def bindir(rootdir):
+    res = Path(rootdir) / 'clk' / 'bin'
     if not res.exists():
         os.makedirs(res)
     return res
