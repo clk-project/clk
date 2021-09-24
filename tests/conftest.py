@@ -3,9 +3,10 @@
 import os
 import tempfile
 from pathlib import Path
+from shlex import split
+from subprocess import check_call, check_output
 
 import pytest
-from lib import run
 
 
 @pytest.fixture()
@@ -25,7 +26,7 @@ def root_dir(request):
     os.chdir(root)
     os.environ['CLKCONFIGDIR'] = str(Path(root) / 'clk')
     (Path(root) / '.envrc').write_text(f"export CLKCONFIGDIR={os.environ['CLKCONFIGDIR']}")
-    run('direnv allow')
+    Lib.run('direnv allow')
     yield root
     del os.environ['CLKCONFIGDIR']
     os.chdir(prev)
@@ -37,3 +38,30 @@ def pythondir(root_dir):
     if not res.exists():
         os.makedirs(res)
     return res
+
+
+@pytest.fixture()
+def bindir(root_dir):
+    res = Path(root_dir) / 'clk' / 'bin'
+    if not res.exists():
+        os.makedirs(res)
+    return res
+
+
+class Lib:
+    @staticmethod
+    def run(cmd, *args, **kwargs):
+        return check_call(split(cmd), *args, **kwargs)
+
+    @staticmethod
+    def out(cmd, *args, **kwargs):
+        return check_output(split(cmd), *args, encoding='utf-8', **kwargs).strip()
+
+    @staticmethod
+    def cmd(remaining, *args, **kwargs):
+        return Lib.out('clk ' + remaining, *args, **kwargs)
+
+
+@pytest.fixture
+def lib():
+    return Lib
