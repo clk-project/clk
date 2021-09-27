@@ -43,7 +43,12 @@ def param_config(name, *args, **kwargs):
         # use name in dir(class) instead of hasattr(class, name) because the
         # later will try to get class.name and may trigger lazy behavior that
         # are generally wanted to be trigger as late as possible.
-        if attr.name not in dir(getattr(config, name)) or value is not None:
+        if (
+                # not already known
+                attr.name not in dir(getattr(config, name))
+                # explicitely given (meaning not using the default value). I
+                # don't want to use the implicit default value
+                or attr.name not in ctx.clk_default_catch):
             setattr(getattr(config, name), attr.name, value)
         return value
 
