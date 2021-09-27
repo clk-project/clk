@@ -42,27 +42,29 @@ def test_alias_conserves_parameters_of_group_with_param_config(pythondir, lib):
     (pythondir / 'http.py').write_text("""
 from clk.config import config
 from clk.decorators import group, param_config
+from clk.overloads import flag
 @group()
 @param_config('http', '--url')
-def http():
+@param_config('http', '--verify', kls=flag, expose_value=True)
+def http(verify):
     ""
 
 @http.command()
 def get():
-    print("Getting " + config.http.url)
+    print(f"Getting {config.http.url} with {config.http.verify}")
 """)
-    assert lib.cmd('http --url http://a.com get') == 'Getting http://a.com'
+    assert lib.cmd('http --url http://a.com --verify get') == 'Getting http://a.com with True'
     # and the url being saved in the parameters
-    lib.cmd('parameter set http --url http://a.com')
-    assert lib.cmd('http get') == 'Getting http://a.com'
+    lib.cmd('parameter set http --url http://a.com --verify')
+    assert lib.cmd('http get') == 'Getting http://a.com with True'
     # when I create an alias called h to shorten the call to http
     lib.cmd('alias set h http')
     # then I can call h without parameters and still see it use http://a.com
-    assert lib.cmd('h get') == 'Getting http://a.com'
+    assert lib.cmd('h get') == 'Getting http://a.com with True'
     # when I create an alias called h.g to shorten even more the call to http get
     lib.cmd('alias set h.g h get')
     # then I can call h g without parameters and still see it use http://a.com
-    assert lib.cmd('h g') == 'Getting http://a.com'
+    assert lib.cmd('h g') == 'Getting http://a.com with True'
 
 
 def test_simple_alias_command():
