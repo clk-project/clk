@@ -98,6 +98,7 @@ class AliasCommandResolver(CommandResolver):
         if len(cmdhelp) > 55:
             short_help = cmdhelp[:52] + '...'
         deps = []
+
         for cmd in commands_to_run[:-1]:
             # get the contexts of the commands to capture the flow. I don't want
             # to allow side effects because they are only supposed to be run,
@@ -222,7 +223,7 @@ class AliasCommandResolver(CommandResolver):
                     # given to the command line
                     param.name in c.clk_default_catch or
                     # not given for sure
-                    c.params.get(param.name) is None)
+                    c.params.get(param.name) == param.default)
 
             alias_command.params = [
                 param for param in c.command.params
