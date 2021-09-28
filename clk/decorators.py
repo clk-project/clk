@@ -13,7 +13,8 @@ from clk.core import ExtensionType, settings_stores
 from clk.flow import flowdepends  # NOQA: F401
 from clk.lib import ParameterType, get_tabulate_formats
 from clk.log import get_logger
-from clk.overloads import argument, command, flag, flow_argument, flow_command, flow_option, group, option
+from clk.overloads import (Argument, Option, argument, command, flag, flow_argument, flow_command, flow_option, group,
+                           option)
 from clk.profile import commandline_name_to_profile_name, profile_name_to_commandline_name
 
 LOGGER = get_logger(__name__)
@@ -23,10 +24,13 @@ def param_config(name, *args, **kwargs):
     typ = kwargs.pop('typ', object)
     kls = kwargs.pop('kls', option)
     cls = kwargs.get('cls', {
-        option: click.core.Option,
-        argument: click.core.Argument,
-        flag: click.core.Option,
+        option: Option,
+        argument: Argument,
+        flag: Option,
     }[kls])
+    if kls == flag:
+        kwargs['is_flag'] = True
+        kwargs['default'] = kwargs.get('default', False)
 
     class Conf(typ):
         pass
