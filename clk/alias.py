@@ -179,11 +179,6 @@ class AliasCommandResolver(CommandResolver):
                     config.commandline_profile.get_settings('parameters')[_ctx.command.path],
                     _ctx.params,
                 ))
-                # this alias already captured the complete flow, hence we should
-                # not trigger any flow behavior of the aliased commands
-                for flow_param in 'flow', 'flow_from', 'flow_after':
-                    if flow_param in _ctx.params:
-                        _ctx.params[flow_param] = None
                 with _ctx:
                     old_resilient_parsing = _ctx.resilient_parsing
                     _ctx.resilient_parsing = ctx.resilient_parsing
