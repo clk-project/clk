@@ -204,8 +204,8 @@ class AliasCommandResolver(CommandResolver):
         if deps:
             alias_command.clk_flowdepends = deps
             alias_command.clk_flow = c.params['flow']
-            alias_command.clk_flow_from = c.params['flow_from']
-            alias_command.clk_flow_after = c.params['flow_after']
+            alias_command.clk_flowfrom = c.params['flow_from']
+            alias_command.clk_flowafter = c.params['flow_after']
 
         alias_command.commands_to_run = commands_to_run
         if c is not None:
