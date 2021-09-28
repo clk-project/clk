@@ -21,7 +21,10 @@ project1 = project
 
 @pytest.fixture(autouse=True)
 def rootdir(request):
-    root = tempfile.mkdtemp(prefix='clk-test-' + request.node.name[len('test_'):] + '_')
+    tempdir = Path(tempfile.gettempdir()) / 'clk-tests'
+    if not tempdir.exists():
+        os.makedirs(tempdir)
+    root = tempfile.mkdtemp(dir=tempdir, prefix=request.node.name[len('test_'):] + '_')
     prev = os.getcwd()
     os.chdir(root)
     os.environ['CLKCONFIGDIR'] = str(Path(root) / 'clk')
