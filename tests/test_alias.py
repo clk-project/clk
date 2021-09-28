@@ -36,6 +36,58 @@ def get():
     assert lib.cmd('h g') == 'Getting http://b.com'
 
 
+def test_capture_partial_flow(pythondir, lib):
+    # given a group of commands that allows playing with threed printing, with a
+    # flow between them
+    (pythondir / 'threed.py').write_text("""
+from clk.decorators import group
+
+
+@group()
+def threed():
+    ""
+
+
+@threed.command()
+def slicer():
+    print("slicer")
+
+
+@threed.command(flowdepends=["threed.slicer"])
+def feed():
+    print("feed")
+
+
+@threed.command(flowdepends=["threed.feed"])
+def calib():
+    print("calib")
+
+
+@threed.command(flowdepends=["threed.calib"])
+def upload():
+    print("upload")
+
+
+@threed.command(flowdepends=["threed.upload"])
+def _print():
+    print("print")
+""")
+    # I can run the complete flow
+    assert lib.cmd('threed print --flow') == '''slicer
+feed
+calib
+upload
+print'''
+    # I can run a partial flow
+    assert lib.cmd('threed print --flow-from threed.upload') == '''upload
+print'''
+    # when I create an alias that capture the partial flow can run a partial flow
+    lib.cmd('alias set threed.uprint threed print --flow-from threed.upload')
+    # then, calling this alias run only the partial flow
+    assert lib.cmd('threed uprint') == '''upload
+print'''
+
+
 def test_alias_conserves_parameters_of_group_with_param_config(pythondir, lib):
     # given a group of commands that allows playing with http, using
     # param_config for very reactive completion
