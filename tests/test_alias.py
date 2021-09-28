@@ -5,6 +5,69 @@ from shlex import split
 from subprocess import check_call, check_output
 
 
+def test_capture_flow_command(pythondir, lib):
+    # given a group of commands that allows playing with 3D printing, with a
+    # flow between them and a final command flow
+    (pythondir / 'threed.py').write_text("""
+from clk.decorators import group
+
+
+@group()
+def threed():
+    ""
+
+
+@threed.command()
+def slicer():
+    print("slicer")
+
+
+@threed.command(flowdepends=["threed.slicer"])
+def feed():
+    print("feed")
+
+
+@threed.command(flowdepends=["threed.feed"])
+def calib():
+    print("calib")
+
+
+@threed.command(flowdepends=["threed.calib"])
+def upload():
+    print("upload")
+
+
+@threed.command(flowdepends=["threed.upload"])
+def _print():
+    print("print")
+
+
+
+@threed.flow_command(flowdepends=["threed.print"])
+def flow():
+    print("done")
+
+
+
+""")
+    # I can run the complete flow
+    assert lib.cmd('threed flow') == '''slicer
+feed
+calib
+upload
+print
+done'''
+    # when a create an alias to that flow command
+    lib.cmd('alias set flow threed flow')
+    # then, calling this alias runs the flow
+    assert lib.cmd('flow') == '''slicer
+feed
+calib
+upload
+print
+done'''
+
+
 def test_alias_overrides_parameters(pythondir, lib):
     # given a group of commands that allows playing with http, using
     # param_config for very reactive completion
