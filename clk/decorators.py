@@ -43,8 +43,6 @@ def param_config(name, *args, **kwargs):
     initial = kwargs.get('default')
     if callable(initial):
         initial = initial()
-    ctx = click.get_current_context()
-    initial = parameter.type_cast_value(ctx, initial)
 
     setattr(getattr(config, name), parameter.name, initial)
 
