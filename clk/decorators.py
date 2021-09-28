@@ -39,9 +39,14 @@ def param_config(name, *args, **kwargs):
     if not hasattr(config, name):
         setattr(config, name, Conf())
 
-    default = kwargs.get('default')
-    if callable(default):
-        default = default()
+    parameter = cls(args, **kwargs)
+    initial = kwargs.get('default')
+    if callable(initial):
+        initial = initial()
+    ctx = click.get_current_context()
+    initial = parameter.type_cast_value(ctx, initial)
+
+    setattr(getattr(config, name), parameter.name, initial)
 
     def _subcommand_config_callback(ctx, attr, value):
         if not hasattr(config, name):
@@ -59,15 +64,12 @@ def param_config(name, *args, **kwargs):
                 # don't want to use the implicit default value
                 or attr.name not in ctx.clk_default_catch
                 # the value is not the default one
-                or value != attr.get_default(ctx)):
+                or value != initial):
             setattr(getattr(config, name), attr.name, value)
         return value
 
     kwargs['expose_value'] = kwargs.get('expose_value', False)
     kwargs['callback'] = _subcommand_config_callback
-    # find out the name of the param to setup the default value
-    o = cls(args)
-    setattr(getattr(config, name), o.name, default)
 
     return kls(*args, **kwargs)
 
