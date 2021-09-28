@@ -55,7 +55,7 @@ def param_config(name, *args, **kwargs):
                 # don't want to use the implicit default value
                 or attr.name not in ctx.clk_default_catch
                 # the value is not the default one
-                or value != default):
+                or value != attr.get_default(ctx)):
             setattr(getattr(config, name), attr.name, value)
         return value
 
