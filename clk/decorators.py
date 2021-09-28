@@ -35,11 +35,16 @@ def param_config(name, *args, **kwargs):
     if not hasattr(config, name):
         setattr(config, name, Conf())
 
+    default = kwargs.get('default')
+    if callable(default):
+        default = default()
+
     def _subcommand_config_callback(ctx, attr, value):
         if not hasattr(config, name):
             setattr(config, name, Conf())
         if init_callback is not None:
             value = init_callback(ctx, attr, value)
+
         # use name in dir(class) instead of hasattr(class, name) because the
         # later will try to get class.name and may trigger lazy behavior that
         # are generally wanted to be trigger as late as possible.
@@ -48,7 +53,9 @@ def param_config(name, *args, **kwargs):
                 attr.name not in dir(getattr(config, name))
                 # explicitely given (meaning not using the default value). I
                 # don't want to use the implicit default value
-                or attr.name not in ctx.clk_default_catch):
+                or attr.name not in ctx.clk_default_catch
+                # the value is not the default one
+                or value != default):
             setattr(getattr(config, name), attr.name, value)
         return value
 
@@ -56,9 +63,6 @@ def param_config(name, *args, **kwargs):
     kwargs['callback'] = _subcommand_config_callback
     # find out the name of the param to setup the default value
     o = cls(args)
-    default = kwargs.get('default')
-    if callable(default):
-        default = default()
     setattr(getattr(config, name), o.name, default)
 
     return kls(*args, **kwargs)
