@@ -245,7 +245,9 @@ def move(source, destination):
     destination_store[source] = profile.settings['alias'][source]
     destination.settings['alias'] = destination_store
     del profile.settings['alias'][source]
-    LOGGER.status(f'Moved alias {source}, {profile.name} -> {destination.name}')
+    LOGGER.status(
+        f'Moved alias {source}, {Colorer.apply_color_profilename(profile.name)} -> {Colorer.apply_color_profilename(destination.name)}'
+    )
     destination.write_settings()
     profile.write_settings()
 

@@ -105,7 +105,8 @@ def create(ctx, name, disable):
     """Create a new extension"""
     profile = config.recipe.profile
     r = profile.create_extension(name)
-    LOGGER.status('Created extension {}.'.format(r.friendly_name))
+    LOGGER.status('Created extension {}.'.format(
+        Colorer.apply_color_default_value(r.friendly_name, config.recipe.writeprofilename)))
     if disable:
         ctx.invoke(_disable, extension=[name])
 
