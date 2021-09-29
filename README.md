@@ -20,22 +20,27 @@ Come and discuss clk with us on
 - [![IRC libera.chat #clk](https://raster.shields.io/badge/libera.chat-%23clk-blue)](https://web.libera.chat/?channels=#clk)
 - [![Gitter](https://badges.gitter.im/clk-project/community.svg)](https://gitter.im/clk-project/community?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
 
-clk makes it *easy* and fun for ***you*** to create *awesome* command line interfaces!
+clk is the *Command Line Kit* that aims to become a *Cognitive Load Killer*,
+meaning it allow you to create applications that your user will be able to
+adjust to per needs. Eventually, your user should type only what the computer
+could not have guessed by itself.
 
-With clk, you can turn your scripts into a powerful cli without pain and get
-instant access to stuff like:
+Out of the box, it provides:
 
 - great completion support
+- aliases
 - persistence of options and arguments
 - commands flow management
 - launchers
-- aliases
 - and more...
 
 clk is a very *opinionated framework*, and is meant to be *batteries
-included*, meaning we gathered all the stuff we wanted while creating various
-commands. Dogfooding in mind, the developers are extensive users of
-clk. They like it and when something feels wrong, they just change it.
+included*. We want to be able to create command line applications very fast
+without compromising on the user experience.
+
+clk provides a library to create your own command line application, but it also
+provide an application called `clk` that already provides all the features so
+that you can just add your own commands on top of it.
 
 # Quick start
 
@@ -50,11 +55,17 @@ Let's play with this tool to have a feeling of what clk is about.
 Install the completion with `clk completion --case-insensitive install` and
 start a new shell to take advantage of it.
 
-Then, run `clk` to see the available commands.
+Then, run `clk command` (or simply `clk`) to see the available commands.
 
-Create a command with `clk command create python say`. It should open
-the command with your favorite editor (or whatever is in the EDITOR environment
-variable).
+Out of the box, `clk` only provides the commands that allow its user to create
+per own tool.
+
+For instance, let's create a command with `clk command create python say`. It
+should open the command with your favorite editor (whatever is in the EDITOR
+environment variable).
+
+The command is already filled with the common imports, so that you just need to
+edit the command code.
 
 In the end of the file, replace this part
 
@@ -77,6 +88,10 @@ def say(what, who):
     getattr(cowsay, who)(what)
 ```
 
+Actually because `clk` simply provide features on top of
+[click](https://click.palletsprojects.com/), please take a look at click's
+documentation to understand how to write commands.
+
 Close your editor, install the cowsay dependency `python3 -m pip install cowsay`.
 
 And now, try:
@@ -87,15 +102,35 @@ And now, try:
 
 You have created your first command!
 
-Now, run:
+You can see that this command already provide a nice help message.
 
-`clk alias set hello say hello`
+You could have created a click command that does exactly that, without using
+`clk`. So you might wonder why using clk in the first place. But now, this
+command can take advantage of all the features that come with clk.
+
+For instance, you can create aliases:
+
+Let's create an alias called `hello` that runs the command `say` (the one you just created) with the argument `hello world`
+
+`clk alias set hello say hello world`
 
 And you have created another command, `hello`, that says hello. Try it with.
 
 `clk hello`
 
-Now, run:
+This feature allow you to provide generic commands with a lot of power and let
+your user customize those commands to fit per particular needs.
+
+Aliasing is a good way to quickly handcraft a command from other commands.
+
+Now, even tough you tried hard to have sensible default values, chances are that
+some of the users of your commands might think otherwise, using `clk parameter`,
+per can mitigate this issue.
+
+For instance, your command hello by default make a cow say the message. But some
+user might prefer the hello command to be told by a cheese.
+
+Run:
 
 `clk parameter set hello --who cheese`
 
