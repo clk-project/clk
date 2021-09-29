@@ -20,10 +20,10 @@ Come and discuss clk with us on
 - [![IRC libera.chat #clk](https://raster.shields.io/badge/libera.chat-%23clk-blue)](https://web.libera.chat/?channels=#clk)
 - [![Gitter](https://badges.gitter.im/clk-project/community.svg)](https://gitter.im/clk-project/community?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
 
-clk is the *Command Line Kit* that aims to become a *Cognitive Load Killer*,
-meaning it allow you to create applications that your user will be able to
-adjust to per needs. Eventually, your user should type only what the computer
-could not have guessed by itself.
+clk is the *Command Line Kit* that aims to become a *Cognitive Load Killer*, so
+that you can focus on what you are doing instead of how to how to ask the tool
+to do it. You should type only what the computer could not have guessed by
+itself.
 
 Out of the box, it provides:
 
