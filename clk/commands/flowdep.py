@@ -50,9 +50,17 @@ def flowdep():
     pass
 
 
+class FlowDependencies(CommandType):
+    def convert(self, value, param, ctx):
+        if value == '[self]':
+            return value
+        else:
+            return super().convert(value, param, ctx)
+
+
 @flowdep.command(handle_dry_run=True)
 @argument('cmd', type=CommandType(), help='The command to which set the flow dependencies')
-@argument('dependencies', nargs=-1, type=CommandType(), help='The flow dependencies')
+@argument('dependencies', nargs=-1, type=FlowDependencies(), help='The flow dependencies')
 def _set(cmd, dependencies):
     """Set the flow dependencies of a command"""
     if cmd in config.flowdeps.writable:

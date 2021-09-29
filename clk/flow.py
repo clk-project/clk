@@ -61,7 +61,11 @@ def get_command_handler(cmd):
     flowdeps_settings = config.settings.get('flowdeps')
     if flowdeps_settings and cmd.path in flowdeps_settings:
         LOGGER.debug('Overriding flow dependencies of {} with {}'.format(cmd.path, flowdeps_settings[cmd.path]))
-        flowdeps[cmd.path] = flowdeps_settings[cmd.path]
+        new_flow = flowdeps_settings[cmd.path]
+        if '[self]' in new_flow:
+            self_index = new_flow.index('[self]')
+            new_flow = new_flow[:self_index] + flowdeps[cmd.path] + new_flow[self_index + 1:]
+        flowdeps[cmd.path] = new_flow
     try:
         cmd_has_flow = has_flow(cmd.path)
     except CommandNotFound:
