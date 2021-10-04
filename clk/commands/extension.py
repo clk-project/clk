@@ -65,7 +65,7 @@ class ExtensionType(ExtensionNameType):
                 ctx,
             )
 
-        candidates = list(reversed(list(config.all_enabled_extensions)))
+        candidates = list(reversed(list(config.all_extensions)))
         # the algorithm here is to first prefer exact match before falling back
         # to looser match. Both loops look alike, but the reason why they are
         # searated is that even if a loose (based on the short_name) match
@@ -314,20 +314,20 @@ def __enable(ctx, extension, all, only):
 
 @extension.command(handle_dry_run=True)
 @argument(
-    'extension1',
-    type=ExtensionNameType(enabled=True, shortonly=True),
-    help='The name of the extension to disable',
-)
-@argument(
-    'extension2',
-    type=ExtensionNameType(disabled=True, shortonly=True),
+    'extension',
+    type=ExtensionType(),
     help='The name of the extension to enable',
 )
 @pass_context
-def switch(ctx, extension1, extension2):
-    """Switch from an extension to another"""
-    ctx.invoke(_disable, extension=[extension1])
-    ctx.invoke(__enable, extension=[extension2])
+def switch(ctx, extension):
+    """Switch to an extension, disabling all the other extensions that are know
+    as alternatives"""
+    ctx.invoke(__enable, extension=[extension.short_name])
+    if extension.alternative_groups:
+        LOGGER.status(f"Part of the group {', '.join(extension.alternative_groups)}, disabling the other ones")
+        for other_extension in config.all_extensions:
+            if (other_extension != extension and other_extension.alternative_groups == extension.alternative_groups):
+                ctx.invoke(_disable, extension=[other_extension.short_name])
 
 
 @extension.command(handle_dry_run=True)

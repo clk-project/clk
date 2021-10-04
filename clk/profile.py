@@ -129,6 +129,10 @@ class Profile():
     def contains(self, path):
         return False
 
+    @property
+    def alternative_groups(self):
+        return self.settings.get('alternative-groups')
+
 
 plugin_sources = {}
 
