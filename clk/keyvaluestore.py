@@ -23,7 +23,7 @@ def keyvaluestore_generic_commands(group, settings_name):
         getattr(config, settings_name).write()
 
     @group.command(handle_dry_run=True)
-    @argument('src', type=CommandSettingsKeyType('value'), help='The current key')
+    @argument('src', type=CommandSettingsKeyType(settings_name), help='The current key')
     @argument('dst', help='The new key')
     @flag('--overwrite/--no-overwrite', help='̂Rename even if the destination already exists')
     def rename(src, dst, overwrite):
@@ -44,7 +44,7 @@ def keyvaluestore_generic_commands(group, settings_name):
         getattr(config, settings_name).write()
 
     @group.command(handle_dry_run=True)
-    @argument('keys', nargs=-1, type=CommandSettingsKeyType('value'), help='The keys to unset')
+    @argument('keys', nargs=-1, type=CommandSettingsKeyType(settings_name), help='The keys to unset')
     def unset(keys):
         """Unset some values"""
         for key in keys:
@@ -63,7 +63,7 @@ def keyvaluestore_generic_commands(group, settings_name):
     @table_fields(choices=['key', 'value'])
     @argument('keys',
               nargs=-1,
-              type=CommandSettingsKeyType('value'),
+              type=CommandSettingsKeyType(settings_name),
               help='The keys to show. When no keys are provided, all the keys are showed')
     def show(fields, format, keys, **kwargs):
         """Show the values"""
