@@ -350,7 +350,7 @@ def popen(args, internal=False, **kwargs):
 @contextmanager
 def tempdir(dir=None):
     u"""Create a temporary to use be in a with statement"""
-    d = tempfile.mkdtemp(dir=dir)
+    d = Path(tempfile.mkdtemp(dir=dir))
     LOGGER.action(f'Creating a temporary directory at {d}')
     try:
         yield d
