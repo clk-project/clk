@@ -118,7 +118,7 @@ def rename(old, new):
     """Rename an extension"""
     if '/' not in new:
         new = '{}/{}'.format(old.name.split('/')[0], new)
-    new_loc = config.recipe_location(new)
+    new_loc = config.extension_location(new)
     if os.path.exists(new_loc):
         raise click.UsageError('{} already exists'.format(new_loc))
     move(old.location, new_loc)
@@ -146,7 +146,7 @@ def _copy(src, dest):
     """Copy an extension"""
     if '/' not in dest:
         dest = '{}/{}'.format(src.name.split('/')[0], dest)
-    new_loc = config.recipe_location(dest)
+    new_loc = config.extension_location(dest)
     if os.path.exists(new_loc):
         raise click.UsageError('{} already exists'.format(new_loc))
     copy(src.location, new_loc)
