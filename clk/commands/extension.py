@@ -154,8 +154,8 @@ def _copy(src, dest):
     if os.path.exists(new_loc):
         raise click.UsageError('{} already exists'.format(new_loc))
     copy(src.location, new_loc)
-    LOGGER.status(f'Copied extension {src.friendly_name} -> {dest} in profile'
-                  f' {Colorer.apply_color_profilename(src.parent_name)}.')
+    LOGGER.status(f'Copied extension {Colorer.apply_color_default_value(src.friendly_name, src.parent_name)}'
+                  f' -> {Colorer.apply_color_default_value(dest, src.parent_name)}.')
 
 
 @extension.command(handle_dry_run=True)
@@ -173,6 +173,7 @@ def remove(extension, force):
         path = profile.get_extension(rec.name).location
         if force or click.confirm(f'Removing {path}, are you sure ?'):
             rm(path)
+            LOGGER.status(f'Removed extension {Colorer.apply_color_default_value(rec.friendly_name, rec.parent_name)}')
 
 
 @extension.command(handle_dry_run=True)
