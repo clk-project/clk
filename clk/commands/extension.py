@@ -122,6 +122,8 @@ def rename(old, new):
     if os.path.exists(new_loc):
         raise click.UsageError('{} already exists'.format(new_loc))
     move(old.location, new_loc)
+    LOGGER.status(f'Renamed extension {old.friendly_name} -> {new} in profile'
+                  f' {Colorer.apply_color_profilename(old.parent_name)}.')
 
 
 @extension.command(handle_dry_run=True)
@@ -137,6 +139,8 @@ def _move(old, profile):
         old.location,
         Path(profile.location) / 'extensions' / Path(old.location).name,
     )
+    LOGGER.status(f'Moved extension {Colorer.apply_color_default_value(old.friendly_name, old.parent_name)} to profile'
+                  f' {Colorer.apply_color_profilename(profile.name)}.')
 
 
 @extension.command(handle_dry_run=True)
@@ -150,6 +154,8 @@ def _copy(src, dest):
     if os.path.exists(new_loc):
         raise click.UsageError('{} already exists'.format(new_loc))
     copy(src.location, new_loc)
+    LOGGER.status(f'Copied extension {src.friendly_name} -> {dest} in profile'
+                  f' {Colorer.apply_color_profilename(src.parent_name)}.')
 
 
 @extension.command(handle_dry_run=True)
