@@ -98,6 +98,11 @@ def load_settings(path):
 
 
 def write_settings(settings_path, settings, dry_run):
+    # don't pollute the settings by removing all the ones that have no
+    # values. This helps having more homogeneous settings.
+    for key in list(settings.keys()):
+        if settings[key] == {}:
+            del settings[key]
     if dry_run:
         return
     parent_dir = os.path.dirname(settings_path)
