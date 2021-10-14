@@ -29,10 +29,7 @@ class Value:
             return getattr(super(), name)
 
     def __getitem__(self, name):
-        try:
-            return self.__getattr__(name)
-        except BaseException:
-            return super()[name]
+        return self.__getattr__(name)
 
     def __dir__(self):
         return list(config.settings2['value'].keys())
