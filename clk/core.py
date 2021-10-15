@@ -735,7 +735,7 @@ def cache_disk(f=None, expire=int(os.environ.get(u'CLK_CACHE_EXPIRE', 24 * 60 * 
             key = u'{}{}{}{}'.format(re.sub(r'pluginbase\._internalspace.[^\.]+\.', 'clk.plugins.', f.__module__),
                                      f.__name__, args, kwargs).encode(u'utf-8')
             # print(key)
-            key = hashlib.sha1(key).hexdigest()
+            key = hashlib.sha3_256(key).hexdigest()
             if not os.path.exists(cache_folder):
                 makedirs(cache_folder)
             filepath = os.path.join(cache_folder, key)
