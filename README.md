@@ -1,17 +1,17 @@
 clk
 ==============================================================================
 
-[![Vulnerabilities](https://sonarcloud.io/api/project_badges/measure?project=click-project_click-project&metric=vulnerabilities)](https://sonarcloud.io/dashboard?id=click-project_click-project)
-[![Bugs](https://sonarcloud.io/api/project_badges/measure?project=click-project_click-project&metric=bugs)](https://sonarcloud.io/dashboard?id=click-project_click-project)
-[![Code Smells](https://sonarcloud.io/api/project_badges/measure?project=click-project_click-project&metric=code_smells)](https://sonarcloud.io/dashboard?id=click-project_click-project)
-[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=click-project_click-project&metric=coverage)](https://sonarcloud.io/dashboard?id=click-project_click-project)
-[![Lines of Code](https://sonarcloud.io/api/project_badges/measure?project=click-project_click-project&metric=ncloc)](https://sonarcloud.io/dashboard?id=click-project_click-project)
-[![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=click-project_click-project&metric=sqale_rating)](https://sonarcloud.io/dashboard?id=click-project_click-project)
-[![Duplicated Lines (%)](https://sonarcloud.io/api/project_badges/measure?project=click-project_click-project&metric=duplicated_lines_density)](https://sonarcloud.io/dashboard?id=click-project_click-project)
-[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=click-project_click-project&metric=alert_status)](https://sonarcloud.io/dashboard?id=click-project_click-project)
-[![Reliability Rating](https://sonarcloud.io/api/project_badges/measure?project=click-project_click-project&metric=reliability_rating)](https://sonarcloud.io/dashboard?id=click-project_click-project)
-[![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=click-project_click-project&metric=security_rating)](https://sonarcloud.io/dashboard?id=click-project_click-project)
-[![Technical Debt](https://sonarcloud.io/api/project_badges/measure?project=click-project_click-project&metric=sqale_index)](https://sonarcloud.io/dashboard?id=click-project_click-project)
+[![Vulnerabilities](https://sonarcloud.io/api/project_badges/measure?project=clk-project_clk&metric=vulnerabilities)](https://sonarcloud.io/dashboard?id=clk-project_clk)
+[![Bugs](https://sonarcloud.io/api/project_badges/measure?project=clk-project_clk&metric=bugs)](https://sonarcloud.io/dashboard?id=clk-project_clk)
+[![Code Smells](https://sonarcloud.io/api/project_badges/measure?project=clk-project_clk&metric=code_smells)](https://sonarcloud.io/dashboard?id=clk-project_clk)
+[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=clk-project_clk&metric=coverage)](https://sonarcloud.io/dashboard?id=clk-project_clk)
+[![Lines of Code](https://sonarcloud.io/api/project_badges/measure?project=clk-project_clk&metric=ncloc)](https://sonarcloud.io/dashboard?id=clk-project_clk)
+[![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=clk-project_clk&metric=sqale_rating)](https://sonarcloud.io/dashboard?id=clk-project_clk)
+[![Duplicated Lines (%)](https://sonarcloud.io/api/project_badges/measure?project=clk-project_clk&metric=duplicated_lines_density)](https://sonarcloud.io/dashboard?id=clk-project_clk)
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=clk-project_clk&metric=alert_status)](https://sonarcloud.io/dashboard?id=clk-project_clk)
+[![Reliability Rating](https://sonarcloud.io/api/project_badges/measure?project=clk-project_clk&metric=reliability_rating)](https://sonarcloud.io/dashboard?id=clk-project_clk)
+[![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=clk-project_clk&metric=security_rating)](https://sonarcloud.io/dashboard?id=clk-project_clk)
+[![Technical Debt](https://sonarcloud.io/api/project_badges/measure?project=clk-project_clk&metric=sqale_index)](https://sonarcloud.io/dashboard?id=clk-project_clk)
 
 
 [![CircleCI](https://circleci.com/gh/clk-project/clk.svg?style=svg)](https://app.circleci.com/pipelines/github/clk-project/clk)
