@@ -6,13 +6,15 @@ orbs:
   # so you dont have to copy and paste it everywhere.
   # See the orb documentation here: https://circleci.com/developer/orbs/orb/circleci/python
   python: circleci/python@1.2
+  sonarcloud: sonarsource/sonarcloud@1.0.2
 
 workflows:
   test:  # This is the name of the workflow, feel free to change it to better match your workflow.
     # Inside the workflow, you define the jobs you want to run.
     # For more details on extending your workflow, see the configuration docs: https://circleci.com/docs/2.0/configuration-reference/#workflows
     jobs:
-      - test
+      - test:
+          context: SonarCloud
 
 notify:
   webhooks:
@@ -35,6 +37,11 @@ jobs:
     # CircleCI will report the results back to your VCS provider.
     steps:
       - checkout
+      - run:
+          name: Dynamically provision the tag
+          command: |
+            echo sonar.projectVersion=$(git describe --tags --abbrev=0) >> sonar-project.properties
+      - sonarcloud/scan
       - run:
           command: |
             curl -sfL https://direnv.net/install.sh | bash
