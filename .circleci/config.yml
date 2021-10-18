@@ -58,5 +58,5 @@ jobs:
           command: |
             pipenv run which clk
             pipenv run coverage run --source $(pwd) -m pytest
-            cd tests && pipenv run coverage combine --append ../.coverage && pipenv run coverage xml
+            mkdir coverage && cd coverage && pipenv run coverage combine --append ../.coverage ../tests/.coverage && pipenv run coverage xml
       - sonarcloud/scan
