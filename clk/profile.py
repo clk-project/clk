@@ -522,8 +522,11 @@ class DirectoryProfile(Profile):
                            ' to make use of this new setup')
 
     def extensions_instead_of_settings_level(self):
-        if self.isextension:
-            return True
+        if not self.isextension:
+            self._extensions_instead_of_settings_level()
+        return True
+
+    def _extensions_instead_of_settings_level(self):
         extensions_dir = self.location + '/extensions/'
 
         def migrate_settings_to_extension(settings_level_file, name):
@@ -569,7 +572,6 @@ class DirectoryProfile(Profile):
                 values['recipe'] = extensions
             self.computed_location = None
             self.compute_settings()
-        return True
 
     def remove_with_legend(self):
         for settings_file in glob(self.location + '/{}*json'.format(self.app_name)):
