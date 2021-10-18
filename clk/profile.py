@@ -503,8 +503,11 @@ class DirectoryProfile(Profile):
         return True
 
     def extensions_instead_of_profiles(self):
-        if self.isextension:
-            return True
+        if not self.isextension:
+            self._extensions_instead_of_profiles()
+        return True
+
+    def _extensions_instead_of_profiles(self):
         extensions_dir = self.location + '/extensions/'
         warn = False
         for profile in glob(self.location + '/../.csm-*'):
@@ -517,7 +520,6 @@ class DirectoryProfile(Profile):
                            ' As we could not maintain backward compatibility,'
                            ' please see with SLO or GLE to understand how'
                            ' to make use of this new setup')
-        return True
 
     def extensions_instead_of_settings_level(self):
         if self.isextension:
