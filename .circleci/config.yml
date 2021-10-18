@@ -41,14 +41,13 @@ jobs:
           name: Dynamically provision the tag
           command: |
             echo sonar.projectVersion=$(git describe --tags --abbrev=0) >> sonar-project.properties
-      - sonarcloud/scan
       - run:
           command: |
             curl -sfL https://direnv.net/install.sh | bash
             eval "$(direnv hook bash)"
             python3 -m pip install pipenv
-            pipenv install .
-            pipenv install pytest pre-commit
+            pipenv install --editable .
+            pipenv install pytest pre-commit coverage
       - run:
           name: Check code quality
           command: |
@@ -59,3 +58,5 @@ jobs:
           command: |
             pipenv run which clk
             pipenv run pytest
+            cd tests && pipenv run coverage xml
+      - sonarcloud/scan
