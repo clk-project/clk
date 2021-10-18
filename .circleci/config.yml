@@ -57,6 +57,6 @@ jobs:
           # This assumes pytest is installed via the install-package step above
           command: |
             pipenv run which clk
-            pipenv run pytest
-            cd tests && pipenv run coverage xml
+            pipenv run coverage run --source . -m pytest
+            cd tests && pipenv run coverage combine ../.coverage && pipenv run coverage xml
       - sonarcloud/scan
