@@ -39,7 +39,7 @@ def edit_alias_command_in_profile(path, profile):
     old_value = profile.settings.get('alias', {}).get(path)
     old_value = format(old_value['commands'], sep='\n')
     value = click.edit(old_value, extension=f'_{path}.txt')
-    if value == old_value or value is None:
+    if value == old_value:
         LOGGER.info('Nothing changed')
     elif value == '':
         LOGGER.info('Aboooooort !!')
