@@ -40,7 +40,7 @@ jobs:
       - run:
           name: Dynamically provision the tag
           command: |
-            echo sonar.projectVersion=$(git describe --tags --abbrev=0) >> sonar-project.properties
+            echo sonar.projectVersion=$(git tag --sort=creatordate --merged|grep '^v'|tail -1) >> sonar-project.properties
       - run:
           command: |
             curl -sfL https://direnv.net/install.sh | bash
