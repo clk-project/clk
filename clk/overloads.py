@@ -510,7 +510,7 @@ class MissingDocumentationMixin(object):
     """
     def invoke(self, ctx):
         if not ctx.resilient_parsing:
-            if not self.help:
+            if not self.help or self.help.strip() == 'Description':
                 LOGGER.warn("The command '%s' has no documentation" % self.path)
             for param in self.params:
                 if not param.help:
