@@ -1185,18 +1185,8 @@ class MainCommand(click_didyoumean.DYMMixin, DeprecatedMixin, TriggerMixin, Help
         super(MainCommand, self).invoke_handle_deprecated(ctx, *args, **kwargs)
         return super(MainCommand, self).invoke(ctx, *args, **kwargs)
 
-    def parse_args(self, ctx, args):
-        res, remaining = self.split_args_remaining(ctx, args)
-        help_option = (('--help' in res) and '--help' or ('--help-all' in res) and '--help-all')
-        if help_option:
-            index_help = res.index(help_option)
-            res = res[:index_help] + res[index_help + 1:]
-        self.append_commandline_settings(ctx, res)
-        if help_option:
-            res = [help_option] + res
-
-        ctx.auto_envvar_prefix = self.auto_envvar_prefix
-        # parse the args, injecting the extra args, till the extra args are stable
+    def _parse_args_stabilize(self, ctx, args):
+        """Inject extra args and parse them till the args become stable"""
         old_extra_args = []
         if '--no-parameter' in args:
             new_extra_args = self.get_extra_args(implicit_only=True)
@@ -1216,6 +1206,20 @@ class MainCommand(click_didyoumean.DYMMixin, DeprecatedMixin, TriggerMixin, Help
                 "In the {} '{}', parsing args {} (initial args: {})".format(self.__class__.__name__, ctx.command.path,
                                                                             new_extra_args, args), )
             ctx.complete_arguments = list(new_extra_args)
+        return res
+
+    def parse_args(self, ctx, args):
+        res, remaining = self.split_args_remaining(ctx, args)
+        help_option = (('--help' in res) and '--help' or ('--help-all' in res) and '--help-all')
+        if help_option:
+            index_help = res.index(help_option)
+            res = res[:index_help] + res[index_help + 1:]
+        self.append_commandline_settings(ctx, res)
+        if help_option:
+            res = [help_option] + res
+
+        ctx.auto_envvar_prefix = self.auto_envvar_prefix
+        res = self._parse_args_stabilize(ctx, args)
 
         if not hasattr(ctx, 'has_subcommands'):
             ctx.has_subcommands = True
