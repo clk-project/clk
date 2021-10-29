@@ -1187,7 +1187,14 @@ class MainCommand(click_didyoumean.DYMMixin, DeprecatedMixin, TriggerMixin, Help
 
     def parse_args(self, ctx, args):
         res, remaining = self.split_args_remaining(ctx, args)
+        help_option = (('--help' in res) and '--help' or ('--help-all' in res) and '--help-all')
+        if help_option:
+            index_help = res.index(help_option)
+            res = res[:index_help] + res[index_help + 1:]
         self.append_commandline_settings(ctx, res)
+        if help_option:
+            res = [help_option] + res
+
         ctx.auto_envvar_prefix = self.auto_envvar_prefix
         # parse the args, injecting the extra args, till the extra args are stable
         old_extra_args = []
