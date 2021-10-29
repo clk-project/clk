@@ -45,7 +45,7 @@ def edit_alias_command_in_profile(path, profile):
         LOGGER.info('Aboooooort !!')
     else:
         value = value.strip().replace('\n', ' , ')
-        LOGGER.status(f'Replacing alias {path}' f' in {profile.name}' f" from '{old_value}'" f" to '{value}'")
+        LOGGER.status(f"Replacing alias {path} in {profile.name} from '{old_value}' to '{value}'")
         profile.settings['alias'][path]['commands'] = parse(shlex.split(value))
         profile.write_settings()
 
