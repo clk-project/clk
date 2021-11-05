@@ -5,6 +5,12 @@ from shlex import split
 from subprocess import check_call, check_output
 
 
+def test_composote_alias(lib):
+    lib.cmd('alias set a echo a , echo b')
+    assert lib.cmd('a') == """a
+b"""
+
+
 def test_capture_flow_command(pythondir, lib):
     # given a group of commands that allows playing with 3D printing, with a
     # flow between them and a final command flow
