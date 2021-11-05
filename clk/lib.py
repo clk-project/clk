@@ -671,8 +671,9 @@ def get_keyring():
     return keyring.core.get_keyring()
 
 
-def extract(url, dest='.'):
+def extract(url, dest=Path('.')):
     """Download and extract all the files in the archive at url in dest"""
+    dest = Path(dest)
     import tarfile
     import zipfile
     from io import BytesIO
@@ -690,13 +691,13 @@ def extract(url, dest='.'):
     archive.seek(0)
     if archname.endswith('.zip'):
         zipfile.ZipFile(archive).extractall(path=dest)
-        return dest + '/' + archname[:-4]
+        return dest / archname[:-4]
     else:
         tarfile.open(fileobj=archive).extractall(dest)
     for ext in ['.tar.gz', '.tgz', '.tar']:
         if archname.endswith(ext):
-            return dest + '/' + archname[:-len(ext)]
-    return dest + '/' + archname
+            return dest / archname[:-len(ext)]
+    return dest / archname
 
 
 def download(url, outdir=None, outfilename=None, mkdir=False, sha256=None, mode=None):
