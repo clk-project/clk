@@ -25,7 +25,7 @@ class Value:
     def __getattr__(self, name):
         try:
             return config.settings2['value'][name]['value']
-        except BaseException:
+        except Exception:
             return getattr(super(), name)
 
     def __getitem__(self, name):

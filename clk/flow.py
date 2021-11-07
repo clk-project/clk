@@ -128,10 +128,9 @@ def execute_flow_step(cmd, args=None):
     overloads.allow_dotted_commands = True
     try:
         run(cmd)
-    except BaseException:
-        raise
-    finally:
+    except Exception:
         overloads.allow_dotted_commands = old_allow
+        raise
     LOGGER.status("End of step '{}'".format(' '.join(cmd)))
 
 

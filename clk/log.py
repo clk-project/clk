@@ -19,7 +19,7 @@ class DevelopColorFormatter(click_log.core.ColorFormatter):
         return logging.Formatter.format(self, record)
 
 
-class LogLevelExitException(BaseException):
+class LogLevelExitException(Exception):
     def __init__(self):
         message = 'Aborting because log level greater than {}'.format(exit_on_log_level)
         super(LogLevelExitException, self).__init__(message)
@@ -40,9 +40,7 @@ class Handler(logging.Handler):
         try:
             msg = self.format(record)
             click.echo(msg, err=True)
-        except (KeyboardInterrupt, SystemExit):
-            raise
-        except BaseException:
+        except Exception:
             self.handleError(record)
         if (exit_on_log_level is not None and record.levelno >= LOG_LEVELS[exit_on_log_level.lower()]):
             raise LogLevelExitException()

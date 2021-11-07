@@ -609,7 +609,7 @@ def get_command_with_resolvers(resolvers, parent_path, name):
         if name in _list_matching_commands_from_resolver(resolver, parent_path):
             try:
                 cmd = resolver._get_command(cmd_path, parent)
-            except BaseException:
+            except Exception:
                 LOGGER.error(f'Found the command {cmd_path} in the resolver {resolver.name}' ' but could not load it.')
                 raise
             break
@@ -801,7 +801,7 @@ def eval_arg(arg):
     return arg
 
 
-class NoPathAvailable(BaseException):
+class NoPathAvailable(Exception):
     """In cases where click commands are called without using clk get_command, the
     command works but there is no path that makes sense. This might happen for
     instance when using ctx.invoke(somecommand). Even the context is useless, as

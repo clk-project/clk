@@ -558,7 +558,7 @@ def safe_check_output(*args, **kwargs):
             return ''
         else:
             return output.decode('utf-8')
-    except BaseException:
+    except Exception:
         return ''
 
 
@@ -577,7 +577,7 @@ def communicate(command, *args, **kwargs):
         output = output.decode('utf-8')
         error = error.decode('utf-8')
         return output, error, process.returncode
-    except BaseException:
+    except Exception:
         return '', '', 1
 
 
@@ -633,7 +633,7 @@ def check_output(cmd, *args, **kwargs):
                 kwargs['stderr'] = subprocess.PIPE
             try:
                 return subprocess.check_output(cmd, *args, **kwargs).decode('utf-8')
-            except BaseException as e:
+            except Exception as e:
                 if failok:
                     return e.output.decode('utf-8')
                 else:
@@ -784,7 +784,7 @@ def username():
     try:
         import pwd
         return pwd.getpwuid(os.getuid()).pw_name
-    except BaseException:
+    except Exception:
         import getpass
         return getpass.getuser()
 
@@ -1562,7 +1562,7 @@ def get_authenticator(machine, askpass=True, required=True):
         try:
             LOGGER.info('Saving the credentials in your keyring: {}'.format(keyring.name))
             keyring.set_password('clk', machine, json.dumps((login, password)))
-        except BaseException:
+        except Exception:
             LOGGER.warning('I could not save your credentials.')
             if netrc_keyring:
                 LOGGER.warning('You can save them manually by running:'
