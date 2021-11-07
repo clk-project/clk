@@ -115,56 +115,6 @@ def main_command_option(*args, **kwargs):
     return new_decorator
 
 
-def main_command_arguments_to_dict(opts, resilient_parsing):
-    pos = 0
-    res = {}
-    try:
-        while opts and pos < len(opts):
-            opt = opts[pos]
-            matching_options = [option for option in main_command_parameters if opt in option.opts]
-            assert len(matching_options) < 2
-            if len(matching_options) == 0:
-                # we reached something we don't recognize, it must be the
-                # beginning of a new subcommand
-                break
-            option = matching_options[0]
-            assert option.nargs != 0
-            nargs = None
-            if option.nargs == 1:
-                if option.is_flag:
-                    res[option.name] = True
-                    nargs = 1
-                else:
-                    res[option.name] = opts[pos + 1]
-                    nargs = 2
-            else:
-                res[option.name] = opts[pos + 1:pos + 1 + option.nargs]
-                nargs = option.nargs + 1
-            pos += nargs
-    except IndexError:
-        if not resilient_parsing:
-            raise click.UsageError('%s option requires an argument' % opts[pos])
-    return res
-
-
-def main_command_arguments_from_dict(parameters):
-    res = []
-    for key, value in parameters.items():
-        matching_options = [option for option in main_command_parameters if key == option.name]
-        assert len(matching_options) == 1
-        option = matching_options[0]
-        opt = option.opts[0]
-        if value is True:
-            res.append(opt)
-        elif isinstance(value, str):
-            res.extend([opt, value])
-        elif isinstance(value, list):
-            res += [opt] + value
-        else:
-            raise NotImplementedError('Cannot build a command line with {}: {}'.format(key, value))
-    return res
-
-
 class ExtensionType(ParameterType):
     envvar_list_splitter = ','
     name = 'extension'
