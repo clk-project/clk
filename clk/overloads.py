@@ -801,6 +801,19 @@ def eval_arg(arg):
     return arg
 
 
+class NoPathAvailable(BaseException):
+    """In cases where click commands are called without using clk get_command, the
+    command works but there is no path that makes sense. This might happen for
+    instance when using ctx.invoke(somecommand). Even the context is useless, as
+    it does not reflect the path at all. For example, a command "a.a" calling
+    "a.b" with ctk.invoke(b) would result in the context a > a > b.
+
+    Then, in such situation, it is more sensible to raise this exception and
+    explicitly catch it so as to limit the clk awesomeness.
+
+    """
+
+
 class ParameterMixin(click.Parameter):
     def __init__(self, *args, **kwargs):
         self.deprecated = kwargs.pop('deprecated', None)
@@ -829,13 +842,18 @@ class ParameterMixin(click.Parameter):
 
     def get_path(self, ctx):
         path = ctx.command.path
+        if path is None:
+            raise NoPathAvailable
         return path + '.' + self.name.replace('_', '-')
 
     def _get_default_from_values(self, ctx):
         return config.get_settings('value').get('default.' + self.get_path(ctx), {}).get('value')
 
     def get_default(self, ctx):
-        value = self._get_default_from_values(ctx)
+        try:
+            value = self._get_default_from_values(ctx)
+        except NoPathAvailable:
+            value = None
         if value is None:
             value = super(ParameterMixin, self).get_default(ctx)
         else:
