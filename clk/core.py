@@ -67,16 +67,6 @@ def resolve_context_with_side_effects(path, resilient_parsing=True):
 get_ctx_cache = {}
 
 
-def rebuild_path(ctx):
-    if ctx is None:
-        return None
-    path = ctx.command.name
-    parent_path = rebuild_path(ctx.parent)
-    if (parent_path is not None and not isinstance(ctx.parent.command, config.main_command.__class__)):
-        path = parent_path + '.' + path
-    return path
-
-
 def get_ctx(path, side_effects=False, resilient_parsing=None):
     if resilient_parsing is None:
         ctx = click_get_current_context_safe()

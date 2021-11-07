@@ -20,7 +20,7 @@ from clk.click_helpers import click_get_current_context_safe
 from clk.commandresolver import CommandResolver
 from clk.completion import startswith
 from clk.config import config
-from clk.core import cache_disk, get_ctx, main_command_decoration, rebuild_path, run, settings_stores
+from clk.core import cache_disk, get_ctx, main_command_decoration, run, settings_stores
 from clk.lib import ParameterType, cd, check_output, ordered_unique
 from clk.log import get_logger
 from clk.plugin import load_plugins
@@ -828,7 +828,7 @@ class ParameterMixin(click.Parameter):
         return value
 
     def get_path(self, ctx):
-        path = ctx.command.path or rebuild_path(ctx)
+        path = ctx.command.path
         return path + '.' + self.name.replace('_', '-')
 
     def _get_default_from_values(self, ctx):
