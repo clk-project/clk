@@ -397,11 +397,6 @@ def main_command(cls, **kwargs):
 
 
 @main_command_options_callback
-def show_version_callback(ctx, param, value):
-    pass
-
-
-@main_command_options_callback
 def project_callback(ctx, attr, value):
     config.project = value
     return value
