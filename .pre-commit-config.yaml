@@ -16,12 +16,12 @@ repos:
   hooks:
   - id: yapf
 - repo: https://github.com/hadialqattan/pycln
-  rev: v1.0.3
+  rev: v1.1.0
   hooks:
   - id: pycln
     args: [--config=pycln.toml]
 - repo: https://github.com/PyCQA/isort
-  rev: 5.10.0
+  rev: 5.10.1
   hooks:
   - id: isort
 - repo: https://github.com/PyCQA/flake8
