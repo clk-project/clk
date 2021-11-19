@@ -126,7 +126,6 @@ def get_command_safe(path):
         return get_command(path)
     except Exception:
         LOGGER.debug('Failed to get the command {}'.format(path))
-        LOGGER.develop(traceback.format_exc())
         on_command_loading_error()
         return None
 
