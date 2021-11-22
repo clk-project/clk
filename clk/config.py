@@ -199,7 +199,7 @@ class Config(object):
     def group_command_line_parameters_as_environ_variables(self):
         return {('CLK_P_' + path.replace('-', '__').replace('.', '_')).upper(): ' '.join(map(quote, parameters))
                 for path, parameters in self.commandline_profile.settings['parameters'].items()
-                if path in self.groups}
+                if path in self.groups and parameters}
 
     @property
     def external_commands_environ_variables(self):
