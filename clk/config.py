@@ -138,7 +138,7 @@ class Config(object):
         self.distribution_profile_location = None
         self._all_profiles_cache = None
         self.value = Value()
-        self.groups = set()
+        self.groups = set(['clk'])
 
     @cached_property
     def commandline_profile(self):
