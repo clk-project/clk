@@ -4,7 +4,7 @@ import os
 import tempfile
 from pathlib import Path
 from shlex import split
-from subprocess import check_call, check_output
+from subprocess import STDOUT, check_call, check_output
 
 import pytest
 
@@ -63,7 +63,9 @@ class Lib:
         return check_call(split(cmd), *args, **kwargs)
 
     @staticmethod
-    def out(cmd, *args, **kwargs):
+    def out(cmd, with_err=False, *args, **kwargs):
+        if with_err:
+            kwargs['stderr'] = STDOUT
         return check_output(split(cmd), *args, encoding='utf-8', **kwargs).strip()
 
     def cmd(self, remaining, *args, **kwargs):
