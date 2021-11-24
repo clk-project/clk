@@ -5,6 +5,17 @@ import re
 from subprocess import check_output
 
 
+def test_broken_command_dont_make_clk_crash(lib, pythondir):
+    # given a command that is poorly written
+    (pythondir / 'a.py').write_text("""
+raise Exception("test")
+""")
+    # when I create an alias to that command
+    output = lib.cmd('alias set b a', with_err=True)
+    # then the output indicates the command could not be loaded
+    assert 'error: Found the command a in the resolver customcommand but could not load it.' in output
+
+
 def test_param_config_default_value_callback_that_depends_on_another_param(pythondir, lib):
     # given a command to perform http request with a default url lazily computed
     # that depends on some other value
