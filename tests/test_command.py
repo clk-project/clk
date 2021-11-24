@@ -5,6 +5,32 @@ import re
 from subprocess import check_output
 
 
+def test_invoked_commands_still_work(lib, pythondir):
+    # given a command that is calling another using ctx.invoke
+    (pythondir / 'mygroup.py').write_text("""
+import click
+from clk.decorators import group
+
+@group()
+def mygroup():
+    pass
+
+@mygroup.command()
+def invokedcommand():
+    print("invokedcommand")
+
+@mygroup.command()
+def invokingcommand():
+    ctx = click.get_current_context()
+    ctx.invoke(invokedcommand)
+""")
+    # when I call the invoking command
+    output = lib.cmd('mygroup invokingcommand')
+    # then the output indicates that the command was correctly invoked, even
+    # though the notion of Path does not makes sense here and it could have crashed
+    assert 'invokedcommand' == output
+
+
 def test_broken_command_dont_make_clk_crash(lib, pythondir):
     # given a command that is poorly written
     (pythondir / 'a.py').write_text("""
