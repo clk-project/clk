@@ -5,7 +5,7 @@ from shlex import split
 from subprocess import check_call, check_output
 
 
-def test_composote_alias(lib):
+def test_composite_alias(lib):
     lib.cmd('alias set a echo a , echo b')
     assert lib.cmd('a') == """a
 b"""
