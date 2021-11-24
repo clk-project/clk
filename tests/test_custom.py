@@ -12,6 +12,15 @@ echo foo""")
     assert lib.out('clk a') == 'foo'
 
 
+def test_default_help_message_triggers_a_warning(lib):
+    lib.run('clk command create bash a --no-open')
+    lib.run('clk command create python b --no-open')
+    output = lib.out('clk a', with_err=True)
+    assert output == "warning: The command 'a' has no documentation"
+    output = lib.out('clk b', with_err=True)
+    assert output == "warning: The command 'b' has no documentation"
+
+
 def test_simple_python(lib):
     lib.run('clk command create python a --no-open')
     path = lib.out('clk command which a')
