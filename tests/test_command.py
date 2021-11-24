@@ -5,30 +5,41 @@ import re
 from subprocess import check_output
 
 
-def test_invoked_commands_still_work(lib, pythondir):
+def test_invoked_commands_still_work_even_though_they_are_no_customizable(lib, pythondir):
     # given a command that is calling another using ctx.invoke
     (pythondir / 'mygroup.py').write_text("""
 import click
-from clk.decorators import group
+from clk.decorators import group, flag
 
 @group()
 def mygroup():
     pass
 
 @mygroup.command()
-def invokedcommand():
-    print("invokedcommand")
+@flag("--shout")
+def invokedcommand(shout):
+    message = "invokedcommand"
+    if shout:
+        message = message.upper()
+    print(message)
 
 @mygroup.command()
 def invokingcommand():
     ctx = click.get_current_context()
     ctx.invoke(invokedcommand)
 """)
+    # and I customize the invokedcommand
+    lib.cmd('parameter set mygroup.invokedcommand --shout')
+    # when I call the customized command alone
+    output = lib.cmd('mygroup invokedcommand')
+    # then I can see the customization in action
+    assert output == 'INVOKEDCOMMAND'
     # when I call the invoking command
     output = lib.cmd('mygroup invokingcommand')
-    # then the output indicates that the command was correctly invoked, even
-    # though the notion of Path does not makes sense here and it could have crashed
-    assert 'invokedcommand' == output
+    # then I can see the output of the invokedcommand but without the
+    # customization (because it was not called using a path, hence the notion of
+    # path itself does not make sense in this context).
+    assert output == 'invokedcommand'
 
 
 def test_broken_command_dont_make_clk_crash(lib, pythondir):
