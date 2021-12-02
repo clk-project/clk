@@ -18,8 +18,12 @@ workflows:
       - build_artifact:
           # see https://circleci.com/docs/2.0/configuration-reference/#tags
           filters:
+            # only run for the official tags
             tags:
               only: /v.*/
+            # don't bother package work that won't be released
+            branches:
+              ignore: /.*/
 
 notify:
   webhooks:
