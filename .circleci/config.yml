@@ -15,13 +15,18 @@ workflows:
     jobs:
       - test:
           context: SonarCloud
-      - build_artifact:
-          # see https://circleci.com/docs/2.0/configuration-reference/#tags
+          filters:
+            tags:
+              # see https://circleci.com/docs/2.0/configuration-reference/#tags
+              only: /v.*/
+      - deploy:
+          requires:
+            - test
           filters:
             # only run for the official tags
             tags:
               only: /v.*/
-            # don't bother package work that won't be released
+            # deploy only tags, not branches
             branches:
               ignore: /.*/
 
@@ -70,7 +75,7 @@ jobs:
             mkdir coverage && cd coverage && pipenv run coverage combine --append ../.coverage ../tests/.coverage && pipenv run coverage xml
       - sonarcloud/scan
 
-  build_artifact:
+  deploy:
     docker:
       - image: cimg/python:3.8
     steps:
@@ -79,7 +84,20 @@ jobs:
           name: Build wheel
           command: |
             python3 -m pip wheel .
-            mkdir -p /tmp/artifacts
-            mv clk-*whl /tmp/artifacts/
+            mkdir -p /tmp/wheel
+            mv clk-*whl /tmp/wheel/
+      - run:
+          name: Init pypirc
+          command: |
+            echo -e "[pypi]" >> ~/.pypirc
+            echo -e "username = clk_uploader" >> ~/.pypirc
+            echo -e "password = $PYPI_PASSWORD" >> ~/.pypirc
+      - run:
+          name: "Deploy it"
+          command: |
+            python3 -m venv venv
+            . venv/bin/activate
+            python3 -m pip install twine
+            twine upload /tmp/wheel/*
       - store_artifacts:
           path: /tmp/artifacts/
