@@ -60,3 +60,11 @@ jobs:
             pipenv run coverage run --source $(pwd) -m pytest
             mkdir coverage && cd coverage && pipenv run coverage combine --append ../.coverage ../tests/.coverage && pipenv run coverage xml
       - sonarcloud/scan
+      - run:
+          name: Build wheel
+          command: |
+            pip wheel .
+            mkdir -p /tmp/artifacts
+            mv clk-*whl /tmp/artifacts/
+      - store_artifacts:
+          path: /tmp/artifacts/
