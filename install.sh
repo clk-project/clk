@@ -89,7 +89,7 @@ if [ "$(uname)" == "Darwin" ]; then
 else
     if ! which wget > /dev/null && ! which curl > /dev/null; then
         if which sudo apt-get > /dev/null; then
-            sudo apt-get install -y curl
+            sudo apt-get install -y curl python3-distutils
         elif which sudo yum > /dev/null; then
             sudo yum -y install curl
         fi
