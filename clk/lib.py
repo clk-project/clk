@@ -860,7 +860,7 @@ def git_sync(url,
     use_shallow = use_shallow and parse_version(version) >= parse_version('2.1.4') and not last_tag
     directory = os.path.abspath(directory or re.split('[:/]', url)[-1])
     git_dir = os.path.join(directory, '.git')
-    ref_file = os.path.abspath(directory + '/.git/clk-git-sync-reference')
+    ref_file = os.path.abspath(f'{directory}/.git/clk-git-sync-reference')
     updated = False
     quiet = ['--quiet'] if quiet else []
     parent = os.path.dirname(directory)
@@ -880,7 +880,7 @@ def git_sync(url,
             if os.path.exists(ref_file) and open(ref_file).read() != commit_ish:
                 # reference has changed. Unfortunately we can't continue with the single branch shallow repository
                 call(['git', 'remote', 'set-branches', 'origin', '*'])
-                if os.path.exists(directory + '/.git/shallow'):
+                if os.path.exists(f'{directory}/.git/shallow'):
                     call(['git', 'fetch', '--unshallow', '--tags'] + quiet)
             prevrev = check_output(['git', 'rev-parse', 'HEAD'], internal=True)
             # just to make sure the user hasn't done anything by himself
