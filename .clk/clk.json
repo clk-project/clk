@@ -19,7 +19,8 @@
                     "--in-project",
                     "rm",
                     "-rf",
-                    "dist"
+                    "dist",
+                    "build"
                 ]
             ],
             "documentation": null
