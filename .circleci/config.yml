@@ -15,6 +15,11 @@ workflows:
     jobs:
       - test:
           context: SonarCloud
+      - build_artifact:
+          # see https://circleci.com/docs/2.0/configuration-reference/#tags
+          filters:
+            tags:
+              only: /v.*/
 
 notify:
   webhooks:
@@ -60,10 +65,16 @@ jobs:
             pipenv run coverage run --source $(pwd) -m pytest
             mkdir coverage && cd coverage && pipenv run coverage combine --append ../.coverage ../tests/.coverage && pipenv run coverage xml
       - sonarcloud/scan
+
+  build_artifact:
+    docker:
+      - image: cimg/python:3.8
+    steps:
+      - checkout
       - run:
           name: Build wheel
           command: |
-            pip wheel .
+            python3 -m pip wheel .
             mkdir -p /tmp/artifacts
             mv clk-*whl /tmp/artifacts/
       - store_artifacts:
