@@ -15,6 +15,7 @@ repos:
   rev: v0.32.0
   hooks:
   - id: yapf
+    additional_dependencies: [toml]
 - repo: https://github.com/hadialqattan/pycln
   rev: v1.1.0
   hooks:
