@@ -176,7 +176,7 @@ def compute_dot(
     cluster=True,
     left_right=False,
     lonely=False,
-    show_aliases=False,
+    display_aliases=False,
     display_parameters=False,
 ):
     import networkx
@@ -248,10 +248,10 @@ def compute_dot(
                 node,
                 node,
                 '\n -> {}'.format(' , '.join(' '.join(quote(arg) for arg in cmd) for cmd in aliases[node])) if
-                (show_aliases and node in aliases) else '',
+                (display_aliases and node in aliases) else '',
                 '\n : {}'.format(shlexjoin(config.settings['parameters'].get(node, []))) if
                 (display_parameters and config.settings['parameters'].get(node)) else '',
-                'greenyellow' if (show_aliases and node in aliases) else 'skyblue',
+                'greenyellow' if (display_aliases and node in aliases) else 'skyblue',
             )
     source_order = defaultdict(int)
     for src, dst in adjacency:
@@ -266,7 +266,7 @@ def compute_dot(
 @option('--output', help='Output file instead of showing it in a web browser - not relevant with format x11')
 @option('--format', type=click.Choice(['png', 'svg', 'x11', 'pdf', 'dot']), help='Format to use', default='svg')
 @flag('--strict/--all', help='Show the all dependency graph or only the explicitly configured flowdep')
-@flag('--show-aliases/--hide-aliases',
+@flag('--display-aliases/--hide-aliases',
       help='Show the details of the aliases instead of making them look like other nodes')
 @flag('--display-parameters/--hide-parameters', help='Show the details of the parameters as well')
 @flag('--left-right/--top-bottom', help='Show from left to right')
@@ -274,7 +274,7 @@ def compute_dot(
       ' (it generally pollutes unnecessarily the graph)')
 @flag('--cluster/--independent', help='Show all commands independently or cluster groups', default=True)
 @argument('cmds', nargs=-1, type=CommandType(), help='The commands to display')
-def graph(output, format, cmds, show_aliases, display_parameters, strict, cluster, left_right, lonely):
+def graph(output, format, cmds, display_aliases, display_parameters, strict, cluster, left_right, lonely):
     """Display the flow dependencies as a graph"""
     dot = compute_dot(
         cmds=cmds,
@@ -282,7 +282,7 @@ def graph(output, format, cmds, show_aliases, display_parameters, strict, cluste
         cluster=cluster,
         left_right=left_right,
         lonely=lonely,
-        show_aliases=show_aliases,
+        display_aliases=display_aliases,
         display_parameters=display_parameters,
     )
     if dot is None:
