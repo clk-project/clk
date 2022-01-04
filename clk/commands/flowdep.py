@@ -12,6 +12,7 @@ import click
 
 from clk.colors import Colorer
 from clk.config import config
+from clk.core import get_ctx
 from clk.decorators import argument, flag, group, option, pass_context, table_fields, table_format, use_settings
 from clk.flow import flowdeps as _flowdeps
 from clk.flow import get_flow_commands_to_run
@@ -178,6 +179,7 @@ def compute_dot(
     lonely=False,
     display_aliases=False,
     display_parameters=False,
+    alias_links=False,
 ):
     import networkx
     g = networkx.digraph.DiGraph()
@@ -253,6 +255,12 @@ def compute_dot(
                 (display_parameters and config.settings['parameters'].get(node)) else '',
                 'greenyellow' if (display_aliases and node in aliases) else 'skyblue',
             )
+    if alias_links:
+        for source, destination in aliases.items():
+            destination_context = get_ctx(destination[-1], side_effects=False, resilient_parsing=True)
+            label = 'label="{}", '.format(' , '.join(' '.join(quote(arg) for arg in cmd) for cmd in destination))
+            dot += f"""  "{source}" -> "{destination_context.command.path}" [{label}style=dashed, color=grey]
+"""
     source_order = defaultdict(int)
     for src, dst in adjacency:
         source_order[dst] = source_order[dst] + 1
@@ -268,13 +276,14 @@ def compute_dot(
 @flag('--strict/--all', help='Show the all dependency graph or only the explicitly configured flowdep')
 @flag('--display-aliases/--hide-aliases',
       help='Show the details of the aliases instead of making them look like other nodes')
+@flag('--alias-links/--no-alias-link', help='Show a link when there are aliases')
 @flag('--display-parameters/--hide-parameters', help='Show the details of the parameters as well')
 @flag('--left-right/--top-bottom', help='Show from left to right')
 @flag('--lonely/--no-lonely', help='Show lonely nodes also'
       ' (it generally pollutes unnecessarily the graph)')
 @flag('--cluster/--independent', help='Show all commands independently or cluster groups', default=True)
 @argument('cmds', nargs=-1, type=CommandType(), help='The commands to display')
-def graph(output, format, cmds, display_aliases, display_parameters, strict, cluster, left_right, lonely):
+def graph(output, format, cmds, display_aliases, alias_links, display_parameters, strict, cluster, left_right, lonely):
     """Display the flow dependencies as a graph"""
     dot = compute_dot(
         cmds=cmds,
@@ -284,6 +293,7 @@ def graph(output, format, cmds, display_aliases, display_parameters, strict, clu
         lonely=lonely,
         display_aliases=display_aliases,
         display_parameters=display_parameters,
+        alias_links=alias_links,
     )
     if dot is None:
         LOGGER.status('Nothing to show')
