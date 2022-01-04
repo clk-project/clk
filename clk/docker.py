@@ -17,6 +17,7 @@ from clk.lib import ParameterType, call, cd, check_output, updated_env
 
 def docker_command(group=None, **kwargs):
     """A decorator to create a group with docker subcommands"""
+
     def decorator(f):
         opts = dict((k, v) for k, v in kwargs.items() if k in ['directory', 'extra_options'])
         for k in opts.keys():
@@ -33,6 +34,7 @@ def docker_generic_commands(group,
                             extra_options=lambda: ['-p', config.simulator_name.lower()],
                             extra_env=lambda: {},
                             extra_flowdepends={}):
+
     def abs_directory():
         return os.path.abspath(directory() if callable(directory) else directory)
 
@@ -43,8 +45,10 @@ def docker_generic_commands(group,
                  cwd=abs_directory())
 
     class DockerServices(ParameterType):
+
         @property
         def choices(self):
+
             @cache_disk(expire=60)
             def compute(directory, args):
                 with cd(directory, internal=True):

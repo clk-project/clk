@@ -54,6 +54,7 @@ def register_command(parent=None):
 
 
 class command_loader(object):
+
     def __init__(self, name, parent=None):
         self.name = name
         self.parent = parent or config.main_command.path
@@ -66,6 +67,7 @@ command_hooks = defaultdict(list)
 
 
 class command_hook(object):
+
     def __init__(self, name):
         self.name = name
 

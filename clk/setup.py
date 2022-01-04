@@ -65,6 +65,7 @@ def basic_entry_point(main_module,
                       include_core_commands=None,
                       exclude_core_commands=None,
                       authenticator_hints={}):
+
     def decorator(f):
         path = f.__name__
         config_cls = type('{}Config'.format(path), (Config, ), {

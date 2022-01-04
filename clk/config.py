@@ -22,6 +22,7 @@ LOGGER = get_logger(__name__)
 
 
 class Value:
+
     def __getattr__(self, name):
         try:
             return config.settings2['value'][name]['value']
@@ -51,8 +52,10 @@ Then, get the option with config.thenameintheconfig.someoption. Because it uses
 callbacks, the value is available very early, even before running the
 command. Hence the name dynamic
 """
+
     @classmethod
     def get_callback(klass):
+
         def cb(ctx, attr, value):
             if not hasattr(config, klass.name):
                 inst = klass()
@@ -647,6 +650,7 @@ setup_config_class()
 
 
 class ConfigProxy(object):
+
     def __getattr__(self, k):
         return getattr(configs[-1], k)
 

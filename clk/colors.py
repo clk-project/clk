@@ -12,6 +12,7 @@ from clk.lib import clear_ansi_color_codes
 
 
 class Colorer(object):
+
     def __init__(self, kwargs):
         self.legend = kwargs.pop('legend')
         self.full = kwargs.pop('full')
@@ -99,6 +100,7 @@ class Colorer(object):
 
     @classmethod
     def color_options(cls, f=None, full_default=None):
+
         def decorator(f):
             profiles_colors = cls.build_color_options_default_values()
             f = flag('--legend/--no-legend',

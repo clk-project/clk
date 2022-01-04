@@ -206,6 +206,7 @@ def glob_first(expr, default=None):
 
 def main_default(**default_options):
     u"""Change the default values of the main method of a Command"""
+
     def decorator(f):
         oldmain = f.main
 
@@ -1065,6 +1066,7 @@ def progressbar(iterable=None,
 
 
 class ProgressBar(ProgressBar_):
+
     def __init__(self, clear=True, *args, **kwargs):
         self.clear = clear
         kwargs.setdefault('file', sys.stderr)
@@ -1179,6 +1181,7 @@ def grep(
 
 
 class NullContext:
+
     def __enter__(self):
         pass
 
@@ -1342,6 +1345,7 @@ def read_cmakecache(file):
 
 
 class ParameterType(click.ParamType):
+
     def __init__(self):
         click.ParamType.__init__(self)
         if not hasattr(self, 'name'):
@@ -1397,7 +1401,8 @@ def deprecated_module(src, dst):
         if 'frozen' not in get_frame_info(frame)[0] and 'pluginbase' not in get_frame_info(frame)[0]
     ][-1]
     filename, lineno, line = get_frame_info(frame)
-    return ("{}:{} '{}' =>" ' Importing {} is deprecated, import {} instead').format(filename, lineno, line, src, dst)
+    return ("{}:{} '{}' =>"
+            ' Importing {} is deprecated, import {} instead').format(filename, lineno, line, src, dst)
 
 
 class TablePrinter(object):
@@ -1526,6 +1531,7 @@ def str_join(sep, ls):
 
 
 class AuthenticatorNotFound(click.UsageError):
+
     def __init__(self, machine, *args, **kwargs):
         super(AuthenticatorNotFound, self).__init__('User credentials required for machine {}.'.format(machine), *args,
                                                     **kwargs)

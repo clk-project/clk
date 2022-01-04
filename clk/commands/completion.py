@@ -17,6 +17,7 @@ LOGGER = get_logger(__name__)
 
 
 class CompletionConfig(object):
+
     def __init__(self):
         self.case_insensitive = False
 
@@ -51,7 +52,8 @@ def show(shell):
 @completion.command(handle_dry_run=True, ignore_unknown_options=True)
 @option('--description/--no-description', help='Display the argument description')
 @option('--last/--after', help='Complete the last argument')
-@flag('--call/--no-call', help='Call in a new process.' ' --no-call is useful in combination with --post-mortem')
+@flag('--call/--no-call', help='Call in a new process.'
+      ' --no-call is useful in combination with --post-mortem')
 @argument('command', type=CommandType(recursive=False), help='The command about which to try the completion')
 @argument('args', nargs=-1, help='The arguments to provide to the command')
 def _try(description, last, command, args, call):

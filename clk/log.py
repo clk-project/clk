@@ -11,6 +11,7 @@ import click_log
 
 class DevelopColorFormatter(click_log.core.ColorFormatter):
     """A click log formatter with augmented output, to be used in debug mode"""
+
     def format(self, record):
         if not record.exc_info:
             level = record.levelname.lower()
@@ -20,6 +21,7 @@ class DevelopColorFormatter(click_log.core.ColorFormatter):
 
 
 class LogLevelExitException(Exception):
+
     def __init__(self):
         message = 'Aborting because log level greater than {}'.format(exit_on_log_level)
         super(LogLevelExitException, self).__init__(message)
@@ -33,6 +35,7 @@ class Handler(logging.Handler):
 
     It puts everything in the error output. Also, it allow to exit abruptly when
     a log of some level is issued"""
+
     def emit(self, record):
         from clk import completion
         if completion.IN_COMPLETION and record.levelno < 40:
@@ -85,6 +88,7 @@ def getLogger(name):
 
 
 class Logger(logging.getLoggerClass()):
+
     def develop(self, msg, *args, **kwargs):
         if self.isEnabledFor(DEVELOP):
             self._log(DEVELOP, msg, args, **kwargs)

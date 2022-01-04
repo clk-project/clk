@@ -14,6 +14,7 @@ LOGGER = get_logger(__name__)
 
 
 def keyvaluestore_generic_commands(group, settings_name):
+
     @group.command(ignore_unknown_options=True)
     @argument('key', help='The key')
     @argument('value', help='The value')

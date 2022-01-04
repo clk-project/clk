@@ -107,6 +107,7 @@ def get_command2(path):
         cmd.params.extend([param for param in parent.params if param.name in new_param_names])
 
         def get_wrapper(f):
+
             def wrapper(*args, **kwargs):
                 for name in new_param_names:
                     if name in kwargs:
@@ -244,6 +245,7 @@ class ProfileChoice(click.Choice):
 
 
 class ExtraParametersMixin(object):
+
     def __init__(self, *args, **kwargs):
         super(ExtraParametersMixin, self).__init__(*args, **kwargs)
         set_param_opt = AutomaticOption(['--set-parameter'],
@@ -383,6 +385,7 @@ class ExtraParametersMixin(object):
 
 
 class HelpMixin(object):
+
     def __init__(self, *args, **kwargs):
         super(HelpMixin, self).__init__(*args, **kwargs)
         if self.help and 'short_help' not in kwargs.keys():
@@ -484,6 +487,7 @@ class RememberParametersMixin(object):
     pragmatically, doing so sounds to do the job well.
 
     """
+
     def split_args_remaining(self, ctx, args):
         """Reconstruct parameters equivalent to those initially given to the command line"""
         parser = self.make_parser(ctx)
@@ -507,6 +511,7 @@ class MissingDocumentationMixin(object):
     """A mixin to use to display a waring when running a command that miss some documentation, either on the command
     itself or on its parameters
     """
+
     def invoke(self, ctx):
         if not ctx.resilient_parsing:
             if not self.help or self.help.strip() == 'Description':
@@ -518,6 +523,7 @@ class MissingDocumentationMixin(object):
 
 
 class DeprecatedMixin(object):
+
     def init_deprecated(self):
         self.deprecated = None
 
@@ -535,6 +541,7 @@ class DeprecatedMixin(object):
 
 class Command(MissingDocumentationMixin, DeprecatedMixin, TriggerMixin, HelpMixin, ExtraParametersMixin,
               RememberParametersMixin, click.Command):
+
     def __init__(self, *args, **kwargs):
         super(Command, self).__init__(*args, **kwargs)
         super(Command, self).init_deprecated()
@@ -609,7 +616,8 @@ def get_command_with_resolvers(resolvers, parent_path, name):
             try:
                 cmd = resolver._get_command(cmd_path, parent)
             except Exception:
-                LOGGER.error(f'Found the command {cmd_path} in the resolver {resolver.name}' ' but could not load it.')
+                LOGGER.error(f'Found the command {cmd_path} in the resolver {resolver.name}'
+                             ' but could not load it.')
                 raise
             break
     return cmd, resolver
@@ -712,6 +720,7 @@ class Group(click_didyoumean.DYMMixin, MissingDocumentationMixin, DeprecatedMixi
         self.format_commands(ctx, formatter)
 
     def command(self, *args, **kwargs):
+
         def decorator(f):
             cmd = command(*args, **kwargs)(f)
             self.add_command(cmd)
@@ -720,6 +729,7 @@ class Group(click_didyoumean.DYMMixin, MissingDocumentationMixin, DeprecatedMixi
         return decorator
 
     def flow_command(self, *args, **kwargs):
+
         def decorator(f):
             cmd = flow_command(*args, **kwargs)(f)
             self.add_command(cmd)
@@ -728,6 +738,7 @@ class Group(click_didyoumean.DYMMixin, MissingDocumentationMixin, DeprecatedMixi
         return decorator
 
     def group(self, *args, **kwargs):
+
         def decorator(f):
             cmd = group(*args, **kwargs)(f)
             self.add_command(cmd)
@@ -814,6 +825,7 @@ class NoPathAvailable(Exception):
 
 
 class ParameterMixin(click.Parameter):
+
     def __init__(self, *args, **kwargs):
         self.deprecated = kwargs.pop('deprecated', None)
         super(ParameterMixin, self).__init__(*args, **kwargs)
@@ -908,6 +920,7 @@ class ParameterMixin(click.Parameter):
 
 
 class Option(ParameterMixin, click.Option):
+
     def __init__(self, *args, **kwargs):
         self.group = kwargs.pop('group', None)
         kwargs.setdefault('show_default', True)
@@ -915,12 +928,14 @@ class Option(ParameterMixin, click.Option):
 
 
 class AutomaticOption(Option):
+
     def __init__(self, *args, **kwargs):
         kwargs.setdefault('group', 'automatic')
         super(AutomaticOption, self).__init__(*args, **kwargs)
 
 
 class Argument(ParameterMixin, click.Argument):
+
     def __init__(self, *args, **kwargs):
         self.help = kwargs.pop('help', '')
         self.show_default = kwargs.pop('show_default', True)
@@ -1093,11 +1108,13 @@ def flow_argument(*args, **kwargs):
 
 
 class CommandType(ParameterType):
+
     def __init__(self, recursive=True):
         super(CommandType, self).__init__()
         self.recursive = recursive
 
     def complete(self, ctx, incomplete):
+
         @cache_disk(expire=600)
         def get_candidates(parent_path):
             if parent_path != config.main_command.path:
@@ -1143,6 +1160,7 @@ class CommandType(ParameterType):
 
 
 class CommandSettingsKeyType(ParameterType):
+
     def __init__(self, name, silent_fail=False):
         self.name = name
         self.silent_fail = silent_fail
@@ -1151,6 +1169,7 @@ class CommandSettingsKeyType(ParameterType):
         return settings_stores[self.name].readonly
 
     def complete(self, ctx, incomplete):
+
         @cache_disk(expire=600)
         def get_shortdoc(path):
             cmd = get_command_safe(path)
@@ -1183,6 +1202,7 @@ class MainCommand(click_didyoumean.DYMMixin, DeprecatedMixin, TriggerMixin, Help
         super(MainCommand, self).init_deprecated()
 
     def get_command_short_help(self, ctx, cmd_name):
+
         @cache_disk
         def short_help(cmd_path, name):
             cmd = self.get_command(ctx, name)
@@ -1191,6 +1211,7 @@ class MainCommand(click_didyoumean.DYMMixin, DeprecatedMixin, TriggerMixin, Help
         return short_help(ctx.command_path, cmd_name)
 
     def get_command_hidden(self, ctx, cmd_name):
+
         @cache_disk
         def hidden(cmd_path, name):
             cmd = self.get_command(ctx, name)
@@ -1272,6 +1293,7 @@ class MainCommand(click_didyoumean.DYMMixin, DeprecatedMixin, TriggerMixin, Help
 
 
 class FlowOption(Option):
+
     def __init__(self, param_decls, target_command, target_option=None, **kwargs):
         name, opts, secondary_opts = self._parse_decls(param_decls or (), kwargs.get('expose_value'))
         target_option = target_option or name
@@ -1315,6 +1337,7 @@ class FlowOption(Option):
 
 
 class FlowArgument(Argument):
+
     def __init__(self, param_decls, target_command, target_argument=None, **kwargs):
         name, opts, secondary_opts = self._parse_decls(param_decls or (), kwargs.get('expose_value'))
         target_argument = target_argument or name
@@ -1337,6 +1360,7 @@ class FlowArgument(Argument):
 
 
 def entry_point(cls=None, **kwargs):
+
     def decorator(f):
         if cls is None:
             path = f.__name__

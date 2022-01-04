@@ -19,6 +19,7 @@ def run_triggers(name, path, commands):
 
 
 class TriggerMixin(object):
+
     def invoke(self, *args, **kwargs):
         trigger = config.settings2.get('triggers', {}).get(self.path, {})
         pre = trigger.get('pre', [])

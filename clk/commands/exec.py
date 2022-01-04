@@ -12,6 +12,7 @@ from clk.lib import ParameterType, call, double_quote, updated_env
 
 
 class ExecutableType(ParameterType):
+
     def complete(self, ctx, incomplete):
         completion = set()
         for path in self.path(ctx):

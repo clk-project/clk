@@ -112,6 +112,7 @@ def write_settings(settings_path, settings, dry_run):
 
 
 class Profile():
+
     def __repr__(self):
         return f'<{self.__class__.__name__}: {self.name}>'
 
@@ -372,7 +373,8 @@ class DirectoryProfile(Profile):
         self.compute_settings()
         self.backup_location = self.location + '_backup'
         if os.path.exists(self.backup_location):
-            LOGGER.warning('The backup directory for profile' ' in location {} already exist'.format(self.location))
+            LOGGER.warning('The backup directory for profile'
+                           ' in location {} already exist'.format(self.location))
         self.migration_impact = [
             os.path.basename(self.version_file_name),
         ] + [os.path.basename(f) for f in glob(self.location + '/{}*json'.format(self.app_name))] + ['extensions']
@@ -689,7 +691,8 @@ class DirectoryProfile(Profile):
             if self.version == version:
                 next_version = version + 1
                 if persist:
-                    LOGGER.info('Migrating from version {}' ' to version {}'.format(version, next_version))
+                    LOGGER.info('Migrating from version {}'
+                                ' to version {}'.format(version, next_version))
                 if migrator():
                     self._version = next_version
                 else:
@@ -704,6 +707,7 @@ class DirectoryProfile(Profile):
 
 @ProfileFactory.register_preset_profile
 class PresetProfile(Profile):
+
     def __init__(self,
                  name,
                  settings,

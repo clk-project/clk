@@ -90,6 +90,7 @@ main_command_parameters = set()
 
 
 def main_command_options_callback(f):
+
     def decorator(ctx, attr, value):
         if config.frozen:
             return value
@@ -133,6 +134,7 @@ class ExtensionType(ParameterType):
 
 
 class ExtensionTypeSuggestion(ExtensionType):
+
     def convert(self, value, param, ctx):
         return value
 
@@ -172,6 +174,7 @@ class ColorType(ParameterType):
 
     @classmethod
     def get_kwargs(cls, color_name):
+
         def splitpart(part):
             parts = part.split('-')
             if len(parts) == 1:
@@ -225,6 +228,7 @@ class SomeChoices(DynamicChoiceType):
 @option("--someoption", type=SomeChoices())
 
 """
+
     def choices(self):
         raise NotImplementedError
 
@@ -389,6 +393,7 @@ def main_command_decoration(f, cls, **kwargs):
 
 
 def main_command(cls, **kwargs):
+
     def decorator(f):
         return main_command_decoration(f, cls, *kwargs)
 

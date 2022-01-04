@@ -28,6 +28,7 @@ def plugin():
 
 
 class PluginType(DynamicChoice):
+
     def choices(self):
         profile = config.plugin.profile_source
         if profile is None:
@@ -68,7 +69,8 @@ def _move(profile_source, plugin, profile_destination, force):
     old_location = Path(profile_source.location) / 'plugins' / (plugin + '.py')
     new_location = Path(profile_destination.location) / 'plugins' / (plugin + '.py')
     if new_location.exists() and not force:
-        raise click.UsageError(f"I won't overwrite {new_location}," ' unless called with --force')
+        raise click.UsageError(f"I won't overwrite {new_location},"
+                               ' unless called with --force')
     makedirs(new_location.parent)
     move(old_location, new_location)
     LOGGER.status(f'Moved {old_location} into {new_location}')
@@ -198,7 +200,8 @@ def create(profile_source, new_name, open, force, body, description):
     script_path = Path(profile_source.location) / 'plugins' / (new_name + '.py')
     makedirs(script_path.parent)
     if script_path.exists() and not force:
-        raise click.UsageError(f"Won't overwrite {script_path} unless" ' explicitly asked so with --force')
+        raise click.UsageError(f"Won't overwrite {script_path} unless"
+                               ' explicitly asked so with --force')
     script_path.write_text(f"""#!/usr/bin/env python3
 # -*- coding:utf-8 -*-
 

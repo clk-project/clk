@@ -20,6 +20,7 @@ def password():
 
 
 class LazyChoice(click.Choice):
+
     def convert(self, value, param, ctx):
         return value
 
@@ -52,7 +53,8 @@ def set(machine, username, password):
           help='The machine for which the username and password will be removed')
 def remove(machine):
     """Remove the password"""
-    if click.confirm('This will definitely remove the password for {}.' ' Are you sure?'.format(machine)):
+    if click.confirm('This will definitely remove the password for {}.'
+                     ' Are you sure?'.format(machine)):
         get_keyring().delete_password('clk', machine)
     else:
         LOGGER.warning('Removing anyway!')

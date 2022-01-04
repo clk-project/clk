@@ -175,6 +175,7 @@ def has_flow(cmd):
 
 
 def build_show_flow_callback(cmd):
+
     def callback(ctx, param, value):
         if value and not ctx.resilient_parsing:
             run(['flowdep', 'show', '--all', cmd])
@@ -184,6 +185,7 @@ def build_show_flow_callback(cmd):
 
 
 def build_show_flowgraph_callback(cmd):
+
     def callback(ctx, param, value):
         if value and not ctx.resilient_parsing:
             run(['flowdep', 'graph', cmd])
@@ -241,6 +243,7 @@ def in_a_flow(ctx):
 
 
 def get_flow_wrapper(name, function):
+
     def flow_wrapper(*args, **kwargs):
         flow = kwargs['flow']
         del kwargs['flow']
@@ -296,6 +299,7 @@ def get_flow_wrapper(name, function):
 
 
 class flowdepends(object):
+
     def __init__(self, depends, name=None):
         self.depends = depends
         self.name = name

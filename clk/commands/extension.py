@@ -31,6 +31,7 @@ class ExtensionConfig(object):
 
 
 class ExtensionNameType(ParameterType):
+
     def __init__(self, enabled=False, disabled=False, shortonly=False):
         self.disabled = disabled
         self.enabled = enabled
@@ -56,6 +57,7 @@ class ExtensionNameType(ParameterType):
 
 
 class ExtensionType(ExtensionNameType):
+
     def convert(self, value, param, ctx):
         choice = self.getchoice(ctx)
         if value not in choice:

@@ -70,6 +70,7 @@ def resolve(path):
 
 
 class CustomCommandPathType(DynamicChoiceType):
+
     def __init__(self, type):
         self.type = type
 
@@ -79,6 +80,7 @@ class CustomCommandPathType(DynamicChoiceType):
 
 
 class CustomCommandNameType(DynamicChoiceType):
+
     def __init__(self, settings=None):
         self.resolvers = [
             ExternalCommandResolver(settings),
@@ -90,6 +92,7 @@ class CustomCommandNameType(DynamicChoiceType):
 
 
 class CustomCommandType(CustomCommandNameType):
+
     def converter(self, path):
         for resolver in self.resolvers:
             if path in resolver._list_command_paths():
@@ -188,6 +191,7 @@ def edit(customcommand):
 
 
 class AliasesType(DynamicChoiceType):
+
     def choices(self):
         return list(config.settings['alias'].keys())
 
@@ -238,14 +242,17 @@ It works only for python scripts or bash scripts.
 def bash(name, open, force, description, body, from_alias, replace_alias, flowdeps, source_bash_helpers, from_file):
     """Create a bash custom command"""
     if from_alias and replace_alias:
-        raise click.UsageError('You can only set --from-alias or --from-alias-move,' ' not both at the same time.')
+        raise click.UsageError('You can only set --from-alias or --from-alias-move,'
+                               ' not both at the same time.')
     if name.endswith('.sh'):
-        LOGGER.warning("Removing the extra .sh so that clk won't confuse it" ' with a command name.')
+        LOGGER.warning("Removing the extra .sh so that clk won't confuse it"
+                       ' with a command name.')
         name = name[:len('.sh')]
     script_path = Path(config.customcommands.profile.location) / 'bin' / name
     makedirs(script_path.parent)
     if script_path.exists() and not force:
-        raise click.UsageError(f"Won't overwrite {script_path} unless" ' explicitly asked so with --force')
+        raise click.UsageError(f"Won't overwrite {script_path} unless"
+                               ' explicitly asked so with --force')
     options = []
     arguments = []
     flags = []
@@ -359,7 +366,8 @@ clk_help_handler "$@"
 @flag('--open/--no-open', help='Also open the file after its creation', default=True)
 @flag('--force', help='Overwrite a file if it already exists')
 @flag('--group/--command', help='Bootstrap a command or a group of commands')
-@flag('--with-data', help='Create a directory module instead of a single file.' ' So that you can ship data with it')
+@flag('--with-data', help='Create a directory module instead of a single file.'
+      ' So that you can ship data with it')
 @option('--body', help='The initial body to put', default='')
 @option('--description', help='The initial description to put', default='Description')
 @option('--from-file', help='Copy this file instead of using the template')
@@ -379,7 +387,8 @@ def python(name, open, force, description, body, with_data, from_file, group):
     script_path /= name
     makedirs(script_path.parent)
     if script_path.exists() and not force:
-        raise click.UsageError(f"Won't overwrite {script_path} unless" ' explicitly asked so with --force')
+        raise click.UsageError(f"Won't overwrite {script_path} unless"
+                               ' explicitly asked so with --force')
     script_text = f"""#!/usr/bin/env python3
 # -*- coding:utf-8 -*-
 
@@ -438,7 +447,8 @@ def rename(customcommand, new_name, force):
         new_name += ext
     new_path = Path(customcommand.customcommand_path).parent / new_name
     if new_path.exists() and not force:
-        raise click.UsageError(f"I won't overwrite {new_path}," ' unless called with --force')
+        raise click.UsageError(f"I won't overwrite {new_path},"
+                               ' unless called with --force')
     Path(customcommand.customcommand_path).rename(new_path)
     LOGGER.status(f'Renamed {customcommand.customcommand_path} into {new_path}')
 
@@ -452,7 +462,8 @@ def _move(customcommand, profile, force):
     directory = ('python' if customcommand.customcommand_path.endswith('.py') else 'bin')
     new_location = Path(profile.location) / directory / Path(customcommand.customcommand_path).name
     if new_location.exists() and not force:
-        raise click.UsageError(f"I won't overwrite {new_location}," ' unless called with --force')
+        raise click.UsageError(f"I won't overwrite {new_location},"
+                               ' unless called with --force')
     makedirs(new_location.parent)
     move(customcommand.customcommand_path, new_location)
     LOGGER.status(f'Moved {customcommand.customcommand_path} into {new_location}')
@@ -468,7 +479,8 @@ def _copy(customcommand, profile, force, name):
     directory = ('python' if customcommand.customcommand_path.endswith('.py') else 'bin')
     new_location = Path(profile.location) / directory / name
     if new_location.exists() and not force:
-        raise click.UsageError(f"I won't overwrite {new_location}," ' unless called with --force')
+        raise click.UsageError(f"I won't overwrite {new_location},"
+                               ' unless called with --force')
     makedirs(new_location.parent)
     copy(customcommand.customcommand_path, new_location)
     LOGGER.status(f'copied {customcommand.customcommand_path} into {new_location}')

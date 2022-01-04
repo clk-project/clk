@@ -23,6 +23,7 @@ class BadCustomCommandError(Exception):
 
 
 def build_update_extension_callback(profile):
+
     def callback(ctx, param, value):
         if value and not ctx.resilient_parsing:
             run(['extension', 'update', profile.name])

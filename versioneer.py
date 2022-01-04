@@ -372,6 +372,7 @@ HANDLERS = {}
 
 def register_vcs_handler(vcs, method):  # decorator
     """Decorator to mark a method as the handler for a particular VCS."""
+
     def decorate(f):
         """Store f in HANDLERS[vcs][method]."""
         if vcs not in HANDLERS:
@@ -1557,6 +1558,7 @@ def get_cmdclass():
         from distutils.command.build_py import build_py as _build_py
 
     class cmd_build_py(_build_py):
+
         def run(self):
             root = get_root()
             cfg = get_config_from_root(root)
@@ -1582,6 +1584,7 @@ def get_cmdclass():
         #   ...
 
         class cmd_build_exe(_build_exe):
+
             def run(self):
                 root = get_root()
                 cfg = get_config_from_root(root)
@@ -1613,6 +1616,7 @@ def get_cmdclass():
             from py2exe.build_exe import py2exe as _py2exe  # py2
 
         class cmd_py2exe(_py2exe):
+
             def run(self):
                 root = get_root()
                 cfg = get_config_from_root(root)
@@ -1643,6 +1647,7 @@ def get_cmdclass():
         from distutils.command.sdist import sdist as _sdist
 
     class cmd_sdist(_sdist):
+
         def run(self):
             versions = get_versions()
             self._versioneer_generated_versions = versions

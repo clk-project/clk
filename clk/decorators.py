@@ -73,6 +73,7 @@ def param_config(name, *args, **kwargs):
 
 
 def use_settings(settings_name, settings_cls, override=True, default_profile='context'):
+
     def decorator(f):
         if settings_name not in settings_stores:
             settings_stores[settings_name] = settings_cls()
@@ -175,6 +176,7 @@ pass_context = click.pass_context
 
 
 def deprecated(version=None, message=None):
+
     def deprecated_decorator(command):
         deprecated_suffix = ' (deprecated)'
         help = command.help.splitlines()[0] if command.help else ''
@@ -189,6 +191,7 @@ def deprecated(version=None, message=None):
 
 
 def table_format(func=None, default=None, config_name='config.table.format'):
+
     def decorator(func):
         # not sure why, but python can't access the default value with a closure in a statement of this kind
         #     default = default
@@ -205,6 +208,7 @@ def table_format(func=None, default=None, config_name='config.table.format'):
 
 
 def table_fields(func=None, choices=(), default=None):
+
     def callback(ctx, attr, value):
         if not value:
             value = list(choices)

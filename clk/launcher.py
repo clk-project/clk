@@ -10,6 +10,7 @@ from clk.overloads import option
 
 
 class LauncherCommandType(ParameterType):
+
     def complete(self, ctx, incomplete):
         choices = [' '.join([quote(v) for v in value]) for value in config.settings.get('launchers', {}).values()]
         return [launcher for launcher in choices if startswith(launcher, incomplete)]
@@ -19,6 +20,7 @@ class LauncherCommandType(ParameterType):
 
 
 class LauncherType(ParameterType):
+
     def __init__(self, missing_ok=False):
         ParameterType.__init__(self)
         self.missing_ok = missing_ok
