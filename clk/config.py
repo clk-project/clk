@@ -285,7 +285,8 @@ class Config(object):
             else:
                 os.environ[k] = v
         for k, v in self.get_settings('environment').items():
-            os.environ[k] = v['value']
+            from clk.overloads import eval_arg
+            os.environ[k] = eval_arg(v['value'])
 
     def get_settings(self, section):
         if self.settings is None:
