@@ -59,20 +59,20 @@ jobs:
           command: |
             curl -sfL https://direnv.net/install.sh | bash
             eval "$(direnv hook bash)"
-            python3 -m venv venv
-            source venv/bin/activate
+            python3 -m venv /tmp/venv
+            source /tmp/venv/bin/activate
             pip install --editable .
             pip install pytest pre-commit coverage
       - run:
           name: Check code quality
           command: |
-            source venv/bin/activate
+            source /tmp/venv/bin/activate
             pre-commit run -a
       - run:
           name: Run tests
           # This assumes pytest is installed via the install-package step above
           command: |
-            source venv/bin/activate
+            source /tmp/venv/bin/activate
             which clk
             coverage run --source $(pwd) -m pytest
             mkdir coverage && cd coverage && coverage combine --append ../.coverage ../tests/.coverage && coverage xml
@@ -98,8 +98,8 @@ jobs:
       - run:
           name: "Deploy it"
           command: |
-            python3 -m venv venv
-            . venv/bin/activate
+            python3 -m venv /tmp/venv
+            . /tmp/venv/bin/activate
             python3 -m pip install twine
             twine upload /tmp/wheel/*
       - store_artifacts:
