@@ -1,4 +1,10 @@
 # -*- coding: utf-8 -*-
+
+
+def test_dump_flowdeps(lib):
+    lib.cmd('flowdep graph --alias-links --format dot')
+
+
 def test_extend_flow(pythondir, lib):
     # given a group of commands that allows playing with 3D printing, with a
     # flow between them and a final command flow
