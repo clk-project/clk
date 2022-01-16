@@ -59,21 +59,23 @@ jobs:
           command: |
             curl -sfL https://direnv.net/install.sh | bash
             eval "$(direnv hook bash)"
-            python3 -m pip install pipenv
-            # without --skip-lock, it complains on cimg/python:3.8 that black cannot be installed
-            pipenv install --skip-lock --editable .
-            pipenv install pytest pre-commit coverage
+            python3 -m venv venv
+            source venv/bin/activate
+            pip install --editable .
+            pip install pytest pre-commit coverage
       - run:
           name: Check code quality
           command: |
-            pipenv run pre-commit run -a
+            source venv/bin/activate
+            pre-commit run -a
       - run:
           name: Run tests
           # This assumes pytest is installed via the install-package step above
           command: |
-            pipenv run which clk
-            pipenv run coverage run --source $(pwd) -m pytest
-            mkdir coverage && cd coverage && pipenv run coverage combine --append ../.coverage ../tests/.coverage && pipenv run coverage xml
+            source venv/bin/activate
+            which clk
+            coverage run --source $(pwd) -m pytest
+            mkdir coverage && cd coverage && coverage combine --append ../.coverage ../tests/.coverage && coverage xml
       - sonarcloud/scan
 
   deploy:
