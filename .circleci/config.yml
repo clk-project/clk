@@ -60,7 +60,8 @@ jobs:
             curl -sfL https://direnv.net/install.sh | bash
             eval "$(direnv hook bash)"
             python3 -m pip install pipenv
-            pipenv install --editable .
+            # without --skip-lock, it complains on cimg/python:3.8 that black cannot be installed
+            pipenv install --skip-lock --editable .
             pipenv install pytest pre-commit coverage
       - run:
           name: Check code quality
