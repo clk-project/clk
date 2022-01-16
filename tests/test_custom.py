@@ -4,6 +4,12 @@
 from pathlib import Path
 
 
+def test_complete_remove(lib):
+    lib.run('clk command create bash a --no-open')
+    candidates = lib.out('clk completion try command remove')
+    assert 'a' == candidates
+
+
 def test_simple_bash(lib):
     lib.run('clk command create bash a --no-open')
     path = lib.out('clk command which a')
