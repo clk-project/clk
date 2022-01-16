@@ -73,7 +73,6 @@ jobs:
           # This assumes pytest is installed via the install-package step above
           command: |
             source /tmp/venv/bin/activate
-            which clk
             coverage run --source $(pwd) -m pytest
             mkdir coverage && cd coverage && coverage combine --append ../.coverage ../tests/.coverage && coverage xml
       - sonarcloud/scan
