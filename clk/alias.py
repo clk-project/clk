@@ -110,8 +110,10 @@ class AliasCommandResolver(CommandResolver):
         # also get the context of the last command to capture its flow. In that
         # case, I wan't to allow side effects because I want this command to
         # impact the behavior of the generated alias. Its parameters, completion
-        # or whatever should transpire in the aliased command.
-        c = get_ctx(commands_to_run[-1], side_effects=True)
+        # or whatever should transpire in the aliased command. The parsing must
+        # be resilient though because the aliased command might be incomplete
+        # (like it might be missing an argument)
+        c = get_ctx(commands_to_run[-1], side_effects=True, resilient_parsing=True)
         deps += flowdeps[c.command.path]
         deps = ordered_unique(deps)
 
