@@ -3,7 +3,7 @@
 
 
 def test_parameter_precedence(lib, project1):
-    lib.run('clk parameter set echo global')
+    lib.cmd('parameter set echo global')
     lib.run(f'clk -P {project1} parameter set echo local')
     lib.cmd('extension create ext')
     lib.cmd('parameter set --global-ext echo ext')
@@ -11,14 +11,14 @@ def test_parameter_precedence(lib, project1):
 
 
 def test_simple_parameter(lib):
-    lib.run('clk parameter set echo foo')
+    lib.cmd('parameter set echo foo')
     assert lib.out('clk echo') == 'foo'
 
 
 def test_parameter_to_alias(lib):
-    lib.run('clk alias set a echo')
-    lib.run('clk parameter set a foo')
-    lib.run('clk parameter set echo bar')
+    lib.cmd('alias set a echo')
+    lib.cmd('parameter set a foo')
+    lib.cmd('parameter set echo bar')
     assert lib.out('clk a') == 'bar foo'
 
 
