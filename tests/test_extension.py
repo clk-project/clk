@@ -6,8 +6,8 @@ from subprocess import check_call
 
 
 def test_install_extension():
-    check_call(split('clk extension install hello'), encoding='utf8')
-    check_call(split('clk hello'), encoding='utf-8')
+    check_call(split('clk extension install hello'))
+    check_call(split('clk hello'))
 
 
 def test_copy_extension(lib):

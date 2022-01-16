@@ -189,7 +189,7 @@ def get():
 
 
 def test_simple_alias_command():
-    check_call(split('clk alias set test echo a , echo b , echo c'), encoding='utf8')
+    check_call(split('clk alias set test echo a , echo b , echo c'))
     assert check_output(split('clk test'), encoding='utf-8') == 'a\nb\nc\n'
 
 
