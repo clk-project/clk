@@ -214,11 +214,10 @@ class CoreCommandResolver(CommandResolver):
                         LOGGER.warning('When loading command {}: {}'.format(name, e))
                         on_command_loading_error()
                         raise
-                    if mod is not None:
-                        if hasattr(mod, attrname + '_') and not hasattr(mod, attrname):
-                            return getattr(mod, attrname + '_')
-                        else:
-                            return getattr(mod, attrname)
+                    if hasattr(mod, attrname + '_') and not hasattr(mod, attrname):
+                        return getattr(mod, attrname + '_')
+                    else:
+                        return getattr(mod, attrname)
         raise CommandNotFound(path)
 
 
