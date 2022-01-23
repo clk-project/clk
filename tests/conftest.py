@@ -71,7 +71,7 @@ class Lib:
     def cmd(self, remaining, *args, **kwargs):
         command = ('coverage run'
                    f' --source "{Path(__file__).parent.parent.resolve()}"'
-                   ' -m clk.main ' + remaining)
+                   ' -m clk ' + remaining)
         res = self.out(command, *args, **kwargs)
         old_dir = os.getcwd()
         current_coverage_location = (Path(os.getcwd()) / '.coverage').resolve()
