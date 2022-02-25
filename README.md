@@ -20,12 +20,11 @@ Come and discuss clk with us on
 - [![IRC libera.chat #clk](https://raster.shields.io/badge/libera.chat-%23clk-blue)](https://web.libera.chat/?channels=#clk)
 - [![Gitter](https://badges.gitter.im/clk-project/community.svg)](https://gitter.im/clk-project/community?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
 
-clk is the *Command Line Kit* that aims to become a *Cognitive Load Killer*, so
-that you can focus on what you are doing instead of how to how to ask the tool
-to do it. You should type only what the computer could not have guessed by
-itself.
+clk (*Command Line Kit*) is a program that provides nothing but the features of
+a (in our opinionated minds) wonderful command line tool. On top of it, you create
+your own commands to build your own tool.
 
-Out of the box, it provides:
+Among other things, it provides out of the box:
 
 - great completion support
 - aliases
@@ -34,21 +33,23 @@ Out of the box, it provides:
 - launchers
 - and more...
 
-clk is a very *opinionated framework*, and is meant to be *batteries
-included*. We want to be able to create command line applications very fast
-without compromising on the user experience.
 
-clk provides a library to create your own command line application, but it also
-provide an application called `clk` that already provides all the features so
-that you can just add your own commands on top of it.
+We believe that its features will empower you in a way that will capture
+whatever complicated workflow you have. In the end, it should be reduced to a
+single short command. This aspect of helping you removing the cognitive load of
+remembering how to call a complicated command line tool is why clk is also named
+a *Cognitive Load Killer*.  You can focus on what you are doing instead of how
+to how to ask the tool to do it.
 
-# Quick start
+# Installation
 
 Install with `curl -sSL https://clk-project.org/install.sh | bash`
 or `python3 -m pip install clk`
 
 Now, the `clk` tool is available in `~/.local/bin/`, if that directory is not
 already in your path, use `export PATH="${PATH}:${HOME}/.local/bin"`
+
+# Getting used of the tool
 
 Let's play with this tool to have a feeling of what clk is about.
 
@@ -88,11 +89,11 @@ def say(what, who):
     getattr(cowsay, who)(what)
 ```
 
-Actually because `clk` simply provide features on top of
+Actually because `clk` simply provides features on top of
 [click](https://click.palletsprojects.com/), please take a look at click's
 documentation to understand how to write commands.
 
-Close your editor, install the cowsay dependency `python3 -m pip install cowsay`.
+Close your editor, make sure the cowsay dependency is available `python3 -m pip install cowsay`.
 
 And now, try:
 
@@ -102,7 +103,7 @@ And now, try:
 
 You have created your first command!
 
-You can see that this command already provide a nice help message.
+You can see that this command already provides a nice help message.
 
 You could have created a click command that does exactly that, without using
 `clk`. So you might wonder why using clk in the first place. But now, this
@@ -118,8 +119,8 @@ And you have created another command, `hello`, that says hello. Try it with.
 
 `clk hello`
 
-This feature allow you to provide generic commands with a lot of power and let
-your user customize those commands to fit per particular needs.
+This feature allows you to provide generic commands with a lot of power and let
+your users customize those commands to fit per particular needs.
 
 Aliasing is a good way to quickly handcraft a command from other commands.
 
