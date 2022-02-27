@@ -39,7 +39,7 @@ setup(
         'pluginbase',
         'appdirs',
         'ipdb',
-        'humanize',
+        'humanize==4',
         'Pygments',
         'cached-property',
         'requests',

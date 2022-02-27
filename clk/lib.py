@@ -1321,7 +1321,7 @@ def date_and_delta(value):
     from datetime import datetime, timedelta
 
     import dateutil.tz
-    from humanize.time import abs_timedelta
+    from humanize.time import _abs_timedelta
     now = datetime.now(dateutil.tz.tzlocal())
     if isinstance(value, datetime):
         date = value
@@ -1336,7 +1336,7 @@ def date_and_delta(value):
             date = now - delta
         except (ValueError, TypeError):
             return (None, value)
-    return date, abs_timedelta(delta)
+    return date, _abs_timedelta(delta)
 
 
 def read_cmakecache(file):
