@@ -61,7 +61,7 @@ jobs:
             eval "$(direnv hook bash)"
             python3 -m venv /tmp/venv
             source /tmp/venv/bin/activate
-            pip install --editable .
+            pip install -r requirements.txt --editable .
             pip install pytest pre-commit coverage
       - run:
           name: Check code quality
