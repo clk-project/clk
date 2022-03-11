@@ -56,11 +56,8 @@
                 [
                     "exec",
                     "--in-project",
-                    "docker",
-                    "build",
-                    "-t",
-                    "clk",
-                    "."
+                    "docker-make",
+                    "clk"
                 ]
             ],
             "documentation": null

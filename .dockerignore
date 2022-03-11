@@ -3,5 +3,4 @@ clk.egg-info
 dist
 __pycache__
 .pytest_cache
-.git
 Dockerfile
