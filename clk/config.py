@@ -120,7 +120,7 @@ class Config(object):
     app_dir_name = 'clk'
     app_name = 'clk'
     main_command = None
-    log_level_default = 'status'
+    log_level_default = 'deprecated'
 
     def __init__(self):
         self.settings2 = None
