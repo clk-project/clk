@@ -120,6 +120,7 @@ class Config(object):
     app_dir_name = 'clk'
     app_name = 'clk'
     main_command = None
+    log_level_default = 'status'
 
     def __init__(self):
         self.settings2 = None
@@ -263,7 +264,7 @@ class Config(object):
             return
         self.settings = None
         self.merge_settings()
-        self.log_level = self.log_level or 'status'
+        self.log_level = self.log_level or self.log_level_default
         self.reset_env()
         self.env = defaultdict(list)
         self.setup_environ()

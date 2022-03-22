@@ -300,7 +300,7 @@ def main_command_decoration(f, cls, **kwargs):
                             default=None,
                             type=click.Choice(LOG_LEVELS.keys()),
                             callback=log_level_callback,
-                            help="Log level (default to 'status')")(f)
+                            help=f"Log level (default to '{Config.log_level_default}')")(f)
     f = main_command_option('-q',
                             '--quiet/--no-quiet',
                             help='Same as --log-level critical',
@@ -473,7 +473,7 @@ def debug_callback(ctx, attr, value):
     if value:
         config.log_level = 'debug'
     elif value is not None and config.debug:
-        config.log_level = 'status'
+        config.log_level = Config.log_level_default
     return value
 
 
@@ -483,7 +483,7 @@ def develop_callback(ctx, attr, value):
         config.log_level = 'develop'
         log.default_handler.formatter = log.DevelopColorFormatter()
     elif value is not None and config.debug:
-        config.log_level = 'status'
+        config.log_level = Config.log_level_default
     return value
 
 
@@ -492,7 +492,7 @@ def action_callback(ctx, attr, value):
     if value:
         config.log_level = 'action'
     elif value is not None and config.debug:
-        config.log_level = 'status'
+        config.log_level = Config.log_level_default
     return value
 
 
