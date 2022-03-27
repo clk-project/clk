@@ -242,7 +242,7 @@ It works only for python scripts or bash scripts.
 def bash(name, open, force, description, body, from_alias, replace_alias, flowdeps, source_bash_helpers, from_file):
     """Create a bash custom command"""
     if from_alias and replace_alias:
-        raise click.UsageError('You can only set --from-alias or --from-alias-move,'
+        raise click.UsageError('You can only set --from-alias or --replace-alias,'
                                ' not both at the same time.')
     if name.endswith('.sh'):
         LOGGER.warning("Removing the extra .sh so that clk won't confuse it"
