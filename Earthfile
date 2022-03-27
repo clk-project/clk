@@ -23,8 +23,16 @@ REQUIREMENTS:
 	COPY requirements.txt /src/
 	RUN python3 -m pip install -r /src/requirements.txt
 
+side-files:
+	COPY --dir .flake8 .gitignore .gitmodules .pre-commit-config.yaml .isort.cfg .gitignore .style.yapf LICENSE pycln.toml tox.ini sonar-project.properties /src
+	SAVE ARTIFACT /src /src
+
+test-files:
+	COPY --dir tests /src/
+	SAVE ARTIFACT /src /src
+
 sources:
-	COPY --dir .flake8 .gitignore .gitmodules .pre-commit-config.yaml .isort.cfg .gitignore .style.yapf LICENSE pycln.toml pyproject.toml tox.ini MANIFEST.in setup.py requirements.txt sonar-project.properties fasterentrypoint.py setup.cfg versioneer.py ./tests ./clk ./.git /src/
+	COPY --dir pyproject.toml MANIFEST.in setup.py fasterentrypoint.py setup.cfg versioneer.py ./clk ./.git /src/
 	WORKDIR /src
 	SAVE ARTIFACT /src /src
 
@@ -33,7 +41,7 @@ INSTALL:
 	ARG from=source
 	IF [ "${from}" == "source" ]
 		DO +REQUIREMENTS
-		COPY +sources/src/ /src
+		COPY --dir +sources/src/* /src
 		RUN python3 -m pip install /src
 	ELSE IF [ "${from}" == "pypi" ]
 	     RUN --no-cache python3 -m pip install clk
@@ -55,27 +63,28 @@ test:
 	RUN python3 -m pip install coverage pytest
  	ARG from=source
 	DO +INSTALL --from $from
-	COPY --dir +sources/src/tests +sources/src/clk /src/
+	COPY --dir +test-files/src/tests +sources/src/clk /src/
 	WORKDIR /src
+	ARG test_args
 	IF [ "${from}" == "source" ]
-		RUN coverage run --source /src -m pytest
+		RUN coverage run --source /src -m pytest ${test_args}
 		RUN mkdir coverage && cd coverage && coverage combine --append ../.coverage ../tests/.coverage && coverage xml
  		SAVE ARTIFACT coverage /coverage
 	ELSE
-		RUN pytest
+		RUN pytest ${test_args}
 	END
 
 check-quality:
 	FROM python:slim
 	RUN apt update && apt install --yes git
 	RUN python3 -m pip install pre-commit
-	COPY +sources/src/ /src
+	COPY --dir +sources/src/* +side-files/src/* +test-files/src/* /src
 	RUN cd /src && pre-commit run -a
 
 prepare-for-sonar:
 	FROM alpine
 	RUN apk add --update git
-	COPY --dir +sources/src/clk +sources/src/.git +sources/src/.gitignore +sources/src/sonar-project.properties /src/
+	COPY --dir +sources/src/clk +sources/src/.git +sources/src/.gitignore +side-files/src/sonar-project.properties /src/
 	WORKDIR /src
 	# asserts the repository is clean
 	RUN [ "$(git status --porcelain clk | wc -l)" == "0" ]
