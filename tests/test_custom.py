@@ -11,6 +11,21 @@ create_a_command = 'command create bash a --no-open'
 create_b_command = 'command create bash b --no-open'
 
 
+def test_capture_alias(lib):
+    lib.cmd('alias set a echo a')
+    # cannot replace and copy from an alias at the same time
+    with pytest.raises(CalledProcessError) as e:
+        lib.cmd('command create bash --replace-alias a --from-alias a', stderr=PIPE)
+    assert re.match('.*can only set --from-alias or --replace-alias.*', e.value.stderr)
+    lib.cmd('command create bash --from-alias a b --no-open')
+    assert lib.cmd('b') == 'a'
+    assert lib.cmd('a') == 'a'
+    lib.cmd('command remove --force b')
+    lib.cmd('command create bash --replace-alias a --no-open')
+    assert lib.cmd('a') == 'a'
+    assert lib.cmd('alias show') == ''
+
+
 def test_cannot_remove_existing_command(lib):
     lib.cmd(create_a_command)
     path = lib.out('clk command which a')
