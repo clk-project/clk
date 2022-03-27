@@ -36,46 +36,13 @@ notify:
     - url: https://webhooks.gitter.im/e/16634961392360db480a
 
 jobs:
-  test:  # This is the name of the job, feel free to change it to better match what you're trying to do!
-    # These next lines defines a Docker executors: https://circleci.com/docs/2.0/executor-types/
-    # You can specify an image from Dockerhub or use one of the convenience images from CircleCI's Developer Hub
-    # A list of available CircleCI Docker convenience images are available here: https://circleci.com/developer/images/image/cimg/python
-    # The executor is the environment in which the steps below will be executed - below will use a python 3.9 container
-    # Change the version below to your required version of python
+  test:
     docker:
-      - image: cimg/python:3.8
-    # Checkout the code as the first step. This is a dedicated CircleCI step.
-    # The python orb's install-packages step will install the dependencies from a Pipfile via Pipenv by default.
-    # Here we're making sure we use just use the system-wide pip. By default it uses the project root's requirements.txt.
-    # Then run your tests!
-    # CircleCI will report the results back to your VCS provider.
+      - image: alpine
     steps:
       - checkout
-      - run:
-          name: Dynamically provision the tag
-          command: |
-            echo sonar.projectVersion=$(git tag --sort=creatordate --merged|grep '^v'|tail -1) >> sonar-project.properties
-      - run:
-          command: |
-            curl -sfL https://direnv.net/install.sh | bash
-            eval "$(direnv hook bash)"
-            python3 -m venv /tmp/venv
-            source /tmp/venv/bin/activate
-            pip install -r requirements.txt --editable .
-            pip install pytest pre-commit coverage
-      - run:
-          name: Check code quality
-          command: |
-            source /tmp/venv/bin/activate
-            pre-commit run -a
-      - run:
-          name: Run tests
-          # This assumes pytest is installed via the install-package step above
-          command: |
-            source /tmp/venv/bin/activate
-            coverage run --source $(pwd) -m pytest
-            mkdir coverage && cd coverage && coverage combine --append ../.coverage ../tests/.coverage && coverage xml
-      - sonarcloud/scan
+      - run: wget https://github.com/earthly/earthly/releases/download/v0.6.12/earthly-linux-amd64 -O /usr/local/bin/earthly && chmod +x /usr/local/bin/earthly
+      - run: earthly --secret SONAR_TOKEN="${SONAR_TOKEN}" --ci +sanity-check
 
   deploy:
     docker:
