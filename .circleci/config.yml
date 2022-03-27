@@ -40,9 +40,10 @@ jobs:
     docker:
       - image: alpine
     steps:
-      - checkout
-      - run: wget https://github.com/earthly/earthly/releases/download/v0.6.12/earthly-linux-amd64 -O /usr/local/bin/earthly && chmod +x /usr/local/bin/earthly
-      - run: earthly --secret SONAR_TOKEN="${SONAR_TOKEN}" --ci +sanity-check
+        - checkout
+        - run: wget https://github.com/earthly/earthly/releases/download/v0.6.12/earthly-linux-amd64 -O /usr/local/bin/earthly && chmod +x /usr/local/bin/earthly
+        - run: apk add --update docker
+        - run: earthly --secret SONAR_TOKEN="${SONAR_TOKEN}" --ci +sanity-check
 
   deploy:
     docker:
