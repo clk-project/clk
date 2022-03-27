@@ -44,4 +44,4 @@ def test_natural_time():
 
 
 def test_which():
-    assert lib.which('ls') == '/usr/bin/ls'
+    assert lib.which('ls') in ('/usr/bin/ls', '/bin/ls')
