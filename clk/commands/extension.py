@@ -569,7 +569,7 @@ def update(extension, method):
     """Update this cloned extension"""
     for cmd in extension:
         root = Path(cmd.location)
-        LOGGER.info(f'Updating {cmd.name}')
+        LOGGER.status(f'Updating {cmd.name}')
         if not (root / '.git').exists():
             LOGGER.warning(f'I cannot update the extension {cmd.name}.'
                            ' For the time being, I only can update'
