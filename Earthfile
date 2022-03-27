@@ -24,7 +24,7 @@ REQUIREMENTS:
 	RUN python3 -m pip install -r /src/requirements.txt
 
 side-files:
-	COPY --dir .flake8 .gitignore .gitmodules .pre-commit-config.yaml .isort.cfg .gitignore .style.yapf LICENSE pycln.toml tox.ini sonar-project.properties /src
+	COPY --dir .flake8 .pre-commit-config.yaml .isort.cfg .gitignore .style.yapf LICENSE pycln.toml tox.ini sonar-project.properties /src
 	SAVE ARTIFACT /src /src
 
 test-files:
@@ -32,7 +32,7 @@ test-files:
 	SAVE ARTIFACT /src /src
 
 sources:
-	COPY --dir pyproject.toml MANIFEST.in setup.py fasterentrypoint.py setup.cfg versioneer.py ./clk ./.git /src/
+	COPY --dir pyproject.toml MANIFEST.in setup.py fasterentrypoint.py setup.cfg versioneer.py ./clk ./.git .gitignore .gitmodules /src/
 	WORKDIR /src
 	SAVE ARTIFACT /src /src
 
