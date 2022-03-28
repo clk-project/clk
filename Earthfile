@@ -16,33 +16,33 @@ AS_USER:
 
 REQUIREMENTS:
 	COMMAND
-	COPY requirements.txt /src/
-	RUN python3 -m pip install -r /src/requirements.txt
+	COPY requirements.txt /app/
+	RUN python3 -m pip install -r /app/requirements.txt
 
 side-files:
-	COPY --dir .flake8 .pre-commit-config.yaml .isort.cfg .style.yapf LICENSE pycln.toml tox.ini sonar-project.properties /src
-	SAVE ARTIFACT /src /src
+	COPY --dir .flake8 .pre-commit-config.yaml .isort.cfg .style.yapf LICENSE pycln.toml tox.ini sonar-project.properties /app
+	SAVE ARTIFACT /app /app
 
 test-files:
-	COPY --dir tests /src/
-	SAVE ARTIFACT /src /src
+	COPY --dir tests /app/
+	SAVE ARTIFACT /app /app
 
 git-files:
-    COPY --dir ./.git .gitignore .gitmodules /src
-	SAVE ARTIFACT /src /src
+    COPY --dir ./.git .gitignore .gitmodules /app
+	SAVE ARTIFACT /app /app
 
 sources:
-	COPY --dir pyproject.toml MANIFEST.in setup.py fasterentrypoint.py setup.cfg versioneer.py ./clk /src/
-	WORKDIR /src
-	SAVE ARTIFACT /src /src
+	COPY --dir pyproject.toml MANIFEST.in setup.py fasterentrypoint.py setup.cfg versioneer.py ./clk /app/
+	WORKDIR /app
+	SAVE ARTIFACT /app /app
 
 INSTALL:
 	COMMAND
 	ARG from=build
 	IF [ "${from}" == "source" ]
 		DO +REQUIREMENTS
-		COPY --dir +sources/src/* /src
-		RUN cd /src && python3 -m pip install --editable .
+		COPY --dir +sources/app/* /app
+		RUN cd /app && python3 -m pip install --editable .
 	ELSE IF [ "${from}" == "build" ]
 		DO +REQUIREMENTS
 		COPY +build/dist /dist
@@ -79,12 +79,12 @@ test:
 	RUN python3 -m pip install coverage pytest
  	ARG from=build
 	DO +INSTALL --from "$from"
-	COPY --dir +test-files/src/tests /src
-	WORKDIR /src
+	COPY --dir +test-files/app/tests /app
+	WORKDIR /app
 	ARG test_args
 	IF [ "${from}" == "source" ] || [ "${from}" == "build" ]
-		COPY --dir +sources/src/clk /src
-		RUN coverage run --source /src -m pytest ${test_args}
+		COPY --dir +sources/app/clk /app
+		RUN coverage run --source /app -m pytest ${test_args}
 		RUN mkdir coverage && cd coverage && coverage combine --append ../.coverage ../tests/.coverage && coverage xml
  		SAVE ARTIFACT coverage /coverage
 	ELSE
@@ -95,33 +95,33 @@ coverage:
 	ARG test_args
  	ARG from=source
 	FROM +test --from="$from" --test_args="$test_args"
-	RUN cd /src/coverage && coverage html
-	SAVE ARTIFACT /src/coverage AS LOCAL coverage
+	RUN cd /app/coverage && coverage html
+	SAVE ARTIFACT /app/coverage AS LOCAL coverage
 
 check-quality:
 	FROM python:slim
 	RUN apt-get update && apt-get install --yes git
 	RUN python3 -m pip install pre-commit
-	COPY --dir +sources/src/* +side-files/src/* +test-files/src/* +git-files/src/* /src
-	RUN cd /src && pre-commit run -a
+	COPY --dir +sources/app/* +side-files/app/* +test-files/app/* +git-files/app/* /app
+	RUN cd /app && pre-commit run -a
 
 sonar:
 	FROM sonarsource/sonar-scanner-cli
 	ARG from=build
 	RUN [ "$from" == "build" ]
-	COPY --dir +sources/src/clk +git-files/src/* +side-files/src/sonar-project.properties /src/
-	WORKDIR /src
+	COPY --dir +sources/app/clk +git-files/app/* +side-files/app/sonar-project.properties /app/
+	WORKDIR /app
 	# asserts the repository is clean
 	RUN [ "$(git status --porcelain clk | wc -l)" == "0" ]
-	RUN echo sonar.projectVersion=$(git tag --sort=creatordate --merged|grep '^v'|tail -1) >> /src/sonar-project.properties
-	COPY (+test/coverage --from="$from") /src/coverage
+	RUN echo sonar.projectVersion=$(git tag --sort=creatordate --merged|grep '^v'|tail -1) >> /app/sonar-project.properties
+	COPY (+test/coverage --from="$from") /app/coverage
 	ENV SONAR_HOST_URL=https://sonarcloud.io
- 	RUN --secret SONAR_TOKEN sonar-scanner -D sonar.python.coverage.reportPaths=/src/coverage/coverage.xml
+ 	RUN --secret SONAR_TOKEN sonar-scanner -D sonar.python.coverage.reportPaths=/app/coverage/coverage.xml
 
 build:
 	FROM python:alpine
-	COPY --dir +sources/src/* +git-files/src/* /src
-	WORKDIR /src
+	COPY --dir +sources/app/* +git-files/app/* /app
+	WORKDIR /app
 	RUN python3 setup.py bdist_wheel
 	SAVE ARTIFACT dist /dist
 
