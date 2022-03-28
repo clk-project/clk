@@ -49,6 +49,8 @@ INSTALL:
 		RUN python3 -m pip install /dist/*
 	ELSE IF [ "${from}" == "pypi" ]
 	    RUN --no-cache python3 -m pip install clk
+	ELSE
+		RUN echo "from=${from} must be either source, build or pypi" && exit 1
 	END
 
 clk:
