@@ -82,6 +82,7 @@ coverage:
 	ARG test_args
  	ARG from=build
 	FROM +test --from="$from" --test_args="$test_args"
+	RUN cd /src/coverage && coverage html
 	SAVE ARTIFACT /src/coverage AS LOCAL coverage
 
 check-quality:
