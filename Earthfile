@@ -99,7 +99,7 @@ coverage:
 
 check-quality:
 	FROM python:slim
-	RUN apt update && apt install --yes git
+	RUN apt-get update && apt-get install --yes git
 	RUN python3 -m pip install pre-commit
 	COPY --dir +sources/src/* +side-files/src/* +test-files/src/* /src
 	RUN cd /src && pre-commit run -a
