@@ -59,17 +59,16 @@ VENV:
 	RUN python3 -m venv "$VIRTUAL_ENV"
 	ENV PATH="$VIRTUAL_ENV/bin:$PATH"
 
-clk:
+build:
 	FROM python:alpine
-	DO +AS_USER
-	DO +VENV
- 	ARG from=build
-	DO +INSTALL --from "$from"
-	RUN clk completion show bash >> ~/.bashrc
-	RUN echo 'eval "$(direnv hook bash)"' >> ~/.bashrc
-	ENTRYPOINT ["clk"]
-	ARG ref=latest
-	SAVE IMAGE clk:${ref}
+	COPY --dir +sources/app/* +git-files/app/* /app
+	WORKDIR /app
+	RUN python3 setup.py bdist_wheel
+	SAVE ARTIFACT dist /dist
+
+dist:
+	COPY +build/dist dist
+	SAVE ARTIFACT dist /dist AS LOCAL dist
 
 test:
 	FROM python:alpine
@@ -98,6 +97,18 @@ coverage:
 	RUN cd /app/coverage && coverage html
 	SAVE ARTIFACT /app/coverage AS LOCAL coverage
 
+clk:
+	FROM python:alpine
+	DO +AS_USER
+	DO +VENV
+ 	ARG from=build
+	DO +INSTALL --from "$from"
+	RUN clk completion show bash >> ~/.bashrc
+	RUN echo 'eval "$(direnv hook bash)"' >> ~/.bashrc
+	ENTRYPOINT ["clk"]
+	ARG ref=latest
+	SAVE IMAGE clk:${ref}
+
 check-quality:
 	FROM python:slim
 	RUN apt-get update && apt-get install --yes git
@@ -117,17 +128,6 @@ sonar:
 	COPY (+test/coverage --from="$from") /app/coverage
 	ENV SONAR_HOST_URL=https://sonarcloud.io
  	RUN --secret SONAR_TOKEN sonar-scanner -D sonar.python.coverage.reportPaths=/app/coverage/coverage.xml
-
-build:
-	FROM python:alpine
-	COPY --dir +sources/app/* +git-files/app/* /app
-	WORKDIR /app
-	RUN python3 setup.py bdist_wheel
-	SAVE ARTIFACT dist /dist
-
-dist:
-	COPY +build/dist dist
-	SAVE ARTIFACT dist /dist AS LOCAL dist
 
 local-sanity-check:
 	BUILD +test
