@@ -69,19 +69,19 @@ test:
 	DO +INSTALL --from "$from"
 	COPY --dir +test-files/src/tests +sources/src/clk /src/
 	WORKDIR /src
-	ARG test_args
+	ARG test-args
 	IF [ "${from}" == "source" ] || [ "${from}" == "build" ]
-		RUN coverage run --source /src -m pytest ${test_args}
+		RUN coverage run --source /src -m pytest ${test-args}
 		RUN mkdir coverage && cd coverage && coverage combine --append ../.coverage ../tests/.coverage && coverage xml
  		SAVE ARTIFACT coverage /coverage
 	ELSE
-		RUN pytest ${test_args}
+		RUN pytest ${test-args}
 	END
 
 coverage:
-	ARG test_args
+	ARG test-args
  	ARG from=source
-	FROM +test --from="$from" --test_args="$test_args"
+	FROM +test --from="$from" --test-args="$test-args"
 	SAVE ARTIFACT /src/coverage AS LOCAL coverage
 
 check-quality:
