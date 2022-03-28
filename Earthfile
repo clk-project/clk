@@ -79,10 +79,11 @@ test:
 	RUN python3 -m pip install coverage pytest
  	ARG from=build
 	DO +INSTALL --from "$from"
-	COPY --dir +test-files/src/tests +sources/src/clk /src/
+	COPY --dir +test-files/src/tests /src
 	WORKDIR /src
 	ARG test_args
 	IF [ "${from}" == "source" ] || [ "${from}" == "build" ]
+		COPY --dir +sources/src/clk /src
 		RUN coverage run --source /src -m pytest ${test_args}
 		RUN mkdir coverage && cd coverage && coverage combine --append ../.coverage ../tests/.coverage && coverage xml
  		SAVE ARTIFACT coverage /coverage
