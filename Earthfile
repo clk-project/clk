@@ -2,7 +2,7 @@ FROM python:alpine
 
 AS_USER:
 	COMMAND
-	RUN apk add --update git bash curl
+	RUN apk add --update bash curl
 	RUN curl -sfL https://direnv.net/install.sh | bash
 	ARG username=sam
 	ENV HOME=/home/$username
