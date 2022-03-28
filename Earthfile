@@ -110,10 +110,13 @@ dist:
 	COPY +build/dist dist
 	SAVE ARTIFACT dist /dist AS LOCAL dist
 
-sanity-check:
+local-sanity-check:
 	BUILD +test
-	BUILD +sonar
 	BUILD +check-quality
+
+sanity-check:
+	BUILD +local-sanity-check
+	BUILD +sonar
 
 upload:
 	BUILD +sanity-check
