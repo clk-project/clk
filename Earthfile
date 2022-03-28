@@ -4,17 +4,13 @@ AS_USER:
 	COMMAND
 	RUN apk add --update git bash curl
 	RUN curl -sfL https://direnv.net/install.sh | bash
-	# setup-user
-	ARG uid=1000
 	ARG username=sam
 	ENV HOME=/home/$username
+	ARG uid=1000
 	RUN addgroup --gid $uid --system $username \
 		&& adduser --uid $uid --system $username --ingroup $username \
 	 	&& chown -R $username:$username $HOME
 	ENV PATH=$HOME/.local/bin:$PATH
-	# as-user:
-	ARG uid=1000
-	ARG username=sam
 	ENV HOME=/home/$username
 	USER $username
 
@@ -57,8 +53,8 @@ INSTALL:
 
 clk:
 	FROM python:alpine
- 	ARG from=build
 	DO +AS_USER
+ 	ARG from=build
 	DO +INSTALL --from "$from"
 	RUN clk completion show bash >> ~/.bashrc
 	RUN echo 'eval "$(direnv hook bash)"' >> ~/.bashrc
@@ -143,7 +139,6 @@ upload:
 	COPY +build/dist /tmp/dist
 	# asserts the file was generated using a tag
 	RUN ls /tmp/dist/|grep -q 'clk-[0-9]\+\.[0-9]\+\.[0-9]\+'
- 	ARG PASSWORD
 	RUN --push --secret pypi-username --secret pypi-password twine upload --username "${pypi-username}" --password "${pypi-password}" '/tmp/dist/*'
 
 deploy:
