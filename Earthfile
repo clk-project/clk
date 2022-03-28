@@ -73,6 +73,7 @@ clk:
 
 test:
 	FROM python:alpine
+	RUN apk add -U git
 	DO +AS_USER
 	DO +VENV
 	RUN python3 -m pip install coverage pytest
