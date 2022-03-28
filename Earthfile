@@ -38,7 +38,7 @@ sources:
 
 INSTALL:
 	COMMAND
-	ARG from=source
+	ARG from=build
 	IF [ "${from}" == "source" ]
 		DO +REQUIREMENTS
 		COPY --dir +sources/src/* /src
@@ -53,7 +53,7 @@ INSTALL:
 
 clk:
 	FROM python:alpine
- 	ARG from=source
+ 	ARG from=build
 	DO +AS_USER
 	DO +INSTALL --from "$from"
 	RUN clk completion show bash >> ~/.bashrc
@@ -65,7 +65,7 @@ test:
 	FROM python:alpine
 	DO +AS_USER
 	RUN python3 -m pip install coverage pytest
- 	ARG from=source
+ 	ARG from=build
 	DO +INSTALL --from "$from"
 	COPY --dir +test-files/src/tests +sources/src/clk /src/
 	WORKDIR /src
@@ -80,7 +80,7 @@ test:
 
 coverage:
 	ARG test-args
- 	ARG from=source
+ 	ARG from=build
 	FROM +test --from="$from" --test-args="$test-args"
 	SAVE ARTIFACT /src/coverage AS LOCAL coverage
 
@@ -103,7 +103,7 @@ prepare-for-sonar:
 
 sonar:
 	FROM sonarsource/sonar-scanner-cli
-	ARG from=source
+	ARG from=build
 	RUN [ "$from" == "source" ]
 	COPY +prepare-for-sonar/src /src
 	WORKDIR /src
