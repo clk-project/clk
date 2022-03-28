@@ -104,22 +104,15 @@ check-quality:
 	COPY --dir +sources/src/* +side-files/src/* +test-files/src/* /src
 	RUN cd /src && pre-commit run -a
 
-prepare-for-sonar:
-	FROM alpine
-	RUN apk add --update git
-	COPY --dir +sources/src/clk +sources/src/.git +sources/src/.gitignore +side-files/src/sonar-project.properties /src/
-	WORKDIR /src
-	# asserts the repository is clean
-	RUN [ "$(git status --porcelain clk | wc -l)" == "0" ]
-	RUN echo sonar.projectVersion=$(git tag --sort=creatordate --merged|grep '^v'|tail -1) >> /src/sonar-project.properties
-	SAVE ARTIFACT /src /src
-
 sonar:
 	FROM sonarsource/sonar-scanner-cli
 	ARG from=build
 	RUN [ "$from" == "build" ]
-	COPY +prepare-for-sonar/src /src
+	COPY --dir +sources/src/clk +git-files/src/* +side-files/src/sonar-project.properties /src/
 	WORKDIR /src
+	# asserts the repository is clean
+	RUN [ "$(git status --porcelain clk | wc -l)" == "0" ]
+	RUN echo sonar.projectVersion=$(git tag --sort=creatordate --merged|grep '^v'|tail -1) >> /src/sonar-project.properties
 	COPY (+test/coverage --from="$from") /src/coverage
 	ENV SONAR_HOST_URL=https://sonarcloud.io
  	RUN --secret SONAR_TOKEN sonar-scanner -D sonar.python.coverage.reportPaths=/src/coverage/coverage.xml
