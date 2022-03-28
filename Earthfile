@@ -43,6 +43,10 @@ INSTALL:
 		DO +REQUIREMENTS
 		COPY --dir +sources/src/* /src
 		RUN python3 -m pip install /src
+	ELSE IF [ "${from}" == "build" ]
+		DO +REQUIREMENTS
+		COPY +build/dist /dist
+		RUN python3 -m pip install /dist/*
 	ELSE IF [ "${from}" == "pypi" ]
 	     RUN --no-cache python3 -m pip install clk
 	END
@@ -66,7 +70,7 @@ test:
 	COPY --dir +test-files/src/tests +sources/src/clk /src/
 	WORKDIR /src
 	ARG test_args
-	IF [ "${from}" == "source" ]
+	IF [ "${from}" == "source" ] || [ "${from}" == "build" ]
 		RUN coverage run --source /src -m pytest ${test_args}
 		RUN mkdir coverage && cd coverage && coverage combine --append ../.coverage ../tests/.coverage && coverage xml
  		SAVE ARTIFACT coverage /coverage
