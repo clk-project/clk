@@ -42,7 +42,7 @@ INSTALL:
 	IF [ "${from}" == "source" ]
 		DO +REQUIREMENTS
 		COPY --dir +sources/src/* /src
-		RUN python3 -m pip install /src
+		RUN cd /src && python3 ./setup.py develop --user
 	ELSE IF [ "${from}" == "build" ]
 		DO +REQUIREMENTS
 		COPY +build/dist /dist
