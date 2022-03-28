@@ -9,7 +9,10 @@ import versioneer
 versions = versioneer.get_versions()
 version = versions['version']
 if version == u'0+unknown':
-    version = u'sha:{}'.format(versions['full-revisionid'])
+    if versions['full-revisionid'] is None:
+        version = '0.0.0-dev'
+    else:
+        version = u'sha:{}'.format(versions['full-revisionid'])
 
 cmdclass = versioneer.get_cmdclass()
 
