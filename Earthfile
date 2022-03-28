@@ -80,7 +80,8 @@ test:
 
 coverage:
 	ARG test_args
-	FROM (+test/coverage --test_args=$test_args)
+ 	ARG from=source
+	FROM (+test/coverage --test_args=$test_args --from=$from)
 	SAVE ARTIFACT /src/coverage AS LOCAL coverage
 
 check-quality:
