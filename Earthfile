@@ -48,7 +48,7 @@ INSTALL:
 		COPY +build/dist /dist
 		RUN python3 -m pip install /dist/*
 	ELSE IF [ "${from}" == "pypi" ]
-	     RUN --no-cache python3 -m pip install clk
+	    RUN --no-cache python3 -m pip install clk
 	END
 
 clk:
@@ -105,7 +105,7 @@ prepare-for-sonar:
 sonar:
 	FROM sonarsource/sonar-scanner-cli
 	ARG from=build
-	RUN [ "$from" == "source" ]
+	RUN [ "$from" == "build" ]
 	COPY +prepare-for-sonar/src /src
 	WORKDIR /src
 	COPY (+test/coverage --from="$from") /src/coverage
