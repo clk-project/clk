@@ -59,7 +59,8 @@ clk:
 	RUN clk completion show bash >> ~/.bashrc
 	RUN echo 'eval "$(direnv hook bash)"' >> ~/.bashrc
 	ENTRYPOINT ["clk"]
-	SAVE IMAGE clk
+	ARG ref=latest
+	SAVE IMAGE clk:${ref}
 
 test:
 	FROM python:alpine
