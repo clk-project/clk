@@ -24,15 +24,19 @@ REQUIREMENTS:
 	RUN python3 -m pip install -r /src/requirements.txt
 
 side-files:
-	COPY --dir .flake8 .pre-commit-config.yaml .isort.cfg .gitignore .style.yapf LICENSE pycln.toml tox.ini sonar-project.properties /src
+	COPY --dir .flake8 .pre-commit-config.yaml .isort.cfg .style.yapf LICENSE pycln.toml tox.ini sonar-project.properties /src
 	SAVE ARTIFACT /src /src
 
 test-files:
 	COPY --dir tests /src/
 	SAVE ARTIFACT /src /src
 
+git-files:
+    COPY --dir ./.git .gitignore .gitmodules /src
+	SAVE ARTIFACT /src /src
+
 sources:
-	COPY --dir pyproject.toml MANIFEST.in setup.py fasterentrypoint.py setup.cfg versioneer.py ./clk ./.git .gitignore .gitmodules /src/
+	COPY --dir pyproject.toml MANIFEST.in setup.py fasterentrypoint.py setup.cfg versioneer.py ./clk /src/
 	WORKDIR /src
 	SAVE ARTIFACT /src /src
 
@@ -114,7 +118,9 @@ sonar:
  	RUN --secret SONAR_TOKEN sonar-scanner -D sonar.python.coverage.reportPaths=/src/coverage/coverage.xml
 
 build:
-	FROM +sources
+	FROM python:alpine
+	COPY --dir +sources/src/* +git-files/src/* /src
+	WORKDIR /src
 	RUN python3 setup.py bdist_wheel
 	SAVE ARTIFACT dist /dist
 
