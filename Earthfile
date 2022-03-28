@@ -42,7 +42,7 @@ INSTALL:
 	IF [ "${from}" == "source" ]
 		DO +REQUIREMENTS
 		COPY --dir +sources/src/* /src
-		RUN cd /src && python3 ./setup.py develop --user
+		RUN cd /src && python3 -m pip install --editable .
 	ELSE IF [ "${from}" == "build" ]
 		DO +REQUIREMENTS
 		COPY +build/dist /dist
@@ -53,9 +53,16 @@ INSTALL:
 		RUN echo "from=${from} must be either source, build or pypi" && exit 1
 	END
 
+VENV:
+	COMMAND
+	ENV VIRTUAL_ENV="${HOME}/venv"
+	RUN python3 -m venv "$VIRTUAL_ENV"
+	ENV PATH="$VIRTUAL_ENV/bin:$PATH"
+
 clk:
 	FROM python:alpine
 	DO +AS_USER
+	DO +VENV
  	ARG from=build
 	DO +INSTALL --from "$from"
 	RUN clk completion show bash >> ~/.bashrc
@@ -67,6 +74,7 @@ clk:
 test:
 	FROM python:alpine
 	DO +AS_USER
+	DO +VENV
 	RUN python3 -m pip install coverage pytest
  	ARG from=build
 	DO +INSTALL --from "$from"
