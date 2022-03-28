@@ -55,7 +55,7 @@ clk:
 	FROM python:alpine
  	ARG from=source
 	DO +AS_USER
-	DO +INSTALL --from $from
+	DO +INSTALL --from "$from"
 	RUN clk completion show bash >> ~/.bashrc
 	RUN echo 'eval "$(direnv hook bash)"' >> ~/.bashrc
 	ENTRYPOINT ["clk"]
@@ -66,7 +66,7 @@ test:
 	DO +AS_USER
 	RUN python3 -m pip install coverage pytest
  	ARG from=source
-	DO +INSTALL --from $from
+	DO +INSTALL --from "$from"
 	COPY --dir +test-files/src/tests +sources/src/clk /src/
 	WORKDIR /src
 	ARG test_args
@@ -81,7 +81,7 @@ test:
 coverage:
 	ARG test_args
  	ARG from=source
-	FROM +test --from=$from --test_args="$test_args"
+	FROM +test --from="$from" --test_args="$test_args"
 	SAVE ARTIFACT /src/coverage AS LOCAL coverage
 
 check-quality:
