@@ -74,6 +74,11 @@ test:
 		RUN pytest ${test_args}
 	END
 
+coverage:
+	ARG test_args
+	FROM (+test/coverage --test_args=$test_args)
+	SAVE ARTIFACT /src/coverage AS LOCAL coverage
+
 check-quality:
 	FROM python:slim
 	RUN apt update && apt install --yes git
