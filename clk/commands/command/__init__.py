@@ -247,7 +247,7 @@ def bash(name, open, force, description, body, from_alias, replace_alias, flowde
     if name.endswith('.sh'):
         LOGGER.warning("Removing the extra .sh so that clk won't confuse it"
                        ' with a command name.')
-        name = name[:len('.sh')]
+        name = name[:-len('.sh')]
     script_path = Path(config.customcommands.profile.location) / 'bin' / name
     makedirs(script_path.parent)
     if script_path.exists() and not force:
