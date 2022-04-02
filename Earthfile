@@ -73,7 +73,7 @@ dist:
 
 test:
 	FROM python:alpine
-	RUN apk add -U git
+	RUN apk add --update git
 	DO +AS_USER
 	DO +VENV
 	RUN python3 -m pip install coverage pytest
