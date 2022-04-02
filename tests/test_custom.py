@@ -68,6 +68,12 @@ def test_simple_bash(lib):
 echo foo""")
     assert lib.out('clk a') == 'foo'
 
+    lib.cmd('command create bash b.sh --no-open')
+    path = lib.out('clk command which b')
+    Path(path).write_text(Path(path).read_text() + """
+echo foo""")
+    assert lib.out('clk b') == 'foo'
+
 
 def test_default_help_message_triggers_a_warning(lib):
     lib.cmd(create_a_command)
@@ -84,6 +90,11 @@ def test_simple_python(lib):
     Path(path).write_text(Path(path).read_text() + """
     print("foo")""")
     assert lib.out('clk a') == 'foo'
+    lib.cmd('command create python b.py --no-open')
+    path = lib.out('clk command which b')
+    Path(path).write_text(Path(path).read_text() + """
+    print("foo")""")
+    assert lib.out('clk b') == 'foo'
 
 
 def test_group_python(lib):
