@@ -72,20 +72,22 @@ class Lib:
         command = ('coverage run'
                    f' --source "{Path(__file__).parent.parent.resolve()}"'
                    ' -m clk ' + remaining)
-        res = self.out(command, *args, **kwargs)
-        old_dir = os.getcwd()
-        current_coverage_location = (Path(os.getcwd()) / '.coverage').resolve()
-        coverage_location = (Path(__file__).parent).resolve()
-        assert current_coverage_location != coverage_location
-        combine_command = 'coverage combine '
-        if Lib.first_call:
-            Lib.first_call = False
-        else:
-            combine_command += ' --append '
-        combine_command += str(current_coverage_location)
-        os.chdir(Path(__file__).parent)
-        self.run(combine_command)
-        os.chdir(old_dir)
+        try:
+            res = self.out(command, *args, **kwargs)
+        finally:
+            old_dir = os.getcwd()
+            current_coverage_location = (Path(os.getcwd()) / '.coverage').resolve()
+            coverage_location = (Path(__file__).parent).resolve()
+            assert current_coverage_location != coverage_location
+            combine_command = 'coverage combine '
+            if Lib.first_call:
+                Lib.first_call = False
+            else:
+                combine_command += ' --append '
+            combine_command += str(current_coverage_location)
+            os.chdir(Path(__file__).parent)
+            self.run(combine_command)
+            os.chdir(old_dir)
         return res
 
     def create_bash_command(self, name, content):
