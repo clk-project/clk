@@ -136,6 +136,7 @@ local-sanity-check:
 sanity-check:
 	BUILD +local-sanity-check
 	BUILD +sonar
+	BUILD +coverage --from=build
 
 upload:
 	BUILD +sanity-check

@@ -43,7 +43,9 @@ jobs:
         - checkout
         - run: "sudo /bin/sh -c 'wget https://github.com/earthly/earthly/releases/download/v0.6.12/earthly-linux-amd64 -O /usr/local/bin/earthly && chmod +x /usr/local/bin/earthly'"
         - run: earthly --secret SONAR_TOKEN="${SONAR_TOKEN}" --ci +sanity-check
-
+        - store_artifacts:
+                  path: coverage/coverage.xml
+                  destination: coverage.xml
   deploy:
     machine:
       image: ubuntu-2004:202111-02
