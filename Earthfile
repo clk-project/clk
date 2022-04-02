@@ -84,7 +84,7 @@ test:
 	ARG test_args
 	IF [ "${from}" == "source" ] || [ "${from}" == "build" ]
 		COPY --dir +sources/app/clk /app
-		RUN coverage run --source /app -m pytest ${test_args}
+		RUN coverage run --source clk -m pytest ${test_args}
 		RUN mkdir coverage && cd coverage && coverage combine --append ../.coverage ../tests/.coverage && coverage xml
  		SAVE ARTIFACT coverage /coverage
 	ELSE
