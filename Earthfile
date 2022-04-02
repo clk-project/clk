@@ -61,6 +61,7 @@ VENV:
 
 build:
 	FROM python:alpine
+	RUN apk add --update git
 	COPY --dir +sources/app/* +git-files/app/* /app
 	WORKDIR /app
 	RUN python3 setup.py bdist_wheel
