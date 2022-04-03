@@ -122,7 +122,7 @@ check-quality:
 sonar:
 	FROM sonarsource/sonar-scanner-cli
 	ARG from=build
-	RUN [ "$from" == "build" ]
+	RUN [ "$from" == "build" ] || [ "$from" == "source" ]
 	COPY --dir +sources/app/clk +git-files/app/* +side-files/app/sonar-project.properties /app/
 	WORKDIR /app
 	# asserts the repository is clean
