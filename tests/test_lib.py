@@ -45,3 +45,11 @@ def test_natural_time():
 
 def test_which():
     assert lib.which('ls') in ('/usr/bin/ls', '/bin/ls')
+
+
+def test_extract():
+    lib.extract(
+        'https://github.com/clk-project/clk/raw/main/tests/zipfile.zip',
+        '.',
+    )
+    assert Path('readme').read_text() == 'hello from some zip file\n'
