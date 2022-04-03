@@ -746,16 +746,6 @@ def pid_kill(pidpath, signal=signal.SIGTERM):
         os.kill(pid, signal)
 
 
-def username():
-    """Return the current user name"""
-    try:
-        import pwd
-        return pwd.getpwuid(os.getuid()).pw_name
-    except Exception:
-        import getpass
-        return getpass.getuser()
-
-
 _find_unsafe = re.compile(r'[^\w@%+=:,./-]').search
 
 
