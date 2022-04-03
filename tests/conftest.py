@@ -69,7 +69,7 @@ class Lib:
         return check_output(split(cmd), *args, encoding='utf-8', **kwargs).strip()
 
     def cmd(self, remaining, *args, **kwargs):
-        command = ('coverage run'
+        command = ('python3 -u -m coverage run'
                    ' --source clk'
                    ' -m clk ' + remaining)
         try:
