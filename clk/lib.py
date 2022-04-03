@@ -699,7 +699,7 @@ def download(url, outdir=None, outfilename=None, mkdir=False, sha256=None, mode=
             raise click.ClickException('The file at {} was corrupted. It was removed'.format(outpath))
     if mode is not None:
         os.chmod(outpath, mode)
-    return outpath
+    return Path(outpath)
 
 
 def part_of_day():
