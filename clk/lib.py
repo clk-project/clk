@@ -563,25 +563,6 @@ def safe_check_output(*args, **kwargs):
         return ''
 
 
-def communicate(command, *args, **kwargs):
-    """Return the process output, error and returncode of the command"""
-    LOGGER.action('run: {}'.format(' '.join(command)))
-    if dry_run and not kwargs.get('internal'):
-        return '', '', 0
-    else:
-        LOGGER.debug('Calling: {}'.format(' '.join(quote(arg) for arg in command)))
-    if 'internal' in kwargs:
-        del kwargs['internal']
-    try:
-        process = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, *args, **kwargs)
-        output, error = process.communicate()
-        output = output.decode('utf-8')
-        error = error.decode('utf-8')
-        return output, error, process.returncode
-    except Exception:
-        return '', '', 1
-
-
 def check_output(cmd, *args, **kwargs):
     """Return the process output"""
     if isinstance(cmd, str):
@@ -591,10 +572,6 @@ def check_output(cmd, *args, **kwargs):
         nostderr = kwargs.pop('nostderr')
     except KeyError:
         nostderr = False
-    try:
-        failok = kwargs.pop('failok')
-    except KeyError:
-        failok = False
     try:
         internal = kwargs.pop('internal')
     except KeyError:
@@ -632,13 +609,7 @@ def check_output(cmd, *args, **kwargs):
         else:
             if nostderr:
                 kwargs['stderr'] = subprocess.PIPE
-            try:
-                return subprocess.check_output(cmd, *args, **kwargs).decode('utf-8')
-            except Exception as e:
-                if failok:
-                    return e.output.decode('utf-8')
-                else:
-                    raise e
+            return subprocess.check_output(cmd, *args, **kwargs).decode('utf-8')
 
 
 def is_pip_install(src_dir):
@@ -692,13 +663,8 @@ def extract(url, dest=Path('.')):
     archive.seek(0)
     if archname.endswith('.zip'):
         zipfile.ZipFile(archive).extractall(path=dest)
-        return dest / archname[:-4]
     else:
         tarfile.open(fileobj=archive).extractall(dest)
-    for ext in ['.tar.gz', '.tgz', '.tar']:
-        if archname.endswith(ext):
-            return dest / archname[:-len(ext)]
-    return dest / archname
 
 
 def download(url, outdir=None, outfilename=None, mkdir=False, sha256=None, mode=None):
