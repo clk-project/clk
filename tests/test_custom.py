@@ -95,6 +95,9 @@ def test_simple_python(lib):
     Path(path).write_text(Path(path).read_text() + """
     print("foo")""")
     assert lib.out('clk b') == 'foo'
+    with pytest.raises(CalledProcessError) as e:
+        lib.cmd('command create python a --no-open', stderr=PIPE)
+    assert re.match('.*I won.t overwrite.+unless explicitly asked so with --force*', e.value.stderr)
 
 
 def test_group_python(lib):
