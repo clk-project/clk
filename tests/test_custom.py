@@ -40,19 +40,19 @@ echo b""")
     # creating onto another one
     with pytest.raises(CalledProcessError) as e:
         lib.cmd(create_a_command, stderr=PIPE)
-    assert re.match(".*I won't overwrite [/0-9a-zA-Z_-]+/clk/bin/a unless explicitly.*", e.value.stderr)
+    assert re.match(".*I won't overwrite [/0-9a-zA-Z_-]+/bin/a unless explicitly.*", e.value.stderr)
     # copying onto another one
     with pytest.raises(CalledProcessError) as e:
         lib.cmd('command copy a global/ext a', stderr=PIPE)
-    assert re.match(".*I won't overwrite [/0-9a-zA-Z_-]+/clk/extensions/ext/bin/a unless explicitly.*", e.value.stderr)
+    assert re.match(".*I won't overwrite [/0-9a-zA-Z_-]+/extensions/ext/bin/a unless explicitly.*", e.value.stderr)
     # moving onto another one
     with pytest.raises(CalledProcessError) as e:
         lib.cmd('command move a global/ext', stderr=PIPE)
-    assert re.match(".*I won't overwrite [/0-9a-zA-Z_-]+/clk/extensions/ext/bin/a unless explicitly.*", e.value.stderr)
+    assert re.match(".*I won't overwrite [/0-9a-zA-Z_-]+/extensions/ext/bin/a unless explicitly.*", e.value.stderr)
     # renaming onto another one
     with pytest.raises(CalledProcessError) as e:
         lib.cmd('command rename b a', stderr=PIPE)
-    assert re.match(".*I won't overwrite [/0-9a-zA-Z_-]+/clk/bin/a unless explicitly.*", e.value.stderr)
+    assert re.match(".*I won't overwrite [/0-9a-zA-Z_-]+/bin/a unless explicitly.*", e.value.stderr)
 
 
 def test_complete_remove(lib):
