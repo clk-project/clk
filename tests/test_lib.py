@@ -55,5 +55,11 @@ def test_extract():
     assert Path('readme').read_text() == 'hello from some zip file\n'
 
 
+def test_download():
+    zipfile = lib.download('https://github.com/clk-project/clk/raw/main/tests/zipfile.zip',
+                           sha256='702bb46372dfad9632c8dc3d8b5bbe945f9efd2f5575723bf66a0128486b7fb5')
+    assert zipfile.exists()
+
+
 def test_safe_check_output():
     lib.safe_check_output('something_crazy') == ''
