@@ -53,3 +53,7 @@ def test_extract():
         '.',
     )
     assert Path('readme').read_text() == 'hello from some zip file\n'
+
+
+def test_safe_check_output():
+    lib.safe_check_output('something_crazy') == ''
