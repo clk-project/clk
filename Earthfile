@@ -125,9 +125,16 @@ sonar:
 	RUN [ "$from" == "build" ] || [ "$from" == "source" ]
 	COPY --dir +sources/app/clk +git-files/app/* +side-files/app/sonar-project.properties /app/
 	WORKDIR /app
-	# asserts the repository is clean
-	RUN [ "$(git status --porcelain clk | wc -l)" == "0" ]
+	IF [ "$use_branch" == "no" ]
+		# asserts the repository is clean when working in a long-liver branch
+ 		RUN [ "$(git status --porcelain clk | wc -l)" == "0" ]
+	END
 	RUN echo sonar.projectVersion=$(git tag --sort=creatordate --merged|grep '^v'|tail -1) >> /app/sonar-project.properties
+	ARG use_branch=no
+	IF [ "$use_branch" != "no" ]
+	   RUN git checkout -B "$use_branch"
+	   RUN echo sonar.branch.name="$use_branch" >> /app/sonar-project.properties
+	END
 	COPY (+test/coverage --from="$from") /app/coverage
 	ENV SONAR_HOST_URL=https://sonarcloud.io
  	RUN --secret SONAR_TOKEN sonar-scanner -D sonar.python.coverage.reportPaths=/app/coverage/coverage.xml
@@ -138,7 +145,8 @@ local-sanity-check:
 
 sanity-check:
 	BUILD +local-sanity-check
-	BUILD +sonar
+	ARG use_branch=no
+	BUILD +sonar --use_branch="$use_branch"
 	BUILD +coverage --from=build
 
 upload:
