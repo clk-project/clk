@@ -124,6 +124,8 @@ sonar:
 	FROM sonarsource/sonar-scanner-cli
 	ARG from=build
 	RUN [ "$from" == "build" ] || [ "$from" == "source" ]
+	ARG use_git=true
+	COPY (+test/coverage --from="$from" --use_git="$use_git") /app/coverage
 	COPY --dir +sources/app/clk +git-files/app/* +side-files/app/sonar-project.properties /app/
 	WORKDIR /app
 	IF [ "$use_branch" == "no" ]
@@ -136,7 +138,6 @@ sonar:
 	   RUN git checkout -B "$use_branch"
 	   RUN echo sonar.branch.name="$use_branch" >> /app/sonar-project.properties
 	END
-	COPY (+test/coverage --from="$from") /app/coverage
 	ENV SONAR_HOST_URL=https://sonarcloud.io
  	RUN --secret SONAR_TOKEN sonar-scanner -D sonar.python.coverage.reportPaths=/app/coverage/coverage.xml
 
