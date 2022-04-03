@@ -139,7 +139,7 @@ sonar:
 	   RUN echo sonar.branch.name="$use_branch" >> /app/sonar-project.properties
 	END
 	ENV SONAR_HOST_URL=https://sonarcloud.io
- 	RUN --secret SONAR_TOKEN sonar-scanner -D sonar.python.coverage.reportPaths=/app/coverage/coverage.xml
+ 	RUN --mount=type=cache,target=/opt/sonar-scanner/.sonar/cache --secret SONAR_TOKEN sonar-scanner -D sonar.python.coverage.reportPaths=/app/coverage/coverage.xml
 
 local-sanity-check:
 	BUILD +test
