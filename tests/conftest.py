@@ -27,7 +27,7 @@ def rootdir(request):
     root = tempfile.mkdtemp(dir=tempdir, prefix=request.node.name[len('test_'):] + '_')
     prev = os.getcwd()
     os.chdir(root)
-    os.environ['CLKCONFIGDIR'] = str(Path(root) / 'clk')
+    os.environ['CLKCONFIGDIR'] = str(Path(root) / 'clk-root')
     print(root)
     (Path(root) / '.envrc').write_text(f"export CLKCONFIGDIR={os.environ['CLKCONFIGDIR']}")
     Lib.run('direnv allow')
@@ -37,16 +37,16 @@ def rootdir(request):
 
 
 @pytest.fixture()
-def pythondir(rootdir):
-    res = Path(rootdir) / 'clk' / 'python'
+def pythondir():
+    res = Path(os.environ['CLKCONFIGDIR']) / 'python'
     if not res.exists():
         os.makedirs(res)
     return res
 
 
 @pytest.fixture()
-def bindir(rootdir):
-    res = Path(rootdir) / 'clk' / 'bin'
+def bindir():
+    res = Path(os.environ['CLKCONFIGDIR']) / 'bin'
     if not res.exists():
         os.makedirs(res)
     return res
@@ -70,7 +70,7 @@ class Lib:
 
     def cmd(self, remaining, *args, **kwargs):
         command = ('coverage run'
-                   f' --source "{Path(__file__).parent.parent.resolve()}"'
+                   ' --source clk'
                    ' -m clk ' + remaining)
         try:
             res = self.out(command, *args, **kwargs)
