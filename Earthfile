@@ -88,13 +88,9 @@ test:
 	COPY --dir +test-files/app/tests /app
 	WORKDIR /app
 	ARG test_args
-	IF [ "${from}" == "source" ] || [ "${from}" == "build" ]
-		RUN pytest ${test_args}
-		RUN mkdir coverage && cd coverage && mv ../tests/.coverage ./ && coverage xml
- 		SAVE ARTIFACT coverage /coverage
-	ELSE
-		RUN pytest ${test_args}
-	END
+ 	RUN pytest ${test_args}
+ 	RUN mkdir coverage && cd coverage && mv ../tests/.coverage ./ && coverage xml
+ 	SAVE ARTIFACT coverage /coverage
 
 coverage:
 	ARG test_args
