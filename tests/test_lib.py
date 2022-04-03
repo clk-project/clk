@@ -62,4 +62,4 @@ def test_download():
 
 
 def test_safe_check_output():
-    lib.safe_check_output('something_crazy') == ''
+    assert lib.safe_check_output('something_crazy') == ''
