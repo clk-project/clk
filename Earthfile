@@ -45,7 +45,8 @@ INSTALL:
 		RUN cd /app && python3 -m pip install --editable .
 	ELSE IF [ "${from}" == "build" ]
 		DO +REQUIREMENTS
-		COPY +build/dist /dist
+		ARG use_git=true
+		COPY (+build/dist --use_git="$use_git") /dist
 		RUN python3 -m pip install /dist/*
 	ELSE IF [ "${from}" == "pypi" ]
 	    RUN --no-cache python3 -m pip install clk
@@ -61,8 +62,12 @@ VENV:
 
 build:
 	FROM python:alpine
-	RUN apk add --update git
-	COPY --dir +sources/app/* +git-files/app/* /app
+	COPY +sources/app /app
+	ARG use_git=true
+	IF [ "$use_git" == "true" ]
+		RUN apk add --update git
+		COPY --dir +git-files/app/* /app
+	END
 	WORKDIR /app
 	RUN python3 setup.py bdist_wheel
 	SAVE ARTIFACT dist /dist
@@ -78,7 +83,8 @@ test:
 	DO +VENV
 	RUN python3 -m pip install coverage pytest
  	ARG from=build
-	DO +INSTALL --from "$from"
+	ARG use_git=true
+	DO +INSTALL --from "$from" --use_git="$use_git"
 	COPY --dir +test-files/app/tests /app
 	WORKDIR /app
 	ARG test_args
@@ -93,7 +99,8 @@ test:
 coverage:
 	ARG test_args
  	ARG from=source
-	FROM +test --from="$from" --test_args="$test_args"
+	ARG use_git=true
+	FROM +test --from="$from" --test_args="$test_args" --use_git="$use_git"
 	RUN cd /app/coverage && coverage html
 	SAVE ARTIFACT /app/coverage AS LOCAL coverage
 
