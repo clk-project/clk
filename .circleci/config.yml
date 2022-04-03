@@ -39,6 +39,7 @@ jobs:
   test:
     machine:
       image: ubuntu-2004:202111-02
+      docker_layer_caching: true
     steps:
         - checkout
         - run: "sudo /bin/sh -c 'wget https://github.com/earthly/earthly/releases/download/v0.6.12/earthly-linux-amd64 -O /usr/local/bin/earthly && chmod +x /usr/local/bin/earthly'"
@@ -49,6 +50,7 @@ jobs:
   deploy:
     machine:
       image: ubuntu-2004:202111-02
+      docker_layer_caching: true
     steps:
         - checkout
         - run: "sudo /bin/sh -c 'wget https://github.com/earthly/earthly/releases/download/v0.6.12/earthly-linux-amd64 -O /usr/local/bin/earthly && chmod +x /usr/local/bin/earthly'"
