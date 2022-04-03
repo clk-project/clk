@@ -89,7 +89,7 @@ test:
 	WORKDIR /app
 	ARG test_args
  	RUN pytest ${test_args}
-	IF [ -e tests/.coverage]
+	IF [ -e tests/.coverage ]
 	   RUN mkdir coverage && cd coverage && mv ../tests/.coverage ./ && coverage xml
  	   RUN sed -r -i 's|filename=".+/site-packages/|filename="|g' coverage/coverage.xml
  	   SAVE ARTIFACT coverage /coverage
