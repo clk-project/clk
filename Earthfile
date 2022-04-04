@@ -13,6 +13,7 @@ AS_USER:
 	ENV PATH=$HOME/.local/bin:$PATH
 	ENV HOME=/home/$username
 	USER $username
+	RUN echo 'source <(direnv hook bash)' >> "${HOME}/.bashrc"
 
 REQUIREMENTS:
 	COMMAND
