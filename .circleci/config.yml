@@ -43,6 +43,13 @@ jobs:
     resource_class: small
     steps:
         - checkout
+        - run: |
+            changes=`git show --name-only ${CIRCLE_SHA1} | tail -n +7`
+
+            if [ "$changes" = ".circleci/config.yml" ]; then
+              echo "Only found a configuration change. Stopping build"
+              circleci-agent step halt
+            fi
         - run: "sudo /bin/sh -c 'wget https://github.com/earthly/earthly/releases/download/v0.6.12/earthly-linux-amd64 -O /usr/local/bin/earthly && chmod +x /usr/local/bin/earthly'"
         - run: earthly --secret SONAR_TOKEN="${SONAR_TOKEN}" --ci +sanity-check
   deploy:
