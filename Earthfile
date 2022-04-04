@@ -97,7 +97,7 @@ test:
  	RUN sed -r -i 's|filename=".+/site-packages/|filename="|g' coverage/coverage.xml
  	SAVE ARTIFACT coverage /coverage
 
-coverage:
+export-coverage:
 	ARG test_args
  	ARG from=source
 	ARG use_git=no
