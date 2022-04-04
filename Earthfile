@@ -88,12 +88,14 @@ test:
 	COPY --dir +test-files/app/tests /app
 	WORKDIR /app
 	ARG test_args
- 	RUN pytest ${test_args}
+ 	RUN coverage run --source clk -m pytest ${test_args}
+ 	RUN mkdir coverage && cd coverage && coverage combine --append ../.coverage
 	IF [ -e tests/.coverage ]
-	   RUN mkdir coverage && cd coverage && mv ../tests/.coverage ./ && coverage xml
- 	   RUN sed -r -i 's|filename=".+/site-packages/|filename="|g' coverage/coverage.xml
- 	   SAVE ARTIFACT coverage /coverage
+	   RUN cd coverage && coverage combine --append ../tests/.coverage &&
 	END
+	RUN cd coverage && coverage xml
+ 	RUN sed -r -i 's|filename=".+/site-packages/|filename="|g' coverage/coverage.xml
+ 	SAVE ARTIFACT coverage /coverage
 
 coverage:
 	ARG test_args
