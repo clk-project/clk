@@ -100,7 +100,7 @@ test:
 coverage:
 	ARG test_args
  	ARG from=source
-	ARG use_git=true
+	ARG use_git=no
 	FROM +test --from="$from" --test_args="$test_args" --use_git="$use_git"
 	RUN cd /app/coverage && coverage html
 	SAVE ARTIFACT /app/coverage AS LOCAL coverage
