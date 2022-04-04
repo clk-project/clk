@@ -39,7 +39,7 @@ jobs:
   test:
     machine:
       image: ubuntu-2004:202111-02
-      docker_layer_caching: true
+      docker_layer_caching: true # Specified using docker layer caching, but it is only available for Performance Plan.
     resource_class: small
     steps:
         - checkout
@@ -48,7 +48,7 @@ jobs:
   deploy:
     machine:
       image: ubuntu-2004:202111-02
-      docker_layer_caching: true
+      docker_layer_caching: true # Specified using docker layer caching, but it is only available for Performance Plan.
     resource_class: small
     steps:
         - checkout
