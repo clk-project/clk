@@ -2,6 +2,8 @@
 # -*- coding: utf-8 -*-
 
 from pathlib import Path
+from shlex import split
+from subprocess import check_call
 
 import pytest
 
@@ -63,3 +65,28 @@ def test_download():
 
 def test_safe_check_output():
     assert lib.safe_check_output('something_crazy') == ''
+
+
+def test_git_sync():
+
+    def git_add_and_commit(message):
+        path = 'a'
+        content = message
+        (Path('a') / path).write_text(content)
+        check_call(split('git -C a add ' + path))
+        check_call(split(f'git -C a commit {path} -m {message}'))
+
+    # when a repository is available, a fresh git sync will clone this repository
+    check_call(split('git init a'))
+    check_call(split('git -C a config user.email a@a.a1'))
+    git_add_and_commit('1')
+    lib.git_sync('a', 'b')
+    assert Path('b/a').read_text() == '1'
+    # when a git sync is already done, a new git sync will update the url and
+    # sync the branch
+    git_add_and_commit('2')
+    lib.git_sync('../a', 'b')
+    assert Path('b/a').read_text() == '2'
+    git_add_and_commit('3')
+    lib.git_sync('../a', 'b')
+    assert Path('b/a').read_text() == '3'
