@@ -84,8 +84,8 @@ test:
 	DO +AS_USER
 	DO +VENV
 	RUN python3 -m pip install coverage pytest
- 	ARG from=build
-	ARG use_git=true
+ 	ARG from=source
+	ARG use_git=no
 	DO +INSTALL --from "$from" --use_git="$use_git"
 	COPY --dir +test-files/app/tests /app
 	WORKDIR /app
@@ -148,12 +148,14 @@ sonar:
 
 local-sanity-check:
 	ARG use_git=true
-	BUILD +test --use_git="$use_git"
+	ARG from=build
+	BUILD +test --use_git="$use_git" --from="$from"
 	BUILD +check-quality
 
 sanity-check:
 	ARG use_git=true
-	BUILD +local-sanity-check --use_git="$use_git"
+	ARG from=build
+	BUILD +local-sanity-check --use_git="$use_git" --from="$from"
 	ARG use_branch=no
 	BUILD +sonar --use_branch="$use_branch" --use_git="$use_git"
 
