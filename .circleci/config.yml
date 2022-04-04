@@ -40,7 +40,7 @@ jobs:
     machine:
       image: ubuntu-2004:202111-02
       docker_layer_caching: true # Specified using docker layer caching, but it is only available for Performance Plan.
-    resource_class: small
+    resource_class: medium
     steps:
         - checkout
         - run: |
@@ -56,7 +56,7 @@ jobs:
     machine:
       image: ubuntu-2004:202111-02
       docker_layer_caching: true # Specified using docker layer caching, but it is only available for Performance Plan.
-    resource_class: small
+    resource_class: medium
     steps:
         - checkout
         - run: "sudo /bin/sh -c 'wget https://github.com/earthly/earthly/releases/download/v0.6.12/earthly-linux-amd64 -O /usr/local/bin/earthly && chmod +x /usr/local/bin/earthly'"
