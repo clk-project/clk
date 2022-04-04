@@ -3,8 +3,77 @@
 from subprocess import STDOUT
 
 
-def test_dump_flowdeps(lib):
-    lib.cmd('flowdep graph --alias-links --format dot')
+def test_dump_flowdeps(lib, pythondir):
+    # given a group of commands that allows playing with 3D printing, with a
+    # flow between them and a final command flow
+    (pythondir / 'threed.py').write_text("""
+from clk.decorators import group
+
+
+@group()
+def threed():
+    ""
+
+
+@threed.command()
+def slicer():
+    print("slicer")
+
+
+@threed.command(flowdepends=["threed.slicer"])
+def feed():
+    print("feed")
+
+
+@threed.command(flowdepends=["threed.feed"])
+def calib():
+    print("calib")
+
+
+@threed.command(flowdepends=["threed.calib"])
+def upload():
+    print("upload")
+
+
+@threed.command(flowdepends=["threed.upload"])
+def _print():
+    print("print")
+
+
+@threed.flow_command(flowdepends=["threed.print"])
+def flow():
+    print("done")
+""")
+    # when I ask to get the flow of those
+    content = lib.cmd('flowdep graph threed --format dot --output -')
+    # then it shows the links and only the links of the commands
+    reference = [
+        '"threed.print" -> "threed.flow"',
+        '"threed.upload" -> "threed.print"',
+        '"threed.calib" -> "threed.upload"',
+        '"threed.feed" -> "threed.calib"',
+        '"threed.slicer" -> "threed.feed"',
+    ]
+    assert len([line for line in content.splitlines() if '->' in line]) == len(reference)
+    for line in reference:
+        assert line in content
+    # given I have an alias to one of those commands
+    lib.cmd('alias set reprap threed print')
+    # when I ask for the flowdep graph with alias link enabled
+    content = lib.cmd('flowdep graph --format dot --alias-links --output - reprap')
+    # then I see that the alias has got the associated flow
+    # and I don't see that the remaining part of the flow pointed toward the
+    # alias
+    reference = [
+        '"threed.upload" -> "reprap"',
+        '"threed.calib" -> "threed.upload"',
+        '"threed.feed" -> "threed.calib"',
+        '"threed.slicer" -> "threed.feed"',
+        '"reprap" -> "threed.print" [label="threed print", style=dashed,',
+    ]
+    assert len([line for line in content.splitlines() if '->' in line]) == len(reference)
+    for line in reference:
+        assert line in content
 
 
 def test_extend_flow(pythondir, lib):
