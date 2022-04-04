@@ -91,7 +91,7 @@ test:
  	RUN coverage run --source clk -m pytest ${test_args}
  	RUN mkdir coverage && cd coverage && coverage combine --append ../.coverage
 	IF [ -e tests/.coverage ]
-	   RUN cd coverage && coverage combine --append ../tests/.coverage &&
+	   RUN cd coverage && coverage combine --append ../tests/.coverage
 	END
 	RUN cd coverage && coverage xml
  	RUN sed -r -i 's|filename=".+/site-packages/|filename="|g' coverage/coverage.xml
