@@ -54,6 +54,7 @@ INSTALL:
 	ELSE
 		RUN echo "from=${from} must be either source, build or pypi" && exit 1
 	END
+ 	RUN clk completion --case-insensitive install bash && echo 'source "${HOME}/.bash_completion"' >> "${HOME}/.bashrc"
 
 VENV:
 	COMMAND
@@ -112,7 +113,6 @@ clk:
 	DO +VENV
  	ARG from=build
 	DO +INSTALL --from "$from"
-	RUN clk completion show bash >> ~/.bashrc
 	RUN echo 'eval "$(direnv hook bash)"' >> ~/.bashrc
 	ENTRYPOINT ["clk"]
 	ARG ref=latest
