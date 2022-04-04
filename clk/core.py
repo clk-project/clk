@@ -472,8 +472,6 @@ def exit_on_log_level_callback(ctx, attr, value):
 def debug_callback(ctx, attr, value):
     if value:
         config.log_level = 'debug'
-    elif value is not None and config.debug:
-        config.log_level = Config.log_level_default
     return value
 
 
@@ -482,8 +480,6 @@ def develop_callback(ctx, attr, value):
     if value:
         config.log_level = 'develop'
         log.default_handler.formatter = log.DevelopColorFormatter()
-    elif value is not None and config.debug:
-        config.log_level = Config.log_level_default
     return value
 
 
@@ -491,8 +487,6 @@ def develop_callback(ctx, attr, value):
 def action_callback(ctx, attr, value):
     if value:
         config.log_level = 'action'
-    elif value is not None and config.debug:
-        config.log_level = Config.log_level_default
     return value
 
 
