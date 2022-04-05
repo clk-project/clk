@@ -196,7 +196,7 @@ def test_simple_alias_command():
 def test_alias_to_clk(project1, lib):
     lib.run(f'clk -P {project1} alias set a echo bou')
     lib.run(f'clk alias set b clk -P {project1} a')
-    assert lib.out('clk b') == 'bou'
+    assert lib.cmd('b') == 'bou'
 
 
 def test_alias_conserves_parameters(lib):

@@ -28,11 +28,11 @@ def test_capture_alias(lib):
 
 def test_cannot_remove_existing_command(lib):
     lib.cmd(create_a_command)
-    path = lib.out('clk command which a')
+    path = lib.cmd('command which a')
     Path(path).write_text(Path(path).read_text() + """
 echo a""")
     lib.cmd(create_b_command)
-    path = lib.out('clk command which b')
+    path = lib.cmd('command which b')
     Path(path).write_text(Path(path).read_text() + """
 echo b""")
     lib.cmd('extension create ext')
@@ -57,44 +57,44 @@ echo b""")
 
 def test_complete_remove(lib):
     lib.cmd(create_a_command)
-    candidates = lib.out('clk completion try command remove')
+    candidates = lib.cmd('completion try command remove')
     assert 'a' == candidates
 
 
 def test_simple_bash(lib):
     lib.cmd(create_a_command)
-    path = lib.out('clk command which a')
+    path = lib.cmd('command which a')
     Path(path).write_text(Path(path).read_text() + """
 echo foo""")
-    assert lib.out('clk a') == 'foo'
+    assert lib.cmd('a') == 'foo'
 
     lib.cmd('command create bash b.sh --no-open')
-    path = lib.out('clk command which b')
+    path = lib.cmd('command which b')
     Path(path).write_text(Path(path).read_text() + """
 echo foo""")
-    assert lib.out('clk b') == 'foo'
+    assert lib.cmd('b') == 'foo'
 
 
 def test_default_help_message_triggers_a_warning(lib):
     lib.cmd(create_a_command)
     lib.cmd('command create python b --no-open')
-    output = lib.out('clk a', with_err=True)
+    output = lib.cmd('a', with_err=True)
     assert output == "warning: The command 'a' has no documentation"
-    output = lib.out('clk b', with_err=True)
+    output = lib.cmd('b', with_err=True)
     assert output == "warning: The command 'b' has no documentation"
 
 
 def test_simple_python(lib):
     lib.cmd('command create python a --no-open')
-    path = lib.out('clk command which a')
+    path = lib.cmd('command which a')
     Path(path).write_text(Path(path).read_text() + """
     print("foo")""")
-    assert lib.out('clk a') == 'foo'
+    assert lib.cmd('a') == 'foo'
     lib.cmd('command create python b.py --no-open')
-    path = lib.out('clk command which b')
+    path = lib.cmd('command which b')
     Path(path).write_text(Path(path).read_text() + """
     print("foo")""")
-    assert lib.out('clk b') == 'foo'
+    assert lib.cmd('b') == 'foo'
     with pytest.raises(CalledProcessError) as e:
         lib.cmd('command create python a --no-open', stderr=PIPE)
     assert re.match('.*I won.t overwrite.+unless explicitly asked so with --force*', e.value.stderr)
@@ -102,7 +102,7 @@ def test_simple_python(lib):
 
 def test_group_python(lib):
     lib.cmd('command create python a --no-open --group')
-    path = lib.out('clk command which a')
+    path = lib.cmd('command which a')
     Path(path).write_text(Path(path).read_text() + """
 @a.command()
 def b():

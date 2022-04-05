@@ -12,14 +12,14 @@ def test_parameter_precedence(lib, project1):
 
 def test_simple_parameter(lib):
     lib.cmd('parameter set echo foo')
-    assert lib.out('clk echo') == 'foo'
+    assert lib.cmd('echo') == 'foo'
 
 
 def test_parameter_to_alias(lib):
     lib.cmd('alias set a echo')
     lib.cmd('parameter set a foo')
     lib.cmd('parameter set echo bar')
-    assert lib.out('clk a') == 'bar foo'
+    assert lib.cmd('a') == 'bar foo'
 
 
 def test_parameter_before_the_ignore_section(lib):
