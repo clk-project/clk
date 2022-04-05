@@ -147,8 +147,8 @@ sonar:
  	RUN --mount=type=cache,target=/opt/sonar-scanner/.sonar/cache --secret SONAR_TOKEN sonar-scanner -D sonar.python.coverage.reportPaths=/app/coverage/coverage.xml
 
 local-sanity-check:
-	ARG use_git=true
-	ARG from=build
+	ARG use_git=no
+	ARG from=source
 	BUILD +test --use_git="$use_git" --from="$from"
 	BUILD +check-quality
 
