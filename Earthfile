@@ -1,18 +1,12 @@
+IMPORT github.com/Konubinix/Earthfile AS e
+
 FROM python:alpine
 
 AS_USER:
 	COMMAND
 	RUN apk add --update bash curl
 	RUN curl -sfL https://direnv.net/install.sh | bash
-	ARG username=sam
-	ENV HOME=/home/$username
-	ARG uid=1000
-	RUN addgroup --gid $uid --system $username \
-		&& adduser --uid $uid --system $username --ingroup $username \
-	 	&& chown -R $username:$username $HOME
-	ENV PATH=$HOME/.local/bin:$PATH
-	ENV HOME=/home/$username
-	USER $username
+	DO e+USE_USER
 	RUN echo 'source <(direnv hook bash)' >> "${HOME}/.bashrc"
 
 REQUIREMENTS:
