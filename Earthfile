@@ -9,9 +9,25 @@ AS_USER:
 	DO e+USE_USER
 	RUN echo 'source <(direnv hook bash)' >> "${HOME}/.bashrc"
 
-REQUIREMENTS:
+requirements:
+	FROM python:3.8-alpine
+	RUN python3 -m pip install pip-tools
+	DO e+USE_USER
+	COPY --dir fasterentrypoint.py versioneer.py setup.cfg setup.py /app
+	WORKDIR /app
+	RUN --no-cache pip-compile
+	SAVE ARTIFACT requirements.txt AS LOCAL requirements.txt
+
+DEPENDENCIES:
 	COMMAND
-	COPY requirements.txt /app/
+	# whether we use the requirements from the source code
+	ARG build_requirements=no
+ 	IF [ "${build_requirements}" == "no" ]
+		COPY requirements.txt /app/
+	ELSE
+		# get a newly generated requirements
+		COPY +requirements/requirements.txt /app/requirements.txt
+ 	END
 	RUN python3 -m pip install -r /app/requirements.txt
 
 side-files:
@@ -34,12 +50,13 @@ sources:
 INSTALL:
 	COMMAND
 	ARG from=build
+	ARG build_requirements=no
 	IF [ "${from}" == "source" ]
-		DO +REQUIREMENTS
+ 	    DO +DEPENDENCIES --build_requirements="${build_requirements}"
 		COPY --dir +sources/app/* /app
 		RUN cd /app && python3 -m pip install --editable .
 	ELSE IF [ "${from}" == "build" ]
-		DO +REQUIREMENTS
+ 	    DO +DEPENDENCIES --build_requirements="${build_requirements}"
 		ARG use_git=true
 		COPY (+build/dist --use_git="$use_git") /dist
 		RUN python3 -m pip install /dist/*
@@ -80,7 +97,8 @@ test:
 	RUN python3 -m pip install coverage pytest
  	ARG from=source
 	ARG use_git=no
-	DO +INSTALL --from "$from" --use_git="$use_git"
+	ARG build_requirements=no
+	DO +INSTALL --from "$from" --use_git="$use_git" --build_requirements="${build_requirements}"
 	COPY --dir +test-files/app/tests /app
 	WORKDIR /app
 	ARG test_args
@@ -124,7 +142,8 @@ sonar:
 	ARG from=build
 	RUN [ "$from" == "build" ] || [ "$from" == "source" ]
 	ARG use_git=true
-	COPY (+test/coverage --from="$from" --use_git="$use_git") /app/coverage
+	ARG build_requirements=no
+	COPY (+test/coverage --from="$from" --use_git="$use_git" --build_requirements="${build_requirements}") /app/coverage
 	COPY --dir +sources/app/clk +git-files/app/* +side-files/app/sonar-project.properties /app/
 	WORKDIR /app
 	IF [ "$use_branch" == "no" ]
@@ -143,15 +162,17 @@ sonar:
 local-sanity-check:
 	ARG use_git=no
 	ARG from=source
-	BUILD +test --use_git="$use_git" --from="$from"
 	BUILD +check-quality
+	ARG build_requirements=no
+	BUILD +test --use_git="$use_git" --from="$from" --build_requirements="${build_requirements}"
 
 sanity-check:
 	ARG use_git=true
 	ARG from=build
-	BUILD +local-sanity-check --use_git="$use_git" --from="$from"
+	ARG build_requirements=no
+	BUILD +local-sanity-check --use_git="$use_git" --from="$from" --build_requirements="${build_requirements}"
 	ARG use_branch=no
-	BUILD +sonar --use_branch="$use_branch" --use_git="$use_git"
+	BUILD +sonar --use_branch="$use_branch" --use_git="$use_git" --build_requirements="${build_requirements}"
 
 upload:
 	BUILD +sanity-check
