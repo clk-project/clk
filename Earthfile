@@ -141,7 +141,7 @@ pre-commit-base:
     RUN python3 -m pip install pre-commit
     WORKDIR /app
 
-pre-commit-update:
+export-pre-commit-update:
     FROM +pre-commit-base
     RUN git init
     COPY --dir .pre-commit-config.yaml .
