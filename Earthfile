@@ -1,7 +1,5 @@
 IMPORT github.com/Konubinix/Earthfile AS e
 
-FROM python:alpine
-
 AS_USER:
     COMMAND
     RUN apk add --update bash curl
@@ -31,20 +29,23 @@ DEPENDENCIES:
     RUN python3 -m pip install -r /app/requirements.txt
 
 side-files:
+    FROM scratch
     COPY --dir .flake8 .pre-commit-config.yaml .isort.cfg .style.yapf LICENSE pycln.toml tox.ini sonar-project.properties /app
     SAVE ARTIFACT /app /app
 
 test-files:
+    FROM scratch
     COPY --dir tests /app/
     SAVE ARTIFACT /app /app
 
 git-files:
+    FROM scratch
     COPY --dir ./.git .gitignore .gitmodules /app
     SAVE ARTIFACT /app /app
 
 sources:
+    FROM scratch
     COPY --dir pyproject.toml MANIFEST.in setup.py fasterentrypoint.py setup.cfg versioneer.py ./clk /app/
-    WORKDIR /app
     SAVE ARTIFACT /app /app
 
 INSTALL:
@@ -86,6 +87,7 @@ build:
     SAVE ARTIFACT dist /dist
 
 dist:
+    FROM scratch
     COPY +build/dist dist
     SAVE ARTIFACT dist /dist AS LOCAL dist
 
@@ -116,6 +118,7 @@ test:
         SAVE ARTIFACT output /output
 
 export-coverage:
+    FROM scratch
     ARG test_args
     ARG from=source
     ARG use_git=no
@@ -186,6 +189,7 @@ sonar:
     SAVE ARTIFACT output
 
 local-sanity-check:
+    FROM scratch
     BUILD +check-quality
     ARG use_git=no
     ARG from=source
@@ -194,6 +198,7 @@ local-sanity-check:
     SAVE ARTIFACT output
 
 sanity-check:
+    FROM scratch
     BUILD +check-quality
     ARG use_git=true
     ARG use_branch=no
@@ -210,4 +215,5 @@ upload:
     RUN --push --secret pypi-username --secret pypi-password twine upload --username "${pypi-username}" --password "${pypi-password}" 'output/dist/*'
 
 deploy:
+    FROM scratch
     BUILD +upload
