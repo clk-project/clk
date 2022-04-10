@@ -138,9 +138,13 @@ check-quality:
 	FROM python:slim
 	RUN apt-get update && apt-get install --yes git
 	RUN python3 -m pip install pre-commit
+	WORKDIR /app
+	COPY --dir .pre-commit-config.yaml .
+	COPY --dir +git-files/app/* .
 	RUN pre-commit autoupdate
-	COPY --dir +sources/app/* +side-files/app/* +test-files/app/* +git-files/app/* /app
-	RUN cd /app && pre-commit run -a
+	SAVE ARTIFACT .pre-commit-config.yaml AS LOCAL .pre-commit-config.yaml
+	COPY --dir +sources/app/* +side-files/app/* +test-files/app/* .
+	RUN pre-commit run -a
 
 sonar:
 	FROM sonarsource/sonar-scanner-cli
