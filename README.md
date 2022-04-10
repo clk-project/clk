@@ -35,12 +35,66 @@ Among other things, it provides out of the box:
 - and more...
 
 
-We believe that its features will empower you in a way that will capture
-whatever complicated workflow you have. In the end, it should be reduced to a
-single short command. This aspect of helping you removing the cognitive load of
-remembering how to call a complicated command line tool is why clk is also named
-a *Cognitive Load Killer*.  You can focus on what you are doing instead of how
-to how to ask the tool to do it.
+You may create several atomic commands and use clk features (alias, parameter,
+flow) to end up with higher level commands that capture whatever complicated
+workflow you might want to do.
+
+In the end, calling you high level commands should only require you to type a
+few words, not very long lines with several long options.
+
+What we think is no easy to remember:
+```sh
+# complicated chains of command to "do-something"
+command1 --some-flag --some-option some-value && command2 --some-other-option some-other-value
+```
+
+People often realize that those need to be memorized and tend to put them in
+text notes or documentations, in shell scripts or in shell history handling
+ninja tricks. In a sense, they acknowledge this is not something that should
+waste their cognitive load.
+
+We believe that clk helps capture those workflows in a more usable way.
+
+What we think should be more appropriate:
+```sh
+# you only have to remember you want do "do-something"
+clk do-something
+```
+
+This aspect of helping you removing the cognitive load of remembering how to
+call a complicated command line tool is why clk is also named a *Cognitive Load
+Killer*: you can focus on what you want to get done instead of how to how to ask
+the tool to do it.
+
+This cognitive load is specific to each individual. For example, if you find out
+that for your brain, it is easier to remember to "do-some-other-thing" rather
+than "do-something", we encourage you to capture this as well.
+
+```sh
+clk alias set do-some-other-thing do-something
+# now, you can only remember to "do-some-other-thing" while your team mates can still "do-something"
+clk do-some-other-thing  # will behave exactly like "clk do-something"
+```
+
+You might also think that it makes more sense to you to do something
+differently. This should also be captured.
+
+```sh
+clk parameter set do-something --in-some-way
+# now, you can only remember to "do-something"
+clk do-something  # will behave exactly like "clk do-something --in-some-way"
+clk do-some-other-thing  # will behave exactly like "clk do-something --in-some-way"
+```
+
+Those can be combined in case you remember "do something with some specifics" as "do-some-other-thing"
+
+```sh
+clk parameter set do-some-other-thing --with-some-specifics
+# now, you can only remember to "do-something"
+clk do-something  # will behave exactly like "clk do-something --in-some-way"
+# or to "do-some-other-thing"
+clk do-some-other-thing  # will behave exactly like "clk do-something --in-some-way --with-some-specifics"
+```
 
 # Installation
 
