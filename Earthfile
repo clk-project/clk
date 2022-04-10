@@ -111,7 +111,7 @@ test:
  	RUN sed -r -i 's|filename=".+/site-packages/|filename="|g' coverage/coverage.xml
 	RUN mkdir output && mv coverage output
 	IF [ "${from}" == "build" ]
-	   mv dist output
+	   RUN mv dist output
 	END
  	SAVE ARTIFACT output /output
 
