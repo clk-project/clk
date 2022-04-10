@@ -109,15 +109,19 @@ test:
 	END
 	RUN cd coverage && coverage xml
  	RUN sed -r -i 's|filename=".+/site-packages/|filename="|g' coverage/coverage.xml
- 	SAVE ARTIFACT coverage /coverage
+	RUN mkdir output && mv coverage output
+	IF [ "${from}" == "build" ]
+	   mv dist output
+	END
+ 	SAVE ARTIFACT output /output
 
 export-coverage:
 	ARG test_args
  	ARG from=source
 	ARG use_git=no
 	FROM +test --from="$from" --test_args="$test_args" --use_git="$use_git"
-	RUN cd /app/coverage && coverage html
-	SAVE ARTIFACT /app/coverage AS LOCAL coverage
+	RUN cd /app/output/coverage && coverage html
+	SAVE ARTIFACT /app/output/coverage AS LOCAL coverage
 
 clk:
 	FROM python:alpine
@@ -143,7 +147,7 @@ sonar:
 	RUN [ "$from" == "build" ] || [ "$from" == "source" ]
 	ARG use_git=true
 	ARG build_requirements=no
-	COPY (+test/coverage --from="$from" --use_git="$use_git" --build_requirements="${build_requirements}") /app/coverage
+	COPY (+test/output --from="$from" --use_git="$use_git" --build_requirements="${build_requirements}") /app/output
 	COPY --dir +sources/app/clk +git-files/app/* +side-files/app/sonar-project.properties /app/
 	WORKDIR /app
 	IF [ "$use_branch" == "no" ]
@@ -157,7 +161,7 @@ sonar:
 	   RUN echo sonar.branch.name="$use_branch" >> /app/sonar-project.properties
 	END
 	ENV SONAR_HOST_URL=https://sonarcloud.io
- 	RUN --mount=type=cache,target=/opt/sonar-scanner/.sonar/cache --secret SONAR_TOKEN sonar-scanner -D sonar.python.coverage.reportPaths=/app/coverage/coverage.xml
+ 	RUN --mount=type=cache,target=/opt/sonar-scanner/.sonar/cache --secret SONAR_TOKEN sonar-scanner -D sonar.python.coverage.reportPaths=/app/output/coverage/coverage.xml
 
 local-sanity-check:
 	ARG use_git=no
