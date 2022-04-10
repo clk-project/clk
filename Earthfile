@@ -134,16 +134,37 @@ clk:
 	ARG ref=latest
 	SAVE IMAGE clk:${ref}
 
+pre-commit-update:
+	FROM python:slim
+	RUN apt-get update && apt-get install --yes git
+	DO e+USE_USER
+	RUN python3 -m pip install pre-commit
+	WORKDIR app
+	RUN git init
+	COPY --dir .pre-commit-config.yaml .
+	RUN pre-commit autoupdate
+	SAVE ARTIFACT .pre-commit-config.yaml AS LOCAL .pre-commit-config.yaml
+
+pre-commit-cache:
+	FROM python:slim
+	RUN apt-get update && apt-get install --yes git
+	DO e+USE_USER
+	RUN python3 -m pip install pre-commit
+	WORKDIR app
+	RUN git init
+	COPY --dir .pre-commit-config.yaml .
+	RUN pre-commit run -a
+	SAVE ARTIFACT ${HOME}/.cache/pre-commit cache
+
 check-quality:
 	FROM python:slim
 	RUN apt-get update && apt-get install --yes git
+	DO e+USE_USER
 	RUN python3 -m pip install pre-commit
 	WORKDIR /app
 	COPY --dir .pre-commit-config.yaml .
-	COPY --dir +git-files/app/* .
-	RUN pre-commit autoupdate
-	SAVE ARTIFACT .pre-commit-config.yaml AS LOCAL .pre-commit-config.yaml
-	COPY --dir +sources/app/* +side-files/app/* +test-files/app/* .
+	COPY +pre-commit-cache/cache $HOME/.cache/pre-commit
+	COPY --dir +git-files/app/* +sources/app/* +side-files/app/* +test-files/app/* .
 	RUN pre-commit run -a
 
 sonar:
