@@ -162,13 +162,15 @@ sonar:
 	END
 	ENV SONAR_HOST_URL=https://sonarcloud.io
  	RUN --mount=type=cache,target=/opt/sonar-scanner/.sonar/cache --secret SONAR_TOKEN sonar-scanner -D sonar.python.coverage.reportPaths=/app/output/coverage/coverage.xml
+	SAVE ARTIFACT /app/output
 
 local-sanity-check:
 	ARG use_git=no
 	ARG from=source
 	BUILD +check-quality
 	ARG build_requirements=no
-	BUILD +test --use_git="$use_git" --from="$from" --build_requirements="${build_requirements}"
+	COPY (+test --use_git="$use_git" --from="$from" --build_requirements="${build_requirements}")/output output
+	SAVE ARTIFACT output
 
 sanity-check:
 	ARG use_git=true
@@ -176,16 +178,16 @@ sanity-check:
 	ARG build_requirements=no
 	BUILD +local-sanity-check --use_git="$use_git" --from="$from" --build_requirements="${build_requirements}"
 	ARG use_branch=no
-	BUILD +sonar --use_branch="$use_branch" --use_git="$use_git" --build_requirements="${build_requirements}"
+	COPY (+sonar --use_branch="$use_branch" --use_git="$use_git" --build_requirements="${build_requirements}")/output output
+	SAVE ARTIFACT output
 
 upload:
-	BUILD +sanity-check
+	COPY +sanity-check/output output
 	FROM python:alpine
 	RUN apk add --update py3-twine
-	COPY +build/dist /tmp/dist
 	# asserts the file was generated using a tag
-	RUN ls /tmp/dist/|grep -q 'clk-[0-9]\+\.[0-9]\+\.[0-9]\+'
-	RUN --push --secret pypi-username --secret pypi-password twine upload --username "${pypi-username}" --password "${pypi-password}" '/tmp/dist/*'
+	RUN ls output/dist/|grep -q 'clk-[0-9]\+\.[0-9]\+\.[0-9]\+'
+	RUN --push --secret pypi-username --secret pypi-password twine upload --username "${pypi-username}" --password "${pypi-password}" 'output/dist/*'
 
 deploy:
 	BUILD +upload
