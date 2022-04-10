@@ -165,9 +165,9 @@ sonar:
 	SAVE ARTIFACT /app/output
 
 local-sanity-check:
+	BUILD +check-quality
 	ARG use_git=no
 	ARG from=source
-	BUILD +check-quality
 	ARG build_requirements=no
 	COPY (+test --use_git="$use_git" --from="$from" --build_requirements="${build_requirements}")/output output
 	SAVE ARTIFACT output
