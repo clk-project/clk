@@ -148,7 +148,7 @@ export-pre-commit-update:
     FROM +pre-commit-base
     RUN git init
     COPY --dir .pre-commit-config.yaml .
-    RUN pre-commit autoupdate
+    RUN --no-cache pre-commit autoupdate
     SAVE ARTIFACT .pre-commit-config.yaml AS LOCAL .pre-commit-config.yaml
 
 pre-commit-cache:
