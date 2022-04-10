@@ -173,11 +173,10 @@ local-sanity-check:
 	SAVE ARTIFACT output
 
 sanity-check:
+	BUILD +check-quality
 	ARG use_git=true
-	ARG from=build
-	ARG build_requirements=no
-	BUILD +local-sanity-check --use_git="$use_git" --from="$from" --build_requirements="${build_requirements}"
 	ARG use_branch=no
+	ARG build_requirements=no
 	COPY (+sonar --use_branch="$use_branch" --use_git="$use_git" --build_requirements="${build_requirements}")/output output
 	SAVE ARTIFACT output
 
