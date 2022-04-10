@@ -138,6 +138,7 @@ check-quality:
 	FROM python:slim
 	RUN apt-get update && apt-get install --yes git
 	RUN python3 -m pip install pre-commit
+	RUN pre-commit autoupdate
 	COPY --dir +sources/app/* +side-files/app/* +test-files/app/* +git-files/app/* /app
 	RUN cd /app && pre-commit run -a
 
