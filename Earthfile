@@ -163,14 +163,14 @@ sonar:
 	END
 	ENV SONAR_HOST_URL=https://sonarcloud.io
  	RUN --mount=type=cache,target=/opt/sonar-scanner/.sonar/cache --secret SONAR_TOKEN sonar-scanner -D sonar.python.coverage.reportPaths=/app/output/coverage/coverage.xml
-	SAVE ARTIFACT /app/output
+	SAVE ARTIFACT output
 
 local-sanity-check:
 	BUILD +check-quality
 	ARG use_git=no
 	ARG from=source
 	ARG build_requirements=no
-	COPY (+test --use_git="$use_git" --from="$from" --build_requirements="${build_requirements}")/output output
+	COPY (+test/output --use_git="$use_git" --from="$from" --build_requirements="${build_requirements}") output
 	SAVE ARTIFACT output
 
 sanity-check:
@@ -178,7 +178,7 @@ sanity-check:
 	ARG use_git=true
 	ARG use_branch=no
 	ARG build_requirements=no
-	COPY (+sonar --use_branch="$use_branch" --use_git="$use_git" --build_requirements="${build_requirements}")/output output
+	COPY (+sonar/output --use_branch="${use_branch}" --use_git="${use_git}" --build_requirements="${build_requirements}") output
 	SAVE ARTIFACT output
 
 upload:
