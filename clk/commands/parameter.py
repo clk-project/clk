@@ -56,12 +56,12 @@ def set(cmd, params):
     old = config.parameters.writable.get(cmd)
     config.parameters.writable[cmd] = params
     if old is not None:
-        LOGGER.status('Removing {} parameters of {}: {}'.format(
+        LOGGER.info('Removing {} parameters of {}: {}'.format(
             Colorer.apply_color_profilename(config.parameters.writeprofilename),
             cmd,
             format_parameters(old),
         ))
-    LOGGER.status('New {} parameters for {}: {}'.format(
+    LOGGER.info('New {} parameters for {}: {}'.format(
         Colorer.apply_color_profilename(config.parameters.writeprofilename),
         cmd,
         format_parameters(params),
@@ -85,13 +85,13 @@ def edit(cmd):
         LOGGER.info('Aboooooort !!')
     else:
         if old:
-            LOGGER.status('Removing {} parameters of {}: {}'.format(
+            LOGGER.info('Removing {} parameters of {}: {}'.format(
                 Colorer.apply_color_profilename(config.parameters.writeprofilename),
                 cmd,
                 format_parameters(old),
             ))
         params = shlex.split(content)
-        LOGGER.status('New {} parameters for {}: {}'.format(
+        LOGGER.info('New {} parameters for {}: {}'.format(
             Colorer.apply_color_profilename(config.parameters.writeprofilename),
             cmd,
             format_parameters(params),
@@ -111,14 +111,14 @@ def append(cmd, params):
     old = config.parameters.writable.get(cmd, [])
     new = old + list(params)
     if old:
-        LOGGER.status('New {} parameters for {}: {} (old parameters) + {}'.format(
+        LOGGER.info('New {} parameters for {}: {} (old parameters) + {}'.format(
             Colorer.apply_color_profilename(config.parameters.writeprofilename),
             cmd,
             format_parameters(old),
             format_parameters(params),
         ))
     else:
-        LOGGER.status('New {} parameters for {}: {}'.format(
+        LOGGER.info('New {} parameters for {}: {}'.format(
             Colorer.apply_color_profilename(config.parameters.writeprofilename),
             cmd,
             format_parameters(params),
@@ -166,7 +166,7 @@ def remove(cmd, params):
             config.parameters.writable[cmd].remove(param)
         except ValueError:
             raise click.ClickException('%s is not in the parameters of %s' % (param, cmd))
-    LOGGER.status('Erasing {} parameters {} from {} settings'.format(
+    LOGGER.info('Erasing {} parameters {} from {} settings'.format(
         cmd, ' '.join(params), Colorer.apply_color_profilename(config.parameters.writeprofilename)))
     config.parameters.write()
 
@@ -184,7 +184,7 @@ def unset(cmds):
                                        ' Try using another profile option (like --local or --global)' %
                                        (cmd, Colorer.apply_color_profilename(config.parameters.writeprofilename)))
     for cmd in cmds:
-        LOGGER.status('Erasing {} parameters of {} (was: {})'.format(
+        LOGGER.info('Erasing {} parameters of {} (was: {})'.format(
             Colorer.apply_color_profilename(config.parameters.writeprofilename), cmd,
             format_parameters(config.parameters.writable[cmd])))
         del config.parameters.writable[cmd]

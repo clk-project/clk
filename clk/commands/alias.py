@@ -73,10 +73,10 @@ def _set(alias, command, documentation, params, flowdep):
     }
     old = config.alias.writable.get(alias)
     if old is not None:
-        LOGGER.status('Removing {} alias of {}: {}'.format(
-            Colorer.apply_color_profilename(config.alias.writeprofilename), alias, format(old['commands'])))
-    LOGGER.status('New {} alias for {}: {}'.format(Colorer.apply_color_profilename(config.alias.writeprofilename),
-                                                   alias, format(data['commands'])))
+        LOGGER.info('Removing {} alias of {}: {}'.format(Colorer.apply_color_profilename(config.alias.writeprofilename),
+                                                         alias, format(old['commands'])))
+    LOGGER.info('New {} alias for {}: {}'.format(Colorer.apply_color_profilename(config.alias.writeprofilename), alias,
+                                                 format(data['commands'])))
     config.alias.writable[alias] = data
     config.alias.write()
     if flowdep:
@@ -125,7 +125,7 @@ def unset(aliases):
                                        ' provide the profile option explicitely (like --local or --global).' %
                                        (Colorer.apply_color_profilename(config.alias.writeprofilename), cmd))
     for cmd in aliases:
-        LOGGER.status('Erasing {} alias from {} settings'.format(
+        LOGGER.info('Erasing {} alias from {} settings'.format(
             cmd, Colorer.apply_color_profilename(config.alias.writeprofilename)))
         del config.alias.writable[cmd]
     config.alias.write()
@@ -152,7 +152,7 @@ def unset_documentation(aliases):
                                        ' Try using another profile option (like --local or --global)' %
                                        (Colorer.apply_color_profilename(config.alias.writeprofilename), cmd))
     for cmd in aliases:
-        LOGGER.status('Erasing the documentation of {} alias from {} settings'.format(
+        LOGGER.info('Erasing the documentation of {} alias from {} settings'.format(
             cmd, Colorer.apply_color_profilename(config.alias.writeprofilename)))
         config.alias.writable[cmd]['documentation'] = None
     config.alias.write()
@@ -227,7 +227,7 @@ def rename(source, destination):
             if cmd[0] == source and a not in renamed_in:
                 LOGGER.warning('%s is still used in %s at another configuration profile.'
                                ' You may want to correct this manually.' % (source, a))
-    LOGGER.status(f'Moved alias {source} -> {destination} in {profile.name}')
+    LOGGER.info(f'Moved alias {source} -> {destination} in {profile.name}')
     profile.write_settings()
 
 
@@ -245,7 +245,7 @@ def move(source, destination):
     destination_store[source] = profile.settings['alias'][source]
     destination.settings['alias'] = destination_store
     del profile.settings['alias'][source]
-    LOGGER.status(
+    LOGGER.info(
         f'Moved alias {source}, {Colorer.apply_color_profilename(profile.name)} -> {Colorer.apply_color_profilename(destination.name)}'
     )
     destination.write_settings()
@@ -264,7 +264,7 @@ def copy(source, destination):
         raise Exception(f'{source} not found')
     profile.settings['alias'][destination] = profile.settings['alias'][source]
     profile.write_settings()
-    LOGGER.status(f'Copied alias {source} -> {destination} in {profile.name}')
+    LOGGER.info(f'Copied alias {source} -> {destination} in {profile.name}')
 
 
 @alias.command(ignore_unknown_options=True, handle_dry_run=True)
