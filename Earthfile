@@ -217,3 +217,8 @@ upload:
 deploy:
     FROM scratch
     BUILD +upload
+
+git-push-safe:
+    BUILD +test
+    LOCALLY
+    RUN git push
