@@ -635,7 +635,9 @@ def get_keyring():
     try:
         import keyring
     except ModuleNotFoundError:
-        raise click.UsageError('You have to install keyring `pip install keyring` for this to work')
+        LOGGER.status('keyring is not installed `pip install keyring`. Falling back on netrc')
+        from clk.netrc import Netrc
+        return Netrc()
     if isinstance(keyring.core.get_keyring(), keyring.backends.fail.Keyring):
         LOGGER.debug('could not find a correct keyring backend, fallback on the netrc one')
         from clk.keyring_netrc import NetrcKeyring
