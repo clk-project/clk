@@ -1503,9 +1503,14 @@ def get_authenticator(machine, askpass=True, required=True):
     login, password = None, None
     netrc_keyring = False
     try:
+        import keyring as _  # NOQA:F401
+
+        from clk.keyring_netrc import NetrcKeyring as Netrc
+    except ModuleNotFoundError:
+        from clk.netrc import Netrc
+    try:
         keyring = get_keyring()
-        from clk.keyring_netrc import NetrcKeyring
-        if isinstance(keyring, NetrcKeyring):
+        if isinstance(keyring, Netrc):
             netrc_keyring = True
         try:
             login, password = json.loads(keyring.get_password('clk', machine))
