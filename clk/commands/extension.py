@@ -12,6 +12,7 @@ from shlex import split
 import click
 import requests
 
+from clk import run
 from clk.colors import Colorer
 from clk.commands.pip import pip
 from clk.completion import startswith
@@ -384,7 +385,7 @@ def process_url(name, url):
         install_type = 'git'
         if name is None:
             name = url
-    elif match := re.match('^(?P<author>[a-zA-Z0-9_-]+)/(?P<extension>[a-zA-Z0-9]+)$', url):
+    elif match := re.match('^(?P<author>[a-zA-Z0-9_-]+)/(?P<extension>[a-zA-Z0-9_]+)$', url):
         author = match.group('author')
         extension = match.group('extension')
         for host in predefined_hosts:
@@ -565,7 +566,8 @@ def _install_deps(ctx, extension):
 @flag('--clean', 'method', flag_value='clean', help='Remove local modification and update')
 @flag('--stash', 'method', flag_value='stash', help='Stash local modification and update')
 @flag('--no-clean', 'method', flag_value='no-clean', help="Don't try cleaning the repository before pulling")
-def update(extension, method):
+@flag('--install-deps/--no-install-deps', help='Automatically install the dependencies.', default=True)
+def update(extension, method, install_deps):
     """Update this cloned extension"""
     for cmd in extension:
         root = Path(cmd.location)
@@ -589,6 +591,9 @@ def update(extension, method):
             call(['git', 'pull'])
             if need_stash:
                 call(split('git stash pop'))
+        if install_deps is True:
+            LOGGER.status(f'-> Installing the dependencies of {cmd.name}')
+            run(['extension', 'install-deps', cmd.name])
 
 
 @extension.command()
