@@ -2,7 +2,6 @@
 # -*- coding: utf-8 -*-
 
 import re
-from subprocess import check_output
 
 
 def test_invoked_commands_still_work_even_though_they_are_no_customizable(lib, pythondir):
@@ -119,6 +118,6 @@ def get():
     assert lib.cmd('http get') == 'Getting http://myapi'
 
 
-def test_command():
-    output = check_output(['clk', 'command', 'display'], encoding='utf8')
+def test_command(lib):
+    output = lib.cmd('command display')
     assert re.search(r'flowdep\s+Manipulate command flow dependencies\.', output)

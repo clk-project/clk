@@ -1,9 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-from shlex import split
-from subprocess import check_call, check_output
-
 
 def test_composite_alias(lib):
     lib.cmd('alias set a echo a , echo b')
@@ -188,14 +185,14 @@ def get():
     assert lib.cmd('h g') == 'Getting http://a.com with True'
 
 
-def test_simple_alias_command():
-    check_call(split('clk alias set test echo a , echo b , echo c'))
-    assert check_output(split('clk test'), encoding='utf-8') == 'a\nb\nc\n'
+def test_simple_alias_command(lib):
+    lib.cmd('alias set test echo a , echo b , echo c')
+    assert lib.cmd('test') == 'a\nb\nc\n'
 
 
 def test_alias_to_clk(project1, lib):
-    lib.run(f'clk -P {project1} alias set a echo bou')
-    lib.run(f'clk alias set b clk -P {project1} a')
+    lib.cmd(f'-P {project1} alias set a echo bou')
+    lib.cmd(f'alias set b clk -P {project1} a')
     assert lib.cmd('b') == 'bou'
 
 

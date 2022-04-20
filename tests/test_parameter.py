@@ -71,10 +71,10 @@ EOF
 
 def test_parameter_precedence(lib, project1):
     lib.cmd('parameter set echo global')
-    lib.run(f'clk -P {project1} parameter set echo local')
+    lib.cmd(f'-P {project1} parameter set echo local')
     lib.cmd('extension create ext')
     lib.cmd('parameter set --global-ext echo ext')
-    assert lib.out(f'clk -P {project1} echo') == 'global ext local'
+    assert lib.cmd(f'-P {project1} echo') == 'global ext local'
 
 
 def test_simple_parameter(lib):
