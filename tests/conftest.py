@@ -58,6 +58,9 @@ class Lib:
     def __init__(self, bindir):
         self.bindir = bindir
 
+    def assert_intrusive(self):
+        assert os.environ.get('CLK_ALLOW_INTRUSIVE_TEST') == 'True', 'Intrusive test'
+
     @staticmethod
     def run(cmd, *args, **kwargs):
         return check_call(split(cmd), *args, **kwargs)

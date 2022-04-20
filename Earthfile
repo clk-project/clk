@@ -104,6 +104,7 @@ test:
     COPY --dir +test-files/app/tests /app
     WORKDIR /app
     ARG test_args
+    ENV CLK_ALLOW_INTRUSIVE_TEST=True
     RUN coverage run --source clk -m pytest ${test_args}
     RUN mkdir coverage && cd coverage && coverage combine --append ../.coverage
     IF [ -e tests/.coverage ]
