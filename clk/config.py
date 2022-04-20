@@ -320,9 +320,14 @@ class Config(object):
         self.settings, self.settings2 = merge_settings(self.iter_settings(recurse=True))
 
     def get_profile_that_contains(self, path):
-        for profile in self.all_enabled_profiles:
-            if profile.contains(path):
-                return profile
+        """Among all profiles that contain the path, return the one with the
+        longest path.
+
+        This ensure that the path
+        ~/.config/clk/extension/someext/python/somecommand.py will return
+        ~/.config/clk/extension/someext and never ~/.config/clk/."""
+        return max([profile for profile in self.all_enabled_profiles if profile.contains(path)],
+                   key=lambda profile: profile.location)
 
     def load_settings_from_profile(self, profile, recurse, only_this_extension=None):
         if profile is not None and (not only_this_extension or profile.short_name == only_this_extension):
