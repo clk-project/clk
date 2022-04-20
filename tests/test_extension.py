@@ -10,6 +10,11 @@ def test_install_extension():
     check_call(split('clk hello'))
 
 
+def test_install_extension_with_github_syntax():
+    check_call(split('clk extension install clk-project/hello'))
+    check_call(split('clk hello'))
+
+
 def test_update_extension():
     check_call(split('clk extension install hello'))
     check_call(split('clk extension update hello'))
