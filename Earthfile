@@ -69,7 +69,7 @@ INSTALL:
          RUN --no-cache python3 -m pip install clk
     ELSE IF [ "${from}" == "script" ]
         ARG extra_env
-        RUN curl -sSL https://clk-project.org/install.sh | env ${extra_env} bash
+        RUN --no-cache curl -sSL https://clk-project.org/install.sh | env ${extra_env} bash
     ELSE
         # assume it is the url to install from
         RUN python3 -m pip install "${from}"
