@@ -67,6 +67,9 @@ INSTALL:
         RUN python3 -m pip install /dist/*
     ELSE IF [ "${from}" == "pypi" ]
          RUN --no-cache python3 -m pip install clk
+    ELSE IF [ "${from}" == "script" ]
+        ARG extra_env
+        RUN curl -sSL https://clk-project.org/install.sh | env ${extra_env} bash
     ELSE
         # assume it is the url to install from
         RUN python3 -m pip install "${from}"
@@ -141,9 +144,13 @@ docker:
         RUN apt-get update && apt-get install --yes git
     END
     DO +AS_USER
-    DO +VENV
+    ARG venv=yes
+    IF [ "${venv}" != "no" ]
+        DO +VENV
+    END
     ARG from=build
-    DO +INSTALL --from "$from"
+    ARG extra_env
+    DO +INSTALL --from "$from" --extra_env="${extra_env}"
     RUN echo 'eval "$(direnv hook bash)"' >> ~/.bashrc
     ENTRYPOINT ["bash"]
     ARG ref=latest
@@ -156,7 +163,9 @@ docker-interactive:
     # e.g. try a branch with earthly +docker-interactive --from=git+https://github.com/clk-project@release/0.26.1
     ARG from=build
     ARG system=alpine
-    FROM +docker --from="${from}" --system="${system}"
+    ARG extra_env
+    ARG venv=yes
+    FROM +docker --from="${from}" --system="${system}" --extra_env="${extra_env}" --venv="${venv}"
     RUN --interactive bash
 
 pre-commit-base:
