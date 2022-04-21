@@ -138,6 +138,9 @@ docker:
     RUN echo 'eval "$(direnv hook bash)"' >> ~/.bashrc
     ENTRYPOINT ["bash"]
     ARG ref=latest
+
+export-image:
+    FROM +docker
     SAVE IMAGE clk:${ref}
 
 docker-interactive:
