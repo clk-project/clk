@@ -144,7 +144,7 @@ else
     verb="installing"
 fi
 
-${PIP} install ${USER_OPT} --quiet --upgrade clk & spin "${verb} clk"
+${PIP} install ${USER_OPT} --quiet --upgrade "${CLK:-clk}" & spin "${verb} clk"
 
 echo -n "installing clk completion... "
 for s in bash zsh fish; do
