@@ -127,14 +127,15 @@ export-coverage:
     RUN cd /app/output/coverage && coverage html
     SAVE ARTIFACT /app/output/coverage AS LOCAL coverage
 
-clk:
+docker:
     FROM python:alpine
+    RUN apk add --update git
     DO +AS_USER
     DO +VENV
     ARG from=build
     DO +INSTALL --from "$from"
     RUN echo 'eval "$(direnv hook bash)"' >> ~/.bashrc
-    ENTRYPOINT ["clk"]
+    ENTRYPOINT ["bash"]
     ARG ref=latest
     SAVE IMAGE clk:${ref}
 
