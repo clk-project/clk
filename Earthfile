@@ -64,7 +64,8 @@ INSTALL:
     ELSE IF [ "${from}" == "pypi" ]
          RUN --no-cache python3 -m pip install clk
     ELSE
-        RUN echo "from=${from} must be either source, build or pypi" && exit 1
+        # assume it is the url to install from
+        RUN python3 -m pip install "${from}"
     END
     RUN clk completion --case-insensitive install bash && echo 'source "${HOME}/.bash_completion"' >> "${HOME}/.bashrc"
 
