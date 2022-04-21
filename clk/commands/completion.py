@@ -42,7 +42,10 @@ def completion(case_insensitive):
 
 
 @completion.command(handle_dry_run=True)
-@argument('shell', required=False, type=DocumentedChoice(click_completion.shells))
+@argument('shell',
+          help='What shell to show the completion for',
+          required=False,
+          type=DocumentedChoice(click_completion.shells))
 def show(shell):
     """Show the completion code"""
     extra_env = {CASE_INSENSITIVE_ENV: 'ON'} if config.completion.case_insensitive else {}
