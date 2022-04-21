@@ -187,7 +187,7 @@ def get():
 
 def test_simple_alias_command(lib):
     lib.cmd('alias set test echo a , echo b , echo c')
-    assert lib.cmd('test') == 'a\nb\nc\n'
+    assert lib.cmd('test') == 'a\nb\nc'
 
 
 def test_alias_to_clk(project1, lib):
