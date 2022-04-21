@@ -2,7 +2,11 @@ IMPORT github.com/Konubinix/Earthfile AS e
 
 AS_USER:
     COMMAND
-    RUN apk add --update bash curl
+    IF command -v apk
+        RUN apk add --update bash curl
+    ELSE
+        RUN apt-get update && apt-get install --yes curl
+    END
     RUN curl -sfL https://direnv.net/install.sh | bash
     DO e+USE_USER
     RUN echo 'source <(direnv hook bash)' >> "${HOME}/.bashrc"
@@ -129,8 +133,13 @@ export-coverage:
     SAVE ARTIFACT /app/output/coverage AS LOCAL coverage
 
 docker:
-    FROM python:alpine
-    RUN apk add --update git
+    ARG system=alpine
+    FROM python:${system}
+    IF command -v apk
+        RUN apk add --update git
+    ELSE
+        RUN apt-get update && apt-get install --yes git
+    END
     DO +AS_USER
     DO +VENV
     ARG from=build
@@ -146,7 +155,8 @@ export-image:
 docker-interactive:
     # e.g. try a branch with earthly +docker-interactive --from=git+https://github.com/clk-project@release/0.26.1
     ARG from=build
-    FROM +docker --from="${from}"
+    ARG system=alpine
+    FROM +docker --from="${from}" --system="${system}"
     RUN --interactive bash
 
 pre-commit-base:
