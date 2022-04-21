@@ -140,6 +140,12 @@ docker:
     ARG ref=latest
     SAVE IMAGE clk:${ref}
 
+docker-interactive:
+    # e.g. try a branch with earthly +docker-interactive --from=git+https://github.com/clk-project@release/0.26.1
+    ARG from=build
+    FROM +docker --from="${from}"
+    RUN --interactive bash
+
 pre-commit-base:
     FROM python:slim
     RUN apt-get update && apt-get install --yes git
