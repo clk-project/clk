@@ -428,6 +428,8 @@ def process_url(name, url):
         urls.append(url)
     if name is None and '/' in url:
         name = url.split('/')[-1]
+    if name is None:
+        raise NotImplementedError(f'Could not parse the given url to extract a name out of it: {url}')
     if name.startswith('clk_extension_'):
         name = name.replace('clk_extension_', '')
     return name, urls, install_type
