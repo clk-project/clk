@@ -78,7 +78,7 @@ def edit(cmd):
     """Set the parameters of a command"""
     old = config.parameters.writable.get(cmd) or []
     oldcontent = format_parameters(old)
-    content = click.edit(oldcontent, extension=f'_{config.parameters.writeprofilename}.txt')
+    content = click.edit(oldcontent, extension=f'_{config.parameters.writeprofilename.replace("/", "_")}.txt')
     if content == oldcontent or content is None:
         LOGGER.info('Nothing changed')
     elif content == '':
