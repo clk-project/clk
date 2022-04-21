@@ -384,7 +384,7 @@ def process_url(name, url):
         install_type = 'git'
         if name is None:
             name = url
-    elif match := re.match('^(?P<author>[a-zA-Z0-9_-]+)/(?P<extension>[a-zA-Z0-9]+)$', url):
+    elif match := re.match('^(?P<author>[a-zA-Z0-9_-]+)/(?P<extension>[a-zA-Z0-9_]+)$', url):
         author = match.group('author')
         extension = match.group('extension')
         for host in predefined_hosts:
