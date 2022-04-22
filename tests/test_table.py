@@ -25,9 +25,19 @@ LOGGER = get_logger(__name__)
 @table_format(default='key_value')
 @table_fields(choices=['col1', 'col2', 'col3'])
 def table(fields, format):
-    ""
+    "Write something in a table"
     with TablePrinter(fields, format) as tp:
         tp.echo(1, 2, 3)
         tp.echo("a", "b", "c")
 """)
+    assert lib.cmd('table') == '''
+1 2 3
+a b c
+'''.strip()
+    assert lib.cmd('table --format orgtbl') == '''
+| col1   | col2   | col3   |
+|--------+--------+--------|
+| 1      | 2      | 3      |
+| a      | b      | c      |
+'''.strip()
     assert json.loads(lib.cmd('table --format json --field col2')) == [{'col2': 2}, {'col2': 'b'}]
