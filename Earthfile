@@ -103,7 +103,10 @@ test:
     FROM python:alpine
     RUN apk add --update git
     DO +AS_USER
-    DO +VENV
+    ARG venv=yes
+    IF [ "${venv}" != "no" ]
+        DO +VENV
+    END
     RUN python3 -m pip install coverage pytest
     ARG from=source
     ARG use_git=no
