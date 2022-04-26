@@ -66,7 +66,8 @@ INSTALL:
         COPY (+build/dist --use_git="$use_git") /dist
         RUN python3 -m pip install /dist/*
     ELSE IF [ "${from}" == "pypi" ]
-         RUN --no-cache python3 -m pip install clk
+        ARG pypi_version
+        RUN --no-cache python3 -m pip install clk${pypi_version}
     ELSE IF [ "${from}" == "script" ]
         ARG script_extra_env
         RUN --no-cache curl -sSL https://clk-project.org/install.sh | env ${script_extra_env} bash
@@ -111,7 +112,8 @@ test:
     ARG from=source
     ARG use_git=no
     ARG build_requirements=no
-    DO +INSTALL --from "$from" --use_git="$use_git" --build_requirements="${build_requirements}"
+    ARG pypi_version
+    DO +INSTALL --from "$from" --use_git="$use_git" --build_requirements="${build_requirements}" --pypi_version="${pypi_version}"
     COPY --dir +test-files/app/tests /app
     WORKDIR /app
     ARG test_args
@@ -148,12 +150,16 @@ docker:
     END
     DO +AS_USER
     ARG venv=yes
+    ARG from=build
     IF [ "${venv}" != "no" ]
+        IF [ "${from}" = "script" ]
+            RUN echo "It won't work to have venv=${venv} and from=${from}" && exit 1
+        END
         DO +VENV
     END
-    ARG from=build
     ARG script_extra_env
-    DO +INSTALL --from "$from" --script_extra_env="${script_extra_env}"
+    ARG pypi_version
+    DO +INSTALL --from "$from" --script_extra_env="${script_extra_env}" --pypi_version="${pypi_version}"
     RUN echo 'eval "$(direnv hook bash)"' >> ~/.bashrc
     ENTRYPOINT ["bash"]
     ARG ref=latest
@@ -168,7 +174,8 @@ docker-interactive:
     ARG system=alpine
     ARG script_extra_env
     ARG venv=yes
-    FROM +docker --from="${from}" --system="${system}" --script_extra_env="${script_extra_env}" --venv="${venv}"
+    ARG pypi_version
+    FROM +docker --from="${from}" --system="${system}" --script_extra_env="${script_extra_env}" --venv="${venv}" --pypi_version="${pypi_version}"
     RUN --interactive bash
 
 pre-commit-base:
