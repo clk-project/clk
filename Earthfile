@@ -27,7 +27,7 @@ DEPENDENCIES:
     COMMAND
     # whether we use the requirements from the source code
     ARG build_requirements=no
-    IF [ "${build_requirements}" == "no" ]
+    IF [ "${build_requirements}" = "no" ]
         COPY requirements.txt /app/
     ELSE
         # get a newly generated requirements
@@ -59,19 +59,19 @@ INSTALL:
     COMMAND
     ARG from=build
     ARG build_requirements=no
-    IF [ "${from}" == "source" ]
+    IF [ "${from}" = "source" ]
         DO +DEPENDENCIES --build_requirements="${build_requirements}"
         COPY --dir +sources/app/* /app
         RUN cd /app && python3 -m pip install --editable .
-    ELSE IF [ "${from}" == "build" ]
+    ELSE IF [ "${from}" = "build" ]
         DO +DEPENDENCIES --build_requirements="${build_requirements}"
         ARG use_git=true
         COPY (+build/dist --use_git="$use_git") /dist
         RUN python3 -m pip install /dist/*
-    ELSE IF [ "${from}" == "pypi" ]
+    ELSE IF [ "${from}" = "pypi" ]
         ARG pypi_version
         RUN --no-cache python3 -m pip install clk${pypi_version}
-    ELSE IF [ "${from}" == "script" ]
+    ELSE IF [ "${from}" = "script" ]
         ARG script_extra_env
         RUN --no-cache curl -sSL https://clk-project.org/install.sh | env ${script_extra_env} bash
     ELSE
@@ -90,7 +90,7 @@ build:
     FROM python:alpine
     COPY +sources/app /app
     ARG use_git=true
-    IF [ "$use_git" == "true" ]
+    IF [ "$use_git" = "true" ]
         RUN apk add --update git
         COPY --dir +git-files/app/* /app
     END
@@ -132,7 +132,7 @@ test:
     RUN cd coverage && coverage xml
         RUN sed -r -i 's|filename=".+/site-packages/|filename="|g' coverage/coverage.xml
     RUN mkdir output && mv coverage output
-    IF [ "${from}" == "build" ]
+    IF [ "${from}" = "build" ]
         RUN mkdir output/dist && mv /dist/* output/dist/
     END
         SAVE ARTIFACT output /output
@@ -218,15 +218,15 @@ check-quality:
 sonar:
     FROM sonarsource/sonar-scanner-cli
     ARG from=build
-    RUN [ "$from" == "build" ] || [ "$from" == "source" ]
+    RUN [ "$from" = "build" ] || [ "$from" = "source" ]
     ARG use_git=true
     ARG build_requirements=no
     COPY (+test/output --from="$from" --use_git="$use_git" --build_requirements="${build_requirements}") /app/output
     COPY --dir +sources/app/clk +git-files/app/* +side-files/app/sonar-project.properties /app/
     WORKDIR /app
-    IF [ "$use_branch" == "no" ]
+    IF [ "$use_branch" = "no" ]
         # asserts the repository is clean when working in a long-liver branch
-        RUN [ "$(git status --porcelain clk | wc -l)" == "0" ]
+        RUN [ "$(git status --porcelain clk | wc -l)" = "0" ]
     END
     RUN echo sonar.projectVersion=$(git tag --sort=creatordate --merged|grep '^v'|tail -1) >> /app/sonar-project.properties
     ARG use_branch=no
