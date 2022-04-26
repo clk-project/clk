@@ -8,7 +8,10 @@ AS_USER:
         RUN apt-get update && apt-get install --yes curl
     END
     RUN curl -sfL https://direnv.net/install.sh | bash
-    DO e+USE_USER
+    ARG uid=1000
+    ARG username=sam
+    ARG groups
+    DO e+USE_USER --groups="$groups" --uid="${uid}" --username="${username}"
     RUN echo 'source <(direnv hook bash)' >> "${HOME}/.bashrc"
 
 requirements:
@@ -103,7 +106,10 @@ dist:
 test:
     FROM python:alpine
     RUN apk add --update git
-    DO +AS_USER
+    ARG uid=1000
+    ARG username=sam
+    ARG groups
+    DO +AS_USER --groups="$groups" --uid="${uid}" --username="${username}"
     ARG venv=yes
     IF [ "${venv}" != "no" ]
         DO +VENV
@@ -148,7 +154,10 @@ docker:
     ELSE
         RUN apt-get update && apt-get install --yes git
     END
-    DO +AS_USER
+    ARG uid=1000
+    ARG username=sam
+    ARG groups
+    DO +AS_USER --groups="$groups" --uid="${uid}" --username="${username}"
     ARG venv=yes
     ARG from=build
     IF [ "${venv}" != "no" ]
