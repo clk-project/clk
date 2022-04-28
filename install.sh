@@ -113,6 +113,12 @@ else
 
     if ! _check_pip
     then
+        if ! "${PYTHON}" -c "import distutils.cmd"
+        then
+            echo "You need to install distutils as well (see https://github.com/pypa/get-pip/issues/124)"
+            printf "${yellow}warning:${reset} Hint: on debian-like systems -> sudo apt install python3-distutils.\n"
+            exit 1
+        fi
         # we need to force the reinstall in order to make sure the latest version of
         # pip is there
         GET_PIP_TMP_DIR="${TMPDIR:-/tmp}/get-pip.py"
