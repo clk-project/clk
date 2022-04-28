@@ -301,7 +301,7 @@ def graph(output, format, cmds, display_aliases, alias_links, display_parameters
         alias_links=alias_links,
     )
     if dot is None:
-        LOGGER.status('Nothing to show')
+        LOGGER.info('Nothing to show')
         exit(0)
     if format != 'dot':
         dotpath = which('dot')
