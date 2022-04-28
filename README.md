@@ -98,6 +98,11 @@ clk do-some-other-thing  # will behave exactly like "clk do-something --in-some-
 
 # Installation
 
+You need to have python3. On debian based system, due to a [bug in the packaging
+of python3](https://github.com/pypa/get-pip/issues/124), you also need to
+install python3-distutils. This can simply be done with `sudo apt install
+python3-distutils`.
+
 Install with `curl -sSL https://clk-project.org/install.sh | bash`
 or `python3 -m pip install clk`
 
