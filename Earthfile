@@ -215,6 +215,12 @@ check-quality:
     COPY --dir +git-files/app/* +sources/app/* +side-files/app/* +test-files/app/* .
     RUN pre-commit run -a
 
+test-install-ubuntu:
+    FROM ubuntu
+    RUN apt-get update && apt-get install --yes python3-distutils
+    DO +AS_USER
+    DO +INSTALL --from=script
+
 sonar:
     FROM sonarsource/sonar-scanner-cli
     ARG from=build
@@ -250,6 +256,7 @@ local-sanity-check:
 sanity-check:
     FROM scratch
     BUILD +check-quality
+    BUILD +test-install-ubuntu
     ARG use_git=true
     ARG use_branch=no
     ARG build_requirements=no
