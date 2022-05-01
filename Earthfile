@@ -90,11 +90,12 @@ build:
     FROM python:alpine
     COPY +sources/app /app
     ARG use_git=true
+    WORKDIR /app
     IF [ "$use_git" = "true" ]
         RUN apk add --update git
         COPY --dir +git-files/app/* /app
+        RUN git checkout . && git reset --hard HEAD
     END
-    WORKDIR /app
     RUN python3 setup.py bdist_wheel
     SAVE ARTIFACT dist /dist
 
