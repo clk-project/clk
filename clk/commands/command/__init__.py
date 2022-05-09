@@ -229,7 +229,15 @@ It works only for python scripts or bash scripts.
 
 
 @create.command()
-@argument('name', help='The name of the new command')
+@argument(
+    'name',
+    help=('The name of the new command.'
+          ' You can use the period character to separate groups and commands.'
+          ' For example, the command named "somegroup.somecommand"'
+          ' will be called with "clk somegroup somecommand".'
+          ' This is useful to add a feature to a group of commands that '
+          ' already exists.'),
+)
 @flag('--open/--no-open', help='Also open the file after its creation', default=True)
 @flag('--force', help='Overwrite a file if it already exists')
 @option('--body', help='The initial body to put', default='')
