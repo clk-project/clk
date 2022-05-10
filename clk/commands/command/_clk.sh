@@ -22,6 +22,13 @@ clk_help_handler () {
 		clk_usage
 		exit 0
 	fi
+    if [ "${CLK__LOG_LEVEL}" = "debug" ] \
+           || [ "${CLK__LOG_LEVEL}" = "develop" ] \
+           || [ "${CLK__DEBUG}" = "True" ] \
+           || [ "${CLK__DEVELOP}" = "True" ]
+    then
+        set -x
+    fi
 }
 
 _log () {
