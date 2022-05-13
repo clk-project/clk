@@ -11,7 +11,10 @@ from clk.core import ExtensionTypeSuggestion as ExtensionSuggestion  # NOQA: jus
 from clk.launcher import LauncherCommandType as LauncherCommand  # NOQA: just expose the object
 from clk.launcher import LauncherType as launcher  # NOQA: just expose the object
 from clk.lib import ParameterType as Parameter  # NOQA: just expose the object
+from clk.log import get_logger
 from clk.overloads import CommandSettingsKeyType, CommandType  # NOQA: just expose the object
+
+LOGGER = get_logger(__name__)
 
 
 class Suggestion(click.Choice):
@@ -22,6 +25,27 @@ class Suggestion(click.Choice):
 
     def get_metavar(self, param):
         return '[{}|...]'.format('|'.join(self.choices))
+
+
+class Date(DynamicChoice):
+    name = 'date'
+
+    def choices(self):
+        return [
+            'today',
+            'yesterday',
+            'tomorrow',
+            'last week',
+            'last month',
+            'next week',
+            'two days ago',
+        ]
+
+    def convert(self, value, param, ctx):
+        from clk.lib import parsedatetime
+        date = parsedatetime(value)[0]
+        LOGGER.develop(f'Got date {param.name}={date}')
+        return date
 
 
 class Profile(DynamicChoice):
