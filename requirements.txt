@@ -44,11 +44,11 @@ idna==3.3
     # via requests
 ipdb==0.13.9
     # via clk (setup.py)
-ipython==8.2.0
+ipython==8.3.0
     # via ipdb
 jedi==0.18.1
     # via ipython
-jinja2==3.1.1
+jinja2==3.1.2
     # via click-completion
 markupsafe==2.1.1
     # via jinja2
@@ -74,11 +74,11 @@ pure-eval==0.2.2
     # via stack-data
 pydotplus==2.0.2
     # via clk (setup.py)
-pygments==2.11.2
+pygments==2.12.0
     # via
     #   clk (setup.py)
     #   ipython
-pyparsing==3.0.8
+pyparsing==3.0.9
     # via pydotplus
 python-dateutil==2.8.2
     # via clk (setup.py)
@@ -96,7 +96,7 @@ tabulate==0.8.9
     # via clk (setup.py)
 toml==0.10.2
     # via ipdb
-traitlets==5.1.1
+traitlets==5.2.0
     # via
     #   ipython
     #   matplotlib-inline
