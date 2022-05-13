@@ -1019,6 +1019,14 @@ def group(*args, **kwargs):
 
 def option(*args, **kwargs):
     """Declare on new option"""
+    dynamic = kwargs.get('dynamic')
+    if dynamic:
+        kwargs.pop('dynamic')
+        from clk.decorators import param_config
+        kwargs['expose_value'] = True
+        kwargs['typ'] = dynamic
+        name = dynamic.__name__.lower()
+        return param_config(name, *args, **kwargs)
     deprecated = kwargs.get('deprecated')
     callback = kwargs.get('callback')
     if deprecated:
