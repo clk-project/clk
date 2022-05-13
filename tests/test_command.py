@@ -78,6 +78,41 @@ def get():
     assert lib.cmd('http --api myapi get') == 'Getting http://myapi'
 
 
+def test_dynamic_option(pythondir, lib):
+    # given a command to perform http request with a default url lazily computed
+    # that depends on some other value
+    (pythondir / 'http.py').write_text("""
+from clk.config import config
+from clk.decorators import group, option
+
+class Http:
+    def dump(self):
+        print(self.url)
+
+def default():
+    if config.http.api:
+        return f"http://{config.http.api}"
+
+@group()
+@option('--api', dynamic=Http)
+@option('--url', dynamic=Http, default=default)
+def http(api, url):
+    ""
+
+@http.command()
+def get():
+    print("Getting " + config.http.url)
+
+@http.command()
+def dump():
+    config.http.dump()
+""")
+    # when I use the command without providing the first value, then I get the
+    # appropriate default value
+    assert lib.cmd('http --api myapi get') == 'Getting http://myapi'
+    assert lib.cmd('http --api myapi dump') == 'http://myapi'
+
+
 def test_param_config_default_value_callback(pythondir, lib):
     # given a command to perform http request with a default url lazily computed
     (pythondir / 'http.py').write_text("""
