@@ -38,6 +38,7 @@ setup(
         'python-dateutil',
         'tabulate',
         'networkx',
+        'parsedatetime',
         'pydotplus',
         'pluginbase',
         'appdirs',
