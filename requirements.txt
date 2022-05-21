@@ -96,7 +96,7 @@ tabulate==0.8.9
     # via clk (setup.py)
 toml==0.10.2
     # via ipdb
-traitlets==5.2.0
+traitlets==5.2.1.post0
     # via
     #   ipython
     #   matplotlib-inline
