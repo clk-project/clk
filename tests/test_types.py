@@ -4,6 +4,31 @@
 from pathlib import Path
 
 
+def test_default_with_converter(lib):
+    lib.cmd('command create python a --no-open --group')
+    path = lib.cmd('command which a')
+    Path(path).write_text(
+        Path(path).read_text() + """
+
+class Test(DynamicChoice):
+
+    def choices(self):
+        return ["foo", "bar"]
+
+    def converter(self, value):
+        return value.upper()
+
+
+@a.command()
+@option("--test", default="foo", type=Test())
+def test(test):
+    "Description"
+    print(test)
+""")
+    assert lib.cmd('a test --test bar') == 'BAR'
+    assert lib.cmd('a test') == 'FOO'
+
+
 def test_suggestion(lib):
     lib.cmd('command create python a --no-open --group')
     path = lib.cmd('command which a')
