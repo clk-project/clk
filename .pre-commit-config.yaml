@@ -33,3 +33,9 @@ repos:
 #   rev: 6.2.0
 #   hooks:
 #     - id: pip-compile
+- repo: https://github.com/compilerla/conventional-pre-commit
+  rev: v1.3.0
+  hooks:
+      - id: conventional-pre-commit
+        stages: [commit-msg]
+        args: []
