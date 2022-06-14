@@ -67,6 +67,16 @@ def test_safe_check_output():
     assert lib.safe_check_output('something_crazy') == ''
 
 
+def test_safe_check_output_on_path():
+    printf_path = Path(lib.which('printf'))
+    assert lib.safe_check_output([printf_path, 'test']) == 'test'
+
+
+def test_check_output_on_path():
+    printf_path = Path(lib.which('printf'))
+    assert lib.check_output([printf_path, 'test']) == 'test'
+
+
 def test_git_sync():
 
     def git_add_and_commit(message):
