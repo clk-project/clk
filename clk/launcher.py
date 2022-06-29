@@ -16,6 +16,9 @@ class LauncherCommandType(ParameterType):
         return [launcher for launcher in choices if startswith(launcher, incomplete)]
 
     def convert(self, value, param, ctx):
+        if not isinstance(value, str):
+            # already converted
+            return value
         return shlex.split(value)
 
 

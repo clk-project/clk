@@ -212,7 +212,10 @@ class ColorType(ParameterType):
         return {key: cls.converters[key](value) for key, value in cls.get_kwargs(value).items()}
 
     def convert(self, value, param, ctx):
-        return self.unpack_styles(value)
+        if isinstance(value, str):
+            return self.unpack_styles(value)
+        else:
+            return value
 
 
 class DynamicChoiceType(ParameterType):
@@ -245,6 +248,10 @@ class SomeChoices(DynamicChoiceType):
         if value not in choices:
             self.fail('invalid choice: %s. (choose from %s)' % (value, ', '.join(choices)), param, ctx)
         if isinstance(choices, dict):
+            if not isinstance(value, str) and value in choices.values():
+                # already converted
+                return value
+
             value = choices[value]
         value = self.converter(value)
         return value

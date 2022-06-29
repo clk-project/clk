@@ -42,6 +42,10 @@ class Date(DynamicChoice):
         ]
 
     def convert(self, value, param, ctx):
+        if not isinstance(value, str):
+            # already converted
+            return value
+
         from clk.lib import parsedatetime
         date = parsedatetime(value)[0]
         LOGGER.develop(f'Got date {param.name}={date}')
