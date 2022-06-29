@@ -144,6 +144,7 @@ class Config(object):
         self.value = Value()
         self.groups = set(['clk'])
         self.verbose_flow = False
+        self.level_settings = {}
 
     @cached_property
     def commandline_profile(self):
@@ -678,6 +679,7 @@ config = ConfigProxy()
 def temp_config():
     with updated_env():
         configs.append(deepcopy(configs[-1]))
+        config.level_settings = {}
         try:
             yield
         finally:

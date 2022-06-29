@@ -75,7 +75,12 @@ def get_ctx(path, side_effects=False, resilient_parsing=None):
     key = tuple(path)
     if key not in get_ctx_cache:
         if side_effects:
+            # https://konubinix.eu/braindump/posts/f6965d2d-5deb-4dd3-89b5-00a29d885fa8/?title=clk_config_per_level_and_overriding
+            old_appended_parameters = config.level_settings.get('appended_parameters', [])
+            config.level_settings['appended_parameters'] = []
             res = resolve_context_with_side_effects(path, resilient_parsing=resilient_parsing)
+            config.level_settings['appended_parameters'] = list(
+                set(config.level_settings['appended_parameters'] + old_appended_parameters))
         else:
             with temp_config():
                 res = resolve_context_with_side_effects(path, resilient_parsing=resilient_parsing)

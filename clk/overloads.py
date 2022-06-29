@@ -476,9 +476,12 @@ class RememberParametersMixin(object):
     alias. But this logic breaks simple commands when they are parsed several
     time (like completion does) and they have arguments. Indeed, in such cases,
     every call to parse_args would add the argument, resulting in a messy
-    commandline_profile with several times the same arguments.
+    commandline_profile with several times the same arguments. Yet, I don't want
+    to be done more than once per level, or it will mess up with the completion.
 
-    In brief, use append_commandline_settings for group stuff and
+    More information in https://konubinix.eu/braindump/posts/f6965d2d-5deb-4dd3-89b5-00a29d885fa8/?title=clk_config_per_level_and_overriding
+
+    In brief, use append_commandline_settings_once for group stuff and
     set_commandline_settings for commands.
 
     It would be theoretically better to rescan the args and the command line
@@ -501,9 +504,13 @@ class RememberParametersMixin(object):
         config.commandline_profile.get_settings('parameters')[self.path] = args
         config.merge_settings()
 
-    def append_commandline_settings(self, ctx, args):
-        config.commandline_profile.get_settings('parameters')[self.path] += args
-        config.merge_settings()
+    def append_commandline_settings_once(self, ctx, args):
+        appended_parameters = config.level_settings.get('appended_parameters', [])
+        if self.path not in appended_parameters:
+            appended_parameters.append(self.path)
+            config.commandline_profile.get_settings('parameters')[self.path] += args
+            config.merge_settings()
+            config.level_settings['appended_parameters'] = appended_parameters
 
 
 class MissingDocumentationMixin(object):
@@ -547,7 +554,7 @@ class Command(MissingDocumentationMixin, DeprecatedMixin, TriggerMixin, HelpMixi
         self.path = None
 
     def parse_args(self, ctx, args):
-        # cannot call append_commandline_settings because the parameters can be
+        # cannot call append_commandline_settings_once because the parameters can be
         # arguments. In case the parsing is called several times, the arguments
         # would be appended each time.
         self.set_commandline_settings(ctx, args)
@@ -687,7 +694,7 @@ class Group(click_didyoumean.DYMMixin, MissingDocumentationMixin, DeprecatedMixi
         if help_option:
             index_help = res.index(help_option)
             res = res[:index_help] + res[index_help + 1:]
-        self.set_commandline_settings(ctx, res)
+        self.append_commandline_settings_once(ctx, res)
         args = self.get_extra_args(implicit_only=('--no-parameter' in args)) + list(remaining)
         if help_option:
             args = [help_option] + args
@@ -1258,7 +1265,7 @@ class MainCommand(click_didyoumean.DYMMixin, DeprecatedMixin, TriggerMixin, Help
         if help_option:
             index_help = res.index(help_option)
             res = res[:index_help] + res[index_help + 1:]
-        self.append_commandline_settings(ctx, res)
+        self.append_commandline_settings_once(ctx, res)
         if help_option:
             res = [help_option] + res
 

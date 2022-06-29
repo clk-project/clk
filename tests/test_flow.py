@@ -256,3 +256,30 @@ def flow():
     assert lib.cmd('threed flow') == '''check
 print
 done'''
+
+
+def test_reuse_flow_parameters(pythondir, lib):
+    (pythondir / 'somegroup.py').write_text("""
+from clk.decorators import group, option
+from clk.config import config
+
+@group()
+@option("--someoption")
+def somegroup(someoption):
+    ""
+    config.someoption = someoption
+
+
+@somegroup.command()
+def somecommand():
+    print(config.someoption)
+
+@somegroup.command(flowdepends=["somegroup.somecommand"])
+def someothercommand():
+    print(config.someoption)
+
+""")
+    assert lib.cmd('somegroup somecommand') == 'None'
+    assert lib.cmd('somegroup --someoption something somecommand') == 'something'
+    assert lib.cmd('somegroup --someoption something someothercommand') == 'something'
+    assert lib.cmd('somegroup --someoption something someothercommand --flow') == 'something\nsomething'

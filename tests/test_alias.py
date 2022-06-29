@@ -100,6 +100,8 @@ def get():
     lib.cmd('alias set h.g h get')
     # then I can call h g without parameters and still see it use http://b.com
     assert lib.cmd('h g') == 'Getting http://b.com'
+    # and I can call h --url http://c.com and it will be taken into account
+    assert lib.cmd('h --url http://c.com g') == 'Getting http://c.com'
 
 
 def test_capture_partial_flow(pythondir, lib):
