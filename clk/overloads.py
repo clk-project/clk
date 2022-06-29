@@ -687,8 +687,7 @@ class Group(click_didyoumean.DYMMixin, MissingDocumentationMixin, DeprecatedMixi
         if help_option:
             index_help = res.index(help_option)
             res = res[:index_help] + res[index_help + 1:]
-        self.append_commandline_settings(ctx, res)
-
+        self.set_commandline_settings(ctx, res)
         args = self.get_extra_args(implicit_only=('--no-parameter' in args)) + list(remaining)
         if help_option:
             args = [help_option] + args
