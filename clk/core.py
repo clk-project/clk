@@ -667,7 +667,10 @@ def main():
             print(s.getvalue())
         trigger()
         end_time = datetime.now()
-        LOGGER.debug('command run in %s' % natural_delta(end_time - startup_time))
+        import sys
+
+        from clk.lib import quote
+        LOGGER.debug(f'command `{" ".join(map(quote, sys.argv))}` run in {natural_delta(end_time - startup_time)}')
     exit(exitcode)
 
 
