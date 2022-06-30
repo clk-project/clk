@@ -19,6 +19,8 @@ workflows:
             tags:
               # see https://circleci.com/docs/2.0/configuration-reference/#tags
               ignore: /.*/
+  deploy:
+    jobs:
       - deploy:
           context: clk
           filters:
