@@ -266,8 +266,8 @@ sanity-check:
 
 upload:
     FROM scratch
-    FROM python:alpine
-    RUN apk add --update py3-twine
+    FROM python:slim
+    RUN apt-get update && apt-get install --yes twine
     COPY +sanity-check/output /output
     # asserts the file was generated using a tag
     RUN ls /output/dist/|grep -q 'clk-[0-9]\+\.[0-9]\+\.[0-9]\+'
