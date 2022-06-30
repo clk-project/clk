@@ -14,13 +14,13 @@ workflows:
     # For more details on extending your workflow, see the configuration docs: https://circleci.com/docs/2.0/configuration-reference/#workflows
     jobs:
       - test:
-          context: SonarCloud
+          context: clk
           filters:
             tags:
               # see https://circleci.com/docs/2.0/configuration-reference/#tags
               ignore: /.*/
       - deploy:
-          context: SonarCloud
+          context: clk
           filters:
             # only run for the official tags
             tags:
