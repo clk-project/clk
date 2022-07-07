@@ -284,7 +284,8 @@ def main_command_decoration(f, cls, **kwargs):
                             default=None)(f)
     f = main_command_option('--flow-step/--no-flow-step',
                             help='Make a pause in between the flow steps.'
-                            ' Useful to make demonstrations.',
+                            ' Useful to make demonstrations.'
+                            ' Implies --verbose-flow.',
                             is_flag=True,
                             callback=flowstep_callback,
                             default=None)(f)
@@ -550,6 +551,7 @@ def autoflow_callback(ctx, attr, value):
 
 @main_command_options_callback
 def flowstep_callback(ctx, attr, value):
+    config.verbose_flow = True
     config.flowstep = value
 
 
