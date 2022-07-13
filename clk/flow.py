@@ -115,7 +115,7 @@ def get_flow_commands_to_run(cmd_path, flow_from=None, flow_after=None, flow_tru
 
 def execute_flow_step(cmd, args=None):
     cmd.extend(args or [])
-    if config.verbose_flow:
+    if config.flow_verbose:
         LOGGER.info('--------------')
         LOGGER.info(f"{'About to run' if config.flowstep else 'Running'} step '{' '.join(cmd)}'")
     if config.flowstep:
@@ -124,7 +124,7 @@ def execute_flow_step(cmd, args=None):
             default='',
             show_default=False,
         )
-        if config.verbose_flow:
+        if config.flow_verbose:
             LOGGER.info('Here we go!')
     old_allow = overloads.allow_dotted_commands
     overloads.allow_dotted_commands = True
@@ -133,7 +133,7 @@ def execute_flow_step(cmd, args=None):
     except Exception:
         overloads.allow_dotted_commands = old_allow
         raise
-    if config.verbose_flow:
+    if config.flow_verbose:
         LOGGER.info("End of step '{}'".format(' '.join(cmd)))
 
 
@@ -154,6 +154,11 @@ def execute_flow_dependencies(cmd, flow_from=None, flow_after=None):
 
 
 def execute_flow(args):
+    import IPython
+    dict_ = globals()
+    dict_.update(locals())
+    IPython.start_ipython(argv=[], user_ns=dict_)
+
     if args:
         from clk.overloads import get_ctx
         c = get_ctx(args)
@@ -290,7 +295,7 @@ def get_flow_wrapper(name, function):
             _in_a_flow = False
             # restore the flow settings
             config.flow_profile.get_settings('parameters').clear()
-            if config.verbose_flow:
+            if config.flow_verbose:
                 LOGGER.info("Ended executing the flow dependencies, back to the command '{}'".format(name))
         res = function(*args, **kwargs)
         return res

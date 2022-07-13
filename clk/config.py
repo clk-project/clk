@@ -143,7 +143,7 @@ class Config(object):
         self._all_profiles_cache = None
         self.value = Value()
         self.groups = set(['clk'])
-        self.verbose_flow = False
+        self.flow_verbose = False
         self.level_settings = {}
 
     @cached_property

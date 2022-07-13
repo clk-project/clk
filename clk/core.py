@@ -285,7 +285,7 @@ def main_command_decoration(f, cls, **kwargs):
     f = main_command_option('--flow-step/--no-flow-step',
                             help='Make a pause in between the flow steps.'
                             ' Useful to make demonstrations.'
-                            ' Implies --verbose-flow.',
+                            ' Implies --flow-verbose.',
                             is_flag=True,
                             callback=flowstep_callback,
                             default=None)(f)
@@ -353,10 +353,10 @@ def main_command_decoration(f, cls, **kwargs):
                             is_flag=True,
                             help='Trigger a debugger whenever a command fails to load',
                             callback=debug_on_command_load_error_callback)(f)
-    f = main_command_option('--verbose-flow',
+    f = main_command_option('--flow-verbose',
                             is_flag=True,
                             help='Show more precisely when a flow starts and when it ends',
-                            callback=verbose_flow_callback)(f)
+                            callback=flow_verbose_callback)(f)
     f = main_command_option('--report-file',
                             help='Create a report file to put with bug reports',
                             callback=report_file_callback,
@@ -551,7 +551,7 @@ def autoflow_callback(ctx, attr, value):
 
 @main_command_options_callback
 def flowstep_callback(ctx, attr, value):
-    config.verbose_flow = True
+    config.flow_verbose = True
     config.flowstep = value
 
 
@@ -576,8 +576,8 @@ def debug_on_command_load_error_callback(ctx, attr, value):
 
 
 @main_command_options_callback
-def verbose_flow_callback(ctx, attr, value):
-    config.verbose_flow = value
+def flow_verbose_callback(ctx, attr, value):
+    config.flow_verbose = value
 
 
 def report_file_callback(ctx, attr, value):
