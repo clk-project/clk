@@ -306,7 +306,9 @@ def graph(output, format, cmds, display_aliases, alias_links, display_parameters
     if format != 'dot':
         dotpath = which('dot')
         if dotpath is None:
-            raise click.UsageError("You don't have graphviz installed. Therefore you cannot use dot.")
+            raise click.UsageError("You don't have graphviz installed."
+                                   ' Therefore you cannot use this command.'
+                                   ' Hint: sudo apt install graphviz')
         args = [dotpath, '-T{}'.format(format)]
         p = subprocess.Popen(
             args,
