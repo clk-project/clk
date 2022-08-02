@@ -12,6 +12,7 @@ import subprocess
 import time
 from datetime import datetime
 from io import StringIO
+from pathlib import Path
 
 import appdirs
 import click
@@ -21,7 +22,7 @@ from clk.atexit import trigger
 from clk.click_helpers import click_get_current_context_safe
 from clk.completion import startswith
 from clk.config import Config, config, migrate_profiles, temp_config
-from clk.lib import ParameterType, main_default, makedirs, natural_delta
+from clk.lib import ParameterType, main_default, makedirs, natural_delta, rm
 from clk.log import LOG_LEVELS, get_logger
 
 LOGGER = get_logger(__name__)
@@ -690,26 +691,33 @@ def cache_disk(f=None, expire=int(os.environ.get(u'CLK_CACHE_EXPIRE', 24 * 60 * 
         if expire == -1:
             return f
 
-        def inner_function(*args, **kwargs):
-            # calculate a cache key based on the decorated method signature
+        def compute_key(args, kwargs):
             key = u'{}{}{}{}'.format(re.sub(r'pluginbase\._internalspace.[^\.]+\.', 'clk.plugins.', f.__module__),
                                      f.__name__, args, kwargs).encode(u'utf-8')
-            # print(key)
             key = hashlib.sha3_256(key).hexdigest()
+            return key
+
+        def inner_function(*args, **kwargs):
+            key = compute_key(args, kwargs)
             if not os.path.exists(cache_folder):
                 makedirs(cache_folder)
             filepath = os.path.join(cache_folder, key)
-            # verify that the cached object exists and is less than $seconds old
             if os.path.exists(filepath):
                 modified = os.path.getmtime(filepath)
                 age_seconds = time.time() - modified
                 if expire is None or age_seconds < expire:
                     return pickle.load(open(filepath, u'rb'))
-            # call the decorated function...
             result = f(*args, **kwargs)
-            # ... and save the cached object for next time
             pickle.dump(result, open(filepath, u'wb'))
             return result
+
+        def drop(*args, **kwargs):
+            key = compute_key(args, kwargs)
+            cache = Path(cache_folder) / key
+            if cache.exists():
+                rm(cache)
+
+        inner_function.drop = drop
 
         return inner_function
 

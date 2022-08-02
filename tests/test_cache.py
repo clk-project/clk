@@ -18,9 +18,12 @@ def cached_now():
 
 @command()
 @flag("--cached")
-def now(cached):
+@flag("--drop")
+def now(cached, drop):
     ""
     handler = (cached_now if cached else datetime.now)
+    if drop:
+        cached_now.drop()
     print(handler())
 
 """)
@@ -30,3 +33,6 @@ def now(cached):
     # when I call the cached version twice
     # then I can see they are the same
     assert lib.cmd('now --cached') == lib.cmd('now --cached')
+    # when I call the cached version twice while dropping the cache
+    # then I can see they are different
+    assert lib.cmd('now --cached --drop') != lib.cmd('now --cached --drop')
