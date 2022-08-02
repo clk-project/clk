@@ -181,7 +181,7 @@ def flow():
 """)
     # when I run the flow in verbose mode
     # then I can see the succession of commands
-    assert lib.cmd(' --verbose-flow threed flow', stderr=STDOUT).splitlines()[1:] == '''--------------
+    assert lib.cmd(' --flow-verbose threed flow', stderr=STDOUT).splitlines()[1:] == '''--------------
 Running step 'threed slicer'
 slicer
 End of step 'threed slicer'
