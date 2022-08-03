@@ -153,28 +153,6 @@ def execute_flow_dependencies(cmd, flow_from=None, flow_after=None):
         execute_flow_step(cmd)
 
 
-def execute_flow(args):
-    import IPython
-    dict_ = globals()
-    dict_.update(locals())
-    IPython.start_ipython(argv=[], user_ns=dict_)
-
-    if args:
-        from clk.overloads import get_ctx
-        c = get_ctx(args)
-        # get rid of the app part
-        app_path_len = len(config.main_command.path)
-        subpath = c.command_path[app_path_len + 1:].replace(' ', '.')
-        cmd = subpath.split('.')[-1]
-        args = args[args.index(cmd) + 1:]
-    else:
-        subpath = 'build'
-        args = []
-    LOGGER.debug('Will execute the flow of {} with args {}'.format(subpath, args))
-    execute_flow_dependencies(subpath)
-    execute_flow_step(subpath.split('.'), args)
-
-
 def has_flow(cmd):
     return get_flow_commands_to_run(cmd) != []
 
