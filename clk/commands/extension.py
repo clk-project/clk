@@ -565,7 +565,7 @@ def _install_deps(ctx, extension):
     required=True,
     help='The names of the extensions to update',
 )
-@flag('--clean', 'method', flag_value='clean', help='Remove local modification and update')
+@flag('--clean', '--force', 'method', flag_value='clean', help='Remove local modification and update')
 @flag('--stash', 'method', flag_value='stash', help='Stash local modification and update')
 @flag('--no-clean', 'method', flag_value='no-clean', help="Don't try cleaning the repository before pulling")
 @flag('--install-deps/--no-install-deps', help='Automatically install the dependencies.', default=True)
