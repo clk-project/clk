@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
+from itertools import product
+
 import click
 
 from clk.config import config
@@ -31,15 +33,26 @@ class Date(DynamicChoice):
     name = 'date'
 
     def choices(self):
+        number = ['one', 'two', 'three', 'four', 'five']
+        period = ['day', 'week', 'month', 'year']
+        weekday = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday']
         return [
             'today',
             'yesterday',
             'tomorrow',
-            'last week',
-            'last month',
-            'next week',
-            'two days ago',
-        ]
+        ] + [f'{a} {b}' for a, b in product(
+            ['next', 'last'],
+            period + weekday,
+        )] + [f"{a} {b}{'' if a == 'one' else 's'} ago" for a, b in product(
+            number,
+            period + weekday,
+        )] + [f"in {a} {b}{'' if a == 'one' else 's'}" for a, b in product(
+            number,
+            period + weekday,
+        )] + [f"{a} {b}{'' if a == 'one' else 's'}" for a, b in product(
+            number,
+            period + weekday,
+        )]
 
     def convert(self, value, param, ctx):
         if not isinstance(value, str):
