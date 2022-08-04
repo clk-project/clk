@@ -545,7 +545,7 @@ def safe_check_output(*args, **kwargs):
         LOGGER.deprecated("'force' argument is deprecated since version 0.9.0, use 'internal' instead.")
         internal = kwargs['force']
         del kwargs['force']
-    action_message = 'run: {}'.format(' '.join(str(args[0])))
+    action_message = 'run: {}'.format(' '.join(map(str, args[0])))
     if internal:
         LOGGER.develop(action_message)
     else:
