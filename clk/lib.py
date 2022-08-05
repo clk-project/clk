@@ -1003,6 +1003,7 @@ def progressbar(iterable=None,
                   codes are included anywhere in the progress bar output
                   which is not the case by default.
     """
+    LOGGER.deprecated('Use tqdm, which is much better than this one')
     if disabled:
         return null_context
     color = click.termui.resolve_color_default(color)

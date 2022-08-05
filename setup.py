@@ -47,6 +47,7 @@ setup(
         'Pygments',
         'cached-property',
         'requests',
+        'tqdm',
     ],
     entry_points={'console_scripts': [
         'clk=clk.main:main',
