@@ -57,3 +57,20 @@ def b(someday):
 """)
     assert lib.cmd('a b --someday "May 4th 2022"') == '2022-05-04'
     assert lib.cmd('a b --someday "2022-05-04"') == '2022-05-04'
+
+
+def test_complete_date(lib):
+    lib.cmd('command create python a --no-open --group')
+    path = lib.cmd('command which a')
+    Path(path).write_text(
+        Path(path).read_text() + """
+from clk.types import Date
+@a.command()
+@option("--someday", type=Date())
+def b(someday):
+    print(f"{someday:%Y-%m-%d}")
+""")
+    assert lib.cmd('completion try --last a b --someday next\ da') == 'next\\ day'  # noqa: W605
+    assert lib.cmd('completion try --last a b --someday last\ sun') == 'last\\ sunday'  # noqa: W605
+    assert lib.cmd('completion try --last a b --someday in\ two\ mont') == 'in\\ two\\ months'  # noqa: W605
+    assert lib.cmd('completion try --last a b --someday two\ days\ a') == 'two\\ days\\ ago'  # noqa: W605
