@@ -1,5 +1,22 @@
 #!/bin/bash -eu
 
+clk_name_to_env () {
+    local name="$1"
+    echo "CLK___$(echo "${name}"|sed 's/-/_/g'|tr '[:lower:]' '[:upper:]')"
+}
+
+clk_value ( ) {
+    local name="$1"
+    local variable="$(clk_name_to_env "${name}")"
+    local variable_call="\${${variable}}"
+    echo "$(eval "echo \"${variable_call}\"")"
+}
+
+clk_is_true ( ) {
+    local name="$1"
+    test "$(clk_value "${name}")" = "True"
+}
+
 clk_import ( ) {
     local dep="$1"
     source "$(dirname "${0}")/lib/${dep}"
