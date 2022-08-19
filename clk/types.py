@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
+from datetime import datetime
 from itertools import product
 
 import click
@@ -58,9 +59,13 @@ class Date(DynamicChoice):
         if not isinstance(value, str):
             # already converted
             return value
-
-        from clk.lib import parsedatetime
-        date = parsedatetime(value)[0]
+        from dateutil.parser import ParserError, parse
+        try:
+            date = parse(value)
+        except ParserError:
+            from clk.lib import parsedatetime
+            date = parsedatetime(value)[0]
+        date = datetime(date.year, date.month, date.day)
         LOGGER.develop(f'Got date {param.name}={date}')
         return date
 
