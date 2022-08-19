@@ -1582,7 +1582,14 @@ def parsedatetime(value):
 
 
 def value_to_string(value):
-    return (' '.join(map(quote, value)) if type(value) is tuple else str(value) if value else '')
+    if isinstance(value, tuple):
+        return (' '.join([value_to_string(element) for element in value]))
+    elif isinstance(value, datetime.datetime):
+        return value.isoformat()
+    elif value:
+        return str(value)
+    else:
+        return ''
 
 
 def is_port_available(port, hostname='127.0.0.1'):
