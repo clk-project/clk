@@ -433,7 +433,7 @@ def data_file(name):
 """
     script_text += f"""
 @{'group' if group else 'command'}()
-def {command_name}():
+def {command_name.replace("-", "_")}():
     "{description}"
     {body}
 """

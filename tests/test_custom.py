@@ -101,11 +101,11 @@ def test_simple_python(lib):
 
 
 def test_group_python(lib):
-    lib.cmd('command create python a --no-open --group')
-    path = lib.cmd('command which a')
+    lib.cmd('command create python a-b --no-open --group')
+    path = lib.cmd('command which a-b')
     Path(path).write_text(Path(path).read_text() + """
-@a.command()
+@a_b.command()
 def b():
     print("b")
 """)
-    assert lib.cmd('a b') == 'b'
+    assert lib.cmd('a-b b') == 'b'
