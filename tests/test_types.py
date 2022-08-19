@@ -74,3 +74,29 @@ def b(someday):
     assert lib.cmd('completion try --last a b --someday last\ sun') == 'last\\ sunday'  # noqa: W605
     assert lib.cmd('completion try --last a b --someday in\ two\ mont') == 'in\\ two\\ months'  # noqa: W605
     assert lib.cmd('completion try --last a b --someday two\ days\ a') == 'two\\ days\\ ago'  # noqa: W605
+
+
+def test_date_in_command(lib):
+    lib.create_bash_command(
+        'a', """#!/bin/bash -eu
+
+source "_clk.sh"
+
+clk_usage () {
+    cat<<EOF
+$0
+
+Test date
+--
+O:--someday:date:Some date
+EOF
+}
+
+clk_help_handler "$@"
+
+echo ${CLK___SOMEDAY}
+""")
+    assert lib.cmd('completion try --last a --someday next\ da') == 'next\\ day'  # noqa: W605
+    assert lib.cmd('completion try --last a --someday last\ sun') == 'last\\ sunday'  # noqa: W605
+    assert lib.cmd('completion try --last a --someday in\ two\ mont') == 'in\\ two\\ months'  # noqa: W605
+    assert lib.cmd('completion try --last a --someday two\ days\ a') == 'two\\ days\\ ago'  # noqa: W605

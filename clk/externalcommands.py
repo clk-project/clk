@@ -16,6 +16,7 @@ from clk.customcommands import build_update_extension_callback
 from clk.lib import call, quote, updated_env, value_to_string, which
 from clk.log import get_logger
 from clk.overloads import AutomaticOption
+from clk.types import Date
 
 LOGGER = get_logger(__name__)
 
@@ -157,6 +158,7 @@ class ExternalCommandResolver(CommandResolver):
             'int': int,
             'float': float,
             'str': str,
+            'date': Date(),
         }
 
         def get_type(t):
