@@ -11,6 +11,7 @@ from clk.core import ColorType as Color  # NOQA: just expose the object
 from clk.core import DynamicChoiceType as DynamicChoice  # NOQA: just expose the object
 from clk.core import ExtensionType as Extension  # NOQA: just expose the object
 from clk.core import ExtensionTypeSuggestion as ExtensionSuggestion  # NOQA: just expose the object
+from clk.core import cache_disk
 from clk.launcher import LauncherCommandType as LauncherCommand  # NOQA: just expose the object
 from clk.launcher import LauncherType as launcher  # NOQA: just expose the object
 from clk.lib import ParameterType as Parameter  # NOQA: just expose the object
@@ -98,3 +99,18 @@ class DirectoryProfile(Profile):
             for name, profile in super().profiles.items()
             if isinstance(profile, DirectoryProfile) and (not self.root_only or profile.isroot)
         }
+
+
+class ExecutableType(Parameter):
+
+    def complete(self, ctx, incomplete):
+        completion = set()
+        for path in self.path(ctx):
+            for file in os.listdir(path):
+                if startswith(file, incomplete):
+                    completion.add(file)
+        return completion
+
+    @cache_disk(expire=600)
+    def path(self, ctx):
+        return [path for path in os.environ['PATH'].split(os.pathsep) if os.path.exists(path)]

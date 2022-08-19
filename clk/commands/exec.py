@@ -9,21 +9,7 @@ from clk.core import cache_disk
 from clk.decorators import argument, command, flag, option
 from clk.launcher import launcher
 from clk.lib import ParameterType, call, double_quote, updated_env
-
-
-class ExecutableType(ParameterType):
-
-    def complete(self, ctx, incomplete):
-        completion = set()
-        for path in self.path(ctx):
-            for file in os.listdir(path):
-                if startswith(file, incomplete):
-                    completion.add(file)
-        return completion
-
-    @cache_disk(expire=600)
-    def path(self, ctx):
-        return [path for path in os.environ['PATH'].split(os.pathsep) if os.path.exists(path)]
+from clk.types import ExecutableType
 
 
 @command(ignore_unknown_options=True, handle_dry_run=True)
