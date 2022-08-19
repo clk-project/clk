@@ -12,6 +12,21 @@ clk_value ( ) {
     echo "$(eval "echo \"${variable_call}\"")"
 }
 
+clk_extension ( ) {
+    local value="$1"
+    echo "${value}"|sed -r 's|^(.+)\.([^.]+)$|\2|'
+}
+
+clk_without_extension ( ) {
+    local value="$1"
+    echo "${value}"|sed -r 's|^(.+)\.([^.]+)$|\1|'
+}
+
+clk_is_null ( ) {
+    local name="$1"
+    test "$(clk_value "${name}")" == ""
+}
+
 clk_is_true ( ) {
     local name="$1"
     test "$(clk_value "${name}")" = "True"
