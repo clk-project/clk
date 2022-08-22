@@ -1,14 +1,10 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import os
-
-from clk.completion import startswith
 from clk.config import config
-from clk.core import cache_disk
 from clk.decorators import argument, command, flag, option
 from clk.launcher import launcher
-from clk.lib import ParameterType, call, double_quote, updated_env
+from clk.lib import call, double_quote, updated_env
 from clk.types import ExecutableType
 
 
