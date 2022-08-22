@@ -62,7 +62,7 @@ class CustomCommandResolver(CommandResolver):
 
     def _get_command(self, path, parent=None):
         module = self.source.load_plugin(path)
-        function_name = path.replace("-", "_")
+        function_name = path.replace('-', '_')
         if function_name not in dir(module):
             raise BadCustomCommandError(
                 f'The file {module.__file__} must contain a command or a group named {function_name}')

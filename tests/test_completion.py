@@ -105,12 +105,12 @@ def c():
 
 
 def test_exec(rootdir, lib):
-    somebindir = Path(rootdir) / "somebindir"
+    somebindir = Path(rootdir) / 'somebindir'
     os.makedirs(somebindir)
-    somebinary = somebindir / "somebinary"
-    somebinary.write_text("""#!/bin/bash"
+    somebinary = somebindir / 'somebinary'
+    somebinary.write_text('''#!/bin/bash'
 echo OK
-""")
+''')
     somebinary.chmod(0o755)
-    os.environ["PATH"] = os.environ["PATH"] + os.pathsep + str(somebindir)
+    os.environ['PATH'] = os.environ['PATH'] + os.pathsep + str(somebindir)
     assert lib.cmd('completion try --last exec somebin') == 'somebinary'
