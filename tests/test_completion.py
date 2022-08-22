@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-
+import os
 from pathlib import Path
 
 
@@ -102,3 +102,15 @@ def c():
     assert lib.cmd('completion try a b --bar') == 'c\td'
     assert lib.cmd('completion try --last a b --foo a --b') == '--bar'
     assert lib.cmd('completion try a b --foo a --bar') == 'c\td'
+
+
+def test_exec(rootdir, lib):
+    somebindir = Path(rootdir) / "somebindir"
+    os.makedirs(somebindir)
+    somebinary = somebindir / "somebinary"
+    somebinary.write_text("""#!/bin/bash"
+echo OK
+""")
+    somebinary.chmod(0o755)
+    os.environ["PATH"] = os.environ["PATH"] + os.pathsep + str(somebindir)
+    assert lib.cmd('completion try --last exec somebin') == 'somebinary'

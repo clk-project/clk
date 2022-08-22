@@ -1,11 +1,13 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
+import os
 from datetime import datetime
 from itertools import product
 
 import click
 
+from clk.completion import startswith
 from clk.config import config
 from clk.core import ColorType as Color  # NOQA: just expose the object
 from clk.core import DynamicChoiceType as DynamicChoice  # NOQA: just expose the object
