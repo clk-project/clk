@@ -159,6 +159,7 @@ class ExternalCommandResolver(CommandResolver):
             'float': float,
             'str': str,
             'date': Date(),
+            'file': lambda s: Path(s).absolute(),
         }
 
         def get_type(t):

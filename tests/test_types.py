@@ -3,6 +3,8 @@
 
 from pathlib import Path
 
+from clk.lib import cd
+
 
 def test_default_with_converter(lib):
     lib.cmd('command create python a --no-open --group')
@@ -76,7 +78,7 @@ def b(someday):
     assert lib.cmd('completion try --last a b --someday two\ days\ a') == 'two\\ days\\ ago'  # noqa: W605
 
 
-def test_date_in_command(lib):
+def test_custom_types_in_command(lib):
     lib.create_bash_command(
         'a', """#!/bin/bash -eu
 
@@ -86,17 +88,31 @@ clk_usage () {
     cat<<EOF
 $0
 
-Test date
+Test custom types
 --
 O:--someday:date:Some date
+O:--somefile:file:Some file
 EOF
 }
 
 clk_help_handler "$@"
 
-echo ${CLK___SOMEDAY}
+if ! clk_is_null someday
+then
+   echo ${CLK___SOMEDAY}
+fi
+if ! clk_is_null somefile
+then
+   echo ${CLK___SOMEFILE}
+fi
+
 """)
     assert lib.cmd('completion try --last a --someday next\ da') == 'next\\ day'  # noqa: W605
     assert lib.cmd('completion try --last a --someday last\ sun') == 'last\\ sunday'  # noqa: W605
     assert lib.cmd('completion try --last a --someday in\ two\ mont') == 'in\\ two\\ months'  # noqa: W605
     assert lib.cmd('completion try --last a --someday two\ days\ a') == 'two\\ days\\ ago'  # noqa: W605
+    assert lib.cmd("a --someday '2022/08/30'") == "2022-08-30T00:00:00"
+    # only deals with dates, not time
+    assert lib.cmd("a --someday '2022/08/30 18:12'") == "2022-08-30T00:00:00"
+    with cd("/tmp"):
+        assert lib.cmd("a --somefile .") == "/tmp"
