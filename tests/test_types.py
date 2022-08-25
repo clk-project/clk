@@ -111,8 +111,8 @@ fi
     assert lib.cmd('completion try --last a --someday last\ sun') == 'last\\ sunday'  # noqa: W605
     assert lib.cmd('completion try --last a --someday in\ two\ mont') == 'in\\ two\\ months'  # noqa: W605
     assert lib.cmd('completion try --last a --someday two\ days\ a') == 'two\\ days\\ ago'  # noqa: W605
-    assert lib.cmd("a --someday '2022/08/30'") == "2022-08-30T00:00:00"
+    assert lib.cmd('a --someday "2022/08/30"') == '2022-08-30T00:00:00'
     # only deals with dates, not time
-    assert lib.cmd("a --someday '2022/08/30 18:12'") == "2022-08-30T00:00:00"
-    with cd("/tmp"):
-        assert lib.cmd("a --somefile .") == "/tmp"
+    assert lib.cmd('a --someday "2022/08/30 18:12"') == '2022-08-30T00:00:00'
+    with cd('/tmp'):
+        assert lib.cmd('a --somefile .') == '/tmp'
