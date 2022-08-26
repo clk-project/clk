@@ -209,12 +209,21 @@ pre-commit-cache:
     RUN pre-commit run -a
     SAVE ARTIFACT ${HOME}/.cache/pre-commit cache
 
-check-quality:
+
+quality-base:
     FROM +pre-commit-base
     COPY --dir .pre-commit-config.yaml .
     COPY +pre-commit-cache/cache $HOME/.cache/pre-commit
     COPY --dir +git-files/app/* +sources/app/* +side-files/app/* +test-files/app/* .
+
+check-quality:
+    FROM +quality-base
     RUN pre-commit run -a
+
+fix-quality:
+    FROM +quality-base
+    RUN pre-commit run -a || echo OK
+    SAVE ARTIFACT . AS LOCAL fixed
 
 test-install-ubuntu:
     FROM ubuntu
