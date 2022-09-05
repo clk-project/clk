@@ -34,7 +34,7 @@ decorator==5.1.1
     # via
     #   ipdb
     #   ipython
-executing==0.10.0
+executing==1.0.0
     # via stack-data
 glob2==0.7
     # via clk (setup.py)
@@ -54,7 +54,7 @@ markupsafe==2.1.1
     # via jinja2
 matplotlib-inline==0.1.6
     # via ipython
-networkx==2.8.5
+networkx==2.8.6
     # via clk (setup.py)
 parsedatetime==2.6
     # via clk (setup.py)
@@ -90,7 +90,7 @@ six==1.16.0
     # via
     #   click-completion
     #   python-dateutil
-stack-data==0.4.0
+stack-data==0.5.0
     # via ipython
 tabulate==0.8.10
     # via clk (setup.py)
@@ -102,7 +102,7 @@ traitlets==5.3.0
     # via
     #   ipython
     #   matplotlib-inline
-urllib3==1.26.11
+urllib3==1.26.12
     # via requests
 wcwidth==0.2.5
     # via prompt-toolkit
