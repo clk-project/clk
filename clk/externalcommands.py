@@ -156,8 +156,10 @@ class ExternalCommandResolver(CommandResolver):
 
         types = {
             'int': int,
+            'integer': int,
             'float': float,
             'str': str,
+            'string': str,
             'date': Date(),
             'file': lambda s: Path(s).absolute(),
         }
