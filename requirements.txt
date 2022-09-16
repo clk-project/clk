@@ -12,7 +12,7 @@ backcall==0.2.0
     # via ipython
 cached-property==1.5.2
     # via clk (setup.py)
-certifi==2022.6.15
+certifi==2022.6.15.1
     # via requests
 charset-normalizer==2.1.1
     # via requests
@@ -44,7 +44,7 @@ idna==3.3
     # via requests
 ipdb==0.13.9
     # via clk (setup.py)
-ipython==8.4.0
+ipython==8.5.0
     # via ipdb
 jedi==0.18.1
     # via ipython
@@ -66,7 +66,7 @@ pickleshare==0.7.5
     # via ipython
 pluginbase==1.0.1
     # via clk (setup.py)
-prompt-toolkit==3.0.30
+prompt-toolkit==3.0.31
     # via ipython
 ptyprocess==0.7.0
     # via pexpect
@@ -96,9 +96,9 @@ tabulate==0.8.10
     # via clk (setup.py)
 toml==0.10.2
     # via ipdb
-tqdm==4.64.0
+tqdm==4.64.1
     # via clk (setup.py)
-traitlets==5.3.0
+traitlets==5.4.0
     # via
     #   ipython
     #   matplotlib-inline
