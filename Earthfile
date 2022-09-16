@@ -1,3 +1,4 @@
+VERSION 0.6
 IMPORT github.com/Konubinix/Earthfile AS e
 
 AS_USER:
