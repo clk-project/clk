@@ -1,5 +1,17 @@
 #!/bin/bash -eu
 
+clk_confirm () {
+    local prompt="$1"
+    local res
+    read -p "${prompt} " res
+    if echo "${res}" | grep -iq '^\(y\|yes\)$'
+    then
+        return 0
+    else
+        return 1
+    fi
+}
+
 clk_name_to_env () {
     local name="$1"
     echo "CLK___$(echo "${name}"|sed 's/-/_/g'|tr '[:lower:]' '[:upper:]')"
