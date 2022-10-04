@@ -11,6 +11,56 @@ create_a_command = 'command create bash a --no-open'
 create_b_command = 'command create bash b --no-open'
 
 
+def test_capture_flow_option(lib):
+    lib.create_bash_command(
+        'a', """#!/bin/bash -eu
+
+source "_clk.sh"
+
+clk_usage () {
+    cat<<EOF
+$0
+
+Some command to say something
+--
+F:--shouting:Shout the message
+O:--message:str:Message to say:something
+EOF
+}
+
+clk_help_handler "$@"
+
+echo "$(clk_value message)"|{
+if clk_is_true shouting
+then
+    tr '[:lower:]' '[:upper:]'
+else
+    cat
+fi
+}
+""")
+    lib.create_bash_command(
+        'b', """#!/bin/bash -eu
+
+source "_clk.sh"
+
+clk_usage () {
+    cat<<EOF
+$0
+
+Some command to say say nothing
+--
+flowdeps: a
+flowoptions: a:--shouting
+EOF
+}
+
+clk_help_handler "$@"
+
+""")
+    lib.cmd('b --shouting --flow') == 'SOMETHING'
+
+
 def test_capture_alias(lib):
     lib.cmd('alias set a echo a')
     # cannot replace and copy from an alias at the same time

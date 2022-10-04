@@ -67,6 +67,7 @@ class ExternalCommandResolver(CommandResolver):
         flags = []
         remaining_args = False
         ignore_unknown_options = False
+        cmd_flowoptions = []
         try:
             env = {}
             env['PATH'] = str(Path(__file__).parent / 'commands/command') + ':' + os.environ['PATH']
@@ -120,6 +121,10 @@ class ExternalCommandResolver(CommandResolver):
                         meta = m.group('meta')
                         if 'I' in meta:
                             ignore_unknown_options = True
+                    m = re.match('^flowoptions: *(?P<target>[^:]+):(?P<options>.+)$', line)
+                    if m is not None:
+                        target = m.group('target')
+                        cmd_flowoptions.append((target, m.group('options').replace(' ', '').split(',')))
                 cmdflowdepends = re.search('\nflowdep(end)?s: *(.+)\n', out)
                 if cmdflowdepends:
                     cmdflowdepends = cmdflowdepends.group(2).replace(' ', '').split(',')
@@ -205,13 +210,19 @@ class ExternalCommandResolver(CommandResolver):
                 help=f['help'],
                 default=f['default'] == 'True',
             )(external_command)
-
-        external_command = command(name=name,
-                                   ignore_unknown_options=ignore_unknown_options,
-                                   help=cmdhelp,
-                                   short_help=cmdhelp.splitlines()[0] if cmdhelp else '',
-                                   handle_dry_run=True,
-                                   flowdepends=cmdflowdepends)(external_command)
+        if cmd_flowoptions:
+            from clk.overloads import flow_options, get_command2
+            for target, options in cmd_flowoptions:
+                target_command = get_command2(target)[0]
+                external_command = flow_options(options=options, target_command=target_command)(external_command)
+        external_command = command(
+            name=name,
+            ignore_unknown_options=ignore_unknown_options,
+            help=cmdhelp,
+            short_help=cmdhelp.splitlines()[0] if cmdhelp else '',
+            handle_dry_run=True,
+            flowdepends=cmdflowdepends,
+        )(external_command)
         external_command.params.append(
             AutomaticOption(['--edit-command'],
                             help='Edit the external command',
