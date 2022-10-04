@@ -120,9 +120,9 @@ class ExternalCommandResolver(CommandResolver):
                         meta = m.group('meta')
                         if 'I' in meta:
                             ignore_unknown_options = True
-                cmdflowdepends = re.search('flowdepends: (.+)', out)
+                cmdflowdepends = re.search('\nflowdep(end)?s: *(.+)\n', out)
                 if cmdflowdepends:
-                    cmdflowdepends = cmdflowdepends.group(1).split(', ')
+                    cmdflowdepends = cmdflowdepends.group(2).replace(' ', '').split(',')
                 else:
                     cmdflowdepends = []
             else:
