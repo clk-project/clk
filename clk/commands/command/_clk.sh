@@ -14,7 +14,7 @@ clk_confirm () {
 
 clk_name_to_env () {
     local name="$1"
-    echo "CLK___$(echo "${name}"|sed 's/-/_/g'|tr '[:lower:]' '[:upper:]')"
+    echo "CLK___$(echo "${name}"|sed -r 's/^-+//g'|sed 's/-/_/g'|tr '[:lower:]' '[:upper:]')"
 }
 
 clk_value ( ) {
