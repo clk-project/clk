@@ -96,6 +96,8 @@ clk do-something  # will behave exactly like "clk do-something --in-some-way"
 clk do-some-other-thing  # will behave exactly like "clk do-something --in-some-way --with-some-specifics"
 ```
 
+See the WIP documentation of the lib [here](./doc/lib.html).
+
 # Installation
 
 You need to have python3. On debian based system, due to a [bug in the packaging

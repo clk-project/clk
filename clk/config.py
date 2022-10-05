@@ -631,8 +631,9 @@ class Config(object):
         self._dry_run = value
         for profile in self.all_profiles:
             profile.dry_run = value
-        from clk import lib
+        from clk import lib, liblp
         lib.dry_run = value
+        liblp.dry_run = value
 
     def get_value(self, path, default=None):
         return self.get_settings('value').get(path, {'value': default})['value']

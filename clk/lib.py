@@ -34,6 +34,7 @@ from click._termui_impl import ProgressBar as ProgressBar_
 from click_completion import DocumentedChoice
 
 from clk.click_helpers import click_get_current_context_safe
+from clk.liblp import rm
 from clk.log import get_logger
 
 LOGGER = get_logger(__name__)
@@ -147,17 +148,6 @@ def link(src, dst):
     if dry_run:
         return
     os.link(src, dst)
-
-
-def rm(*file_or_tree):
-    LOGGER.action('remove {}'.format(' '.join(map(str, file_or_tree))))
-    if dry_run:
-        return
-    for f in file_or_tree:
-        if os.path.isdir(f) and not os.path.islink(f):
-            shutil.rmtree(f)
-        else:
-            os.unlink(f)
 
 
 # expose find_executable as which
