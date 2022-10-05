@@ -16,6 +16,7 @@
 
   import os
   import shutil
+
   from clk.log import get_logger
 
   LOGGER = get_logger(__name__)
@@ -26,7 +27,7 @@
 
   This function can be use as a substitute of shutil.rmtree, that deals with the
   dry-run mode and symbolic links.
-  
+
   #+NAME: rm
   #+BEGIN_SRC python :results none :exports code
     def rm(*file_or_tree):
