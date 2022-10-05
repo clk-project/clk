@@ -38,7 +38,7 @@ DEPENDENCIES:
 
 side-files:
     FROM scratch
-    COPY --dir .flake8 .pre-commit-config.yaml .isort.cfg .style.yapf LICENSE pycln.toml tox.ini sonar-project.properties /app
+    COPY --dir .flake8 .pre-commit-config.yaml .isort.cfg .style.yapf LICENSE pycln.toml sonar-project.properties /app
     SAVE ARTIFACT /app /app
 
 test-files:
