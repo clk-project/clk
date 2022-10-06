@@ -54,7 +54,7 @@ def get_choices(ctx, args_, incomplete):
 def set(cmd, params):
     """Set the parameters of a command"""
     old = config.parameters.writable.get(cmd)
-    config.parameters.writable[cmd] = params
+    config.parameters.writable[cmd] = list(params)
     if old is not None:
         LOGGER.info('Removing {} parameters of {}: {}'.format(
             Colorer.apply_color_profilename(config.parameters.writeprofilename),
