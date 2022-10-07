@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# -*- coding:utf-8 -*-
+# -*- coding: utf-8 -*-
 
 
 def test_can_edit_parameters(lib, pythondir):
@@ -12,4 +12,4 @@ def a():
     run(["parameter", "set", "echo", "--style", "fg-yellow"])
     run(["parameter", "show", "echo"])
 """)
-    "--style fg-yellow" in lib.cmd('a')
+    '--style fg-yellow' in lib.cmd('a')
