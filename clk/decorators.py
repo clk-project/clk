@@ -98,10 +98,7 @@ def use_settings(settings_name, settings_cls, override=True, default_profile='co
                 extension = None
             if profile_name == 'context':
                 compute_settings(False)
-                s1, s2 = merge_settings(config.iter_settings(
-                    recurse=True,
-                    only_this_extension=extension,
-                ))
+                s1, s2 = merge_settings(config.iter_settings(only_this_extension=extension, ))
                 profile = config.local_profile or config.global_profile
                 if extension:
                     profile = profile.get_extension(extension)
@@ -116,12 +113,10 @@ def use_settings(settings_name, settings_cls, override=True, default_profile='co
                 profile = profile.get_extension(extension) if extension else profile
                 settings_store.readprofile = profile_name
                 settings_store.all_settings[profile_name] = profile.get_settings(settings_name)
-                s1, s2 = merge_settings(
-                    config.load_settings_from_profile(
-                        profile,
-                        recurse=True,
-                        only_this_extension=extension,
-                    ))
+                s1, s2 = merge_settings(config.load_settings_from_profile(
+                    profile,
+                    only_this_extension=extension,
+                ))
                 for extension in config.filter_enabled_profiles(profile.extensions):
                     settings_store.all_settings[extension.name] = extension.get_settings(settings_name)
 

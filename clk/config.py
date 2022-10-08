@@ -303,21 +303,21 @@ class Config(object):
             self.settings2[section] = {}
         return self.settings2[section]
 
-    def iter_settings(self, explicit_only=False, recurse=True, only_this_extension=None):
+    def iter_settings(self, explicit_only=False, only_this_extension=None):
         explicit_only = explicit_only or only_this_extension
         for profile in self.all_enabled_profiles:
             if not explicit_only or profile.explicit:
-                yield from self.load_settings_from_profile(profile, recurse, only_this_extension=only_this_extension)
+                yield from self.load_settings_from_profile(profile, only_this_extension=only_this_extension)
 
     def merge_settings(self):
         for profile in self.all_enabled_profiles:
             profile.compute_settings()
         migrate_profiles()
         # first step to get the initial settings
-        self.settings, self.settings2 = merge_settings(self.iter_settings(recurse=False))
+        self.settings, self.settings2 = merge_settings(self.iter_settings())
         # second step now that the we have enough settings to decide which
         # extensions to enable
-        self.settings, self.settings2 = merge_settings(self.iter_settings(recurse=True))
+        self.settings, self.settings2 = merge_settings(self.iter_settings())
 
     def get_profile_that_contains(self, path):
         """Among all profiles that contain the path, return the one with the
@@ -332,14 +332,9 @@ class Config(object):
         else:
             return None
 
-    def load_settings_from_profile(self, profile, recurse, only_this_extension=None):
+    def load_settings_from_profile(self, profile, only_this_extension=None):
         if profile is not None and (not only_this_extension or profile.short_name == only_this_extension):
             yield profile.settings
-        if profile is not None and recurse:
-            for extension in self.filter_enabled_profiles(profile.extensions):
-                if not only_this_extension or only_this_extension == extension.short_name:
-                    for settings in self.load_settings_from_profile(extension, recurse):
-                        yield settings
 
     def get_profile(self, name):
         for profile in self.all_profiles:
