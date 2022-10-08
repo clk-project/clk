@@ -1,0 +1,14 @@
+{
+    "some_settings": {
+        "some-key": [
+            "some",
+            "default",
+            "value"
+        ],
+        "another-key": [
+            "some",
+            "default",
+            "value"
+        ]
+    }
+}

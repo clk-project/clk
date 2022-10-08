@@ -105,9 +105,9 @@ def lib(bindir):
     return Lib(bindir)
 
 
-for project in (Path(__file__).parent / "projects").iterdir():
+for project in (Path(__file__).parent / 'projects').iterdir():
 
-    @pytest.fixture(name="project_" + project.name)
+    @pytest.fixture(name='project_' + project.name)
     def p(rootdir):
-        copytree(project, Path(rootdir) / "clk-root")
+        copytree(project, Path(rootdir) / 'clk-root')
         yield rootdir
