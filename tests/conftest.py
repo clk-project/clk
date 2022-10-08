@@ -4,6 +4,7 @@ import os
 import tempfile
 from pathlib import Path
 from shlex import split
+from shutil import copytree
 from subprocess import STDOUT, check_call, check_output
 
 import pytest
@@ -102,3 +103,11 @@ class Lib:
 @pytest.fixture
 def lib(bindir):
     return Lib(bindir)
+
+
+for project in (Path(__file__).parent / "projects").iterdir():
+
+    @pytest.fixture(name="project_" + project.name)
+    def p(rootdir):
+        copytree(project, Path(rootdir) / "clk-root")
+        yield rootdir
