@@ -500,7 +500,6 @@ class Config(object):
             def add_profile(profile, explicit=True):
                 if profile is None:
                     return
-                res.append(profile)
                 for extension in self.sorted_extensions(profile.extensions):
                     res.append(
                         ProfileFactory.create_preset_profile(
@@ -512,6 +511,7 @@ class Config(object):
                             activation_level=ActivationLevel.global_,
                         ))
                     res.append(extension)
+                res.append(profile)
 
             add_profile(self.distribution_profile)
             add_profile(self.globalpreset_profile)

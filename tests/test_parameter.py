@@ -74,7 +74,7 @@ def test_parameter_precedence(lib, project1):
     lib.cmd(f'-P {project1} parameter set echo local')
     lib.cmd('extension create ext')
     lib.cmd('parameter set --global-ext echo ext')
-    assert lib.cmd(f'-P {project1} echo') == 'global ext local'
+    assert lib.cmd(f'-P {project1} echo') == 'ext global local'
 
 
 def test_simple_parameter(lib):

@@ -17,7 +17,7 @@ def test_normal_use_case(lib, rootdir):
     assert lib.cmd('plugin which global a') == f'loaded\n{location}'
     lib.cmd('extension create a')
     lib.cmd('''plugin create global/a a --no-open --body "print('loaded2')"''')
-    assert lib.cmd('echo foo') == 'loaded\nloaded2\nfoo'
+    assert lib.cmd('echo foo') == 'loaded2\nloaded\nfoo'
     with pytest.raises(CalledProcessError) as e:
         lib.cmd('plugin move global a global/a', stderr=PIPE)
     assert re.match(".*I won't overwrite [/0-9a-zA-Z_-]+/plugins/a.py, unless.*", e.value.stderr)
