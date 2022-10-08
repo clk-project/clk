@@ -381,6 +381,7 @@ clk_help_handler "$@"
 @option('--from-file', help='Copy this file instead of using the template')
 def python(name, open, force, description, body, with_data, from_file, group):
     """Create a bash custom command"""
+    name = name.replace('-', '_')
     script_path = Path(config.customcommands.profile.location) / 'python'
     if with_data:
         if name.endswith('.py'):

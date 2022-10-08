@@ -58,15 +58,15 @@ class CustomCommandResolver(CommandResolver):
         return self._source
 
     def _list_command_paths(self, parent=None):
-        return self.source.list_plugins()
+        return [p.replace('_', '-') for p in self.source.list_plugins()]
 
     def _get_command(self, path, parent=None):
-        module = self.source.load_plugin(path)
-        function_name = path.replace('-', '_')
-        if function_name not in dir(module):
+        plugin_name = path.replace('-', '_')
+        module = self.source.load_plugin(plugin_name)
+        if plugin_name not in dir(module):
             raise BadCustomCommandError(
-                f'The file {module.__file__} must contain a command or a group named {function_name}')
-        cmd = getattr(module, function_name)
+                f'The file {module.__file__} must contain a command or a group named {plugin_name}')
+        cmd = getattr(module, plugin_name)
         cmd.customcommand_path = module.__file__
         cmd.params.append(
             AutomaticOption(['--edit-command'],
