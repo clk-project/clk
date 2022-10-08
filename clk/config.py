@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import collections
 import json
 import os
 import shlex
@@ -83,8 +82,8 @@ def get_appdir(appname):
 
 
 def merge_settings(settings):
-    computed_settings = collections.OrderedDict()
-    computed_settings2 = collections.OrderedDict()
+    computed_settings = {}
+    computed_settings2 = {}
     for s in settings:
         for k, v in s.items():
             if k == '_self':
@@ -294,14 +293,14 @@ class Config(object):
         if self.settings is None:
             self.merge_settings()
         if section not in self.settings:
-            self.settings[section] = collections.OrderedDict()
+            self.settings[section] = {}
         return self.settings[section]
 
     def get_settings2(self, section):
         if self.settings2 is None:
             self.merge_settings()
         if section not in self.settings2:
-            self.settings2[section] = collections.OrderedDict()
+            self.settings2[section] = {}
         return self.settings2[section]
 
     def iter_settings(self, explicit_only=False, recurse=True, only_this_extension=None):

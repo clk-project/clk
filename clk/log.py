@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import collections
 import logging
 import re
 
@@ -132,7 +131,6 @@ INFO = logging.INFO
 WARN = logging.WARN
 WARNING = logging.WARNING
 ERROR = logging.ERROR
-LOG_LEVELS = collections.OrderedDict([('develop', DEVELOP), ('debug', logging.DEBUG), ('action', ACTION),
-                                      ('status', STATUS), ('deprecated', DEPRECATED), ('info', logging.INFO),
-                                      ('warning', logging.WARNING), ('error', logging.ERROR),
-                                      ('critical', logging.CRITICAL)])
+LOG_LEVELS = dict([('develop', DEVELOP), ('debug', logging.DEBUG), ('action', ACTION), ('status', STATUS),
+                   ('deprecated', DEPRECATED), ('info', logging.INFO), ('warning', logging.WARNING),
+                   ('error', logging.ERROR), ('critical', logging.CRITICAL)])

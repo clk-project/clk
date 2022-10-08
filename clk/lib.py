@@ -1440,12 +1440,11 @@ def tabulate(tabular_data,
         f.seek(0)
         return f.read().rstrip('\n')
     elif tablefmt == 'json':
-        import collections
         json_data = []
         if not headers and tabular_data:
             headers = ['key%s' % i for i in range(len(tabular_data[0]))]
         for ls in tabular_data:
-            d = collections.OrderedDict()
+            d = {}
             for i, v in enumerate(ls):
                 if isinstance(v, str):
                     v = clear_ansi_color_codes(v)
@@ -1457,12 +1456,11 @@ def tabulate(tabular_data,
             dict(
                 (d[0], clear_ansi_color_codes(str_join(' ', d[1:])) if len(d[1:]) > 1 else d[1]) for d in tabular_data))
     elif tablefmt == 'json-maps':
-        import collections
         json_data = {}
         if not headers and tabular_data:
             headers = ['key%s' % i for i in range(len(tabular_data[0]))]
         for ls in tabular_data:
-            d = collections.OrderedDict()
+            d = {}
             for i, v in enumerate(ls[1:]):
                 v = clear_ansi_color_codes(v)
                 d[headers[i + 1]] = v

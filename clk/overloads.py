@@ -7,7 +7,7 @@ import pkgutil
 import re
 import shlex
 import traceback
-from collections import OrderedDict, defaultdict
+from collections import defaultdict
 from copy import copy, deepcopy
 
 import click
@@ -40,7 +40,7 @@ def list_commands(parent_path):
 
 
 commands_cache = {}
-get_command_handlers = OrderedDict()
+get_command_handlers = {}
 
 
 def get_command(path, with_resolver=False):

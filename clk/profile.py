@@ -90,7 +90,7 @@ def load_settings(path):
     if path is not None and os.path.exists(path):
         with open(path) as f:
             try:
-                return json.load(f, object_pairs_hook=collections.OrderedDict)
+                return json.load(f)
             except ValueError:
                 # just give up on the data in the file
                 LOGGER.warning("Can't read settings from %s" % path)
