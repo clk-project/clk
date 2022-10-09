@@ -4,7 +4,7 @@ import os
 import tempfile
 from pathlib import Path
 from shlex import split
-from shutil import copytree
+from shutil import copytree, rmtree
 from subprocess import STDOUT, check_call, check_output
 
 import pytest
@@ -99,15 +99,13 @@ class Lib:
         path.write_text(content)
         path.chmod(0o755)
 
+    def use_project(self, name):
+        rootdir = Path(os.environ['CLKCONFIGDIR'])
+        if rootdir.exists():
+            rmtree(rootdir)
+        copytree(Path(__file__).parent / 'projects' / name, rootdir)
+
 
 @pytest.fixture
 def lib(bindir):
     return Lib(bindir)
-
-
-for project in (Path(__file__).parent / 'projects').iterdir():
-
-    @pytest.fixture(name='project_' + project.name)
-    def p(rootdir):
-        copytree(project, Path(rootdir) / 'clk-root')
-        yield rootdir

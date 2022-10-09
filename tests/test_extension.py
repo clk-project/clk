@@ -7,7 +7,8 @@ from subprocess import PIPE, CalledProcessError
 import pytest
 
 
-def test_can_use_settings(project_use_settings, lib):
+def test_can_use_settings(lib):
+    lib.use_project('use_settings')
     assert lib.cmd('some-group-with-settings show some-key') == "['some', 'default', 'value']"
     lib.cmd('some-group-with-settings set')
     assert lib.cmd('some-group-with-settings show some-key') == "['some', 'list']"
