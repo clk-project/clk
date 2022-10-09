@@ -1,0 +1,60 @@
+{
+    "alias": {
+        "alice": {
+            "commands": [
+                [
+                    "people",
+                    "--person",
+                    "alice"
+                ]
+            ],
+            "documentation": null
+        },
+        "bob": {
+            "commands": [
+                [
+                    "people",
+                    "--person",
+                    "bob"
+                ]
+            ],
+            "documentation": null
+        },
+        "conclusion": {
+            "commands": [
+                [
+                    "echo",
+                    "done"
+                ]
+            ],
+            "documentation": null
+        },
+        "message1": {
+            "commands": [
+                [
+                    "alice",
+                    "say",
+                    "something"
+                ]
+            ],
+            "documentation": null
+        },
+        "message2": {
+            "commands": [
+                [
+                    "bob",
+                    "say",
+                    "something",
+                    "else"
+                ]
+            ],
+            "documentation": null
+        }
+    },
+    "flowdeps": {
+        "conclusion": [
+            "message1",
+            "message2"
+        ]
+    }
+}

@@ -3,6 +3,13 @@
 from subprocess import STDOUT
 
 
+def test_flow_in_aliases(lib):
+    lib.use_project('flow')
+    assert lib.cmd('conclusion --flow') == """alice: something
+bob: something else
+done"""
+
+
 def test_dump_flowdeps(lib, pythondir):
     # given a group of commands that allows playing with 3D printing, with a
     # flow between them and a final command flow
