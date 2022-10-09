@@ -30,7 +30,7 @@ def rootdir(request):
     os.chdir(root)
     os.environ['CLKCONFIGDIR'] = str(Path(root) / 'clk-root')
     print(root)
-    (Path(root) / '.envrc').write_text(f"export CLKCONFIGDIR={os.environ['CLKCONFIGDIR']}")
+    (Path(root) / '.envrc').write_text('export CLKCONFIGDIR="$(pwd)/clk-root"')
     Lib.run('direnv allow')
     yield root
     del os.environ['CLKCONFIGDIR']
