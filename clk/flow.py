@@ -6,7 +6,7 @@ from collections import defaultdict
 import click
 
 from clk import overloads
-from clk.config import config
+from clk.config import config, temp_config
 from clk.core import run
 from clk.lib import flat_map, ordered_unique
 from clk.log import get_logger
@@ -90,7 +90,8 @@ def get_flow_commands_to_run(cmd_path, flow_from=None, flow_after=None, flow_tru
         if cmd_path.startswith(('[')):
             return
         # force the loading of cmd_path to fill flowdeps
-        get_command(cmd_path)
+        with temp_config():
+            get_command(cmd_path)
         deps = list(reversed(flowdeps[cmd_path])) + list(deps)
         for dep in deps:
             torun.insert(0, dep)
@@ -154,7 +155,8 @@ def execute_flow_dependencies(cmd, flow_from=None, flow_after=None):
 
 
 def has_flow(cmd):
-    return get_flow_commands_to_run(cmd) != []
+    with temp_config():
+        return get_flow_commands_to_run(cmd) != []
 
 
 def build_show_flow_callback(cmd):
