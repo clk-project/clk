@@ -8,6 +8,12 @@ def test_flow_in_aliases(lib):
     assert lib.cmd('conclusion --flow') == """alice: something
 bob: something else
 done"""
+    assert lib.cmd('story') == '''done
+The End'''
+    assert lib.cmd('story --flow') == '''alice: something
+bob: something else
+done
+The End'''
 
 
 def test_dump_flowdeps(lib, pythondir):

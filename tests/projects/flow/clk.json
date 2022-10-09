@@ -49,6 +49,18 @@
                 ]
             ],
             "documentation": null
+        },
+        "story": {
+            "commands": [
+                [
+                    "conclusion"
+                ],
+                [
+                    "echo",
+                    "The End"
+                ]
+            ],
+            "documentation": null
         }
     },
     "flowdeps": {
