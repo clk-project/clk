@@ -1,6 +1,22 @@
 # -*- coding: utf-8 -*-
 
-from subprocess import STDOUT
+import re
+from subprocess import PIPE, STDOUT, CalledProcessError
+
+import pytest
+
+
+def test_flow_not_captured_if_consumed(lib):
+    lib.use_project('flow')
+    lib.cmd('whole-story') == """alice: something
+bob: something else
+alice: something
+bob: something else
+done
+The End"""
+    with pytest.raises(CalledProcessError) as e:
+        lib.cmd('whole-story --flow', stderr=PIPE)
+    assert re.match('.*no such option: --flow.*', e.value.stderr)
 
 
 def test_flow_does_not_mess_up_with_options(lib):

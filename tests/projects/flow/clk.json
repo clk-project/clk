@@ -56,8 +56,19 @@
                     "conclusion"
                 ],
                 [
-                    "echo",
-                    "The End"
+                    "theend"
+                ]
+            ],
+            "documentation": null
+        },
+        "whole-story": {
+            "commands": [
+                [
+                    "conclusion",
+                    "--flow"
+                ],
+                [
+                    "theend"
                 ]
             ],
             "documentation": null

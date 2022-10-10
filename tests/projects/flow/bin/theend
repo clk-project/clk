@@ -1,0 +1,16 @@
+#!/bin/bash -eu
+
+source "_clk.sh"
+
+clk_usage () {
+    cat<<EOF
+$0
+
+Say the conclusion
+--
+EOF
+}
+
+clk_help_handler "$@"
+
+echo "The End"
