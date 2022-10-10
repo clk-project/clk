@@ -86,7 +86,7 @@ echo a""")
     Path(path).write_text(Path(path).read_text() + """
 echo b""")
     lib.cmd('extension create ext')
-    lib.cmd('command create --global-ext bash a --no-open')
+    lib.cmd('command create --global --extension ext bash a --no-open')
     # creating onto another one
     with pytest.raises(CalledProcessError) as e:
         lib.cmd(create_a_command, stderr=PIPE)
