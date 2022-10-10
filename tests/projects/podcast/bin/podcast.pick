@@ -1,0 +1,17 @@
+#!/bin/bash -eu
+
+source "_clk.sh"
+
+clk_usage () {
+    cat<<EOF
+$0
+
+Picking some episodes
+--
+O:--wanted-duration:int:Number of episodes to take:20
+EOF
+}
+
+clk_help_handler "$@"
+
+clk echo "picking $(clk_value --wanted-duration) episodes"

@@ -3,6 +3,18 @@
 from subprocess import STDOUT
 
 
+def test_flow_does_not_mess_up_with_options(lib):
+    lib.use_project('podcast')
+    # the shuffle option is only True in the alias setting it to true
+    assert lib.cmd('podcast play --wanted-duration 100 --flow') == """shuffle: False
+shuffle: False
+shuffle: True
+picking 100 episodes
+shuffle: False
+downloading some episodes
+Playing the episodes"""
+
+
 def test_flow_in_aliases(lib):
     lib.use_project('flow')
     assert lib.cmd('conclusion --flow') == """alice: something

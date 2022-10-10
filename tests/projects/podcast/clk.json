@@ -1,0 +1,33 @@
+{
+    "alias": {
+        "podcast.download": {
+            "commands": [
+                [
+                    "echo",
+                    "downloading",
+                    "some",
+                    "episodes"
+                ]
+            ],
+            "documentation": null
+        },
+        "podcast.pick-random": {
+            "commands": [
+                [
+                    "podcast",
+                    "--shuffle",
+                    "pick"
+                ]
+            ],
+            "documentation": null
+        }
+    },
+    "flowdeps": {
+        "podcast.download": [
+            "podcast.pick-random"
+        ],
+        "podcast.play": [
+            "podcast.download"
+        ]
+    }
+}

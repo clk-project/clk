@@ -1,0 +1,19 @@
+#!/bin/bash -eu
+
+source "_clk.sh"
+
+clk_usage () {
+    cat<<EOF
+$0
+
+Description
+Converted from the alias podcast.play
+--
+flowdepends: podcast.download
+flowoptions:podcast.pick-random:--wanted-duration
+EOF
+}
+
+clk_help_handler "$@"
+
+echo "Playing the episodes"
