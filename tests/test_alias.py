@@ -2,6 +2,15 @@
 # -*- coding: utf-8 -*-
 
 
+def test_can_use_a_flow_in_an_alias(lib):
+    lib.use_project('flow')
+    lib.cmd('alias set a conclusion --flow , echo ok')
+    assert lib.cmd('a') == '''alice: something
+bob: something else
+done
+ok'''
+
+
 def test_composite_alias(lib):
     lib.cmd('alias set a echo a , echo b')
     assert lib.cmd('a') == """a
