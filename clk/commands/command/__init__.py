@@ -17,6 +17,7 @@ from clk.flow import get_flow_commands_to_run
 from clk.lib import TablePrinter, copy, createfile, makedirs, move, quote, rm
 from clk.log import get_logger
 from clk.overloads import Argument, CommandType, Group, Option, get_command
+from clk.profile import profile_name_to_commandline_name
 from clk.types import DirectoryProfile as DirectoryProfileType
 
 LOGGER = get_logger(__name__)
@@ -364,7 +365,7 @@ clk_help_handler "$@"
     createfile(script_path, script_content, mode=0o755)
     if replace_alias:
         from clk.core import run
-        run(['alias', 'unset', name])
+        run(['alias', f'--{profile_name_to_commandline_name(config.customcommands.profile.name)}', 'unset', name])
     if open:
         click.edit(filename=str(script_path))
 
