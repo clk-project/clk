@@ -1,4 +1,23 @@
 {
+    "alias": {
+        "test-n-push": {
+            "commands": [
+                [
+                    "exec",
+                    "--in-project",
+                    "earthly",
+                    "+local-sanity-check"
+                ],
+                [
+                    "exec",
+                    "--in-project",
+                    "git",
+                    "push"
+                ]
+            ],
+            "documentation": null
+        }
+    },
     "flowdeps": {
         "build": [
             "clean"
