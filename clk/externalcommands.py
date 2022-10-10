@@ -11,7 +11,7 @@ from pathlib import Path
 import click
 
 from clk.commandresolver import CommandResolver
-from clk.config import config
+from clk.config import config, temp_config
 from clk.customcommands import build_update_extension_callback
 from clk.lib import call, quote, updated_env, value_to_string, which
 from clk.log import get_logger
@@ -213,7 +213,8 @@ class ExternalCommandResolver(CommandResolver):
         if cmd_flowoptions:
             from clk.overloads import flow_options, get_command2
             for target, options in cmd_flowoptions:
-                target_command = get_command2(target)[0]
+                with temp_config():
+                    target_command = get_command2(target)[0]
                 external_command = flow_options(options=options, target_command=target_command)(external_command)
         external_command = command(
             name=name,
