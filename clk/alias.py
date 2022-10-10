@@ -105,7 +105,10 @@ class AliasCommandResolver(CommandResolver):
             # not to impact how the alias will behave in completion, parameters
             # etc.
             cmdctx = get_ctx(cmd, resilient_parsing=True, side_effects=False)
-            deps += flowdeps[cmdctx.command.path]
+            # I capture the flow only if it has not already been consumed by the
+            # command itself
+            if not any(cmdctx.params.get(o) for o in ('flow', 'flow_after', 'flow_from')):
+                deps += flowdeps[cmdctx.command.path]
 
         # also get the context of the last command to capture its flow. In that
         # case, I wan't to allow side effects because I want this command to
