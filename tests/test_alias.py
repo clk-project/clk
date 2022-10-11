@@ -3,7 +3,7 @@
 
 
 def test_can_use_a_flow_in_an_alias(lib):
-    lib.use_project('flow')
+    lib.use_config('flow')
     lib.cmd('alias set a conclusion --flow , echo ok')
     assert lib.cmd('a') == '''alice: something
 bob: something else

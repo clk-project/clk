@@ -7,7 +7,7 @@ import pytest
 
 
 def test_flow_not_captured_if_consumed(lib):
-    lib.use_project('flow')
+    lib.use_config('flow')
     lib.cmd('whole-story') == """alice: something
 bob: something else
 alice: something
@@ -20,7 +20,7 @@ The End"""
 
 
 def test_flow_does_not_mess_up_with_options(lib):
-    lib.use_project('podcast')
+    lib.use_config('podcast')
     # the shuffle option is only True in the alias setting it to true
     assert lib.cmd('podcast play --wanted-duration 100 --flow') == """shuffle: False
 shuffle: False
@@ -32,7 +32,7 @@ Playing the episodes"""
 
 
 def test_flow_in_aliases(lib):
-    lib.use_project('flow')
+    lib.use_config('flow')
     assert lib.cmd('conclusion --flow') == """alice: something
 bob: something else
 done"""

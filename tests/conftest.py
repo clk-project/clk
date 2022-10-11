@@ -99,7 +99,7 @@ class Lib:
         path.write_text(content)
         path.chmod(0o755)
 
-    def use_project(self, name):
+    def use_config(self, name):
         rootdir = Path(os.environ['CLKCONFIGDIR'])
         if rootdir.exists():
             rmtree(rootdir)
