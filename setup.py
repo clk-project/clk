@@ -36,7 +36,7 @@ setup(
         'glob2',
         'colorama',
         'python-dateutil',
-        'tabulate',
+        'tabulate==0.8.10',
         'networkx',
         'parsedatetime',
         'pydotplus',
