@@ -667,7 +667,7 @@ class ConfigProxy(object):
         return dir(configs[-1])
 
 
-config = ConfigProxy()
+config: Config = ConfigProxy()
 
 
 @contextmanager
