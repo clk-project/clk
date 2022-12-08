@@ -103,7 +103,14 @@ class Lib:
         rootdir = Path(os.environ['CLKCONFIGDIR'])
         if rootdir.exists():
             rmtree(rootdir)
-        copytree(Path(__file__).parent / 'projects' / name, rootdir)
+        copytree(Path(__file__).parent / 'profiles' / name, rootdir)
+
+    def use_project(self, name):
+        rootdir = Path(os.environ['CLKCONFIGDIR'])
+        project_dir = rootdir.parent / '.clk'
+        if project_dir.exists():
+            rmtree(project_dir)
+        copytree(Path(__file__).parent / 'profiles' / name, project_dir)
 
 
 @pytest.fixture
