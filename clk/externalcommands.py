@@ -68,12 +68,23 @@ class ExternalCommandResolver(CommandResolver):
         remaining_args = False
         ignore_unknown_options = False
         cmd_flowoptions = []
-        try:
-            env = {}
+
+        def compute_env(kwargs={}):
+            env = {('CLK___' + key).upper(): (value_to_string(value)) for key, value in kwargs.items()}
+            try:
+                ctx = click.get_current_context()
+                if 'args' in ctx.params:
+                    env[('CLK___ARGS').upper()] = ' '.join(map(quote, ctx.params['args']))
+            except RuntimeError:
+                pass
+
+            env.update(config.external_commands_environ_variables)
             env['PATH'] = str(Path(__file__).parent / 'commands/command') + ':' + os.environ['PATH']
-            if config.project:
-                env['CLK__PROJECT'] = config.project
-            with updated_env(**env):
+            return env
+
+        try:
+
+            with updated_env(**compute_env()):
                 process = subprocess.Popen([command_path, '--help'], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
                 out, err = process.communicate()
             if process.returncode == 0:
@@ -147,13 +158,7 @@ class ExternalCommandResolver(CommandResolver):
             config.merge_settings()
             args = ([command_path] + list(ctx.params.get('args', [])))
 
-            env = {('CLK___' + key).upper(): (value_to_string(value)) for key, value in kwargs.items()}
-            if 'args' in ctx.params:
-                env[('CLK___ARGS').upper()] = ' '.join(map(quote, ctx.params['args']))
-
-            env.update(config.external_commands_environ_variables)
-            env['PATH'] = str(Path(__file__).parent / 'commands/command') + ':' + os.environ['PATH']
-            with updated_env(**env):
+            with updated_env(**compute_env(kwargs)):
                 call(
                     args,
                     internal=True,
@@ -166,7 +171,7 @@ class ExternalCommandResolver(CommandResolver):
             'str': str,
             'string': str,
             'date': Date(),
-            'file': lambda s: Path(s).absolute(),
+            'file': lambda s: Path(s).expanduser().absolute(),
         }
 
         def get_type(t):
@@ -189,11 +194,12 @@ class ExternalCommandResolver(CommandResolver):
         for o in options:
             if 'type' in o:
                 t = get_type(o['type'])
+            t = t or str
             external_command = option(
                 *(o['name'].split(',')),
                 help=o['help'],
-                type=t or str,
-                default=o.get('default'),
+                type=t,
+                default=t(o.get('default')) if o.get('default') is not None else None,
             )(external_command)
         for a in reversed(arguments):
             if 'type' in a:

@@ -191,7 +191,10 @@ class Config(object):
 
     @property
     def context_parameters_as_environ_variables(self):
-        ctx = click.get_current_context()
+        try:
+            ctx = click.get_current_context()
+        except RuntimeError:
+            return {}
         env = {}
 
         while ctx:
