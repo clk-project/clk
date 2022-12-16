@@ -42,7 +42,7 @@ humanize==4
     # via clk (setup.py)
 idna==3.4
     # via requests
-ipdb==0.13.9
+ipdb==0.13.11
     # via clk (setup.py)
 ipython==8.7.0
     # via ipdb
@@ -94,11 +94,11 @@ stack-data==0.6.2
     # via ipython
 tabulate==0.8.10
     # via clk (setup.py)
-toml==0.10.2
+tomli==2.0.1
     # via ipdb
 tqdm==4.64.1
     # via clk (setup.py)
-traitlets==5.6.0
+traitlets==5.7.1
     # via
     #   ipython
     #   matplotlib-inline
@@ -106,6 +106,3 @@ urllib3==1.26.13
     # via requests
 wcwidth==0.2.5
     # via prompt-toolkit
-
-# The following packages are considered to be unsafe in a requirements file:
-# setuptools
