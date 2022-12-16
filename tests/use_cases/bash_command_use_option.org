@@ -1,0 +1,113 @@
+:PROPERTIES:
+:ID:       100aa89b-f320-46ee-9d5d-2193ef48d4eb
+:END:
+#+TITLE: Showing how to extend a bash command with options
+#+language: en
+#+EXPORT_FILE_NAME: ../../doc/use_cases/bash_command_use_option.md
+
+#+BEGIN_SRC elisp :exports none :results none
+  (org-md-export-to-markdown)
+#+END_SRC
+
+
+#+name: init
+#+BEGIN_SRC shell :results none :exports code :session 100aa89b-f320-46ee-9d5d-2193ef48d4eb
+. ./sandboxing.sh
+#+END_SRC
+
+An option is an optional parameter that is given a value. A flag is an optional
+parameter that is a boolean. An argument is a positional parameter that you must
+give.
+
+#+name: def
+#+BEGIN_SRC shell :results none :exports code 
+A:kind-of-animal:str:A name of animal
+O:--sound-of-animal:str:The sound the animal makes
+F:--shout:Print the message of the animal in capital case
+#+END_SRC
+
+#+name: use
+#+BEGIN_SRC shell :results none :exports code 
+  if clk_given sound-of-animal
+  then
+      msg="$(clk_value kind-of-animal) does $(clk_value sound-of-animal)"
+  else
+      msg="I don't know what sound ${CLK___KIND_OF_ANIMAL} makes"
+  fi
+
+  if clk_true shout
+  then
+      echo "${msg}"|tr '[:lower:]' '[:upper:]'
+  else
+      echo "${msg}"
+  fi
+#+END_SRC
+
+#+name: create
+#+BEGIN_SRC shell :results none :session 100aa89b-f320-46ee-9d5d-2193ef48d4eb :noweb yes
+clk command create bash animal --no-open
+cat <<"EOH" > "$(clk command which animal)"
+#!/bin/bash -eu
+
+source "_clk.sh"
+
+clk_usage () {
+    cat<<EOF
+$0
+
+This command shows something
+--
+<<def>>
+EOF
+}
+
+clk_help_handler "$@"
+
+<<use>>
+
+EOH
+#+END_SRC
+
+We can see the help of those parameters in the help of the command.
+
+#+name: see
+#+BEGIN_SRC shell :results verbatim :exports both :session 100aa89b-f320-46ee-9d5d-2193ef48d4eb
+clk animal --help | grep -- 'KIND_OF_ANIMAL'
+clk animal --help | grep -- '--sound-of-animal'
+clk animal --help | grep -- '--shout'
+#+END_SRC
+
+#+RESULTS: see
+: Usage: clk animal [OPTIONS] KIND_OF_ANIMAL
+:   KIND_OF_ANIMAL  A name of animal
+: --sound-of-animal TEXT  The sound the animal makes
+: --shout                 Print the message of the animal in
+
+#+name: compulsory
+#+BEGIN_SRC shell :results verbatim :exports both :session 100aa89b-f320-46ee-9d5d-2193ef48d4eb
+clk animal 2>&1 > /dev/null | grep "Missing argument 'KIND_OF_ANIMAL'"
+#+END_SRC
+
+#+RESULTS: compulsory
+: error: Missing argument 'KIND_OF_ANIMAL'.
+
+#+name: check
+#+BEGIN_SRC shell :results none :exports both :session 100aa89b-f320-46ee-9d5d-2193ef48d4eb
+test "$(clk animal duck --sound-of-animal couac)" = "duck does couac"
+test "$(clk animal whale --shout)" = "I DON'T KNOW WHAT SOUND WHALE MAKES"
+#+END_SRC
+
+#+BEGIN_SRC shell :tangle bash_command_use_option.sh :noweb yes
+#!/bin/bash -eu
+
+set -e
+set -u
+
+<<init>>
+
+<<create>>
+
+<<see>>
+
+<<check>>
+#+END_SRC

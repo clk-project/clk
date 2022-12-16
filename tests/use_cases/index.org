@@ -1,0 +1,10 @@
+#+TITLE: Listing the use cases
+#+language: en
+#+EXPORT_FILE_NAME: ../../doc/use_cases/index.md
+
+#+BEGIN_SRC elisp :exports none :results none
+  (org-md-export-to-markdown)
+#+END_SRC
+
+- [[file:bash_command.org][show how to create some bash commands]],
+- [[file:bash_command_use_option.org][show how to extend a bash command with options]],

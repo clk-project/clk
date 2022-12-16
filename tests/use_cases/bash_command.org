@@ -1,0 +1,119 @@
+:PROPERTIES:
+:ID:       85c8e385-7f24-48ac-9a85-30cfc354aebf
+:END:
+#+TITLE: Showing how to create a bash command
+#+LANGUAGE: en
+#+EXPORT_FILE_NAME: ../../doc/use_cases/bash_command.md
+
+#+BEGIN_SRC elisp :exports none :results none
+  (org-md-export-to-markdown)
+#+END_SRC
+
+
+#+name: init
+#+BEGIN_SRC shell :results none :exports code :session 85c8e385-7f24-48ac-9a85-30cfc354aebf
+. ./sandboxing.sh
+#+END_SRC
+
+To create a bash command, you can simply call the following command.
+
+#+name: create
+#+BEGIN_SRC shell :results none :session 85c8e385-7f24-48ac-9a85-30cfc354aebf
+clk command create bash mycommand --no-open
+#+END_SRC
+
+Note that if you omit the no open, your editor will be used to first edit the
+command.
+
+#+BEGIN_SRC shell   :session 85c8e385-7f24-48ac-9a85-30cfc354aebf
+clk command which mycommand
+#+END_SRC
+
+#+RESULTS:
+: /home/sam/tmp/tmp.V6TskPmMKR-clk-test/clk-root/bin/mycommand
+
+#+name: try
+#+BEGIN_SRC shell   :session 85c8e385-7f24-48ac-9a85-30cfc354aebf
+clk mycommand
+#+END_SRC
+
+#+RESULTS:
+: [33mwarning: [0mThe command 'mycommand' has no documentation
+
+It does not do much, but it is now part of your tools
+
+#+name: see
+#+BEGIN_SRC shell :results verbatim :exports both :session 85c8e385-7f24-48ac-9a85-30cfc354aebf
+clk | grep mycommand
+#+END_SRC
+
+#+RESULTS:
+: mycommand   Description
+
+Now, let's put something into this command
+
+#+name: fill
+#+BEGIN_SRC shell :results none :exports both :session 85c8e385-7f24-48ac-9a85-30cfc354aebf
+cat <<"EOH" > "$(clk command which mycommand)"
+#!/bin/bash -eu
+
+source "_clk.sh"
+
+clk_usage () {
+    cat<<EOF
+$0
+
+This command shows something
+--
+
+EOF
+}
+
+clk_help_handler "$@"
+
+echo something
+
+EOH
+#+END_SRC
+
+#+BEGIN_SRC shell :results verbatim :exports both :session 85c8e385-7f24-48ac-9a85-30cfc354aebf
+clk mycommand --help
+#+END_SRC
+
+#+RESULTS:
+: Usage: clk mycommand [OPTIONS]
+: 
+:   This command shows something blablabla
+: 
+:   The current parameters set for this command are: --help
+: 
+: Options:
+:   --help-all  Show the full help message, automatic options included.
+:   --help      Show this message and exit.
+
+#+name: check
+#+BEGIN_SRC shell :results verbatim :exports both :session 85c8e385-7f24-48ac-9a85-30cfc354aebf
+test "$(clk mycommand)" = "something"
+#+END_SRC
+
+#+RESULTS: check
+
+#+BEGIN_SRC shell :tangle bash_command.sh :noweb yes
+#!/bin/bash -eu
+
+<<init>>
+
+<<create>>
+
+<<try>>
+
+<<see>>
+
+<<fill>>
+
+<<check>>
+#+END_SRC
+
+#+BEGIN_SRC shell :results none :exports none 
+chmod +x bash_command.sh
+#+END_SRC

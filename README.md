@@ -98,6 +98,8 @@ clk do-some-other-thing  # will behave exactly like "clk do-something --in-some-
 
 See the WIP documentation of the lib [here](./doc/lib.html).
 
+And some attempt at showing uses cases [here](./doc/use_cases).
+
 # Installation
 
 You need to have python3. On debian based system, due to a [bug in the packaging
