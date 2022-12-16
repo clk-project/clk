@@ -5,8 +5,14 @@ from pathlib import Path
 from subprocess import check_call
 
 
-def test_use_cases():
+def call_script(script):
     use_cases = Path(__file__).parent / "use_cases"
-    for script in use_cases.iterdir():
-        if str(script).endswith(".sh"):
-            check_call(["bash", "-e", "-u", str(script)], cwd=str(use_cases))
+    check_call(["bash", "-e", "-u", str(use_cases / script)], cwd=str(use_cases))
+
+
+def test_bash_command():
+    call_script("bash_command.sh")
+
+
+def test_bash_command_use_option():
+    call_script("bash_command_use_option.sh")
