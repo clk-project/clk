@@ -39,7 +39,7 @@ clk_is_null ( ) {
     test "$(clk_value "${name}")" == ""
 }
 
-clk_is_true ( ) {
+clk_true ( ) {
     local name="$1"
     test "$(clk_value "${name}")" = "True"
 }

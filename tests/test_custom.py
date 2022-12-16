@@ -31,7 +31,7 @@ EOF
 clk_help_handler "$@"
 
 echo "$(clk_value message)"|{
-if clk_is_true shouting
+if clk_true shouting
 then
     tr '[:lower:]' '[:upper:]'
 else
