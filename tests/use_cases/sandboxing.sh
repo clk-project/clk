@@ -2,7 +2,7 @@ CLK_COV="$(readlink -f "$(dirname "$BASH_SOURCE")/../clk_coverage.sh")"
 clk ( ) {
     "${CLK_COV}" "$@"
 }
-TMP="$(mktemp -d --suffix -clk-test)"
+TMP="$(mktemp -d)"
 mkdir -p "${TMP}/clk-root"
 cd "${TMP}"
 eval "$(direnv hook bash)"
