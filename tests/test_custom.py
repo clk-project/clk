@@ -58,7 +58,7 @@ EOF
 clk_help_handler "$@"
 
 """)
-    lib.cmd('b --shouting --flow') == 'SOMETHING'
+    assert lib.cmd('b --shouting --flow') == 'SOMETHING'
 
 
 def test_capture_alias(lib):
