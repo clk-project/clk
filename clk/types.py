@@ -69,7 +69,7 @@ class Date(DynamicChoice):
             from clk.lib import parsedatetime
             date = parsedatetime(value)[0]
         date = datetime(date.year, date.month, date.day)
-        LOGGER.develop(f'Got date {param.name}={date}')
+        LOGGER.develop(f'Got date {param.name if param is not None else "NA"}={date}')
         return date
 
 
