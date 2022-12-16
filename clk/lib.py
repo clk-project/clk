@@ -119,8 +119,10 @@ def createfile(name, content, append=False, internal=False, force=False, makedir
         logger('with content {}'.format(content))
     else:
         flag = 'a' if append else 'w'
+        if isinstance(content, str):
+            content = content.encode("utf-8")
         flag += 'b'
-        open(name, flag).write(content.encode('utf-8'))
+        open(name, flag).write(content)
     if mode:
         chmod(name, mode)
     return Path(name)
@@ -1467,9 +1469,21 @@ def tabulate(tabular_data,
             json_data[clear_ansi_color_codes(ls[0])] = d
         return colorize_json(json_data)
     elif tablefmt == 'plain':
-        return tabulate_(tabular_data, (), 'plain', floatfmt, numalign, stralign, missingval)
+        return tabulate_(tabular_data=tabular_data,
+                         headers=(),
+                         tablefmt='plain',
+                         floatfmt=floatfmt,
+                         numalign=numalign,
+                         stralign=stralign,
+                         missingval=missingval)
     else:
-        return tabulate_(tabular_data, headers, tablefmt, floatfmt, numalign, stralign, missingval)
+        return tabulate_(tabular_data=tabular_data,
+                         headers=headers,
+                         tablefmt=tablefmt,
+                         floatfmt=floatfmt,
+                         numalign=numalign,
+                         stralign=stralign,
+                         missingval=missingval)
 
 
 def str_join(sep, ls):
