@@ -20,14 +20,14 @@ parameter that is a boolean. An argument is a positional parameter that you must
 give.
 
 #+name: def
-#+BEGIN_SRC shell :results none :exports code 
+#+BEGIN_SRC shell :results none :exports code
 A:kind-of-animal:str:A name of animal
 O:--sound-of-animal:str:The sound the animal makes
 F:--shout:Print the message of the animal in capital case
 #+END_SRC
 
 #+name: use
-#+BEGIN_SRC shell :results none :exports code 
+#+BEGIN_SRC shell :results none :exports code
   if clk_given sound-of-animal
   then
       msg="$(clk_value kind-of-animal) does $(clk_value sound-of-animal)"

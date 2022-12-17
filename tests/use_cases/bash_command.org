@@ -82,11 +82,11 @@ clk mycommand --help
 
 #+RESULTS:
 : Usage: clk mycommand [OPTIONS]
-: 
+:
 :   This command shows something blablabla
-: 
+:
 :   The current parameters set for this command are: --help
-: 
+:
 : Options:
 :   --help-all  Show the full help message, automatic options included.
 :   --help      Show this message and exit.
@@ -114,6 +114,6 @@ test "$(clk mycommand)" = "something"
 <<check>>
 #+END_SRC
 
-#+BEGIN_SRC shell :results none :exports none 
+#+BEGIN_SRC shell :results none :exports none
 chmod +x bash_command.sh
 #+END_SRC
