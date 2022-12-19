@@ -129,7 +129,7 @@ class Colorer(object):
     @classmethod
     def apply_color_default_value(cls, string, profile):
         profiles_colors = cls.build_color_options_default_values()
-        style = ColorType.unpack_styles(profiles_colors.get(profile, "blink-True"))
+        style = ColorType.unpack_styles(profiles_colors.get(profile, 'blink-True'))
         return click.style(string, **style)
 
     @classmethod

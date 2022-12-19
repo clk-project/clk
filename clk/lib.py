@@ -120,7 +120,7 @@ def createfile(name, content, append=False, internal=False, force=False, makedir
     else:
         flag = 'a' if append else 'w'
         if isinstance(content, str):
-            content = content.encode("utf-8")
+            content = content.encode('utf-8')
         flag += 'b'
         open(name, flag).write(content)
     if mode:
