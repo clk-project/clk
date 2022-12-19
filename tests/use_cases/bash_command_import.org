@@ -71,7 +71,7 @@ EOH
 test "$(clk somecommand)" = "SOMETHING"
 #+END_SRC
 
-#+BEGIN_SRC shell :tangle bash_command_import.sh :noweb yes
+#+BEGIN_SRC shell :tangle :exports none bash_command_import.sh :noweb yes
 #!/bin/bash -eu
 
 set -e

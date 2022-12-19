@@ -57,40 +57,13 @@ Then you can simply import this code in your code, using clk\_import.
     set -e
     set -u
     
-    . ./sandboxing.sh
+    <<init>>
     
-      mkdir -p "${CLKCONFIGDIR}/bin/lib"
-      cat<<EOF > "${CLKCONFIGDIR}/bin/lib/mylib"
-    shout () {
-       tr '[:lower:]' '[:upper:]'
-    }
-    EOF
+    <<install>>
     
-    clk command create bash somecommand --no-open
-    cat <<"EOH" > "$(clk command which somecommand)"
-    #!/bin/bash -eu
+    <<create>>
     
-    source "_clk.sh"
+    <<see>>
     
-    clk_import mylib
-    
-    clk_usage () {
-        cat<<EOF
-    $0
-    
-    This command does something
-    --
-    
-    EOF
-    }
-    
-    clk_help_handler "$@"
-    
-    echo something | shout
-    
-    EOH
-    
-    
-    
-    test "$(clk somecommand)" = "SOMETHING"
+    <<check>>
 

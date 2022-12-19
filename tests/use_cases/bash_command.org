@@ -98,7 +98,7 @@ test "$(clk mycommand)" = "something"
 
 #+RESULTS: check
 
-#+BEGIN_SRC shell :tangle bash_command.sh :noweb yes
+#+BEGIN_SRC shell :exports none :tangle bash_command.sh :noweb yes
 #!/bin/bash -eu
 
 <<init>>

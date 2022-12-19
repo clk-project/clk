@@ -1,4 +1,3 @@
-#+TITLE: Some attempt at literately programming some code in clk
 
 # Table of Contents
 
@@ -31,68 +30,36 @@ Now, let's put something into this command
 
     cat <<"EOH" > "$(clk command which mycommand)"
     #!/bin/bash -eu
-
+    
     source "_clk.sh"
-
+    
     clk_usage () {
         cat<<EOF
     $0
-
+    
     This command shows something
     --
-
+    
     EOF
     }
-
+    
     clk_help_handler "$@"
-
+    
     echo something
-
+    
     EOH
 
     clk mycommand --help
 
     Usage: clk mycommand [OPTIONS]
-
+    
       This command shows something blablabla
-
+    
       The current parameters set for this command are: --help
-
+    
     Options:
       --help-all  Show the full help message, automatic options included.
       --help      Show this message and exit.
 
     test "$(clk mycommand)" = "something"
 
-    #!/bin/bash -eu
-
-    . ./sandboxing.sh
-
-    clk command create bash mycommand --no-open
-
-    clk mycommand
-
-    clk | grep mycommand
-
-    cat <<"EOH" > "$(clk command which mycommand)"
-    #!/bin/bash -eu
-
-    source "_clk.sh"
-
-    clk_usage () {
-        cat<<EOF
-    $0
-
-    This command shows something
-    --
-
-    EOF
-    }
-
-    clk_help_handler "$@"
-
-    echo something
-
-    EOH
-
-    test "$(clk mycommand)" = "something"

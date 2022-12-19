@@ -1,6 +1,6 @@
 
 #+NAME: tmpdir
-#+BEGIN_SRC shell :results none :tangle sandboxing.sh
+#+BEGIN_SRC shell :exports none :results none :tangle sandboxing.sh
   CLK_COV="$(readlink -f "$(dirname "$BASH_SOURCE")/../clk_coverage.sh")"
   clk ( ) {
       "${CLK_COV}" "$@"
