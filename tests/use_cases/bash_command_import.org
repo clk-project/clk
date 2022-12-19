@@ -21,7 +21,7 @@ You can put that code in another directory called lib sibling to the commands.
 Say you want to provide a function called shout that capitalize the input.
 
 #+name: shout
-#+BEGIN_SRC shell :results verbatim :exports code 
+#+BEGIN_SRC shell :results verbatim :exports code
 shout () {
    tr '[:lower:]' '[:upper:]'
 }
