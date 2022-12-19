@@ -16,3 +16,7 @@ def test_bash_command():
 
 def test_bash_command_use_option():
     call_script('bash_command_use_option.sh')
+
+
+def test_bash_command_import():
+    call_script('bash_command_import.sh')
