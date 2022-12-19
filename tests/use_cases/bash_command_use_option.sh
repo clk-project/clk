@@ -17,7 +17,7 @@ $0
 
 This command shows something
 --
-A:kind-of-animal:str:A name of animal
+A:kind-of-animal:$(clk_format_choice duck whale cat dog):A name of animal
 O:--sound-of-animal:str:The sound the animal makes
 F:--shout:Print the message of the animal in capital case
 EOF

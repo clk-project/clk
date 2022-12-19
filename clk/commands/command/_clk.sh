@@ -165,3 +165,14 @@ clk_err () {
         echo /dev/null
     fi
 }
+
+clk_format_choice () {
+    echo -n '['
+    echo -n "\"$1\""
+    shift
+    for arg in "$@"
+    do
+        echo -n ", \"${arg}\""
+    done
+    echo -n ']'
+}
