@@ -39,8 +39,7 @@ def display():
     display_subcommands(ctx, config.main_command)
 
 
-def display_subcommands(ctx, cmd, indent=''):
-    # type: (click.Context, Group, str) -> None
+def display_subcommands(ctx: click.Context, cmd: Group, indent: str = ''):
     for sub_cmd_name in cmd.list_commands(ctx):
         sub_cmd = cmd.get_command(ctx, sub_cmd_name)
         if sub_cmd:
