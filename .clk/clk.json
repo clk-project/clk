@@ -6,7 +6,8 @@
                     "exec",
                     "--in-project",
                     "earthly",
-                    "+local-sanity-check"
+                    "+local-sanity-check",
+                    "--use_git=true"
                 ],
                 [
                     "exec",
