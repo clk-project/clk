@@ -18,9 +18,10 @@ Often, files are available as zip of tar archives in web servers. A function
 that, given a url, would download and extract its content would be very useful.
 
 #+name:extract
-#+BEGIN_SRC python :results verbatim :exports both :session 
-from clk.lib import extract
+#+BEGIN_SRC python :results verbatim :exports both :session
 from pathlib import Path
+
+from clk.lib import extract
 
 f = Path('readme')
 
@@ -33,10 +34,11 @@ assert f.read_text() == 'hello from some zip file\n'
 If you wish to simply download the file, just call download.
 
 #+name:download
-#+BEGIN_SRC python :results verbatim :exports both :session 
-    from clk.lib import download
-    from pathlib import Path
+#+BEGIN_SRC python :results verbatim :exports both :session
     import zipfile
+    from pathlib import Path
+
+    from clk.lib import download
 
     f = Path('zipfile.zip')
     assert not f.exists()
@@ -46,15 +48,17 @@ If you wish to simply download the file, just call download.
 
     assert f.exists()
     z = zipfile.ZipFile(f)
-    assert z.read("readme").decode() == 'hello from some zip file\n'
+    assert z.read('readme').decode() == 'hello from some zip file\n'
 #+END_SRC
 
 * Tangling                                                         :noexport:
 #+BEGIN_SRC python :tangle ../test_lib2.py :exports none  :noweb yes
 #!/usr/bin/env python3
-# -*- coding:utf-8 -*-
+# -*- coding: utf-8 -*-
 
 # Automatically generated, don't edit
+
+
 def test_extract():
     <<extract>>
 

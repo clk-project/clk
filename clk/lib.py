@@ -26,7 +26,6 @@ import traceback
 from contextlib import contextmanager
 from copy import deepcopy
 from pathlib import Path
-from urllib.request import urlopen
 
 import click
 import colorama
