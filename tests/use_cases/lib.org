@@ -1,0 +1,65 @@
+:PROPERTIES:
+:ID:       0ecfb0d2-433b-4b34-8a4a-529603d8e669
+:END:
+#+TITLE: Using the helpers provided by clk
+#+language: en
+#+EXPORT_FILE_NAME: ../../doc/use_cases/lib.md
+
+#+BEGIN_SRC elisp :exports none :results none
+  (org-md-export-to-markdown)
+#+END_SRC
+
+There are several stuff that you will always need to have at hand when
+developing command line commands.
+
+* Getting files
+
+Often, files are available as zip of tar archives in web servers. A function
+that, given a url, would download and extract its content would be very useful.
+
+#+name:extract
+#+BEGIN_SRC python :results verbatim :exports both :session 
+from clk.lib import extract
+from pathlib import Path
+
+f = Path('readme')
+
+assert not f.exists()
+extract('https://github.com/clk-project/clk/raw/main/tests/zipfile.zip')
+assert f.exists()
+assert f.read_text() == 'hello from some zip file\n'
+#+END_SRC
+
+If you wish to simply download the file, just call download.
+
+#+name:download
+#+BEGIN_SRC python :results verbatim :exports both :session 
+    from clk.lib import download
+    from pathlib import Path
+    import zipfile
+
+    f = Path('zipfile.zip')
+    assert not f.exists()
+
+    download('https://github.com/clk-project/clk/raw/main/tests/zipfile.zip',
+             sha256='702bb46372dfad9632c8dc3d8b5bbe945f9efd2f5575723bf66a0128486b7fb5')
+
+    assert f.exists()
+    z = zipfile.ZipFile(f)
+    assert z.read("readme").decode() == 'hello from some zip file\n'
+#+END_SRC
+
+* Tangling                                                         :noexport:
+#+BEGIN_SRC python :tangle ../test_lib2.py :exports none  :noweb yes
+#!/usr/bin/env python3
+# -*- coding:utf-8 -*-
+
+# Automatically generated, don't edit
+def test_extract():
+    <<extract>>
+
+
+def test_download():
+    <<download>>
+
+#+END_SRC

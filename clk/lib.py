@@ -8,6 +8,7 @@ import functools
 import getpass
 import hashlib
 import heapq
+import io
 import itertools
 import json
 import os
@@ -30,6 +31,8 @@ from urllib.request import urlopen
 import click
 import colorama
 import glob2
+import requests
+import tqdm
 from click._termui_impl import ProgressBar as ProgressBar_
 from click_completion import DocumentedChoice
 
@@ -637,63 +640,64 @@ def get_keyring():
     return keyring.core.get_keyring()
 
 
+# taken from
+# https://stackoverflow.com/questions/71459213/requests-tqdm-to-a-variable
+def _download_as_byteio_with_progress(url: str) -> bytes:
+    resp = requests.get(url, stream=True)
+    total = int(resp.headers.get('content-length', 0))
+    bio = io.BytesIO()
+    with tqdm.tqdm(
+            desc=url,
+            total=total,
+            unit='b',
+            unit_scale=True,
+            unit_divisor=1024,
+    ) as bar:
+        for chunk in resp.iter_content(chunk_size=65536):
+            bar.update(len(chunk))
+            bio.write(chunk)
+    bio.seek(0)
+    return bio
+
+
 def extract(url, dest=Path('.')):
     """Download and extract all the files in the archive at url in dest"""
     dest = Path(dest)
     import tarfile
     import zipfile
-    from io import BytesIO
     makedirs(dest)
-    r = urlopen(url)
-    size = int(r.headers['Content-Length'] or r.headers['content-length'])
+
     archname = os.path.basename(url)
-    archive = BytesIO()
-    with progressbar(length=size, label='Downloading %s' % archname) as bar:
-        chunk = r.read(1024)
-        while chunk:
-            archive.write(chunk)
-            bar.update(1024)
-            chunk = r.read(1024)
-    archive.seek(0)
+    bio = _download_as_byteio_with_progress(url)
     if archname.endswith('.zip'):
-        zipfile.ZipFile(archive).extractall(path=dest)
+        zipfile.ZipFile(bio).extractall(path=dest)
     else:
-        tarfile.open(fileobj=archive).extractall(dest)
+        tarfile.open(fileobj=bio).extractall(dest)
 
 
 def download(url, outdir=None, outfilename=None, mkdir=False, sha256=None, mode=None):
-    outdir = outdir or tempfile.mkdtemp()
+    outdir = Path(outdir or '.')
     outfilename = outfilename or os.path.basename(url)
     if not os.path.exists(outdir) and mkdir:
         makedirs(outdir)
-    outpath = os.path.join(outdir, outfilename)
+    outpath = outdir / outfilename
     LOGGER.action('download %s' % url)
     if dry_run:
         return outpath
 
-    r = urlopen(url)
-    size = int(r.headers['Content-Length'] or r.headers['content-length'])
-    outfile = open(outpath, 'wb')
-    try:
-        with progressbar(length=size, label='Downloading %s' % os.path.basename(url)) as bar:
-            chunk = r.read(1024)
-            while chunk:
-                outfile.write(chunk)
-                bar.update(1024)
-                chunk = r.read(1024)
-    except BaseException:
-        outfile.close()
-        rm(outpath)
-        raise
-    outfile.close()
+    bio = _download_as_byteio_with_progress(url)
+    value = bio.getvalue()
+
     if sha256 is not None:
         LOGGER.debug('Checking for corruption')
-        if hashlib.sha256(open(outpath, 'rb').read()).hexdigest() != sha256:
-            rm(outpath)
-            raise click.ClickException('The file at {} was corrupted. It was removed'.format(outpath))
+        h = hashlib.sha256(value).hexdigest()
+        if h != sha256:
+            raise click.ClickException(f'Hash mismatch got {h}, expected {sha256}')
+
+    outpath.write_bytes(value)
     if mode is not None:
         os.chmod(outpath, mode)
-    return Path(outpath)
+    return outpath
 
 
 def part_of_day():

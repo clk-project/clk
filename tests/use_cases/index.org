@@ -8,3 +8,5 @@
 
 - [[file:bash_command.org][show how to create some bash commands]],
 - [[file:bash_command_use_option.org][show how to extend a bash command with options]],
+- [[file:lib.org][show how to use the lib]],
+- [[file:bash_command_import.org][show how to import stuff in bash scripts]],
