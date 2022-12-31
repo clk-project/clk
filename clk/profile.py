@@ -633,7 +633,7 @@ class DirectoryProfile(Profile):
             raise click.UsageError('You cannot edit the configuration if the migration is not persisted')
         makedirs(self.location)
         version = self.version
-        createfile(self.version_file_name, ensure_unicode(str(version)), internal=True)
+        createfile(self.version_file_name, ensure_unicode(str(version) + '\n'), internal=True)
 
     def migrate_if_needed(self, persist=True):
         self.persist = persist
