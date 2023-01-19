@@ -117,7 +117,7 @@ def get_flow_commands_to_run(cmd_path, flow_from=None, flow_after=None, flow_tru
 def execute_flow_step(cmd, args=None):
     cmd.extend(args or [])
     if config.flow_verbose:
-        LOGGER.info('--------------')
+        # LOGGER.info('--------------')
         LOGGER.info(f"{'About to run' if config.flowstep else 'Running'} step '{' '.join(cmd)}'")
     if config.flowstep:
         click.prompt(
@@ -135,7 +135,7 @@ def execute_flow_step(cmd, args=None):
         overloads.allow_dotted_commands = old_allow
         raise
     if config.flow_verbose:
-        LOGGER.info("End of step '{}'".format(' '.join(cmd)))
+        LOGGER.debug("End of step '{}'".format(' '.join(cmd)))
 
 
 def all_part(path):
@@ -276,7 +276,7 @@ def get_flow_wrapper(name, function):
             # restore the flow settings
             config.flow_profile.get_settings('parameters').clear()
             if config.flow_verbose:
-                LOGGER.info("Ended executing the flow dependencies, back to the command '{}'".format(name))
+                LOGGER.debug("Ended executing the flow dependencies, back to the command '{}'".format(name))
         res = function(*args, **kwargs)
         return res
 
