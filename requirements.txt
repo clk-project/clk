@@ -14,7 +14,7 @@ cached-property==1.5.2
     # via clk (setup.py)
 certifi==2022.12.7
     # via requests
-charset-normalizer==2.1.1
+charset-normalizer==3.0.1
     # via requests
 click==7.1.2
     # via
@@ -44,17 +44,17 @@ idna==3.4
     # via requests
 ipdb==0.13.11
     # via clk (setup.py)
-ipython==8.7.0
+ipython==8.8.0
     # via ipdb
 jedi==0.18.2
     # via ipython
 jinja2==3.1.2
     # via click-completion
-markupsafe==2.1.1
+markupsafe==2.1.2
     # via jinja2
 matplotlib-inline==0.1.6
     # via ipython
-networkx==2.8.8
+networkx==3.0
     # via clk (setup.py)
 parsedatetime==2.6
     # via clk (setup.py)
@@ -74,7 +74,7 @@ pure-eval==0.2.2
     # via stack-data
 pydotplus==2.0.2
     # via clk (setup.py)
-pygments==2.13.0
+pygments==2.14.0
     # via
     #   clk (setup.py)
     #   ipython
@@ -82,9 +82,9 @@ pyparsing==3.0.9
     # via pydotplus
 python-dateutil==2.8.2
     # via clk (setup.py)
-requests==2.28.1
+requests==2.28.2
     # via clk (setup.py)
-shellingham==1.5.0
+shellingham==1.5.0.post1
     # via click-completion
 six==1.16.0
     # via
@@ -98,11 +98,11 @@ tomli==2.0.1
     # via ipdb
 tqdm==4.64.1
     # via clk (setup.py)
-traitlets==5.8.0
+traitlets==5.8.1
     # via
     #   ipython
     #   matplotlib-inline
-urllib3==1.26.13
+urllib3==1.26.14
     # via requests
-wcwidth==0.2.5
+wcwidth==0.2.6
     # via prompt-toolkit
