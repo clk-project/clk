@@ -644,15 +644,19 @@ def _download_as_byteio_with_progress(url: str) -> bytes:
     resp = requests.get(url, stream=True)
     total = int(resp.headers.get('content-length', 0))
     bio = io.BytesIO()
-    with tqdm.tqdm(
-            desc=url,
-            total=total,
-            unit='b',
-            unit_scale=True,
-            unit_divisor=1024,
-    ) as bar:
+    if sys.stderr.isatty():
+        with tqdm.tqdm(
+                desc=url,
+                total=total,
+                unit='b',
+                unit_scale=True,
+                unit_divisor=1024,
+        ) as bar:
+            for chunk in resp.iter_content(chunk_size=65536):
+                bar.update(len(chunk))
+                bio.write(chunk)
+    else:
         for chunk in resp.iter_content(chunk_size=65536):
-            bar.update(len(chunk))
             bio.write(chunk)
     bio.seek(0)
     return bio
