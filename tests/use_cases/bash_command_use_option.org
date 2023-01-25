@@ -6,7 +6,7 @@
 #+EXPORT_FILE_NAME: ../../doc/use_cases/bash_command_use_option.md
 
 #+BEGIN_SRC elisp :exports none :results none
-  (org-md-export-to-markdown)
+  (org-gfm-export-to-markdown)
 #+END_SRC
 
 

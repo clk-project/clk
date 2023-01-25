@@ -1,55 +1,63 @@
-
-# Table of Contents
-
-
-
-    . ./sandboxing.sh
+```shell
+. ./sandboxing.sh
+```
 
 To create a bash command, you can simply call the following command.
 
-    clk command create bash mycommand --no-open
+```shell
+clk command create bash mycommand --no-open
+```
 
-Note that if you omit the no open, your editor will be used to first edit the
-command.
+Note that if you omit the no open, your editor will be used to first edit the command.
 
-    clk command which mycommand
+```shell
+clk command which mycommand
+```
 
     /home/sam/tmp/tmp.V6TskPmMKR-clk-test/clk-root/bin/mycommand
 
-    clk mycommand
+```shell
+clk mycommand
+```
 
     [33mwarning: [0mThe command 'mycommand' has no documentation
 
 It does not do much, but it is now part of your tools
 
-    clk | grep mycommand
+```shell
+clk | grep mycommand
+```
 
     mycommand   Description
 
 Now, let's put something into this command
 
-    cat <<"EOH" > "$(clk command which mycommand)"
-    #!/bin/bash -eu
-    
-    source "_clk.sh"
-    
-    clk_usage () {
-        cat<<EOF
-    $0
-    
-    This command shows something
-    --
-    
-    EOF
-    }
-    
-    clk_help_handler "$@"
-    
-    echo something
-    
-    EOH
+```shell
+cat <<"EOH" > "$(clk command which mycommand)"
+#!/bin/bash -eu
 
-    clk mycommand --help
+source "_clk.sh"
+
+clk_usage () {
+    cat<<EOF
+$0
+
+This command shows something
+--
+
+EOF
+}
+
+clk_help_handler "$@"
+
+echo something
+
+EOH
+```
+
+```shell
+clk mycommand --help
+```
 
     Usage: clk mycommand [OPTIONS]
     
@@ -61,5 +69,6 @@ Now, let's put something into this command
       --help-all  Show the full help message, automatic options included.
       --help      Show this message and exit.
 
-    test "$(clk mycommand)" = "something"
-
+```shell
+test "$(clk mycommand)" = "something"
+```
