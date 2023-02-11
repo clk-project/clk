@@ -98,7 +98,7 @@ tomli==2.0.1
     # via ipdb
 tqdm==4.64.1
     # via clk (setup.py)
-traitlets==5.8.1
+traitlets==5.9.0
     # via
     #   ipython
     #   matplotlib-inline
