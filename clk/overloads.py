@@ -845,9 +845,9 @@ class ParameterMixin(click.Parameter):
                 value = eval_arg(value)
         return value
 
-    def full_process_value(self, ctx, value):
+    def process_value(self, ctx, value):
         try:
-            value = super(ParameterMixin, self).full_process_value(ctx, value)
+            value = super(ParameterMixin, self).process_value(ctx, value)
         except MissingParameter:
             if clk.completion.IN_COMPLETION:
                 value = self.get_default(ctx)
@@ -887,7 +887,7 @@ class ParameterMixin(click.Parameter):
         res = super(ParameterMixin, self).get_help_record(ctx)
         self.show_default = show_default
         if res is None:
-            metavar = self.type.get_metavar(ctx)
+            metavar = self.type.get_metavar(self)
             if metavar:
                 metavar = '%s %s' % (self.human_readable_name, metavar)
             else:
