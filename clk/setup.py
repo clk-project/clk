@@ -3,7 +3,6 @@
 
 from clk import lib
 from clk.alias import AliasCommandResolver, AliasToGroupResolver
-from clk.completion import init as completion_init
 from clk.config import Config, config, setup_config_class
 from clk.core import main  # NOQA: F401
 from clk.customcommands import CustomCommandResolver
@@ -27,7 +26,6 @@ def classic_setup(main_module=None,
                   authenticator_hints={}):
     get_authenticator_hints.update(authenticator_hints)
     lib.main_module = main_module
-    completion_init()
     setup_config_class(config_cls)
     setup_flow()
     setup_hook()

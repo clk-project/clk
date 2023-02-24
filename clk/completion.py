@@ -75,9 +75,3 @@ def compute_choices(ctx, args, incomplete):
             if isinstance(param, Argument):
                 choices += [c if isinstance(c, tuple) else (c, None) for c in param.type.complete(ctx, incomplete)]
     return choices
-
-
-def init():
-    click_completion.core.get_choices = get_choices
-    click_completion.init(complete_options=to_bool(os.environ.get(COMPLETE_OPTIONS, 'off')),
-                          match_incomplete=startswith)
