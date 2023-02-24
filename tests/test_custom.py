@@ -108,7 +108,7 @@ echo b""")
 def test_complete_remove(lib):
     lib.cmd(create_a_command)
     candidates = lib.cmd('completion try command remove')
-    assert 'a' == candidates
+    assert 'plain,a' == candidates
 
 
 def test_simple_bash(lib):

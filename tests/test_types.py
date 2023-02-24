@@ -43,7 +43,7 @@ def b(something):
     print(something)
 """)
     assert lib.cmd('a b --something c') == 'c'
-    assert lib.cmd('completion try a b --something') == 'a\tb'
+    assert lib.cmd('completion try a b --something') == 'plain,a\nplain,b'
 
 
 def test_date(lib):
@@ -72,10 +72,10 @@ from clk.types import Date
 def b(someday):
     print(f"{someday:%Y-%m-%d}")
 """)
-    assert lib.cmd('completion try --last a b --someday next\ da') == 'next\\ day'  # noqa: W605
-    assert lib.cmd('completion try --last a b --someday last\ sun') == 'last\\ sunday'  # noqa: W605
-    assert lib.cmd('completion try --last a b --someday in\ two\ mont') == 'in\\ two\\ months'  # noqa: W605
-    assert lib.cmd('completion try --last a b --someday two\ days\ a') == 'two\\ days\\ ago'  # noqa: W605
+    assert lib.cmd('completion try --last a b --someday next\ da') == 'plain,next\\ day'  # noqa: W605
+    assert lib.cmd('completion try --last a b --someday last\ sun') == 'plain,last\\ sunday'  # noqa: W605
+    assert lib.cmd('completion try --last a b --someday in\ two\ mont') == 'plain,in\\ two\\ months'  # noqa: W605
+    assert lib.cmd('completion try --last a b --someday two\ days\ a') == 'plain,two\\ days\\ ago'  # noqa: W605
 
 
 def test_custom_types_in_command(lib):
@@ -107,10 +107,10 @@ then
 fi
 
 """)
-    assert lib.cmd('completion try --last a --someday next\ da') == 'next\\ day'  # noqa: W605
-    assert lib.cmd('completion try --last a --someday last\ sun') == 'last\\ sunday'  # noqa: W605
-    assert lib.cmd('completion try --last a --someday in\ two\ mont') == 'in\\ two\\ months'  # noqa: W605
-    assert lib.cmd('completion try --last a --someday two\ days\ a') == 'two\\ days\\ ago'  # noqa: W605
+    assert lib.cmd('completion try --last a --someday next\ da') == 'plain,next\\ day'  # noqa: W605
+    assert lib.cmd('completion try --last a --someday last\ sun') == 'plain,last\\ sunday'  # noqa: W605
+    assert lib.cmd('completion try --last a --someday in\ two\ mont') == 'plain,in\\ two\\ months'  # noqa: W605
+    assert lib.cmd('completion try --last a --someday two\ days\ a') == 'plain,two\\ days\\ ago'  # noqa: W605
     assert lib.cmd('a --someday "2022/08/30"') == '2022-08-30T00:00:00'
     # only deals with dates, not time
     assert lib.cmd('a --someday "2022/08/30 18:12"') == '2022-08-30T00:00:00'

@@ -15,10 +15,10 @@ def test_command(lib):
 def b(foo, bar):
     pass
 """)
-    assert lib.cmd('completion try a b --foo') == 'a\tb'
-    assert lib.cmd('completion try a b --bar') == 'c\td'
-    assert lib.cmd('completion try --last a b --foo a --b') == '--bar'
-    assert lib.cmd('completion try a b --foo a --bar') == 'c\td'
+    assert lib.cmd('completion try a b --foo') == 'plain,a\nplain,b'
+    assert lib.cmd('completion try a b --bar') == 'plain,c\nplain,d'
+    assert lib.cmd('completion try --last a b --foo a --b') == 'plain,--bar'
+    assert lib.cmd('completion try a b --foo a --bar') == 'plain,c\nplain,d'
 
 
 def test_group(lib):
@@ -36,10 +36,10 @@ def b(foo, bar):
 def c():
     pass
 """)
-    assert lib.cmd('completion try a b --foo') == 'a\tb'
-    assert lib.cmd('completion try a b --bar') == 'c\td'
-    assert lib.cmd('completion try --last a b --foo a --b') == '--bar'
-    assert lib.cmd('completion try a b --foo a --bar') == 'c\td'
+    assert lib.cmd('completion try a b --foo') == 'plain,a\nplain,b'
+    assert lib.cmd('completion try a b --bar') == 'plain,c\nplain,d'
+    assert lib.cmd('completion try --last a b --foo a --b') == 'plain,--bar'
+    assert lib.cmd('completion try a b --foo a --bar') == 'plain,c\nplain,d'
 
 
 def test_dynamic_command(lib):
@@ -65,10 +65,10 @@ from clk.decorators import param_config
 def b(foo, bar):
     pass
 """)
-    assert lib.cmd('completion try a b --foo') == 'a\tb'
-    assert lib.cmd('completion try a b --bar') == 'c\td'
-    assert lib.cmd('completion try --last a b --foo a --b') == '--bar'
-    assert lib.cmd('completion try a b --foo a --bar') == 'c\td'
+    assert lib.cmd('completion try a b --foo') == 'plain,a\nplain,b'
+    assert lib.cmd('completion try a b --bar') == 'plain,c\nplain,d'
+    assert lib.cmd('completion try --last a b --foo a --b') == 'plain,--bar'
+    assert lib.cmd('completion try a b --foo a --bar') == 'plain,c\nplain,d'
 
 
 def test_dynamic_group(lib):
@@ -98,10 +98,10 @@ def b(foo, bar):
 def c():
     pass
 """)
-    assert lib.cmd('completion try a b --foo') == 'a\tb'
-    assert lib.cmd('completion try a b --bar') == 'c\td'
-    assert lib.cmd('completion try --last a b --foo a --b') == '--bar'
-    assert lib.cmd('completion try a b --foo a --bar') == 'c\td'
+    assert lib.cmd('completion try a b --foo') == 'plain,a\nplain,b'
+    assert lib.cmd('completion try a b --bar') == 'plain,c\nplain,d'
+    assert lib.cmd('completion try --last a b --foo a --b') == 'plain,--bar'
+    assert lib.cmd('completion try a b --foo a --bar') == 'plain,c\nplain,d'
 
 
 def test_exec(rootdir, lib):
@@ -113,4 +113,4 @@ echo OK
 ''')
     somebinary.chmod(0o755)
     os.environ['PATH'] = os.environ['PATH'] + os.pathsep + str(somebindir)
-    assert lib.cmd('completion try --last exec somebin') == 'somebinary'
+    assert lib.cmd('completion try --last exec somebin') == 'plain,somebinary'
