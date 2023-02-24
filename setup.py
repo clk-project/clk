@@ -29,7 +29,7 @@ setup(
     python_requires='>=3.8',
     include_package_data=True,
     install_requires=[
-        'click>=6.4,<8',
+        'click>=8',
         'click-log',
         'click-didyoumean',
         'click-completion>=0.5.0',
