@@ -865,13 +865,16 @@ class ParameterMixin(click.Parameter):
     def _get_default_from_values(self, ctx):
         return config.get_settings('value').get('default.' + self.get_path(ctx), {}).get('value')
 
-    def get_default(self, ctx):
+    def get_default(self, ctx, call=False):
         try:
             value = self._get_default_from_values(ctx)
         except NoPathAvailable:
             value = None
         if value is None:
-            value = super(ParameterMixin, self).get_default(ctx)
+            if click.__version__.startswith("7"):
+                value = super(ParameterMixin, self).get_default(ctx)
+            else:
+                value = super(ParameterMixin, self).get_default(ctx, call=call)
         else:
             LOGGER.develop('Getting default value {}={}'.format(self.get_path(ctx), value))
             value = self.__process_value(ctx, value)
