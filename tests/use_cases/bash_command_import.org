@@ -10,7 +10,7 @@
 #+END_SRC
 
 #+name: init
-#+BEGIN_SRC shell :results none :exports code :session 0a89868c-4cbb-4f83-874a-21ce32b4508f
+#+BEGIN_SRC bash :results none :exports code :session 0a89868c-4cbb-4f83-874a-21ce32b4508f
 . ./sandboxing.sh
 #+END_SRC
 
@@ -21,7 +21,7 @@ You can put that code in another directory called lib sibling to the commands.
 Say you want to provide a function called shout that capitalize the input.
 
 #+name: shout
-#+BEGIN_SRC shell :results verbatim :exports code
+#+BEGIN_SRC bash :results verbatim :exports code
 shout () {
    tr '[:lower:]' '[:upper:]'
 }
@@ -30,7 +30,7 @@ shout () {
 Let's put this code in a file called mylib.
 
 #+name: install
-#+BEGIN_SRC shell :results none :exports code :session 0a89868c-4cbb-4f83-874a-21ce32b4508f :noweb yes
+#+BEGIN_SRC bash :results none :exports code :session 0a89868c-4cbb-4f83-874a-21ce32b4508f :noweb yes
   mkdir -p "${CLKCONFIGDIR}/bin/lib"
   cat<<EOF > "${CLKCONFIGDIR}/bin/lib/mylib"
 <<shout>>
@@ -40,7 +40,7 @@ EOF
 Then you can simply import this code in your code, using clk_import.
 
 #+name: create
-#+BEGIN_SRC shell :results none :session 0a89868c-4cbb-4f83-874a-21ce32b4508f :noweb yes
+#+BEGIN_SRC bash :results none :session 0a89868c-4cbb-4f83-874a-21ce32b4508f :noweb yes
 clk command create bash somecommand --no-open
 cat <<"EOH" > "$(clk command which somecommand)"
 #!/bin/bash -eu
@@ -67,11 +67,11 @@ EOH
 #+END_SRC
 
 #+name: check
-#+BEGIN_SRC shell :results none :exports both :session 0a89868c-4cbb-4f83-874a-21ce32b4508f
+#+BEGIN_SRC bash :results none :exports both :session 0a89868c-4cbb-4f83-874a-21ce32b4508f
 test "$(clk somecommand)" = "SOMETHING"
 #+END_SRC
 
-#+BEGIN_SRC shell :tangle bash_command_import.sh :exports none  :noweb yes
+#+BEGIN_SRC bash :tangle bash_command_import.sh :exports none  :noweb yes
 #!/bin/bash -eu
 
 set -e
