@@ -16,7 +16,7 @@ done
 The End"""
     with pytest.raises(CalledProcessError) as e:
         lib.cmd('whole-story --flow', stderr=PIPE)
-    assert re.match('.*no such option: --flow.*', e.value.stderr)
+    assert re.match('.*No such option: --flow.*', e.value.stderr)
 
 
 def test_flow_does_not_mess_up_with_options(lib):
