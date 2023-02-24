@@ -76,7 +76,7 @@ def _try(description, last, command, args, call):
             'COMP_WORDS': ' '.join(quote(arg) for arg in args),
             'COMP_CWORD': str(max(0,
                                   len(args) - (1 if last else 0))),
-            complete_envvar: 'complete',
+            complete_envvar: 'bash_complete',
         }
     extra_env.update({CASE_INSENSITIVE_ENV: 'ON'} if config.completion.case_insensitive else {})
     with updated_env(**extra_env):
