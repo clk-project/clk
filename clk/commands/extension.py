@@ -52,9 +52,13 @@ class ExtensionNameType(ParameterType):
             names += [extension.name for extension in extensions]
         return names
 
-    def complete(self, ctx, incomplete):
+    def shell_complete(self, ctx, param, incomplete):
         choice = self.getchoice(ctx)
-        return [(extension, load_short_help(extension)) for extension in choice if startswith(extension, incomplete)]
+        return [
+            click.shell_completion.CompletionItem(extension, help=load_short_help(extension))
+            for extension in choice
+            if startswith(extension, incomplete)
+        ]
 
 
 class ExtensionType(ExtensionNameType):

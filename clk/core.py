@@ -130,8 +130,10 @@ class ExtensionType(ParameterType):
     def choices(self):
         return [extension.short_name for extension in config.all_extensions]
 
-    def complete(self, ctx, incomplete):
-        return (choice for choice in self.choices if startswith(choice, incomplete))
+    def shell_complete(self, ctx, param, incomplete):
+        return (click.shell_completion.CompletionItem(choice)
+                for choice in self.choices
+                if startswith(choice, incomplete))
 
     def convert(self, value, param, ctx):
         if value not in self.choices:
@@ -190,7 +192,7 @@ class ColorType(ParameterType):
 
         return {key: value for key, value in [splitpart(part) for part in color_name.split(',')]}
 
-    def complete(self, ctx, incomplete):
+    def shell_complete(self, ctx, param, incomplete):
         # got from click.termui.style
         if ',' not in incomplete and ':' not in incomplete:
             candidates = self.colors + [key + '-' for key in self.args.keys()]
@@ -211,7 +213,11 @@ class ColorType(ParameterType):
             candidates = [key_ + '-' for key_ in self.args.keys()]
             tested = key
             prefix = '{},'.format(prefix)
-        return [prefix + str(candidate) for candidate in candidates if startswith(str(candidate), tested)]
+        return [
+            click.shell_completion.CompletionItem(prefix + str(candidate))
+            for candidate in candidates
+            if startswith(str(candidate), tested)
+        ]
 
     @classmethod
     def unpack_styles(cls, value):
@@ -244,8 +250,8 @@ class SomeChoices(DynamicChoiceType):
     def converter(self, value):
         return value
 
-    def complete(self, ctx, incomplete):
-        return [name for name in self.choices() if startswith(name, incomplete)]
+    def shell_complete(self, ctx, param, incomplete):
+        return [click.shell_completion.CompletionItem(name) for name in self.choices() if startswith(name, incomplete)]
 
     def convert(self, value, param, ctx):
         if ctx.resilient_parsing:

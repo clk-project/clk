@@ -874,7 +874,7 @@ class ParameterMixin(click.Parameter):
             if click.__version__.startswith("7"):
                 value = super(ParameterMixin, self).get_default(ctx)
             else:
-                value = super(ParameterMixin, self).get_default(ctx, call=call)
+                value = super(ParameterMixin, self).get_default(ctx, call=True)
         else:
             LOGGER.develop('Getting default value {}={}'.format(self.get_path(ctx), value))
             value = self.__process_value(ctx, value)
@@ -1129,7 +1129,7 @@ class CommandType(ParameterType):
         super(CommandType, self).__init__()
         self.recursive = recursive
 
-    def complete(self, ctx, incomplete):
+    def shell_complete(self, ctx, param, incomplete):
 
         @cache_disk(expire=600)
         def get_candidates(parent_path):
@@ -1158,9 +1158,11 @@ class CommandType(ParameterType):
         else:
             parent_path = config.main_command.path
         candidates = get_candidates(parent_path)
-        return [(cmd, cmd_help)
-                for cmd, cmd_help in candidates
-                if startswith(cmd, incomplete) and (self.recursive or '.' not in cmd)]
+        return [
+            click.shell_completion.CompletionItem(cmd, help=cmd_help)
+            for cmd, cmd_help in candidates
+            if startswith(cmd, incomplete) and (self.recursive or '.' not in cmd)
+        ]
 
     def convert(self, value, param, ctx):
         if get_command_safe(value) is None:
@@ -1184,7 +1186,7 @@ class CommandSettingsKeyType(ParameterType):
     def settings(self, ctx):
         return settings_stores[self.name].readonly
 
-    def complete(self, ctx, incomplete):
+    def shell_complete(self, ctx, param, incomplete):
 
         @cache_disk(expire=600)
         def get_shortdoc(path):
@@ -1195,7 +1197,11 @@ class CommandSettingsKeyType(ParameterType):
                 return cmd.short_help
 
         choices = [(path, get_shortdoc(path)) for path in self.settings(ctx).keys()]
-        return [(cmd, cmd_help) for cmd, cmd_help in choices if startswith(cmd, incomplete)]
+        return [
+            click.shell_completion.CompletionItem(cmd, help=cmd_help)
+            for cmd, cmd_help in choices
+            if startswith(cmd, incomplete)
+        ]
 
     def convert(self, value, param, ctx):
         choices = self.settings(ctx).keys()
@@ -1325,6 +1331,8 @@ class FlowOption(Option):
         del okwargs['opts']
         del okwargs['secondary_opts']
         del okwargs['is_bool_flag']
+        del okwargs['_custom_shell_complete']
+        del okwargs['_flag_needs_value']
         if okwargs['is_flag'] and isinstance(okwargs['flag_value'], bool):
             # required to properly set he is_bool_flag, because of a bug in click.Option.__init__
             del okwargs['type']

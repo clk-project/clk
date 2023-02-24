@@ -105,12 +105,12 @@ class DirectoryProfile(Profile):
 
 class ExecutableType(Parameter):
 
-    def complete(self, ctx, incomplete):
+    def shell_complete(self, ctx, param, incomplete):
         completion = set()
         for path in self.path(ctx):
             for file in os.listdir(path):
                 if startswith(file, incomplete):
-                    completion.add(file)
+                    completion.add(click.shell_completion.CompletionItem(file))
         return completion
 
     @cache_disk(expire=600)

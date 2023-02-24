@@ -3,6 +3,8 @@
 
 import shlex
 
+from click.shell_completion import CompletionItem
+
 from clk.completion import startswith
 from clk.config import config
 from clk.lib import ParameterType, quote
@@ -11,9 +13,9 @@ from clk.overloads import option
 
 class LauncherCommandType(ParameterType):
 
-    def complete(self, ctx, incomplete):
+    def shell_complete(self, ctx, param, incomplete):
         choices = [' '.join([quote(v) for v in value]) for value in config.settings.get('launchers', {}).values()]
-        return [launcher for launcher in choices if startswith(launcher, incomplete)]
+        return [CompletionItem(launcher) for launcher in choices if startswith(launcher, incomplete)]
 
     def convert(self, value, param, ctx):
         if not isinstance(value, str):
@@ -28,9 +30,9 @@ class LauncherType(ParameterType):
         ParameterType.__init__(self)
         self.missing_ok = missing_ok
 
-    def complete(self, ctx, incomplete):
+    def shell_complete(self, ctx, param, incomplete):
         choices = config.settings.get('launchers', {}).keys()
-        return [launcher for launcher in choices if startswith(launcher, incomplete)]
+        return [CompletionItem(launcher) for launcher in choices if startswith(launcher, incomplete)]
 
     def convert(self, value, param, ctx):
         if self.missing_ok:
