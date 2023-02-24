@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+from pathlib import Path
+
 import click
 import click_completion
 
@@ -9,7 +11,7 @@ from clk.commands.parameter import get_choices
 from clk.completion import CASE_INSENSITIVE_ENV
 from clk.config import config
 from clk.decorators import argument, flag, group, option
-from clk.lib import DocumentedChoice, call_me, quote, updated_env
+from clk.lib import DocumentedChoice, call_me, check_output, quote, updated_env
 from clk.log import get_logger
 from clk.overloads import CommandType
 
@@ -20,6 +22,15 @@ class CompletionConfig(object):
 
     def __init__(self):
         self.case_insensitive = False
+
+    def content(self, shell):
+        if shell != "bash":
+            raise NotImplementedError
+        res = check_output(["python3", "-m", "clk"], env={"_CLK_COMPLETE": "bash_source"})
+        if config.completion.case_insensitive:
+            res = res.replace("env COMP_WORDS", f"env {CASE_INSENSITIVE_ENV}=ON COMP_WORDS")
+
+        return res
 
 
 cmd_help = """Shell completion
@@ -48,8 +59,7 @@ def completion(case_insensitive):
           type=DocumentedChoice(click_completion.shells))
 def show(shell):
     """Show the completion code"""
-    extra_env = {CASE_INSENSITIVE_ENV: 'ON'} if config.completion.case_insensitive else {}
-    click.echo(click_completion.get_code(shell, extra_env=extra_env))
+    click.echo(config.completion.content(shell))
 
 
 @completion.command(handle_dry_run=True, ignore_unknown_options=True)
@@ -69,7 +79,7 @@ def _try(description, last, command, args, call):
     if description:
         extra_env = {
             'COMMANDLINE': ' '.join(quote(arg) for arg in args) + ('' if last else ' '),
-            complete_envvar: 'complete-fish',
+            complete_envvar: 'fish_complete',
         }
     else:
         extra_env = {
@@ -98,7 +108,8 @@ _try.get_choices = get_choices
 @argument('path', required=False, help='Where to install the completion')
 def install(append, shell, path):
     """Install the completion"""
-    extra_env = {CASE_INSENSITIVE_ENV: 'ON'} if config.completion.case_insensitive else {}
     if not config.dry_run:
-        shell, path = click_completion.install(shell=shell, path=path, append=append, extra_env=extra_env)
-        LOGGER.info('%s completion installed in %s' % (shell, path))
+        comp_file = Path("~/.bash_completion").expanduser()
+        completion_content = config.completion.content(shell)
+        comp_file.open('a').write(completion_content)
+        LOGGER.info('%s completion installed in %s' % (shell, comp_file))
