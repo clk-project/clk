@@ -871,7 +871,7 @@ class ParameterMixin(click.Parameter):
         except NoPathAvailable:
             value = None
         if value is None:
-            if click.__version__.startswith("7"):
+            if click.__version__.startswith('7'):
                 value = super(ParameterMixin, self).get_default(ctx)
             else:
                 value = super(ParameterMixin, self).get_default(ctx, call=True)

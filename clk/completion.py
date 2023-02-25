@@ -7,8 +7,6 @@ import os
 import click_completion
 from click import Argument, MultiCommand, Option
 
-from clk.lib import to_bool
-
 CASE_INSENSITIVE_ENV = '_CLK_CASE_INSENSITIVE_COMPLETION'
 COMPLETE_OPTIONS = '_CLK_COMPLETE_OPTIONS'
 

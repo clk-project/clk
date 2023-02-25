@@ -24,11 +24,11 @@ class CompletionConfig(object):
         self.case_insensitive = False
 
     def content(self, shell):
-        if shell != "bash":
+        if shell != 'bash':
             raise NotImplementedError
-        res = check_output(["python3", "-m", "clk"], env={"_CLK_COMPLETE": "bash_source"})
+        res = check_output(['python3', '-m', 'clk'], env={'_CLK_COMPLETE': 'bash_source'})
         if config.completion.case_insensitive:
-            res = res.replace("env COMP_WORDS", f"env {CASE_INSENSITIVE_ENV}=ON COMP_WORDS")
+            res = res.replace('env COMP_WORDS', f'env {CASE_INSENSITIVE_ENV}=ON COMP_WORDS')
 
         return res
 
@@ -109,7 +109,7 @@ _try.get_choices = get_choices
 def install(append, shell, path):
     """Install the completion"""
     if not config.dry_run:
-        comp_file = Path("~/.bash_completion").expanduser()
+        comp_file = Path('~/.bash_completion').expanduser()
         completion_content = config.completion.content(shell)
         comp_file.open('a').write(completion_content)
         LOGGER.info('%s completion installed in %s' % (shell, comp_file))
