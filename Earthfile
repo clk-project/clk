@@ -228,8 +228,9 @@ fix-quality:
 
 test-install-ubuntu:
     FROM ubuntu
-    RUN apt-get update && apt-get install --yes python3-distutils
+    RUN apt-get update && apt-get install --yes python3-distutils python3-pip
     DO +AS_USER
+    RUN python3 -m pip install coverage pytest
     DO +INSTALL --from=script
 
 sonar:
