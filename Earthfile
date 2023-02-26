@@ -79,7 +79,7 @@ INSTALL:
         # assume it is the url to install from
         RUN python3 -m pip install "${from}"
     END
-    RUN clk completion --case-insensitive install bash && echo 'source "${HOME}/.bash_completion"' >> "${HOME}/.bashrc"
+    RUN coverage run --source clk -m clk completion --case-insensitive install bash && echo 'source "${HOME}/.bash_completion"' >> "${HOME}/.bashrc"
 
 VENV:
     COMMAND
@@ -127,7 +127,7 @@ test:
     ARG test_args
     ENV CLK_ALLOW_INTRUSIVE_TEST=True
     RUN coverage run --source clk -m pytest ${test_args}
-    RUN mkdir coverage && cd coverage && coverage combine --append ../.coverage
+    RUN mkdir coverage && cd coverage && coverage combine --append ../.coverage ~/.coverage
     IF [ -e tests/.coverage ]
         RUN cd coverage && coverage combine --append ../tests/.coverage
     END
