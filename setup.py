@@ -33,7 +33,6 @@ setup(
         'click-log',
         'click-didyoumean',
         'click-completion>=0.5.0',
-        'shellingham>=1.5.0',
         'glob2',
         'colorama',
         'python-dateutil',

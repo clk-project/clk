@@ -5,15 +5,13 @@ import sys
 from pathlib import Path
 
 import click
-import click_completion
-import shellingham
 
 import clk.completion
 from clk.commands.parameter import get_choices
 from clk.completion import CASE_INSENSITIVE_ENV
 from clk.config import config
 from clk.decorators import argument, flag, group, option
-from clk.lib import DocumentedChoice, call_me, check_output, quote, updated_env
+from clk.lib import call_me, check_output, quote, updated_env
 from clk.log import get_logger
 from clk.overloads import CommandType
 
@@ -35,18 +33,7 @@ class CompletionConfig(object):
         return res
 
 
-cmd_help = """Shell completion
-
-Available shell types:
-
-\b
-  %s
-
-Default type: auto
-""" % '\n  '.join('{:<12} {}'.format(k, click_completion.shells[k]) for k in sorted(click_completion.shells.keys()))
-
-
-@group(help=cmd_help)
+@group()
 @option('-i', '--case-insensitive/--no-case-insensitive', help='Completion will be case insensitive')
 def completion(case_insensitive):
     """Shell completion"""
@@ -56,9 +43,10 @@ def completion(case_insensitive):
 
 @completion.command(handle_dry_run=True)
 @argument('shell',
-          help='What shell to show the completion for',
+          help='What shell to show the completion for (only bash supported for now)',
           required=False,
-          type=DocumentedChoice(click_completion.shells))
+          default='bash',
+          type=click.Choice(['bash']))
 def show(shell):
     """Show the completion code"""
     click.echo(config.completion.content(shell))
@@ -106,11 +94,13 @@ _try.get_choices = get_choices
 
 @completion.command(handle_dry_run=True)
 @option('--append/--overwrite', help='Append the completion code to the file', default=None)
-@argument('shell', required=False, type=DocumentedChoice(click_completion.shells), help='The shell that will be used')
+@argument('shell',
+          default='bash',
+          type=click.Choice(['bash']),
+          help='The shell that will be used (for now, only bash supported)')
 @argument('path', required=False, help='Where to install the completion')
 def install(append, shell, path):
     """Install the completion"""
-    shell = shell or shellingham.detect_shell()[0]
     if not config.dry_run:
         comp_file = Path('~/.bash_completion').expanduser()
         completion_content = config.completion.content(shell)
