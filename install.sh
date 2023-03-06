@@ -86,7 +86,6 @@ if [ "$(uname)" == "Darwin" ]; then
         brew install python3
     fi
     PIP=pip3
-    USER_OPT=
     INSTALL_PATH=/usr/local/bin
 else
     if ! which wget > /dev/null && ! which curl > /dev/null; then
@@ -126,10 +125,10 @@ else
         GET_PIP_TMP_DIR="${TMPDIR:-/tmp}/get-pip.py"
         if which curl > /dev/null; then
             curl -sSL https://bootstrap.pypa.io/get-pip.py -o "${GET_PIP_TMP_DIR}"
-            "${PYTHON}" ${TMPDIR:-/tmp}/get-pip.py --force-reinstall --user --quiet & spin "installing pip"
+            "${PYTHON}" ${TMPDIR:-/tmp}/get-pip.py --force-reinstall --quiet & spin "installing pip"
         elif which wget > /dev/null; then
             wget -nv https://bootstrap.pypa.io/get-pip.py -O "${GET_PIP_TMP_DIR}"
-            "${PYTHON}" ${TMPDIR:-/tmp}/get-pip.py --force-reinstall --user --quiet & spin "installing pip"
+            "${PYTHON}" ${TMPDIR:-/tmp}/get-pip.py --force-reinstall --quiet & spin "installing pip"
         else
             echo "Error: can't find or install pip"
             exit 1
@@ -142,7 +141,6 @@ else
         exit 1
     fi
     PIP="${PYTHON} -m pip"
-    USER_OPT=--user
 fi
 
 if which clk > /dev/null 2>&1
@@ -153,7 +151,7 @@ else
 fi
 
 CLK="${CLK:-clk}"
-${PIP} install ${USER_OPT} --quiet --upgrade "${CLK}" & spin "${verb} ${CLK}"
+${PIP} install --quiet --upgrade "${CLK}" & spin "${verb} ${CLK}"
 
 echo -n "installing clk completion... "
 for s in bash zsh fish; do
