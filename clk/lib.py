@@ -32,7 +32,6 @@ import colorama
 import glob2
 import requests
 import tqdm
-from click_completion import DocumentedChoice
 
 from clk.click_helpers import click_get_current_context_safe
 from clk.liblp import rm
@@ -41,8 +40,6 @@ from clk.log import get_logger
 LOGGER = get_logger(__name__)
 dry_run = None
 main_module = None
-
-DocumentedChoice = DocumentedChoice
 
 
 def read_properties_file(file_name):
