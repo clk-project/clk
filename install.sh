@@ -43,6 +43,19 @@ _find_suitable_python_version ( ) {
     echo "Using this command to run python: ${PYTHON}"
 }
 
+_in_venv ( ) {
+    # see https://stackoverflow.com/questions/1871549/determine-if-python-is-running-inside-virtualenv
+    test "False" = "$("${PYTHON}" -c "import sys ; print(sys.prefix == sys.base_prefix)")"
+}
+
+_compute_install_path ( ) {
+    if _in_venv
+    then
+        INSTALL_PATH="$(dirname "$(which "${PYTHON}")")"
+    else
+        INSTALL_PATH=$HOME/.local/bin
+    fi
+}
 
 if [ -t 1 ]; then
     green="\e[32m"
@@ -96,7 +109,7 @@ else
         fi
     fi
 
-    INSTALL_PATH=$HOME/.local/bin
+    _compute_install_path
 
     mkdir -p "${INSTALL_PATH}"
     touch "${INSTALL_PATH}/somedummyscripttotest"
