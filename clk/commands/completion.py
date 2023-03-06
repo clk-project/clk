@@ -6,6 +6,7 @@ from pathlib import Path
 
 import click
 import click_completion
+import shellingham
 
 import clk.completion
 from clk.commands.parameter import get_choices
@@ -109,6 +110,7 @@ _try.get_choices = get_choices
 @argument('path', required=False, help='Where to install the completion')
 def install(append, shell, path):
     """Install the completion"""
+    shell = shell or shellingham.detect_shell()[0]
     if not config.dry_run:
         comp_file = Path('~/.bash_completion').expanduser()
         completion_content = config.completion.content(shell)
