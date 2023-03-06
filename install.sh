@@ -154,7 +154,7 @@ CLK="${CLK:-clk}"
 ${PIP} install --quiet --upgrade "${CLK}" & spin "${verb} ${CLK}"
 
 echo -n "installing clk completion... "
-for s in bash zsh fish; do
+for s in bash; do # zsh fish
     $INSTALL_PATH/clk -L warning completion install $s
 done
 echo "done"
