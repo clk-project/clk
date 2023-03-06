@@ -1,0 +1,10 @@
+
+This is a work in progress replacement for [[file:README.md]].
+
+The intent of this document to is have a literate programming way of documenting clk.
+
+* Installation
+
+  #+BEGIN_SRC bash :tangle installer.sh :shebang "#!/bin/bash"
+    curl -sSL https://clk-project.org/install.sh | bash
+  #+END_SRC

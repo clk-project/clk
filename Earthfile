@@ -75,6 +75,9 @@ INSTALL:
     ELSE IF [ "${from}" = "script" ]
         ARG script_extra_env
         RUN --no-cache curl -sSL https://clk-project.org/install.sh | env ${script_extra_env} bash
+    ELSE IF [ "${from}" = "doc" ]
+        COPY ./installer.sh ./
+        RUN --no-cache ./installer.sh
     ELSE
         # assume it is the url to install from
         RUN python3 -m pip install "${from}"
@@ -230,8 +233,8 @@ test-install-ubuntu:
     FROM ubuntu
     RUN apt-get update && apt-get install --yes python3-distutils python3-pip
     DO +AS_USER
-    RUN python3 -m pip install coverage pytest
-    DO +INSTALL --from=script
+    DO +INSTALL --from=doc
+    RUN test foo = "$(clk echo foo)"
 
 sonar:
     FROM sonarsource/sonar-scanner-cli
