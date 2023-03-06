@@ -59,6 +59,7 @@ if [ -t 1 ]; then
             sleep .3
         done
         echo -e "\r${msg}... done"
+        wait $pid
     }
 else
     green=""
@@ -72,6 +73,7 @@ else
             sleep .1
         done
         echo "done"
+        wait $pid
     }
 fi
 
