@@ -7,7 +7,6 @@ from pathlib import Path
 import click
 
 import clk.completion
-from clk.commands.parameter import get_choices
 from clk.completion import CASE_INSENSITIVE_ENV
 from clk.config import config
 from clk.decorators import argument, flag, group, option
@@ -87,9 +86,6 @@ def _try(description, last, command, args, call):
             clk.completion.IN_COMPLETION = True
             config.main_command()
             clk.completion.IN_COMPLETION = oldvalue
-
-
-_try.get_choices = get_choices
 
 
 @completion.command(handle_dry_run=True)

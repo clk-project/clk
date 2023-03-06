@@ -7,13 +7,12 @@ import click
 
 from clk.alias import edit_alias_command, format, parse
 from clk.colors import Colorer
-from clk.completion import compute_choices
 from clk.config import config
 from clk.core import run
 from clk.decorators import argument, flag, group, option, table_fields, table_format, use_settings
 from clk.lib import TablePrinter, quote
 from clk.log import get_logger
-from clk.overloads import CommandSettingsKeyType, CommandType, get_ctx
+from clk.overloads import CommandSettingsKeyType, CommandType
 from clk.profile import profile_name_to_commandline_name
 from clk.types import DirectoryProfile as DirectoryProfileType
 
@@ -29,28 +28,6 @@ class AliasConfig(object):
 def alias():
     """Manipulate the command aliases"""
     pass
-
-
-def get_choices(ctx, args_, incomplete):
-    args = config.commandline_profile.get_settings('parameters')[ctx.command.path][:]
-    if '--' in args:
-        separator_index = args.index('--')
-        if separator_index is not None and separator_index != len(args) - 1:
-            args = args[:separator_index] + args[separator_index + 1:]
-    while args and args[0].startswith('-'):
-        a = args.pop(0)
-        if args and (a == '-e' or a == '--extension'):
-            args.pop(0)
-    if not args:
-        choices = compute_choices(ctx, args_, incomplete)
-    else:
-        args.pop(0)
-        while ',' in args:
-            args = args[args.index(',') + 1:]
-        ctx = get_ctx(args, side_effects=True)
-        choices = compute_choices(ctx, args, incomplete)
-    for item, help in choices:
-        yield (item, help)
 
 
 @alias.command(ignore_unknown_options=True, change_directory_options=False, handle_dry_run=True)
@@ -88,17 +65,11 @@ def _set(alias, command, documentation, params, flowdep):
         ] + list(flowdep), )
 
 
-_set.get_choices = get_choices
-
-
 @alias.command(ignore_unknown_options=True, change_directory_options=False, handle_dry_run=True)
 @argument('alias', help='The alias name', type=CommandSettingsKeyType('alias'))
 def edit(alias):
     """Set an alias"""
     edit_alias_command(alias)
-
-
-edit.get_choices = get_choices
 
 
 @alias.command()
@@ -285,6 +256,3 @@ def append(alias, params):
     data['commands'] = data.get('commands', []) + commands
     config.alias.writable[alias] = data
     config.alias.write()
-
-
-append.get_choices = get_choices

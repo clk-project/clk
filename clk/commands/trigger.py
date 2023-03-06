@@ -6,7 +6,6 @@ import re
 import click
 
 from clk.colors import Colorer
-from clk.commands.alias import get_choices
 from clk.config import config
 from clk.decorators import argument, flag, group, use_settings
 from clk.lib import echo_key_value, quote
@@ -75,9 +74,6 @@ def set(cmd, triggered_command, params, position):
     else:
         config.triggers.writable[cmd] = {position: commands}
     config.triggers.write()
-
-
-set.get_choices = get_choices
 
 
 @trigger.command(handle_dry_run=True)
@@ -171,6 +167,3 @@ def append(cmd, params, position):
     data[position] = data.get(position, []) + commands
     config.triggers.writable[cmd] = data
     config.triggers.write()
-
-
-append.get_choices = get_choices

@@ -6,12 +6,11 @@ import shlex
 import click
 
 from clk.colors import Colorer
-from clk.completion import compute_choices
 from clk.config import config
 from clk.decorators import argument, flag, group, option, pass_context, table_fields, table_format, use_settings
 from clk.lib import TablePrinter, quote
 from clk.log import get_logger
-from clk.overloads import CommandSettingsKeyType, CommandType, get_command_safe, get_ctx
+from clk.overloads import CommandSettingsKeyType, CommandType, get_command_safe
 
 LOGGER = get_logger(__name__)
 
@@ -29,23 +28,6 @@ def format_parameters(params):
 def parameter():
     """Manipulate command parameters"""
     pass
-
-
-def get_choices(ctx, args_, incomplete):
-    args = config.commandline_profile.get_settings('parameters')[ctx.command.path][:]
-    while args and args[0].startswith('-'):
-        a = args.pop(0)
-        if args and (a == '-e' or a == '--extension'):
-            args.pop(0)
-    if not args:
-        choices = compute_choices(ctx, args_, incomplete)
-    else:
-        path = args.pop(0).split('.')
-        args = path + args
-        ctx = get_ctx(path)
-        choices = compute_choices(ctx, args, incomplete)
-    for item, help in choices:
-        yield (item, help)
 
 
 @parameter.command(ignore_unknown_options=True, change_directory_options=False, handle_dry_run=True)
@@ -67,9 +49,6 @@ def set(cmd, params):
         format_parameters(params),
     ))
     config.parameters.write()
-
-
-set.get_choices = get_choices
 
 
 @parameter.command(ignore_unknown_options=True, change_directory_options=False, handle_dry_run=True)
@@ -100,9 +79,6 @@ def edit(cmd):
         config.parameters.write()
 
 
-edit.get_choices = get_choices
-
-
 @parameter.command(ignore_unknown_options=True, handle_dry_run=True)
 @argument('cmd', type=CommandType(), help='The command to which the parameters will be appended')
 @argument('params', nargs=-1, help='The parameters to append')
@@ -127,9 +103,6 @@ def append(cmd, params):
     config.parameters.write()
 
 
-append.get_choices = get_choices
-
-
 @parameter.command(ignore_unknown_options=True, handle_dry_run=True)
 @argument('cmd', type=CommandSettingsKeyType('parameters'), help='The command to which the parameters will be inserted')
 @argument('params', nargs=-1, help='The parameters to insert')
@@ -138,9 +111,6 @@ def insert(cmd, params):
     params = list(params) + config.parameters.readonly.get(cmd, [])
     config.parameters.writable[cmd] = params
     config.parameters.write()
-
-
-insert.get_choices = get_choices
 
 
 @parameter.command(ignore_unknown_options=True, handle_dry_run=True)
