@@ -109,6 +109,7 @@ else
         fi
     fi
 
+    _find_suitable_python_version
     _compute_install_path
 
     mkdir -p "${INSTALL_PATH}"
@@ -122,8 +123,6 @@ else
         ASK_NEW_BASH="1"
     fi
     rm "${INSTALL_PATH}/somedummyscripttotest"
-
-    _find_suitable_python_version
 
     if ! _check_pip
     then
