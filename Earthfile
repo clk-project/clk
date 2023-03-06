@@ -79,7 +79,6 @@ INSTALL:
         # assume it is the url to install from
         RUN python3 -m pip install "${from}"
     END
-    RUN coverage run --source clk -m clk completion --case-insensitive install bash && echo 'source "${HOME}/.bash_completion"' >> "${HOME}/.bashrc"
 
 VENV:
     COMMAND
@@ -122,6 +121,7 @@ test:
     ARG build_requirements=no
     ARG pypi_version
     DO +INSTALL --from "$from" --use_git="$use_git" --build_requirements="${build_requirements}" --pypi_version="${pypi_version}"
+    RUN coverage run --source clk -m clk completion --case-insensitive install bash && echo 'source "${HOME}/.bash_completion"' >> "${HOME}/.bashrc"
     COPY --dir +test-files/app/tests /app
     WORKDIR /app
     ARG test_args
