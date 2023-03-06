@@ -72,9 +72,6 @@ INSTALL:
     ELSE IF [ "${from}" = "pypi" ]
         ARG pypi_version
         RUN --no-cache python3 -m pip install clk${pypi_version}
-    ELSE IF [ "${from}" = "script" ]
-        ARG script_extra_env
-        RUN --no-cache curl -sSL https://clk-project.org/install.sh | env ${script_extra_env} bash
     ELSE IF [ "${from}" = "doc" ]
         COPY ./installer.sh ./
         RUN --no-cache ./installer.sh
@@ -151,46 +148,9 @@ export-coverage:
     RUN cd /app/output/coverage && coverage html
     SAVE ARTIFACT /app/output/coverage AS LOCAL coverage
 
-docker:
-    ARG system=alpine
-    FROM python:${system}
-    IF command -v apk
-        RUN apk add --update git
-    ELSE
-        RUN apt-get update && apt-get install --yes git
-    END
-    ARG uid=1000
-    ARG username=sam
-    ARG groups
-    DO +AS_USER --groups="$groups" --uid="${uid}" --username="${username}"
-    ARG venv=yes
-    ARG from=build
-    IF [ "${venv}" != "no" ]
-        IF [ "${from}" = "script" ]
-            RUN echo "It won't work to have venv=${venv} and from=${from}" && exit 1
-        END
-        DO +VENV
-    END
-    ARG script_extra_env
-    ARG pypi_version
-    DO +INSTALL --from "$from" --script_extra_env="${script_extra_env}" --pypi_version="${pypi_version}"
-    RUN echo 'eval "$(direnv hook bash)"' >> ~/.bashrc
-    ENTRYPOINT ["bash"]
-    ARG ref=latest
-
 export-image:
     FROM +docker
     SAVE IMAGE clk:${ref}
-
-docker-interactive:
-    # e.g. try a branch with earthly +docker-interactive --from=git+https://github.com/clk-project@release/0.26.1
-    ARG from=build
-    ARG system=alpine
-    ARG script_extra_env
-    ARG venv=yes
-    ARG pypi_version
-    FROM +docker --from="${from}" --system="${system}" --script_extra_env="${script_extra_env}" --venv="${venv}" --pypi_version="${pypi_version}"
-    RUN --interactive bash
 
 pre-commit-base:
     FROM python:slim
