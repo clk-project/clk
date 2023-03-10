@@ -48,6 +48,10 @@ clk_true ( ) {
     test "$(clk_value "${name}")" = "True"
 }
 
+clk_false ( ) {
+    ! clk_true "${@}"
+}
+
 clk_import ( ) {
     local dep="$1"
     source "$(dirname "${0}")/lib/${dep}"
