@@ -466,8 +466,9 @@ predefined_hosts = [
 @flag('--install-deps/--no-install-deps', help='Automatically install the dependencies.', default=True)
 @flag('--force/--no-force', help='Overwrite the existing extension if need be.')
 @flag('-e', '--editable', help='(only for local path) Create a symbolic link rather than copying the content')
+@flag('--break-system-packages', help='Use this flag of pip')
 @pass_context
-def install(ctx, profile, url, name, install_deps, editable, force):
+def install(ctx, profile, url, name, install_deps, editable, force, break_system_packages):
     """Install an extension from outside"""
     profile = profile or config.global_profile
     name, urls, install_type = process_url(name, url)
@@ -539,7 +540,7 @@ def install(ctx, profile, url, name, install_deps, editable, force):
 
     if install_deps is True:
         LOGGER.status('-> Installing the dependencies of the extension')
-        ctx.invoke(_install_deps, extension=[extension])
+        ctx.invoke(_install_deps, extension=[extension], break_system_packages=break_system_packages)
     LOGGER.status(f'Done installing the extension {name}')
 
 
@@ -550,13 +551,18 @@ def install(ctx, profile, url, name, install_deps, editable, force):
     nargs=-1,
     help='The name of the extensions to consider',
 )
+@flag('--break-system-packages', help='Use this flag of pip')
 @pass_context
-def _install_deps(ctx, extension):
+def _install_deps(ctx, extension, break_system_packages):
     'Install the dependencies of the extension'
     for rec in extension:
         LOGGER.status('Handling {}'.format(rec.friendly_name))
         if rec.requirements_path.exists():
-            ctx.invoke(pip, args=('install', '--upgrade', '-r', rec.requirements_path))
+            pip_args = ['install']
+            if break_system_packages:
+                pip_args += ['--break-system-packages']
+            pip_args += ['--upgrade', '-r', rec.requirements_path]
+            ctx.invoke(pip, args=pip_args)
         else:
             LOGGER.info(f'Nothing to be done for {rec.friendly_name}')
 
