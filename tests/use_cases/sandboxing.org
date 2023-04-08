@@ -1,12 +1,22 @@
 
 #+NAME: tmpdir
 #+BEGIN_SRC bash :exports none :results none :tangle sandboxing.sh
+  SRCDIR="$(pwd)"
   CLK_COV="$(readlink -f "$(dirname "$BASH_SOURCE")/../clk_coverage.sh")"
   clk ( ) {
       "${CLK_COV}" "$@"
   }
   TMP="$(mktemp -d)"
   mkdir -p "${TMP}/clk-root"
+  cat <<EOF > "${TMP}/clk-root/clk.json"
+  {
+      "parameters": {
+          "command.create.python": [
+              "--no-open"
+          ]
+      }
+  }
+  EOF
   cd "${TMP}"
   eval "$(direnv hook bash)"
   export CLKCONFIGDIR=${TMP}/clk-root

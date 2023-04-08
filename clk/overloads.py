@@ -1078,8 +1078,8 @@ def argument(*args, **kwargs):
     return click.argument(*args, **kwargs)
 
 
-def flow_command(flowdepends=(), flow_from=None, flow_after=None, **kwargs):
-    closure_flowdepends = flowdepends
+def flow_command(flowdepends=None, flow_from=None, flow_after=None, **kwargs):
+    closure_flowdepends = flowdepends or []
 
     def decorator(f):
         try:
@@ -1376,6 +1376,7 @@ class FlowArgument(Argument):
         del okwargs['name']
         del okwargs['opts']
         del okwargs['secondary_opts']
+        del okwargs['_custom_shell_complete']
         del okwargs['multiple']
         # change the default value to None in order to detect when the value should be passed to the previous commands
         # in the flow

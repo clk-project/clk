@@ -2,11 +2,10 @@
 #+language: en
 #+EXPORT_FILE_NAME: ../../doc/use_cases/index.md
 
-#+BEGIN_SRC elisp :exports none :results none
-  (org-gfm-export-to-markdown)
-#+END_SRC
+#+CALL: lp.org:export-on-save()
 
 - [[file:bash_command.org][show how to create some bash commands]],
 - [[file:bash_command_use_option.org][show how to extend a bash command with options]],
 - [[file:lib.org][show how to use the lib]],
 - [[file:bash_command_import.org][show how to import stuff in bash scripts]],
+- [[file:flow_options.org][how to use flow options to create a flow command]],

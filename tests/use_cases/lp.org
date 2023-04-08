@@ -1,0 +1,42 @@
+#+NAME: check-result
+#+BEGIN_SRC elisp :results none :exports none
+  (defun konix/org-babel-expand-noweb-references/add-check-result (orig-func info &optional parent-buffer)
+    (let (
+          (code (second info))
+          )
+      (setq code
+            (replace-regexp-in-string "^check-result(\\([a-zA-Z0-9_-]+\\))" "
+  \\1_code () {
+        <<\\1>>
+  }
+
+  \\1_expected () {
+        cat<<EOEXPECTED
+  <<\\1()>>
+  EOEXPECTED
+  }
+
+  diff -u <(\\1_code) <(\\1_expected)
+    " code))
+      (setcdr info (append (list code) (cdr (cdr info))))
+      (funcall orig-func info parent-buffer)
+      )
+    )
+  (advice-add 'org-babel-expand-noweb-references :around 'konix/org-babel-expand-noweb-references/add-check-result)
+#+END_SRC
+
+#+NAME: export-on-save
+#+BEGIN_SRC elisp :results none :exports none
+  (require 'ox-gfm)
+  (add-hook 'after-save-hook
+  'org-gfm-export-to-markdown
+  nil
+  t
+  )
+#+END_SRC
+
+#+NAME: init
+#+BEGIN_SRC elisp :exports none :results none :noweb yes
+<<check-result>>
+<<export-on-save>>
+#+END_SRC
