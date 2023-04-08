@@ -20,10 +20,6 @@ Something like this
 
     This is a group of commands to deal with 3D printing.
 
-```bash
-sed -i "s/Description/$documentation/" "${CLKCONFIGDIR}/python/printer.py"
-```
-
 You might be tempted to start with the most important command, the one that sends a gcode to the printer.
 
 ```python
@@ -95,27 +91,3 @@ clk printer flow myprinter
     Slicing model.stl to model.gcode
     Printing model.gcode using myprinter
     The flow is done
-
-```bash
-<<init>>
-
-<<create-group>>
-
-<<inject-doc>>
-
-<<copy>> 
-
-
-run_flow_code () {
-      <<run_flow>>
-}
-
-run_flow_expected () {
-      cat<<EOEXPECTED
-<<run_flow()>>
-EOEXPECTED
-}
-
-diff -u <(run_flow_code) <(run_flow_expected)
-
-```

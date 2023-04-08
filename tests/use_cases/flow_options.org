@@ -37,7 +37,7 @@ Something like this
 : This is a group of commands to deal with 3D printing.
 
 #+NAME: inject-doc
-#+BEGIN_SRC bash :session 73f5d57e-d16a-490a-b4e1-0254d6296590 :results none :var documentation=documentation
+#+BEGIN_SRC bash :session 73f5d57e-d16a-490a-b4e1-0254d6296590 :results none :exports none :var documentation=documentation
   sed -i "s/Description/$documentation/" "${CLKCONFIGDIR}/python/printer.py"
 #+END_SRC
 
@@ -147,7 +147,7 @@ Then, when you run the flow, you get this.
 
 
 #+NAME: script
-#+BEGIN_SRC bash :tangle flow_options.sh :noweb yes :shebang "#!/bin/bash -eu" :var documentation=documentation
+#+BEGIN_SRC bash :results none :exports none :tangle flow_options.sh :noweb yes :shebang "#!/bin/bash -eu" :var documentation=documentation
   <<init>>
 
   <<create-group>>
