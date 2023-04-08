@@ -44,7 +44,7 @@ idna==3.4
     # via requests
 ipdb==0.13.13
     # via clk (setup.py)
-ipython==8.11.0
+ipython==8.12.0
     # via ipdb
 jedi==0.18.2
     # via ipython
@@ -102,6 +102,8 @@ traitlets==5.9.0
     # via
     #   ipython
     #   matplotlib-inline
+typing-extensions==4.5.0
+    # via ipython
 urllib3==1.26.15
     # via requests
 wcwidth==0.2.6
