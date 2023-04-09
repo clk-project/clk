@@ -1,7 +1,6 @@
-# [[file:lib.org::*weave][weave:1]]
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-
+# [[file:lib.org::*weave][weave:1]]
 # GENERATED USING lib.org, DO NOT EDIT
 
 import os
@@ -28,4 +27,7 @@ def rm(*file_or_tree):
             shutil.rmtree(f)
         else:
             os.unlink(f)
+
+
+# end
 # weave:1 ends here

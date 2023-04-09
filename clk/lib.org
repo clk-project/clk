@@ -7,8 +7,6 @@
 
 #+NAME: header
 #+BEGIN_SRC python :results none :exports none
-  #!/usr/bin/env python
-  # -*- coding: utf-8 -*-
 
   # GENERATED USING lib.org, DO NOT EDIT
 
@@ -22,6 +20,9 @@
 #+END_SRC
 
 * rm
+  :PROPERTIES:
+  :CUSTOM_ID:       bcdb0473-f9fa-4947-bc65-8cd6a91b5089
+  :END:
 
   This function can be use as a substitute of shutil.rmtree, that deals with the
   dry-run mode and symbolic links.
@@ -46,9 +47,16 @@
   #+END_SRC
 
 * weave                                                            :noexport:
-  #+BEGIN_SRC python :results none :exports code :noweb yes :tangle liblp.py
+  :PROPERTIES:
+  :ID:       2e87b087-e2f0-4159-a415-e7599626d358
+  :END:
+  #+BEGIN_SRC python :results none :exports code :noweb yes :tangle liblp.py :shebang "#!/usr/bin/env python\n# -*- coding: utf-8 -*-"
+
     <<header>>
 
 
     <<rm>>
+
+
+    # end
   #+END_SRC
