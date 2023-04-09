@@ -36,7 +36,7 @@ needed to create human friendly command line tools.
 
 * In a nutshell                                                     :Context:
   :PROPERTIES:
-  :ID:       fe60735c-91c2-4f54-8ae2-7e3b307f27a5
+  :CUSTOM_ID:       fe60735c-91c2-4f54-8ae2-7e3b307f27a5
   :END:
 
   Install with
@@ -82,11 +82,12 @@ needed to create human friendly command line tools.
   #+END_SRC
 
   This actually does not tell you much why clk is so awesome. I try in [[id:7857f3bb-e4c7-4bad-9e27-ea48bf808a44][rationale]]
-  to explain why clk started to exist, the [[./doc/use_cases][use cases]] try to show real life
-  examples of situations where clk shines.
+  to explain why clk started to exist. The [[./doc/use_cases][use cases]] try to show real life
+  examples of situations where clk shines. To get more, take a look at the
+  [[./doc][documentation]].
 * Rationale
   :PROPERTIES:
-  :ID:       7857f3bb-e4c7-4bad-9e27-ea48bf808a44
+  :CUSTOM_ID:       7857f3bb-e4c7-4bad-9e27-ea48bf808a44
   :END:
 
   Low level command line tools are very powerful. Yet they are not very
