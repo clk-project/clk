@@ -11,6 +11,9 @@ cat <<EOF > "${TMP}/clk-root/clk.json"
     "parameters": {
         "command.create.python": [
             "--no-open"
+        ],
+        "command.create.bash": [
+            "--no-open"
         ]
     }
 }

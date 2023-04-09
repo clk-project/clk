@@ -13,6 +13,9 @@
       "parameters": {
           "command.create.python": [
               "--no-open"
+          ],
+          "command.create.bash": [
+              "--no-open"
           ]
       }
   }

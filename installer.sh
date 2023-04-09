@@ -1,4 +1,4 @@
 #!/bin/bash
-# [[file:README.org::*Installation][Installation:1]]
+# [[file:README.org::*In a nutshell][In a nutshell:1]]
 curl -sSL https://clk-project.org/install.sh | bash
-# Installation:1 ends here
+# In a nutshell:1 ends here

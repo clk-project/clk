@@ -5,8 +5,8 @@
 #+language: en
 #+EXPORT_FILE_NAME: ../../doc/use_cases/flow_options.md
 
-#+CALL: lp.org:export-on-save()
-#+CALL: lp.org:check-result()
+#+CALL: ../../lp.org:export-on-save()
+#+CALL: ../../lp.org:check-result()
 
 #+name: init
 #+BEGIN_SRC bash :results none :exports none :session 73f5d57e-d16a-490a-b4e1-0254d6296590

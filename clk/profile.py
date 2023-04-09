@@ -638,7 +638,7 @@ class DirectoryProfile(Profile):
     def migrate_if_needed(self, persist=True):
         self.persist = persist
         if (self.version < self.max_version or (self.persist and self.prevented_persistence)):
-            if self.persist:
+            if self.persist and self.old_version != 0:
                 LOGGER.warning('Profile in {} is obsolete.'
                                ' It has the version {} and current version is {}.'
                                ' Migration started.'.format(self.location, self.old_version, self.max_version))

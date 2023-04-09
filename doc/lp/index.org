@@ -1,0 +1,8 @@
+#+LANGUAGE: en
+#+EXPORT_FILE_NAME: index.md
+
+#+CALL: ../../lp.org:export-on-save()
+
+This is where the generated documentation of the code written in literate is.
+
+For now, only a few function are documented in [[./lib][here]].
