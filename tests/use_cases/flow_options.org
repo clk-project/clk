@@ -9,7 +9,7 @@
 #+CALL: lp.org:check-result()
 
 #+name: init
-#+BEGIN_SRC bash :results none :exports code :session 73f5d57e-d16a-490a-b4e1-0254d6296590
+#+BEGIN_SRC bash :results none :exports none :session 73f5d57e-d16a-490a-b4e1-0254d6296590
   . ./sandboxing.sh
 #+END_SRC
 
@@ -22,17 +22,17 @@ time have a shortcut to chain them.
 For the sake of the example, let's suppose you are writing a bunch of commands
 to perform 3d printing.
 
-You would first create the group of commands named 3d like so.
+You would first create the group of commands named ~printer~ like so.
 
 #+name: create-group
 #+BEGIN_SRC bash :results none :exports code :session 73f5d57e-d16a-490a-b4e1-0254d6296590
   clk command create python --group printer
 #+END_SRC
 
-Then, in the print.py file that just opened, there is already the group printer
+Then, in the printer.py file that just opened, there is already the group printer
 set up. Let's change its documentation so that it says something more meaningful.
 
-Something like this 
+Something like this
 #+NAME: documentation
 : This is a group of commands to deal with 3D printing.
 
@@ -45,7 +45,7 @@ You might be tempted to start with the most important command, the one that
 sends a gcode to the printer.
 
 #+NAME: send
-#+BEGIN_SRC python  :exports code 
+#+BEGIN_SRC python  :exports code
   @printer.command()
   @option("--gcode", help="The gcode file", default="model.gcode")
   @flag("--warn-when-done", help="Trigger a notification when done")
@@ -75,7 +75,7 @@ That is nice. But now, you also realize that you need to calibrate the printer
 before sending the gcode content.
 
 #+NAME: calibrate
-#+BEGIN_SRC python   
+#+BEGIN_SRC python
   @printer.command()
   def calibrate():
       """Run everything that is needed to have the printer ready to print"""
@@ -93,7 +93,7 @@ as well as the "--warn-when-done" flag and the "printer" argument of send.
 Let's define such a flow.
 
 #+NAME: flow
-#+BEGIN_SRC python 
+#+BEGIN_SRC python
   from clk.overloads import get_command
 
   @printer.flow_command()
@@ -108,7 +108,7 @@ Let's define such a flow.
 The flow_option and flow_argument lines tell that this new command "captures"
 those parameters from the respective commands.
 
-This will make the command flow behave like if 
+This will make the command flow behave like if
 
 1. it naturally had those parameters
 2. it has a flow to those commands
@@ -154,7 +154,7 @@ Then, when you run the flow, you get this.
 
   <<inject-doc>>
 
-  <<copy>> 
+  <<copy>>
 
   check-result(run_flow)
 #+END_SRC

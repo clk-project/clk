@@ -1,20 +1,16 @@
-```bash
-. ./sandboxing.sh
-```
-
 When you get used to create groups of commands, you generally end up having a sequence that comes out quite naturally.
 
 It is handy to have each command do one thing and do it well, while at the same time have a shortcut to chain them.
 
 For the sake of the example, let's suppose you are writing a bunch of commands to perform 3d printing.
 
-You would first create the group of commands named 3d like so.
+You would first create the group of commands named `printer` like so.
 
 ```bash
 clk command create python --group printer
 ```
 
-Then, in the print.py file that just opened, there is already the group printer set up. Let's change its documentation so that it says something more meaningful.
+Then, in the printer.py file that just opened, there is already the group printer set up. Let's change its documentation so that it says something more meaningful.
 
 Something like this
 
