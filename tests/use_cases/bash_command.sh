@@ -1,3 +1,4 @@
+# [[file:bash_command.org::+BEGIN_SRC bash :exports none :tangle bash_command.sh :noweb yes][No heading:9]]
 #!/bin/bash -eu
 
 . ./sandboxing.sh
@@ -30,3 +31,4 @@ echo something
 EOH
 
 test "$(clk mycommand)" = "something"
+# No heading:9 ends here

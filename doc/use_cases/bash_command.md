@@ -1,22 +1,18 @@
-```shell
-. ./sandboxing.sh
-```
-
 To create a bash command, you can simply call the following command.
 
-```shell
+```bash
 clk command create bash mycommand --no-open
 ```
 
 Note that if you omit the no open, your editor will be used to first edit the command.
 
-```shell
+```bash
 clk command which mycommand
 ```
 
     /home/sam/tmp/tmp.V6TskPmMKR-clk-test/clk-root/bin/mycommand
 
-```shell
+```bash
 clk mycommand
 ```
 
@@ -24,7 +20,7 @@ clk mycommand
 
 It does not do much, but it is now part of your tools
 
-```shell
+```bash
 clk | grep mycommand
 ```
 
@@ -32,7 +28,7 @@ clk | grep mycommand
 
 Now, let's put something into this command
 
-```shell
+```bash
 cat <<"EOH" > "$(clk command which mycommand)"
 #!/bin/bash -eu
 
@@ -55,7 +51,7 @@ echo something
 EOH
 ```
 
-```shell
+```bash
 clk mycommand --help
 ```
 
@@ -69,6 +65,6 @@ clk mycommand --help
       --help-all  Show the full help message, automatic options included.
       --help      Show this message and exit.
 
-```shell
+```bash
 test "$(clk mycommand)" = "something"
 ```

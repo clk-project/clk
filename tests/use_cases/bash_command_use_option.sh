@@ -1,3 +1,4 @@
+# [[file:bash_command_use_option.org::+BEGIN_SRC bash :exports none :tangle bash_command_use_option.sh :noweb yes][No heading:8]]
 #!/bin/bash -eu
 
 set -e
@@ -47,3 +48,4 @@ clk animal --help | grep -- '--shout'
 
 test "$(clk animal duck --sound-of-animal couac)" = "duck does couac"
 test "$(clk animal whale --shout)" = "I DON'T KNOW WHAT SOUND WHALE MAKES"
+# No heading:8 ends here

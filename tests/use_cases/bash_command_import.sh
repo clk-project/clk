@@ -1,3 +1,4 @@
+# [[file:bash_command_import.org::+BEGIN_SRC bash :tangle bash_command_import.sh :exports none :noweb yes][No heading:6]]
 #!/bin/bash -eu
 
 set -e
@@ -39,3 +40,4 @@ EOH
 
 
 test "$(clk somecommand)" = "SOMETHING"
+# No heading:6 ends here
