@@ -1,5 +1,5 @@
 #+LANGUAGE: en
-#+EXPORT_FILE_NAME: index.md
+#+EXPORT_FILE_NAME: README.md
 
 #+CALL: ../lp.org:export-on-save()
 
