@@ -1,7 +1,7 @@
 To create a bash command, you can simply call the following command.
 
 ```bash
-clk command create bash mycommand 
+clk command create bash mycommand
 ```
 
 Note that if you omit the no open, your editor will be used to first edit the command.

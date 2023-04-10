@@ -25,6 +25,8 @@ Note: This is a rewrite of the documentation, mostly using org-mode and literate
 
 clk, the **Command Line Kit** is a unique tool that aims to contains everything needed to create human friendly command line tools.
 
+I try in [rationale](#7857f3bb-e4c7-4bad-9e27-ea48bf808a44) to explain why clk started to exist. The [use cases](./doc/use_cases) try to show real life examples of situations where clk shines. To get more information, take a look at the [documentation](./doc).
+
 
 <a id="fe60735c-91c2-4f54-8ae2-7e3b307f27a5"></a>
 
@@ -48,7 +50,7 @@ clk hello-world
 
     Hello world
 
-This actually does not tell you much why clk is so awesome. I try in [rationale](#7857f3bb-e4c7-4bad-9e27-ea48bf808a44) to explain why clk started to exist. The [use cases](./doc/use_cases) try to show real life examples of situations where clk shines. To get more, take a look at the [documentation](./doc).
+This actually does not tell you much why clk is so awesome. Try taking a look, the [use cases](./doc/use_cases) to get more real life examples.
 
 
 <a id="7857f3bb-e4c7-4bad-9e27-ea48bf808a44"></a>

@@ -79,11 +79,16 @@ clk_abort () {
 	exit "${code}"
 }
 
+_clk_eval_env_by_name ( ) {
+    local name="$1"
+    echo "${!name}"
+}
+
 clk_debubp () {
-    [ "${CLK__LOG_LEVEL}" = "debug" ] \
-        || [ "${CLK__LOG_LEVEL}" = "develop" ] \
-        || [ "${CLK__DEBUG}" = "True" ] \
-        || [ "${CLK__DEVELOP}" = "True" ]
+    [ "$(_clk_eval_env_by_name ${CLK_APPNAME_UPPER}__LOG_LEVEL)" = "debug" ] \
+        || [ "$(_clk_eval_env_by_name ${CLK_APPNAME_UPPER}__LOG_LEVEL)" = "develop" ] \
+        || [ "$(_clk_eval_env_by_name ${CLK_APPNAME_UPPER}__DEBUG)" = "True" ] \
+        || [ "$(_clk_eval_env_by_name ${CLK_APPNAME_UPPER}__DEVELOP)" = "True" ]
 }
 
 clk_help_handler () {

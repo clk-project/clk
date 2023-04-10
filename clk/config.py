@@ -75,7 +75,7 @@ def migrate_profiles():
 
 
 def get_appdir(appname):
-    config = os.environ.get('CLKCONFIGDIR')
+    config = os.environ.get(f'{appname.upper()}CONFIGDIR')
     if config:
         return config
     return click.get_app_dir(appname)
@@ -214,6 +214,10 @@ class Config(object):
         return {
             **self.context_parameters_as_environ_variables,
             **self.group_command_line_parameters_as_environ_variables,
+            **{
+                'CLK_APPNAME': self.app_name,
+                'CLK_APPNAME_UPPER': self.app_name.upper(),
+            }
         }
 
     @property

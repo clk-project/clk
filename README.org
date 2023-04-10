@@ -33,9 +33,13 @@ programming. See here for the [[./README_old][old documentation]].
 clk, the *Command Line Kit* is a unique tool that aims to contains everything
 needed to create human friendly command line tools.
 
+I try in [[id:7857f3bb-e4c7-4bad-9e27-ea48bf808a44][rationale]] to explain why clk started to exist. The [[./doc/use_cases][use cases]] try to
+show real life examples of situations where clk shines. To get more information,
+take a look at the [[./doc][documentation]].
+
 * In a nutshell                                                     :Context:
   :PROPERTIES:
-  :CUSTOM_ID:       fe60735c-91c2-4f54-8ae2-7e3b307f27a5
+  :CUSTOM_ID: fe60735c-91c2-4f54-8ae2-7e3b307f27a5
   :END:
 
   Install with
@@ -80,13 +84,11 @@ needed to create human friendly command line tools.
     check-result(run)
   #+END_SRC
 
-  This actually does not tell you much why clk is so awesome. I try in [[id:7857f3bb-e4c7-4bad-9e27-ea48bf808a44][rationale]]
-  to explain why clk started to exist. The [[./doc/use_cases][use cases]] try to show real life
-  examples of situations where clk shines. To get more, take a look at the
-  [[./doc][documentation]].
+  This actually does not tell you much why clk is so awesome. Try taking a look,
+  the [[./doc/use_cases][use cases]] to get more real life examples.
 * Rationale
   :PROPERTIES:
-  :CUSTOM_ID:       7857f3bb-e4c7-4bad-9e27-ea48bf808a44
+  :CUSTOM_ID: 7857f3bb-e4c7-4bad-9e27-ea48bf808a44
   :END:
 
   Low level command line tools are very powerful. Yet they are not very

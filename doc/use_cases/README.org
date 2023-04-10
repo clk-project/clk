@@ -7,11 +7,14 @@ Here are some use cases that hopefully will have the following properties:
 - show some common pattern that emerged when using clk,
 - give examples of real life uses of clk, giving hints about when it might be useful,
 
+If you simply want to create bash commands, take a look at [[file:bash_command.org][this one]]. This [[file:bash_command_use_option.org][other
+one]] provides more insights about how to define options. When those will get
+bigger, take a look at how to [[file:bash_command_import.org][split your code]].
 
+But, eventually, you might want to use python commands to have a full control
+over the user experience.  Then, you might want a quick look at the [[file:lib.org][available
+helpers]].
 
+At some point, you will definitely want to try the [[file:flow_options.org][flow command pattern]].
 
-- [[file:bash_command.org][show how to create some bash commands]],
-- [[file:bash_command_use_option.org][show how to extend a bash command with options]],
-- [[file:lib.org][show how to use the lib]],
-- [[file:bash_command_import.org][show how to import stuff in bash scripts]],
-- [[file:flow_options.org][how to use flow options to create a flow command]],
+If you don't want to use the clk command line tool, you can [[file:rolling_your_own.org][roll your own]].

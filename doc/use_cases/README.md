@@ -4,8 +4,10 @@ Here are some use cases that hopefully will have the following properties:
 -   show some common pattern that emerged when using clk,
 -   give examples of real life uses of clk, giving hints about when it might be useful,
 
--   [show how to create some bash commands](bash_command.md),
--   [show how to extend a bash command with options](bash_command_use_option.md),
--   [show how to use the lib](lib.md),
--   [show how to import stuff in bash scripts](bash_command_import.md),
--   [how to use flow options to create a flow command](flow_options.md),
+If you simply want to create bash commands, take a look at [this one](bash_command.md). This [other one](bash_command_use_option.md) provides more insights about how to define options. When those will get bigger, take a look at how to [split your code](bash_command_import.md).
+
+But, eventually, you might want to use python commands to have a full control over the user experience. Then, you might want a quick look at the [available helpers](lib.md).
+
+At some point, you will definitely want to try the [flow command pattern](flow_options.md).
+
+If you don't want to use the clk command line tool, you can [roll your own](rolling_your_own.md).

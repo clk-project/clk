@@ -56,7 +56,7 @@ from clk.decorators import command, argument, flag, option
 @basic_entry_point(
 __name__,
 extra_command_packages=["{name}.commands"],
-exclude_core_commands=["git-sync"],
+exclude_core_commands=[],
 )
 def {name}(**kwargs):
     pass

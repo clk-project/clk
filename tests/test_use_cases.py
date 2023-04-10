@@ -24,3 +24,7 @@ def test_bash_command_import():
 
 def test_flow_options():
     call_script('flow_options.sh')
+
+
+def test_rolling_your_own():
+    call_script('rolling_your_own.sh')
