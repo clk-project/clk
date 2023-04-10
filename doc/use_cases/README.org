@@ -1,6 +1,14 @@
 #+TITLE: Listing the use cases
 #+language: en
-#+EXPORT_FILE_NAME: ../../doc/use_cases/README.md
+#+EXPORT_FILE_NAME: ./README.md
+
+Here are some use cases that hopefully will have the following propertied:
+- provide a better idea of what clk is capable of than a simple description,
+- show some common pattern that emerged when using clk,
+- give examples of real life uses of clk, giving hints about when it might be useful,
+
+
+
 
 - [[file:bash_command.org][show how to create some bash commands]],
 - [[file:bash_command_use_option.org][show how to extend a bash command with options]],
