@@ -1,14 +1,10 @@
-```shell
-. ./sandboxing.sh
-```
-
 Some times, you want to share some pieces of code in several bash commands.
 
 You can put that code in another directory called lib sibling to the commands.
 
 Say you want to provide a function called shout that capitalize the input.
 
-```shell
+```bash
 shout () {
    tr '[:lower:]' '[:upper:]'
 }
@@ -16,7 +12,7 @@ shout () {
 
 Let's put this code in a file called mylib.
 
-```shell
+```bash
   mkdir -p "${CLKCONFIGDIR}/bin/lib"
   cat<<EOF > "${CLKCONFIGDIR}/bin/lib/mylib"
 shout () {
@@ -27,7 +23,7 @@ EOF
 
 Then you can simply import this code in your code, using clk\_import.
 
-```shell
+```bash
 clk command create bash somecommand --no-open
 cat <<"EOH" > "$(clk command which somecommand)"
 #!/bin/bash -eu
@@ -53,6 +49,6 @@ echo something | shout
 EOH
 ```
 
-```shell
+```bash
 test "$(clk somecommand)" = "SOMETHING"
 ```

@@ -1,8 +1,6 @@
 #+LANGUAGE: en
 #+EXPORT_FILE_NAME: README.md
 
-#+CALL: ../lp.org:export-on-save()
-
 This is the main entry point of the documentation.
 
 The [[./use_cases][use cases]] show several real life situations that highlight how clk may be used.

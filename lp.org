@@ -24,19 +24,3 @@
     )
   (advice-add 'org-babel-expand-noweb-references :around 'konix/org-babel-expand-noweb-references/add-check-result)
 #+END_SRC
-
-#+NAME: export-on-save
-#+BEGIN_SRC elisp :results none :exports none
-  (require 'ox-gfm)
-  (add-hook 'after-save-hook
-  'org-gfm-export-to-markdown
-  nil
-  t
-  )
-#+END_SRC
-
-#+NAME: init
-#+BEGIN_SRC elisp :exports none :results none :noweb yes
-<<check-result>>
-<<export-on-save>>
-#+END_SRC

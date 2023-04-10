@@ -2,8 +2,6 @@
 #+language: en
 #+EXPORT_FILE_NAME: ../../doc/use_cases/README.md
 
-#+CALL: ../../lp.org:export-on-save()
-
 - [[file:bash_command.org][show how to create some bash commands]],
 - [[file:bash_command_use_option.org][show how to extend a bash command with options]],
 - [[file:lib.org][show how to use the lib]],

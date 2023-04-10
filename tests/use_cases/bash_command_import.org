@@ -5,8 +5,6 @@
 #+language: en
 #+EXPORT_FILE_NAME: ../../doc/use_cases/bash_command_import.md
 
-#+CALL: ../../lp.org:export-on-save()
-
 #+name: init
 #+BEGIN_SRC bash :results none :exports none :session 0a89868c-4cbb-4f83-874a-21ce32b4508f
 . ./sandboxing.sh

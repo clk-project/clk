@@ -3,7 +3,6 @@
 #+options: toc:t
 #+EXPORT_FILE_NAME: README.md
 
-#+CALL: lp.org:export-on-save()
 #+CALL: lp.org:check-result()
 
 #+BEGIN_export markdown

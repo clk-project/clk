@@ -5,8 +5,6 @@
 #+LANGUAGE: en
 #+EXPORT_FILE_NAME: ../../doc/use_cases/bash_command.md
 
-#+CALL: ../../lp.org:export-on-save()
-
 #+name: init
 #+BEGIN_SRC bash :results none :exports none :session 85c8e385-7f24-48ac-9a85-30cfc354aebf
 . ./sandboxing.sh
@@ -16,7 +14,7 @@ To create a bash command, you can simply call the following command.
 
 #+name: create
 #+BEGIN_SRC bash :results none :session 85c8e385-7f24-48ac-9a85-30cfc354aebf
-clk command create bash mycommand --no-open
+clk command create bash mycommand 
 #+END_SRC
 
 Note that if you omit the no open, your editor will be used to first edit the

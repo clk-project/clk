@@ -3,7 +3,7 @@
 
 . ./sandboxing.sh
 
-clk command create bash mycommand --no-open
+clk command create bash mycommand
 
 clk mycommand
 

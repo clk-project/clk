@@ -35,13 +35,27 @@ $0
 
 This command shows something
 --
-<<def>>
+A:kind-of-animal:$(clk_format_choice duck whale cat dog):A name of animal
+O:--sound-of-animal:str:The sound the animal makes
+F:--shout:Print the message of the animal in capital case
 EOF
 }
 
 clk_help_handler "$@"
 
-<<use>>
+if clk_given sound-of-animal
+then
+    msg="$(clk_value kind-of-animal) does $(clk_value sound-of-animal)"
+else
+    msg="I don't know what sound ${CLK___KIND_OF_ANIMAL} makes"
+fi
+
+if clk_true shout
+then
+    echo "${msg}"|tr '[:lower:]' '[:upper:]'
+else
+    echo "${msg}"
+fi
 
 EOH
 ```

@@ -5,7 +5,6 @@
 #+language: en
 #+EXPORT_FILE_NAME: ../../doc/use_cases/flow_options.md
 
-#+CALL: ../../lp.org:export-on-save()
 #+CALL: ../../lp.org:check-result()
 
 #+name: init

@@ -3,8 +3,6 @@
 #+TITLE: Some attempt at literately programming some code in clk
 #+EXPORT_FILE_NAME: ../doc/lp/lib.md
 
-#+CALL: ../lp.org:export-on-save()
-
 #+NAME: header
 #+BEGIN_SRC python :results none :exports none
 
