@@ -54,7 +54,7 @@ markupsafe==2.1.2
     # via jinja2
 matplotlib-inline==0.1.6
     # via ipython
-networkx==3.0
+networkx==3.1
     # via clk (setup.py)
 parsedatetime==2.6
     # via clk (setup.py)
