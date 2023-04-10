@@ -1,4 +1,4 @@
-Here are some use cases that hopefully will have the following propertied:
+Here are some use cases that hopefully will have the following properties:
 
 -   provide a better idea of what clk is capable of than a simple description,
 -   show some common pattern that emerged when using clk,

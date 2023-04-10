@@ -76,7 +76,7 @@ This will make the command flow behave like if
 
 1.  it naturally had those parameters
 2.  it has a flow to those commands
-3.  it was called with &#x2013;flow
+3.  it was called with `--flow`
 
 Then, when you run the flow, you get this.
 
