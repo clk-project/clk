@@ -43,10 +43,19 @@ CURRENT_CLK="$(python3 -c 'from pathlib import Path; import clk ; print(Path(clk
 
 
 #+NAME: venv
-#+BEGIN_SRC bash :results none :exports none :session 807c02cd-a6cf-432f-b982-530fc81dbbf4
+#+BEGIN_SRC bash :results none :exports none
 python3 -m venv venv
 . ./venv/bin/activate
 #+END_SRC
+
+#+NAME: venv-maybe
+#+BEGIN_SRC bash :results none :exports none :session 807c02cd-a6cf-432f-b982-530fc81dbbf4 :noweb yes
+  if test -z "${VIRTUAL_ENV}"
+  then
+      <<venv>>
+  fi
+#+END_SRC
+
 
 #+NAME: install
 #+BEGIN_SRC bash :results verbatim :exports both :session 807c02cd-a6cf-432f-b982-530fc81dbbf4
@@ -55,7 +64,10 @@ python3 -m pip install ./mytool
 
 #+NAME: install-current-clk
 #+BEGIN_SRC bash :results none :exports none :session 807c02cd-a6cf-432f-b982-530fc81dbbf4
-python3 -m pip install "${CURRENT_CLK}"
+  if test -z "${VIRTUAL_ENV}"
+  then
+      python3 -m pip install "${CURRENT_CLK}"
+  fi
 #+END_SRC
 
 From there, you can play with this new toy.
@@ -242,7 +254,7 @@ Commands:
 
 <<fork>>
 
-<<venv>>
+<<venv-maybe>>
 
 <<install>>
 
