@@ -136,12 +136,13 @@ Then, when you run the flow, you get this.
 
 #+NAME: run_flow
 #+BEGIN_SRC bash :results verbatim :exports both :session 73f5d57e-d16a-490a-b4e1-0254d6296590 :cache yes
-  clk printer flow myprinter
+  clk printer flow myprinter --model somemodel --warn-when-done 
 #+END_SRC
 
-#+RESULTS[71ecb9fc21fc4a780fdcb5ccae507d179989e276]: run_flow
-: Slicing model.stl to model.gcode
+#+RESULTS[0c111b919e2839cadb3e24e867a8ed560b862bb8]: run_flow
+: Slicing somemodel to model.gcode
 : Printing model.gcode using myprinter
+: Driiiiiiing!
 : The flow is done
 
 

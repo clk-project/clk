@@ -43,13 +43,14 @@ EOF
 
 
 run_flow_code () {
-      clk printer flow myprinter
+      clk printer flow myprinter --model somemodel --warn-when-done
 }
 
 run_flow_expected () {
       cat<<EOEXPECTED
-Slicing model.stl to model.gcode
+Slicing somemodel to model.gcode
 Printing model.gcode using myprinter
+Driiiiiiing!
 The flow is done
 EOEXPECTED
 }

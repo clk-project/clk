@@ -81,9 +81,10 @@ This will make the command flow behave like if
 Then, when you run the flow, you get this.
 
 ```bash
-clk printer flow myprinter
+clk printer flow myprinter --model somemodel --warn-when-done 
 ```
 
-    Slicing model.stl to model.gcode
+    Slicing somemodel to model.gcode
     Printing model.gcode using myprinter
+    Driiiiiiing!
     The flow is done
