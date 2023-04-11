@@ -81,7 +81,7 @@ This will make the command flow behave like if
 Then, when you run the flow, you get this.
 
 ```bash
-clk printer flow myprinter --model somemodel --warn-when-done 
+clk printer flow myprinter --model somemodel --warn-when-done
 ```
 
     Slicing somemodel to model.gcode
