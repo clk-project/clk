@@ -1,13 +1,15 @@
 #!/bin/bash -eu
-# [[file:rolling_your_own.org::+BEGIN_SRC bash :tangle rolling_your_own.sh :exports none :noweb yes :shebang "#!/bin/bash -eu"][No heading:9]]
+# [[file:rolling_your_own.org::+BEGIN_SRC bash :tangle rolling_your_own.sh :exports none :noweb yes :shebang "#!/bin/bash -eu"][No heading:11]]
 . ./sandboxing.sh
 
 clk fork mytool
 
-python3 -m venv --system-site-packages venv
+python3 -m venv venv
 . ./venv/bin/activate
 
 python3 -m pip install ./mytool
+
+python3 -m pip install "${CURRENT_CLK}"
 
 mkdir -p "${TMP}/mytool-root"
 cat <<EOF > "${TMP}/mytool-root/mytool.json"
@@ -43,4 +45,4 @@ diff -u <(call_code) <(call_expected)
 
 
 mytool --help
-# No heading:9 ends here
+# No heading:11 ends here

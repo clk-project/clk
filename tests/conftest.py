@@ -37,6 +37,7 @@ def rootdir(request):
     yield root
     del os.environ['CLKCONFIGDIR']
     del os.environ['CLK_TEST_ROOT']
+    del os.environ['CURRENT_CLK']
     os.chdir(prev)
 
 

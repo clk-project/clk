@@ -36,15 +36,26 @@ clk fork mytool
 
 Now, simply install this tool, like suggested.
 
+#+NAME: remember-current-clk
+#+BEGIN_SRC bash :results none :exports none :session 807c02cd-a6cf-432f-b982-530fc81dbbf4
+CURRENT_CLK="$(python3 -c 'from pathlib import Path; import clk ; print(Path(clk.__path__[0]).parent)')"
+#+END_SRC
+
+
 #+NAME: venv
 #+BEGIN_SRC bash :results none :exports none :session 807c02cd-a6cf-432f-b982-530fc81dbbf4
-python3 -m venv --system-site-packages venv
+python3 -m venv venv
 . ./venv/bin/activate
 #+END_SRC
 
 #+NAME: install
 #+BEGIN_SRC bash :results verbatim :exports both :session 807c02cd-a6cf-432f-b982-530fc81dbbf4
 python3 -m pip install ./mytool
+#+END_SRC
+
+#+NAME: install-current-clk
+#+BEGIN_SRC bash :results none :exports none :session 807c02cd-a6cf-432f-b982-530fc81dbbf4
+python3 -m pip install "${CURRENT_CLK}"
 #+END_SRC
 
 From there, you can play with this new toy.
@@ -234,6 +245,8 @@ Commands:
 <<venv>>
 
 <<install>>
+
+<<install-current-clk>>
 
 <<sandbox-mytool>>
 
