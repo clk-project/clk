@@ -7,3 +7,5 @@ wheelhouse
 build
 README.html
 .tox
+/fixed
+/tests/.coverage
