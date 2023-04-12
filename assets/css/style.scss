@@ -1,0 +1,16 @@
+---
+---
+
+@import "{{ site.theme }}";
+
+.language-plaintext>.highlight>.highlight {
+    color: "lawngreen";
+}
+
+.language-plaintext>.highlight::before {
+    content: "Result:";
+}
+
+.language-plaintext>.highlight {
+    background: #333333;
+}
