@@ -43,6 +43,12 @@ setup(
     }},
 )
 """)
+    createfile(
+        output / 'pyproject.toml', """
+[build-system]
+requires = ["setuptools", "wheel"]
+build-backend = "setuptools.build_meta:__legacy__"
+        """)
     package = (output / name)
     makedirs(package)
     createfile(
