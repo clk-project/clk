@@ -28,6 +28,10 @@ def param_config(name, *args, **kwargs):
         argument: Argument,
         flag: Option,
     }[kls])
+    LOGGER.deprecated('param_config will be removed from the source code on 2023/08/01.'
+                      f' Replace @param_config(typ={typ.__name__}, kls={kls.__name__},'
+                      f' cls={cls.__name__}, ...)'
+                      f' by @{kls.__name__}(expose_class={typ.__name__}, ...)')
     if kls == flag:
         kwargs['is_flag'] = True
         kwargs['default'] = kwargs.get('default', False)

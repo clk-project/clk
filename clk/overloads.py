@@ -833,7 +833,11 @@ class ParameterMixin(click.Parameter):
 
     def __init__(self, *args, **kwargs):
         self.deprecated = kwargs.pop('deprecated', None)
+        self.expose_class = kwargs.pop('expose_class', None)
+
         super(ParameterMixin, self).__init__(*args, **kwargs)
+        if self.expose_class and kwargs.get('expose_value') is None:
+            self.expose_value = False
 
     def __process_value(self, ctx, value):
         if value is None:
@@ -854,6 +858,17 @@ class ParameterMixin(click.Parameter):
             else:
                 raise
         value = self.__process_value(ctx, value)
+        if self.expose_class:
+            if hasattr(self.expose_class, 'name'):
+                name = self.expose_class.name
+            else:
+                name = self.expose_class.__name__.lower()
+                if name.endswith('config'):
+                    name = name[:-len('config')]
+            if not hasattr(config, name):
+                setattr(config, name, self.expose_class())
+            if self.name not in ctx.clk_default_catch or not hasattr(getattr(config, name), self.name):
+                setattr(getattr(config, name), self.name, value)
         return value
 
     def get_path(self, ctx):
@@ -1028,14 +1043,6 @@ def group(*args, **kwargs):
 
 def option(*args, **kwargs):
     """Declare on new option"""
-    dynamic = kwargs.get('dynamic')
-    if dynamic:
-        kwargs.pop('dynamic')
-        from clk.decorators import param_config
-        kwargs['expose_value'] = True
-        kwargs['typ'] = dynamic
-        name = dynamic.__name__.lower()
-        return param_config(name, *args, **kwargs)
     deprecated = kwargs.get('deprecated')
     callback = kwargs.get('callback')
     if deprecated:

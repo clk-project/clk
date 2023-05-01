@@ -52,20 +52,22 @@ raise Exception("test")
     assert 'error: Found the command a in the resolver customcommand but could not load it.' in output
 
 
-def test_param_config_default_value_callback_that_depends_on_another_param(pythondir, lib):
+def test_dynamic_default_value_callback_that_depends_on_another_param(pythondir, lib):
     # given a command to perform http request with a default url lazily computed
     # that depends on some other value
     (pythondir / 'http.py').write_text("""
 from clk.config import config
-from clk.decorators import group, param_config
+from clk.decorators import group, option
+class Http:
+    pass
 
 def default():
     if config.http.api:
         return f"http://{config.http.api}"
 
 @group()
-@param_config('http', '--api')
-@param_config('http', '--url', default=default)
+@option('--api', expose_class=Http)
+@option('--url', expose_class=Http, default=default)
 def http():
     ""
 
@@ -94,9 +96,9 @@ def default():
         return f"http://{config.http.api}"
 
 @group()
-@option('--api', dynamic=Http)
-@option('--url', dynamic=Http, default=default)
-def http(api, url):
+@option('--api', expose_class=Http)
+@option('--url', expose_class=Http, default=default)
+def http():
     ""
 
 @http.command()
@@ -113,17 +115,20 @@ def dump():
     assert lib.cmd('http --api myapi dump') == 'http://myapi'
 
 
-def test_param_config_default_value_callback(pythondir, lib):
+def test_dynamic_default_value_callback(pythondir, lib):
     # given a command to perform http request with a default url lazily computed
     (pythondir / 'http.py').write_text("""
 from clk.config import config
-from clk.decorators import group, param_config
+from clk.decorators import group, option
+
+class Http:
+    pass
 
 def default():
     return 'http://myapi'
 
 @group()
-@param_config('http', '--url', default=default)
+@option('--url', expose_class=Http, default=default)
 def http():
     ""
 
@@ -135,13 +140,15 @@ def get():
     assert lib.cmd('http get') == 'Getting http://myapi'
 
 
-def test_param_config_default_value(pythondir, lib):
+def test_dynamic_default_value(pythondir, lib):
     # given a command to perform http request with a default url
     (pythondir / 'http.py').write_text("""
 from clk.config import config
-from clk.decorators import group, param_config
+from clk.decorators import group, option
+class Http:
+    pass
 @group()
-@param_config('http', '--url', default='http://myapi')
+@option('--url', expose_class=Http, default='http://myapi')
 def http():
     ""
 

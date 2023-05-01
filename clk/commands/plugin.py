@@ -7,7 +7,7 @@ import click
 
 from clk.colors import Colorer
 from clk.config import config
-from clk.decorators import argument, flag, group, option, param_config, table_fields, table_format, use_settings
+from clk.decorators import argument, flag, group, option, table_fields, table_format, use_settings
 from clk.lib import TablePrinter, makedirs, move, rm
 from clk.log import get_logger
 from clk.profile import DirectoryProfile
@@ -38,27 +38,28 @@ class PluginType(DynamicChoice):
         return profile.plugin_source.list_plugins()
 
 
+class PluginConfig:
+    pass
+
+
 @plugin.command()
-@param_config(
-    'plugin',
+@argument(
     'profile-source',
-    kls=argument,
+    expose_class=PluginConfig,
     type=DirectoryProfileType(),
     help='The profile containing the plugin to move',
     expose_value=True,
 )
-@param_config(
+@argument(
     'plugin',
-    'plugin',
-    kls=argument,
+    expose_class=PluginConfig,
     type=PluginType(),
     help='The plugin to move',
     expose_value=True,
 )
-@param_config(
-    'plugin',
+@argument(
     'profile-destination',
-    kls=argument,
+    expose_class=PluginConfig,
     type=DirectoryProfileType(),
     help='The profile where to move the plugin',
     expose_value=True,
@@ -77,18 +78,16 @@ def _move(profile_source, plugin, profile_destination, force):
 
 
 @plugin.command()
-@param_config(
-    'plugin',
+@argument(
     'profile-source',
-    kls=argument,
+    expose_class=PluginConfig,
     type=DirectoryProfileType(),
     help='The profile containing the plugin to rename',
     expose_value=True,
 )
-@param_config(
+@argument(
     'plugin',
-    'plugin',
-    kls=argument,
+    expose_class=PluginConfig,
     type=PluginType(),
     help='The plugin to rename',
     expose_value=True,
@@ -107,18 +106,16 @@ def rename(profile_source, plugin, new_name):
 
 
 @plugin.command()
-@param_config(
-    'plugin',
+@argument(
     'profile-source',
-    kls=argument,
+    expose_class=PluginConfig,
     type=DirectoryProfileType(),
     help='The profile containing the plugin to edit',
     expose_value=True,
 )
-@param_config(
+@argument(
     'plugin',
-    'plugin',
-    kls=argument,
+    expose_class=PluginConfig,
     type=PluginType(),
     help='The plugin to rename',
     expose_value=True,
@@ -130,18 +127,16 @@ def edit(profile_source, plugin):
 
 
 @plugin.command()
-@param_config(
-    'plugin',
+@argument(
     'profile-source',
-    kls=argument,
+    expose_class=PluginConfig,
     type=DirectoryProfileType(),
     help='The profile containing the plugin to remove',
     expose_value=True,
 )
-@param_config(
+@argument(
     'plugin',
-    'plugin',
-    kls=argument,
+    expose_class=PluginConfig,
     type=PluginType(),
     help='The plugin to rename',
     expose_value=True,
@@ -155,18 +150,16 @@ def remove(force, profile_source, plugin):
 
 
 @plugin.command()
-@param_config(
-    'plugin',
+@argument(
     'profile-source',
-    kls=argument,
+    expose_class=PluginConfig,
     type=DirectoryProfileType(),
     help='The profile containing the plugin to find',
     expose_value=True,
 )
-@param_config(
+@argument(
     'plugin',
-    'plugin',
-    kls=argument,
+    expose_class=PluginConfig,
     type=PluginType(),
     help='The plugin to rename',
     expose_value=True,
@@ -178,10 +171,9 @@ def which(profile_source, plugin):
 
 
 @plugin.command()
-@param_config(
-    'plugin',
+@argument(
     'profile-source',
-    kls=argument,
+    expose_class=PluginConfig,
     type=DirectoryProfileType(),
     help='The profile where to create a new plugin',
     expose_value=True,

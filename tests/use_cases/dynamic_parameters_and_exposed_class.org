@@ -1,0 +1,299 @@
+:PROPERTIES:
+:ID:       e451aef8-b5f8-4529-972b-4b341833c797
+:END:
+#+TITLE: Using dynamic parameters
+#+language: en
+#+EXPORT_FILE_NAME: ../../doc/use_cases/dynamic_parameters.md
+
+#+CALL: ../../lp.org:check-result()
+
+#+name: init
+#+BEGIN_SRC bash :results none :exports none :session e451aef8-b5f8-4529-972b-4b341833c797
+  . ./sandboxing.sh
+#+END_SRC
+
+When creating complex commands, you will likely want to split its behavior among
+several subcommands, part of a common group. This is how we recommend to proceed.
+
+Let's imagine for example that you want to create a tool to perform http
+requests, like an ad-hoc version of httpie specialized for some particular use
+case you might have in mind.
+
+Let's start by focusing on how you would use such tool.
+
+You most likely want to have a command for each http verb: get, post, put...
+
+#+BEGIN_SRC bash :results none :exports code
+clk get http://url/something
+clk post http://url/something bodyoftherequest
+#+END_SRC
+
+Then, you will most likely want to make the word ~http~ more explicit, either by [[file:rolling_your_own.org][rolling your own command]]
+
+#+BEGIN_SRC bash :results none :exports code
+http get http://url/something
+http post http://url/something bodyoftherequest
+#+END_SRC
+
+or by creating a group of commands
+
+#+BEGIN_SRC bash :results none :exports code
+clk http get http://url/something
+clk http post http://url/something bodyoftherequest
+#+END_SRC
+
+I am not fond of the former way of doing as it may result in hiding other tools
+(in that case, httpie). I will focus on the later use case here.
+
+After some time using this commands, you will likely realize that you have to
+repeat the base url again and again.
+
+You might want to regroup this repeated concept in the http group, so that it
+would be called like.
+
+#+BEGIN_SRC bash :results none :exports code
+clk http --base-url http://url get /something
+clk http --base-url http://url post /something bodyoftherequest
+#+END_SRC
+
+That way, you can make use of parameters to persist that data.
+
+#+BEGIN_SRC bash :results none :exports code
+clk parameter set http --base-url http://url
+clk http get /something
+clk http post /something bodyoftherequest
+#+END_SRC
+
+Or you might want to create aliases for some sites you use a lot, like this:
+
+#+BEGIN_SRC bash :results none :exports code
+clk alias set somesite http --base-url http://url
+clk somesite get /something
+clk somesite post /something bodyoftherequest
+#+END_SRC
+
+Let's get our hands dirty then! There are plenty of ways and patterns to
+implement this tool. Here, I present the pattern that I converged to after many
+experiments.
+
+Let's start with the code of the http group.
+
+#+NAME: basehttpconfig
+#+BEGIN_SRC python :results none :exports none
+  class HTTPConfig:
+      pass
+#+END_SRC
+
+#+NAME: basehttp
+#+BEGIN_SRC python :results none :exports none
+  @group()
+  @option("--base-url", help="The url to use as a basis for all commands", expose_class=HTTPConfig)
+  def http():
+      "Commands to make http requests"
+#+END_SRC
+
+#+NAME: http
+#+BEGIN_SRC python :results none :exports code :noweb yes
+<<basehttpconfig>>
+
+<<basehttp>>
+#+END_SRC
+
+There are a few things to consider here, in particular if you already know click:
+1. the option is given an argument ~expose_class~ with the value HTTPConfig
+2. clk will make sure there exists in the config singleton an instance of this class with the name http.
+   1. the naming logic is very simple, lowercase the class name and remove the "config" suffix,
+3. clk will set the attribute "base_url" into this instance, so that any part of
+   the code will be able to read ~config.http.base_url~ at any time.
+4. clk will not expose this value to the http group of command. That means that
+   the http function is not supposed to expect the "base_url" variable. Instead,
+   it is suppose to read it from the config of need be.
+
+
+Then, in the code of the subcommands, I suggest to write all the logic that
+deals with the interaction with the user (90% of the time, this is simply
+logging) and call method of HTTPConfig to do the work.
+
+#+BEGIN_SRC python :results none :exports none
+  @http.command()
+  @argument("path", help="The path to GET")
+  def get(path):
+      "Perform a GET request"
+       LOGGER.info(f"GET {config.http.base_url}/{path}")
+       res = config.http.get(path)
+       LOGGER.info(f"res = {res}")
+
+  @http.command()
+  @argument("path", help="The path to POST to")
+  @option("--body", help="The body to send")
+  def post(path, body):
+      "Perform a POST request"
+       LOGGER.info(f"POST {config.http.base_url}/{path} with body {body}")
+       res = config.http.post(path, body)
+       LOGGER.info(f"res = {res}")
+#+END_SRC
+
+
+And then, in ~HTTPConfig~, you write whatever the real logic.
+
+#+NAME: httpconfig
+#+BEGIN_SRC python :results none :exports code
+class HTTPConfig:
+
+    def get(self, path):
+        print("Would run the get code")
+
+    def post(self, path, body):
+        print("Would run the post code")
+#+END_SRC
+
+Because the http instance is created very early, even during completion, you can
+take advantage of this object to help providing powerful completion.
+
+#+NAME: pathtype
+#+BEGIN_SRC python :results none :exports code
+  class HttpPathType(DynamicChoice):
+      def choices(self):
+          if config.http.base_url == "http://url":
+              return ["/a", "/b", "/c"]
+          elif config.http.base_url == "http://otherurl":
+              return ["/d", "/e", "/f"]
+          return []
+
+      def convert(self, value, param, ctx):
+          return value
+#+END_SRC
+
+
+Then, by providing the ~HttpPathType~ to the get and post subcommands, you get a
+powerful dynamic completion.
+
+#+NAME: getpost
+#+BEGIN_SRC python :results none :exports none
+  @http.command()
+  @argument("path", help="The path to GET", type=HttpPathType())
+  def get(path):
+      "Perform a GET request"
+      LOGGER.info(f"GET {config.http.base_url}/{path}")
+      res = config.http.get(path)
+      LOGGER.info(f"res = {res}")
+
+  @http.command()
+  @argument("path", help="The path to POST to", type=HttpPathType())
+  @option("--body", help="The body to send")
+  def post(path, body):
+      "Perform a POST request"
+      LOGGER.info(f"POST {config.http.base_url}/{path} with body {body}")
+      res = config.http.post(path, body)
+      LOGGER.info(f"res = {res}")
+#+END_SRC
+
+All in one, the final code looks like this:
+
+#+NAME: allinone
+#+BEGIN_SRC python :results none :exports code :noweb yes
+<<httpconfig>>
+
+<<pathtype>>
+
+<<basehttp>>
+
+<<getpost>>
+#+END_SRC
+
+Enough explanation.
+
+Create the http group of commands like this:
+
+#+NAME: create
+#+BEGIN_SRC bash :results none :exports code :session e451aef8-b5f8-4529-972b-4b341833c797
+clk command create python --group http
+#+END_SRC
+
+Then, in the newly opened file paste the above code.
+
+#+NAME: copy
+#+BEGIN_SRC bash :results none :exports code :session e451aef8-b5f8-4529-972b-4b341833c797 :noweb yes
+  cat<<EOF >> "${CLKCONFIGDIR}/python/http.py"
+  <<allinone>>
+  EOF
+#+END_SRC
+
+Try calling the command with:
+
+#+NAME: simpleget
+#+BEGIN_SRC bash :results verbatim :exports both :session e451aef8-b5f8-4529-972b-4b341833c797 :cache yes
+clk http --base-url http://url get /path
+#+END_SRC
+
+#+RESULTS[fdd9ecc929785ff0301b5eddebe88f5b36dc257c]: simpleget
+: GET http://url//path
+: Would run the get code
+: res = None
+
+#+NAME: simplepost
+#+BEGIN_SRC bash :results verbatim :exports both :session e451aef8-b5f8-4529-972b-4b341833c797 :cache yes
+clk http --base-url http://url post /path --body somebody
+#+END_SRC
+
+#+RESULTS[51e1cb82db92ea453fab6837b050a13d2e93d2fc]: simplepost
+: POST http://url//path with body somebody
+: Would run the post code
+: res = None
+
+But also, you get the completion that depends on what value you gave for ~--base-url~.
+
+#+NAME: completion1shown
+#+BEGIN_SRC bash :results verbatim :exports both
+clk http --base-url "http://url" get <TAB>
+#+END_SRC
+
+#+RESULTS: completion1shown
+: /a /b /c
+
+#+NAME: completion1
+#+BEGIN_SRC bash :results verbatim :exports none :session e451aef8-b5f8-4529-972b-4b341833c797 :cache yes
+clk completion try http --base-url "http://url" get
+#+END_SRC
+
+#+RESULTS[446d7cd24305a215761800ee636e79c65740f905]: completion1
+: plain,/a
+: plain,/b
+: plain,/c
+
+
+#+NAME: completion2shown
+#+BEGIN_SRC bash :results verbatim :exports both
+clk http --base-url "http://otherurl" get <TAB>
+#+END_SRC
+
+#+RESULTS: completion2shown
+: /d /e /f
+
+#+NAME: completion2
+#+BEGIN_SRC bash :results verbatim :exports none :session e451aef8-b5f8-4529-972b-4b341833c797 :cache yes
+clk completion try http --base-url "http://otherurl" get
+#+END_SRC
+
+#+RESULTS[49c836c698dc31f2251282f4111ba744a1822ce5]: completion2
+: plain,/d
+: plain,/e
+: plain,/f
+
+#+NAME: final
+#+BEGIN_SRC bash :results none :exports none :tangle dynamic_parameters_and_exposed_class.sh :noweb yes :shebang "#!/bin/bash -eu"
+<<init>>
+
+<<create>>
+
+<<copy>>
+
+check-result(simpleget)
+
+check-result(simplepost)
+
+check-result(completion1)
+
+check-result(completion2)
+
+#+END_SRC

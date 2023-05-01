@@ -47,18 +47,21 @@ def test_dynamic_command(lib):
     path = lib.cmd('command which a')
     Path(path).write_text(
         Path(path).read_text() + """
-from clk.decorators import param_config
+from clk.decorators import option
+
+class B:
+    pass
 
 @a.group()
-@param_config(
-    'b',
+@option(
     '--foo',
+    expose_class=B,
     type=click.Choice(["a", "b"]),
     expose_value=True,
 )
-@param_config(
-    'b',
+@option(
     '--bar',
+    expose_class=B,
     type=click.Choice(["c", "d"]),
     expose_value=True,
 )
@@ -76,18 +79,20 @@ def test_dynamic_group(lib):
     path = lib.cmd('command which a')
     Path(path).write_text(
         Path(path).read_text() + """
-from clk.decorators import param_config
+from clk.decorators import option
+class B:
+    pass
 
 @a.group()
-@param_config(
-    'b',
+@option(
     '--foo',
+    expose_class=B,
     type=click.Choice(["a", "b"]),
     expose_value=True,
 )
-@param_config(
-    'b',
+@option(
     '--bar',
+    expose_class=B,
     type=click.Choice(["c", "d"]),
     expose_value=True,
 )

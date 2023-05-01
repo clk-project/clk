@@ -82,12 +82,15 @@ done'''
 
 def test_alias_overrides_parameters(pythondir, lib):
     # given a group of commands that allows playing with http, using
-    # param_config for very reactive completion
+    # exposed class for very reactive completion
     (pythondir / 'http.py').write_text("""
 from clk.config import config
-from clk.decorators import group, param_config
+from clk.decorators import group, option
+class Http:
+    pass
+
 @group()
-@param_config('http', '--url')
+@option('--url', expose_class=Http)
 def http():
     ""
 
@@ -165,16 +168,19 @@ print'''
 print'''
 
 
-def test_alias_conserves_parameters_of_group_with_param_config(pythondir, lib):
+def test_alias_conserves_parameters_of_group_with_exposed_class(pythondir, lib):
     # given a group of commands that allows playing with http, using
-    # param_config for very reactive completion
+    # expose_class for very reactive completion
     (pythondir / 'http.py').write_text("""
 from clk.config import config
-from clk.decorators import group, param_config
+from clk.decorators import group, option, flag
 from clk.overloads import flag
+class Http:
+    pass
+
 @group()
-@param_config('http', '--url')
-@param_config('http', '--verify', kls=flag, expose_value=True)
+@option('--url', expose_class=Http)
+@flag('--verify', expose_class=Http, expose_value=True)
 def http(verify):
     ""
 

@@ -28,3 +28,7 @@ def test_flow_options():
 
 def test_rolling_your_own():
     call_script('rolling_your_own.sh')
+
+
+def test_dynamic_parameters_and_exposed_class():
+    call_script('dynamic_parameters_and_exposed_class.sh')

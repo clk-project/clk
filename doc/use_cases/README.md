@@ -6,6 +6,8 @@ Here are some use cases that hopefully will have the following properties:
 
 If you simply want to create bash commands, take a look at [this one](bash_command.md). This [other one](bash_command_use_option.md) provides more insights about how to define options. When those will get bigger, take a look at how to [split your code](bash_command_import.md).
 
+Also, to create powerful, dynamic command line tools that provide the best completion possible, see [this pattern](dynamic_parameters_and_exposed_class.md) for writing your commands.
+
 But, eventually, you might want to use python commands to have a full control over the user experience. Then, you might want a quick look at the [available helpers](lib.md).
 
 At some point, you will definitely want to try the [flow command pattern](flow_options.md).

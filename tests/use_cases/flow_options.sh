@@ -55,5 +55,5 @@ The flow is done
 EOEXPECTED
 }
 
-diff -u <(run_flow_code) <(run_flow_expected)
+diff -u <(run_flow_code 2>&1) <(run_flow_expected)
 # script ends here

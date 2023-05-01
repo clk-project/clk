@@ -11,6 +11,9 @@ If you simply want to create bash commands, take a look at [[file:bash_command.o
 one]] provides more insights about how to define options. When those will get
 bigger, take a look at how to [[file:bash_command_import.org][split your code]].
 
+Also, to create powerful, dynamic command line tools that provide the best
+completion possible, see [[file:dynamic_parameters_and_exposed_class.org][this pattern]] for writing your commands.
+
 But, eventually, you might want to use python commands to have a full control
 over the user experience.  Then, you might want a quick look at the [[file:lib.org][available
 helpers]].
