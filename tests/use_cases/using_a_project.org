@@ -1,0 +1,137 @@
+:PROPERTIES:
+:ID:       6de55de4-c0b3-41d6-952a-25e0fe06c881
+:END:
+#+TITLE: Using a project
+#+language: en
+#+EXPORT_FILE_NAME: ../../doc/use_cases/using_a_project.md
+
+#+CALL: ../../lp.org:check-result()
+
+#+name: init
+#+BEGIN_SRC bash :results none :exports none :session 6de55de4-c0b3-41d6-952a-25e0fe06c881
+  . ./sandboxing.sh
+#+END_SRC
+
+When working in project, it is useful to have a way to tell where the root of the project is.
+
+In git, the folder ~.git~ tells where the root of the project is. In clk, it is the folder ~.clk~.
+
+We don't actually have a command to create a project. The mere existence of this
+directory is enough.
+
+#+NAME: createproject
+#+BEGIN_SRC bash :results none :exports code :session 6de55de4-c0b3-41d6-952a-25e0fe06c881
+mkdir myprojet && cd myprojet && mkdir .clk
+#+END_SRC
+
+From here, most of the commands (aliases, parameters) you use that deal
+with persisting information will put that data in this project rather than in
+the global configuration.
+
+For example, let's create a local alias.
+
+#+NAME: usingaliases
+#+BEGIN_SRC bash :results verbatim :exports both :session 6de55de4-c0b3-41d6-952a-25e0fe06c881 :cache yes
+clk alias set somelocalcommand echo hello
+#+END_SRC
+
+#+RESULTS[0d6c576f9b6b9bf567f6a69e614604ea2774c1ef]: usingaliases
+: New local alias for somelocalcommand: echo hello
+
+
+You can call this alias when inside the project.
+
+#+NAME: callingthealias
+#+BEGIN_SRC bash :results verbatim :exports both :session 6de55de4-c0b3-41d6-952a-25e0fe06c881  :cache yes
+clk somelocalcommand
+#+END_SRC
+
+#+RESULTS[6d570aedac0dd9c98e79c8e989bdf8cce7ec7db1]: callingthealias
+: hello
+
+
+
+But, once getting out of the project, the command vanishes.
+
+#+NAME: gettingoutoftheprojecttotestthealias
+#+BEGIN_SRC bash :results none :exports code :session 6de55de4-c0b3-41d6-952a-25e0fe06c881
+cd ..
+#+END_SRC
+
+#+NAME: callingthealiasoutsideoftheproject
+#+BEGIN_SRC bash :results verbatim :exports both :session 6de55de4-c0b3-41d6-952a-25e0fe06c881  :cache yes
+clk somelocalcommand
+#+END_SRC
+
+#+RESULTS[6d570aedac0dd9c98e79c8e989bdf8cce7ec7db1]: callingthealiasoutsideoftheproject
+: Usage: clk [OPTIONS] COMMAND [ARGS]...
+: error: No such command 'somelocalcommand'.
+: error:
+: error: Did you mean one of these?
+: error:     command
+
+
+
+Let's go back in the project and create a parameter.
+
+#+NAME: gettingbackintotheprojectottestparameters
+#+BEGIN_SRC bash :results none :exports code :session 6de55de4-c0b3-41d6-952a-25e0fe06c881
+cd myprojet
+#+END_SRC
+
+#+NAME: createaparameter
+#+BEGIN_SRC bash :results verbatim :exports both :session 6de55de4-c0b3-41d6-952a-25e0fe06c881 :cache yes
+clk parameter set echo hello
+clk echo world
+#+END_SRC
+
+#+RESULTS[ad781d6972442108f1c68e05c77e76d1261ceea2]: createaparameter
+: New local parameters for echo: hello
+: hello world
+
+
+This parameter is also unavailable only inside the project.
+
+#+NAME: callingparameteroutsideofproject
+#+BEGIN_SRC bash :results verbatim :exports both :session 6de55de4-c0b3-41d6-952a-25e0fe06c881 :cache yes
+cd .. && clk echo world
+cd myprojet && clk echo world
+#+END_SRC
+
+#+RESULTS[80727bc3b2dda69f9f1daf5dc1f33a16f2f4c79b]: callingparameteroutsideofproject
+: world
+: hello world
+
+You can reference files inside the project using the ~project:~ prefix.
+
+#+NAME: projectprefix
+#+BEGIN_SRC bash :results verbatim :exports both :session 6de55de4-c0b3-41d6-952a-25e0fe06c881 :cache yes
+echo somecontent > somefile.txt
+clk exec cat project:somefile.txt
+#+END_SRC
+
+#+RESULTS[ede9ec34469ac8de6f94fef707b09be111bece55]: projectprefix
+: somecontent
+
+#+NAME: run
+#+BEGIN_SRC bash :results none :exports none :tangle using_a_project.sh :noweb yes :shebang "#!/bin/bash -eu"
+<<init>>
+
+<<createproject>>
+
+check-result(usingaliases)
+
+check-result(callingthealias)
+
+<<gettingoutoftheprojecttotestthealias>>
+
+check-result(callingthealiasoutsideoftheproject)
+
+<<gettingbackintotheprojectottestparameters>>
+
+check-result(createaparameter)
+
+check-result(callingparameteroutsideofproject)
+
+check-result(projectprefix)
+#+END_SRC

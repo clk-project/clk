@@ -36,3 +36,7 @@ def test_dealing_with_secrets():
 
 def test_dynamic_parameters_and_exposed_class():
     call_script('dynamic_parameters_and_exposed_class.sh')
+
+
+def test_using_a_project():
+    call_script('using_a_project.sh')

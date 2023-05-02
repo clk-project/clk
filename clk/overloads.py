@@ -9,6 +9,7 @@ import shlex
 import traceback
 from collections import defaultdict
 from copy import copy, deepcopy
+from pathlib import Path
 
 import click
 import click_didyoumean
@@ -806,6 +807,8 @@ def eval_arg(arg):
                          ' If you did not want it to be evaluated'
                          ' please use the following syntax: noeval:{}'.format(arg, arg))
             exit(1)
+    elif arg.startswith('project:'):
+        return str(Path(config.project) / arg[len('project:'):])
     elif eval_match:
         try:
 

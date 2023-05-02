@@ -16,7 +16,7 @@
   EOEXPECTED
   }
 
-  diff -u <(\\1_code 2>&1) <(\\1_expected)
+  diff -uw <(\\1_code 2>&1) <(\\1_expected)
     " code))
       (setcdr info (append (list code) (cdr (cdr info))))
       (funcall orig-func info parent-buffer)
