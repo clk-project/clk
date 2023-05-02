@@ -17,6 +17,7 @@ LOGGER = get_logger(__name__)
 @group()
 def password():
     """Manipulate your passwords"""
+    LOGGER.deprecated('"clk password" will be deleted on 2023/08/01. Please use "clk secret" instead')
 
 
 class LazyChoice(click.Choice):

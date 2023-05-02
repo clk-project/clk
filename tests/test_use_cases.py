@@ -30,5 +30,9 @@ def test_rolling_your_own():
     call_script('rolling_your_own.sh')
 
 
+def test_dealing_with_secrets():
+    call_script('dealing_with_secrets.sh')
+
+
 def test_dynamic_parameters_and_exposed_class():
     call_script('dynamic_parameters_and_exposed_class.sh')

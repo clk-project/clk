@@ -13,3 +13,5 @@ But, eventually, you might want to use python commands to have a full control ov
 At some point, you will definitely want to try the [flow command pattern](flow_options.md).
 
 If you don't want to use the clk command line tool, you can [roll your own](rolling_your_own.md).
+
+Some commands might need to use secret, [here is how](dealing_with_secrets.md) we implement that.

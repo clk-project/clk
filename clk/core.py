@@ -279,6 +279,8 @@ def main_command_decoration(f, cls, **kwargs):
                             is_flag=True,
                             callback=dry_run_callback,
                             help="Don't actually run anything")(f)
+    f = main_command_option('--keyring', callback=keyring_callback,
+                            help='Use this keyring instead of the default one')(f)
     f = main_command_option('--no-cache/--cache',
                             is_flag=True,
                             callback=no_cache_callback,
@@ -530,6 +532,19 @@ def no_cache_callback(ctx, attr, value):
     global cache_disk_deactivate
     if value is not None:
         cache_disk_deactivate = value
+    return value
+
+
+@main_command_options_callback
+def keyring_callback(ctx, attr, value):
+    if value is not None:
+        try:
+            import keyring
+        except ModuleNotFoundError:
+            raise click.UsageError('You need to install keyring'
+                                   ' in order to manipulate secrets.'
+                                   ' Hint: python3 -m pip install keyring')
+        keyring.set_keyring(keyring.core.load_keyring(value))
     return value
 
 

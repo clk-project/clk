@@ -617,7 +617,7 @@ def get_netrc_keyring():
     netrcfile = os.path.expanduser('~/.netrc')
     if os.path.exists(netrcfile) and platform.system() != 'Windows':
         chmod(netrcfile, 0o600)
-    from clk.keyring_netrc import NetrcKeyring
+    from clk.keyrings import NetrcKeyring
     return NetrcKeyring()
 
 
@@ -628,11 +628,13 @@ def get_keyring():
         LOGGER.status('keyring is not installed `pip install keyring`. Falling back on netrc')
         from clk.netrc import Netrc
         return Netrc()
-    if isinstance(keyring.core.get_keyring(), keyring.backends.fail.Keyring):
+
+    if isinstance(keyring.get_keyring(), keyring.backends.fail.Keyring):
         LOGGER.debug('could not find a correct keyring backend, fallback on the netrc one')
-        from clk.keyring_netrc import NetrcKeyring
-        keyring.core.set_keyring(NetrcKeyring())
-    return keyring.core.get_keyring()
+        from clk.keyrings import NetrcKeyring
+        keyring.set_keyring(NetrcKeyring())
+
+    return keyring.get_keyring()
 
 
 # taken from
@@ -1358,7 +1360,7 @@ def get_authenticator(machine, askpass=True, required=True):
     try:
         import keyring as _  # NOQA:F401
 
-        from clk.keyring_netrc import NetrcKeyring as Netrc
+        from clk.keyrings import NetrcKeyring as Netrc
     except ModuleNotFoundError:
         from clk.netrc import Netrc
     try:

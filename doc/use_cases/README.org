@@ -21,3 +21,5 @@ helpers]].
 At some point, you will definitely want to try the [[file:flow_options.org][flow command pattern]].
 
 If you don't want to use the clk command line tool, you can [[file:rolling_your_own.org][roll your own]].
+
+Some commands might need to use secret, [[file:dealing_with_secrets.org][here is how]] we implement that.

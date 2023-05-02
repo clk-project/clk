@@ -778,6 +778,7 @@ def eval_arg(arg):
         return arg
     eval_match = re.match(r'eval(\(\d+\)|):(.+)', arg)
     nexteval_match = re.match(r'nexteval(\(\d+\)|):(.+)', arg)
+    keyring_prefix = 'secret:'
     if arg.startswith('noeval:'):
         arg = arg[len('noeval:'):]
     elif nexteval_match:
@@ -786,6 +787,14 @@ def eval_arg(arg):
     elif arg.startswith('value:'):
         key = arg[len('value:'):]
         arg = config.get_settings('value').get(key, {'value': None})['value']
+    elif arg.startswith(keyring_prefix):
+        from clk.lib import get_keyring
+        key = arg[len(keyring_prefix):]
+        if res := get_keyring().get_password('clk', key):
+            return res
+        else:
+            LOGGER.error(f'Could not find the secret for {key}')
+            exit(1)
     elif arg.startswith('pyeval:'):
         try:
             evaluated_arg = str(eval(arg[len('pyeval:'):]))

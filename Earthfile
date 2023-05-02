@@ -115,7 +115,7 @@ test:
     IF [ "${venv}" != "no" ]
         DO +VENV
     END
-    RUN python3 -m pip install coverage pytest
+    RUN python3 -m pip install coverage pytest keyring
     ARG from=source
     ARG use_git=no
     ARG build_requirements=no
