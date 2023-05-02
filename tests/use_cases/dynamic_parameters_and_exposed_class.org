@@ -3,7 +3,7 @@
 :END:
 #+TITLE: Using dynamic parameters
 #+language: en
-#+EXPORT_FILE_NAME: ../../doc/use_cases/dynamic_parameters.md
+#+EXPORT_FILE_NAME: ../../doc/use_cases/dynamic_parameters_and_exposed_class.md
 
 #+CALL: ../../lp.org:check-result()
 
