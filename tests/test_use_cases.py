@@ -40,3 +40,7 @@ def test_dynamic_parameters_and_exposed_class():
 
 def test_using_a_project():
     call_script('using_a_project.sh')
+
+
+def test_dynamic_parameters_advanced_use_cases():
+    call_script('dynamic_parameters_advanced_use_cases.sh')

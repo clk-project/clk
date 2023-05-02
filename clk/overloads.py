@@ -862,6 +862,15 @@ class ParameterMixin(click.Parameter):
         return value
 
     def process_value(self, ctx, value):
+        if self.expose_class:
+            if hasattr(self.expose_class, 'name'):
+                exposed_class_name = self.expose_class.name
+            else:
+                exposed_class_name = self.expose_class.__name__.lower()
+                if exposed_class_name.endswith('config'):
+                    exposed_class_name = exposed_class_name[:-len('config')]
+            if not hasattr(config, exposed_class_name):
+                setattr(config, exposed_class_name, self.expose_class())
         try:
             value = super(ParameterMixin, self).process_value(ctx, value)
         except MissingParameter:
@@ -871,16 +880,8 @@ class ParameterMixin(click.Parameter):
                 raise
         value = self.__process_value(ctx, value)
         if self.expose_class:
-            if hasattr(self.expose_class, 'name'):
-                name = self.expose_class.name
-            else:
-                name = self.expose_class.__name__.lower()
-                if name.endswith('config'):
-                    name = name[:-len('config')]
-            if not hasattr(config, name):
-                setattr(config, name, self.expose_class())
-            if self.name not in ctx.clk_default_catch or not hasattr(getattr(config, name), self.name):
-                setattr(getattr(config, name), self.name, value)
+            if self.name not in ctx.clk_default_catch or not hasattr(getattr(config, exposed_class_name), self.name):
+                setattr(getattr(config, exposed_class_name), self.name, value)
         return value
 
     def get_path(self, ctx):

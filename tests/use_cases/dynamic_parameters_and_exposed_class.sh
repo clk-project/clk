@@ -60,7 +60,7 @@ res = None
 EOEXPECTED
 }
 
-diff -u <(simpleget_code 2>&1) <(simpleget_expected)
+diff -uw <(simpleget_code 2>&1) <(simpleget_expected)
 
 
 
@@ -76,7 +76,7 @@ res = None
 EOEXPECTED
 }
 
-diff -u <(simplepost_code 2>&1) <(simplepost_expected)
+diff -uw <(simplepost_code 2>&1) <(simplepost_expected)
 
 
 
@@ -92,7 +92,7 @@ plain,/c
 EOEXPECTED
 }
 
-diff -u <(completion1_code 2>&1) <(completion1_expected)
+diff -uw <(completion1_code 2>&1) <(completion1_expected)
 
 
 
@@ -108,5 +108,5 @@ plain,/f
 EOEXPECTED
 }
 
-diff -u <(completion2_code 2>&1) <(completion2_expected)
+diff -uw <(completion2_code 2>&1) <(completion2_expected)
 # final ends here

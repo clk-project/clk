@@ -1,0 +1,108 @@
+:PROPERTIES:
+:ID:       17c8e2ee-f62a-4516-aa6c-e04a755db3ad
+:END:
+#+TITLE: Dynamic Parameters Advanced Use Cases
+#+language: en
+#+EXPORT_FILE_NAME: ../../doc/use_cases/dynamic_parameters_advanced_use_cases.md
+
+#+CALL: ../../lp.org:check-result()
+
+#+name: init
+#+BEGIN_SRC bash :results none :exports none :session 17c8e2ee-f62a-4516-aa6c-e04a755db3ad
+  . ./sandboxing.sh
+#+END_SRC
+
+After discovering the [[file:dynamic_parameters_and_exposed_class.org][dynamic parameters]], you may want to use them for plenty of
+use cases. Here are a few pattern that I encountered when writing command line
+tools.
+* Adding values in the created class
+
+It may happen that you want to add some values to the created class when it is
+created.
+
+This is not currently possible, as the creation of the class is done internally in clk.
+
+You can do this using callback then.
+
+This pattern was found when creating an openapi client.
+
+Let's suppose you want to implement the get and the post commands of the openapi group of commands.
+
+You may want the completion of get and post to show only the appropriate paths.
+
+#+NAME: group
+#+BEGIN_SRC python :results none :exports code
+  @group()
+  def openapi():
+      "Play with some openapi server"
+
+
+  class OpenApi:
+      pass
+
+
+  class Payload(DynamicChoice):
+      def choices(self):
+          if config.openapi.method == "put":
+              return ["a", "b", "c"]
+          elif config.openapi.method == "post":
+              return ["d", "e", "f"]
+          else:
+              return []
+
+  def put_callback(ctx, attr, value):
+      config.openapi.method = "put"
+      return value
+
+
+  @openapi.command()
+  @argument("path", expose_class=OpenApi, help="The path to put",
+            expose_value=True, callback=put_callback)
+  @argument("payload", type=Payload(), help="The payload to provide")
+  def put(path, payload):
+      "Performing the put operation"
+      click.echo(f"PUT on {path} with {payload}")
+
+
+  def post_callback(ctx, attr, value):
+      config.openapi.method = "post"
+      return value
+
+
+  @openapi.command()
+  @argument("path", expose_class=OpenApi, help="The path to post",
+            expose_value=True, callback=post_callback)
+  @argument("payload", type=Payload(), help="The payload to provide")
+  def post(path, payload):
+      "Performing the post operation"
+      click.echo(f"POST on {path} with {payload}")
+#+END_SRC
+
+#+NAME: create_command
+#+BEGIN_SRC bash :results none :exports none :noweb yes :session 17c8e2ee-f62a-4516-aa6c-e04a755db3ad
+  clk command create python --group openapi --force
+  cat<<EOF >> "${CLKCONFIGDIR}/python/openapi.py"
+  <<group>>
+  EOF
+#+END_SRC
+
+Then, you can call post and put with the appropriate argument values.
+
+#+NAME: use_it
+#+BEGIN_SRC bash :results verbatim :exports both :session 17c8e2ee-f62a-4516-aa6c-e04a755db3ad :cache yes
+clk openapi put somepath a
+clk openapi post somepath d
+#+END_SRC
+
+#+RESULTS[d595847fe9b6778d7e680e5888647598d4eefea1]: use_it
+: PUT on somepath with a
+: POST on somepath with d
+
+#+NAME: all
+#+BEGIN_SRC bash :results none :exports none :tangle dynamic_parameters_advanced_use_cases.sh :noweb yes :shebang "#!/bin/bash -eu"
+<<init>>
+
+<<create_command>>
+
+check-result(use_it)
+#+END_SRC
