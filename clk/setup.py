@@ -10,21 +10,20 @@ from clk.externalcommands import ExternalCommandResolver
 from clk.flow import setup as setup_flow
 from clk.hook import HookCommandResolver
 from clk.hook import setup as setup_hook
-from clk.lib import get_authenticator_hints
 from clk.log import basic_config, get_logger
 from clk.overloads import CoreCommandResolver, Group, GroupCommandResolver, MainCommand, entry_point
 
 LOGGER = get_logger(__name__)
 
 
-def classic_setup(main_module=None,
-                  config_cls=Config,
-                  extra_command_packages=[],
-                  distribution_profile_location=None,
-                  include_core_commands=None,
-                  exclude_core_commands=None,
-                  authenticator_hints={}):
-    get_authenticator_hints.update(authenticator_hints)
+def classic_setup(
+    main_module=None,
+    config_cls=Config,
+    extra_command_packages=[],
+    distribution_profile_location=None,
+    include_core_commands=None,
+    exclude_core_commands=None,
+):
     lib.main_module = main_module
     setup_config_class(config_cls)
     setup_flow()
@@ -57,12 +56,13 @@ def classic_setup(main_module=None,
     return decorator
 
 
-def basic_entry_point(main_module,
-                      extra_command_packages=[],
-                      distribution_profile_location=None,
-                      include_core_commands=None,
-                      exclude_core_commands=None,
-                      authenticator_hints={}):
+def basic_entry_point(
+    main_module,
+    extra_command_packages=[],
+    distribution_profile_location=None,
+    include_core_commands=None,
+    exclude_core_commands=None,
+):
 
     def decorator(f):
         path = f.__name__
@@ -70,12 +70,13 @@ def basic_entry_point(main_module,
             'app_dir_name': path,
             'app_name': path,
         })
-        return classic_setup(main_module,
-                             config_cls=config_cls,
-                             extra_command_packages=extra_command_packages,
-                             distribution_profile_location=distribution_profile_location,
-                             include_core_commands=include_core_commands,
-                             exclude_core_commands=exclude_core_commands,
-                             authenticator_hints=authenticator_hints)(entry_point()(f))
+        return classic_setup(
+            main_module,
+            config_cls=config_cls,
+            extra_command_packages=extra_command_packages,
+            distribution_profile_location=distribution_profile_location,
+            include_core_commands=include_core_commands,
+            exclude_core_commands=exclude_core_commands,
+        )(entry_point()(f))
 
     return decorator

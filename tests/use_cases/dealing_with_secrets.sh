@@ -33,7 +33,7 @@ New global parameters for http: --bearer mytoken
 EOEXPECTED
 }
 
-diff -u <(setsecretinparameter_code 2>&1) <(setsecretinparameter_expected)
+diff -uw <(setsecretinparameter_code 2>&1) <(setsecretinparameter_expected)
 
 
 
@@ -47,7 +47,7 @@ Calling someurl/someendpoint with bearer token mytoken
 EOEXPECTED
 }
 
-diff -u <(usesecretinparameter_code 2>&1) <(usesecretinparameter_expected)
+diff -uw <(usesecretinparameter_code 2>&1) <(usesecretinparameter_expected)
 
 
 
@@ -62,7 +62,7 @@ New global parameters for http: --bearer secret:http_bearer
 EOEXPECTED
 }
 
-diff -u <(usethebearefromsecret_code 2>&1) <(usethebearefromsecret_expected)
+diff -uw <(usethebearefromsecret_code 2>&1) <(usethebearefromsecret_expected)
 
 
 
@@ -76,7 +76,7 @@ error: Could not find the secret for http_bearer
 EOEXPECTED
 }
 
-diff -u <(httpwithsecretfail_code 2>&1) <(httpwithsecretfail_expected)
+diff -uw <(httpwithsecretfail_code 2>&1) <(httpwithsecretfail_expected)
 
 
 clk secret set --set-parameter global --secret mytoken
@@ -94,7 +94,7 @@ http_bearer *****
 EOEXPECTED
 }
 
-diff -u <(showsecret_code 2>&1) <(showsecret_expected)
+diff -uw <(showsecret_code 2>&1) <(showsecret_expected)
 
 
 
@@ -108,7 +108,7 @@ http_bearer mytoken
 EOEXPECTED
 }
 
-diff -u <(reallyshowsecret_code 2>&1) <(reallyshowsecret_expected)
+diff -uw <(reallyshowsecret_code 2>&1) <(reallyshowsecret_expected)
 
 
 
@@ -122,7 +122,7 @@ mytoken
 EOEXPECTED
 }
 
-diff -u <(reallyshowonlysecret_code 2>&1) <(reallyshowonlysecret_expected)
+diff -uw <(reallyshowonlysecret_code 2>&1) <(reallyshowonlysecret_expected)
 
 
 
@@ -136,7 +136,31 @@ Calling someurl/someendpoint with bearer token mytoken
 EOEXPECTED
 }
 
-diff -u <(httpwithsecret_code 2>&1) <(httpwithsecret_expected)
+diff -uw <(httpwithsecret_code 2>&1) <(httpwithsecret_expected)
+
+
+clk command create python dosomething --force
+cat<<EOF >> "${CLKCONFIGDIR}/python/dosomething.py"
+from clk import get_secret
+
+@command()
+def dosomething():
+    'Example of using secrets'
+    click.echo(get_secret('http_bearer'))
+EOF
+
+
+showgetsecret_code () {
+      clk dosomething
+}
+
+showgetsecret_expected () {
+      cat<<EOEXPECTED
+mytoken
+EOEXPECTED
+}
+
+diff -uw <(showgetsecret_code 2>&1) <(showgetsecret_expected)
 
 
 clk parameter set secret.unset --force
@@ -154,5 +178,5 @@ warning: No secret set
 EOEXPECTED
 }
 
-diff -u <(checkthatthesecretisgone_code 2>&1) <(checkthatthesecretisgone_expected)
+diff -uw <(checkthatthesecretisgone_code 2>&1) <(checkthatthesecretisgone_expected)
 # test ends here

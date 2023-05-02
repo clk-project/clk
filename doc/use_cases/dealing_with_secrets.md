@@ -122,6 +122,23 @@ clk http --base-url someurl get someendpoint
 
     Calling someurl/someendpoint with bearer token mytoken
 
+This secret can also be used directly in the source code, using the `get_secret` function from clk.
+
+```python
+from clk import get_secret
+
+@command()
+def dosomething():
+    'Example of using secrets'
+    click.echo(get_secret('http_bearer'))
+```
+
+```bash
+clk dosomething
+```
+
+    mytoken
+
 You can remove this secret now using the unset command. But beware that the command won't work anymore as its parameter explicitly lookup for this secret.
 
 ```bash

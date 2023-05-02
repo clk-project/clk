@@ -5,7 +5,6 @@
 import datetime
 import difflib
 import functools
-import getpass
 import hashlib
 import heapq
 import io
@@ -635,6 +634,10 @@ def get_keyring():
         keyring.set_keyring(NetrcKeyring())
 
     return keyring.get_keyring()
+
+
+def get_secret(key):
+    return get_keyring().get_password('clk', key)
 
 
 # taken from
@@ -1341,64 +1344,6 @@ def tabulate(tabular_data,
 def str_join(sep, ls):
     """Return a joined string of all the members of the list converted in strings"""
     return sep.join(str(elem) for elem in ls)
-
-
-class AuthenticatorNotFound(click.UsageError):
-
-    def __init__(self, machine, *args, **kwargs):
-        super(AuthenticatorNotFound, self).__init__('User credentials required for machine {}.'.format(machine), *args,
-                                                    **kwargs)
-        self.machine = machine
-
-
-get_authenticator_hints = {}
-
-
-def get_authenticator(machine, askpass=True, required=True):
-    login, password = None, None
-    netrc_keyring = False
-    try:
-        import keyring as _  # NOQA:F401
-
-        from clk.keyrings import NetrcKeyring as Netrc
-    except ModuleNotFoundError:
-        from clk.netrc import Netrc
-    try:
-        keyring = get_keyring()
-        if isinstance(keyring, Netrc):
-            netrc_keyring = True
-        try:
-            login, password = json.loads(keyring.get_password('clk', machine))
-        except Exception:
-            netrc = get_netrc_keyring()
-            netrc_keyring = True
-            login, password = json.loads(netrc.get_password('clk', machine))
-    except Exception:
-        LOGGER.warning('I could not automatically find your login/password for {}.'.format(machine))
-
-    from clk import completion
-    if (login is None or password is None) and askpass and not completion.IN_COMPLETION:
-        LOGGER.info('Please enter your username and password for {}'.format(machine))
-        if machine in get_authenticator_hints:
-            LOGGER.info('Hint: {}'.format(get_authenticator_hints[machine]))
-        login = input('%s username: ' % machine)
-        password = getpass.getpass('%s password: ' % machine)
-        try:
-            LOGGER.info('Saving the credentials in your keyring: {}'.format(keyring.name))
-            keyring.set_password('clk', machine, json.dumps((login, password)))
-        except Exception:
-            LOGGER.warning('I could not save your credentials.')
-            if netrc_keyring:
-                LOGGER.warning('You can save them manually by running:'
-                               ' `passwords {} netrc-set {}`'.format(machine, login))
-
-    if login is None or password is None:
-        if required:
-            raise AuthenticatorNotFound(machine)
-        else:
-            return None
-
-    return login, password
 
 
 def assert_main_module():
