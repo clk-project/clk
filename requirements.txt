@@ -44,7 +44,7 @@ idna==3.4
     # via requests
 ipdb==0.13.13
     # via clk (setup.py)
-ipython==8.12.0
+ipython==8.12.1
     # via ipdb
 jedi==0.18.2
     # via ipython
@@ -74,7 +74,7 @@ pure-eval==0.2.2
     # via stack-data
 pydotplus==2.0.2
     # via clk (setup.py)
-pygments==2.14.0
+pygments==2.15.1
     # via
     #   clk (setup.py)
     #   ipython
@@ -82,7 +82,7 @@ pyparsing==3.0.9
     # via pydotplus
 python-dateutil==2.8.2
     # via clk (setup.py)
-requests==2.28.2
+requests==2.29.0
     # via clk (setup.py)
 shellingham==1.5.0.post1
     # via click-completion
