@@ -1,26 +1,29 @@
 #+NAME: check-result
 #+BEGIN_SRC elisp :results none :exports none
-  (defun konix/org-babel-expand-noweb-references/add-check-result (orig-func info &optional parent-buffer)
-    (let (
-          (code (second info))
-          )
-      (setq code
-            (replace-regexp-in-string "^check-result(\\([a-zA-Z0-9_-]+\\))" "
-  \\1_code () {
-        <<\\1>>
-  }
+(defun konix/org-babel-expand-noweb-references/add-check-result (orig-func info &optional parent-buffer)
+  (let (
+        (code (second info))
+        )
+    (setq code
+          (replace-regexp-in-string "^check-result(\\([a-zA-Z0-9_-]+\\))" "
+\\1_code () {
+      <<\\1>>
+}
 
-  \\1_expected () {
-        cat<<EOEXPECTED
-  <<\\1()>>
-  EOEXPECTED
-  }
+\\1_expected () {
+      cat<<EOEXPECTED
+<<\\1()>>
+EOEXPECTED
+}
 
-  diff -uw <(\\1_code 2>&1) <(\\1_expected)
+diff -uw <(\\1_code 2>&1) <(\\1_expected)
     " code))
-      (setcdr info (append (list code) (cdr (cdr info))))
-      (funcall orig-func info parent-buffer)
-      )
+    (funcall
+     orig-func
+     ;; info with the code replaced
+     (cons (first info) (cons code (cddr info)))
+     parent-buffer)
     )
-  (advice-add 'org-babel-expand-noweb-references :around 'konix/org-babel-expand-noweb-references/add-check-result)
+  )
+(advice-add 'org-babel-expand-noweb-references :around 'konix/org-babel-expand-noweb-references/add-check-result)
 #+END_SRC

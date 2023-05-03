@@ -57,9 +57,13 @@ Let's get our hands dirty then! There are plenty of ways and patterns to impleme
 Let's start with the code of the http group.
 
 ```python
-<<basehttpconfig>>
+class HTTPConfig:
+    pass
 
-<<basehttp>>
+@group()
+@option("--base-url", help="The url to use as a basis for all commands", expose_class=HTTPConfig)
+def http():
+    "Commands to make http requests"
 ```
 
 There are a few things to consider here, in particular if you already know click:
@@ -104,13 +108,46 @@ Then, by providing the `HttpPathType` to the get and post subcommands, you get a
 All in one, the final code looks like this:
 
 ```python
-<<httpconfig>>
+class HTTPConfig:
 
-<<pathtype>>
+    def get(self, path):
+        print("Would run the get code")
 
-<<basehttp>>
+    def post(self, path, body):
+        print("Would run the post code")
 
-<<getpost>>
+class HttpPathType(DynamicChoice):
+    def choices(self):
+        if config.http.base_url == "http://url":
+            return ["/a", "/b", "/c"]
+        elif config.http.base_url == "http://otherurl":
+            return ["/d", "/e", "/f"]
+        return []
+
+    def convert(self, value, param, ctx):
+        return value
+
+@group()
+@option("--base-url", help="The url to use as a basis for all commands", expose_class=HTTPConfig)
+def http():
+    "Commands to make http requests"
+
+@http.command()
+@argument("path", help="The path to GET", type=HttpPathType())
+def get(path):
+    "Perform a GET request"
+    LOGGER.info(f"GET {config.http.base_url}/{path}")
+    res = config.http.get(path)
+    LOGGER.info(f"res = {res}")
+
+@http.command()
+@argument("path", help="The path to POST to", type=HttpPathType())
+@option("--body", help="The body to send")
+def post(path, body):
+    "Perform a POST request"
+    LOGGER.info(f"POST {config.http.base_url}/{path} with body {body}")
+    res = config.http.post(path, body)
+    LOGGER.info(f"res = {res}")
 ```
 
 Enough explanation.
@@ -122,12 +159,6 @@ clk command create python --group http
 ```
 
 Then, in the newly opened file paste the above code.
-
-```bash
-cat<<EOF >> "${CLKCONFIGDIR}/python/http.py"
-<<allinone>>
-EOF
-```
 
 Try calling the command with:
 
