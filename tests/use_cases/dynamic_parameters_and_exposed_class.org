@@ -213,7 +213,7 @@ clk command create python --group http
 Then, in the newly opened file paste the above code.
 
 #+NAME: copy
-#+BEGIN_SRC bash :results none :exports code :session e451aef8-b5f8-4529-972b-4b341833c797 :noweb yes
+#+BEGIN_SRC bash :results none :exports none :session e451aef8-b5f8-4529-972b-4b341833c797 :noweb yes
   cat<<EOF >> "${CLKCONFIGDIR}/python/http.py"
   <<allinone>>
   EOF
