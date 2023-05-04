@@ -1,5 +1,5 @@
 #!/bin/bash -eu
-# [[file:../../README.org::hellp-world][hellp-world]]
+# [[file:../../README.org::hello-world][hello-world]]
 . ./sandboxing.sh
 
 clk command create bash hello-world --description "Some simple hello world command" --body 'echo "Hello world"'
@@ -15,5 +15,5 @@ Hello world
 EOEXPECTED
 }
 
-diff -u <(run_code) <(run_expected)
-# hellp-world ends here
+diff -uw <(run_code 2>&1) <(run_expected)
+# hello-world ends here

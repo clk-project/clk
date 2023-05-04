@@ -25,17 +25,19 @@
 
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=clk-project_clk&metric=alert_status)](https://sonarcloud.io/dashboard?id=clk-project_clk)
 [![CircleCI](https://circleci.com/gh/clk-project/clk.svg?style=svg)](https://app.circleci.com/pipelines/github/clk-project/clk)
+
 #+END_export
 
-Note: This is a rewrite of the documentation, mostly using org-mode and literate
-programming. See here for the [[./README_old][old documentation]].
+Come and discuss clk with us on
+- [[[https://raster.shields.io/badge/libera.chat-%23clk-blue][IRC libera.chat #clk]]](https://web.libera.chat/?channels
+- [[[https://badges.gitter.im/clk-project/community.svg][Gitter]]
 
 clk, the *Command Line Kit* is a unique tool that aims to contains everything
 needed to create human friendly command line tools.
 
-I try in [[id:7857f3bb-e4c7-4bad-9e27-ea48bf808a44][rationale]] to explain why clk started to exist. The [[./doc/use_cases][use cases]] try to
-show real life examples of situations where clk shines. To get more information,
-take a look at the [[./doc][documentation]].
+The [[id:7857f3bb-e4c7-4bad-9e27-ea48bf808a44][rationale]] attempts to explain why clk started to exist. You will find in the
+[[./doc/use_cases][use cases]] classical situations where clk is worth being used. In the future, we
+might write even more [[./doc][documentation]].
 
 * In a nutshell                                                     :Context:
   :PROPERTIES:
@@ -61,11 +63,9 @@ take a look at the [[./doc][documentation]].
   #+END_SRC
 
   #+NAME: command
-  #+BEGIN_SRC bash :results verbatim :exports both :session fe60735c-91c2-4f54-8ae2-7e3b307f27a5
+  #+BEGIN_SRC bash :results none :exports code :session fe60735c-91c2-4f54-8ae2-7e3b307f27a5
     clk command create bash hello-world --description "Some simple hello world command" --body 'echo "Hello world"'
   #+END_SRC
-
-  #+RESULTS: command
 
   #+NAME: run
   #+BEGIN_SRC bash :results verbatim :exports both :session fe60735c-91c2-4f54-8ae2-7e3b307f27a5 :cache yes
@@ -75,7 +75,7 @@ take a look at the [[./doc][documentation]].
   #+RESULTS[0c93732bdafe7b03043b9c23af57ef23f87f6a52]: run
   : Hello world
 
-  #+NAME: hellp-world
+  #+NAME: hello-world
   #+BEGIN_SRC bash :results none :exports none :tangle ./tests/use_cases/hello_world.sh :shebang "#!/bin/bash -eu" :noweb yes
     <<init>>
 
@@ -84,7 +84,7 @@ take a look at the [[./doc][documentation]].
     check-result(run)
   #+END_SRC
 
-  This actually does not tell you much why clk is so awesome. Try taking a look,
+  This actually does not tell you much why *clk* is so awesome. Try taking a look,
   the [[./doc/use_cases][use cases]] to get more real life examples.
 * Rationale
   :PROPERTIES:
@@ -92,49 +92,61 @@ take a look at the [[./doc][documentation]].
   :END:
 
   Low level command line tools are very powerful. Yet they are not very
-  intuitive. It takes time to understand *find*, *kill*, *tr*, *awk* or
-  *sed*. We spend a lot of time reading the documentation and the tool itself
-  does not help much.
+  intuitive. It takes time to understand those like *find*, *kill*, *tr*, *awk*
+  or *sed*. We spend a lot of time reading the documentation and the tool itself
+  does not help much[fn:2]. 
 
   It looks like a lot of high level command line tools, like *maven* or *npm*
   have followed the same idea of relying on a comprehensive documentation and
-  leave the tool unhelpful to the user.
+  do not provide a friendly user experience.
 
-  Yet, there are a lot a stuffs that the tool can do to help the user, so that
-  the clear documentation is not the only resort.
+  Yet, there are a lot a stuffs that the command line tool itself can do to
+  become less a burden and more a partner.
 
   One awesome command line tool on that matter is *git*. There are semantic
   completion for almost everything (~git push <tab>~ shows the remotes and ~git
   push origin <tab>~ shows the branches). You can create aliases to shorten
   commands you often use. Almost every behavior can be enabled or disabled using
-  config. Most command provide meaningful suggestions of what commands you are
+  config. Most commands provide meaningful suggestions of what commands you are
   likely to want to call next.
 
-  The concepts behind git are not that easy and a good and comprehensive
-  documentation is still needed. But git tries its best to be as friendly as
-  possible.
+  The concepts behind *git* are not that easy and a good and comprehensive
+  documentation is still needed. But *git* tries its best to be as friendly as
+  possible anyway.
 
   I think that tools like *git* opened my mind and made me realize that command
-  line tools are not necessarily obtuse. 
+  line tools are not necessarily obtuse.
 
   The *Command Line Kit* was started in 2016 out of the frustration of dealing
   with yet another set of command line tools that provided only the bare minimum
-  that a CLI can provide. That led to very long and hard to understand lines of
-  code to call them.
+  that a CLI can provide.
 
-  At that time, I created clk to wrap those tools and provide a nice user
-  experience on top on them.
+  In my mind, the authors of those tools did not willingly create obtuse
+  tools. They most likely could not afford the cognitive load of having to thing
+  about such "non functional" feature.
 
-  That's the reason why clk provides out of the box a nice completion framework,
-  aliases and a way to save configuration.
+  For that reason, *clk* provides out of the box a nice completion framework,
+  aliases and a way to save configuration, so that when writing my command line
+  tools, I don't have to think about them. They are automatically there[fn:1].
 
-  There already exist awesome libraries to create a nice interface, *click*
-  provides an easy way to write the commands, *tqdm* provides nice progress
-  bars, *humanize* helps converting dates and intervals to human readable
-  ones. What clk does is use all that and opinionatedly combines them to create
-  a "batteries included" tool.
+  There already exist awesome libraries to create nice command line
+  interfaces. *click* provides an easy way to write the commands, *tqdm*
+  provides nice progress bars, *humanize* helps converting dates and intervals
+  to human readable ones. What *clk* does is use all that and opinionatedly
+  combines them to create a "batteries included" tool.
 
-  Nowadays, I use clk for most of my day to day use, from communicating in slack
-  to fetching rss, to getting my mails or to play music. Under the hood are the
-  classical tools such as flexget, offlineimap or mopidy. They simply are
+  Nowadays, I use *clk* for most of my day to day use, from communicating in slack
+  to fetching rss, to getting my mails or to play music. Under the hood, I use
+  the classical tools such as flexget, offlineimap or mopidy. They simply are
   wrapped in a very user friendly overlay.
+* Note on version
+
+  *clk* is quite old, and most of its concepts are stable. There are still a few
+  areas that I want to dig into before starting a v1. For a start, I want to end
+  up describing all the [[./doc/use_cases][use cases]] that matter to me before considering it ready.
+
+* Footnotes
+[fn:2] After more than a decade of use, I still have a hard time finding out how
+       to use *find* for non trivial use cases.
+
+[fn:1] for that reason, clk is also called the *C*ognitive *L*oad *K*iller.

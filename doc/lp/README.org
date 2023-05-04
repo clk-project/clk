@@ -1,6 +1,8 @@
 #+LANGUAGE: en
 #+EXPORT_FILE_NAME: README.md
 
-This is where the generated documentation of the code written in literate is.
+This is where the generated documentation of the code written in literate programming.
 
-For now, only a few function are documented in [[./lib][here]].
+For now, only a few function are documented in [[./lib][here]]. It is more an experiment
+with literate programming than a useful documentation. But who knows, it may
+grow to eventually become something interesting.

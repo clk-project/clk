@@ -1,5 +1,5 @@
 This is the main entry point of the documentation.
 
-The [use cases](./use_cases) show several real life situations that highlight how clk may be used.
+For now, only the [use cases](./use_cases) are worth reading. They show several real life situations that highlight how **clk** may be used.
 
-Some code is written using literate programming, you can find the generated documentation in [here](./lp).
+I started to write some code literate programming, so you can find the generated documentation in [here](./lp), but it is still quite useless on its current state.
