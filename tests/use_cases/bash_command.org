@@ -5,6 +5,8 @@
 #+LANGUAGE: en
 #+EXPORT_FILE_NAME: ../../doc/use_cases/bash_command.md
 
+#+CALL: ../../lp.org:check-result()
+
 #+name: init
 #+BEGIN_SRC bash :results none :exports none :session 85c8e385-7f24-48ac-9a85-30cfc354aebf
 . ./sandboxing.sh
@@ -20,29 +22,29 @@ clk command create bash mycommand
 Note that if you omit the no open, your editor will be used to first edit the
 command.
 
-#+BEGIN_SRC bash   :session 85c8e385-7f24-48ac-9a85-30cfc354aebf
+#+BEGIN_SRC bash :results verbatim  :session 85c8e385-7f24-48ac-9a85-30cfc354aebf
 clk command which mycommand
 #+END_SRC
 
 #+RESULTS:
-: /home/sam/tmp/tmp.V6TskPmMKR-clk-test/clk-root/bin/mycommand
+: /home/sam/tmp/tmp.HkSraoDtb4/clk-root/bin/mycommand
 
 #+name: try
-#+BEGIN_SRC bash   :session 85c8e385-7f24-48ac-9a85-30cfc354aebf
+#+BEGIN_SRC bash   :session 85c8e385-7f24-48ac-9a85-30cfc354aebf :cache yes
 clk mycommand
 #+END_SRC
 
-#+RESULTS:
-: [33mwarning: [0mThe command 'mycommand' has no documentation
+#+RESULTS[97f6a9c28340c97de929400f49e80c55c4004428]: try
+: warning: The command 'mycommand' has no documentation
 
 It does not do much, but it is now part of your tools
 
-#+name: see
-#+BEGIN_SRC bash :results verbatim :exports both :session 85c8e385-7f24-48ac-9a85-30cfc354aebf
+#+name: see 
+#+BEGIN_SRC bash :results verbatim :exports both :session 85c8e385-7f24-48ac-9a85-30cfc354aebf :cache yes
 clk | grep mycommand
 #+END_SRC
 
-#+RESULTS:
+#+RESULTS[063678aa50852466b5fe9080008a1abeda057f56]: see
 : mycommand   Description
 
 Now, let's put something into this command
@@ -71,17 +73,16 @@ echo something
 EOH
 #+END_SRC
 
-#+BEGIN_SRC bash :results verbatim :exports both :session 85c8e385-7f24-48ac-9a85-30cfc354aebf
+#+NAME: help
+#+BEGIN_SRC bash :results verbatim :exports both :session 85c8e385-7f24-48ac-9a85-30cfc354aebf :cache yes
 clk mycommand --help
 #+END_SRC
 
-#+RESULTS:
+#+RESULTS[f8828cd48f152b2e7faa15ce1b0657999edfa6b3]: help
 : Usage: clk mycommand [OPTIONS]
-:
-:   This command shows something blablabla
-:
-:   The current parameters set for this command are: --help
-:
+: 
+:   This command shows something
+: 
 : Options:
 :   --help-all  Show the full help message, automatic options included.
 :   --help      Show this message and exit.
@@ -100,11 +101,13 @@ test "$(clk mycommand)" = "something"
 
 <<create>>
 
-<<try>>
+check-result(try)
 
-<<see>>
+check-result(see)
 
 <<fill>>
+
+check-result(help)
 
 <<check>>
 #+END_SRC

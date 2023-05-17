@@ -10,13 +10,13 @@ Note that if you omit the no open, your editor will be used to first edit the co
 clk command which mycommand
 ```
 
-    /home/sam/tmp/tmp.V6TskPmMKR-clk-test/clk-root/bin/mycommand
+    /home/sam/tmp/tmp.HkSraoDtb4/clk-root/bin/mycommand
 
 ```bash
 clk mycommand
 ```
 
-    [33mwarning: [0mThe command 'mycommand' has no documentation
+    warning: The command 'mycommand' has no documentation
 
 It does not do much, but it is now part of your tools
 
@@ -57,9 +57,7 @@ clk mycommand --help
 
     Usage: clk mycommand [OPTIONS]
     
-      This command shows something blablabla
-    
-      The current parameters set for this command are: --help
+      This command shows something
     
     Options:
       --help-all  Show the full help message, automatic options included.
