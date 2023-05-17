@@ -304,6 +304,8 @@ class ExtraParametersMixin(object):
     def format_help_text(self, ctx, formatter):
         super(ExtraParametersMixin, self).format_help_text(ctx, formatter)
         extra_args = self.get_extra_args()
+        if '--help' in extra_args:
+            extra_args.remove('--help')
         if extra_args:
             formatter.write_paragraph()
             with formatter.indentation():
