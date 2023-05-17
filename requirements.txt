@@ -12,7 +12,7 @@ backcall==0.2.0
     # via ipython
 cached-property==1.5.2
     # via clk (setup.py)
-certifi==2022.12.7
+certifi==2023.5.7
     # via requests
 charset-normalizer==3.1.0
     # via requests
@@ -44,7 +44,7 @@ idna==3.4
     # via requests
 ipdb==0.13.13
     # via clk (setup.py)
-ipython==8.12.1
+ipython==8.12.2
     # via ipdb
 jedi==0.18.2
     # via ipython
@@ -82,7 +82,7 @@ pyparsing==3.0.9
     # via pydotplus
 python-dateutil==2.8.2
     # via clk (setup.py)
-requests==2.29.0
+requests==2.30.0
     # via clk (setup.py)
 shellingham==1.5.0.post1
     # via click-completion
@@ -104,7 +104,7 @@ traitlets==5.9.0
     #   matplotlib-inline
 typing-extensions==4.5.0
     # via ipython
-urllib3==1.26.15
+urllib3==2.0.2
     # via requests
 wcwidth==0.2.6
     # via prompt-toolkit
