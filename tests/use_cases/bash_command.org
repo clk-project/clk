@@ -39,7 +39,7 @@ clk mycommand
 
 It does not do much, but it is now part of your tools
 
-#+name: see 
+#+name: see
 #+BEGIN_SRC bash :results verbatim :exports both :session 85c8e385-7f24-48ac-9a85-30cfc354aebf :cache yes
 clk | grep mycommand
 #+END_SRC
@@ -80,9 +80,9 @@ clk mycommand --help
 
 #+RESULTS[f8828cd48f152b2e7faa15ce1b0657999edfa6b3]: help
 : Usage: clk mycommand [OPTIONS]
-: 
+:
 :   This command shows something
-: 
+:
 : Options:
 :   --help-all  Show the full help message, automatic options included.
 :   --help      Show this message and exit.
