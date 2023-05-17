@@ -1,4 +1,4 @@
-#!/bin/bash -eu
+#!/bin/bash
 
 clk_confirm () {
     local prompt="$1"
@@ -150,10 +150,13 @@ clk_popline ( ) {
         return 1
     fi
     local thehead="$(head -1 "${file}")"
-    TMPDIR="$(mktemp -d)"
-    trap "rm -rf '${TMPDIR}'" 0
-    tail +2 "${file}" > "${TMPDIR}/temp"
-    mv "${TMPDIR}/temp" "${file}"
+    (
+        # use a subshell to deal with a temp file
+        TMPDIR="$(mktemp -d)"
+        trap "rm -rf '${TMPDIR}'" 0
+        tail +2 "${file}" > "${TMPDIR}/temp"
+        mv "${TMPDIR}/temp" "${file}"
+    )
     read "$2" < <(echo "${thehead}")
 }
 
