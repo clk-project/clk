@@ -82,7 +82,7 @@ pyparsing==3.0.9
     # via pydotplus
 python-dateutil==2.8.2
     # via clk (setup.py)
-requests==2.30.0
+requests==2.31.0
     # via clk (setup.py)
 shellingham==1.5.0.post1
     # via click-completion
@@ -102,7 +102,7 @@ traitlets==5.9.0
     # via
     #   ipython
     #   matplotlib-inline
-typing-extensions==4.5.0
+typing-extensions==4.6.0
     # via ipython
 urllib3==2.0.2
     # via requests
