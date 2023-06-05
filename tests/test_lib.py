@@ -86,3 +86,17 @@ def test_git_sync():
     git_add_and_commit('3')
     lib.git_sync('../a', 'b')
     assert Path('b/a').read_text() == '3'
+
+
+def test_flat_map():
+    list_of_lists = [[1, 2, 3], [4, 5]]
+    dict_item = dict(one=1, two=2, three=3)
+    list_of_tuples = [(1, 2, 3), (4, 5)]
+
+    flat_of_lists = [1, 2, 3, 4, 5]
+    flat_of_dict_items = ['one', 1, 'two', 2, 'three', 3]
+    flat_of_tuples = [1, 2, 3, 4, 5]
+
+    assert lib.flat_map(list_of_lists) == flat_of_lists
+    assert lib.flat_map(dict_item.items()) == flat_of_dict_items
+    assert lib.flat_map(list_of_tuples) == flat_of_tuples
