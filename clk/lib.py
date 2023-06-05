@@ -1183,6 +1183,12 @@ def flat_map(elem):
 
     >>> flat_map([[1, 2, 3], [4, 5]])
     [1, 2, 3, 4, 5]
+
+    >>> flat_map(dict(one=1, two=2, three=3).items())
+    ['one', 1, 'two', 2, 'three', 3]
+
+    >>> flat_map((1, 2, 3), (4, 5))
+    [1, 2, 3, 4, 5]
     """
     elem = list(map(list,elem))
     return functools.reduce(list.__add__, elem) if elem else []
