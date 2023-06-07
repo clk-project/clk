@@ -25,7 +25,7 @@ You would first create the group of commands named ~printer~ like so.
 
 #+name: create-group
 #+BEGIN_SRC bash :results none :exports code :session 73f5d57e-d16a-490a-b4e1-0254d6296590
-  clk command create python --group printer 
+  clk command create python --group printer
 #+END_SRC
 
 Then, in the printer.py file that just opened, there is already the group printer

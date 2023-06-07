@@ -7,7 +7,7 @@ For the sake of the example, let's suppose you are writing a bunch of commands t
 You would first create the group of commands named `printer` like so.
 
 ```bash
-clk command create python --group printer 
+clk command create python --group printer
 ```
 
 Then, in the printer.py file that just opened, there is already the group printer set up. Let's change its documentation so that it says something more meaningful.

@@ -1190,7 +1190,7 @@ def flat_map(elem):
     >>> flat_map((1, 2, 3), (4, 5))
     [1, 2, 3, 4, 5]
     """
-    elem = list(map(list,elem))
+    elem = list(map(list, elem))
     return functools.reduce(list.__add__, elem) if elem else []
 
 
