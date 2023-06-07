@@ -19,11 +19,11 @@ def send(gcode, warn_when_done, printer):
         print("Driiiiiiing!")
 
 @printer.command()
-@option("--model", default="model.stl", help="The model to slice")
+@option("--model", default=["model.stl"], help="The model to slice", multiple=True)
 @option("--output", default="model.gcode", help="The file getting the final gcode")
 def slice(model, output):
     """Slice a model"""
-    print(f"Slicing {model} to {output}")
+    print(f"Slicing {', '.join(model)} to {output}")
 
 @printer.command()
 def calibrate():
@@ -43,17 +43,17 @@ EOF
 
 
 run_flow_code () {
-      clk printer flow myprinter --model somemodel --warn-when-done
+      clk printer flow myprinter --model somemodel --model someothermodel --warn-when-done
 }
 
 run_flow_expected () {
       cat<<EOEXPECTED
-Slicing somemodel to model.gcode
+Slicing somemodel, someothermodel to model.gcode
 Printing model.gcode using myprinter
 Driiiiiiing!
 The flow is done
 EOEXPECTED
 }
 
-diff -u <(run_flow_code 2>&1) <(run_flow_expected)
+diff -uw <(run_flow_code 2>&1) <(run_flow_expected)
 # script ends here

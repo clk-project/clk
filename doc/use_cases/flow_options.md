@@ -7,7 +7,7 @@ For the sake of the example, let's suppose you are writing a bunch of commands t
 You would first create the group of commands named `printer` like so.
 
 ```bash
-clk command create python --group printer
+clk command create python --group printer 
 ```
 
 Then, in the printer.py file that just opened, there is already the group printer set up. Let's change its documentation so that it says something more meaningful.
@@ -34,11 +34,11 @@ Then, you realize that you got from thingiverse some stl file, not some actual g
 
 ```python
 @printer.command()
-@option("--model", default="model.stl", help="The model to slice")
+@option("--model", default=["model.stl"], help="The model to slice", multiple=True)
 @option("--output", default="model.gcode", help="The file getting the final gcode")
 def slice(model, output):
     """Slice a model"""
-    print(f"Slicing {model} to {output}")
+    print(f"Slicing {', '.join(model)} to {output}")
 ```
 
 That is nice. But now, you also realize that you need to calibrate the printer before sending the gcode content.
@@ -81,10 +81,10 @@ This will make the command flow behave like if
 Then, when you run the flow, you get this.
 
 ```bash
-clk printer flow myprinter --model somemodel --warn-when-done
+clk printer flow myprinter --model somemodel --model someothermodel --warn-when-done
 ```
 
-    Slicing somemodel to model.gcode
+    Slicing somemodel, someothermodel to model.gcode
     Printing model.gcode using myprinter
     Driiiiiiing!
     The flow is done

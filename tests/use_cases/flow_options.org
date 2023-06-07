@@ -25,7 +25,7 @@ You would first create the group of commands named ~printer~ like so.
 
 #+name: create-group
 #+BEGIN_SRC bash :results none :exports code :session 73f5d57e-d16a-490a-b4e1-0254d6296590
-  clk command create python --group printer
+  clk command create python --group printer 
 #+END_SRC
 
 Then, in the printer.py file that just opened, there is already the group printer
@@ -63,11 +63,11 @@ gcode. Therefore, you might want to run a slicer to.
 #+NAME: slice
 #+BEGIN_SRC python
   @printer.command()
-  @option("--model", default="model.stl", help="The model to slice")
+  @option("--model", default=["model.stl"], help="The model to slice", multiple=True)
   @option("--output", default="model.gcode", help="The file getting the final gcode")
   def slice(model, output):
       """Slice a model"""
-      print(f"Slicing {model} to {output}")
+      print(f"Slicing {', '.join(model)} to {output}")
 #+END_SRC
 
 That is nice. But now, you also realize that you need to calibrate the printer
@@ -136,15 +136,14 @@ Then, when you run the flow, you get this.
 
 #+NAME: run_flow
 #+BEGIN_SRC bash :results verbatim :exports both :session 73f5d57e-d16a-490a-b4e1-0254d6296590 :cache yes
-  clk printer flow myprinter --model somemodel --warn-when-done
+  clk printer flow myprinter --model somemodel --model someothermodel --warn-when-done
 #+END_SRC
 
-#+RESULTS[d4c44896bfbaf1ca0ba1591448a4c50dc6fc6f90]: run_flow
-: Slicing somemodel to model.gcode
+#+RESULTS[25af26071d091d5548b38e4eb061bf6ecba3358f]: run_flow
+: Slicing somemodel, someothermodel to model.gcode
 : Printing model.gcode using myprinter
 : Driiiiiiing!
 : The flow is done
-
 
 #+NAME: script
 #+BEGIN_SRC bash :results none :exports none :tangle flow_options.sh :noweb yes :shebang "#!/bin/bash -eu" :var documentation=documentation
