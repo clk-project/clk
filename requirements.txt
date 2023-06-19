@@ -104,7 +104,7 @@ traitlets==5.9.0
     #   matplotlib-inline
 typing-extensions==4.6.3
     # via ipython
-urllib3==2.0.2
+urllib3==2.0.3
     # via requests
 wcwidth==0.2.6
     # via prompt-toolkit
