@@ -11,12 +11,15 @@
 }
 
 \\1_expected () {
-      cat<<EOEXPECTED
+      cat<<\"EOEXPECTED\"
 <<\\1()>>
 EOEXPECTED
 }
 
-diff -uw <(\\1_code 2>&1) <(\\1_expected)
+diff -uBw <(\\1_code 2>&1) <(\\1_expected) || {
+echo \"Something went wrong when trying \\1\"
+exit 1
+}
     " code))
     (funcall
      orig-func
