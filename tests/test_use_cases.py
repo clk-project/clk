@@ -22,6 +22,10 @@ def test_bash_command_import():
     call_script('bash_command_import.sh')
 
 
+def test_bash_command_built_in_lib():
+    call_script('bash_command_built_in_lib.sh')
+
+
 def test_flow_options():
     call_script('flow_options.sh')
 

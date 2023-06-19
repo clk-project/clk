@@ -1,0 +1,88 @@
+:PROPERTIES:
+:ID:       35bf6c2a-1bf6-42b2-ac1e-3f017e28fb90
+:END:
+#+TITLE: Use the bash batteries provided by clk
+#+LANGUAGE: en
+#+EXPORT_FILE_NAME: ../../doc/use_cases/bash_command_built_in_lib.md
+
+#+CALL: ../../lp.org:check-result()
+
+#+name: init
+#+BEGIN_SRC bash :results none :exports none :session 35bf6c2a-1bf6-42b2-ac1e-3f017e28fb90
+  . ./sandboxing.sh
+#+END_SRC
+
+Now that [[file:bash_command.org][you can write a bash command]]. you might want to do some complicated
+stuff with it. If your logic becomes pretty complicated, I definitely recommend
+that you use a python command instead.
+
+But for moderate size commands, bash is pretty usable. clk provides some helpers
+to help with every day uses.
+
+Let's start by creating a command line.
+
+#+NAME: create_command
+#+BEGIN_SRC bash :results none :exports code :session 35bf6c2a-1bf6-42b2-ac1e-3f017e28fb90
+  clk command create bash mycommand
+#+END_SRC
+
+We will use it to illustrate most of the example below.
+* manipulating strings
+  When using bash, you don't have powerful string manipulation at hand. So you
+  often need to put data in files and use tools like ~cat~, ~sed~, ~cut~ or
+  ~sed~ (or ~awk~) to deal with them.
+
+** dropping duplicate lines
+
+   Say that you want to deal with a file that contains duplicate entries and
+   would like to deduplicate them, without sorting the file.
+
+   #+NAME: example_duplicate_file
+   #+BEGIN_SRC bash :results none :exports code :session 35bf6c2a-1bf6-42b2-ac1e-3f017e28fb90
+     cat<<EOF>"file_with_duplicate.txt"
+     a
+     b
+     b
+     c
+     b
+     a
+     c
+     b
+     a
+     EOF
+   #+END_SRC
+
+   ~clk_drop_duplicate~ helps in that case, simply write the following line at the end of your command.
+
+   #+NAME: drop_duplicate
+   #+BEGIN_SRC bash :results none :exports code
+     clk_drop_duplicate
+   #+END_SRC
+
+   #+NAME: drop_add_code
+   #+BEGIN_SRC bash :results none :noweb yes :exports none :session 35bf6c2a-1bf6-42b2-ac1e-3f017e28fb90
+     cat<<EOF >> "$(clk command which mycommand)"
+     <<drop_duplicate>>
+     EOF
+   #+END_SRC
+
+   Then run this command.
+
+   #+NAME: drop_run
+   #+BEGIN_SRC bash :results verbatim :exports code :session 35bf6c2a-1bf6-42b2-ac1e-3f017e28fb90 :cache yes
+     cat file_with_duplicate.txt | clk mycommand
+   #+END_SRC
+
+   #+RESULTS[0c90d3194b3e0bdf248cb9a51152f06067581a23]: drop_run
+   : warning: The command 'mycommand' has no documentation
+   : a
+   : b
+   : c
+
+
+* tangle                                                           :noexport:
+  #+BEGIN_SRC bash :exports none :tangle bash_command_built_in_lib.sh :noweb yes :shebang "#!/bin/bash -eu"
+    <<init>>
+
+    <<create_command>>
+  #+END_SRC
