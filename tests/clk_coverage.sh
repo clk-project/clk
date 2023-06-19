@@ -20,7 +20,16 @@ then
 fi
 
 set +e
-python3 -u -m coverage run --source clk -m clk "$@"
+CLK_BIN="$(readlink -f "$(which clk)")"
+CLK_BIN_PATH="${CLK_BIN%/*}"
+PYTHON="${CLK_BIN_PATH}/python"
+# if this path exists, clk is most likely installed in a venv, using that
+# version of python to get to the coverage
+if ! test -e "${PYTHON}"
+then
+    PYTHON=python3
+fi
+"${PYTHON}" -u -m coverage run --source clk -m clk "$@"
 res=$?
 set -e
 
