@@ -90,12 +90,7 @@ test "$(clk animal duck --sound-of-animal couac)" = "duck does couac"
 test "$(clk animal whale --shout)" = "I DON'T KNOW WHAT SOUND WHALE MAKES"
 #+END_SRC
 
-#+BEGIN_SRC bash :exports none :tangle bash_command_use_option.sh :noweb yes
-#!/bin/bash -eu
-
-set -e
-set -u
-
+#+BEGIN_SRC bash :exports none :tangle bash_command_use_option.sh :noweb yes :shebang "#!/bin/bash -eu"
 <<init>>
 
 <<create>>

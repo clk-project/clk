@@ -1,9 +1,5 @@
-# [[file:bash_command_use_option.org::+BEGIN_SRC bash :exports none :tangle bash_command_use_option.sh :noweb yes][No heading:8]]
 #!/bin/bash -eu
-
-set -e
-set -u
-
+# [[file:bash_command_use_option.org::+BEGIN_SRC bash :exports none :tangle bash_command_use_option.sh :noweb yes :shebang "#!/bin/bash -eu"][No heading:8]]
 . ./sandboxing.sh
 
 clk command create bash animal --no-open

@@ -19,39 +19,18 @@ To create a bash command, you can simply call the following command.
 clk command create bash mycommand
 #+END_SRC
 
-Note that if you omit the no open, your editor will be used to first edit the
-command.
+Your editor will be used to first edit the command. This command will already
+contain some code to get you started.
 
-#+BEGIN_SRC bash :results verbatim  :session 85c8e385-7f24-48ac-9a85-30cfc354aebf
-clk command which mycommand
+Let's look at this file together.
+
+#+NAME: show_it
+#+BEGIN_SRC bash :results verbatim  :session 85c8e385-7f24-48ac-9a85-30cfc354aebf :cache yes
+cat $(clk command which mycommand)
 #+END_SRC
 
-#+RESULTS:
-: /home/sam/tmp/tmp.HkSraoDtb4/clk-root/bin/mycommand
-
-#+name: try
-#+BEGIN_SRC bash   :session 85c8e385-7f24-48ac-9a85-30cfc354aebf :cache yes
-clk mycommand
-#+END_SRC
-
-#+RESULTS[97f6a9c28340c97de929400f49e80c55c4004428]: try
-: warning: The command 'mycommand' has no documentation
-
-It does not do much, but it is now part of your tools
-
-#+name: see
-#+BEGIN_SRC bash :results verbatim :exports both :session 85c8e385-7f24-48ac-9a85-30cfc354aebf :cache yes
-clk | grep mycommand
-#+END_SRC
-
-#+RESULTS[063678aa50852466b5fe9080008a1abeda057f56]: see
-: mycommand   Description
-
-Now, let's put something into this command
-
-#+name: fill
-#+BEGIN_SRC bash :results none :exports both :session 85c8e385-7f24-48ac-9a85-30cfc354aebf
-cat <<"EOH" > "$(clk command which mycommand)"
+#+RESULTS[7d3b87635527e2c71dba61b28983f897eb7a8a9f]: show_it
+#+begin_example
 #!/bin/bash -eu
 
 source "_clk.sh"
@@ -60,17 +39,44 @@ clk_usage () {
     cat<<EOF
 $0
 
-This command shows something
+Description
 --
 
 EOF
 }
 
 clk_help_handler "$@"
+#+end_example
 
-echo something
+The first part, ~source "_clk.sh"~ loads a few helpers provided by clk to make
+your life easier. Among other things, it contains the glue code to make clk
+parse your command line.
 
-EOH
+Then, ~clk_usage~ is responsible to provide the help message and the description
+of the options and arguments.
+
+On top of the line with two dashes ~--~ , you write whatever plain text content
+you want. It will be available in the ~--help~ output.
+
+Below the ~--~ line, you will write the descriptions of the arguments and
+options (see [[file:bash_command_use_option.org][the dedicated tutorial]]).
+
+If you keep the word ~Description~ in the help message, clk will warn you that
+you should replace it with something more interesting.
+
+#+name: try
+#+BEGIN_SRC bash :results verbatim :exports both  :session 85c8e385-7f24-48ac-9a85-30cfc354aebf :cache yes
+clk mycommand
+#+END_SRC
+
+#+RESULTS[b51c75a0bbe5bf44990b233b589594473c828e43]: try
+: warning: The command 'mycommand' has no documentation
+
+Let's write something in here.
+
+#+name: set_description
+#+BEGIN_SRC bash :results none :exports both :session 85c8e385-7f24-48ac-9a85-30cfc354aebf
+sed -i 's/Description/Command that says something/g' "$(clk command which mycommand)"
 #+END_SRC
 
 #+NAME: help
@@ -81,37 +87,48 @@ clk mycommand --help
 #+RESULTS[f8828cd48f152b2e7faa15ce1b0657999edfa6b3]: help
 : Usage: clk mycommand [OPTIONS]
 :
-:   This command shows something
+:   Command that says something
 :
 : Options:
 :   --help-all  Show the full help message, automatic options included.
 :   --help      Show this message and exit.
 
-#+name: check
-#+BEGIN_SRC bash :results verbatim :exports both :session 85c8e385-7f24-48ac-9a85-30cfc354aebf
-test "$(clk mycommand)" = "something"
+
+The last part ~clk_help_handler "$@"~ is the glue code that makes clk parse the
+command line. After this line, you can write the content of your command line.
+
+Let's make this command say something.
+
+#+name: say_something
+#+BEGIN_SRC bash :results none :exports code :session 85c8e385-7f24-48ac-9a85-30cfc354aebf
+  cat<<EOF >> "$(clk command which mycommand)"
+  echo something
+  EOF
 #+END_SRC
 
-#+RESULTS: check
+#+NAME: use_it
+#+BEGIN_SRC bash :results verbatim :exports both :session 85c8e385-7f24-48ac-9a85-30cfc354aebf :cache yes
+clk mycommand
+#+END_SRC
 
-#+BEGIN_SRC bash :exports none :tangle bash_command.sh :noweb yes
-#!/bin/bash -eu
+#+RESULTS[b51c75a0bbe5bf44990b233b589594473c828e43]: use_it
+: something
 
+
+#+BEGIN_SRC bash :exports none :tangle bash_command.sh :noweb yes :shebang "#!/bin/bash -eu"
 <<init>>
 
 <<create>>
 
+check-result(show_it)
+
 check-result(try)
 
-check-result(see)
-
-<<fill>>
+<<set_description>>
 
 check-result(help)
 
-<<check>>
-#+END_SRC
+<<say_something>>
 
-#+BEGIN_SRC bash :results none :exports none
-chmod +x bash_command.sh
+check-result(use_it)
 #+END_SRC
