@@ -358,7 +358,7 @@ clk_help_handler "$@"
 
 {args}
 {body}
-"""
+""".strip() + '\n'
     if from_file:
         script_content = Path(from_file).read_text()
     createfile(script_path, script_content, mode=0o755)
