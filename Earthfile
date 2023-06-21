@@ -144,7 +144,7 @@ export-coverage:
     ARG test_args
     ARG from=source
     ARG use_git=no
-    FROM +test --from="$from" --test_args="$test_args" --use_git="$use_git"
+    FROM +test --test_args="$test_args" --from="$from" --test_args="$test_args" --use_git="$use_git"
     RUN cd /app/output/coverage && coverage html
     SAVE ARTIFACT /app/output/coverage AS LOCAL coverage
 
@@ -172,7 +172,6 @@ pre-commit-cache:
     COPY --dir .pre-commit-config.yaml .
     RUN pre-commit run -a
     SAVE ARTIFACT ${HOME}/.cache/pre-commit cache
-
 
 quality-base:
     FROM +pre-commit-base
@@ -225,6 +224,7 @@ local-sanity-check:
     ARG use_git=no
     ARG from=source
     ARG build_requirements=no
+    ARG test_args
     COPY (+test/output --use_git="$use_git" --from="$from" --build_requirements="${build_requirements}") output
     SAVE ARTIFACT output
 

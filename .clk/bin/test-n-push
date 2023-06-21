@@ -1,0 +1,22 @@
+#!/bin/bash -eu
+
+source "_clk.sh"
+
+clk_usage () {
+    cat<<EOF
+$0
+
+Run the tests, and then push the code if the tests pass
+--
+O:--test-args:str:The arguments to provide to the test command
+EOF
+}
+
+clk_help_handler "$@"
+
+args=()
+if clk_given test-args
+then
+    args+=(--test_args "$(clk_value test-args)")
+fi
+earthly +local-sanity-check --use_git=true "${args[@]}" && git push
