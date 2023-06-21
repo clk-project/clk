@@ -16,7 +16,7 @@ except ModuleNotFoundError:
 
 
 class NetrcKeyring(netrc.Netrc, keyring.backend.KeyringBackend):
-    pass
+    priority = 1
 
 
 class DummyFileKeyring(keyring.backend.KeyringBackend):
@@ -26,6 +26,8 @@ class DummyFileKeyring(keyring.backend.KeyringBackend):
     path of this file is read from the environment variable DUMMYFILEKEYRINGPATH.
 
     """
+
+    priority = 1
 
     def __init__(self):
         path = os.environ['DUMMYFILEKEYRINGPATH']
