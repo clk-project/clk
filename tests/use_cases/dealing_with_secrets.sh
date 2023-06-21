@@ -159,11 +159,8 @@ call_ask_for_real_code () {
 call_ask_for_real_expected () {
       cat<<"EOEXPECTED"
 warning: Could not find the secret for http_bearer
-
 Please provide the secret http_bearer:
-
 Repeat for confirmation:
-
 Calling someurl/someendpoint with bearer token test
 EOEXPECTED
 }
@@ -295,19 +292,18 @@ exit 1
 
 
 cat <<EOF > "${CLK_NETRC_LOCATION}"
-machine thesecretname
-login notused
+machine http_bearer
 password thevalue
 EOF
 
 
 using_netrc_code () {
-      clk --keyring clk.keyrings.NetrcKeyring secret show thesecretname --secret
+      clk --keyring clk.keyrings.NetrcKeyring secret show http_bearer --secret
 }
 
 using_netrc_expected () {
       cat<<"EOEXPECTED"
-thesecretname thevalue
+http_bearer thevalue
 EOEXPECTED
 }
 

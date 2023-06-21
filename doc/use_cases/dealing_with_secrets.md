@@ -1,7 +1,8 @@
-- [if you don't have access to a password manager](#org1312dbb)
-- [if you have access to a password manager](#org3d3b5d1)
-- [using the secret in your command](#org8182efa)
-- [using your own secret provider, or the built-in netrc one](#org85b99a6)
+- [if you don't have access to a password manager](#org8c04971)
+- [if you have access to a password manager](#orgc4720a4)
+- [using the secret in your command](#orgd77c5e2)
+- [remove the secret](#orgcfa356f)
+- [using your own secret provider, or the built-in netrc one](#orgf22227b)
 
 There are plenty of use cases that need to use some secret value.
 
@@ -82,11 +83,11 @@ clk http --base-url someurl get someendpoint
 Now, there are two situations: either you have access to a password manager, or you don't.
 
 
-<a id="org1312dbb"></a>
+<a id="org8c04971"></a>
 
 # if you don't have access to a password manager
 
-If the former case, `clk` fails by default<sup><a id="fnr.1" class="footref" href="#fn.1" role="doc-backlink">1</a></sup>, but you can ask it on the command line to ask you for the password by providing the `--ask-secret` flag to `clk`.
+If `clk` needs to get access to a secret but you don't have a password manager, it will fail<sup><a id="fnr.1" class="footref" href="#fn.1" role="doc-backlink">1</a></sup>. But you can tell `clk` to ask you for the password by providing the `--ask-secret` flag.
 
 ```bash
 clk --ask-secret http --base-url someurl get someendpoint
@@ -97,16 +98,18 @@ clk --ask-secret http --base-url someurl get someendpoint
     Repeat for confirmation:
     Calling someurl/someendpoint with bearer token test
 
+As you can see, the error message became a warning message and it falls back on asking you to provide manually the secret.
 
-<a id="org3d3b5d1"></a>
+
+<a id="orgc4720a4"></a>
 
 # if you have access to a password manager
 
-If you have access to a password manager, here is how you would proceed.
+If you have access to a password manager and want to use it, here is how you would proceed.
 
-Every password manager has its particularities, so clk does not try to guess where the secret is located. It uses [keyring](https://github.com/jaraco/keyring) to deal with secrets and provides an interface to lookup secret and store secrets in your password manager.
+Every password manager has its particularities, therefore `clk` does not try to guess where the secret is located. It uses [keyring](https://github.com/jaraco/keyring) to deal with secrets and provides a few commands to lookup and store secrets using keyring.
 
-To store a secret, use this command
+To store a secret, use this command:
 
 ```bash
 clk secret set http_bearer
@@ -124,9 +127,9 @@ clk secret show http_bearer
 
     http_bearer *****
 
-As you can see, the secret is not actually shown, to avoid secrets to easily show up when you don't want them to. What this command tells is that a secret actually exists associated to that key.
+The secret is not actually shown, to avoid secrets to easily show up when you don't want them to. What this command tells is that a secret actually exists associated to that key. The only information that you have is that there indeed exists a secret with that name.
 
-You have to explicitly ask clk to show the secret.
+To have `clk` show the secret, you need to add the `--secret` flag.
 
 ```bash
 clk secret show http_bearer --secret
@@ -134,7 +137,9 @@ clk secret show http_bearer --secret
 
     http_bearer mytoken
 
-And in case you want to provide this secret to another command and just want the secret, nothing more.
+It might look cumbersome to simply see this piece of information, but this is actually the point: avoiding leaking your password.
+
+In case you want to provide this secret to another command and just want the secret, nothing more.
 
 ```bash
 clk secret show http_bearer --secret --field secret
@@ -151,7 +156,7 @@ clk http --base-url someurl get someendpoint
     Calling someurl/someendpoint with bearer token mytoken
 
 
-<a id="org8182efa"></a>
+<a id="orgd77c5e2"></a>
 
 # using the secret in your command
 
@@ -172,6 +177,11 @@ clk dosomething
 
     mytoken
 
+
+<a id="orgcfa356f"></a>
+
+# remove the secret
+
 You can remove this secret now using the unset command. But beware that the command won't work anymore as its parameter explicitly lookup for this secret.
 
 ```bash
@@ -187,7 +197,7 @@ clk secret show http_bearer
     warning: No secret set
 
 
-<a id="org85b99a6"></a>
+<a id="orgf22227b"></a>
 
 # using your own secret provider, or the built-in netrc one
 
@@ -197,23 +207,22 @@ If you want to overwrite this in `clk`, you can pass the import value in the `--
 
 For example, clk comes with a keyring to read secrets from netrc, implemented by the class `NetrcKeyring` of the module `clk.keyrings`.
 
-Let's try to use netrc to provide the secret.
+Let's try to use netrc to provide the secret. The built-in netrc keyring assume that the secret name is put in the field `machine` of the netrc file and that the secret is in the field password.
 
 Write this content in `~/.netrc`
 
 ```authinfo
-machine thesecretname
-login notused
+machine http_bearer
 password thevalue
 ```
 
-Then, you can show this secret by explicitly asking clk to use netrc.
+Then, you can tell `clk` to use this keyring by providing the appropriate value to the `--keyring` option.
 
 ```bash
-clk --keyring clk.keyrings.NetrcKeyring secret show thesecretname --secret
+clk --keyring clk.keyrings.NetrcKeyring secret show http_bearer --secret
 ```
 
-    thesecretname thevalue
+    http_bearer thevalue
 
 ## Footnotes
 
