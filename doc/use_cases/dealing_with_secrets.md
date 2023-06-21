@@ -1,3 +1,8 @@
+- [if you don't have access to a password manager](#org1312dbb)
+- [if you have access to a password manager](#org3d3b5d1)
+- [using the secret in your command](#org8182efa)
+- [using your own secret provider, or the built-in netrc one](#org85b99a6)
+
 There are plenty of use cases that need to use some secret value.
 
 Let's dig into how those are done in clk.
@@ -74,9 +79,32 @@ clk http --base-url someurl get someendpoint
 
     error: Could not find the secret for http_bearer
 
-Now, how do you put the secret in your password manager?
+Now, there are two situations: either you have access to a password manager, or you don't.
 
-Every password manager has its particularities, so clk does not try to guess where the secret is located. Instead, it provides an interface to lookup secret and store secrets in your password manager.
+
+<a id="org1312dbb"></a>
+
+# if you don't have access to a password manager
+
+If the former case, `clk` fails by default<sup><a id="fnr.1" class="footref" href="#fn.1" role="doc-backlink">1</a></sup>, but you can ask it on the command line to ask you for the password by providing the `--ask-secret` flag to `clk`.
+
+```bash
+clk --ask-secret http --base-url someurl get someendpoint
+```
+
+    warning: Could not find the secret for http_bearer
+    Please provide the secret http_bearer:
+    Repeat for confirmation:
+    Calling someurl/someendpoint with bearer token test
+
+
+<a id="org3d3b5d1"></a>
+
+# if you have access to a password manager
+
+If you have access to a password manager, here is how you would proceed.
+
+Every password manager has its particularities, so clk does not try to guess where the secret is located. It uses [keyring](https://github.com/jaraco/keyring) to deal with secrets and provides an interface to lookup secret and store secrets in your password manager.
 
 To store a secret, use this command
 
@@ -122,6 +150,11 @@ clk http --base-url someurl get someendpoint
 
     Calling someurl/someendpoint with bearer token mytoken
 
+
+<a id="org8182efa"></a>
+
+# using the secret in your command
+
 This secret can also be used directly in the source code, using the `get_secret` function from clk.
 
 ```python
@@ -152,3 +185,36 @@ clk secret show http_bearer
 ```
 
     warning: No secret set
+
+
+<a id="org85b99a6"></a>
+
+# using your own secret provider, or the built-in netrc one
+
+The secret feature of `clk` is only a small wrapper on top of [keyring](https://github.com/jaraco/keyring). If you configured keyring to use a backend, it will be used in clk.
+
+If you want to overwrite this in `clk`, you can pass the import value in the `--keyring` option.
+
+For example, clk comes with a keyring to read secrets from netrc, implemented by the class `NetrcKeyring` of the module `clk.keyrings`.
+
+Let's try to use netrc to provide the secret.
+
+Write this content in `~/.netrc`
+
+```authinfo
+machine thesecretname
+login notused
+password thevalue
+```
+
+Then, you can show this secret by explicitly asking clk to use netrc.
+
+```bash
+clk --keyring clk.keyrings.NetrcKeyring secret show thesecretname --secret
+```
+
+    thesecretname thevalue
+
+## Footnotes
+
+<sup><a id="fn.1" class="footnum" href="#fnr.1">1</a></sup> this is so that if you use `clk` in scripts, you will be aware that something went wrong

@@ -12,7 +12,8 @@ class Netrc():
 
     def get_password(self, servicename, username):
         try:
-            authenticator = netrc.netrc(os.path.expanduser('~/.netrc')).authenticators(username)
+            authenticator = netrc.netrc(os.path.expanduser(os.environ.get('CLK_NETRC_LOCATION',
+                                                                          ('~/.netrc')))).authenticators(username)
             return authenticator[2]
         except:  # NOQA: E722
             return None

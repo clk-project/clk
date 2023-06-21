@@ -317,6 +317,12 @@ def main_command_decoration(f, cls, **kwargs):
                             callback=alternate_style_callback,
                             default='fg-cyan' if platform.system() == 'Windows' else 'dim-True',
                             type=ColorType())(f)
+    f = main_command_option('--ask-secret/--no-ask-secret',
+                            help=('Interactively ask for the secret if the'
+                                  ' secret manager does not provide it'),
+                            callback=ask_secret_callback,
+                            is_eager=True,
+                            default=None)(f)
     f = main_command_option('-L',
                             '--log-level',
                             default=None,
@@ -482,6 +488,13 @@ def log_level_callback(ctx, attr, value):
         config.log_level = value
         if value == 'develop':
             log.default_handler.formatter = log.DevelopColorFormatter()
+    return value
+
+
+@main_command_options_callback
+def ask_secret_callback(ctx, attr, value):
+    if value is not None:
+        config.ask_secret_callback = value
     return value
 
 

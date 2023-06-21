@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import logging
+import os
 import re
 
 import click
@@ -41,6 +42,8 @@ class Handler(logging.Handler):
             return
         try:
             msg = self.format(record)
+            if os.environ.get('TERM') == 'dumb':
+                msg = click.unstyle(msg)
             click.echo(msg, err=True)
         except Exception:
             self.handleError(record)

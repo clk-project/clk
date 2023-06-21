@@ -796,8 +796,18 @@ def eval_arg(arg):
         if res := get_keyring().get_password('clk', key):
             return res
         else:
-            LOGGER.error(f'Could not find the secret for {key}')
-            exit(1)
+            message = f'Could not find the secret for {key}'
+            if config.ask_secret_callback:
+                LOGGER.warning(message)
+                from click.termui import prompt
+                if res := prompt(f'Please provide the secret {key}', hide_input=True, confirmation_prompt=True):
+                    return res
+                else:
+                    LOGGER.error(f'Cannot move forward without the secret for {key}')
+                    exit(1)
+            else:
+                LOGGER.error(message)
+                exit(1)
     elif arg.startswith('pyeval:'):
         try:
             evaluated_arg = str(eval(arg[len('pyeval:'):]))

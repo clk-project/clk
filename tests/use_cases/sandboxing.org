@@ -14,27 +14,29 @@
   fi
   mkdir -p "${TMP}/clk-root"
   cat <<EOF > "${TMP}/clk-root/clk.json"
-  {
-      "parameters": {
-          "clk": [
-              "--keyring", "clk.keyrings.DummyFileKeyring"
-          ],
-          "command.create.python": [
-              "--no-open"
-          ],
-          "command.create.bash": [
-              "--no-open"
-          ]
-      }
-  }
+    {
+        "parameters": {
+            "clk": [
+                "--keyring", "clk.keyrings.DummyFileKeyring"
+            ],
+            "command.create.python": [
+                "--no-open"
+            ],
+            "command.create.bash": [
+                "--no-open"
+            ]
+        }
+    }
   EOF
   cd "${TMP}"
   eval "$(direnv hook bash)"
+  cat<<EOF > "${TMP}/.envrc" && direnv allow
   export CLKCONFIGDIR="${TMP}/clk-root"
   export DUMMYFILEKEYRINGPATH="${TMP}/keyring.json"
-  cat<<EOF > "${TMP}/.envrc" && direnv allow
-  export CLKCONFIGDIR=${CLKCONFIGDIR}
-  export DUMMYFILEKEYRINGPATH="${DUMMYFILEKEYRINGPATH}"
+  export CLK_NETRC_LOCATION="${TMP}/netrc"
   EOF
+  # source the env file to use it in automatic test
+  source "${TMP}/.envrc"
+  export TERM=dumb # to avoid possible issues with colors
   echo "${TMP}"
 #+END_SRC

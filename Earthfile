@@ -106,7 +106,7 @@ dist:
 
 test:
     FROM python:alpine
-    RUN apk add --update git
+    RUN apk add --update git expect
     ARG uid=1000
     ARG username=sam
     ARG groups
