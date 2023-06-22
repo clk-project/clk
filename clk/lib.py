@@ -793,9 +793,16 @@ def echo_json(v):
 
 
 def colorize_json(v):
-    """Format and colorize in json"""
-    from pygments import formatters, highlight, lexers
-    return highlight(json_dumps(v), lexers.JsonLexer(), formatters.TerminalFormatter())
+    """Format and colorize in json.
+
+    Don't colorize in case of using a dumb terminal.
+    """
+    result = json_dumps(v)
+    if os.environ.get('TERM') == 'dumb':
+        return result
+    else:
+        from pygments import formatters, highlight, lexers
+        return highlight(result, lexers.JsonLexer(), formatters.TerminalFormatter())
 
 
 def ordered_unique(ls):
@@ -1291,7 +1298,10 @@ def tabulate(tabular_data,
         data = []
         for kv in tabular_data:
             if len(kv) > 1:
-                data.append('%s %s' % (kv[0], click.style(u' '.join(to_string(v) for v in kv[1:]), **config.alt_style)))
+                toprint = u' '.join(to_string(v) for v in kv[1:])
+                if os.environ.get('TERM') != 'dumb':
+                    toprint = click.style(toprint, **config.alt_style)
+                data.append('%s %s' % (kv[0], toprint))
             else:
                 data.append(str(kv[0]))
         return '\n'.join(data)
