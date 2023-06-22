@@ -159,11 +159,8 @@ call_ask_for_real_code () {
 call_ask_for_real_expected () {
       cat<<"EOEXPECTED"
 warning: Could not find the secret for http_bearer
-
 Please provide the secret http_bearer:
-
 Repeat for confirmation:
-
 Calling someurl/someendpoint with bearer token test
 EOEXPECTED
 }
@@ -242,13 +239,9 @@ call_ask_for_real_error_code () {
 call_ask_for_real_error_expected () {
       cat<<"EOEXPECTED"
 warning: Could not find the secret for http_bearer
-
 Please provide the secret http_bearer:
-
 Repeat for confirmation:
-
 Error: The two entered values do not match.
-
 Please provide the secret http_bearer:
 EOEXPECTED
 }

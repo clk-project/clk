@@ -1,9 +1,9 @@
-- [if you don't have access to a password manager](#org347710d)
-- [impact on completion](#orgbf3ad16)
-- [if you have access to a password manager](#orgabdf0d9)
-- [using the secret in your command](#orga71ca3f)
-- [remove the secret](#org2f5f17c)
-- [using your own secret provider, or the built-in netrc one](#org0c1dd92)
+- [if you don't have access to a password manager](#orgec96e14)
+- [impact on completion](#orga77165e)
+- [if you have access to a password manager](#orgbbf5111)
+- [using the secret in your command](#org854518c)
+- [remove the secret](#orgf5c5333)
+- [using your own secret provider, or the built-in netrc one](#orgf1cf1bd)
 
 There are plenty of use cases that need to use some secret value.
 
@@ -84,7 +84,7 @@ clk http --base-url someurl get someendpoint
 Now, there are two situations: either you have access to a password manager, or you don't.
 
 
-<a id="org347710d"></a>
+<a id="orgec96e14"></a>
 
 # if you don't have access to a password manager
 
@@ -110,7 +110,7 @@ If you don't provide the same value, the program will continuously ask for it un
     Please provide the secret http_bearer:
 
 
-<a id="orgbf3ad16"></a>
+<a id="orga77165e"></a>
 
 # impact on completion
 
@@ -120,14 +120,18 @@ The fact that a secret is missing should not impact the completion, hence if you
 clk http --base-ur<TAB>
 ```
 
+    --base-url
+
 Even if you use `--ask-secret`.
 
 ```bash
 clk --ask-secret http --base-ur<TAB>
 ```
 
+    --base-url
 
-<a id="orgabdf0d9"></a>
+
+<a id="orgbbf5111"></a>
 
 # if you have access to a password manager
 
@@ -182,7 +186,7 @@ clk http --base-url someurl get someendpoint
     Calling someurl/someendpoint with bearer token mytoken
 
 
-<a id="orga71ca3f"></a>
+<a id="org854518c"></a>
 
 # using the secret in your command
 
@@ -204,7 +208,7 @@ clk dosomething
     mytoken
 
 
-<a id="org2f5f17c"></a>
+<a id="orgf5c5333"></a>
 
 # remove the secret
 
@@ -223,7 +227,7 @@ clk secret show http_bearer
     warning: No secret set
 
 
-<a id="org0c1dd92"></a>
+<a id="orgf1cf1bd"></a>
 
 # using your own secret provider, or the built-in netrc one
 
