@@ -228,6 +228,7 @@ expect -exact "\r
 Repeat for confirmation: "
 send -- "somethingelse\r"
 expect -exact "Error: The two entered values do not match.\r"
+expect -exact "Please provide the secret http_bearer:"
 EOEXPECT
 
 
