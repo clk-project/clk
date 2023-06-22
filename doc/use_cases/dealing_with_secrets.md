@@ -1,9 +1,9 @@
-- [if you don't have access to a password manager](#orgec96e14)
-- [impact on completion](#orga77165e)
-- [if you have access to a password manager](#orgbbf5111)
-- [using the secret in your command](#org854518c)
-- [remove the secret](#orgf5c5333)
-- [using your own secret provider, or the built-in netrc one](#orgf1cf1bd)
+- [if you don't have access to a password manager](#d1ea176b-444a-4808-a5db-ff7c27767d4e)
+- [impact on completion](#cfb1d97c-78ab-4f1f-bdbd-e7222f5503a9)
+- [if you have access to a password manager](#61f05dde-58fc-47b7-bb78-0af9f98e36b4)
+- [using the secret in your command](#469f9507-471b-460f-9859-0cb1f03b1b4e)
+- [remove the secret](#087fcd23-cb6b-4602-848a-fc88ee24a48c)
+- [using your own secret provider, or the built-in netrc one](#c49aeb51-0523-4521-9de3-717def168162)
 
 There are plenty of use cases that need to use some secret value.
 
@@ -84,7 +84,7 @@ clk http --base-url someurl get someendpoint
 Now, there are two situations: either you have access to a password manager, or you don't.
 
 
-<a id="orgec96e14"></a>
+<a id="d1ea176b-444a-4808-a5db-ff7c27767d4e"></a>
 
 # if you don't have access to a password manager
 
@@ -110,7 +110,7 @@ If you don't provide the same value, the program will continuously ask for it un
     Please provide the secret http_bearer:
 
 
-<a id="orga77165e"></a>
+<a id="cfb1d97c-78ab-4f1f-bdbd-e7222f5503a9"></a>
 
 # impact on completion
 
@@ -131,7 +131,7 @@ clk --ask-secret http --base-ur<TAB>
     --base-url
 
 
-<a id="orgbbf5111"></a>
+<a id="61f05dde-58fc-47b7-bb78-0af9f98e36b4"></a>
 
 # if you have access to a password manager
 
@@ -186,7 +186,7 @@ clk http --base-url someurl get someendpoint
     Calling someurl/someendpoint with bearer token mytoken
 
 
-<a id="org854518c"></a>
+<a id="469f9507-471b-460f-9859-0cb1f03b1b4e"></a>
 
 # using the secret in your command
 
@@ -208,7 +208,7 @@ clk dosomething
     mytoken
 
 
-<a id="orgf5c5333"></a>
+<a id="087fcd23-cb6b-4602-848a-fc88ee24a48c"></a>
 
 # remove the secret
 
@@ -227,7 +227,7 @@ clk secret show http_bearer
     warning: No secret set
 
 
-<a id="orgf1cf1bd"></a>
+<a id="c49aeb51-0523-4521-9de3-717def168162"></a>
 
 # using your own secret provider, or the built-in netrc one
 
