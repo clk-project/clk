@@ -20,7 +20,10 @@ then
 fi
 
 set +e
-CLK_BIN="$(readlink -f "$(which clk)")"
+if test -z "${CLK_BIN-}"
+then
+    CLK_BIN="$(readlink -f "$(which clk)")"
+fi
 CLK_BIN_PATH="${CLK_BIN%/*}"
 PYTHON="${CLK_BIN_PATH}/python"
 # if this path exists, clk is most likely installed in a venv, using that

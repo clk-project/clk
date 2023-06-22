@@ -1,9 +1,6 @@
 # [[file:sandboxing.org::tmpdir][tmpdir]]
 SRCDIR="$(pwd)"
 CLK_COV="$(readlink -f "$(dirname "$BASH_SOURCE")/../clk_coverage.sh")"
-clk ( ) {
-    "${CLK_COV}" "$@"
-}
 if test -n "${CLK_TEST_ROOT-}"
 then
     TMP="${CLK_TEST_ROOT}"
@@ -11,6 +8,14 @@ else
     TMP="$(mktemp -d)"
 fi
 mkdir -p "${TMP}/clk-root"
+mkdir "${TMP}/bin"
+export CLK_BIN="$(readlink -f "$(which clk)")"
+cat<<EOF > "${TMP}/bin/clk"
+#!/bin/bash -eu
+
+"${CLK_COV}" "\$@"
+EOF
+chmod +x "${TMP}/bin/clk"
 cat <<EOF > "${TMP}/clk-root/clk.json"
   {
       "parameters": {
@@ -32,6 +37,8 @@ cat<<EOF > "${TMP}/.envrc" && direnv allow
 export CLKCONFIGDIR="${TMP}/clk-root"
 export DUMMYFILEKEYRINGPATH="${TMP}/keyring.json"
 export CLK_NETRC_LOCATION="${TMP}/netrc"
+export CLK_BIN="${CLK_BIN}"
+export PATH="${TMP}/bin:${PATH}"
 EOF
 # source the env file to use it in automatic test
 source "${TMP}/.envrc"
