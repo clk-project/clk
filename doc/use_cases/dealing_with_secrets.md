@@ -1,8 +1,9 @@
-- [if you don't have access to a password manager](#org8c04971)
-- [if you have access to a password manager](#orgc4720a4)
-- [using the secret in your command](#orgd77c5e2)
-- [remove the secret](#orgcfa356f)
-- [using your own secret provider, or the built-in netrc one](#orgf22227b)
+- [if you don't have access to a password manager](#org347710d)
+- [impact on completion](#orgbf3ad16)
+- [if you have access to a password manager](#orgabdf0d9)
+- [using the secret in your command](#orga71ca3f)
+- [remove the secret](#org2f5f17c)
+- [using your own secret provider, or the built-in netrc one](#org0c1dd92)
 
 There are plenty of use cases that need to use some secret value.
 
@@ -83,7 +84,7 @@ clk http --base-url someurl get someendpoint
 Now, there are two situations: either you have access to a password manager, or you don't.
 
 
-<a id="org8c04971"></a>
+<a id="org347710d"></a>
 
 # if you don't have access to a password manager
 
@@ -100,8 +101,33 @@ clk --ask-secret http --base-url someurl get someendpoint
 
 As you can see, the error message became a warning message and it falls back on asking you to provide manually the secret.
 
+If you don't provide the same value, the program will continuously ask for it until you successfully provide the secret or stop it..
 
-<a id="orgc4720a4"></a>
+    warning: Could not find the secret for http_bearer
+    Please provide the secret http_bearer:
+    Repeat for confirmation:
+    Error: The two entered values do not match.
+    Please provide the secret http_bearer:
+
+
+<a id="orgbf3ad16"></a>
+
+# impact on completion
+
+The fact that a secret is missing should not impact the completion, hence if you try to complete the following, the code should provide the appropriate completion without failing.
+
+```bash
+clk http --base-ur<TAB>
+```
+
+Even if you use `--ask-secret`.
+
+```bash
+clk --ask-secret http --base-ur<TAB>
+```
+
+
+<a id="orgabdf0d9"></a>
 
 # if you have access to a password manager
 
@@ -156,7 +182,7 @@ clk http --base-url someurl get someendpoint
     Calling someurl/someendpoint with bearer token mytoken
 
 
-<a id="orgd77c5e2"></a>
+<a id="orga71ca3f"></a>
 
 # using the secret in your command
 
@@ -178,7 +204,7 @@ clk dosomething
     mytoken
 
 
-<a id="orgcfa356f"></a>
+<a id="org2f5f17c"></a>
 
 # remove the secret
 
@@ -197,7 +223,7 @@ clk secret show http_bearer
     warning: No secret set
 
 
-<a id="orgf22227b"></a>
+<a id="org0c1dd92"></a>
 
 # using your own secret provider, or the built-in netrc one
 
