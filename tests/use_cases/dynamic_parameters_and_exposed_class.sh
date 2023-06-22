@@ -53,14 +53,17 @@ simpleget_code () {
 }
 
 simpleget_expected () {
-      cat<<EOEXPECTED
+      cat<<"EOEXPECTED"
 GET http://url//path
 Would run the get code
 res = None
 EOEXPECTED
 }
 
-diff -uw <(simpleget_code 2>&1) <(simpleget_expected)
+diff -uBw <(simpleget_code 2>&1) <(simpleget_expected) || {
+echo "Something went wrong when trying simpleget"
+exit 1
+}
 
 
 
@@ -69,14 +72,17 @@ simplepost_code () {
 }
 
 simplepost_expected () {
-      cat<<EOEXPECTED
+      cat<<"EOEXPECTED"
 POST http://url//path with body somebody
 Would run the post code
 res = None
 EOEXPECTED
 }
 
-diff -uw <(simplepost_code 2>&1) <(simplepost_expected)
+diff -uBw <(simplepost_code 2>&1) <(simplepost_expected) || {
+echo "Something went wrong when trying simplepost"
+exit 1
+}
 
 
 
@@ -85,14 +91,17 @@ completion1_code () {
 }
 
 completion1_expected () {
-      cat<<EOEXPECTED
-plain,/a
-plain,/b
-plain,/c
+      cat<<"EOEXPECTED"
+/a
+/b
+/c
 EOEXPECTED
 }
 
-diff -uw <(completion1_code 2>&1) <(completion1_expected)
+diff -uBw <(completion1_code 2>&1) <(completion1_expected) || {
+echo "Something went wrong when trying completion1"
+exit 1
+}
 
 
 
@@ -101,12 +110,15 @@ completion2_code () {
 }
 
 completion2_expected () {
-      cat<<EOEXPECTED
-plain,/d
-plain,/e
-plain,/f
+      cat<<"EOEXPECTED"
+/d
+/e
+/f
 EOEXPECTED
 }
 
-diff -uw <(completion2_code 2>&1) <(completion2_expected)
+diff -uBw <(completion2_code 2>&1) <(completion2_expected) || {
+echo "Something went wrong when trying completion2"
+exit 1
+}
 # final ends here

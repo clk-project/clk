@@ -257,9 +257,9 @@ clk completion try http --base-url "http://url" get
 #+END_SRC
 
 #+RESULTS[446d7cd24305a215761800ee636e79c65740f905]: completion1
-: plain,/a
-: plain,/b
-: plain,/c
+: /a
+: /b
+: /c
 
 
 #+NAME: completion2shown
@@ -276,9 +276,9 @@ clk completion try http --base-url "http://otherurl" get
 #+END_SRC
 
 #+RESULTS[49c836c698dc31f2251282f4111ba744a1822ce5]: completion2
-: plain,/d
-: plain,/e
-: plain,/f
+: /d
+: /e
+: /f
 
 #+NAME: final
 #+BEGIN_SRC bash :results none :exports none :tangle dynamic_parameters_and_exposed_class.sh :noweb yes :shebang "#!/bin/bash -eu"

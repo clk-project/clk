@@ -25,6 +25,9 @@ cat <<EOF > "${TMP}/clk-root/clk.json"
           "command.create.python": [
               "--no-open"
           ],
+          "completion.try": [
+              "--call"
+          ],
           "command.create.bash": [
               "--no-open"
           ]
