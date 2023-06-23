@@ -31,7 +31,7 @@ class Colorer(object):
             return colors
 
         self.profile_to_color = {
-            name[:-len('_color')].replace('_slash_', '/'): value
+            name[:-len('_color')].replace('_slash_', '/').replace('_dash_', '-'): value
             for name, value in kwargs.items()
             if name.endswith('_color')
         }
@@ -115,7 +115,7 @@ class Colorer(object):
 
             for profile in config.all_enabled_profiles:
                 f = option(f'--{profile.name.replace("/", "-")}-color',
-                           f"""{profile.name.replace("/", "_slash_")}_color""",
+                           f"""{profile.name.replace("/", "_slash_").replace("-", "_dash_")}_color""",
                            help=f'Color to show the {profile.name} profile',
                            type=ColorType(),
                            default=profiles_colors[profile.short_name])(f)

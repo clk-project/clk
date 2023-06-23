@@ -145,7 +145,7 @@ plugin_sources = {}
 
 @ProfileFactory.register_directory_profile
 class DirectoryProfile(Profile):
-    extension_name_re = '[a-z0-9_]+'
+    extension_name_re = '[a-z0-9_-]+'
     JSON_FILE_EXTENSION = '.json'
 
     def describe(self):
