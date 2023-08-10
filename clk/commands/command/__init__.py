@@ -279,7 +279,7 @@ def bash(name, open, force, description, body, from_alias, replace_alias, flowde
         description = description + f'Converted from the alias {from_alias}'
 
         def guess_type(param):
-            if type(param.type) == click.Choice:
+            if param.type.isinstance(click.Choice):
                 return json.dumps(list(param.type.choices))
             elif param.type == int:
                 return 'int'
@@ -289,7 +289,7 @@ def bash(name, open, force, description, body, from_alias, replace_alias, flowde
                 return 'str'
 
         for param in alias_cmd.params:
-            if type(param) == Option:
+            if param is Option:
                 if param.is_flag:
                     flags.append(f"F:{','.join(param.opts)}:{param.help}:{param.default}")
                     args += f"""
@@ -304,7 +304,7 @@ if [ -n "${{{config.main_command.path.upper()}___{param.name.upper()}}}" ]
 then
     args+=({param.opts[-1]} "${{{config.main_command.path.upper()}___{param.name.upper()}}}")
 fi"""
-            elif type(param) == Argument:
+            elif param is Argument:
                 if param.nargs == -1:
                     remaining = param.help
                 else:
