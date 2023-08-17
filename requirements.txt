@@ -84,7 +84,7 @@ python-dateutil==2.8.2
     # via clk (setup.py)
 requests==2.31.0
     # via clk (setup.py)
-shellingham==1.5.0.post1
+shellingham==1.5.3
     # via click-completion
 six==1.16.0
     # via
@@ -97,7 +97,7 @@ tabulate==0.8.10
     # via clk (setup.py)
 tomli==2.0.1
     # via ipdb
-tqdm==4.65.2
+tqdm==4.66.1
     # via clk (setup.py)
 traitlets==5.9.0
     # via
