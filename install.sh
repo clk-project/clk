@@ -28,6 +28,9 @@ _find_suitable_python_version ( ) {
     if which python3 > /dev/null && _check_python3
     then
         PYTHON=python3
+    elif which python3.11 > /dev/null
+    then
+        PYTHON=python3.11
     elif which python3.9 > /dev/null
     then
         PYTHON=python3.9
