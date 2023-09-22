@@ -99,13 +99,13 @@ tomli==2.0.1
     # via ipdb
 tqdm==4.66.1
     # via clk (setup.py)
-traitlets==5.9.0
+traitlets==5.10.0
     # via
     #   ipython
     #   matplotlib-inline
-typing-extensions==4.7.1
+typing-extensions==4.8.0
     # via ipython
-urllib3==2.0.4
+urllib3==2.0.5
     # via requests
 wcwidth==0.2.6
     # via prompt-toolkit
