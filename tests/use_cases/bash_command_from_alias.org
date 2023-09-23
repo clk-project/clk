@@ -1,0 +1,130 @@
+:PROPERTIES:
+:ID:       e6078fc8-4b12-44ad-b008-20f0b7311069
+:END:
+#+TITLE: Showing how to create a bash command
+#+LANGUAGE: en
+#+EXPORT_FILE_NAME: ../../doc/use_cases/bash_command_from_alias.md
+
+#+CALL: ../../lp.org:check-result()
+
+For a more general introduction to creating bash commands, see [[file:bash_command.org][here]].
+
+#+name: init
+#+BEGIN_SRC bash :results none :exports none :session e6078fc8-4b12-44ad-b008-20f0b7311069
+  . ./sandboxing.sh
+#+END_SRC
+
+Let's imagine you want to use clk to control your musicplayer. Chances are there
+already exists some command line tool to do so and that you want to wrap it into
+clk to take advantages of aliases, parameters and flows.
+
+On that case, you most likely will want to create a simple alias on top of exec.
+
+For the sake of this example, let's use this fake music control program and call
+it 'mpc'.
+
+#+NAME: fake_control_program
+#+BEGIN_SRC bash :results none :exports code
+  echo "Running mpc with: $*"
+#+END_SRC
+
+#+NAME: install_fake_music_program
+#+BEGIN_SRC bash :results none :exports none :session e6078fc8-4b12-44ad-b008-20f0b7311069 :noweb yes
+  cat <<"EOF" > "${TMP}/bin/mpc"
+  #!/bin/bash
+  <<fake_control_program>>
+  EOF
+  chmod +x "${TMP}/bin/mpc"
+#+END_SRC
+
+Then, to use this program as a clk command, we could simply create an alias
+like this.
+
+#+NAME: create
+#+BEGIN_SRC bash :results verbatim :exports both :session e6078fc8-4b12-44ad-b008-20f0b7311069 :cache yes
+  clk alias set music.play exec -- mpc play --random --use-speakers --replaygain
+#+END_SRC
+
+#+RESULTS[b647c2a71f82abeed6340d9486c5c23e9c81bf75]: create
+: New global alias for music.play: exec mpc play --random --use-speakers --replaygain
+
+
+Then, we can simple call this command.
+
+#+NAME: use_play
+#+BEGIN_SRC bash :results verbatim :exports both :session e6078fc8-4b12-44ad-b008-20f0b7311069 :cache yes
+  clk music play MyAlbum
+#+END_SRC
+
+#+RESULTS[528d993ebba0114a75f77f47b1b7e61de533e885]: use_play
+: Running mpc with: play --random --use-speakers --replaygain MyAlbum
+
+We get the benefit of parameters, flow etc.
+
+#+NAME: use_parameters
+#+BEGIN_SRC bash :results verbatim :exports both :session e6078fc8-4b12-44ad-b008-20f0b7311069 :cache yes
+clk music play --repeat --set-parameter global
+clk music play MyAlbum
+#+END_SRC
+
+#+RESULTS[878efeb6fda1602dbdb5296cb1a67cfa8adb7c78]: use_parameters
+: New global parameters for music.play: --repeat
+: Running mpc with: play --random --use-speakers --replaygain --repeat MyAlbum
+
+Chances are that, after some time, we realize that this command should be a
+little more complicated than wrapping a single executable. For instance, we
+could want to start some music server, then play some music.
+
+We could do this with a more complicated alias.
+
+#+NAME: more_complicated_alias
+#+BEGIN_SRC bash :results verbatim :exports both :session e6078fc8-4b12-44ad-b008-20f0b7311069 :cache yes
+  clk alias set music.play exec mpc start-server , exec -- mpc play --random --use-speakers --replaygain
+  clk music play MyAlbum
+#+END_SRC
+
+#+RESULTS[f006cf9ec91386ec657cccf56629f0a2b23f94a7]: more_complicated_alias
+: Removing global alias of music.play: exec mpc play --random --use-speakers --replaygain
+: New global alias for music.play: exec mpc start-server , exec mpc play --random --use-speakers --replaygain
+: Running mpc with: start-server
+: Running mpc with: play --random --use-speakers --replaygain --repeat MyAlbum
+
+
+But in case you want more control about what you are doing, like waiting for the
+music server to be ready, you will have to fall back in a real command. In case
+you just need to bootstrap a shell command out of the alias, here is how you do
+this.
+
+#+NAME: bootstrap
+#+BEGIN_SRC bash :results verbatim :exports both :session e6078fc8-4b12-44ad-b008-20f0b7311069 :cache yes
+clk command create bash --replace-alias music.play
+#+END_SRC
+
+#+RESULTS[5faaca627fd5783bd0facfee4ad8845a696ab9c9]: bootstrap
+: Erasing music.play alias from global settings
+
+This command tries hard to have the same behavior as its original alias.
+
+#+NAME: try_command
+#+BEGIN_SRC bash :results verbatim :exports both :session e6078fc8-4b12-44ad-b008-20f0b7311069 :cache yes
+clk music play MyAlbum
+#+END_SRC
+
+#+RESULTS[528d993ebba0114a75f77f47b1b7e61de533e885]: try_command
+: Running mpc with: start-server
+: Running mpc with: play --random --use-speakers --replaygain --repeat MyAlbum
+
+Now, we fan change its content to do whatever we want, like waiting for the
+music server to be ready, trying to switch on the speakers and falling back to
+some other ones etc.
+
+#+BEGIN_SRC bash :exports none :tangle bash_command_from_alias.sh :noweb yes :shebang "#!/bin/bash -eu"
+  <<init>>
+  <<install_fake_music_program>>
+  check-result(create)
+  check-result(use_play)
+  check-result(use_parameters)
+  check-result(more_complicated_alias)
+  check-result(bootstrap)
+  check-result(try_command)
+#+END_SRC

@@ -4,7 +4,7 @@ Here are some use cases that hopefully will have the following properties:
 -   show some common pattern that emerged when using clk,
 -   give examples of real life uses of clk, giving hints about when it might be useful,
 
-If you simply want to create bash commands, take a look at [this one](bash_command.md). This [other one](bash_command_use_option.md) provides more insights about how to define options. When those will get bigger, take a look at how to [split your code](bash_command_import.md). Also, clk provides some useful "[batteries](bash_command_built_in_lib.md)" to help you create a nice and friendly command.
+If you simply want to create bash commands, take a look at [this one](bash_command.md). This [other one](bash_command_use_option.md) provides more insights about how to define options. When those will get bigger, take a look at how to [split your code](bash_command_import.md). In particular, you might want to start small with [simple alias and then move to bash commands](bash_command_from_alias.md). Also, clk provides some useful "[batteries](bash_command_built_in_lib.md)" to help you create a nice and friendly command.
 
 Also, to create powerful, dynamic command line tools that provide the best completion possible, see [this pattern](dynamic_parameters_and_exposed_class.md) for writing your commands. In case you have some issues, you might want to look at the [advanced use cases](dynamic_parameters_advanced_use_cases.md).
 

@@ -9,7 +9,7 @@ import click
 
 from clk.colors import Colorer
 from clk.config import config, merge_settings
-from clk.core import DynamicChoiceType, cache_disk
+from clk.core import DynamicChoiceType, cache_disk, get_ctx
 from clk.customcommands import CustomCommandResolver
 from clk.decorators import argument, flag, group, option, table_fields, table_format, use_settings
 from clk.externalcommands import ExternalCommandResolver
@@ -279,7 +279,7 @@ def bash(name, open, force, description, body, from_alias, replace_alias, flowde
         description = description + f'Converted from the alias {from_alias}'
 
         def guess_type(param):
-            if param.type.isinstance(click.Choice):
+            if isinstance(param, click.Choice):
                 return json.dumps(list(param.type.choices))
             elif param.type == int:
                 return 'int'
@@ -289,22 +289,22 @@ def bash(name, open, force, description, body, from_alias, replace_alias, flowde
                 return 'str'
 
         for param in alias_cmd.params:
-            if param is Option:
+            if isinstance(param, Option):
                 if param.is_flag:
                     flags.append(f"F:{','.join(param.opts)}:{param.help}:{param.default}")
                     args += f"""
-if [ "${{{config.main_command.path.upper()}___{param.name.upper()}}}" == "True" ]
+if [ "${{{config.main_command.path.upper()}___{param.name.upper()}-}}" == "True" ]
 then
     args+=({param.opts[-1]})
 fi"""
                 else:
                     options.append(f"O:{','.join(param.opts)}:{guess_type(param)}:{param.help}")
                     args += f"""
-if [ -n "${{{config.main_command.path.upper()}___{param.name.upper()}}}" ]
+if [ -n "${{{config.main_command.path.upper()}___{param.name.upper()}-}}" ]
 then
     args+=({param.opts[-1]} "${{{config.main_command.path.upper()}___{param.name.upper()}}}")
 fi"""
-            elif param is Argument:
+            elif isinstance(param, Argument):
                 if param.nargs == -1:
                     remaining = param.help
                 else:
@@ -339,6 +339,8 @@ args=()""" + args
         remaining_str = f'N:{remaining}\n'
     else:
         remaining_str = ''
+    if from_alias and get_ctx(from_alias.split('.')).ignore_unknown_options:
+        remaining_str = f'{remaining_str}M:I\n'
 
     script_content = f"""#!/bin/bash -eu
 

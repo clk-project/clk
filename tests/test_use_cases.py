@@ -48,3 +48,7 @@ def test_using_a_project():
 
 def test_dynamic_parameters_advanced_use_cases():
     call_script('dynamic_parameters_advanced_use_cases.sh')
+
+
+def test_bash_command_from_alias():
+    call_script('bash_command_from_alias.sh')
