@@ -10,10 +10,13 @@ run_code () {
 }
 
 run_expected () {
-      cat<<EOEXPECTED
+      cat<<"EOEXPECTED"
 Hello world
 EOEXPECTED
 }
 
-diff -uw <(run_code 2>&1) <(run_expected)
+diff -uBw <(run_code 2>&1) <(run_expected) || {
+echo "Something went wrong when trying run"
+exit 1
+}
 # hello-world ends here
