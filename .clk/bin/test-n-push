@@ -19,4 +19,8 @@ if clk_given test-args
 then
     args+=(--test_args "$(clk_value test-args)")
 fi
-earthly +local-sanity-check --use_git=true "${args[@]}" && git push
+pushd "${CLK__PROJECT}" > /dev/null
+{
+    earthly +local-sanity-check --use_git=true "${args[@]}" && git push
+}
+popd > /dev/null
