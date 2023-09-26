@@ -39,6 +39,13 @@ The [[id:7857f3bb-e4c7-4bad-9e27-ea48bf808a44][rationale]] attempts to explain w
 [[./doc/use_cases][use cases]] classical situations where clk is worth being used. In the future, we
 might write even more [[./doc][documentation]].
 
+* Use cases
+  :PROPERTIES:
+  :CUSTOM_ID: d7cb0451-bc8f-42cc-912c-8a46599375a7
+  :END:
+  This is most likely the most useful part of the documentation. Take a look at
+  the [[./doc/use_cases][use cases]] to find out how clk could be used in real life situations.
+
 * In a nutshell                                                     :Context:
   :PROPERTIES:
   :CUSTOM_ID: fe60735c-91c2-4f54-8ae2-7e3b307f27a5

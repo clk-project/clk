@@ -1,3 +1,4 @@
+- [Use cases](#d7cb0451-bc8f-42cc-912c-8a46599375a7)
 - [In a nutshell](#fe60735c-91c2-4f54-8ae2-7e3b307f27a5)
 - [Rationale](#7857f3bb-e4c7-4bad-9e27-ea48bf808a44)
 - [Note on version](#8152d0c9-564d-4761-a847-66a40e41aac5)
@@ -30,6 +31,13 @@ Come and discuss clk with us on
 clk, the **Command Line Kit** is a unique tool that aims to contains everything needed to create human friendly command line tools.
 
 The [rationale](#7857f3bb-e4c7-4bad-9e27-ea48bf808a44) attempts to explain why clk started to exist. You will find in the [use cases](./doc/use_cases) classical situations where clk is worth being used. In the future, we might write even more [documentation](./doc).
+
+
+<a id="d7cb0451-bc8f-42cc-912c-8a46599375a7"></a>
+
+# Use cases
+
+This is most likely the most useful part of the documentation. Take a look at the [use cases](./doc/use_cases) to find out how clk could be used in real life situations.
 
 
 <a id="fe60735c-91c2-4f54-8ae2-7e3b307f27a5"></a>
