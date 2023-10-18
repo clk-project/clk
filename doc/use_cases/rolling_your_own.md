@@ -13,12 +13,14 @@ clk provides out of the box a command to bootstrap your own tool.
 clk fork mytool
 ```
 
-    Now, install mytool with `python3 -m pip install mytool`, enable its completion with `mytool completion install` and don't forget to have fun
+    Now, install mytool with either `pipx install ./mytool` or `python3 -m venv venv && ./venv/bin/pip install ./mytool` followed by `export "PATH=$(pwd)/venv/bin/:${PATH}"`. Then, enable its completion with `mytool completion install` and don't forget to have fun
 
 Now, simply install this tool, like suggested.
 
 ```bash
-python3 -m pip install ./mytool
+python3 -m venv venv
+./venv/bin/pip install ./mytool
+export PATH="$(pwd)/venv/bin/:${PATH}"
 ```
 
 From there, you can play with this new toy.
@@ -43,110 +45,50 @@ mytool --help
 Usage: mytool [OPTIONS] COMMAND [ARGS]...
 
 Options:
-  --env TEXT                      Add this custom
-                                  environment
-                                  variable
-  --profiling                     Enable profiling
-                                  the application
-                                  code
+  --env TEXT                      Add this custom environment variable
+  --profiling                     Enable profiling the application code
   -u, --without-extension EXTENSION
-                                  Disable this
-                                  extension for
-                                  the time of the
-                                  command
-  -e, --extension EXTENSION       Enable this
-                                  extension for
-                                  the time of the
-                                  command
-  --report-file TEXT              Create a report
-                                  file to put with
-                                  bug reports
-  --flow-verbose                  Show more
-                                  precisely when a
-                                  flow starts and
-                                  when it ends
-  --debug-on-command-load-error   Trigger a
-                                  debugger
-                                  whenever a
-                                  command fails to
-                                  load
+                                  Disable this extension for the time of the command
+  -e, --extension EXTENSION       Enable this extension for the time of the command
+  --report-file TEXT              Create a report file to put with bug reports
+  --flow-verbose                  Show more precisely when a flow starts and when it
+                                  ends
+  --debug-on-command-load-error   Trigger a debugger whenever a command fails to load
   --post-mortem / --no-post-mortem
-                                  Run a post-
-                                  mortem debugger
-                                  in case of
-                                  exception
+                                  Run a post-mortem debugger in case of exception
   --exit-on-log-level [develop|debug|action|status|deprecated|info|warning|error|critical]
-                                  Exit when one
-                                  log of this
-                                  level is issued.
-                                  Useful to
-                                  reproduce the
-                                  -Werror behavior
-                                  of gcc
-  -D, --develop / --no-develop    Same as --log-
-                                  level develop
-  -d, --debug / --no-debug        Same as --log-
-                                  level debug
-  -a, --action / --no-action      Same as --log-
-                                  level action
-  -q, --quiet / --no-quiet        Same as --log-
-                                  level critical
+                                  Exit when one log of this level is issued. Useful to
+                                  reproduce the -Werror behavior of gcc
+  -D, --develop / --no-develop    Same as --log-level develop
+  -d, --debug / --no-debug        Same as --log-level debug
+  -a, --action / --no-action      Same as --log-level action
+  -q, --quiet / --no-quiet        Same as --log-level critical
   -L, --log-level [develop|debug|action|status|deprecated|info|warning|error|critical]
-                                  Log level
-                                  (default to
-                                  'deprecated')
+                                  Log level (default to 'deprecated')
+  --ask-secret / --no-ask-secret  Interactively ask for the secret if the secret
+                                  manager does not provide it
   --alternate-style STYLE         Alternate style
   --plugin-dirs TEXT
   --persist-migration / --no-persist-migration
-                                  Make the profile
-                                  migration
-                                  persistent,
-                                  using --no-
-                                  persist-
-                                  migration will
-                                  preserve the
-                                  profiles, unless
-                                  you explicitly
-                                  write into them.
-                                  This is useful
-                                  if you want to
-                                  use a razor edge
-                                  version of the
-                                  application
-                                  without forcing
-                                  peoples to move
-                                  to it.
-  -P, --project DIR               Project
-                                  directory
-  --flow-step / --no-flow-step    Make a pause in
-                                  between the flow
-                                  steps. Useful to
-                                  make
-                                  demonstrations.
-                                  Implies --flow-
-                                  verbose.
-  --autoflow / --no-autoflow      Automatically
-                                  trigger the
-                                  --flow option in
-                                  every command
-  --no-cache / --cache            Deactivate the
-                                  caching
-                                  mechanism
-  -n, --dry-run / --no-dry-run    Don't actually
-                                  run anything
+                                  Make the profile migration persistent, using --no-
+                                  persist-migration will preserve the profiles, unless
+                                  you explicitly write into them. This is useful if
+                                  you want to use a razor edge version of the
+                                  application without forcing peoples to move to it.
+  -P, --project DIR               Project directory
+  --flow-step / --no-flow-step    Make a pause in between the flow steps. Useful to
+                                  make demonstrations. Implies --flow-verbose.
+  --autoflow / --no-autoflow      Automatically trigger the --flow option in every
+                                  command
+  --no-cache / --cache            Deactivate the caching mechanism
+  --keyring TEXT                  Use this keyring instead of the default one
+  -n, --dry-run / --no-dry-run    Don't actually run anything
   --force-color / --no-force-color
-                                  Force the color
-                                  output, even if
-                                  the output is
-                                  not a terminal
-  --help-all                      Show the full
-                                  help message,
-                                  automatic
-                                  options
+                                  Force the color output, even if the output is not a
+                                  terminal
+  --help-all                      Show the full help message, automatic options
                                   included.
-  --help                          Show this
-                                  message and
-                                  exit.
+  --help                          Show this message and exit.
 
 Commands:
   alias        Manipulate the command aliases
@@ -155,21 +97,19 @@ Commands:
   describe     Describe the given profile
   echo         Log a message
   env          Show the environment
-  exec         Run a command.
+  exec         Run a program, like good old times.
   extension    Extension related commands
-  flowdep      Manipulate command flow
-               dependencies.
-  fork         Create a brand new project, based
-               on clk that can be used by itself.
+  flowdep      Manipulate command flow dependencies.
+  fork         Create a brand new project, based on clk that can be used by itself.
   hello-world  Just say hello
   help         Display help information
   launcher     Manipulate launchers
   log          Log a message
   parameter    Manipulate command parameters
-  password     Manipulate your passwords
-  pip          Run pip in the context of this
-               installation of clk
+  pip          Run pip in the context of this installation of clk
   plugin       Manipulate plugins
+  python       Run the python executable that is currently running clk
+  secret       Manipulate your secrets
   trigger      Manipulate command triggers
   value        Manipulate the values
 ```

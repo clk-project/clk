@@ -1,21 +1,16 @@
 #!/bin/bash -eu
-# [[file:rolling_your_own.org::+BEGIN_SRC bash :tangle rolling_your_own.sh :exports none :noweb yes :shebang "#!/bin/bash -eu"][No heading:12]]
+# [[file:rolling_your_own.org::+BEGIN_SRC bash :tangle rolling_your_own.sh :exports none :noweb yes :shebang "#!/bin/bash -eu"][No heading:10]]
 . ./sandboxing.sh
 
 clk fork mytool
 
-if test -z "${VIRTUAL_ENV}"
-then
-    python3 -m venv venv
-    . ./venv/bin/activate
-fi
+CURRENT_CLK="$(clk python -c 'from pathlib import Path; import clk ; print(Path(clk.__path__[0]).parent)')"
 
-python3 -m pip install ./mytool
+python3 -m venv venv
+./venv/bin/pip install ./mytool
+export PATH="$(pwd)/venv/bin/:${PATH}"
 
-if test -z "${VIRTUAL_ENV}"
-then
-    python3 -m pip install "${CURRENT_CLK}"
-fi
+./venv/bin/pip install "${CURRENT_CLK}"
 
 mkdir -p "${TMP}/mytool-root"
 cat <<EOF > "${TMP}/mytool-root/mytool.json"
@@ -42,13 +37,16 @@ call_code () {
 }
 
 call_expected () {
-      cat<<EOEXPECTED
+      cat<<"EOEXPECTED"
 Hello world
 EOEXPECTED
 }
 
-diff -u <(call_code) <(call_expected)
+diff -uBw <(call_code 2>&1) <(call_expected) || {
+echo "Something went wrong when trying call"
+exit 1
+}
 
 
 mytool --help
-# No heading:12 ends here
+# No heading:10 ends here

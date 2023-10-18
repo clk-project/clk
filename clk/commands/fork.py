@@ -94,6 +94,9 @@ def somecommand(some_argument, some_flag, some_option):
     LOGGER.info(some_flag)
     LOGGER.info(some_option)
 """)
-    print(f'Now, install {name} with `python3 -m pip install {name}`,'
-          f' enable its completion with `{name} completion install`'
+    print(f'Now, install {name} with either'
+          f' `pipx install ./{name}` or'
+          f' `python3 -m venv venv && ./venv/bin/pip install ./{name}` followed'
+          ' by `export PATH="$(pwd)/venv/bin/:${PATH}"`.'
+          f' Then, enable its completion with `{name} completion install`'
           f" and don't forget to have fun")
