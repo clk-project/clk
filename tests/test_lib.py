@@ -75,6 +75,7 @@ def test_git_sync():
     # when a repository is available, a fresh git sync will clone this repository
     check_call(split('git init a'))
     check_call(split('git -C a config user.email a@a.a1'))
+    check_call(split('git -C a config user.name a'))
     git_add_and_commit('1')
     lib.git_sync('a', 'b')
     assert Path('b/a').read_text() == '1'
