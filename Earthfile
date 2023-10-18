@@ -189,14 +189,14 @@ fix-quality:
     SAVE ARTIFACT . AS LOCAL fixed
 
 test-install-ubuntu:
-    FROM ubuntu
+    FROM ubuntu:22.04.3
     RUN apt-get update && apt-get install --yes python3-distutils python3-pip
     DO +AS_USER
     DO +INSTALL --from=doc
     RUN test foo = "$(clk echo foo)"
 
 sonar:
-    FROM sonarsource/sonar-scanner-cli
+    FROM sonarsource/sonar-scanner-cli:5.0.1
     ARG from=build
     RUN [ "$from" = "build" ] || [ "$from" = "source" ]
     ARG use_git=true
