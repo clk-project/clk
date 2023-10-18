@@ -50,7 +50,13 @@ export PATH="$(pwd)/venv/bin/:${PATH}"
 
 #+NAME: install-current-clk
 #+BEGIN_SRC bash :results none :exports none :session 807c02cd-a6cf-432f-b982-530fc81dbbf4
-  ./venv/bin/pip install "${CURRENT_CLK}"
+  if test -e /dist/clk*
+  then
+      # installing the version of clk that was left here. It matches the one we are currently testing
+     ./venv/bin/pip install /dist/*
+  else
+     ./venv/bin/pip install "${CURRENT_CLK}"
+  fi
 #+END_SRC
 
 From there, you can play with this new toy.

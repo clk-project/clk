@@ -10,7 +10,13 @@ python3 -m venv venv
 ./venv/bin/pip install ./mytool
 export PATH="$(pwd)/venv/bin/:${PATH}"
 
-./venv/bin/pip install "${CURRENT_CLK}"
+if test -e /dist/clk*
+then
+    # installing the version of clk that was left here. It matches the one we are currently testing
+   ./venv/bin/pip install /dist/*
+else
+   ./venv/bin/pip install "${CURRENT_CLK}"
+fi
 
 mkdir -p "${TMP}/mytool-root"
 cat <<EOF > "${TMP}/mytool-root/mytool.json"
