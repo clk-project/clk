@@ -1,27 +1,10 @@
 VERSION 0.7
 IMPORT github.com/Konubinix/Earthfile AS e
 
-AS_USER:
-    COMMAND
-    IF command -v apk
-        RUN apk add --update bash curl
-    ELSE
-        RUN apt-get update && apt-get install --yes curl
-    END
-    RUN curl -sfL https://direnv.net/install.sh | bash
-    ARG uid=1000
-    ARG username=sam
-    ARG groups
-    DO e+USE_USER --groups="$groups" --uid="${uid}" --username="${username}"
-    RUN echo 'source <(direnv hook bash)' >> "${HOME}/.bashrc"
-
 requirements:
-    FROM python:3.8-alpine
-    RUN python3 -m pip install pip-tools
-    DO e+USE_USER
+    FROM e+alpine-python-user-venv --packages=pip-tools --workdir=/app
     COPY --dir fasterentrypoint.py versioneer.py setup.cfg setup.py /app
-    WORKDIR /app
-    RUN --no-cache pip-compile
+    RUN --no-cache /app/venv/bin/pip-compile
     SAVE ARTIFACT requirements.txt AS LOCAL requirements.txt
 
 DEPENDENCIES:
@@ -80,19 +63,11 @@ INSTALL:
         RUN python3 -m pip install "${from}"
     END
 
-VENV:
-    COMMAND
-    ENV VIRTUAL_ENV="${HOME}/venv"
-    RUN python3 -m venv "$VIRTUAL_ENV"
-    ENV PATH="$VIRTUAL_ENV/bin:$PATH"
-
 build:
-    FROM python:alpine
+    FROM e+alpine-python-user-venv --packages="wheel" --extra_packages=git
     COPY +sources/app /app
     ARG use_git=true
-    WORKDIR /app
     IF [ "$use_git" = "true" ]
-        RUN apk add --update git
         COPY --dir +git-files/app/* /app
         RUN git checkout . && git reset --hard HEAD
     END
@@ -105,25 +80,16 @@ dist:
     SAVE ARTIFACT dist /dist AS LOCAL dist
 
 test:
-    FROM python:alpine
-    RUN apk add --update git expect
-    ARG uid=1000
-    ARG username=sam
-    ARG groups
-    DO +AS_USER --groups="$groups" --uid="${uid}" --username="${username}"
-    ARG venv=yes
-    IF [ "${venv}" != "no" ]
-        DO +VENV
-    END
-    RUN python3 -m pip install coverage pytest keyring
+    # we expect the end user to have an environment closer to debian than alpine. Therefore we use debian here.
+    FROM e+debian-python-user-venv --extra_packages="git expect direnv" --packages="coverage pytest keyring"
+    RUN echo 'source <(direnv hook bash)' >> "${HOME}/.bashrc"
     ARG from=source
     ARG use_git=no
     ARG build_requirements=no
     ARG pypi_version
-    DO +INSTALL --from "$from" --use_git="$use_git" --build_requirements="${build_requirements}" --pypi_version="${pypi_version}"
+    DO +INSTALL --from="$from" --use_git="$use_git" --build_requirements="${build_requirements}" --pypi_version="${pypi_version}"
     RUN coverage run --source clk -m clk completion --case-insensitive install bash && echo 'source "${HOME}/.bash_completion"' >> "${HOME}/.bashrc"
     COPY --dir +test-files/app/tests /app
-    WORKDIR /app
     ARG test_args
     ENV CLK_ALLOW_INTRUSIVE_TEST=True
     RUN coverage run --source clk -m pytest ${test_args}
@@ -153,11 +119,8 @@ export-image:
     SAVE IMAGE clk:${ref}
 
 pre-commit-base:
-    FROM python:slim
-    RUN apt-get update && apt-get install --yes git
-    DO e+USE_USER
-    RUN python3 -m pip install pre-commit
-    WORKDIR /app
+    # ruamel does not provide wheels that work for alpine. Therefore we use debian here
+    FROM e+debian-python-user-venv --extra_packages="git" --packages="pre-commit"
 
 export-pre-commit-update:
     FROM +pre-commit-base
@@ -191,7 +154,7 @@ fix-quality:
 test-install-ubuntu:
     FROM ubuntu:22.04.3
     RUN apt-get update && apt-get install --yes python3-distutils python3-pip
-    DO +AS_USER
+    DO e+AS_USER
     DO +INSTALL --from=doc
     RUN test foo = "$(clk echo foo)"
 
@@ -238,15 +201,9 @@ sanity-check:
     COPY (+sonar/output --use_branch="${use_branch}" --use_git="${use_git}" --build_requirements="${build_requirements}") /output
     SAVE ARTIFACT /output
 
-upload:
-    FROM scratch
-    FROM python:slim
-    RUN apt-get update && apt-get install --yes twine
+deploy:
+    FROM e+alpine-python-user-venv --extra_packages=twine
     COPY +sanity-check/output /output
     # asserts the file was generated using a tag
     RUN ls /output/dist/|grep -q 'clk-[0-9]\+\.[0-9]\+\.[0-9]\+'
     RUN --push --secret pypi_username --secret pypi_password twine upload --username "${pypi_username}" --password "${pypi_password}" '/output/dist/*'
-
-deploy:
-    FROM scratch
-    BUILD +upload
