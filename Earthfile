@@ -154,7 +154,7 @@ fix-quality:
     SAVE ARTIFACT . AS LOCAL fixed
 
 test-install-ubuntu:
-    FROM ubuntu:22.04.3
+    FROM ubuntu:22.04
     RUN apt-get update && apt-get install --yes python3-distutils python3-pip
     DO e+AS_USER
     DO +INSTALL --from=doc
