@@ -88,12 +88,14 @@ test:
     ARG build_requirements=no
     ARG pypi_version
     DO +INSTALL --from="$from" --use_git="$use_git" --build_requirements="${build_requirements}" --pypi_version="${pypi_version}"
+    RUN mkdir coverage
     RUN coverage run --source clk -m clk completion --case-insensitive install bash && echo 'source "${HOME}/.bash_completion"' >> "${HOME}/.bashrc"
+    RUN cd coverage && coverage combine --append ../.coverage
     COPY --dir +test-files/app/tests /app
     ARG test_args
     ENV CLK_ALLOW_INTRUSIVE_TEST=True
     RUN coverage run --source clk -m pytest ${test_args}
-    RUN mkdir coverage && cd coverage && coverage combine --append ../.coverage ~/.coverage
+    RUN cd coverage && coverage combine --append ../.coverage
     IF [ -e tests/.coverage ]
         RUN cd coverage && coverage combine --append ../tests/.coverage
     END
