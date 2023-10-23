@@ -14,7 +14,7 @@ cached-property==1.5.2
     # via clk (setup.py)
 certifi==2023.7.22
     # via requests
-charset-normalizer==3.3.0
+charset-normalizer==3.3.1
     # via requests
 click==8.1.7
     # via
@@ -54,7 +54,7 @@ markupsafe==2.1.3
     # via jinja2
 matplotlib-inline==0.1.6
     # via ipython
-networkx==3.1
+networkx==3.2
     # via clk (setup.py)
 parsedatetime==2.6
     # via clk (setup.py)
