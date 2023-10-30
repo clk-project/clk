@@ -3,7 +3,7 @@
 :END:
 #+TITLE: Using dynamic parameters
 #+language: en
-#+EXPORT_FILE_NAME: ../../doc/use_cases/dynamic_parameters_and_exposed_class.md
+#+EXPORT_FILE_NAME: ./dynamic_parameters_and_exposed_class.md
 
 #+CALL: ../../lp.org:check-result()
 
@@ -281,7 +281,7 @@ clk completion try http --base-url "http://otherurl" get
 : /f
 
 #+NAME: final
-#+BEGIN_SRC bash :results none :exports none :tangle dynamic_parameters_and_exposed_class.sh :noweb yes :shebang "#!/bin/bash -eu"
+#+BEGIN_SRC bash :results none :exports none :tangle ../../tests/use_cases/dynamic_parameters_and_exposed_class.sh :noweb yes :shebang "#!/bin/bash -eu"
 <<init>>
 
 <<create>>

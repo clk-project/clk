@@ -1,5 +1,5 @@
 #!/bin/bash -eu
-# [[file:bash_command.org::+BEGIN_SRC bash :exports none :tangle bash_command.sh :noweb yes :shebang "#!/bin/bash -eu"][No heading:9]]
+# [[file:../../doc/use_cases/tests/use_cases/bash_command.sh :noweb yes :shebang "#!/bin/bash -eu"][No heading:9]]
 . ./sandboxing.sh
 
 clk command create bash mycommand

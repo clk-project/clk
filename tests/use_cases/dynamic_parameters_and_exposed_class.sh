@@ -1,5 +1,5 @@
 #!/bin/bash -eu
-# [[file:dynamic_parameters_and_exposed_class.org::final][final]]
+# [[file:../../doc/use_cases/dynamic_parameters_and_exposed_class.org::final][final]]
 . ./sandboxing.sh
 
 clk command create python --group http

@@ -3,7 +3,7 @@
 :END:
 #+TITLE: Using a project
 #+language: en
-#+EXPORT_FILE_NAME: ../../doc/use_cases/using_a_project.md
+#+EXPORT_FILE_NAME: ./using_a_project.md
 
 #+CALL: ../../lp.org:check-result()
 
@@ -114,7 +114,7 @@ clk exec cat project:somefile.txt
 : somecontent
 
 #+NAME: run
-#+BEGIN_SRC bash :results none :exports none :tangle using_a_project.sh :noweb yes :shebang "#!/bin/bash -eu"
+#+BEGIN_SRC bash :results none :exports none :tangle ../../tests/use_cases/using_a_project.sh :noweb yes :shebang "#!/bin/bash -eu"
 <<init>>
 
 <<createproject>>

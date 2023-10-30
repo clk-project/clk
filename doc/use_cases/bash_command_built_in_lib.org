@@ -3,7 +3,7 @@
 :END:
 #+TITLE: Use the bash batteries provided by clk
 #+LANGUAGE: en
-#+EXPORT_FILE_NAME: ../../doc/use_cases/bash_command_built_in_lib.md
+#+EXPORT_FILE_NAME: ./bash_command_built_in_lib.md
 
 #+CALL: ../../lp.org:check-result()
 
@@ -81,7 +81,7 @@ We will use it to illustrate most of the example below.
 
 
 * tangle                                                           :noexport:
-  #+BEGIN_SRC bash :exports none :tangle bash_command_built_in_lib.sh :noweb yes :shebang "#!/bin/bash -eu"
+  #+BEGIN_SRC bash :exports none :tangle ../../tests/use_cases/bash_command_built_in_lib.sh :noweb yes :shebang "#!/bin/bash -eu"
     <<init>>
 
     <<create_command>>

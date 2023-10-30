@@ -1,6 +1,6 @@
 
 #+NAME: tmpdir
-#+BEGIN_SRC bash :exports none :results none :tangle sandboxing.sh
+#+BEGIN_SRC bash :exports none :results none :tangle ../../tests/use_cases/sandboxing.sh
   SRCDIR="$(pwd)"
   CLK_COV="$(readlink -f "$(dirname "$BASH_SOURCE")/../clk_coverage.sh")"
   if test -n "${CLK_TEST_ROOT-}"

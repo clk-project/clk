@@ -3,7 +3,7 @@
 :END:
 #+TITLE: Using the helpers provided by clk
 #+language: en
-#+EXPORT_FILE_NAME: ../../doc/use_cases/lib.md
+#+EXPORT_FILE_NAME: ./lib.md
 
 #+BEGIN_SRC elisp :exports none :results none
   (org-gfm-export-to-markdown)
@@ -52,7 +52,7 @@ If you wish to simply download the file, just call download.
 #+END_SRC
 
 * Tangling                                                         :noexport:
-#+BEGIN_SRC python :tangle ../test_lib2.py :exports none  :noweb yes
+#+BEGIN_SRC python :tangle ../../tests/use_cases/../test_lib2.py :exports none  :noweb yes
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 

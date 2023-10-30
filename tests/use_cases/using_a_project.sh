@@ -1,5 +1,5 @@
 #!/bin/bash -eu
-# [[file:using_a_project.org::run][run]]
+# [[file:../../doc/use_cases/using_a_project.org::run][run]]
 . ./sandboxing.sh
 
 mkdir myprojet && cd myprojet && mkdir .clk
@@ -10,12 +10,15 @@ usingaliases_code () {
 }
 
 usingaliases_expected () {
-      cat<<EOEXPECTED
+      cat<<"EOEXPECTED"
 New local alias for somelocalcommand: echo hello
 EOEXPECTED
 }
 
-diff -uw <(usingaliases_code 2>&1) <(usingaliases_expected)
+diff -uBw <(usingaliases_code 2>&1) <(usingaliases_expected) || {
+echo "Something went wrong when trying usingaliases"
+exit 1
+}
 
 
 
@@ -24,12 +27,15 @@ callingthealias_code () {
 }
 
 callingthealias_expected () {
-      cat<<EOEXPECTED
+      cat<<"EOEXPECTED"
 hello
 EOEXPECTED
 }
 
-diff -uw <(callingthealias_code 2>&1) <(callingthealias_expected)
+diff -uBw <(callingthealias_code 2>&1) <(callingthealias_expected) || {
+echo "Something went wrong when trying callingthealias"
+exit 1
+}
 
 
 cd ..
@@ -40,7 +46,7 @@ callingthealiasoutsideoftheproject_code () {
 }
 
 callingthealiasoutsideoftheproject_expected () {
-      cat<<EOEXPECTED
+      cat<<"EOEXPECTED"
 Usage: clk [OPTIONS] COMMAND [ARGS]...
 error: No such command 'somelocalcommand'.
 error:
@@ -49,7 +55,10 @@ error:     command
 EOEXPECTED
 }
 
-diff -uw <(callingthealiasoutsideoftheproject_code 2>&1) <(callingthealiasoutsideoftheproject_expected)
+diff -uBw <(callingthealiasoutsideoftheproject_code 2>&1) <(callingthealiasoutsideoftheproject_expected) || {
+echo "Something went wrong when trying callingthealiasoutsideoftheproject"
+exit 1
+}
 
 
 cd myprojet
@@ -61,13 +70,16 @@ createaparameter_code () {
 }
 
 createaparameter_expected () {
-      cat<<EOEXPECTED
+      cat<<"EOEXPECTED"
 New local parameters for echo: hello
 hello world
 EOEXPECTED
 }
 
-diff -uw <(createaparameter_code 2>&1) <(createaparameter_expected)
+diff -uBw <(createaparameter_code 2>&1) <(createaparameter_expected) || {
+echo "Something went wrong when trying createaparameter"
+exit 1
+}
 
 
 
@@ -77,13 +89,16 @@ callingparameteroutsideofproject_code () {
 }
 
 callingparameteroutsideofproject_expected () {
-      cat<<EOEXPECTED
+      cat<<"EOEXPECTED"
 world
 hello world
 EOEXPECTED
 }
 
-diff -uw <(callingparameteroutsideofproject_code 2>&1) <(callingparameteroutsideofproject_expected)
+diff -uBw <(callingparameteroutsideofproject_code 2>&1) <(callingparameteroutsideofproject_expected) || {
+echo "Something went wrong when trying callingparameteroutsideofproject"
+exit 1
+}
 
 
 
@@ -93,10 +108,13 @@ projectprefix_code () {
 }
 
 projectprefix_expected () {
-      cat<<EOEXPECTED
+      cat<<"EOEXPECTED"
 somecontent
 EOEXPECTED
 }
 
-diff -uw <(projectprefix_code 2>&1) <(projectprefix_expected)
+diff -uBw <(projectprefix_code 2>&1) <(projectprefix_expected) || {
+echo "Something went wrong when trying projectprefix"
+exit 1
+}
 # run ends here

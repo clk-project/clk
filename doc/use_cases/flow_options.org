@@ -3,7 +3,7 @@
 :END:
 #+TITLE: Flow options
 #+language: en
-#+EXPORT_FILE_NAME: ../../doc/use_cases/flow_options.md
+#+EXPORT_FILE_NAME: ./flow_options.md
 
 #+CALL: ../../lp.org:check-result()
 
@@ -146,7 +146,7 @@ Then, when you run the flow, you get this.
 : The flow is done
 
 #+NAME: script
-#+BEGIN_SRC bash :results none :exports none :tangle flow_options.sh :noweb yes :shebang "#!/bin/bash -eu" :var documentation=documentation
+#+BEGIN_SRC bash :results none :exports none :tangle ../../tests/use_cases/flow_options.sh :noweb yes :shebang "#!/bin/bash -eu" :var documentation=documentation
   <<init>>
 
   <<create-group>>
