@@ -52,3 +52,7 @@ def test_dynamic_parameters_advanced_use_cases():
 
 def test_bash_command_from_alias():
     call_script('bash_command_from_alias.sh')
+
+
+def test_ethereum_local_environment_dev_tool():
+    call_script('ethereum_local_environment_dev_tool.sh')

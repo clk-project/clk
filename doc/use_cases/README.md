@@ -17,3 +17,5 @@ At some point, you will definitely want to try the [flow command pattern](flow_o
 If you don't want to use the clk command line tool, you can [roll your own](rolling_your_own.md).
 
 Some commands might need to use secret, [here is how](dealing_with_secrets.md) we implement that.
+
+This example of an [ethereum local environment dev tool](ethereum_local_environment_dev_tool.md) shows how to plug clk commands as parameters in other commands.

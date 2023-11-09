@@ -22,7 +22,7 @@ from clk.commandresolver import CommandResolver
 from clk.completion import startswith
 from clk.config import config
 from clk.core import cache_disk, get_ctx, main_command_decoration, run, settings_stores
-from clk.lib import ParameterType, cd, check_output, ordered_unique
+from clk.lib import ParameterType, cd, check_output, ordered_unique, updated_env
 from clk.log import get_logger
 from clk.plugin import load_plugins
 from clk.triggers import TriggerMixin
@@ -776,10 +776,26 @@ class Group(click_didyoumean.DYMMixin, MissingDocumentationMixin, DeprecatedMixi
         return cmd
 
 
+def get_cached_evaluator(expire=0):
+
+    @cache_disk(expire=expire)
+    def evaluate(project, expr):
+        # avoid possible recursive calls to the completion
+        with updated_env(
+                COMP_WORDS=None,
+                COMP_CWORD=None,
+                _CLK_COMPLETE=None,
+        ):
+            return check_output(shlex.split(expr)).strip()
+
+    return evaluate
+
+
 def eval_arg(arg):
     if not isinstance(arg, str):
         return arg
-    eval_match = re.match(r'eval(\(\d+\)|):(.+)', arg)
+
+    eval_match = re.match(r'eval(?:\((\d+)\)|):(.+)', arg)
     nexteval_match = re.match(r'nexteval(\(\d+\)|):(.+)', arg)
     keyring_prefix = 'secret:'
     if arg.startswith('noeval:'):
@@ -819,11 +835,7 @@ def eval_arg(arg):
         return str(Path(config.project) / arg[len('project:'):])
     elif eval_match:
         try:
-
-            @cache_disk(expire=int(eval_match.group(1) or '600'))
-            def evaluate(project, expr):
-                return check_output(shlex.split(expr)).strip()
-
+            evaluate = get_cached_evaluator(int(eval_match.group(1) or '-1'))
             evaluated_arg = evaluate(config.project, eval_match.group(2))
             LOGGER.develop('%s evaluated to %s' % (arg, evaluated_arg))
             arg = evaluated_arg

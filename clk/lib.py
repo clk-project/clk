@@ -403,9 +403,13 @@ def updated_env(**kwargs):
     u"""Temporarily update the environment. To be used in a with statement"""
     oldenv = dict(os.environ)
     for k, v in kwargs.items():
-        if v is None and k in os.environ:
-            LOGGER.debug('environment %s removed' % k)
-            del os.environ[k]
+        if v is None:
+            if k in os.environ:
+                LOGGER.debug('environment %s removed' % k)
+                del os.environ[k]
+            else:
+                # already not there, nothing to do
+                pass
         else:
             LOGGER.debug('environment %s="%s"' % (k, v))
             os.environ[k] = v

@@ -242,9 +242,9 @@ class AliasCommandResolver(CommandResolver):
                         # may be given, but may be given again
                         param.nargs == -1))
             ] + alias_command.params
-            # any option required with nargs=-1 that was already given should be
-            # no more required
+            # any option required that was already given should be no more
+            # required
             for param in alias_command.params:
-                if param.nargs == -1 and param.required and was_given(param):
+                if param.required and was_given(param):
                     param.required = False
         return alias_command

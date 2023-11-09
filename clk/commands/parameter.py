@@ -10,7 +10,7 @@ from clk.config import config
 from clk.decorators import argument, flag, group, option, pass_context, table_fields, table_format, use_settings
 from clk.lib import TablePrinter, quote
 from clk.log import get_logger
-from clk.overloads import CommandSettingsKeyType, CommandType, get_command_safe
+from clk.overloads import CommandSettingsKeyType, CommandType, get_cached_evaluator, get_command_safe
 
 LOGGER = get_logger(__name__)
 
@@ -198,3 +198,11 @@ def show(ctx, name_only, cmds, under, fields, format, **kwargs):
                     LOGGER.warning('You should know that the command {} does not exist'.format(cmd_name))
                 args = args or 'None'
                 tp.echo(cmd_name, args)
+
+
+@parameter.command()
+@argument('command', help='The command whose cache to drop')
+def drop_cache(command):
+    'Drop the cache for some command that was put as eval:command'
+    evaluator = get_cached_evaluator()
+    evaluator.drop(config.project, command)

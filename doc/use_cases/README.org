@@ -28,3 +28,6 @@ At some point, you will definitely want to try the [[file:flow_options.org][flow
 If you don't want to use the clk command line tool, you can [[file:rolling_your_own.org][roll your own]].
 
 Some commands might need to use secret, [[file:dealing_with_secrets.org][here is how]] we implement that.
+
+This example of an [[file:ethereum_local_environment_dev_tool.org][ethereum local environment dev tool]] shows how to plug clk
+commands as parameters in other commands.
