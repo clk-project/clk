@@ -1,8 +1,13 @@
 
 #+NAME: tmpdir
-#+BEGIN_SRC bash :exports none :results none :tangle ../../tests/use_cases/sandboxing.sh
+#+BEGIN_SRC bash :exports none :results none :tangle ../../tests/use_cases/sandboxing.sh :tangle ./sandboxing.sh
   SRCDIR="$(pwd)"
   CLK_COV="$(readlink -f "$(dirname "$BASH_SOURCE")/../clk_coverage.sh")"
+  if ! test -e "${CLK_COV}"
+  then
+      # in case it is run directly from the org file
+      CLK_COV="$(readlink -f "$(dirname "$BASH_SOURCE")/../../tests/clk_coverage.sh")"
+  fi
   if test -n "${CLK_TEST_ROOT-}"
   then
       TMP="${CLK_TEST_ROOT}"
@@ -19,22 +24,22 @@
   EOF
   chmod +x "${TMP}/bin/clk"
   cat <<EOF > "${TMP}/clk-root/clk.json"
-    {
-        "parameters": {
-            "clk": [
-                "--keyring", "clk.keyrings.DummyFileKeyring"
-            ],
-            "command.create.python": [
-                "--no-open"
-            ],
-            "completion.try": [
-                "--call"
-            ],
-            "command.create.bash": [
-                "--no-open"
-            ]
-        }
-    }
+  {
+      "parameters": {
+          "clk": [
+              "--keyring", "clk.keyrings.DummyFileKeyring"
+          ],
+          "command.create.python": [
+              "--no-open"
+          ],
+          "completion.try": [
+              "--call"
+          ],
+          "command.create.bash": [
+              "--no-open"
+          ]
+      }
+  }
   EOF
   cd "${TMP}"
   eval "$(direnv hook bash)"
