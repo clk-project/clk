@@ -4,7 +4,7 @@
 
 clk command create python eth --description "Play with ethereum" --group --body "
 @eth.group()
-@option('--abi-path', help='Where the abi description is located', required=True)
+@option('--abi-path', help='Where the abi description is located', required=True, type=Path)
 @option('--address', help='The address of the contract', required=True)
 def contract(abi_path, address):
     'Discuss with a smart contract'
@@ -73,7 +73,7 @@ exit 1
 }
 
 
-clk command create bash --force eth.deploy --description 'Deploy a new contract, save its address locally' --body '
+clk command create bash eth.deploy --description 'Deploy a new contract, save its address locally' --body '
 
 # we simply want that each time this code is run, it returns something
 # different. But for the sake of this example, we also want the code to return
@@ -198,6 +198,63 @@ EOEXPECTED
 
 diff -uBw <(dropping-the-cache-when-deploying_code 2>&1) <(dropping-the-cache-when-deploying_expected) || {
 echo "Something went wrong when trying dropping-the-cache-when-deploying"
+exit 1
+}
+
+
+mkdir -p myproject/.clk
+cd myproject
+
+
+alias-with-project_code () {
+      clk alias set eth.mycontract eth contract --abi-path noeval:project:some.json --address "noeval:eval:clk eth get-address"
+}
+
+alias-with-project_expected () {
+      cat<<"EOEXPECTED"
+New local alias for eth.mycontract: eth contract --abi-path project:some.json --address eval:clk eth get-address
+EOEXPECTED
+}
+
+diff -uBw <(alias-with-project_code 2>&1) <(alias-with-project_expected) || {
+echo "Something went wrong when trying alias-with-project"
+exit 1
+}
+
+
+
+deploy-again_code () {
+      clk eth deploy
+      clk eth get-address
+}
+
+deploy-again_expected () {
+      cat<<"EOEXPECTED"
+Contract deployed at address: 68b329da9893e34099c7d8ad5cb9c940
+68b329da9893e34099c7d8ad5cb9c940
+EOEXPECTED
+}
+
+diff -uBw <(deploy-again_code 2>&1) <(deploy-again_expected) || {
+echo "Something went wrong when trying deploy-again"
+exit 1
+}
+
+
+
+run-with-project-abi_code () {
+      clk eth mycontract call dosomething | sed "s|$(pwd)|absolute-path-to-here|"
+}
+
+run-with-project-abi_expected () {
+      cat<<"EOEXPECTED"
+I would discuss with the contract whose address is 68b329da9893e34099c7d8ad5cb9c940 and abi path is absolute-path-to-here/some.json
+I would call the function dosomething
+EOEXPECTED
+}
+
+diff -uBw <(run-with-project-abi_code 2>&1) <(run-with-project-abi_expected) || {
+echo "Something went wrong when trying run-with-project-abi"
 exit 1
 }
 # test ends here

@@ -792,7 +792,12 @@ def get_cached_evaluator(expire=0):
 
 
 def eval_arg(arg):
-    if not isinstance(arg, str):
+    if isinstance(arg, Path):
+        arg = str(arg)
+        type_ = Path
+    elif isinstance(arg, str):
+        type_ = str
+    else:
         return arg
 
     eval_match = re.match(r'eval(?:\((\d+)\)|):(.+)', arg)
@@ -810,13 +815,13 @@ def eval_arg(arg):
         from clk.lib import get_keyring
         key = arg[len(keyring_prefix):]
         if res := get_keyring().get_password('clk', key):
-            return res
+            return type_(res)
         elif not clk.completion.IN_COMPLETION:
             message = f'Could not find the secret for {key}'
             if config.ask_secret_callback:
                 LOGGER.warning(message)
                 from click.termui import prompt
-                return prompt(f'Please provide the secret {key}', hide_input=True, confirmation_prompt=True)
+                return type_(prompt(f'Please provide the secret {key}', hide_input=True, confirmation_prompt=True))
             else:
                 LOGGER.error(message)
                 exit(1)
@@ -831,12 +836,12 @@ def eval_arg(arg):
                          ' If you did not want it to be evaluated'
                          ' please use the following syntax: noeval:{}'.format(arg, arg))
             exit(1)
-    elif arg.startswith('project:'):
-        return str(Path(config.project) / arg[len('project:'):])
+    elif str(arg).startswith('project:'):
+        return type_(str(Path(config.project) / arg[len('project:'):]))
     elif eval_match:
         try:
             evaluate = get_cached_evaluator(int(eval_match.group(1) or '-1'))
-            evaluated_arg = evaluate(config.project, eval_match.group(2))
+            evaluated_arg = type_(evaluate(config.project, eval_match.group(2)))
             LOGGER.develop('%s evaluated to %s' % (arg, evaluated_arg))
             arg = evaluated_arg
         except Exception:
@@ -845,7 +850,7 @@ def eval_arg(arg):
                          ' If you did not want it to be evaluated'
                          ' please use the following syntax: noeval:{}'.format(arg, arg))
             exit(1)
-    return arg
+    return type_(arg)
 
 
 class NoPathAvailable(Exception):

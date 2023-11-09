@@ -1,4 +1,5 @@
-- [advanced use case, caching the result](#e909c8aa-34f1-499c-b789-2581ec67e4f2)
+- [advanced use case: caching the result](#e909c8aa-34f1-499c-b789-2581ec67e4f2)
+- [advanced use case: getting the abi path from a project](#f83521ae-9ada-4740-bc70-19020f965826)
 
 When needing to play with ethereum, I created a [clk extension](https://github.com/clk-project/clk_extension_eth) to do so. I will simply mock this extension right now so that we won't have to install a local blockchain node to reproduce the story, but it should feel the same.
 
@@ -7,7 +8,7 @@ In particular, I will focus only the part that discuss with smart contracts.
 ```bash
 clk command create python eth --description "Play with ethereum" --group --body "
 @eth.group()
-@option('--abi-path', help='Where the abi description is located', required=True)
+@option('--abi-path', help='Where the abi description is located', required=True, type=Path)
 @option('--address', help='The address of the contract', required=True)
 def contract(abi_path, address):
     'Discuss with a smart contract'
@@ -61,7 +62,7 @@ Let's do that using the `eval:` value.
 First, let's add clk commands to simulate deploying a contract and fetching its address.
 
 ```bash
-clk command create bash --force eth.deploy --description 'Deploy a new contract, save its address locally' --body '
+clk command create bash eth.deploy --description 'Deploy a new contract, save its address locally' --body '
 
 # we simply want that each time this code is run, it returns something
 # different. But for the sake of this example, we also want the code to return
@@ -124,7 +125,7 @@ clk eth mycontract call dosomething
 
 <a id="e909c8aa-34f1-499c-b789-2581ec67e4f2"></a>
 
-# advanced use case, caching the result
+# advanced use case: caching the result
 
 In case `eval:clk eth get-address` takes some time to run, you can make use of caching, using `eval(60):clk eth get-address`. This will cache the result for 60 seconds, making only the first call be slow.
 
@@ -164,3 +165,52 @@ clk eth mycontract call dosomething
     I would call the function dosomething
 
 Now, we are finished with this command. It is reactive because the slow computation is cached, but you can still invalidate the cache if need be, avoiding making it inconsistent.
+
+
+<a id="f83521ae-9ada-4740-bc70-19020f965826"></a>
+
+# advanced use case: getting the abi path from a project
+
+So far, we gave this command line to specify the api-path `--abi-path some.json`. This is actually not very practical because it makes the command depend on the location where clk is run. I like the fact that clk commands work whatever the location clk is run.
+
+In my case, I created a clk project, put the abi file in it and configured the command to find the file relative to the project. Let's show this.
+
+First, let's create a project and get into it. As described in [here](using_a_project.md), creating a project needs nothing more than creating an empty directory called `.clk`.
+
+```bash
+mkdir -p myproject/.clk
+cd myproject
+```
+
+Then, let's create the command again, using the shortcut `project:`.
+
+```bash
+clk alias set eth.mycontract eth contract --abi-path noeval:project:some.json --address "noeval:eval:clk eth get-address"
+```
+
+    New local alias for eth.mycontract: eth contract --abi-path project:some.json --address eval:clk eth get-address
+
+Similarly to the `--address` option, we need to prepend it with `noeval:`, or the alias would be defined with the absolute location of the file instead of the instruction to evaluate it when run.
+
+In real life, I also updated `deploy` and `get-address` to put the address file in the project hierarchy, but for the sake of the example, I won't do it in here. Instead, I will simply run deploy again.
+
+```bash
+clk eth deploy
+clk eth get-address
+```
+
+    Contract deployed at address: 68b329da9893e34099c7d8ad5cb9c940
+    68b329da9893e34099c7d8ad5cb9c940
+
+Now, as you can see, the command can be run again. It is now provided with the absolute Path to some.json<sup><a id="fnr.1" class="footref" href="#fn.1" role="doc-backlink">1</a></sup>.
+
+```bash
+clk eth mycontract call dosomething | sed "s|$(pwd)|absolute-path-to-here|"
+```
+
+    I would discuss with the contract whose address is 68b329da9893e34099c7d8ad5cb9c940 and abi path is absolute-path-to-here/some.json
+    I would call the function dosomething
+
+## Footnotes
+
+<sup><a id="fn.1" class="footnum" href="#fnr.1">1</a></sup> For the sake of the example, I replace the absolute path with `absolute-path-to-here` to ease extracting this code snippet into a runable test.

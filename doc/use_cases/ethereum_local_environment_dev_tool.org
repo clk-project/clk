@@ -22,7 +22,7 @@ In particular, I will focus only the part that discuss with smart contracts.
 #+BEGIN_SRC bash :results none :exports code :session cd599835-d6ac-4970-8f7f-34d82068ef4b
   clk command create python eth --description "Play with ethereum" --group --body "
   @eth.group()
-  @option('--abi-path', help='Where the abi description is located', required=True)
+  @option('--abi-path', help='Where the abi description is located', required=True, type=Path)
   @option('--address', help='The address of the contract', required=True)
   def contract(abi_path, address):
       'Discuss with a smart contract'
@@ -97,7 +97,7 @@ address.
 
 #+NAME: deploy
 #+BEGIN_SRC bash :results none :exports code :session cd599835-d6ac-4970-8f7f-34d82068ef4b
-  clk command create bash --force eth.deploy --description 'Deploy a new contract, save its address locally' --body '
+  clk command create bash eth.deploy --description 'Deploy a new contract, save its address locally' --body '
 
   # we simply want that each time this code is run, it returns something
   # different. But for the sake of this example, we also want the code to return
@@ -170,7 +170,7 @@ with is dynamically updated.
 : I would discuss with the contract whose address is 47156ddb404b893cbbe9c85509710f64 and abi path is some.json
 : I would call the function dosomething
 
-* advanced use case, caching the result
+* advanced use case: caching the result
   :PROPERTIES:
   :CUSTOM_ID: e909c8aa-34f1-499c-b789-2581ec67e4f2
   :END:
@@ -227,6 +227,78 @@ with is dynamically updated.
   computation is cached, but you can still invalidate the cache if need be,
   avoiding making it inconsistent.
 
+* advanced use case: getting the abi path from a project
+  :PROPERTIES:
+  :CUSTOM_ID: f83521ae-9ada-4740-bc70-19020f965826
+  :END:
+
+  So far, we gave this command line to specify the api-path ~--abi-path
+  some.json~. This is actually not very practical because it makes the command
+  depend on the location where clk is run. I like the fact that clk commands
+  work whatever the location clk is run.
+
+  In my case, I created a clk project, put the abi file in it and configured
+  the command to find the file relative to the project. Let's show this.
+
+  First, let's create a project and get into it. As described in [[file:using_a_project.org][here]], creating
+  a project needs nothing more than creating an empty directory called ~.clk~.
+
+  #+NAME: create-project
+  #+BEGIN_SRC bash :results none :exports code :session cd599835-d6ac-4970-8f7f-34d82068ef4b
+    mkdir -p myproject/.clk
+    cd myproject
+  #+END_SRC
+
+  Then, let's create the command again, using the shortcut ~project:~.
+
+  #+NAME: alias-with-project
+  #+BEGIN_SRC bash :results verbatim :exports both :session cd599835-d6ac-4970-8f7f-34d82068ef4b :cache yes
+    clk alias set eth.mycontract eth contract --abi-path noeval:project:some.json --address "noeval:eval:clk eth get-address"
+  #+END_SRC
+
+  #+RESULTS[2f4b47e077ee2abe4cbf81c2fe8f288968e41245]: alias-with-project
+  : New local alias for eth.mycontract: eth contract --abi-path project:some.json --address eval:clk eth get-address
+
+  Similarly to the ~--address~ option, we need to prepend it with ~noeval:~, or
+  the alias would be defined with the absolute location of the file instead of
+  the instruction to evaluate it when run.
+
+  In real life, I also updated ~deploy~ and ~get-address~ to put the address
+  file in the project hierarchy, but for the sake of the example, I won't do it
+  in here. Instead, I will simply run deploy again.
+
+  #+NAME: deploy-again
+  #+BEGIN_SRC bash :results verbatim :exports both :session cd599835-d6ac-4970-8f7f-34d82068ef4b :cache yes
+    clk eth deploy
+    clk eth get-address
+  #+END_SRC
+
+  #+RESULTS[441a3f946af7922d794f7528793939799c1ccf62]: deploy-again
+  : Contract deployed at address: 68b329da9893e34099c7d8ad5cb9c940
+  : 68b329da9893e34099c7d8ad5cb9c940
+
+  Now, as you can see, the command can be run again. It is now provided with the absolute Path to some.json[fn:1].
+
+  #+NAME: run-with-project-abi
+  #+BEGIN_SRC bash :results verbatim :exports both :session cd599835-d6ac-4970-8f7f-34d82068ef4b :cache yes
+    clk eth mycontract call dosomething | sed "s|$(pwd)|absolute-path-to-here|"
+  #+END_SRC
+
+  #+RESULTS[89a79ba76bb8bca5df4fb2f199a8a155a54b1ce1]: run-with-project-abi
+  : I would discuss with the contract whose address is 68b329da9893e34099c7d8ad5cb9c940 and abi path is absolute-path-to-here/some.json
+  : I would call the function dosomething
+
+
+* Footnotes
+  :PROPERTIES:
+  :CUSTOM_ID: 1f8655b0-2399-4908-9452-364abac1b6c5
+  :END:
+
+[fn:1] For the sake of the example, I replace the absolute path with
+~absolute-path-to-here~ to ease extracting this code snippet into a runable
+test.
+
+
   #+NAME: test
   #+BEGIN_SRC bash :results none :exports none :noweb yes :shebang "#!/bin/bash -eu" :tangle ../../tests/use_cases/ethereum_local_environment_dev_tool.sh
     <<init>>
@@ -254,4 +326,12 @@ with is dynamically updated.
     check-result(issue-using-with-cache)
 
     check-result(dropping-the-cache-when-deploying)
+
+    <<create-project>>
+
+    check-result(alias-with-project)    
+
+    check-result(deploy-again)
+  
+    check-result(run-with-project-abi)
   #+END_SRC
