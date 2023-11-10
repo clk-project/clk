@@ -25,7 +25,7 @@ class HttpPathType(DynamicChoice):
         return value
 
 @group()
-@option("--base-url", help="The url to use as a basis for all commands", expose_class=HTTPConfig)
+@option("--base-url", help="The url to use as a basis for all commands", expose_class=HTTPConfig, required=True)
 def http():
     "Commands to make http requests"
 
@@ -119,6 +119,31 @@ EOEXPECTED
 
 diff -uBw <(completion2_code 2>&1) <(completion2_expected) || {
 echo "Something went wrong when trying completion2"
+exit 1
+}
+
+
+
+try-somesite_code () {
+      clk alias set somesite http --base-url http://url
+      clk somesite get something
+      clk somesite post something --body bodyoftherequest
+}
+
+try-somesite_expected () {
+      cat<<"EOEXPECTED"
+New global alias for somesite: http --base-url http://url
+GET http://url/something
+Would run the get code
+res = None
+POST http://url/something with body bodyoftherequest
+Would run the post code
+res = None
+EOEXPECTED
+}
+
+diff -uBw <(try-somesite_code 2>&1) <(try-somesite_expected) || {
+echo "Something went wrong when trying try-somesite"
 exit 1
 }
 # final ends here

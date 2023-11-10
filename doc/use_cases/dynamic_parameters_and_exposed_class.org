@@ -52,24 +52,25 @@ You might want to regroup this repeated concept in the http group, so that it
 would be called like.
 
 #+BEGIN_SRC bash :results none :exports code
-clk http --base-url http://url get /something
-clk http --base-url http://url post /something bodyoftherequest
+clk http --base-url http://url get something
+clk http --base-url http://url post something --body bodyoftherequest
 #+END_SRC
 
 That way, you can make use of parameters to persist that data.
 
 #+BEGIN_SRC bash :results none :exports code
 clk parameter set http --base-url http://url
-clk http get /something
-clk http post /something bodyoftherequest
+clk http get something
+clk http post something --body bodyoftherequest
 #+END_SRC
 
 Or you might want to create aliases for some sites you use a lot, like this:
 
+#+NAME: somesite-example
 #+BEGIN_SRC bash :results none :exports code
 clk alias set somesite http --base-url http://url
-clk somesite get /something
-clk somesite post /something bodyoftherequest
+clk somesite get something
+clk somesite post something --body bodyoftherequest
 #+END_SRC
 
 Let's get our hands dirty then! There are plenty of ways and patterns to
@@ -87,7 +88,7 @@ Let's start with the code of the http group.
 #+NAME: basehttp
 #+BEGIN_SRC python :results none :exports none
   @group()
-  @option("--base-url", help="The url to use as a basis for all commands", expose_class=HTTPConfig)
+  @option("--base-url", help="The url to use as a basis for all commands", expose_class=HTTPConfig, required=True)
   def http():
       "Commands to make http requests"
 #+END_SRC
@@ -280,6 +281,23 @@ clk completion try http --base-url "http://otherurl" get
 : /e
 : /f
 
+Now, let's try creating an alias to play with somesite, as explained above.
+
+#+NAME: try-somesite
+#+BEGIN_SRC bash :results verbatim :exports both :session e451aef8-b5f8-4529-972b-4b341833c797 :noweb yes :cache yes
+<<somesite-example>>
+#+END_SRC
+
+#+RESULTS[6efed1ef20947eeee651b29cd1d8f4b7051fcdeb]: try-somesite
+: New global alias for somesite: http --base-url http://url
+: GET http://url/something
+: Would run the get code
+: res = None
+: POST http://url/something with body bodyoftherequest
+: Would run the post code
+: res = None
+
+
 #+NAME: final
 #+BEGIN_SRC bash :results none :exports none :tangle ../../tests/use_cases/dynamic_parameters_and_exposed_class.sh :noweb yes :shebang "#!/bin/bash -eu"
 <<init>>
@@ -295,5 +313,7 @@ check-result(simplepost)
 check-result(completion1)
 
 check-result(completion2)
+
+check-result(try-somesite)
 
 #+END_SRC

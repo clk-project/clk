@@ -4,6 +4,7 @@
 import shlex
 
 import click
+from click.core import ParameterSource
 
 from clk.commandresolver import CommandResolver
 from clk.config import config
@@ -223,12 +224,7 @@ class AliasCommandResolver(CommandResolver):
             alias_param_names = list(map(lambda c: c.name, alias_command.params))
 
             def was_given(param):
-                return not (
-                    # catched the default value only because it was not
-                    # given to the command line
-                    param.name in c.clk_default_catch or
-                    # not given for sure
-                    c.params.get(param.name) == param.default)
+                return c.get_parameter_source(param.name) != ParameterSource.DEFAULT
 
             alias_command.params = [
                 param for param in c.command.params

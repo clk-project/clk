@@ -32,24 +32,24 @@ After some time using this commands, you will likely realize that you have to re
 You might want to regroup this repeated concept in the http group, so that it would be called like.
 
 ```bash
-clk http --base-url http://url get /something
-clk http --base-url http://url post /something bodyoftherequest
+clk http --base-url http://url get something
+clk http --base-url http://url post something --body bodyoftherequest
 ```
 
 That way, you can make use of parameters to persist that data.
 
 ```bash
 clk parameter set http --base-url http://url
-clk http get /something
-clk http post /something bodyoftherequest
+clk http get something
+clk http post something --body bodyoftherequest
 ```
 
 Or you might want to create aliases for some sites you use a lot, like this:
 
 ```bash
 clk alias set somesite http --base-url http://url
-clk somesite get /something
-clk somesite post /something bodyoftherequest
+clk somesite get something
+clk somesite post something --body bodyoftherequest
 ```
 
 Let's get our hands dirty then! There are plenty of ways and patterns to implement this tool. Here, I present the pattern that I converged to after many experiments.
@@ -61,7 +61,7 @@ class HTTPConfig:
     pass
 
 @group()
-@option("--base-url", help="The url to use as a basis for all commands", expose_class=HTTPConfig)
+@option("--base-url", help="The url to use as a basis for all commands", expose_class=HTTPConfig, required=True)
 def http():
     "Commands to make http requests"
 ```
@@ -128,7 +128,7 @@ class HttpPathType(DynamicChoice):
         return value
 
 @group()
-@option("--base-url", help="The url to use as a basis for all commands", expose_class=HTTPConfig)
+@option("--base-url", help="The url to use as a basis for all commands", expose_class=HTTPConfig, required=True)
 def http():
     "Commands to make http requests"
 
@@ -191,3 +191,19 @@ clk http --base-url "http://otherurl" get <TAB>
 ```
 
     /d /e /f
+
+Now, let's try creating an alias to play with somesite, as explained above.
+
+```bash
+clk alias set somesite http --base-url http://url
+clk somesite get something
+clk somesite post something --body bodyoftherequest
+```
+
+    New global alias for somesite: http --base-url http://url
+    GET http://url/something
+    Would run the get code
+    res = None
+    POST http://url/something with body bodyoftherequest
+    Would run the post code
+    res = None
