@@ -68,7 +68,7 @@ def resolve_context_with_side_effects(path, resilient_parsing=True):
 get_ctx_cache = {}
 
 
-def get_ctx(path, side_effects=False, resilient_parsing=None):
+def get_ctx(path, side_effects=False, resilient_parsing=None) -> click.Context:
     if resilient_parsing is None:
         ctx = click_get_current_context_safe()
         resilient_parsing = (ctx is not None and ctx.resilient_parsing) or False
