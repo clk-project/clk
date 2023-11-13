@@ -30,4 +30,5 @@ If you don't want to use the clk command line tool, you can [[file:rolling_your_
 Some commands might need to use secret, [[file:dealing_with_secrets.org][here is how]] we implement that.
 
 This example of an [[file:ethereum_local_environment_dev_tool.org][ethereum local environment dev tool]] shows how to plug clk
-commands as parameters in other commands.
+commands as parameters in other commands. [[file:ipfs_name_publish.org][ipfs name publish]] shows how to use clk
+bash commands to create the completion for other commands.

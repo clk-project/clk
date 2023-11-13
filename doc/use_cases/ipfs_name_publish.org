@@ -1,0 +1,106 @@
+:PROPERTIES:
+:ID:       344b2d46-b85a-40ea-a50b-ad95ddc177f4
+:END:
+#+TITLE: ipfs name publish
+#+language: en
+#+EXPORT_FILE_NAME: ./ipfs_name_publish.md
+
+#+CALL: ../../lp.org:check-result()
+
+#+name: init
+#+BEGIN_SRC bash :results none :exports none :session 344b2d46-b85a-40ea-a50b-ad95ddc177f4
+  . ./sandboxing.sh
+#+END_SRC
+
+I use ipfs to deal with my files. When I want to share some content, I publish it using ipns.
+
+First, I need to list the keys I have available
+
+Let's mock this by creating a command that lists several arbitrary names.
+
+#+NAME: list-key
+#+BEGIN_SRC bash :results none :exports code :session 344b2d46-b85a-40ea-a50b-ad95ddc177f4
+  clk command create bash ipfs.key.list --description "List the available keys" --body "
+  cat<<EOF
+  alice
+  bob
+  charly
+  EOF
+  "
+#+END_SRC
+
+Let's check that we can call it.
+
+#+NAME: call-ipfs-key-list
+#+BEGIN_SRC bash :results verbatim :exports both :session 344b2d46-b85a-40ea-a50b-ad95ddc177f4 :cache yes
+  clk ipfs key list
+#+END_SRC
+
+#+RESULTS[1f090103cceac53b21e0fd49ad0fd3c92c96ff6a]: call-ipfs-key-list
+: alice
+: bob
+: charly
+
+Now, I want to have a command that uses this content as possible values for a
+key argument. Therefore, I create another command at the path ipfs.name.publish
+with the following content.
+
+#+NAME: name-publish-content
+#+BEGIN_SRC bash
+  #!/bin/bash -eu
+
+  source "_clk.sh"
+
+  clk_usage () {
+      cat<<EOF
+  $0
+
+  Publish another cid to the given key id
+  --
+  A:cid:str:The cid to Publish
+  A:key:$(clk ipfs key list|clk_list_to_choice):The key to publish to
+  EOF
+  }
+
+  clk_help_handler "$@"
+  # here, I simply echo because this is a mock command
+  echo "ipfs name publish --key=$(clk_value key) $(clk_value cid)"
+#+END_SRC
+
+#+NAME: name-publish
+#+BEGIN_SRC bash :results none :exports none :session 344b2d46-b85a-40ea-a50b-ad95ddc177f4  :noweb yes
+  clk command create bash ipfs.name.publish --no-open
+  cat <<"EOH" > "$(clk command which ipfs.name.publish)"
+  <<name-publish-content>>
+  EOH
+#+END_SRC
+
+Now, I can try using the completion of this command.
+
+#+NAME: sequence-to-complete
+#+BEGIN_SRC bash :results none :exports none
+  ipfs name publish somecontent al
+#+END_SRC
+
+#+NAME: ask-for-completion
+#+BEGIN_SRC bash :results none :exports code :noweb yes
+  clk <<sequence-to-complete>><TAB>
+#+END_SRC
+
+#+NAME: try-completion
+#+BEGIN_SRC bash :results verbatim :exports results :session 344b2d46-b85a-40ea-a50b-ad95ddc177f4 :noweb yes :cache yes
+  clk completion try --remove-bash-formatting --last <<sequence-to-complete>>
+#+END_SRC
+
+#+RESULTS[d93a685bbeff3536264743719958b9a81d659b78]: try-completion
+: alice
+
+And I can simply call it
+
+#+NAME: call-publish
+#+BEGIN_SRC bash :results verbatim :exports both :session 344b2d46-b85a-40ea-a50b-ad95ddc177f4 :cache yes
+clk ipfs name publish somecid alice
+#+END_SRC
+
+#+RESULTS[84c8dee5526fa6b8a268a131121cbdc82265ea5c]: call-publish
+: ipfs name publish --key=alice somecid

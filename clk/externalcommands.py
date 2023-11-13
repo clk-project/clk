@@ -84,7 +84,11 @@ class ExternalCommandResolver(CommandResolver):
 
         try:
 
-            with updated_env(**compute_env()):
+            with updated_env(**compute_env() | {
+                    "COMP_WORDS": None,
+                    "COMP_CWORD": None,
+                    "_CLK_COMPLETE": None,
+            }):
                 process = subprocess.Popen([command_path, '--help'], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
                 out, err = process.communicate()
             if process.returncode == 0:

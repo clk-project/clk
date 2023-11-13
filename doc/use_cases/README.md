@@ -18,4 +18,4 @@ If you don't want to use the clk command line tool, you can [roll your own](roll
 
 Some commands might need to use secret, [here is how](dealing_with_secrets.md) we implement that.
 
-This example of an [ethereum local environment dev tool](ethereum_local_environment_dev_tool.md) shows how to plug clk commands as parameters in other commands.
+This example of an [ethereum local environment dev tool](ethereum_local_environment_dev_tool.md) shows how to plug clk commands as parameters in other commands. [ipfs name publish](ipfs_name_publish.md) shows how to use clk bash commands to create the completion for other commands.
