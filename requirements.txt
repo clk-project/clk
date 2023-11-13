@@ -62,7 +62,7 @@ pexpect==4.8.0
     # via ipython
 pluginbase==1.0.1
     # via clk (setup.py)
-prompt-toolkit==3.0.39
+prompt-toolkit==3.0.40
     # via ipython
 ptyprocess==0.7.0
     # via pexpect
@@ -97,7 +97,7 @@ traitlets==5.13.0
     # via
     #   ipython
     #   matplotlib-inline
-urllib3==2.0.7
+urllib3==2.1.0
     # via requests
 wcwidth==0.2.9
     # via prompt-toolkit
