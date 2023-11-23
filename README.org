@@ -1,3 +1,6 @@
+:PROPERTIES:
+:ID:       4467b2d4-cd23-41df-a09f-1bfdcb1afecb
+:END:
 #+TITLE: README
 #+language: en
 #+options: toc:t
@@ -26,11 +29,13 @@
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=clk-project_clk&metric=alert_status)](https://sonarcloud.io/dashboard?id=clk-project_clk)
 [![CircleCI](https://circleci.com/gh/clk-project/clk.svg?style=svg)](https://app.circleci.com/pipelines/github/clk-project/clk)
 
+![Gitter ](https://img.shields.io/gitter/room/clk-project/clk)
+![Libera](https://raster.shields.io/badge/libera.chat-%23clk-blue)
 #+END_export
 
 Come and discuss clk with us on
-- [[[https://raster.shields.io/badge/libera.chat-%23clk-blue][IRC libera.chat #clk]]](https://web.libera.chat/?channels
-- [[[https://badges.gitter.im/clk-project/community.svg][Gitter]]
+- [[https://web.libera.chat/?channels][#clk on Libera]]
+- [[https://gitter.im/clk-project/community][Gitter]]
 
 clk, the *Command Line Kit* is a unique tool that aims to contains everything
 needed to create human friendly command line tools.
