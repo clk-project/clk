@@ -20,62 +20,6 @@ from clk.profile import commandline_name_to_profile_name, profile_name_to_comman
 LOGGER = get_logger(__name__)
 
 
-def param_config(name, *args, **kwargs):
-    typ = kwargs.pop('typ', object)
-    kls = kwargs.pop('kls', option)
-    cls = kwargs.get('cls', {
-        option: Option,
-        argument: Argument,
-        flag: Option,
-    }[kls])
-    LOGGER.deprecated('param_config will be removed from the source code on 2023/08/01.'
-                      f' Replace @param_config(typ={typ.__name__}, kls={kls.__name__},'
-                      f' cls={cls.__name__}, ...)'
-                      f' by @{kls.__name__}(expose_class={typ.__name__}, ...)')
-    if kls == flag:
-        kwargs['is_flag'] = True
-        kwargs['default'] = kwargs.get('default', False)
-
-    class Conf(typ):
-        pass
-
-    init_callback = kwargs.get('callback')
-    if not hasattr(config, name):
-        setattr(config, name, Conf())
-
-    parameter = cls(args, **kwargs)
-    initial = kwargs.get('default')
-    if callable(initial):
-        initial = initial()
-
-    setattr(getattr(config, name), parameter.name, initial)
-
-    def _subcommand_config_callback(ctx, attr, value):
-        if not hasattr(config, name):
-            setattr(config, name, Conf())
-        if init_callback is not None:
-            value = init_callback(ctx, attr, value)
-
-        # use name in dir(class) instead of hasattr(class, name) because the
-        # later will try to get class.name and may trigger lazy behavior that
-        # are generally wanted to be trigger as late as possible.
-        if (
-                # not already known
-                attr.name not in dir(getattr(config, name))
-                # explicitely given (meaning not using the default value). I
-                # don't want to use the implicit default value
-                or attr.name not in ctx.clk_default_catch
-                # the value is not the default one
-                or value != initial):
-            setattr(getattr(config, name), attr.name, value)
-        return value
-
-    kwargs['expose_value'] = kwargs.get('expose_value', False)
-    kwargs['callback'] = _subcommand_config_callback
-
-    return kls(*args, **kwargs)
-
-
 def use_settings(settings_name, settings_cls, override=True, default_profile='context'):
 
     def decorator(f):
@@ -235,9 +179,9 @@ def table_fields(func=None, choices=(), default=None):
 
 # don't export the modules, so we can safely import all the decorators
 __all__ = [
-    'get_tabulate_formats', 'startswith', 'settings_stores', 'option', 'argument', 'param_config', 'pass_context',
-    'table_fields', 'ParameterType', 'group', 'table_format', 'deprecated', 'flag', 'merge_settings', 'command',
-    'use_settings', 'flow_argument', 'flow_option', 'flow_command'
+    'get_tabulate_formats', 'startswith', 'settings_stores', 'option', 'argument', 'pass_context', 'table_fields',
+    'ParameterType', 'group', 'table_format', 'deprecated', 'flag', 'merge_settings', 'command', 'use_settings',
+    'flow_argument', 'flow_option', 'flow_command'
 ]
 
 if __name__ == '__main__':
