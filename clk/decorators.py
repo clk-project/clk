@@ -13,8 +13,7 @@ from clk.core import ExtensionType, settings_stores
 from clk.flow import flowdepends  # NOQA: F401
 from clk.lib import ParameterType, get_tabulate_formats
 from clk.log import get_logger
-from clk.overloads import (Argument, Option, argument, command, flag, flow_argument, flow_command, flow_option, group,
-                           option)
+from clk.overloads import argument, command, flag, flow_argument, flow_command, flow_option, group, option
 from clk.profile import commandline_name_to_profile_name, profile_name_to_commandline_name
 
 LOGGER = get_logger(__name__)
