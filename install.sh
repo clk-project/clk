@@ -107,8 +107,8 @@ else
     if ! which wget > /dev/null && ! which curl > /dev/null; then
         if which sudo apt-get > /dev/null; then
             sudo apt-get install -y curl python3-distutils
-        elif which sudo yum > /dev/null; then
-            sudo yum -y install curl
+        elif which sudo dnf > /dev/null; then
+            sudo dnf --assumeyes install curl
         fi
     fi
 
