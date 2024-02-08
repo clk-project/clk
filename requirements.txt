@@ -10,7 +10,7 @@ asttokens==2.4.1
     # via stack-data
 cached-property==1.5.2
     # via clk (setup.py)
-certifi==2023.11.17
+certifi==2024.2.2
     # via requests
 charset-normalizer==3.3.2
     # via requests
@@ -42,13 +42,13 @@ idna==3.6
     # via requests
 ipdb==0.13.13
     # via clk (setup.py)
-ipython==8.20.0
+ipython==8.21.0
     # via ipdb
 jedi==0.19.1
     # via ipython
 jinja2==3.1.3
     # via click-completion
-markupsafe==2.1.3
+markupsafe==2.1.5
     # via jinja2
 matplotlib-inline==0.1.6
     # via ipython
@@ -97,7 +97,7 @@ traitlets==5.14.1
     # via
     #   ipython
     #   matplotlib-inline
-urllib3==2.1.0
+urllib3==2.2.0
     # via requests
 wcwidth==0.2.13
     # via prompt-toolkit
