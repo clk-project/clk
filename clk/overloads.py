@@ -31,7 +31,10 @@ LOGGER = get_logger(__name__)
 
 
 class CommandNotFound(Exception):
-    pass
+
+    def __init__(self, cmd_name):
+        super().__init__(f"Command {cmd_name} not found")
+        self.cmd_name = cmd_name
 
 
 def list_commands(parent_path):
