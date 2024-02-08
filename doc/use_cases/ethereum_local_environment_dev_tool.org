@@ -118,7 +118,7 @@ address.
 Let's try it
 
 #+NAME: try_deploy
-#+BEGIN_SRC bash :results verbatim :exports both :session cd599835-d6ac-4970-8f7f-34d82068ef4b :cache yes 
+#+BEGIN_SRC bash :results verbatim :exports both :session cd599835-d6ac-4970-8f7f-34d82068ef4b :cache yes
   clk eth deploy
   clk eth deploy
 #+END_SRC
@@ -329,9 +329,9 @@ test.
 
     <<create-project>>
 
-    check-result(alias-with-project)    
+    check-result(alias-with-project)
 
     check-result(deploy-again)
-  
+
     check-result(run-with-project-abi)
   #+END_SRC

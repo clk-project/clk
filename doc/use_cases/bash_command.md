@@ -57,9 +57,9 @@ clk mycommand --help
 ```
 
     Usage: clk mycommand [OPTIONS]
-    
+
       Command that says something
-    
+
     Options:
       --help-all  Show the full help message, automatic options included.
       --help      Show this message and exit.

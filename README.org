@@ -63,7 +63,7 @@ might write even more [[./doc][documentation]].
   #+END_SRC
 
   Then create a hello world command with
-  
+
   #+NAME: cwd
   #+BEGIN_SRC bash :results none :exports none :session fe60735c-91c2-4f54-8ae2-7e3b307f27a5
     cd tests/use_cases/
@@ -106,7 +106,7 @@ might write even more [[./doc][documentation]].
   Low level command line tools are very powerful. Yet they are not very
   intuitive. It takes time to understand those like *find*, *kill*, *tr*, *awk*
   or *sed*. We spend a lot of time reading the documentation and the tool itself
-  does not help much[fn:2]. 
+  does not help much[fn:2].
 
   It looks like a lot of high level command line tools, like *maven* or *npm*
   have followed the same idea of relying on a comprehensive documentation and
