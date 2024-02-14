@@ -98,7 +98,7 @@ def use_settings(settings_name, settings_cls, override=True, default_profile='co
                      help='Consider only the {} profile'.format(profile),
                      callback=profile_callback)(f)
         f = flag('--context', 'profile', flag_value='context', help='Guess the profile', callback=profile_callback)(f)
-        f = option('--extension', '-e', type=ExtensionType(), callback=extension_callback, help='Use this extension')(f)
+        f = option('--extension', type=ExtensionType(), callback=extension_callback, help='Use this extension')(f)
 
         setup_settings(None)
 
