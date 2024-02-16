@@ -68,8 +68,8 @@ def get_command_handler(cmd):
         flowdeps[cmd.path] = new_flow
     try:
         cmd_has_flow = has_flow(cmd.path)
-    except CommandNotFound:
-        LOGGER.error('The flow of {} could not be resolved.'.format(cmd.path))
+    except CommandNotFound as e:
+        LOGGER.error(f'The flow of {cmd.path} could not be resolved. {e}')
         cmd_has_flow = None
     if cmd_has_flow:
         setup_flow_params(cmd)

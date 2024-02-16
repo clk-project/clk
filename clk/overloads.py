@@ -32,9 +32,14 @@ LOGGER = get_logger(__name__)
 
 class CommandNotFound(Exception):
 
-    def __init__(self, cmd_name):
-        super().__init__(f'Command {cmd_name} not found')
-        self.cmd_name = cmd_name
+    def __init__(self, cmd_name_or_path, parent=None):
+        self.cmd_name_or_path = cmd_name_or_path
+        self.parent = parent
+        if self.parent is not None and not isinstance(self.parent, config.main_command.__class__):
+            path = f'{parent.path}.{cmd_name_or_path}'
+        else:
+            path = cmd_name_or_path
+        super().__init__(f'Command {path} not found')
 
 
 def list_commands(parent_path):
@@ -63,18 +68,19 @@ def get_command2(path):
         return config.main_command, None
 
     pathsplit = path.split('.')
+    cmd_name = pathsplit[-1]
     if pathsplit[0] == config.main_command.path:
         del pathsplit[0]
     if len(pathsplit) > 1:
         parent_path = '.'.join(pathsplit[:-1])
         parent, _ = get_command2(parent_path)
         if isinstance(parent, config.main_command.__class__):
-            raise CommandNotFound('The command {} was asked for. '
-                                  'Because it starts with an alias to the root command,'
-                                  ' I deliberately chose to ignore it.'.format(path))
+            LOGGER.error(f'The command {path} was asked for. '
+                         'Because it starts with an alias to the root command,'
+                         ' I deliberately chose to ignore it.')
+            raise CommandNotFound(cmd_name, parent)
     else:
         parent = config.main_command
-    cmd_name = pathsplit[-1]
     if cmd_name.startswith('_'):
         cmd_name = cmd_name[1:]
         resolvers = [CoreCommandResolver()]
@@ -90,7 +96,7 @@ def get_command2(path):
             if subcmd.startswith(cmd_name + '.'):
                 cmd = group(name=cmd_name, help='Group of commands')(lambda: None)
     if cmd is None:
-        raise CommandNotFound(cmd_name)
+        raise CommandNotFound(cmd_name, parent)
     # adjust the path
     if cmd.path is None:
         cmd.path = path
