@@ -165,7 +165,7 @@ Yet get something like this.
 #+END_SRC
 
 #+name: commands-with-explicit-flow
-#+BEGIN_SRC bash :results none :exports code :session 73f5d57e-d16a-490a-b4e1-0254d6296590 :noweb yes
+#+BEGIN_SRC bash :results none :exports none :session 73f5d57e-d16a-490a-b4e1-0254d6296590 :noweb yes
   clk command create python --force --group printer --description "This is a group of commands to deal with 3D printing." --body '
 <<with_explicit_flow>>
 '
@@ -181,7 +181,7 @@ echo "# Running the send command, asking for its flow"
 clk printer send myprinter --flow
 #+END_SRC
 
-#+RESULTS[5abe49977f70a65fadbd276544ea1ac468a78e9e]: running-the-explicit-flow
+#+RESULTS[ab4abc6d0df732b964aae068b34e2ecbc06d48d6]: running-the-explicit-flow
 : # Running the send command, without the flow
 : Printing model.gcode using myprinter
 : # Running the send command, asking for its flow
@@ -200,7 +200,7 @@ clk parameter set printer.slice --model someothermodel
 clk printer send myprinter --flow
 #+END_SRC
 
-#+RESULTS[40db54ab1ea60d38b3ce3fafef1d8273c1c8977c]: running-the-explicit-flow-with-model
+#+RESULTS[b8519ee1dee8a9434b4253ec4cfcb9c2ca8263a7]: running-the-explicit-flow-with-model
 : New global parameters for printer.slice: --model someothermodel
 : Running some stuff for the printer to be ready to go
 : Slicing someothermodel to model.gcode

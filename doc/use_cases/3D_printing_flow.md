@@ -120,32 +120,6 @@ def send(gcode, warn_when_done, printer):
         print("Driiiiiiing!")
 ```
 
-```bash
-  clk command create python --force --group printer --description "This is a group of commands to deal with 3D printing." --body '
-@printer.command()
-def calibrate():
-    """Run everything that is needed to have the printer ready to print"""
-    print("Running some stuff for the printer to be ready to go")
-
-@printer.command(flowdepends=["printer.calibrate"])
-@option("--model", default=["model.stl"], help="The model to slice", multiple=True)
-@option("--output", default="model.gcode", help="The file getting the final gcode")
-def slice(model, output):
-    """Slice a model"""
-    print("Slicing " + ", ".join(model) + f" to {output}")
-
-@printer.command(flowdepends=["printer.slice"])
-@option("--gcode", help="The gcode file", default="model.gcode")
-@flag("--warn-when-done", help="Trigger a notification when done")
-@argument("printer", help="The ip of the printer to send the gcode to")
-def send(gcode, warn_when_done, printer):
-    """Send some gcode to your printer"""
-    print(f"Printing {gcode} using {printer}")
-    if warn_when_done:
-        print("Driiiiiiing!")
-'
-```
-
 Now, you only have three commands and running the flow needs to be done explicitly.
 
 ```bash
