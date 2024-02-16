@@ -1,7 +1,6 @@
 :PROPERTIES:
 :ID:       17c8e2ee-f62a-4516-aa6c-e04a755db3ad
 :END:
-#+TITLE: Dynamic Parameters Advanced Use Cases
 #+language: en
 #+EXPORT_FILE_NAME: ./dynamic_parameters_advanced_use_cases.md
 

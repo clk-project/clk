@@ -1,7 +1,6 @@
 :PROPERTIES:
 :ID:       73f5d57e-d16a-490a-b4e1-0254d6296590
 :END:
-#+TITLE: Flow options
 #+language: en
 #+EXPORT_FILE_NAME: ./flow_options.md
 

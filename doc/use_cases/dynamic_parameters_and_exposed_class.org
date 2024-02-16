@@ -1,7 +1,6 @@
 :PROPERTIES:
 :ID:       e451aef8-b5f8-4529-972b-4b341833c797
 :END:
-#+TITLE: Using dynamic parameters
 #+language: en
 #+EXPORT_FILE_NAME: ./dynamic_parameters_and_exposed_class.md
 

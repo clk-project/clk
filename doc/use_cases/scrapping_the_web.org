@@ -1,7 +1,6 @@
 :PROPERTIES:
 :ID:       d5f418b6-4f78-477d-a52b-a69b57d4edee
 :END:
-#+TITLE: Using a project
 #+language: en
 #+EXPORT_FILE_NAME: ./scrapping_the_web.md
 

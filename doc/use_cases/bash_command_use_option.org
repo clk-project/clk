@@ -1,7 +1,6 @@
 :PROPERTIES:
 :ID:       100aa89b-f320-46ee-9d5d-2193ef48d4eb
 :END:
-#+TITLE: Showing how to extend a bash command with options
 #+language: en
 #+EXPORT_FILE_NAME: ./bash_command_use_option.md
 

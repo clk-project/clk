@@ -1,7 +1,6 @@
 :PROPERTIES:
 :ID:       0ecfb0d2-433b-4b34-8a4a-529603d8e669
 :END:
-#+TITLE: Using the helpers provided by clk
 #+language: en
 #+EXPORT_FILE_NAME: ./lib.md
 

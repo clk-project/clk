@@ -1,7 +1,6 @@
 :PROPERTIES:
 :ID:       cd599835-d6ac-4970-8f7f-34d82068ef4b
 :END:
-#+TITLE: Ethereum local environment dev tool
 #+language: en
 #+EXPORT_FILE_NAME: ./ethereum_local_environment_dev_tool.md
 

@@ -1,7 +1,6 @@
 :PROPERTIES:
 :ID:       6de55de4-c0b3-41d6-952a-25e0fe06c881
 :END:
-#+TITLE: Using a project
 #+language: en
 #+EXPORT_FILE_NAME: ./using_a_project.md
 

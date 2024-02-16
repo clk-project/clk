@@ -1,7 +1,6 @@
 :PROPERTIES:
 :ID:       85c8e385-7f24-48ac-9a85-30cfc354aebf
 :END:
-#+TITLE: Showing how to create a bash command
 #+LANGUAGE: en
 #+EXPORT_FILE_NAME: ./bash_command.md
 

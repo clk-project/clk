@@ -1,7 +1,6 @@
 :PROPERTIES:
 :ID:       0a89868c-4cbb-4f83-874a-21ce32b4508f
 :END:
-#+TITLE: Showing how to import some behavior from another file
 #+language: en
 #+EXPORT_FILE_NAME: ./bash_command_import.md
 

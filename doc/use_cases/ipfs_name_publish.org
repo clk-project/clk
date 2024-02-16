@@ -1,7 +1,6 @@
 :PROPERTIES:
 :ID:       344b2d46-b85a-40ea-a50b-ad95ddc177f4
 :END:
-#+TITLE: ipfs name publish
 #+language: en
 #+EXPORT_FILE_NAME: ./ipfs_name_publish.md
 
