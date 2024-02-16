@@ -1,4 +1,3 @@
-#+TITLE: Listing the use cases
 #+language: en
 #+EXPORT_FILE_NAME: ./README.md
 
@@ -25,7 +24,7 @@ But, eventually, you might want to use python commands to have a full control
 over the user experience.  Then, you might want a quick look at the [[file:lib.org][available
 helpers]].
 
-At some point, you will definitely want to try the [[file:flow_options.org][flow command pattern]].
+At some point, you will definitely want to try the use case about [[file:3D_printing_flow.org][a 3D printing flow]].
 
 If you don't want to use the clk command line tool, you can [[file:rolling_your_own.org][roll your own]].
 

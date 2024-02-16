@@ -26,8 +26,8 @@ def test_bash_command_built_in_lib():
     call_script('bash_command_built_in_lib.sh')
 
 
-def test_flow_options():
-    call_script('flow_options.sh')
+def test_3D_printing_flow():
+    call_script('3D_printing_flow.sh')
 
 
 def test_rolling_your_own():

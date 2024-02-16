@@ -14,7 +14,7 @@ If at some point you need to deal with a project, you might want to [read this](
 
 But, eventually, you might want to use python commands to have a full control over the user experience. Then, you might want a quick look at the [available helpers](lib.md).
 
-At some point, you will definitely want to try the [flow command pattern](flow_options.md).
+At some point, you will definitely want to try the use case about [a 3D printing flow](3D_printing_flow.md).
 
 If you don't want to use the clk command line tool, you can [roll your own](rolling_your_own.md).
 
