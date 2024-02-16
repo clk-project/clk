@@ -1,4 +1,4 @@
-# [[file:sandboxing.org::tmpdir][tmpdir]]
+# [[file:sandboxing.org::+BEGIN_SRC bash :exports none :tangle ./sandboxing.sh :noweb yes][No heading:2]]
 SRCDIR="$(pwd)"
 CLK_COV="$(readlink -f "$(dirname "$BASH_SOURCE")/../clk_coverage.sh")"
 if ! test -e "${CLK_COV}"
@@ -52,4 +52,4 @@ EOF
 source "${TMP}/.envrc"
 export TERM=dumb # to avoid possible issues with colors
 echo "${TMP}"
-# tmpdir ends here
+# No heading:2 ends here

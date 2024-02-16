@@ -1,4 +1,4 @@
-# [[file:sandboxing.org::tmpdir][tmpdir]]
+# [[file:../../doc/use_cases/sandboxing.org::sandboxing][sandboxing]]
 SRCDIR="$(pwd)"
 CLK_COV="$(readlink -f "$(dirname "$BASH_SOURCE")/../clk_coverage.sh")"
 if test -n "${CLK_TEST_ROOT-}"
@@ -47,4 +47,4 @@ EOF
 source "${TMP}/.envrc"
 export TERM=dumb # to avoid possible issues with colors
 echo "${TMP}"
-# tmpdir ends here
+# sandboxing ends here
