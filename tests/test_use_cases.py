@@ -56,3 +56,7 @@ def test_bash_command_from_alias():
 
 def test_ethereum_local_environment_dev_tool():
     call_script('ethereum_local_environment_dev_tool.sh')
+
+
+def test_scrapping_the_web():
+    call_script('scrapping_the_web.sh')

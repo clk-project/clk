@@ -81,7 +81,7 @@ dist:
 
 test:
     # we expect the end user to have an environment closer to debian than alpine. Therefore we use debian here.
-    FROM e+debian-python-user-venv --extra_packages="git expect direnv" --packages="coverage pytest keyring"
+    FROM e+debian-python-user-venv --extra_packages="git expect direnv faketime" --packages="coverage pytest keyring"
     RUN echo 'source <(direnv hook bash)' >> "${HOME}/.bashrc"
     ARG from=source
     ARG use_git=no

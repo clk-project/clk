@@ -8,6 +8,8 @@ If you simply want to create bash commands, take a look at [this one](bash_comma
 
 Also, to create powerful, dynamic command line tools that provide the best completion possible, see [this pattern](dynamic_parameters_and_exposed_class.md) for writing your commands. In case you have some issues, you might want to look at the [advanced use cases](dynamic_parameters_advanced_use_cases.md).
 
+To cache some computation to disk, see the [web scrapping](scrapping_the_web.md) use case.
+
 If at some point you need to deal with a project, you might want to [read this](using_a_project.md).
 
 But, eventually, you might want to use python commands to have a full control over the user experience. Then, you might want a quick look at the [available helpers](lib.md).

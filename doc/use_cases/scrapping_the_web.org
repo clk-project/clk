@@ -1,0 +1,244 @@
+:PROPERTIES:
+:ID:       d5f418b6-4f78-477d-a52b-a69b57d4edee
+:END:
+#+TITLE: Using a project
+#+language: en
+#+EXPORT_FILE_NAME: ./scrapping_the_web.md
+
+#+CALL: ../../lp.org:check-result()
+
+#+name: init
+#+BEGIN_SRC bash :results none :exports none :session d5f418b6-4f78-477d-a52b-a69b57d4edee
+  . ./sandboxing.sh
+#+END_SRC
+
+I sometimes need to extract some date from some html page. Those pages barely
+change, so I need to fetch them only once in a while.
+
+This article is not actually about scrapping the data. ~requests~ and
+~BeautifulSoup~ already provide what I generally need. It is more about making
+sure I don't run to much unnecessary requests against the site because: 1. it is
+not polite, and 2. I will eventually reach some uncomfortable rate limit.
+
+For the scope of this article, I will mock the scrapping part[fn:1] with the following
+code.
+
+#+NAME: code_that_fetches_the_content_of
+#+BEGIN_SRC python :results none :exports code
+  def code_that_fetches_the_content_of(url):
+    LOGGER.info(f"Getting the content of {url}")
+    return {"title": "clk project", "h1": "./ clk"}
+#+END_SRC
+
+Each time we see the message ~Getting tje content of X~, we can assume there
+would have been an http request in real life.
+
+Let's consider this group of commands, a straightforward implementation to get
+the data an print it when needed..
+
+#+NAME: command
+#+BEGIN_SRC python :results none :exports code
+  @group()
+  @option("--url", required=True, help="The site to scrap")
+  def scrap(url):
+      "Extract some data from the clk website"
+      config.soup = code_that_fetches_the_content_of(url)
+
+  @scrap.command()
+  def title():
+      "Show the title of the website"
+      click.echo("The title is " + config.soup.get("title"))
+
+  @scrap.command()
+  def topic():
+      "Show the topic of the site"
+      click.echo("The topic is " + config.soup.get("h1"))
+#+END_SRC
+
+#+NAME: install_command
+#+BEGIN_SRC bash :results none :exports none :session d5f418b6-4f78-477d-a52b-a69b57d4edee :noweb yes
+  clk command create python --force --group --body '
+  <<code_that_fetches_the_content_of>>
+
+  <<command>>
+  ' scrap
+#+END_SRC
+
+Those are valid commands and can be run easily.
+
+#+NAME: some_command
+#+BEGIN_SRC bash :results none :exports none
+  clk scrap --url "http://clk-project.org" title
+#+END_SRC
+
+
+#+NAME: running_the_test
+#+BEGIN_SRC bash :results verbatim :exports both :session d5f418b6-4f78-477d-a52b-a69b57d4edee :cache yes :noweb yes
+  <<some_command>>
+  clk scrap --url "http://clk-project.org" topic
+#+END_SRC
+
+#+RESULTS[4e6a75aa1ce80ce18f4ecdde3f6f58b3f60963f3]: running_the_test
+: Getting the content of http://clk-project.org
+: The title is clk project
+: Getting the content of http://clk-project.org
+: The topic is ./ clk
+
+This does the job, but it fetches the page every time the command is run. If the
+page is not expected to change often, and the command is supposed to be run a
+lot, it would be polite to cache the html content.
+
+clk provides out of the box the ~cache_disk~ decorator.
+
+#+NAME: cache_disk_import
+#+BEGIN_SRC python :results none :exports code
+from clk.core import cache_disk
+#+END_SRC
+
+That you use on top of the function you want to cache.
+
+#+NAME: cached_code
+#+BEGIN_SRC python :results none :exports code :noweb yes
+@cache_disk(expire=3600)
+<<code_that_fetches_the_content_of>>
+#+END_SRC
+
+#+NAME: install_command_with_cache
+#+BEGIN_SRC bash :results none :exports none :session d5f418b6-4f78-477d-a52b-a69b57d4edee :noweb yes
+  clk command create python --force --group --body '
+  <<cache_disk_import>>
+
+  <<cached_code>>
+
+  <<command>>
+  ' scrap
+#+END_SRC
+
+Using that decorator, that keeps the content for 1 hour, you get
+
+#+NAME: code_running_the_test_with_cache
+#+BEGIN_SRC bash :results none :exports code :noweb yes
+<<some_command>>
+
+sleep 3500
+echo "After 3500 seconds of waiting, it gets the result from the cache"
+<<some_command>>
+
+sleep 200
+echo "After a 200 seconds, the cache is older than 3600s and is fetched again"
+<<some_command>>
+#+END_SRC
+
+#+NAME: running_the_test_with_cache
+#+BEGIN_SRC bash :results verbatim :exports results :session d5f418b6-4f78-477d-a52b-a69b57d4edee :cache yes :noweb yes
+clean_cache
+init_faked_time
+
+<<code_running_the_test_with_cache>>
+
+stop_faked_time
+#+END_SRC
+
+#+RESULTS[11a98ced186267cb2887f2f77b2322a56a561b94]: running_the_test_with_cache
+: Getting the content of http://clk-project.org
+: The title is clk project
+: After 3500 seconds of waiting, it gets the result from the cache
+: The title is clk project
+: After a 200 seconds, the cache is older than 3600s and is fetched again
+: Getting the content of http://clk-project.org
+: The title is clk project
+
+It gets the html content only once and then use the cached version. One hour
+later, it gets the content again.
+
+Now, a pattern that I use sometimes is that I renew the cache everytime I get
+it. That way when I run several commands in a short period, the cache is
+kept. But I wait a bit, the cache is cleaned. That allows me to have shorter
+expiration while still be able to keep the cache a long time when I heavily use
+it (like in a flow).
+
+This can be done with this change of code.
+
+#+NAME: cached_code_with_renew
+#+BEGIN_SRC python :results none :exports code :noweb yes
+@cache_disk(expire=65, renew=True)
+<<code_that_fetches_the_content_of>>
+#+END_SRC
+
+#+NAME: install_command_with_cache_with_renew
+#+BEGIN_SRC bash :results none :exports none :session d5f418b6-4f78-477d-a52b-a69b57d4edee :noweb yes
+  clk command create python --force --group --body '
+  <<cache_disk_import>>
+
+  <<cached_code_with_renew>>
+
+  <<command>>
+  ' scrap
+#+END_SRC
+
+#+NAME: code_running_the_test_with_cache_with_renew
+#+BEGIN_SRC bash :results none :exports code :noweb yes
+  echo "At $(date), running the commands for the first time -> the page is fetched and its content is cached"
+  <<some_command>>
+  sleep 60
+  echo "At $(date), after having waited for 60s, slightly less than the expiration time of 65s, the cached content is got and the cache is renewed"
+  <<some_command>>
+  sleep 60
+  echo "At $(date), after having waited again for 60s, again slightly less than the expiration time of 65s, the cached content is got and the cache is renewed"
+  <<some_command>>
+  echo "Therefore, the cached content, whose expiration is set to 65s, was kept for 120s, thanks to the renewal"
+  sleep 80
+  echo "At $(date), after having waited 80s, hence slightly more than the expiration time of 65s, the content expired and the page is fetched again"
+  <<some_command>>
+#+END_SRC
+
+#+NAME: running_the_test_with_cache_with_renew
+#+BEGIN_SRC bash :results verbatim :exports results :session d5f418b6-4f78-477d-a52b-a69b57d4edee :cache yes :noweb yes
+init_faked_time
+clean_cache
+
+<<code_running_the_test_with_cache_with_renew>>
+
+stop_faked_time
+#+END_SRC
+
+#+RESULTS[d1dda31273eb541437a126aabd1403623a29ce50]: running_the_test_with_cache_with_renew
+#+begin_example
+At Thu Feb 15 00:00:00 CET 2024, running the commands for the first time -> the page is fetched and its content is cached
+Getting the content of http://clk-project.org
+The title is clk project
+At Thu Feb 15 00:01:00 CET 2024, after having waited for 60s, slightly less than the expiration time of 65s, the cached content is got and the cache is renewed
+The title is clk project
+At Thu Feb 15 00:02:00 CET 2024, after having waited again for 60s, again slightly less than the expiration time of 65s, the cached content is got and the cache is renewed
+The title is clk project
+Therefore, the cached content, whose expiration is set to 65s, was kept for 120s, thanks to the renewal
+At Thu Feb 15 00:03:20 CET 2024, after having waited 80s, hence slightly more than the expiration time of 65s, the content expired and the page is fetched again
+Getting the content of http://clk-project.org
+The title is clk project
+#+end_example
+
+#+NAME: run
+#+BEGIN_SRC bash :results none :exports none :tangle ../../tests/use_cases/scrapping_the_web.sh :noweb yes :shebang "#!/bin/bash -eu"
+<<init>>
+<<install_command>>
+check-result(running_the_test)
+<<install_command_with_cache>>
+check-result(running_the_test_with_cache)
+<<install_command_with_cache_with_renew>>
+check-result(running_the_test_with_cache_with_renew)
+#+END_SRC
+
+* Footnotes
+  :PROPERTIES:
+  :CUSTOM_ID: f532a0cd-58e2-4d96-9563-19f111981670
+  :END:
+
+[fn:1]
+In real life, it would look like this (untested) code
+
+#+BEGIN_SRC python :results none :exports code
+  import requests
+  from bs4 import BeautifulSoup as soup
+  def code_that_fetches_the_content_of(url):
+    return soup(requests.get(url).text)
+#+END_SRC

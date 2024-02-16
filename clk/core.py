@@ -714,7 +714,10 @@ def main():
 cache_disk_deactivate = False
 
 
-def cache_disk(f=None, expire=int(os.environ.get(u'CLK_CACHE_EXPIRE', 24 * 60 * 60)), cache_folder_name=None):
+def cache_disk(f=None,
+               expire=int(os.environ.get(u'CLK_CACHE_EXPIRE', 24 * 60 * 60)),
+               cache_folder_name=None,
+               renew=False):
     u"""A decorator that cache a method result to disk"""
     if cache_disk_deactivate:
         return lambda f: f
@@ -740,9 +743,15 @@ def cache_disk(f=None, expire=int(os.environ.get(u'CLK_CACHE_EXPIRE', 24 * 60 * 
                 modified = os.path.getmtime(filepath)
                 age_seconds = time.time() - modified
                 if expire is None or age_seconds < expire:
+                    if renew:
+                        Path(filepath).touch()
                     return pickle.load(open(filepath, u'rb'))
             result = f(*args, **kwargs)
             pickle.dump(result, open(filepath, u'wb'))
+            # to have a coherent behavior when using faketime in the tests, I need
+            # to touch the file, so that it has the modification date specified
+            # in faketime. I don't know why open is impervious to faketime
+            Path(filepath).touch()
             return result
 
         def drop(*args, **kwargs):
