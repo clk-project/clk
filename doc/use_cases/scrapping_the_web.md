@@ -1,6 +1,6 @@
-I sometimes need to extract some date from some html page. Those pages barely change, so I need to fetch them only once in a while.
+I sometimes need to extract some date from some HTML page. Those pages barely change, so I need to fetch them only once in a while.
 
-This article is not actually about scrapping the data. `requests` and `BeautifulSoup` already provide what I generally need. It is more about making sure I don't run to much unnecessary requests against the site because: 1. it is not polite, and 2. I will eventually reach some uncomfortable rate limit.
+This article is not actually about scrapping the data. `requests` and `BeautifulSoup` already provide what I generally need. It is more about making sure I don't run to many unnecessary requests against the site because it is not polite, and I will eventually reach some uncomfortable rate limit.
 
 For the scope of this article, I will mock the scrapping part<sup><a id="fnr.1" class="footref" href="#fn.1" role="doc-backlink">1</a></sup> with the following code.
 
@@ -10,9 +10,9 @@ def code_that_fetches_the_content_of(url):
   return {"title": "clk project", "h1": "./ clk"}
 ```
 
-Each time we see the message `Getting tje content of X`, we can assume there would have been an http request in real life.
+Each time we see the message `Getting the content of X`, we can assume there would have been an HTTP request in real life.
 
-Let's consider this group of commands, a straightforward implementation to get the data an print it when needed..
+Let's consider this group of commands, a straightforward implementation to get the data and print it when needed.
 
 ```python
 @group()
@@ -44,9 +44,9 @@ clk scrap --url "http://clk-project.org" topic
     Getting the content of http://clk-project.org
     The topic is ./ clk
 
-This does the job, but it fetches the page every time the command is run. If the page is not expected to change often, and the command is supposed to be run a lot, it would be polite to cache the html content.
+This does the job, but it fetches the page every time the command is run. If the page is not expected to change often, and the command is supposed to be run a lot, it would be polite to cache the HTML content.
 
-clk provides out of the box the `cache_disk` decorator.
+`clk` provides out of the box the `cache_disk` decorator.
 
 ```python
 from clk.core import cache_disk
@@ -83,7 +83,7 @@ clk scrap --url "http://clk-project.org" title
     Getting the content of http://clk-project.org
     The title is clk project
 
-It gets the html content only once and then use the cached version. One hour later, it gets the content again.
+It gets the HTML content only once and then use the cached version. One hour later, it gets the content again.
 
 Now, a pattern that I use sometimes is that I renew the cache everytime I get it. That way when I run several commands in a short period, the cache is kept. But I wait a bit, the cache is cleaned. That allows me to have shorter expiration while still be able to keep the cache a long time when I heavily use it (like in a flow).
 

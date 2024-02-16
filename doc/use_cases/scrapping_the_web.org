@@ -12,13 +12,13 @@
   . ./sandboxing.sh
 #+END_SRC
 
-I sometimes need to extract some date from some html page. Those pages barely
+I sometimes need to extract some date from some HTML page. Those pages barely
 change, so I need to fetch them only once in a while.
 
 This article is not actually about scrapping the data. ~requests~ and
 ~BeautifulSoup~ already provide what I generally need. It is more about making
-sure I don't run to much unnecessary requests against the site because: 1. it is
-not polite, and 2. I will eventually reach some uncomfortable rate limit.
+sure I don't run to many unnecessary requests against the site because it is not
+polite, and I will eventually reach some uncomfortable rate limit.
 
 For the scope of this article, I will mock the scrapping part[fn:1] with the following
 code.
@@ -30,11 +30,11 @@ code.
     return {"title": "clk project", "h1": "./ clk"}
 #+END_SRC
 
-Each time we see the message ~Getting tje content of X~, we can assume there
-would have been an http request in real life.
+Each time we see the message ~Getting the content of X~, we can assume there
+would have been an HTTP request in real life.
 
 Let's consider this group of commands, a straightforward implementation to get
-the data an print it when needed..
+the data and print it when needed.
 
 #+NAME: command
 #+BEGIN_SRC python :results none :exports code
@@ -86,9 +86,9 @@ Those are valid commands and can be run easily.
 
 This does the job, but it fetches the page every time the command is run. If the
 page is not expected to change often, and the command is supposed to be run a
-lot, it would be polite to cache the html content.
+lot, it would be polite to cache the HTML content.
 
-clk provides out of the box the ~cache_disk~ decorator.
+~clk~ provides out of the box the ~cache_disk~ decorator.
 
 #+NAME: cache_disk_import
 #+BEGIN_SRC python :results none :exports code
@@ -148,7 +148,7 @@ stop_faked_time
 : Getting the content of http://clk-project.org
 : The title is clk project
 
-It gets the html content only once and then use the cached version. One hour
+It gets the HTML content only once and then use the cached version. One hour
 later, it gets the content again.
 
 Now, a pattern that I use sometimes is that I renew the cache everytime I get
