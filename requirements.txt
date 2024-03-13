@@ -42,7 +42,7 @@ idna==3.6
     # via requests
 ipdb==0.13.13
     # via clk (setup.py)
-ipython==8.21.0
+ipython==8.22.2
     # via ipdb
 jedi==0.19.1
     # via ipython
@@ -74,9 +74,9 @@ pygments==2.17.2
     # via
     #   clk (setup.py)
     #   ipython
-pyparsing==3.1.1
+pyparsing==3.1.2
     # via pydotplus
-python-dateutil==2.8.2
+python-dateutil==2.9.0.post0
     # via clk (setup.py)
 requests==2.31.0
     # via clk (setup.py)
@@ -97,7 +97,7 @@ traitlets==5.14.1
     # via
     #   ipython
     #   matplotlib-inline
-urllib3==2.2.0
+urllib3==2.2.1
     # via requests
 wcwidth==0.2.13
     # via prompt-toolkit
