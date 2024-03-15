@@ -55,7 +55,7 @@ jobs:
         - run: earthly --secret SONAR_TOKEN="${SONAR_TOKEN}" --ci +sanity-check
   deploy:
     machine:
-      image: ubuntu-2004:2023.02.1
+      image: ubuntu-2204:2023.10.1
       docker_layer_caching: true # Specified using docker layer caching, but it is only available for Performance Plan.
     resource_class: medium
     steps:
