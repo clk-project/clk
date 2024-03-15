@@ -1,4 +1,4 @@
-VERSION 0.7
+VERSION 0.8
 IMPORT github.com/Konubinix/Earthfile AS e
 
 requirements:
@@ -8,7 +8,7 @@ requirements:
     SAVE ARTIFACT requirements.txt AS LOCAL requirements.txt
 
 DEPENDENCIES:
-    COMMAND
+    FUNCTION
     # whether we use the requirements from the source code
     ARG build_requirements=no
     IF [ "${build_requirements}" = "no" ]
@@ -40,7 +40,7 @@ sources:
     SAVE ARTIFACT /app /app
 
 INSTALL:
-    COMMAND
+    FUNCTION
     ARG from=build
     ARG build_requirements=no
     IF [ "${from}" = "source" ]
