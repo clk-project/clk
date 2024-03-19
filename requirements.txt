@@ -93,7 +93,7 @@ tabulate==0.8.10
     # via clk (setup.py)
 tqdm==4.66.2
     # via clk (setup.py)
-traitlets==5.14.1
+traitlets==5.14.2
     # via
     #   ipython
     #   matplotlib-inline
