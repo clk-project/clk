@@ -6,7 +6,6 @@ orbs:
   # so you dont have to copy and paste it everywhere.
   # See the orb documentation here: https://circleci.com/developer/orbs/orb/circleci/python
   python: circleci/python@1.2
-  sonarcloud: sonarsource/sonarcloud@1.0.2
 
 workflows:
   test:  # This is the name of the workflow, feel free to change it to better match your workflow.
