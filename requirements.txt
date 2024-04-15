@@ -22,7 +22,7 @@ click==8.1.7
     #   clk (setup.py)
 click-completion==0.5.2
     # via clk (setup.py)
-click-didyoumean==0.3.0
+click-didyoumean==0.3.1
     # via clk (setup.py)
 click-log==0.4.0
     # via clk (setup.py)
