@@ -42,7 +42,7 @@ idna==3.7
     # via requests
 ipdb==0.13.13
     # via clk (setup.py)
-ipython==8.22.2
+ipython==8.23.0
     # via ipdb
 jedi==0.19.1
     # via ipython
@@ -50,13 +50,13 @@ jinja2==3.1.3
     # via click-completion
 markupsafe==2.1.5
     # via jinja2
-matplotlib-inline==0.1.6
+matplotlib-inline==0.1.7
     # via ipython
-networkx==3.2.1
+networkx==3.3
     # via clk (setup.py)
 parsedatetime==2.6
     # via clk (setup.py)
-parso==0.8.3
+parso==0.8.4
     # via jedi
 pexpect==4.9.0
     # via ipython
@@ -97,6 +97,8 @@ traitlets==5.14.2
     # via
     #   ipython
     #   matplotlib-inline
+typing-extensions==4.11.0
+    # via ipython
 urllib3==2.2.1
     # via requests
 wcwidth==0.2.13
