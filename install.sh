@@ -102,7 +102,7 @@ if [ "$(uname)" == "Darwin" ]; then
         brew install python3
     fi
     PIP=pip3
-    INSTALL_PATH=/usr/local/bin
+    INSTALL_PATH="$HOME/Library/Python/3.9/bin"
 else
     if ! which wget > /dev/null && ! which curl > /dev/null; then
         if which sudo apt-get > /dev/null; then
