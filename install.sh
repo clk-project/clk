@@ -31,7 +31,7 @@ _find_suitable_python_version ( ) {
         then
             printf "${yellow}warning:${reset} Could not find a suitable python version (at least 3.8).\n"
             printf "${yellow}warning:${reset} Make sure one is installed and available.\n"
-            printf "${yellow}warning:${reset} Hint: on debian-like systems -> sudo apt install python3.9.\n"
+            printf "${yellow}warning:${reset} Hint: on debian-like systems -> sudo apt install python3.\n"
             exit 1
         fi
     fi
