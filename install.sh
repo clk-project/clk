@@ -35,7 +35,6 @@ _find_suitable_python_version ( ) {
             exit 1
         fi
     fi
-    echo "Using this command to run python: ${PYTHON}"
 }
 
 _in_venv ( ) {
