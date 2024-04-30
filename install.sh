@@ -122,8 +122,8 @@ else
             then
                 if which apt-get > /dev/null
                 then
-                    sudo apt-get install -y pipx
-                elif which dnf > /dev/null
+                    sudo apt-get install --no-install-recommends --quiet=2 --assume-yes pipx
+                elif command -v dnf > /dev/null
                 then
                     sudo dnf --assumeyes pipx
                 else
@@ -136,6 +136,7 @@ else
             fi
         fi
     fi
+    pipx ensurepath
 fi
 
 ${CMD} "${CLK}" & spin "${verb} ${CLK}"
