@@ -125,7 +125,7 @@ else
                     sudo apt-get install --no-install-recommends --quiet=2 --assume-yes pipx
                 elif command -v dnf > /dev/null
                 then
-                    sudo dnf --assumeyes pipx
+                    sudo dnf install --assumeyes pipx
                 else
                     printf "${yellow}warning:${reset} Could not find apt, nor dnf, nor pipx. Please install pipx manually and retry.\n"
                     exit 1
