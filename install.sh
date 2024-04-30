@@ -14,14 +14,14 @@ print(version_number >= 8)
 }
 
 _find_suitable_python_version ( ) {
-    if which python3 > /dev/null && _check_python3
+    if command -v python3 > /dev/null && _check_python3
     then
         PYTHON=python3
     else
         PYTHON=""
         for version in {20..8}
         do
-            if which python3.$version > /dev/null
+            if command -v python3.$version > /dev/null
             then
                 PYTHON=python3.$version
                 break
@@ -45,7 +45,7 @@ _in_venv ( ) {
 _compute_install_path ( ) {
     if _in_venv
     then
-        INSTALL_PATH="$(dirname "$(which "${PYTHON}")")"
+        INSTALL_PATH="$(dirname "$(command -v "${PYTHON}")")"
     else
         INSTALL_PATH=$HOME/.local/bin
     fi
@@ -88,7 +88,7 @@ _find_suitable_python_version
 _compute_install_path
 CLK="${CLK:-clk}"
 
-if which clk > /dev/null 2>&1
+if command -v clk > /dev/null 2>&1
 then
     verb="updating"
 else
@@ -108,19 +108,19 @@ else
     fi
     # now, trying hard to make pipx available
     if [ "$(uname)" == "Darwin" ]; then
-        if ! which pipx > /dev/null; then
-            if ! which brew > /dev/null; then
+        if ! command -v pipx > /dev/null; then
+            if ! command -v brew > /dev/null; then
                 /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
             fi
             brew install pipx
         fi
     else
-        if ! which pipx > /dev/null && ! _in_venv
+        if ! command -v pipx > /dev/null && ! _in_venv
         then
             echo "I will try to install pipx myself. Therefore I will ask for sudo privileges"
-            if which sudo > /dev/null
+            if command -v sudo > /dev/null
             then
-                if which apt-get > /dev/null
+                if command -v apt-get > /dev/null
                 then
                     sudo apt-get install --no-install-recommends --quiet=2 --assume-yes pipx
                 elif command -v dnf > /dev/null
@@ -147,7 +147,7 @@ for s in bash; do # zsh fish
 done
 echo "done"
 
-if !which clk > /dev/null
+if ! command -v clk > /dev/null
 then
     $INSTALL_PATH/clk log --level warning "You have to restart bash to see clk working"
 fi
