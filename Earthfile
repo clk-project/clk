@@ -155,8 +155,8 @@ fix-quality:
 
 test-install-ubuntu:
     FROM ubuntu:22.04
-    RUN apt-get update && apt-get install --yes python3-distutils python3-pip curl
-    DO e+USE_USER
+    RUN apt-get update && apt-get install --yes sudo curl python3
+    DO e+USE_USER --sudoer=y
     DO +INSTALL --from=doc
     RUN test foo = "$(clk echo foo)"
 
