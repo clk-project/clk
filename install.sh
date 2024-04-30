@@ -2,17 +2,6 @@
 
 set -e
 
-_check_pip () {
-    local good_version="$(python3 -c '
-import re
-import pip
-
-version_number=int(re.match("^([0-9]+)\.", pip.__version__).group(1))
-print(version_number >= 19)
-')"
-    [ "${good_version}" == "True" ]
-}
-
 _check_python3 () {
     local good_version="$(python3 -c '
 import re
@@ -28,20 +17,23 @@ _find_suitable_python_version ( ) {
     if which python3 > /dev/null && _check_python3
     then
         PYTHON=python3
-    elif which python3.11 > /dev/null
-    then
-        PYTHON=python3.11
-    elif which python3.9 > /dev/null
-    then
-        PYTHON=python3.9
-    elif which python3.8 > /dev/null
-    then
-        PYTHON=python3.8
     else
-        printf "${yellow}warning:${reset} Could not find a suitable python version (at least 3.8).\n"
-        printf "${yellow}warning:${reset} Make sure one is installed and available.\n"
-        printf "${yellow}warning:${reset} Hint: on debian-like systems -> sudo apt install python3.9.\n"
-        exit 1
+        PYTHON=""
+        for version in {20..8}
+        do
+            if which python3.$version > /dev/null
+            then
+                PYTHON=python3.$version
+                break
+            fi
+        done
+        if test -z "${PYTHON}"
+        then
+            printf "${yellow}warning:${reset} Could not find a suitable python version (at least 3.8).\n"
+            printf "${yellow}warning:${reset} Make sure one is installed and available.\n"
+            printf "${yellow}warning:${reset} Hint: on debian-like systems -> sudo apt install python3.9.\n"
+            exit 1
+        fi
     fi
     echo "Using this command to run python: ${PYTHON}"
 }
@@ -93,70 +85,9 @@ else
     }
 fi
 
-
-if [ "$(uname)" == "Darwin" ]; then
-    if ! which pip3 > /dev/null; then
-        if ! which brew > /dev/null; then
-            /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
-        fi
-        brew install python3
-    fi
-    PIP=pip3
-    INSTALL_PATH="$HOME/Library/Python/3.9/bin"
-else
-    if ! which wget > /dev/null && ! which curl > /dev/null; then
-        if which sudo apt-get > /dev/null; then
-            sudo apt-get install -y curl python3-distutils
-        elif which sudo dnf > /dev/null; then
-            sudo dnf --assumeyes install curl
-        fi
-    fi
-
-    _find_suitable_python_version
-    _compute_install_path
-
-    mkdir -p "${INSTALL_PATH}"
-    touch "${INSTALL_PATH}/somedummyscripttotest"
-    chmod +x "${INSTALL_PATH}/somedummyscripttotest"
-    ASK_NEW_BASH=""
-    if ! which somedummyscripttotest > /dev/null
-    then
-        export PATH="${INSTALL_PATH}:${PATH}"
-        echo "export PATH='${INSTALL_PATH}:${PATH}'" >> "${HOME}/.bashrc"
-        ASK_NEW_BASH="1"
-    fi
-    rm "${INSTALL_PATH}/somedummyscripttotest"
-
-    if ! _check_pip
-    then
-        if ! "${PYTHON}" -c "import distutils.cmd"
-        then
-            echo "You need to install distutils as well (see https://github.com/pypa/get-pip/issues/124)"
-            printf "${yellow}warning:${reset} Hint: on debian-like systems -> sudo apt install python3-distutils.\n"
-            exit 1
-        fi
-        # we need to force the reinstall in order to make sure the latest version of
-        # pip is there
-        GET_PIP_TMP_DIR="${TMPDIR:-/tmp}/get-pip.py"
-        if which curl > /dev/null; then
-            curl -sSL https://bootstrap.pypa.io/get-pip.py -o "${GET_PIP_TMP_DIR}"
-            "${PYTHON}" ${TMPDIR:-/tmp}/get-pip.py --force-reinstall --quiet & spin "installing pip"
-        elif which wget > /dev/null; then
-            wget -nv https://bootstrap.pypa.io/get-pip.py -O "${GET_PIP_TMP_DIR}"
-            "${PYTHON}" ${TMPDIR:-/tmp}/get-pip.py --force-reinstall --quiet & spin "installing pip"
-        else
-            echo "Error: can't find or install pip"
-            exit 1
-        fi
-        trap "rm '${GET_PIP_TMP_DIR}'" 0
-    fi
-    if ! _check_pip
-    then
-        echo "Error: we could not install a suitable pip version..."
-        exit 1
-    fi
-    PIP="${PYTHON} -m pip"
-fi
+_find_suitable_python_version
+_compute_install_path
+CLK="${CLK:-clk}"
 
 if which clk > /dev/null 2>&1
 then
@@ -165,8 +96,50 @@ else
     verb="installing"
 fi
 
-CLK="${CLK:-clk}"
-${PIP} install --quiet --upgrade "${CLK}" & spin "${verb} ${CLK}"
+if _in_venv
+then
+    CMD="pip install --quiet --upgrade"
+else
+    CMD="${PYTHON} -m pipx"
+    if test "${verb}" = "installing"
+    then
+        CMD+=" install"
+    else
+        CMD+=" upgrade"
+    fi
+    # now, trying hard to make pipx available
+    if [ "$(uname)" == "Darwin" ]; then
+        if ! which pipx > /dev/null; then
+            if ! which brew > /dev/null; then
+                /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+            fi
+            brew install pipx
+        fi
+    else
+        if ! which pipx > /dev/null && ! _in_venv
+        then
+            echo "I will try to install pipx myself. Therefore I will ask for sudo privileges"
+            if which sudo > /dev/null
+            then
+                if which apt-get > /dev/null
+                then
+                    sudo apt-get install -y pipx
+                elif which dnf > /dev/null
+                then
+                    sudo dnf --assumeyes pipx
+                else
+                    printf "${yellow}warning:${reset} Could not find apt, nor dnf, nor pipx. Please install pipx manually and retry.\n"
+                    exit 1
+                fi
+            else
+                printf "${yellow}warning:${reset} Could not find sudo, nor pipx. Please install pipx manually and retry.\n"
+                exit 1
+            fi
+        fi
+    fi
+fi
+
+${CMD} "${CLK}" & spin "${verb} ${CLK}"
 
 echo -n "installing clk completion... "
 for s in bash; do # zsh fish
@@ -174,7 +147,7 @@ for s in bash; do # zsh fish
 done
 echo "done"
 
-if [ "${ASK_NEW_BASH}" == "1" ]
+if !which clk > /dev/null
 then
     $INSTALL_PATH/clk log --level warning "You have to restart bash to see clk working"
 fi
