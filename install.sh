@@ -7,7 +7,7 @@ _check_python3 () {
 import re
 import sys
 
-version_number=int(re.match("^3\.([0-9]+)\.", sys.version).group(1))
+version_number=int(re.match(r"^3\.([0-9]+)\.", sys.version).group(1))
 print(version_number >= 8)
 ')"
     [ "${good_version}" == "True" ]
