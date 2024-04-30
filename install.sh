@@ -103,9 +103,9 @@ else
     CMD="${PYTHON} -m pipx"
     if test "${verb}" = "installing"
     then
-        CMD+=" install"
+        CMD="${CMD} install"
     else
-        CMD+=" upgrade"
+        CMD="${CMD} upgrade"
     fi
     # now, trying hard to make pipx available
     if [ "$(uname)" == "Darwin" ]; then
