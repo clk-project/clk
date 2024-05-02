@@ -99,7 +99,7 @@ if _in_venv
 then
     CMD="pip install --quiet --upgrade"
 else
-    CMD="${PYTHON} -m pipx"
+    CMD="pipx"
     if test "${verb}" = "installing"
     then
         CMD="${CMD} install"
