@@ -91,7 +91,7 @@ stack-data==0.6.3
     # via ipython
 tabulate==0.8.10
     # via clk (setup.py)
-tqdm==4.66.2
+tqdm==4.66.3
     # via clk (setup.py)
 traitlets==5.14.2
     # via
