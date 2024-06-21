@@ -16,8 +16,12 @@ from clk.lib import TablePrinter, call, check_output, copy, get_secret, makedirs
 from clk.log import get_logger  # NOQA: E402, F401
 from clk.overloads import entry_point  # NOQA: E402, F401
 
+from . import _version
+
 monkeypatch.do()
 
 LOGGER = log.get_logger(__name__)
 log.basic_config(LOGGER)
 LOGGERS = {LOGGER}
+
+__version__ = _version.get_versions()['version']
