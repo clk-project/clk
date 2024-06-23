@@ -4,6 +4,8 @@
 # keep it at the begin in order to get an accurate startup time
 from datetime import datetime
 
+from . import _version
+
 startup_time = datetime.now()
 
 from clk import log  # NOQA: E402
@@ -15,8 +17,6 @@ from clk.decorators import argument, command, flag, group, option, table_fields,
 from clk.lib import TablePrinter, call, check_output, copy, get_secret, makedirs, rm  # NOQA: E402, F401
 from clk.log import get_logger  # NOQA: E402, F401
 from clk.overloads import entry_point  # NOQA: E402, F401
-
-from . import _version
 
 monkeypatch.do()
 
