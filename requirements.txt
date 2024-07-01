@@ -42,7 +42,7 @@ idna==3.7
     # via requests
 ipdb==0.13.13
     # via clk (setup.py)
-ipython==8.25.0
+ipython==8.26.0
     # via ipdb
 jedi==0.19.1
     # via ipython
