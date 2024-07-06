@@ -10,7 +10,7 @@ asttokens==2.4.1
     # via stack-data
 cached-property==1.5.2
     # via clk (setup.py)
-certifi==2024.6.2
+certifi==2024.7.4
     # via requests
 charset-normalizer==3.3.2
     # via requests
