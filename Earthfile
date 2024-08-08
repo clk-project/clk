@@ -180,6 +180,7 @@ sonar:
         RUN echo sonar.branch.name="$use_branch" >> /app/sonar-project.properties
     END
     ENV SONAR_HOST_URL=https://sonarcloud.io
+    ENV SONAR_USER_HOME=/app/sonar
     RUN --mount=type=cache,target=/opt/sonar-scanner/.sonar/cache --secret SONAR_TOKEN sonar-scanner -D sonar.python.coverage.reportPaths=/app/output/coverage/coverage.xml
     SAVE ARTIFACT /app/output /output
 
