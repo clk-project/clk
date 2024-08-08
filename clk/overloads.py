@@ -836,6 +836,8 @@ def eval_arg(arg):
                 exit(1)
     elif arg.startswith('pyeval:'):
         try:
+            import os  # noqa: F401
+            import sys  # noqa: F401
             evaluated_arg = str(eval(arg[len('pyeval:'):]))
             LOGGER.develop('%s evaluated to %s' % (arg, evaluated_arg))
             arg = evaluated_arg
@@ -847,6 +849,9 @@ def eval_arg(arg):
             exit(1)
     elif str(arg).startswith('project:'):
         return type_(str(Path(config.project) / arg[len('project:'):]))
+    elif str(arg).startswith('tpl:'):
+        import os  # noqa: F401
+        return type_(arg[len('tpl:'):].format(**os.environ))
     elif eval_match:
         try:
             evaluate = get_cached_evaluator(int(eval_match.group(1) or '-1'))

@@ -6,6 +6,8 @@ Here are some use cases that hopefully will have the following properties:
 
 If you simply want to create bash commands, take a look at [this one](bash_command.md). This [other one](bash_command_use_option.md) provides more insights about how to define options. When those will get bigger, take a look at how to [split your code](bash_command_import.md). In particular, you might want to start small with [simple alias and then move to bash commands](bash_command_from_alias.md). Also, clk provides some useful "[batteries](bash_command_built_in_lib.md)" to help you create a nice and friendly command.
 
+Sometimes, you might want to have some control about how the arguments of the command lines are evaluated, take a look at [this use case](controlling_a_server_using_an_environment_variable.md) to know more about them.
+
 Also, to create powerful, dynamic command line tools that provide the best completion possible, see [this pattern](dynamic_parameters_and_exposed_class.md) for writing your commands. In case you have some issues, you might want to look at the [advanced use cases](dynamic_parameters_advanced_use_cases.md).
 
 To cache some computation to disk, see the [web scrapping](scrapping_the_web.md) use case.

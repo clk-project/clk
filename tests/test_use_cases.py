@@ -60,3 +60,7 @@ def test_ethereum_local_environment_dev_tool():
 
 def test_scrapping_the_web():
     call_script('scrapping_the_web.sh')
+
+
+def test_controlling_a_server_using_an_environment_variable():
+    call_script('controlling_a_server_using_an_environment_variable.sh')
