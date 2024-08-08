@@ -156,7 +156,7 @@ fix-quality:
 test-install-ubuntu:
     FROM ubuntu:24.04
     RUN apt-get update && apt-get install --yes sudo curl python3
-    DO e+USE_USER --sudoer=y
+    DO e+USE_USER --sudoer=y --uid=1001
     DO +INSTALL --from=doc
     RUN test foo = "$(clk echo foo)"
 
