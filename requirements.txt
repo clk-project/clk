@@ -66,7 +66,7 @@ prompt-toolkit==3.0.47
     # via ipython
 ptyprocess==0.7.0
     # via pexpect
-pure-eval==0.2.2
+pure-eval==0.2.3
     # via stack-data
 pydotplus==2.0.2
     # via clk (setup.py)
@@ -91,7 +91,7 @@ stack-data==0.6.3
     # via ipython
 tabulate==0.8.10
     # via clk (setup.py)
-tqdm==4.66.4
+tqdm==4.66.5
     # via clk (setup.py)
 traitlets==5.14.3
     # via
