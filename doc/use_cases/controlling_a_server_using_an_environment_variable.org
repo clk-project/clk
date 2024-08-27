@@ -76,14 +76,14 @@ The last shortcut we have is to use the tpl: prefix, to only replace the environ
 
 #+NAME: withtpl
 #+BEGIN_SRC bash :results verbatim :exports both :session 3a3f2856-a1c4-4be6-9521-00a39e0f728d :cache yes
-clk alias set myserver echo curl 'noeval:tpl:http://${MYSERVER}/sommecommand'
+clk alias set myserver echo curl 'noeval:tpl:http://{MYSERVER}/sommecommand'
 clk myserver
 #+END_SRC
 
-#+RESULTS[05e7253effbd63c20011504b77d8038003e7be10]: withtpl
+#+RESULTS[eb1807bf279e1cc2fe61db043455a3d0dd78ddbd]: withtpl
 : Removing global alias of myserver: echo curl eval:sh -c "echo http://${MYSERVER}/sommecommand"
-: New global alias for myserver: echo curl tpl:http://${MYSERVER}/sommecommand
-: curl http://$myserverip/sommecommand
+: New global alias for myserver: echo curl tpl:http://{MYSERVER}/sommecommand
+: curl http://myserverip/sommecommand
 
 That's much better!
 

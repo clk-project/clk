@@ -51,12 +51,12 @@ That's better. But still very verbose compared to what I want.
 The last shortcut we have is to use the tpl: prefix, to only replace the environment variables.
 
 ```bash
-clk alias set myserver echo curl 'noeval:tpl:http://${MYSERVER}/sommecommand'
+clk alias set myserver echo curl 'noeval:tpl:http://{MYSERVER}/sommecommand'
 clk myserver
 ```
 
     Removing global alias of myserver: echo curl eval:sh -c "echo http://${MYSERVER}/sommecommand"
-    New global alias for myserver: echo curl tpl:http://${MYSERVER}/sommecommand
-    curl http://$myserverip/sommecommand
+    New global alias for myserver: echo curl tpl:http://{MYSERVER}/sommecommand
+    curl http://myserverip/sommecommand
 
 That's much better!

@@ -65,15 +65,15 @@ exit 1
 
 
 withtpl_code () {
-      clk alias set myserver echo curl 'noeval:tpl:http://${MYSERVER}/sommecommand'
+      clk alias set myserver echo curl 'noeval:tpl:http://{MYSERVER}/sommecommand'
       clk myserver
 }
 
 withtpl_expected () {
       cat<<"EOEXPECTED"
 Removing global alias of myserver: echo curl eval:sh -c "echo http://${MYSERVER}/sommecommand"
-New global alias for myserver: echo curl tpl:http://${MYSERVER}/sommecommand
-curl http://$myserverip/sommecommand
+New global alias for myserver: echo curl tpl:http://{MYSERVER}/sommecommand
+curl http://myserverip/sommecommand
 EOEXPECTED
 }
 
