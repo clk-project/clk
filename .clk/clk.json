@@ -1,18 +1,1 @@
-{
-    "flowdeps": {
-        "build": [
-            "clean"
-        ],
-        "upload": [
-            "build"
-        ]
-    },
-    "parameters": {
-        "flow": [
-            "--flow"
-        ],
-        "test.flow": [
-            "--flow"
-        ]
-    }
-}
+{}

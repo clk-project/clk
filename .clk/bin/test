@@ -6,7 +6,7 @@ clk_usage () {
     cat<<EOF
 $0
 
-Run the tests, and then push the code if the tests pass
+Run the tests
 --
 O:--test-args:str:The arguments to provide to the test command
 EOF
@@ -21,6 +21,6 @@ then
 fi
 pushd "${CLK__PROJECT}" > /dev/null
 {
-    earthly +local-sanity-check --use_git=true "${args[@]}" && git push
+    earthly +local-sanity-check --use_git=true "${args[@]}"
 }
 popd > /dev/null
