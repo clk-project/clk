@@ -800,7 +800,9 @@ def get_cached_evaluator(expire=0):
     return evaluate
 
 
-def eval_arg(arg):
+def eval_arg(arg, keepnoeval=False):
+    if isinstance(arg, tuple):
+        return tuple(eval_arg(v, keepnoeval=keepnoeval) for v in arg)
     if isinstance(arg, Path):
         arg = str(arg)
         type_ = Path
@@ -813,7 +815,8 @@ def eval_arg(arg):
     nexteval_match = re.match(r'nexteval(\(\d+\)|):(.+)', arg)
     keyring_prefix = 'secret:'
     if arg.startswith('noeval:'):
-        arg = arg[len('noeval:'):]
+        if not keepnoeval:
+            arg = arg[len('noeval:'):]
     elif nexteval_match:
         arg = 'eval%s:%s' % (
             ('(%s)' % nexteval_match.group(1) if nexteval_match.group(1) else ''), nexteval_match.group(2))
@@ -890,16 +893,6 @@ class ParameterMixin(click.Parameter):
         if self.expose_class and kwargs.get('expose_value') is None:
             self.expose_value = False
 
-    def __process_value(self, ctx, value):
-        if value is None:
-            value = self.get_default(ctx)
-        if value is not None:
-            if isinstance(value, tuple):
-                value = tuple(eval_arg(v) for v in value)
-            else:
-                value = eval_arg(value)
-        return value
-
     def process_value(self, ctx, value):
         if self.expose_class:
             if hasattr(self.expose_class, 'name'):
@@ -910,6 +903,11 @@ class ParameterMixin(click.Parameter):
                     exposed_class_name = exposed_class_name[:-len('config')]
             if not hasattr(config, exposed_class_name):
                 setattr(config, exposed_class_name, self.expose_class())
+        # In case I am provided with something to eval, I need to eval it before
+        # processing it or it won't fit its type
+        # I don't want to get rid of the noeval because I will be evaluated
+        # again just after processing
+        value = eval_arg(value, keepnoeval=True)
         try:
             value = super(ParameterMixin, self).process_value(ctx, value)
         except MissingParameter:
@@ -917,7 +915,10 @@ class ParameterMixin(click.Parameter):
                 value = self.get_default(ctx)
             else:
                 raise
-        value = self.__process_value(ctx, value)
+        if value is None:
+            value = self.get_default(ctx)
+        # I now want to check whether the processed value can be evaluated
+        value = eval_arg(value)
         if self.expose_class:
             if self.name not in ctx.clk_default_catch or not hasattr(getattr(config, exposed_class_name), self.name):
                 setattr(getattr(config, exposed_class_name), self.name, value)

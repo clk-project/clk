@@ -1,0 +1,80 @@
+:PROPERTIES:
+:ID:       c8fcfc53-6d2a-4b9c-a836-c303933b6563
+:END:
+#+language: en
+#+EXPORT_FILE_NAME: ./podcast_automation.md
+
+#+CALL: ../../lp.org:check-result()
+
+#+name: init
+#+BEGIN_SRC bash :results none :exports none :session c8fcfc53-6d2a-4b9c-a836-c303933b6563
+  . ./sandboxing.sh
+#+END_SRC
+
+When listening to podcast, I like to download some episode up front.
+
+#+NAME: download_body
+#+BEGIN_SRC python :results none :exports code
+@podcast.command()
+@option('--number', type=int, default=10, help='How many episodes to download at once')
+def download(number):
+    'Downloading podcasts'
+    print(f'Downloading {number} episodes')
+#+END_SRC
+
+#+NAME: download
+#+BEGIN_SRC bash :results none :exports none :session c8fcfc53-6d2a-4b9c-a836-c303933b6563 :noweb yes
+clk command create python podcast --group --force --description "Dealing with podcasts" --body "
+<<download_body>>
+"
+#+END_SRC
+
+#+NAME: tryit
+#+BEGIN_SRC bash :results verbatim :exports both :session c8fcfc53-6d2a-4b9c-a836-c303933b6563 :cache yes
+clk podcast download
+#+END_SRC
+
+#+RESULTS[9e5e1cc779f8de092e883043b56d2327a255009c]: tryit
+: Downloading 10 episodes
+
+Now, I want this command to be wrapped into an alias to ease making it part of
+more complicated flows. I want to control the number of podcast to download
+using an environment variable, hence the use of the 'tpl:' pattern appears
+appropriate.
+
+#+NAME: makeitalias
+#+BEGIN_SRC bash :results verbatim :exports both :session c8fcfc53-6d2a-4b9c-a836-c303933b6563 :cache yes
+clk alias set podcast.dwim echo 'Would do something before' , podcast download --number 'noeval:tpl:{NUMBER_TO_DOWNLOAD}' , echo 'would do something after'
+#+END_SRC
+
+#+RESULTS[878bae04a233b829b08b4b6deaa8bbec63a73d61]: makeitalias
+: New global alias for podcast.dwim: echo Would do something before , podcast download --number tpl:{NUMBER_TO_DOWNLOAD} , echo would do something after
+
+Then I can call it with:
+
+#+NAME: callit
+#+BEGIN_SRC bash :results verbatim :exports both :session c8fcfc53-6d2a-4b9c-a836-c303933b6563 :cache yes
+export NUMBER_TO_DOWNLOAD=100
+clk podcast dwim
+#+END_SRC
+
+#+RESULTS[c0212f3e26f682e0699a082e7dcf612ef0794f12]: callit
+: Would do something before
+: Downloading 100 episodes
+: would do something after
+
+Note that it needs the environment variable to be set, or it will raise an
+error.
+
+#+NAME: run
+#+BEGIN_SRC bash :results none :exports none :tangle ../../tests/use_cases/podcast_automation.sh :noweb yes :shebang "#!/bin/bash -eu"
+<<init>>
+
+<<download>>
+
+check-result(tryit)
+
+check-result(makeitalias)
+
+check-result(callit)
+#+END_SRC
