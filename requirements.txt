@@ -38,7 +38,7 @@ glob2==0.7
     # via clk (setup.py)
 humanize==4.0.0
     # via clk (setup.py)
-idna==3.8
+idna==3.10
     # via requests
 ipdb==0.13.13
     # via clk (setup.py)
@@ -97,7 +97,7 @@ traitlets==5.14.3
     # via
     #   ipython
     #   matplotlib-inline
-urllib3==2.2.2
+urllib3==2.2.3
     # via requests
 wcwidth==0.2.13
     # via prompt-toolkit
