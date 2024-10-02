@@ -405,13 +405,13 @@ def updated_env(**kwargs):
     for k, v in kwargs.items():
         if v is None:
             if k in os.environ:
-                LOGGER.debug('environment %s removed' % k)
+                LOGGER.develop('environment %s removed' % k)
                 del os.environ[k]
             else:
                 # already not there, nothing to do
                 pass
         else:
-            LOGGER.debug('environment %s="%s"' % (k, v))
+            LOGGER.develop('environment %s="%s"' % (k, v))
             os.environ[k] = v
     yield
     os.environ.clear()
