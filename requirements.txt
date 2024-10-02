@@ -42,7 +42,7 @@ idna==3.10
     # via requests
 ipdb==0.13.13
     # via clk (setup.py)
-ipython==8.27.0
+ipython==8.28.0
     # via ipdb
 jedi==0.19.1
     # via ipython
@@ -62,7 +62,7 @@ pexpect==4.9.0
     # via ipython
 pluginbase==1.0.1
     # via clk (setup.py)
-prompt-toolkit==3.0.47
+prompt-toolkit==3.0.48
     # via ipython
 ptyprocess==0.7.0
     # via pexpect
