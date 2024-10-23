@@ -48,11 +48,11 @@ jedi==0.19.1
     # via ipython
 jinja2==3.1.4
     # via click-completion
-markupsafe==3.0.1
+markupsafe==3.0.2
     # via jinja2
 matplotlib-inline==0.1.7
     # via ipython
-networkx==3.4.1
+networkx==3.4.2
     # via clk (setup.py)
 parsedatetime==2.6
     # via clk (setup.py)
