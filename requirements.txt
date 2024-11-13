@@ -44,7 +44,7 @@ ipdb==0.13.13
     # via clk (setup.py)
 ipython==8.29.0
     # via ipdb
-jedi==0.19.1
+jedi==0.19.2
     # via ipython
 jinja2==3.1.4
     # via click-completion
@@ -91,7 +91,7 @@ stack-data==0.6.3
     # via ipython
 tabulate==0.8.10
     # via clk (setup.py)
-tqdm==4.66.6
+tqdm==4.67.0
     # via clk (setup.py)
 traitlets==5.14.3
     # via
