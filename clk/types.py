@@ -136,11 +136,6 @@ class DocumentedChoice(click.Choice):
         super().__init__(choices=list(choices.keys()), *args, **kwargs)
         self.documented_choices = choices
 
-    def to_info_dict(self):
-        info_dict = super().to_info_dict()
-        info_dict['documented_choices'] = self.documented_choices
-        return info_dict
-
     def get_missing_message(self, param):
         choices_keys = self.documented_choices.keys()
         formated_choices = [f'{k:<12} {self.documented_choices[k] or ""}' for k in sorted(choices_keys)]
@@ -152,9 +147,6 @@ class DocumentedChoice(click.Choice):
             super().convert(value, param, ctx)
         except click.BadParameter:
             self.fail(f'{value!r}.\n{self.get_missing_message(param)}', param, ctx)
-
-    def __repr__(self):
-        return f'DocumentedChoice({list(self.choices.key())})'
 
     def shell_complete(self, ctx, param, incomplete):
         complete = super().shell_complete(ctx, param, incomplete)
