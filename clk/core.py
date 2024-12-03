@@ -423,7 +423,7 @@ def main_command_decoration(f, cls, **kwargs):
 def main_command(cls, **kwargs):
 
     def decorator(f):
-        return main_command_decoration(f, cls, *kwargs)
+        return main_command_decoration(f, cls, **kwargs)
 
     return decorator
 
