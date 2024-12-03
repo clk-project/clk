@@ -32,7 +32,6 @@ setup(
         'click>=8',
         'click-log',
         'click-didyoumean',
-        'click-completion>=0.5.0',
         'glob2',
         'colorama',
         'python-dateutil',

@@ -57,8 +57,39 @@ def run(cmd, *args, **kwargs):
         return config.main_command(cmd, *args, **kwargs)
 
 
+def resolve_ctx(cli, prog_name, args, resilient_parsing=True):
+    """
+
+    Parameters
+    ----------
+    cli : click.Command
+        The main click Command of the program
+    prog_name : str
+        The program name on the command line
+    args : [str]
+        The arguments already written by the user on the command line
+
+    Returns
+    -------
+    click.core.Context
+        A new context corresponding to the current command
+    """
+    ctx = cli.make_context(prog_name, list(args), resilient_parsing=resilient_parsing)
+    while ctx.args + ctx.protected_args and isinstance(ctx.command, click.MultiCommand):
+        a = ctx.protected_args + ctx.args
+        cmd = ctx.command.get_command(ctx, a[0])
+        if cmd is None:
+            return None
+        if hasattr(cmd, 'no_args_is_help'):
+            no_args_is_help = cmd.no_args_is_help
+            cmd.no_args_is_help = False
+        ctx = cmd.make_context(a[0], a[1:], parent=ctx, resilient_parsing=resilient_parsing)
+        if hasattr(cmd, 'no_args_is_help'):
+            cmd.no_args_is_help = no_args_is_help
+    return ctx
+
+
 def resolve_context_with_side_effects(path, resilient_parsing=True):
-    from click_completion import resolve_ctx
     return resolve_ctx(config.main_command,
                        config.main_command.__class__.path,
                        path,
