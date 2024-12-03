@@ -39,8 +39,16 @@ class Date(DynamicChoice):
     def choices(self):
         number = ['one', 'two', 'three', 'four', 'five']
         period = ['day', 'week', 'month', 'year']
-        weekday = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday']
-        return [
+        weekday = [
+            'monday',
+            'tuesday',
+            'wednesday',
+            'thursday',
+            'friday',
+            'saturday',
+            'sunday',
+        ]
+        return ([
             'today',
             'yesterday',
             'tomorrow',
@@ -56,17 +64,19 @@ class Date(DynamicChoice):
         )] + [f"{a} {b}{'' if a == 'one' else 's'}" for a, b in product(
             number,
             period + weekday,
-        )]
+        )])
 
     def convert(self, value, param, ctx):
         if not isinstance(value, str):
             # already converted
             return value
         from dateutil.parser import ParserError, parse
+
         try:
             date = parse(value)
         except ParserError:
             from clk.lib import parsedatetime
+
             date = parsedatetime(value)[0]
         date = datetime(date.year, date.month, date.day)
         LOGGER.develop(f'Got date {param.name if param is not None else "NA"}={date}')
@@ -96,6 +106,7 @@ class DirectoryProfile(Profile):
     @property
     def profiles(self):
         from clk.profile import DirectoryProfile
+
         return {
             name: profile
             for name, profile in super().profiles.items()
@@ -116,3 +127,37 @@ class ExecutableType(Parameter):
     @cache_disk(expire=600)
     def path(self, ctx):
         return [path for path in os.environ['PATH'].split(os.pathsep) if os.path.exists(path)]
+
+
+class DocumentedChoice(click.Choice):
+    name = 'DocumentedChoice'
+
+    def __init__(self, choices, *args, **kwargs):
+        super().__init__(choices=list(choices.keys()), *args, **kwargs)
+        self.documented_choices = choices
+
+    def to_info_dict(self):
+        info_dict = super().to_info_dict()
+        info_dict['documented_choices'] = self.documented_choices
+        return info_dict
+
+    def get_missing_message(self, param):
+        choices_keys = self.documented_choices.keys()
+        formated_choices = [f'{k:<12} {self.documented_choices[k] or ""}' for k in sorted(choices_keys)]
+        separator = '\n  '
+        return f'''Choose from:\n  {separator.join(formated_choices)}'''
+
+    def convert(self, value, param, ctx):
+        try:
+            super().convert(value, param, ctx)
+        except click.BadParameter:
+            self.fail(f'{value!r}.\n{self.get_missing_message(param)}', param, ctx)
+
+    def __repr__(self):
+        return f'DocumentedChoice({list(self.choices.key())})'
+
+    def shell_complete(self, ctx, param, incomplete):
+        complete = super().shell_complete(ctx, param, incomplete)
+        for c in complete:
+            c.help = self.documented_choices[c.value]
+        return complete

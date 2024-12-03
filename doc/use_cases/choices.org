@@ -1,0 +1,236 @@
+:PROPERTIES:
+:ID:       a7b996e6-a3e6-410e-a91b-311640c4ada8
+:END:
+#+language: en
+#+EXPORT_FILE_NAME: ./choices.md
+
+#+CALL: ../../lp.org:check-result()
+
+#+name: init
+#+BEGIN_SRC bash :results none :exports none :session a7b996e6-a3e6-410e-a91b-311640c4ada8
+  . ./sandboxing.sh
+#+END_SRC
+
+When you want to give some choice to the user of your application, you can make
+use of the click built-in ~Choice~ types.
+
+* a simple example to illustrate click.Choice
+  :PROPERTIES:
+  :CREATED:  [2024-12-03 16:09]
+  :CUSTOM_ID: 3041aa9c-8e50-4ce4-8e92-255d4f153c8d
+  :END:
+
+  I have a clk command that allow me to automate some stuffs with some devices I
+  have accumulated along the years.
+
+  The group of commands looks like this.
+
+  #+NAME: imports
+  #+BEGIN_SRC python :results none :exports none
+    import os
+    from pathlib import Path
+
+    import click
+    from clk.config import config
+    from clk.decorators import group, option
+    from clk.lib import call, check_output
+    from clk.log import get_logger
+  #+END_SRC
+
+  #+NAME: init-code
+  #+BEGIN_SRC python :results none :exports none
+    LOGGER = get_logger(__name__)
+
+    devices = {
+        'cink-peax': '192.168.1.10:5555',
+        'i9300': '192.168.1.11:5555',
+        'klipad': '192.168.1.12:5555',
+    }
+
+    @group()
+    @option(
+        '--device',
+        '-d',
+        help='What device to connect to',
+  #+END_SRC
+
+  #+NAME: code
+  #+BEGIN_SRC python :results none :exports none
+    )
+    def android(device):
+        'Play with android'
+        config.override_env['ANDROID_DEVICE'] = device
+        device = devices.get(device, device)
+        config.override_env['ANDROID_SERIAL'] = device
+        config.init()
+  #+END_SRC
+
+  #+NAME: with-choice
+  #+BEGIN_SRC python :results none :exports code :noweb yes
+    <<imports>>
+    <<init-code>>
+    type=click.Choice(devices),
+    <<code>>
+  #+END_SRC
+
+  #+NAME: export-with-choice
+  #+BEGIN_SRC bash :results none :exports none :session a7b996e6-a3e6-410e-a91b-311640c4ada8 :noweb yes
+    clk command create python android --force --group --body "$(cat<<EOF
+    <<with-choice>>
+    EOF
+    )"
+  #+END_SRC
+
+  And I create bash commands for stuff I want to do with my android devices, like getting the battery status.
+
+  #+name: batterie-status-command
+  #+BEGIN_SRC bash :results none :exports code :session a7b996e6-a3e6-410e-a91b-311640c4ada8
+    clk command create bash android.battery.status --force --description "Print the battery level of the device" --body 'echo "Would call adb shell dumpsys battery|grep level|cut -f2 -d:|trim and would get the result for ${ANDROID_DEVICE} available at ${ANDROID_SERIAL}"'
+  #+END_SRC
+
+  With that code, I can now get the battery status of the cink-peax phone with
+
+  #+NAME: batterie-status-test
+  #+BEGIN_SRC bash :results verbatim :exports both :session a7b996e6-a3e6-410e-a91b-311640c4ada8 :cache yes
+    clk android -d cink-peax battery status
+  #+END_SRC
+
+  #+RESULTS[e56e17dc1ae97b8521fdc6f5aecfddd116425e85]: batterie-status-test
+  : Would call adb shell dumpsys battery|grep level|cut -f2 -d:|trim and would get the result for cink-peax available at 192.168.1.10:5555
+
+  The good think with Choice is that it forces me to stick to the predefined choices.
+
+  For instance, if I use a name not known, I get
+
+  #+NAME: try-bad-name-choice
+  #+BEGIN_SRC bash :results verbatim :exports both :session a7b996e6-a3e6-410e-a91b-311640c4ada8 :cache yes
+    clk android -d cinkpeax battery status
+  #+END_SRC
+
+  #+RESULTS[52ca409559ab21c636e7396e2b11608c0177eb17]: try-bad-name-choice
+  : Usage: clk android [OPTIONS] COMMAND [ARGS]...
+  : error: Invalid value for '--device' / '-d': 'cinkpeax' is not one of 'cink-peax', 'i9300', 'klipad'.
+
+* showing the usage of Suggestion
+  :PROPERTIES:
+  :CREATED:  [2024-12-03 16:11]
+  :CUSTOM_ID: 63e4db36-5877-424f-a31f-a8889a07a933
+  :END:
+
+  Imagine now that you want to control a new device that you only have
+  temporarily, it would be nice to simply provide its name and have clk use it
+  verbatim. To do so, the Suggestion types might be a good candidate.
+
+  Instead of using ~click.Choice~, we will use ~Suggestion~. In case of
+  mismatch, we will simply use the value as is.
+
+  #+NAME: with-suggestion
+  #+BEGIN_SRC python :results none :exports code :noweb yes
+    <<imports>>
+    from clk.types import Suggestion
+    <<init-code>>
+        type=Suggestion(devices),
+    <<code>>
+  #+END_SRC
+
+  #+NAME: export-with-suggestion
+  #+BEGIN_SRC bash :results none :exports none :session a7b996e6-a3e6-410e-a91b-311640c4ada8 :noweb yes
+    clk command create python android --force --group --body "$(cat<<EOF
+    <<with-suggestion>>
+    EOF
+    )"
+  #+END_SRC
+
+  Now, you can call something like this.
+
+  #+NAME: test-with-suggestion
+  #+BEGIN_SRC bash :results verbatim :exports both :session a7b996e6-a3e6-410e-a91b-311640c4ada8 :cache yes
+    clk android -d 192.168.1.14:5555 battery status
+  #+END_SRC
+
+  #+RESULTS[3694e30b39e10fe14ec407a13dfe3c0785c8b1ad]: test-with-suggestion
+  : Would call adb shell dumpsys battery|grep level|cut -f2 -d:|trim and would get the result for 192.168.1.14:5555 available at 192.168.1.14:5555
+
+  Of course, you don't have the failsafe that provided ~click.Choice~
+  anymore. The predefined values are still available for completion though.
+
+  #+NAME: sequence-to-complete
+  #+BEGIN_SRC bash :results none :exports none
+    android -d kli
+  #+END_SRC
+
+  #+NAME: ask-for-completion
+  #+BEGIN_SRC bash :results none :exports code :noweb yes
+    clk <<sequence-to-complete>><TAB>
+  #+END_SRC
+
+  #+NAME: try-completion
+  #+BEGIN_SRC bash :results verbatim :exports results :noweb yes :cache yes :session a7b996e6-a3e6-410e-a91b-311640c4ada8 :cache yes
+    clk completion try --remove-bash-formatting --last <<sequence-to-complete>>
+  #+END_SRC
+
+  #+RESULTS[6eaadcdd339f47c6ddb4f317cd7f5d4e0a6fbacc]: try-completion
+  : klipad
+
+* showing the usage of DocumentedChoice
+  :PROPERTIES:
+  :CREATED:  [2024-12-03 16:22]
+  :CUSTOM_ID: 917d3f0f-e794-4403-88fb-c02734364082
+  :END:
+
+  If you have several devices, you might want to have some more information
+  about them in the help. To do that, make use of ~DocumentedChoice~.
+
+  #+NAME: with-documented-choice
+  #+BEGIN_SRC python :results none :exports code :noweb yes
+    <<imports>>
+    from clk.types import DocumentedChoice
+    docs = {
+        'cink-peax': 'My pomodoro',
+        'i9300': 'My vacuum automator',
+        'klipad': 'The photo gallery',
+    }
+    <<init-code>>
+        type=DocumentedChoice(docs),
+    <<code>>
+  #+END_SRC
+
+  #+NAME: export-with-documented-choice
+  #+BEGIN_SRC bash :results none :exports none :session a7b996e6-a3e6-410e-a91b-311640c4ada8 :noweb yes
+    clk command create python android --force --group --body "$(cat<<EOF
+    <<with-documented-choice>>
+    EOF
+    )"
+  #+END_SRC
+
+  Now, in case of error, you get a nicer message indicating the purpose of the devices.
+
+  #+NAME: test-documented-choices
+  #+BEGIN_SRC bash :results verbatim :exports both :session a7b996e6-a3e6-410e-a91b-311640c4ada8 :cache yes
+    clk android -d cinkpeax battery status
+  #+END_SRC
+
+  #+RESULTS[52ca409559ab21c636e7396e2b11608c0177eb17]: test-documented-choices
+  : Usage: clk android [OPTIONS] COMMAND [ARGS]...
+  : error: Invalid value for '--device' / '-d': 'cinkpeax'.
+  : error: Choose from:
+  : error:   cink-peax    My pomodoro
+  : error:   i9300        My vacuum automator
+  : error:   klipad       The photo gallery
+
+  It would be even nicer if the documentation was shown in the result of ~--help~, but it is not the case for now.
+
+
+  #+NAME: run
+  #+BEGIN_SRC bash :results none :exports none :tangle ../../tests/use_cases/choices.sh :noweb yes :shebang "#!/bin/bash -eu"
+    <<init>>
+    <<export-with-choice>>
+    <<batterie-status-command>>
+    check-result(batterie-status-test)
+    check-result(try-bad-name-choice)
+    <<export-with-suggestion>>
+    check-result(test-with-suggestion)
+    check-result(try-completion)
+    <<export-with-documented-choice>>
+    check-result(test-documented-choices)
+  #+END_SRC

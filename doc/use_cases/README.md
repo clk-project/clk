@@ -10,6 +10,8 @@ Sometimes, you might want to have some control about how the arguments of the co
 
 Also, to create powerful, dynamic command line tools that provide the best completion possible, see [this pattern](dynamic_parameters_and_exposed_class.md) for writing your commands. In case you have some issues, you might want to look at the [advanced use cases](dynamic_parameters_advanced_use_cases.md).
 
+When you want to provide some choices in command, it might be worthwhile to look at [those examples](choices.md).
+
 To cache some computation to disk, see the [web scrapping](scrapping_the_web.md) use case.
 
 If at some point you need to deal with a project, you might want to [read this](using_a_project.md).

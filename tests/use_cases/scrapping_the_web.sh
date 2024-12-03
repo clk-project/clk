@@ -1,5 +1,5 @@
 #!/bin/bash -eu
-# [[file:../../doc/use_cases/scrapping_the_web.org::run][run]]
+# [[file:../../doc/use_cases/choices.org::run][run]]
 . ./sandboxing.sh
 clk command create python --force --group --body '
 def code_that_fetches_the_content_of(url):

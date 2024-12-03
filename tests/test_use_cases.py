@@ -64,3 +64,7 @@ def test_scrapping_the_web():
 
 def test_controlling_a_server_using_an_environment_variable():
     call_script('controlling_a_server_using_an_environment_variable.sh')
+
+
+def test_choices():
+    call_script('choices.sh')
