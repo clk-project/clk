@@ -190,4 +190,20 @@ diff -uBw <(test-documented-choices_code 2>&1) <(test-documented-choices_expecte
 echo "Something went wrong when trying test-documented-choices"
 exit 1
 }
+
+
+try-completion2_code () {
+      clk completion try --remove-bash-formatting --last android -d i
+}
+
+try-completion2_expected () {
+      cat<<"EOEXPECTED"
+i9300
+EOEXPECTED
+}
+
+diff -uBw <(try-completion2_code 2>&1) <(try-completion2_expected) || {
+echo "Something went wrong when trying try-completion2"
+exit 1
+}
 # run ends here

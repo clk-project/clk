@@ -188,4 +188,12 @@ clk android -d cinkpeax battery status
 
 It would be even nicer if the documentation was shown in the result of `--help` or somehow in the completion, but it is not the case for now.
 
+Yet, the completion still works like expected.
+
+```bash
+clk android -d i<TAB>
+```
+
+    i9300
+
 Note that we simply copied `DocumentedChoice` from the dying project [click-completion](https://github.com/click-contrib/click-completion). It will probably evolve to be more feature complete, or perhaps merged with `Suggestion` to allow providing both feature at the same time. Pull requests are more than welcome here!

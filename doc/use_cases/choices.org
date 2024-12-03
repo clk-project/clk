@@ -220,6 +220,26 @@ use of the click built-in ~Choice~ types.
   It would be even nicer if the documentation was shown in the result of
   ~--help~ or somehow in the completion, but it is not the case for now.
 
+  Yet, the completion still works like expected.
+
+  #+NAME: sequence-to-complete2
+  #+BEGIN_SRC bash :results none :exports none
+    android -d i
+  #+END_SRC
+
+  #+NAME: ask-for-completion2
+  #+BEGIN_SRC bash :results none :exports code :noweb yes
+    clk <<sequence-to-complete2>><TAB>
+  #+END_SRC
+
+  #+NAME: try-completion2
+  #+BEGIN_SRC bash :results verbatim :exports results :noweb yes :cache yes :session a7b996e6-a3e6-410e-a91b-311640c4ada8 :cache yes
+    clk completion try --remove-bash-formatting --last <<sequence-to-complete2>>
+  #+END_SRC
+
+  #+RESULTS[44515c4997d6fe4034ae404a18f4faa3132d1c75]: try-completion2
+  : i9300
+
   Note that we simply copied ~DocumentedChoice~ from the dying project
   [[https://github.com/click-contrib/click-completion][click-completion]]. It will probably evolve to be more feature complete, or
   perhaps merged with ~Suggestion~ to allow providing both feature at the same
@@ -237,4 +257,5 @@ use of the click built-in ~Choice~ types.
     check-result(try-completion)
     <<export-with-documented-choice>>
     check-result(test-documented-choices)
+    check-result(try-completion2)
   #+END_SRC
