@@ -110,7 +110,6 @@ use of the click built-in ~Choice~ types.
   #+RESULTS[52ca409559ab21c636e7396e2b11608c0177eb17]: try-bad-name-choice
   : Usage: clk android [OPTIONS] COMMAND [ARGS]...
   : error: Invalid value for '--device' / '-d': 'cinkpeax' is not one of 'cink-peax', 'i9300', 'klipad'.
-
 * showing the usage of Suggestion
   :PROPERTIES:
   :CREATED:  [2024-12-03 16:11]
@@ -171,7 +170,6 @@ use of the click built-in ~Choice~ types.
 
   #+RESULTS[6eaadcdd339f47c6ddb4f317cd7f5d4e0a6fbacc]: try-completion
   : klipad
-
 * showing the usage of DocumentedChoice
   :PROPERTIES:
   :CREATED:  [2024-12-03 16:22]
@@ -180,6 +178,7 @@ use of the click built-in ~Choice~ types.
 
   If you have several devices, you might want to have some more information
   about them in the help. To do that, make use of ~DocumentedChoice~.
+
 
   #+NAME: with-documented-choice
   #+BEGIN_SRC python :results none :exports code :noweb yes
@@ -218,8 +217,13 @@ use of the click built-in ~Choice~ types.
   : error:   i9300        My vacuum automator
   : error:   klipad       The photo gallery
 
-  It would be even nicer if the documentation was shown in the result of ~--help~, but it is not the case for now.
+  It would be even nicer if the documentation was shown in the result of
+  ~--help~ or somehow in the completion, but it is not the case for now.
 
+  Note that we simply copied ~DocumentedChoice~ from the dying project
+  [[https://github.com/click-contrib/click-completion][click-completion]]. It will probably evolve to be more feature complete, or
+  perhaps merged with ~Suggestion~ to allow providing both feature at the same
+  time. Pull requests are more than welcome here!
 
   #+NAME: run
   #+BEGIN_SRC bash :results none :exports none :tangle ../../tests/use_cases/choices.sh :noweb yes :shebang "#!/bin/bash -eu"
