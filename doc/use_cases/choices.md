@@ -186,6 +186,14 @@ clk android -d cinkpeax battery status
     error:   i9300        My vacuum automator
     error:   klipad       The photo gallery
 
+Oups, I wanted to deal with my pomodoro device&#x2026;
+
+```bash
+clk android -d cink-peax battery status
+```
+
+    Would call adb shell dumpsys battery|grep level|cut -f2 -d:|trim and would get the result for cink-peax available at 192.168.1.10:5555
+
 It would be even nicer if the documentation was shown in the result of `--help` or somehow in the completion, but it is not the case for now.
 
 Yet, the completion still works like expected.

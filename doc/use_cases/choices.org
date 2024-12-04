@@ -217,6 +217,16 @@ use of the click built-in ~Choice~ types.
   : error:   i9300        My vacuum automator
   : error:   klipad       The photo gallery
 
+  Oups, I wanted to deal with my pomodoro device...
+
+  #+NAME: test-documented-choices2
+  #+BEGIN_SRC bash :results verbatim :exports both :session a7b996e6-a3e6-410e-a91b-311640c4ada8 :cache yes
+    clk android -d cink-peax battery status
+  #+END_SRC
+
+  #+RESULTS[e56e17dc1ae97b8521fdc6f5aecfddd116425e85]: test-documented-choices2
+  : Would call adb shell dumpsys battery|grep level|cut -f2 -d:|trim and would get the result for cink-peax available at 192.168.1.10:5555
+
   It would be even nicer if the documentation was shown in the result of
   ~--help~ or somehow in the completion, but it is not the case for now.
 
@@ -257,5 +267,6 @@ use of the click built-in ~Choice~ types.
     check-result(try-completion)
     <<export-with-documented-choice>>
     check-result(test-documented-choices)
+    check-result(test-documented-choices2)
     check-result(try-completion2)
   #+END_SRC

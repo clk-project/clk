@@ -192,6 +192,22 @@ exit 1
 }
 
 
+test-documented-choices2_code () {
+      clk android -d cink-peax battery status
+}
+
+test-documented-choices2_expected () {
+      cat<<"EOEXPECTED"
+Would call adb shell dumpsys battery|grep level|cut -f2 -d:|trim and would get the result for cink-peax available at 192.168.1.10:5555
+EOEXPECTED
+}
+
+diff -uBw <(test-documented-choices2_code 2>&1) <(test-documented-choices2_expected) || {
+echo "Something went wrong when trying test-documented-choices2"
+exit 1
+}
+
+
 try-completion2_code () {
       clk completion try --remove-bash-formatting --last android -d i
 }
