@@ -144,7 +144,7 @@ class DocumentedChoice(click.Choice):
 
     def convert(self, value, param, ctx):
         try:
-            super().convert(value, param, ctx)
+            return super().convert(value, param, ctx)
         except click.BadParameter:
             self.fail(f'{value!r}.\n{self.get_missing_message(param)}', param, ctx)
 
