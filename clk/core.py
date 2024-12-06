@@ -451,14 +451,6 @@ def main_command_decoration(f, cls, **kwargs):
     return command
 
 
-def main_command(cls, **kwargs):
-
-    def decorator(f):
-        return main_command_decoration(f, cls, **kwargs)
-
-    return decorator
-
-
 ################################
 # Handling of the core options #
 ################################
