@@ -1,0 +1,17 @@
+#!/bin/bash -eu
+
+source "_clk.sh"
+
+clk_usage () {
+    cat<<EOF
+$0
+
+Show me the commit that are useful to write a meaningful changelog
+--
+
+EOF
+}
+
+clk_help_handler "$@"
+
+git log $(git tag | sort -V|tail -1).. --oneline --reverse clk
