@@ -36,11 +36,6 @@ clk fork mytool
 
 Now, simply install this tool, like suggested.
 
-#+NAME: remember-current-clk
-#+BEGIN_SRC bash :results none :exports none :session 807c02cd-a6cf-432f-b982-530fc81dbbf4
-CURRENT_CLK="$(clk python -c 'from pathlib import Path; import clk ; print(Path(clk.__path__[0]).parent)')"
-#+END_SRC
-
 #+NAME: install
 #+BEGIN_SRC bash :results none :exports code :session 807c02cd-a6cf-432f-b982-530fc81dbbf4 :noweb yes
 python3 -m venv venv
@@ -50,12 +45,19 @@ export PATH="$(pwd)/venv/bin/:${PATH}"
 
 #+NAME: install-current-clk
 #+BEGIN_SRC bash :results none :exports none :session 807c02cd-a6cf-432f-b982-530fc81dbbf4
-  if test -e /dist/clk*
+  # this reproduces the logic in the INSTALLER function in the root Earthfile. It
+  # might be good to refactor this in the future.
+  if test "$from" = "pypi"
   then
-      # installing the version of clk that was left here. It matches the one we are currently testing
-     ./venv/bin/pip install /dist/*
+      ./venv/bin/pip install clk${pypi_version}
+  elif test "$from" = "build"
+  then
+      ./venv/bin/pip install /dist/*
   else
-     ./venv/bin/pip install "${CURRENT_CLK}"
+      # fall back in assuming that I run this from my machine, where clk is
+      # installed in editable mode
+      CURRENT_CLK="$(clk python -c 'from pathlib import Path; import clk ; print(Path(clk.__path__[0]).parent)')"
+      ./venv/bin/pip install "${CURRENT_CLK}"
   fi
 #+END_SRC
 
@@ -180,8 +182,6 @@ Commands:
 <<init>>
 
 <<fork>>
-
-<<remember-current-clk>>
 
 <<install>>
 

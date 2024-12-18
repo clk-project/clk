@@ -1,21 +1,26 @@
 #!/bin/bash -eu
-# [[file:rolling_your_own.org::+BEGIN_SRC bash :tangle rolling_your_own.sh :exports none :noweb yes :shebang "#!/bin/bash -eu"][No heading:10]]
+# [[file:../../doc/use_cases/tests/use_cases/rolling_your_own.sh :exports none :noweb yes :shebang "#!/bin/bash -eu"][No heading:9]]
 . ./sandboxing.sh
 
 clk fork mytool
-
-CURRENT_CLK="$(clk python -c 'from pathlib import Path; import clk ; print(Path(clk.__path__[0]).parent)')"
 
 python3 -m venv venv
 ./venv/bin/pip install ./mytool
 export PATH="$(pwd)/venv/bin/:${PATH}"
 
-if test -e /dist/clk*
+# this reproduces the logic in the INSTALLER function in the root Earthfile. It
+# might be good to refactor this in the future.
+if test "$from" = "pypi"
 then
-    # installing the version of clk that was left here. It matches the one we are currently testing
-   ./venv/bin/pip install /dist/*
+    ./venv/bin/pip install clk${pypi_version}
+elif test "$from" = "build"
+then
+    ./venv/bin/pip install /dist/*
 else
-   ./venv/bin/pip install "${CURRENT_CLK}"
+    # fall back in assuming that I run this from my machine, where clk is
+    # installed in editable mode
+    CURRENT_CLK="$(clk python -c 'from pathlib import Path; import clk ; print(Path(clk.__path__[0]).parent)')"
+    ./venv/bin/pip install "${CURRENT_CLK}"
 fi
 
 mkdir -p "${TMP}/mytool-root"
@@ -55,4 +60,4 @@ exit 1
 
 
 mytool --help
-# No heading:10 ends here
+# No heading:9 ends here
