@@ -36,6 +36,11 @@ clk fork mytool
 
 Now, simply install this tool, like suggested.
 
+#+NAME: remember-current-clk-before-installing-mytool
+#+BEGIN_SRC bash :results none :exports none :session 807c02cd-a6cf-432f-b982-530fc81dbbf4
+CURRENT_CLK="$(clk python -c 'from pathlib import Path; import clk ; print(Path(clk.__path__[0]).parent)')"
+#+END_SRC
+
 #+NAME: install
 #+BEGIN_SRC bash :results none :exports code :session 807c02cd-a6cf-432f-b982-530fc81dbbf4 :noweb yes
 python3 -m venv venv
@@ -56,7 +61,6 @@ export PATH="$(pwd)/venv/bin/:${PATH}"
   else
       # fall back in assuming that I run this from my machine, where clk is
       # installed in editable mode
-      CURRENT_CLK="$(clk python -c 'from pathlib import Path; import clk ; print(Path(clk.__path__[0]).parent)')"
       ./venv/bin/pip install "${CURRENT_CLK}"
   fi
 #+END_SRC
@@ -182,6 +186,8 @@ Commands:
 <<init>>
 
 <<fork>>
+
+<<remember-current-clk-before-installing-mytool>>
 
 <<install>>
 

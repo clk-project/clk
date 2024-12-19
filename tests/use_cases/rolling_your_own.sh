@@ -1,8 +1,10 @@
 #!/bin/bash -eu
-# [[file:../../doc/use_cases/tests/use_cases/rolling_your_own.sh :exports none :noweb yes :shebang "#!/bin/bash -eu"][No heading:9]]
+# [[file:../../doc/use_cases/tests/use_cases/rolling_your_own.sh :exports none :noweb yes :shebang "#!/bin/bash -eu"][No heading:10]]
 . ./sandboxing.sh
 
 clk fork mytool
+
+CURRENT_CLK="$(clk python -c 'from pathlib import Path; import clk ; print(Path(clk.__path__[0]).parent)')"
 
 python3 -m venv venv
 ./venv/bin/pip install ./mytool
@@ -19,7 +21,6 @@ then
 else
     # fall back in assuming that I run this from my machine, where clk is
     # installed in editable mode
-    CURRENT_CLK="$(clk python -c 'from pathlib import Path; import clk ; print(Path(clk.__path__[0]).parent)')"
     ./venv/bin/pip install "${CURRENT_CLK}"
 fi
 
@@ -60,4 +61,4 @@ exit 1
 
 
 mytool --help
-# No heading:9 ends here
+# No heading:10 ends here
