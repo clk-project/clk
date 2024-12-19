@@ -103,3 +103,18 @@ clk ipfs name publish somecid alice
 
 #+RESULTS[84c8dee5526fa6b8a268a131121cbdc82265ea5c]: call-publish
 : ipfs name publish --key=alice somecid
+
+#+NAME: run
+#+BEGIN_SRC bash :results none :exports none :tangle ../../tests/use_cases/ipfs_name_publish.sh :noweb yes :shebang "#!/bin/bash -eu"
+  <<init>>
+
+  <<list-key>>
+
+  check-result(call-ipfs-key-list)
+
+  <<name-publish>>
+
+  check-result(try-completion)
+
+  check-result(call-publish)
+#+END_SRC

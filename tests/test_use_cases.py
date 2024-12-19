@@ -68,3 +68,7 @@ def test_controlling_a_server_using_an_environment_variable():
 
 def test_choices():
     call_script('choices.sh')
+
+
+def test_ipfs_name_publish():
+    call_script('ipfs_name_publish.sh')
