@@ -12,9 +12,9 @@ cached-property==2.0.1
     # via clk (setup.py)
 certifi==2024.12.14
     # via requests
-charset-normalizer==3.4.0
+charset-normalizer==3.4.1
     # via requests
-click==8.1.7
+click==8.1.8
     # via
     #   click-didyoumean
     #   click-log
@@ -39,7 +39,7 @@ idna==3.10
     # via requests
 ipdb==0.13.13
     # via clk (setup.py)
-ipython==8.30.0
+ipython==8.31.0
     # via ipdb
 jedi==0.19.2
     # via ipython
@@ -63,11 +63,11 @@ pure-eval==0.2.3
     # via stack-data
 pydotplus==2.0.2
     # via clk (setup.py)
-pygments==2.18.0
+pygments==2.19.1
     # via
     #   clk (setup.py)
     #   ipython
-pyparsing==3.2.0
+pyparsing==3.2.1
     # via pydotplus
 python-dateutil==2.9.0.post0
     # via clk (setup.py)
@@ -85,7 +85,7 @@ traitlets==5.14.3
     # via
     #   ipython
     #   matplotlib-inline
-urllib3==2.2.3
+urllib3==2.3.0
     # via requests
 wcwidth==0.2.13
     # via prompt-toolkit
