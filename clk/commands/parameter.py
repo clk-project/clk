@@ -163,7 +163,7 @@ def unset(cmds):
 
 @parameter.command(handle_dry_run=True)
 @flag('--name-only/--no-name-only', help='Only display the command names')
-@Colorer.color_options
+@Colorer.color_options(full_default=True)
 @option('--under', help='Limit the scope to the commands under the given namespace', type=CommandType())
 @table_format(default='key_value')
 @table_fields(choices=['command', 'parameters'])
