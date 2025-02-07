@@ -1,0 +1,36 @@
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+    tags: ["v*"]
+  pull_request:
+    branches: [ main ]
+
+# this concurrency settings means that there will be only one job at a time,
+concurrency:
+  group: ${{ github.ref_name }}
+
+jobs:
+  test:
+    if: ${{ ! startsWith(github.ref, 'refs/tags/') }}
+    runs-on: ubuntu-latest
+    env:
+      FORCE_COLOR: 1
+    steps:
+    - uses: actions/checkout@v2
+    - name: Download latest earthly
+      run: "sudo /bin/sh -c 'wget https://github.com/earthly/earthly/releases/download/v0.8.15/earthly-linux-amd64 -O /usr/local/bin/earthly && chmod +x /usr/local/bin/earthly'"
+    - name: Test
+      run: earthly --secret SONAR_TOKEN="${SONAR_TOKEN}" --ci +sanity-check
+  deploy:
+    if: ${{ startsWith(github.ref, 'refs/tags/') }}
+    runs-on: ubuntu-latest
+    env:
+      FORCE_COLOR: 1
+    steps:
+    - uses: actions/checkout@v2
+    - name: Download latest earthly
+      run: "sudo /bin/sh -c 'wget https://github.com/earthly/earthly/releases/download/v0.8.15/earthly-linux-amd64 -O /usr/local/bin/earthly && chmod +x /usr/local/bin/earthly'"
+    - name: Test
+      run: earthly --secret SONAR_TOKEN="${{ secrets.SONAR_TOKEN }}" --secret pypi_username="__token__" --secret pypi_password="${{ secrets.PYPI_TOKEN }}" --ci --push +deploy
