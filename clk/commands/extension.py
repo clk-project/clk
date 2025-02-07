@@ -592,12 +592,13 @@ def update(extension, method, install_deps, branch):
             continue
         with cd(root):
             if not branch:
-                current_branch_name = check_output(['git', 'rev-parse', '--abbrev-ref', 'HEAD'])
+                current_branch_name = check_output(['git', 'rev-parse', '--abbrev-ref', 'HEAD']).strip()
                 if current_branch_name not in ('main', 'master'):
                     LOGGER.warning(f'I will update {cmd.name} on branch {current_branch_name}.'
                                    ' It does not look like a main branch name.'
                                    ' To get back to the main branch,'
-                                   ' consider using --branch main.')
+                                   ' consider calling `clk extension update'
+                                   f' {cmd.name} --branch main` (or master).')
             need_stash = False
             if method == 'clean':
                 call(['git', 'clean', '-fd'])
