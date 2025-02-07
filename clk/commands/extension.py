@@ -579,7 +579,8 @@ def _install_deps(ctx, extension, break_system_packages):
 @flag('--stash', 'method', flag_value='stash', help='Stash local modification and update')
 @flag('--no-clean', 'method', flag_value='no-clean', help="Don't try cleaning the repository before pulling")
 @flag('--install-deps/--no-install-deps', help='Automatically install the dependencies.', default=True)
-def update(extension, method, install_deps):
+@option('--branch', help='Make sure to get into that branch before updating')
+def update(extension, method, install_deps, branch):
     """Update this cloned extension"""
     for cmd in extension:
         root = Path(cmd.location)
@@ -590,6 +591,13 @@ def update(extension, method, install_deps):
                            ' cloned extensions.')
             continue
         with cd(root):
+            if not branch:
+                current_branch_name = check_output(['git', 'rev-parse', '--abbrev-ref', 'HEAD'])
+                if current_branch_name not in ('main', 'master'):
+                    LOGGER.warning(f'I will update {cmd.name} on branch {current_branch_name}.'
+                                   ' It does not look like a main branch name.'
+                                   ' To get back to the main branch,'
+                                   ' consider using --branch main.')
             need_stash = False
             if method == 'clean':
                 call(['git', 'clean', '-fd'])
@@ -600,6 +608,8 @@ def update(extension, method, install_deps):
                               '')
             if need_stash:
                 call(split('git stash'))
+            if branch:
+                call(['git', 'checkout', branch])
             call(['git', 'pull'])
             if need_stash:
                 call(split('git stash pop'))
