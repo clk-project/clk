@@ -117,11 +117,11 @@ def rename(profile_source, plugin, new_name):
     'plugin',
     expose_class=PluginConfig,
     type=PluginType(),
-    help='The plugin to rename',
+    help='The plugin to edit',
     expose_value=True,
 )
 def edit(profile_source, plugin):
-    """Rename the plugin"""
+    """Edit a plugin"""
     path = Path(profile_source.location) / 'plugins' / (plugin + '.py')
     click.edit(filename=path)
 
@@ -138,7 +138,7 @@ def edit(profile_source, plugin):
     'plugin',
     expose_class=PluginConfig,
     type=PluginType(),
-    help='The plugin to rename',
+    help='The plugin to remove',
     expose_value=True,
 )
 @flag('--force', help="Don't ask for confirmation")
@@ -161,7 +161,7 @@ def remove(force, profile_source, plugin):
     'plugin',
     expose_class=PluginConfig,
     type=PluginType(),
-    help='The plugin to rename',
+    help='The plugin to find',
     expose_value=True,
 )
 def which(profile_source, plugin):
@@ -188,7 +188,7 @@ def which(profile_source, plugin):
 @option('--body', help='The initial body to put', default='')
 @option('--description', help='The initial description to put', default='Description')
 def create(profile_source, new_name, open, force, body, description):
-    """Rename the plugin"""
+    """Create a new plugin"""
     script_path = Path(profile_source.location) / 'plugins' / (new_name + '.py')
     makedirs(script_path.parent)
     if script_path.exists() and not force:
