@@ -16,7 +16,7 @@ from clk.customcommands import build_update_extension_callback
 from clk.lib import call, quote, updated_env, value_to_string, which
 from clk.log import get_logger
 from clk.overloads import AutomaticOption
-from clk.types import Date
+from clk.types import Date, Suggestion
 
 LOGGER = get_logger(__name__)
 
@@ -180,7 +180,10 @@ class ExternalCommandResolver(CommandResolver):
 
         def get_type(t):
             if t.startswith('['):
-                t = click.Choice(json.loads(t))
+                if t.endswith('+'):
+                    t = Suggestion(json.loads(t[:-1]))
+                else:
+                    t = click.Choice(json.loads(t))
             elif '.' in t:
                 t = t.split('.')
                 m = importlib.import_module('.'.join(t[:-1]))
