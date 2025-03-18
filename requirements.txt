@@ -39,7 +39,7 @@ idna==3.10
     # via requests
 ipdb==0.13.13
     # via clk (setup.py)
-ipython==9.0.1
+ipython==9.0.2
     # via ipdb
 ipython-pygments-lexers==1.1.1
     # via ipython
