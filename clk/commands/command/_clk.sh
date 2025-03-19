@@ -215,3 +215,39 @@ clk_format_choice () {
     done
     echo -n ']'
 }
+
+clk_fg_red () {
+    tput setaf 1
+}
+
+clk_fg_green () {
+    tput setaf 2
+}
+
+clk_fg_yellow () {
+    tput setaf 3
+}
+
+clk_fg_blue () {
+    tput setaf 4
+}
+
+clk_fg_purple () {
+    tput setaf 5
+}
+
+clk_fg_cyan () {
+    tput setaf 5
+}
+
+clk_fg_white () {
+    tput setaf 7
+}
+
+clk_fg_grey () {
+    tput setaf 7
+}
+
+clk_fg_no () {
+    tput sgr0
+}
