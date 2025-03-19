@@ -123,9 +123,11 @@ class ExternalCommandResolver(CommandResolver):
                                                    ' got {}'.format(path, line))
                         flags.append(m.groupdict())
                     if line.startswith('A:'):
-                        m = re.match('^A:(?P<name>[^:]+):(?P<type>[^:]+):(?P<help>[^:]+)(:(?P<nargs>[^:]+))?$', line)
+                        m = re.match(
+                            '^A:(?P<name>[^:]+):(?P<type>[^:]+):(?P<help>[^:]+)(:(?P<nargs>[^:]+))?(:(?P<default>[^:]+))?$',
+                            line)
                         if m is None:
-                            raise click.UsageError('Expected format in {} is A:name:type:help[:nargs],'
+                            raise click.UsageError('Expected format in {} is A:name:type:help[:nargs[:default]],'
                                                    ' got {}'.format(path, line))
                         arguments.append(m.groupdict())
                     m = re.match('^N:(?P<help>[^:]+)$', line)
@@ -215,6 +217,7 @@ class ExternalCommandResolver(CommandResolver):
                 a['name'],
                 help=a['help'],
                 type=t or str,
+                default=a['default'] or None,
                 nargs=int(a['nargs'] or '1'),
             )(external_command)
         for f in flags:
