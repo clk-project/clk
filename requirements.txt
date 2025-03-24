@@ -70,7 +70,7 @@ pygments==2.19.1
     #   clk (setup.py)
     #   ipython
     #   ipython-pygments-lexers
-pyparsing==3.2.1
+pyparsing==3.2.2
     # via pydotplus
 python-dateutil==2.9.0.post0
     # via clk (setup.py)
