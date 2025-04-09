@@ -84,7 +84,7 @@ clk_urldecode () {
 
 clk_urlencode() {
     # urlencode <string>
-    old_lc_collate=$LC_COLLATE
+    old_lc_collate=${LC_COLLATE-}
     LC_COLLATE=C
 
     local length="${#1}"
