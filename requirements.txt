@@ -39,7 +39,7 @@ idna==3.10
     # via requests
 ipdb==0.13.13
     # via clk (setup.py)
-ipython==9.0.2
+ipython==9.1.0
     # via ipdb
 ipython-pygments-lexers==1.1.1
     # via ipython
@@ -70,7 +70,7 @@ pygments==2.19.1
     #   clk (setup.py)
     #   ipython
     #   ipython-pygments-lexers
-pyparsing==3.2.2
+pyparsing==3.2.3
     # via pydotplus
 python-dateutil==2.9.0.post0
     # via clk (setup.py)
