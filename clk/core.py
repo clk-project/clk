@@ -285,10 +285,8 @@ class SomeChoices(DynamicChoiceType):
         return [click.shell_completion.CompletionItem(name) for name in self.choices() if startswith(name, incomplete)]
 
     def convert(self, value, param, ctx):
-        if ctx.resilient_parsing:
-            return value
         choices = self.choices()
-        if value not in choices:
+        if not ctx.resilient_parsing and value not in choices:
             self.fail('invalid choice: %s. (choose from %s)' % (value, ', '.join(choices)), param, ctx)
         if isinstance(choices, dict):
             if not isinstance(value, str) and value in choices.values():
