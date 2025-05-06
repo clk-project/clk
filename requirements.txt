@@ -10,9 +10,9 @@ asttokens==3.0.0
     # via stack-data
 cached-property==2.0.1
     # via clk (setup.py)
-certifi==2025.1.31
+certifi==2025.4.26
     # via requests
-charset-normalizer==3.4.1
+charset-normalizer==3.4.2
     # via requests
 click==8.1.8
     # via
@@ -39,7 +39,7 @@ idna==3.10
     # via requests
 ipdb==0.13.13
     # via clk (setup.py)
-ipython==9.1.0
+ipython==9.2.0
     # via ipdb
 ipython-pygments-lexers==1.1.1
     # via ipython
