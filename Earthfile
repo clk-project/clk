@@ -172,7 +172,7 @@ sonar:
     COPY --dir +sources/app/clk +git-files/app/* +side-files/app/sonar-project.properties /app/
     WORKDIR /app
     IF [ "$use_branch" = "no" ]
-        # asserts the repository is clean when working in a long-liver branch
+        # asserts the repository is clean when working in a long-lived branch
         RUN [ "$(git status --porcelain clk | wc -l)" = "0" ]
     END
     RUN echo sonar.projectVersion=$(git tag --sort=creatordate --merged|grep '^v'|tail -1) >> /app/sonar-project.properties
