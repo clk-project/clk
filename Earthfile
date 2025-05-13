@@ -155,8 +155,9 @@ fix-quality:
 
 test-install-ubuntu:
     FROM ubuntu:24.04
-    RUN apt-get update && apt-get install --yes sudo curl python3
+    RUN apt-get update && apt-get install --yes sudo curl python3 python3-venv
     DO e+USE_USER --sudoer=y --uid=1001
+    DO e+PYTHON_VENV --base=$(pwd)/venv
     ARG from=doc
     DO +INSTALL --from=${from}
     RUN test foo = "$(clk echo foo)"
