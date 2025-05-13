@@ -157,7 +157,8 @@ test-install-ubuntu:
     FROM ubuntu:24.04
     RUN apt-get update && apt-get install --yes sudo curl python3
     DO e+USE_USER --sudoer=y --uid=1001
-    DO +INSTALL --from=doc
+    ARG from=doc
+    DO +INSTALL --from=${from}
     RUN test foo = "$(clk echo foo)"
 
 sonar:
@@ -197,7 +198,8 @@ local-sanity-check:
 sanity-check:
     FROM scratch
     BUILD +check-quality
-    BUILD +test-install-ubuntu
+    ARG from=source
+    BUILD +test-install-ubuntu --from=${from}
     ARG use_git=true
     ARG use_branch=no
     ARG build_requirements=no
