@@ -171,6 +171,10 @@ sonar:
     COPY (+test/output --from="$from" --use_git="$use_git" --build_requirements="${build_requirements}") /app/output
     COPY --dir +sources/app/clk +git-files/app/* +side-files/app/sonar-project.properties /app/
     WORKDIR /app
+    # make sonar able to fetch blame information
+    # otherwise, we get the following error
+    # deploy  Test    2025-05-13T11:07:22.3393530Z +sonar *failed* | 11:07:17.446 WARN  Shallow clone detected, no blame information will be provided. You can convert to non-shallow with 'git fetch --unshallow'.
+    RUN git rev-parse --is-shallow-repository && git fetch --unshallow
     IF [ "$use_branch" = "no" ]
         # asserts the repository is clean when working in a long-lived branch
         RUN [ "$(git status --porcelain clk | wc -l)" = "0" ]
