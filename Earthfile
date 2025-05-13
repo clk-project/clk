@@ -155,9 +155,11 @@ fix-quality:
 
 test-install-ubuntu:
     FROM ubuntu:24.04
-    RUN apt-get update && apt-get install --yes sudo curl python3
+    RUN apt-get update && apt-get install --yes sudo curl python3 python3-venv
     DO e+USE_USER --sudoer=y --uid=1001
-    DO +INSTALL --from=doc
+    DO e+PYTHON_VENV --base=$(pwd)/venv
+    ARG from=doc
+    DO +INSTALL --from=${from}
     RUN test foo = "$(clk echo foo)"
 
 sonar:
@@ -169,8 +171,12 @@ sonar:
     COPY (+test/output --from="$from" --use_git="$use_git" --build_requirements="${build_requirements}") /app/output
     COPY --dir +sources/app/clk +git-files/app/* +side-files/app/sonar-project.properties /app/
     WORKDIR /app
+    # make sonar able to fetch blame information
+    # otherwise, we get the following error
+    # deploy  Test    2025-05-13T11:07:22.3393530Z +sonar *failed* | 11:07:17.446 WARN  Shallow clone detected, no blame information will be provided. You can convert to non-shallow with 'git fetch --unshallow'.
+    RUN git rev-parse --is-shallow-repository && git fetch --unshallow
     IF [ "$use_branch" = "no" ]
-        # asserts the repository is clean when working in a long-liver branch
+        # asserts the repository is clean when working in a long-lived branch
         RUN [ "$(git status --porcelain clk | wc -l)" = "0" ]
     END
     RUN echo sonar.projectVersion=$(git tag --sort=creatordate --merged|grep '^v'|tail -1) >> /app/sonar-project.properties
@@ -197,7 +203,8 @@ local-sanity-check:
 sanity-check:
     FROM scratch
     BUILD +check-quality
-    BUILD +test-install-ubuntu
+    ARG from=build
+    BUILD +test-install-ubuntu --from=${from}
     ARG use_git=true
     ARG use_branch=no
     ARG build_requirements=no
