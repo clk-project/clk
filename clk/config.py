@@ -654,7 +654,7 @@ config_cls = None
 def setup_config_class(cls=Config):
     from clk import completion
     completion.CASE_INSENSITIVE_ENV = '_{}_CASE_INSENSITIVE_COMPLETION'.format(cls.app_name.upper().replace('-', '_'))
-    global configs, config_cls
+    global config_cls
     config_cls = cls
     del configs[:]
     configs.append(config_cls())
