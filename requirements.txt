@@ -74,7 +74,7 @@ pyparsing==3.2.3
     # via pydotplus
 python-dateutil==2.9.0.post0
     # via clk (setup.py)
-requests==2.32.3
+requests==2.32.4
     # via clk (setup.py)
 six==1.17.0
     # via python-dateutil
