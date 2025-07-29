@@ -5,7 +5,7 @@ When you get used to create groups of commands, you generally end up having a se
 
 It is handy to have each command do one thing and do it well, while at the same time have a shortcut to chain them.
 
-For the sake of the example, let's suppose you are writing a bunch of commands to perform 3d printing. Hereafter, the printing aspect will be mocked. It's only interest is to show one of my real life usages of clk.
+For the sake of the example, let's suppose you are writing a bunch of commands to perform 3d printing. Hereafter, the printing aspect will be mocked. Its only interest is to show one of my real life usages of clk.
 
 You would first create the group of commands named `printer` like so.
 
@@ -53,7 +53,7 @@ def calibrate():
 
 Great, we created three commands to play with our printer.
 
-In most cases, we want to chain those commands is a flow.
+In most cases, we want to chain those commands in a so-called flow.
 
 Let's define such a flow.
 
@@ -68,6 +68,8 @@ def flow(**kwargs):
     """Run the whole flow"""
     print("The flow is done")
 ```
+
+Note that calibrate, slice and send don't have any precedence relationship between each other. By providing `flow_command`, `flow_option` and `flow_argument` in that order, we explicitly say to the command named flow that it should run them from top to bottom: calibrate, slice and then send.
 
 The flow\_option and flow\_argument lines tell that this new command "captures" those parameters from the respective commands.
 

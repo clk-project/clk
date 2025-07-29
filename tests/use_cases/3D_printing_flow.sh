@@ -1,5 +1,5 @@
 #!/bin/bash -eu
-# [[file:../../doc/use_cases/3D_printing_flow.org::script][script]]
+# [[id:841a8082-597b-45cc-8a4d-115e31137dc9::script][script]]
 . ./sandboxing.sh
 
 clk command create python --group printer --description "This is a group of commands to deal with 3D printing."

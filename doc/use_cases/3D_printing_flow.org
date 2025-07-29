@@ -18,7 +18,7 @@ It is handy to have each command do one thing and do it well, while at the same
 time have a shortcut to chain them.
 
 For the sake of the example, let's suppose you are writing a bunch of commands
-to perform 3d printing. Hereafter, the printing aspect will be mocked. It's only
+to perform 3d printing. Hereafter, the printing aspect will be mocked. Its only
 interest is to show one of my real life usages of clk.
 
 You would first create the group of commands named ~printer~ like so.
@@ -86,7 +86,7 @@ this calibrate command.
 
 Great, we created three commands to play with our printer.
 
-In most cases, we want to chain those commands is a flow.
+In most cases, we want to chain those commands in a so-called flow.
 
 Let's define such a flow.
 
@@ -102,6 +102,11 @@ Let's define such a flow.
       """Run the whole flow"""
       print("The flow is done")
 #+END_SRC
+
+Note that calibrate, slice and send don't have any precedence relationship
+between each other. By providing ~flow_command~, ~flow_option~ and ~flow_argument~ in
+that order, we explicitly say to the command named flow that it should run them
+from top to bottom: calibrate, slice and then send.
 
 The flow_option and flow_argument lines tell that this new command "captures"
 those parameters from the respective commands.
@@ -212,6 +217,7 @@ Here, your mileage may vary. Choose the implementation that suits you better.
   :PROPERTIES:
   :CREATED:  [2024-02-16 17:20]
   :CUSTOM_ID: 96a6905e-06bd-48d5-a117-7e81ebde9399
+  :ID:       841a8082-597b-45cc-8a4d-115e31137dc9
   :END:
 
   Let's assume you miss-typed the flow dependencies. Something like.
