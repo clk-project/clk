@@ -111,7 +111,7 @@ _clk_eval_env_by_name ( ) {
     echo "${!name}"
 }
 
-clk_debubp () {
+clk_debugp () {
     [ "$(_clk_eval_env_by_name ${CLK_APPNAME_UPPER}__LOG_LEVEL)" = "debug" ] \
         || [ "$(_clk_eval_env_by_name ${CLK_APPNAME_UPPER}__LOG_LEVEL)" = "develop" ] \
         || [ "$(_clk_eval_env_by_name ${CLK_APPNAME_UPPER}__DEBUG)" = "True" ] \
@@ -124,7 +124,7 @@ clk_help_handler () {
 		clk_usage
 		exit 0
 	fi
-    if clk_debubp
+    if clk_debugp
     then
         set -x
     fi
@@ -188,7 +188,7 @@ clk_popline ( ) {
 }
 
 clk_out () {
-    if clk_debubp
+    if clk_debugp
     then
         echo /dev/stdout
     else
@@ -197,7 +197,7 @@ clk_out () {
 }
 
 clk_err () {
-    if clk_debubp
+    if clk_debugp
     then
         echo /dev/stderr
     else
