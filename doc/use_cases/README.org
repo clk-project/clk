@@ -13,9 +13,11 @@ Here are some use cases that hopefully will have the following properties:
   :END:
 
   The basics are covered [[file:bash_command.org][here]]. To get more into how to provide parameters to
-  your command, read [[file:bash_command_use_option.org][that one]].
+  your command, read [[file:bash_command_use_option.org][that one]]. If your parameters are too complicated to be
+  simply parsed, follow the idea of this [[file:send_sms.org][use case]].
 
-  If you find out that your bash command starts to become quite big, read [[file:bash_command_import.org][this]] to find out how to split your code.
+  If you find out that your bash command starts to become quite big, read [[file:bash_command_import.org][this]]
+  to find out how to split your code.
 
   Most of my bash commands start with simple aliases. You can read more about
   this way of thinking in [[file:bash_command_from_alias.org][here]].

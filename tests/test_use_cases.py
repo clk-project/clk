@@ -72,3 +72,7 @@ def test_choices():
 
 def test_ipfs_name_publish():
     call_script('ipfs_name_publish.sh')
+
+
+def test_send_sms():
+    call_script('send_sms.sh')

@@ -1,4 +1,4 @@
-# [[file:bash_command_import.org::+BEGIN_SRC bash :tangle bash_command_import.sh :exports none :noweb yes][No heading:6]]
+# [[id:0a89868c-4cbb-4f83-874a-21ce32b4508f::+BEGIN_SRC bash :tangle ../../tests/use_cases/bash_command_import.sh :exports none :noweb yes][No heading:6]]
 #!/bin/bash -eu
 
 set -e

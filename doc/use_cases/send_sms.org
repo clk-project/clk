@@ -1,0 +1,218 @@
+:PROPERTIES:
+:ID:       3781d830-096f-4fb6-9e77-d18586507997
+:END:
+#+language: en
+#+EXPORT_FILE_NAME: ./send_sms.md
+
+#+CALL: ../../lp.org:check-result()
+
+#+name: init
+#+BEGIN_SRC bash :results none :exports none :session 3781d830-096f-4fb6-9e77-d18586507997
+  . ./sandboxing.sh
+#+END_SRC
+
+I like controlling my phone from the comfort of my computer. This includes
+sending sms. termux provides a way to do so, but the interface is quite low
+level. Let's try to do better and take advantage of this situation to introduce
+a more complicated use case of using parameters in bash.
+
+Let's start by mocking the use of termux.
+
+#+NAME: termux-helpers
+#+BEGIN_SRC bash :results verbatim :exports code
+  dumb_contacts='
+  [
+  {
+      "name": "Martha Thomas",
+      "number": "+123456789"
+    },
+    {
+      "name": "Wendy Hodges",
+      "number": "+987654321"
+    },
+    {
+      "name": "Kyle Nguyen",
+      "number": "+1122334455"
+    },
+    {
+      "name": "Peter Harris",
+      "number": "+5566778899"
+  }
+  ]
+  '
+
+  termux-contact-names () {
+      # would call something like ssh myphone termux-contact-list | jq -r '.[].name'
+      echo "$dumb_contacts" | jq -r '.[].name'
+  }
+
+  termux-contact-number () {
+      local name="$1"
+      # would call termux-run termux-contact-list | jq -r ".[] | select(.name == \"${name}\").number"
+      echo "$dumb_contacts" | jq -r ".[] | select(.name == \"${name}\").number"
+  }
+#+END_SRC
+
+Let's suppose this code is put under ~./lib/termux~ in the ~bin~ folder where
+the bash commands are put. See [[file:bash_command_import.org][this documentation]] for more information about
+importing libraries.
+
+#+NAME: install-lib
+#+BEGIN_SRC bash :results none :exports none :noweb yes :session 3781d830-096f-4fb6-9e77-d18586507997
+  mkdir -p "${CLKCONFIGDIR}/bin/lib"
+  cat<<"EOF" > "${CLKCONFIGDIR}/bin/lib/termux"
+<<termux-helpers>>
+EOF
+#+END_SRC
+
+Now, let's use that library to have a nice completion of contacts
+
+The beginning of the script looks like this[fn:1]:
+
+#+NAME: command
+#+BEGIN_SRC bash :results verbatim :exports code
+#!/bin/bash -eu
+
+source "_clk.sh"
+
+clk_import termux
+
+clk_usage () {
+    cat<<EOF
+$0
+
+Send a sms to some contacts of mine
+--
+A:name:$(termux-contact-names|clk_list_to_choice):This contact:-1
+O:--message:str:What to say
+EOF
+}
+
+clk_help_handler "$@"
+
+#+END_SRC
+
+So far so good, we can create the command termux.smd.send with that content and
+start seeing the completion with our contacts names appear. Note the ~-1~
+that means we can provide several contacts.
+
+#+NAME: create-command
+#+BEGIN_SRC bash :results verbatim :noweb yes :exports none :session 3781d830-096f-4fb6-9e77-d18586507997
+  clk command create bash termux.sms.send --no-open
+  cat <<"EOC" > "$(clk command which termux.sms.send)"
+  <<command>>
+  EOC
+#+END_SRC
+
+#+NAME: command-completion-sequence
+#+BEGIN_SRC bash :results verbatim :exports code
+termux sms send Mart
+#+END_SRC
+
+#+NAME: command-completion
+#+BEGIN_SRC bash :results verbatim :exports code :noweb yes
+clk <<command-completion-sequence>><TAB>
+#+END_SRC
+
+#+NAME: command-completion-doit
+#+BEGIN_SRC bash :results verbatim :exports results :noweb yes :session 3781d830-096f-4fb6-9e77-d18586507997 :cache yes
+clk completion try --remove-bash-formatting --last <<command-completion-sequence>>
+#+END_SRC
+
+#+RESULTS[cc8034420029642aa01a3a0f6f868b0b2b588f18]: command-completion-doit
+: Martha Thomas
+
+Now, the contacts provided by clk with ~clk_value~ (see [[file:bash_command_use_option.org][that doc]]) are space
+separated, but the values already contain spaces.
+
+Let's try running this code for instance directly in the script.
+
+#+NAME: with-clk-value
+#+BEGIN_SRC bash :results verbatim :exports code
+clk_value name
+#+END_SRC
+
+#+NAME: create-with-clk-value
+#+BEGIN_SRC bash :results verbatim :exports none :noweb yes :session 3781d830-096f-4fb6-9e77-d18586507997
+cat<<"EOC" > "$(clk command which termux.sms.send)"
+<<command>>
+
+<<with-clk-value>>
+EOC
+#+END_SRC
+
+#+RESULTS: create-with-clk-value
+
+#+NAME: try-with-clk-value
+#+BEGIN_SRC bash :results verbatim :exports both :session 3781d830-096f-4fb6-9e77-d18586507997 :cache yes
+clk termux sms send "Wendy Hodges" "Kyle Nguyen"
+#+END_SRC
+
+#+RESULTS[ec257e902b73f60daf8beb9930136eec1b70f9ba]: try-with-clk-value
+: Wendy Hodges Kyle Nguyen
+
+See? There is nothing allowing our script to find out whether we are dealing
+with one, two three or four names.
+
+I cases where the arguments contain complicated stuffs like that, you can simply
+get the json representation of them in the special ~CLK____JSON~ environment
+variable.
+
+Now, we can do something with them without risking of getting into issues with
+spaces.
+
+#+NAME: with-json
+#+BEGIN_SRC bash :results verbatim :exports code
+names () {
+    echo "${CLK____JSON}"|jq -r '.name[]'
+}
+numbers () {
+    while read name
+    do
+        termux-contact-number "${name}"
+    done < <(names)
+}
+
+numbers="$(numbers|paste -s - -d,)"
+echo "ssh myphone termux-sms-send -n \"${numbers}\" \"Hello there!\""
+#+END_SRC
+
+Let's try this:
+
+#+NAME: create-with-json
+#+BEGIN_SRC bash :results verbatim :exports none :noweb yes :session 3781d830-096f-4fb6-9e77-d18586507997
+cat<<"EOC" > "$(clk command which termux.sms.send)"
+<<command>>
+
+<<with-json>>
+EOC
+#+END_SRC
+
+#+RESULTS: create-with-json
+
+#+NAME: try-with-json
+#+BEGIN_SRC bash :results verbatim :exports both :session 3781d830-096f-4fb6-9e77-d18586507997 :cache yes
+clk termux sms send "Wendy Hodges" "Kyle Nguyen"
+#+END_SRC
+
+#+RESULTS[ec257e902b73f60daf8beb9930136eec1b70f9ba]: try-with-json
+: ssh myphone termux-sms-send -n "+987654321,+1122334455" "Hello there!"
+
+#+NAME: run
+#+BEGIN_SRC bash :results none :exports none :tangle ../../tests/use_cases/send_sms.sh :noweb yes :shebang "#!/bin/bash -eu"
+  <<init>>
+  <<install-lib>>
+  <<create-command>>
+  check-result(command-completion-doit)
+  <<create-with-clk-value>>
+  check-result(try-with-clk-value)
+  <<create-with-json>>
+  check-result(try-with-json)
+#+END_SRC
+
+* Footnotes
+  :PROPERTIES:
+  :CUSTOM_ID: 494da87b-5be6-4642-a4a4-8afd3c33f813
+  :END:
+
+[fn:1] Read [[file:bash_command_use_option.org][that doc]] to find out more about the syntax.

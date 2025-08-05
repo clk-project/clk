@@ -1,6 +1,6 @@
 Some times, you want to share some pieces of code in several bash commands.
 
-You can put that code in another directory called lib sibling to the commands.
+You can put that code in another directory called lib sibling to the commands. Read [this use case](send_sms.md) for a more real life scenario.
 
 Say you want to provide a function called shout that capitalize the input.
 

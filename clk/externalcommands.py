@@ -71,6 +71,7 @@ class ExternalCommandResolver(CommandResolver):
 
         def compute_env(kwargs={}):
             env = {('CLK___' + key).upper(): (value_to_string(value)) for key, value in kwargs.items()}
+            env['CLK____JSON'] = json.dumps(kwargs, default=lambda o: str(o))
             try:
                 ctx = click.get_current_context()
                 if 'args' in ctx.params:

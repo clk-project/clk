@@ -18,7 +18,7 @@ Here are some use cases that hopefully will have the following properties:
 
 # bash commands
 
-The basics are covered [here](bash_command.md). To get more into how to provide parameters to your command, read [that one](bash_command_use_option.md).
+The basics are covered [here](bash_command.md). To get more into how to provide parameters to your command, read [that one](bash_command_use_option.md). If your parameters are too complicated to be simply parsed, follow the idea of this [use case](send_sms.md).
 
 If you find out that your bash command starts to become quite big, read [this](bash_command_import.md) to find out how to split your code.
 
