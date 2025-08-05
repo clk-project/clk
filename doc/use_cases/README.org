@@ -5,37 +5,100 @@ Here are some use cases that hopefully will have the following properties:
 - provide a better idea of what clk is capable of than a simple description,
 - show some common pattern that emerged when using clk,
 - give examples of real life uses of clk, giving hints about when it might be useful,
+* bash commands
+  :PROPERTIES:
+  :CREATED:  [2025-08-05 22:11]
+  :ID:       0d6935af-52d4-43f6-97c7-39dfd773d4f0
+  :CUSTOM_ID: 932f47a6-803b-40df-ba30-ac437aac92e2
+  :END:
 
-If you simply want to create bash commands, take a look at [[file:bash_command.org][this one]]. This [[file:bash_command_use_option.org][other
-one]] provides more insights about how to define options. When those will get
-bigger, take a look at how to [[file:bash_command_import.org][split your code]]. In particular, you might want to
-start small with [[file:bash_command_from_alias.md][simple alias and then move to bash commands]]. Also, clk provides
-some useful "[[file:bash_command_built_in_lib.org][batteries]]" to help you create a nice and friendly command.
+  The basics are covered [[file:bash_command.org][here]]. To get more into how to provide parameters to
+  your command, read [[file:bash_command_use_option.org][that one]].
 
-Sometimes, you might want to have some control about how the arguments of the
-command lines are evaluated, take a look at [[file:controlling_a_server_using_an_environment_variable.org][this use case]] to know more about them.
+  If you find out that your bash command starts to become quite big, read [[file:bash_command_import.org][this]] to find out how to split your code.
 
-Also, to create powerful, dynamic command line tools that provide the best
-completion possible, see [[file:dynamic_parameters_and_exposed_class.org][this pattern]] for writing your commands. In case you
-have some issues, you might want to look at the [[file:dynamic_parameters_advanced_use_cases.org][advanced use cases]].
+  Most of my bash commands start with simple aliases. You can read more about
+  this way of thinking in [[file:bash_command_from_alias.org][here]].
 
-When you want to provide some choices in command, it might be worthwhile to look
-at [[file:choices.org][those examples]].
+* parameters, alias etc
+  :PROPERTIES:
+  :CREATED:  [2025-08-05 22:16]
+  :CUSTOM_ID: fa3df212-fc5f-4c3e-9e3e-3f71e897c9b1
+  :END:
+  Sometimes, you might want to have some control about how the arguments of the
+  command lines are evaluated, take a look at [[file:controlling_a_server_using_an_environment_variable.org][this use case]] to know more about them.
 
-To cache some computation to disk, see the [[file:scrapping_the_web.org][web scrapping]] use case.
+* how to structure your commands
+  :PROPERTIES:
+  :CREATED:  [2025-08-05 22:16]
+  :CUSTOM_ID: 6abcb030-192b-4c73-a62f-4551d1e92a77
+  :END:
+  To create powerful, dynamic command line tools that provide the best
+  completion possible, see [[file:dynamic_parameters_and_exposed_class.org][this pattern]] for writing your commands. In case you
+  have some issues, you might want to look at the [[file:dynamic_parameters_advanced_use_cases.org][advanced use cases]].
 
-If at some point you need to deal with a project, you might want to [[file:using_a_project.org][read this]].
+** commands as first order objects
+   :PROPERTIES:
+   :CREATED:  [2025-08-05 22:24]
+   :CUSTOM_ID: d82b6533-b098-43e7-b4b8-30e283419b9b
+   :END:
 
-But, eventually, you might want to use python commands to have a full control
-over the user experience.  Then, you might want a quick look at the [[file:lib.org][available
-helpers]].
+   Sometimes, you create commands not only to be called directly, but to be used
+   as basis to build greater commands.
 
-At some point, you will definitely want to try the use case about [[file:3D_printing_flow.org][a 3D printing flow]].
+   This example of an [[file:ethereum_local_environment_dev_tool.org][ethereum local environment dev tool]] shows how to plug clk
+   commands as parameters in other commands.
 
-If you don't want to use the clk command line tool, you can [[file:rolling_your_own.org][roll your own]].
+   [[file:ipfs_name_publish.org][ipfs name publish]] shows how to use clk bash commands to create the completion
+   for other commands.
 
-Some commands might need to use secret, [[file:dealing_with_secrets.org][here is how]] we implement that.
+* batteries included
+  :PROPERTIES:
+  :CREATED:  [2025-08-05 22:17]
+  :CUSTOM_ID: 3a184190-e5cb-4e8b-bf5a-177b8ec9ec66
+  :END:
+  Like python, clk try hard to provide most of the things you want in a generic
+  command line tool.
 
-This example of an [[file:ethereum_local_environment_dev_tool.org][ethereum local environment dev tool]] shows how to plug clk
-commands as parameters in other commands. [[file:ipfs_name_publish.org][ipfs name publish]] shows how to use clk
-bash commands to create the completion for other commands.
+  In shell command, the library included by default (called _clk.sh) provides
+  some useful [[file:bash_command_built_in_lib.org][helpers]] to help you create a nice and friendly command, despite,
+  well... bash.
+
+  When you want to provide some choices in command, it might be worthwhile to look
+  at [[file:choices.org][those examples]].
+
+  To cache some computation to disk, see the [[file:scrapping_the_web.org][web scrapping]] use case.
+
+  We put a lot of useful logic in clk.lib but did not document much as of
+  now. [[file:lib.org][This]] is the current state of this documentation.
+
+  Some commands might need to use secret, [[file:dealing_with_secrets.org][here is how]] we implement that.
+
+* project
+  :PROPERTIES:
+  :CREATED:  [2025-08-05 22:19]
+  :CUSTOM_ID: 57153b01-e474-42f0-baa2-26b1b1611ae7
+  :END:
+  Sometimes, you want to gather some commands or configuration in a folder. We
+  call that folder a project.
+
+  If you want to do that to, you might want to [[file:using_a_project.org][read this]].
+
+* flow
+  :PROPERTIES:
+  :CREATED:  [2025-08-05 22:20]
+  :CUSTOM_ID: 8ad4d10e-1ece-45ef-a558-905b5996ddc4
+  :END:
+  When your commands need to be connected and called in a sequence, we call that
+  a flow.
+
+  clk does not want to compete with flow tools, like nodered, but it helps
+  having a basic flow handling from time to time, like when you have a [[file:3D_printing_flow.org][3D printing flow]].
+
+* is it a tool or a library?
+  :PROPERTIES:
+  :CREATED:  [2025-08-05 22:23]
+  :CUSTOM_ID: f291ada8-c504-4624-baa7-9c7d600d5c53
+  :END:
+
+  If you don't want to use the clk command line tool, you can [[file:rolling_your_own.org][roll your own]].

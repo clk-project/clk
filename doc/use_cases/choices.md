@@ -186,7 +186,7 @@ clk android -d cinkpeax battery status
     error:   i9300        My vacuum automator
     error:   klipad       The photo gallery
 
-Oups, I wanted to deal with my pomodoro device&#x2026;
+Oups, I wanted to deal with my pomodoro device&hellip;
 
 ```bash
 clk android -d cink-peax battery status

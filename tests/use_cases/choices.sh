@@ -1,5 +1,5 @@
 #!/bin/bash -eu
-# [[file:../../doc/use_cases/choices.org::run][run]]
+# [[id:d32467d3-931f-4df2-8277-3ed04a213eb2::run][run]]
 . ./sandboxing.sh
 clk command create python android --force --group --body "$(cat<<EOF
 import os
