@@ -116,13 +116,13 @@ class ExternalCommandResolver(CommandResolver):
                             '^O:(?P<name>[^:]+):(?P<type>[^:]+):(?P<help>[^:]+)(:(?P<default>[^:]+))?(:(?P<multiple>[^:]+))?$',
                             line)
                         if m is None:
-                            raise click.UsageError('Expected format in {} is O:name:type:help[:defautl],'
+                            raise click.UsageError('Expected format in {} is O:name:type:help[:default],'
                                                    ' got {}'.format(path, line))
                         options.append(m.groupdict())
                     if line.startswith('F:'):
                         m = re.match('^F:(?P<name>[^:]+):(?P<help>[^:]+)(:(?P<default>[^:]+))?$', line)
                         if m is None:
-                            raise click.UsageError('Expected format in {} is F:name:help[:defautl],'
+                            raise click.UsageError('Expected format in {} is F:name:help[:default],'
                                                    ' got {}'.format(path, line))
                         flags.append(m.groupdict())
                     if line.startswith('A:'):
