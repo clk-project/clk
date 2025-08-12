@@ -112,7 +112,9 @@ class ExternalCommandResolver(CommandResolver):
                 metadata_out = out[metadata_desc:]
                 for line in metadata_out.splitlines():
                     if line.startswith('O:'):
-                        m = re.match('^O:(?P<name>[^:]+):(?P<type>[^:]+):(?P<help>[^:]+)(:(?P<default>[^:]+))?$', line)
+                        m = re.match(
+                            '^O:(?P<name>[^:]+):(?P<type>[^:]+):(?P<help>[^:]+)(:(?P<default>[^:]+))?(:(?P<multiple>[^:]+))?$',
+                            line)
                         if m is None:
                             raise click.UsageError('Expected format in {} is O:name:type:help[:defautl],'
                                                    ' got {}'.format(path, line))
@@ -124,11 +126,9 @@ class ExternalCommandResolver(CommandResolver):
                                                    ' got {}'.format(path, line))
                         flags.append(m.groupdict())
                     if line.startswith('A:'):
-                        m = re.match(
-                            '^A:(?P<name>[^:]+):(?P<type>[^:]+):(?P<help>[^:]+)(:(?P<nargs>[^:]+))?(:(?P<default>[^:]+))?$',
-                            line)
+                        m = re.match('^A:(?P<name>[^:]+):(?P<type>[^:]+):(?P<help>[^:]+)(:(?P<extra>{.+}))?$', line)
                         if m is None:
-                            raise click.UsageError('Expected format in {} is A:name:type:help[:nargs[:default]],'
+                            raise click.UsageError('Expected format in {} is A:name:type:help[:{{someextrajsondata}}],'
                                                    ' got {}'.format(path, line))
                         arguments.append(m.groupdict())
                     m = re.match('^N:(?P<help>[^:]+)$', line)
@@ -209,17 +209,22 @@ class ExternalCommandResolver(CommandResolver):
                 *(o['name'].split(',')),
                 help=o['help'],
                 type=t,
-                default=t(o.get('default')) if o.get('default') is not None else None,
+                multiple=o.get('multiple') == 'True',
+                default=t(o.get('default')) if (o.get('default') not in (
+                    None,
+                    'None',
+                )) else None,
             )(external_command)
         for a in reversed(arguments):
+            extra = json.loads(a['extra'] or '{}')
             if 'type' in a:
                 t = get_type(a['type'])
             external_command = argument(
                 a['name'],
                 help=a['help'],
                 type=t or str,
-                default=a['default'] or None,
-                nargs=int(a['nargs'] or '1'),
+                default=extra.get('default'),
+                nargs=extra.get('nargs', 1),
             )(external_command)
         for f in flags:
             external_command = flag(

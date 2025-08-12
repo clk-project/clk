@@ -55,7 +55,7 @@ $0
 
 Send a sms to some contacts of mine
 --
-A:name:$(termux-contact-names|clk_list_to_choice):This contact:-1
+A:name:$(termux-contact-names|clk_list_to_choice):This contact:{"nargs": -1}
 O:--message:str:What to say
 EOF
 }
