@@ -10,9 +10,9 @@ asttokens==3.0.0
     # via stack-data
 cached-property==2.0.1
     # via clk (setup.py)
-certifi==2025.4.26
+certifi==2025.8.3
     # via requests
-charset-normalizer==3.4.2
+charset-normalizer==3.4.3
     # via requests
 click==8.1.8
     # via
@@ -39,7 +39,7 @@ idna==3.10
     # via requests
 ipdb==0.13.13
     # via clk (setup.py)
-ipython==9.2.0
+ipython==9.4.0
     # via ipdb
 ipython-pygments-lexers==1.1.1
     # via ipython
@@ -47,7 +47,7 @@ jedi==0.19.2
     # via ipython
 matplotlib-inline==0.1.7
     # via ipython
-networkx==3.4.2
+networkx==3.5
     # via clk (setup.py)
 parsedatetime==2.6
     # via clk (setup.py)
@@ -65,7 +65,7 @@ pure-eval==0.2.3
     # via stack-data
 pydotplus==2.0.2
     # via clk (setup.py)
-pygments==2.19.1
+pygments==2.19.2
     # via
     #   clk (setup.py)
     #   ipython
