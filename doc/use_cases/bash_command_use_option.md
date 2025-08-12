@@ -1,7 +1,7 @@
 An option is an optional parameter that is given a value. A flag is an optional parameter that is a boolean. An argument is a positional parameter that you must give.
 
 ```bash
-A:kind-of-animal:$(clk_format_choice duck whale cat dog):A name of animal
+A:kind-of-animal:$(clk_format_choice duck whale cat dog):A kind of animal:{"default": "duck", "nargs": 1}
 O:--sound-of-animal:str:The sound the animal makes
 F:--shout:Print the message of the animal in capital case
 ```
@@ -35,7 +35,7 @@ $0
 
 This command shows something
 --
-A:kind-of-animal:$(clk_format_choice duck whale cat dog):A name of animal
+A:kind-of-animal:$(clk_format_choice duck whale cat dog):A kind of animal:{"default": "duck", "nargs": 1}
 O:--sound-of-animal:str:The sound the animal makes
 F:--shout:Print the message of the animal in capital case
 EOF
@@ -68,9 +68,9 @@ clk animal --help | grep -- '--sound-of-animal'
 clk animal --help | grep -- '--shout'
 ```
 
-    KIND_OF_ANIMAL {duck|whale|cat|dog}
+    KIND_OF_ANIMAL [duck|whale|cat|dog]
     --sound-of-animal TEXT  The sound the animal makes
-    --shout                 Print the message of the animal in capital case  [default: False]
+    --shout                 Print the message of the animal in capital case  [default:
 
 ```bash
 clk animal 2>&1 > /dev/null | grep "Missing argument 'KIND_OF_ANIMAL'"
@@ -78,5 +78,6 @@ clk animal 2>&1 > /dev/null | grep "Missing argument 'KIND_OF_ANIMAL'"
 
 ```bash
 test "$(clk animal duck --sound-of-animal couac)" = "duck does couac"
+test "$(clk animal --sound-of-animal couac)" = "duck does couac"
 test "$(clk animal whale --shout)" = "I DON'T KNOW WHAT SOUND WHALE MAKES"
 ```

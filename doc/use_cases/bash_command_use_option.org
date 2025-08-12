@@ -15,7 +15,7 @@ give.
 
 #+name: def
 #+BEGIN_SRC bash :results none :exports code
-A:kind-of-animal:$(clk_format_choice duck whale cat dog):A name of animal
+A:kind-of-animal:$(clk_format_choice duck whale cat dog):A kind of animal:{"default": "duck", "nargs": 1}
 O:--sound-of-animal:str:The sound the animal makes
 F:--shout:Print the message of the animal in capital case
 #+END_SRC
@@ -72,9 +72,9 @@ clk animal --help | grep -- '--shout'
 #+END_SRC
 
 #+RESULTS: see
-: KIND_OF_ANIMAL {duck|whale|cat|dog}
+: KIND_OF_ANIMAL [duck|whale|cat|dog]
 : --sound-of-animal TEXT  The sound the animal makes
-: --shout                 Print the message of the animal in capital case  [default: False]
+: --shout                 Print the message of the animal in capital case  [default:
 
 #+name: compulsory
 #+BEGIN_SRC bash :results verbatim :exports both :session 100aa89b-f320-46ee-9d5d-2193ef48d4eb
@@ -86,6 +86,7 @@ clk animal 2>&1 > /dev/null | grep "Missing argument 'KIND_OF_ANIMAL'"
 #+name: check
 #+BEGIN_SRC bash :results none :exports both :session 100aa89b-f320-46ee-9d5d-2193ef48d4eb
 test "$(clk animal duck --sound-of-animal couac)" = "duck does couac"
+test "$(clk animal --sound-of-animal couac)" = "duck does couac"
 test "$(clk animal whale --shout)" = "I DON'T KNOW WHAT SOUND WHALE MAKES"
 #+END_SRC
 
