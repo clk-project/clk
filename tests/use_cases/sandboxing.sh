@@ -1,4 +1,4 @@
-# [[file:../../doc/use_cases/sandboxing.org::sandboxing][sandboxing]]
+# [[id:8e7e1dba-e84b-4569-9701-be3a1e073505::sandboxing][sandboxing]]
 SRCDIR="$(pwd)"
 CLK_COV="$(readlink -f "$(dirname "$BASH_SOURCE")/../clk_coverage.sh")"
 if ! test -e "${CLK_COV}"
@@ -71,7 +71,8 @@ cat <<EOF > "${TMP}/clk-root/clk.json"
             "--call"
         ],
         "command.create.bash": [
-            "--no-open"
+            "--no-open",
+            "--force"
         ]
     }
 }

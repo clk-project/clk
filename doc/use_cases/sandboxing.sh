@@ -1,4 +1,4 @@
-# [[file:sandboxing.org::+BEGIN_SRC bash :exports none :tangle ./sandboxing.sh :noweb yes][No heading:2]]
+# [[id:8e7e1dba-e84b-4569-9701-be3a1e073505::+BEGIN_SRC bash :exports none :tangle ./sandboxing.sh :noweb yes][No heading:2]]
 SRCDIR="$(pwd)"
 CLK_COV="$(readlink -f "$(dirname "$BASH_SOURCE")/../clk_coverage.sh")"
 if ! test -e "${CLK_COV}"
@@ -71,7 +71,8 @@ cat <<EOF > "${TMP}/clk-root/clk.json"
             "--call"
         ],
         "command.create.bash": [
-            "--no-open"
+            "--no-open",
+            "--force"
         ]
     }
 }
