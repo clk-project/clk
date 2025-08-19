@@ -68,13 +68,13 @@ def extended(fields, format):
 def sh(ctx):
     """Show how to set the environment in the Bourne shell"""
     for k, v in sorted(config.env.items()):
-        click.echo("{k}={v}:${k}".format(k=k, v=double_quote(v)))
+        click.echo(f"{k}={double_quote(v)}:${k}")
     for k, v in sorted(config.override_env.items()):
-        click.echo("{k}={v}".format(k=k, v=double_quote(v)))
+        click.echo(f"{k}={double_quote(v)}")
     for k in sorted(list(config.env.keys()) + list(config.override_env.keys())):
-        click.echo("export {k}".format(k=k))
+        click.echo(f"export {k}")
     click.echo("# Run this command to configure your shell:")
-    click.echo("# eval $({command})".format(command=ctx.command_path))
+    click.echo(f"# eval $({ctx.command_path})")
 
 
 @env.command(handle_dry_run=True)
@@ -82,11 +82,11 @@ def sh(ctx):
 def bash(ctx):
     """Show how to set the environment in the Bourne again shell"""
     for k, v in sorted(config.env.items()):
-        click.echo("export {k}={v}:${k}".format(k=k, v=double_quote(v)))
+        click.echo(f"export {k}={double_quote(v)}:${k}")
     for k, v in sorted(config.override_env.items()):
-        click.echo("export {k}={v}".format(k=k, v=double_quote(v)))
+        click.echo(f"export {k}={double_quote(v)}")
     click.echo("# Run this command to configure your shell:")
-    click.echo("# eval $({command})".format(command=ctx.command_path))
+    click.echo(f"# eval $({ctx.command_path})")
 
 
 @env.command(handle_dry_run=True)
@@ -94,11 +94,11 @@ def bash(ctx):
 def zsh(ctx):
     """Show how to set the environment in the Z shell"""
     for k, v in sorted(config.env.items()):
-        click.echo("export {k}={v}:${k}".format(k=k, v=double_quote(v)))
+        click.echo(f"export {k}={double_quote(v)}:${k}")
     for k, v in sorted(config.override_env.items()):
-        click.echo("export {k}={v}".format(k=k, v=double_quote(v)))
+        click.echo(f"export {k}={double_quote(v)}")
     click.echo("# Run this command to configure your shell:")
-    click.echo("# eval $({command})".format(command=ctx.command_path))
+    click.echo(f"# eval $({ctx.command_path})")
 
 
 @env.command(handle_dry_run=True)
@@ -107,11 +107,11 @@ def fish(ctx):
     """Show how to set the environment in the Friendly interactive shell"""
     for k, v in sorted(config.env.items()):
         v = v.replace(os.pathsep, " ") if k == "PATH" else v
-        click.echo("set -x {k} {v} ${k};".format(k=k, v=double_quote(v)))
+        click.echo(f"set -x {k} {double_quote(v)} ${k};")
     for k, v in sorted(config.override_env.items()):
-        click.echo("set -x {k} {v};".format(k=k, v=double_quote(v)))
+        click.echo(f"set -x {k} {double_quote(v)};")
     click.echo("# Run this command to configure your shell:")
-    click.echo("# eval ({command})".format(command=ctx.command_path))
+    click.echo(f"# eval ({ctx.command_path})")
 
 
 @env.command(handle_dry_run=True)
@@ -119,15 +119,11 @@ def fish(ctx):
 def cmd(ctx):
     """Show how to set the environment in the Windows Command Prompt"""
     for k, v in sorted(config.env.items()):
-        click.echo("SET {k}={v};%{k}%".format(k=k, v=v))
+        click.echo(f"SET {k}={v};%{k}%")
     for k, v in sorted(config.override_env.items()):
-        click.echo("SET {k}={v}".format(k=k, v=v))
+        click.echo(f"SET {k}={v}")
     click.echo("REM Run this command to configure your shell:")
-    click.echo(
-        "REM FOR /f \"tokens=*\" %i IN ('{command}') DO %i".format(
-            command=ctx.command_path
-        )
-    )
+    click.echo(f"REM FOR /f \"tokens=*\" %i IN ('{ctx.command_path}') DO %i")
 
 
 @env.command(handle_dry_run=True)
@@ -135,11 +131,11 @@ def cmd(ctx):
 def powershell(ctx):
     """Show how to set the environment in the Windows PowerShell"""
     for k, v in sorted(config.env.items()):
-        click.echo('$Env:{k} = "{v};" + $Env:{k}'.format(k=k, v=double_quote(v)))
+        click.echo(f'$Env:{k} = "{double_quote(v)};" + $Env:{k}')
     for k, v in sorted(config.override_env.items()):
-        click.echo('$Env:{k} = "{v}"'.format(k=k, v=double_quote(v)))
+        click.echo(f'$Env:{k} = "{double_quote(v)}"')
     click.echo("# Run this command to configure your shell:")
-    click.echo("# & {command} | Invoke-Expression".format(command=ctx.command_path))
+    click.echo(f"# & {ctx.command_path} | Invoke-Expression")
 
 
 keyvaluestore_generic_commands(env, "environment")

@@ -15,7 +15,7 @@ class DevelopColorFormatter(click_log.core.ColorFormatter):
         if not record.exc_info:
             level = record.levelname.lower()
             prefix = click.style(
-                "{}({}): {}: ".format(record.name, record.lineno, level),
+                f"{record.name}({record.lineno}): {level}: ",
                 **self.colors.get(level, {}),
             )
             record.msg = "\n".join(prefix + x for x in str(record.msg).splitlines())
@@ -24,7 +24,7 @@ class DevelopColorFormatter(click_log.core.ColorFormatter):
 
 class LogLevelExitException(Exception):
     def __init__(self):
-        message = "Aborting because log level greater than {}".format(exit_on_log_level)
+        message = f"Aborting because log level greater than {exit_on_log_level}"
         super().__init__(message)
 
 
@@ -103,7 +103,7 @@ class Logger(logging.getLoggerClass()):
         from clk import lib
 
         if lib.dry_run:
-            click.echo("(dry-run) {}".format(msg))
+            click.echo(f"(dry-run) {msg}")
         elif self.isEnabledFor(ACTION):
             self._log(ACTION, msg, args, **kwargs)
 

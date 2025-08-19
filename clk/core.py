@@ -270,12 +270,12 @@ class ColorType(ParameterType):
             prefix, key, value = valuematch.groups()
             candidates = self.args.get(key, [])
             tested = value or ""
-            prefix = "{}{}-".format(prefix, key)
+            prefix = f"{prefix}{key}-"
         elif keymatch:
             prefix, key = keymatch.groups()
             candidates = [key_ + "-" for key_ in self.args.keys()]
             tested = key
-            prefix = "{},".format(prefix)
+            prefix = f"{prefix},"
         return [
             click.shell_completion.CompletionItem(prefix + str(candidate))
             for candidate in candidates
@@ -527,7 +527,7 @@ def main_command_decoration(f, cls, **kwargs):
     )(f)
     f = click.group(cls=cls, invoke_without_command=True)(f)
     prog_name = cls.path
-    env_name = "_%s_COMPLETE" % prog_name.upper().replace("-", "_")
+    env_name = f"_{prog_name.upper().replace('-', '_')}_COMPLETE"
     if env_name in os.environ:
         completion.IN_COMPLETION = True
     command = main_default(prog_name=cls.path, standalone_mode=False, **kwargs)(f)
@@ -536,9 +536,9 @@ def main_command_decoration(f, cls, **kwargs):
 
     def new_callback(*args, **kwargs):
         migrate_profiles()
-        LOGGER.develop("Global profile: {}".format(config.global_profile.location))
+        LOGGER.develop(f"Global profile: {config.global_profile.location}")
         if config.local_profile:
-            LOGGER.develop("Local profile: {}".format(config.local_profile.location))
+            LOGGER.develop(f"Local profile: {config.local_profile.location}")
         ctx = click.get_current_context()
         if kwargs.get("help") or not ctx.has_subcommands:
             click.echo(ctx.get_help(), color=ctx.color)
@@ -787,8 +787,8 @@ def main():
         if isinstance(e, click.exceptions.NoSuchOption):
             click.echo(
                 "Hint: If you don't know where this option comes from,"
-                " try checking the parameters (with {} --no-parameter"
-                " parameters show).".format(config.main_command.path)
+                f" try checking the parameters (with {config.main_command.path} --no-parameter"
+                " parameters show)."
             )
         post_mortem()
         exitcode = e.exit_code
@@ -803,11 +803,9 @@ def main():
         click.echo(
             "This command reached a part of the code yet to implement. "
             "Please help us by either submitting patches or "
-            "sending report files to us. ({} --report-file .../somefile RESTOFCOMMAND, "
+            f"sending report files to us. ({config.main_command.path} --report-file .../somefile RESTOFCOMMAND, "
             "then send .../somefile to us on"
-            " https://github.com/clk-project/clk/issues/new)".format(
-                config.main_command.path
-            )
+            " https://github.com/clk-project/clk/issues/new)"
         )
         LOGGER.error(str(e))
         post_mortem()
@@ -827,9 +825,7 @@ def main():
             " https://github.com/clk-project/clk/issues/new ."
             " If you feel like a pythonista, you can try debugging"
             " the issue yourself, running the command"
-            " with {cmd} --post-mortem or {cmd} --develop".format(
-                cmd=config.main_command.path
-            )
+            f" with {config.main_command.path} --post-mortem or {config.main_command.path} --develop"
         )
         post_mortem()
         exitcode = 1

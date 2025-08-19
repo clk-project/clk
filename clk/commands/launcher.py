@@ -76,15 +76,13 @@ def unset(launchers):
     for launcher in launchers:
         if launcher not in config.launchers.writable:
             raise click.ClickException(
-                "The command %s has no parameter registered in the %s configuration."
+                f"The command {launcher} has no parameter registered in the"
+                f" {config.launchers.writeprofile} configuration."
                 "Try using another profile option (like --local or --global)"
-                % (launcher, config.launchers.writeprofile)
             )
     for launcher in launchers:
         LOGGER.status(
-            "Erasing {} launchers from {} settings".format(
-                launcher, config.launchers.writeprofile
-            )
+            f"Erasing {launcher} launchers from {config.launchers.writeprofile} settings"
         )
         del config.launchers.writable[launcher]
     config.launchers.write()

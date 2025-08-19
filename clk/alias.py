@@ -77,14 +77,14 @@ class AliasToGroupResolver(CommandResolver):
         except AttributeError:
             return []
         return [
-            "{}.{}".format(parent.path, cmd_name)
+            f"{parent.path}.{cmd_name}"
             for cmd_name in list_commands(original_command.path)
         ]
 
     def _get_command(self, path, parent):
         cmd_name = path.split(".")[-1]
         parent = parent.original_command
-        original_path = "{}.{}".format(parent.path, cmd_name)
+        original_path = f"{parent.path}.{cmd_name}"
         return get_command(original_path)
 
 

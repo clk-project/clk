@@ -60,7 +60,7 @@ def ln(src, link_name):
         src = str(src)
     if isinstance(link_name, Path):
         link_name = str(link_name)
-    LOGGER.action("create symlink {} -> {}".format(link_name, src))
+    LOGGER.action(f"create symlink {link_name} -> {src}")
     if not dry_run:
         os.symlink(src, link_name)
 
@@ -73,7 +73,7 @@ def makedirs(dir):
 
     """
     if not os.path.exists(dir):
-        LOGGER.action("create directory {}".format(dir))
+        LOGGER.action(f"create directory {dir}")
         if not dry_run:
             os.makedirs(dir)
     return Path(dir)
@@ -84,7 +84,7 @@ _makedirs = makedirs
 
 def chmod(file, mode):
     """Change the mode bits of a file"""
-    LOGGER.action("chmod {} to {}".format(file, oct(mode)))
+    LOGGER.action(f"chmod {file} to {oct(mode)}")
     if not dry_run:
         os.chmod(file, mode)
 
@@ -95,7 +95,7 @@ def move(src, dst):
     See shutil.move
 
     """
-    LOGGER.action("Move {} to {}".format(src, dst))
+    LOGGER.action(f"Move {src} to {dst}")
     if not dry_run:
         shutil.move(src, dst)
 
@@ -112,11 +112,11 @@ def createfile(
     else:
         logger = LOGGER.action
     if append:
-        logger("appending to the file {}".format(name))
+        logger(f"appending to the file {name}")
     else:
-        logger("writing to the file {}".format(name))
+        logger(f"writing to the file {name}")
     if dry_run:
-        logger("with content {}".format(content))
+        logger(f"with content {content}")
     else:
         flag = "a" if append else "w"
         if isinstance(content, str):
@@ -134,7 +134,7 @@ def copy(src, dst):
     if isinstance(dst, Path):
         dst = str(dst)
 
-    LOGGER.action("copy {} to {}".format(src, dst))
+    LOGGER.action(f"copy {src} to {dst}")
     if dry_run:
         return
     if os.path.isdir(src):
@@ -146,7 +146,7 @@ def copy(src, dst):
 def link(src, dst):
     if platform.system() == "Windows":
         return copy(src, dst)
-    LOGGER.action("hard link {} to {}".format(src, dst))
+    LOGGER.action(f"hard link {src} to {dst}")
     if dry_run:
         return
     os.link(src, dst)
@@ -203,7 +203,7 @@ def main_default(**default_options):
         oldmain = f.main
 
         def main(*args, **options):
-            LOGGER.develop("Calling with args: {}".format(args))
+            LOGGER.develop(f"Calling with args: {args}")
             newopts = dict(default_options)
             newopts.update(options)
             oldmain(*args, **newopts)
@@ -223,7 +223,7 @@ def get_all_files_recursive(dir, exclude):
 
 
 def check_uptodate(src, dst, src_exclude=[], dst_exclude=[]):
-    assert os.path.exists(src), "{} must exist".format(src)
+    assert os.path.exists(src), f"{src} must exist"
     if not os.path.exists(dst):
         return False
     if os.path.isfile(src):
@@ -253,12 +253,7 @@ def check_uptodate(src, dst, src_exclude=[], dst_exclude=[]):
     else:
         raise NotImplementedError
     LOGGER.debug(
-        "Comparing mtimes of {} ({}) with {} ({})".format(
-            src_f,
-            src_mtime,
-            dst_f,
-            dst_mtime,
-        )
+        f"Comparing mtimes of {src_f} ({src_mtime}) with {dst_f} ({dst_mtime})"
     )
     return src_mtime < dst_mtime
 
@@ -283,10 +278,10 @@ def call(args, **kwargs):
         args = launcher + args
     args = [str(arg) for arg in args]
     message = " ".join(quote(arg) for arg in args)
-    action_message = "run: {}".format(message)
+    action_message = f"run: {message}"
     cwd = kwargs.get("cwd")
     if cwd:
-        action_message = "in {}, {}".format(cwd, action_message)
+        action_message = f"in {cwd}, {action_message}"
     if internal:
         LOGGER.develop(action_message)
     else:
@@ -335,7 +330,7 @@ def _call(args, kwargs):
             if p.returncode:
                 raise subprocess.CalledProcessError(p.returncode, args)
     except OSError as e:
-        raise click.ClickException("Failed to call {}: {}".format(args[0], e.strerror))
+        raise click.ClickException(f"Failed to call {args[0]}: {e.strerror}")
     finally:
         signal.signal(signal.SIGINT, signal.SIG_DFL)
         signal.signal(signal.SIGTERM, signal.SIG_DFL)
@@ -345,7 +340,7 @@ def popen(args, internal=False, **kwargs):
     """Run a program and deal with debugging and signals"""
     args = [str(arg) for arg in args]
     message = " ".join(quote(arg) for arg in args)
-    action_message = "run: {}".format(message)
+    action_message = f"run: {message}"
     if internal:
         LOGGER.develop(action_message)
     else:
@@ -398,14 +393,14 @@ def cd(dir, internal=False, makedirs=False):
     else:
         logger = LOGGER.action
     prevdir = os.getcwd()
-    logger("go to directory {}".format(dir))
+    logger(f"go to directory {dir}")
     if not dry_run:
         os.chdir(dir)
-        LOGGER.debug("In directory {}".format(dir))
+        LOGGER.debug(f"In directory {dir}")
     yield os.path.realpath(dir)
-    logger("go back into directory {}".format(prevdir))
+    logger(f"go back into directory {prevdir}")
     if not dry_run:
-        LOGGER.debug("Back to directory {}".format(prevdir))
+        LOGGER.debug(f"Back to directory {prevdir}")
     os.chdir(prevdir)
 
 
@@ -422,13 +417,13 @@ def updated_env(**kwargs):
     for k, v in kwargs.items():
         if v is None:
             if k in os.environ:
-                LOGGER.develop("environment %s removed" % k)
+                LOGGER.develop(f"environment {k} removed")
                 del os.environ[k]
             else:
                 # already not there, nothing to do
                 pass
         else:
-            LOGGER.develop('environment {}="{}"'.format(k, v))
+            LOGGER.develop(f'environment {k}="{v}"')
             os.environ[k] = v
     yield
     os.environ.clear()
@@ -447,7 +442,7 @@ def env(**kwargs):
 
 
 def format_opt(opt):
-    return "--%s" % opt.replace("_", "-")
+    return f"--{opt.replace('_', '-')}"
 
 
 def format_options(options, glue=False):
@@ -460,12 +455,12 @@ def format_options(options, glue=False):
             # this is a multi value option
             for v in value:
                 if glue:
-                    cmd.append("{}={}".format(format_opt(opt), v))
+                    cmd.append(f"{format_opt(opt)}={v}")
                 else:
                     cmd.extend([format_opt(opt), v])
         elif value:
             if glue:
-                cmd.append("{}={}".format(format_opt(opt), value))
+                cmd.append(f"{format_opt(opt)}={value}")
             else:
                 cmd.extend([format_opt(opt), value])
     return cmd
@@ -601,7 +596,7 @@ def check_output(cmd, *args, **kwargs):
         )
         internal = kwargs["force"]
         del kwargs["force"]
-    action_message = "run: {}".format(message)
+    action_message = f"run: {message}"
     if internal:
         LOGGER.develop(action_message)
     else:
@@ -724,7 +719,7 @@ def download(url, outdir=None, outfilename=None, mkdir=False, sha256=None, mode=
     if not os.path.exists(outdir) and mkdir:
         makedirs(outdir)
     outpath = outdir / outfilename
-    LOGGER.action("download %s" % url)
+    LOGGER.action(f"download {url}")
     if dry_run:
         return outpath
 
@@ -761,7 +756,7 @@ def part_of_day():
 
 def pid_exists(pidpath):
     """Check whether a program is running or not, based on its pid file"""
-    LOGGER.develop("Checking %s" % pidpath)
+    LOGGER.develop(f"Checking {pidpath}")
     running = False
     if os.path.exists(pidpath):
         with open(pidpath) as f:
@@ -784,10 +779,10 @@ def pid_exists(pidpath):
 
 def pid_kill(pidpath, signal=signal.SIGTERM):
     """Send a signal to a process, based on its pid file"""
-    LOGGER.develop("Checking %s" % pidpath)
+    LOGGER.develop(f"Checking {pidpath}")
     if os.path.exists(pidpath):
         pid = int(read(pidpath))
-        LOGGER.action("kill -{} {}".format(signal, pid))
+        LOGGER.action(f"kill -{signal} {pid}")
         os.kill(pid, signal)
 
 
@@ -827,7 +822,7 @@ def quote(s):
 
 def echo_key_value(k, v, alt_style={"dim": True}):
     """Print a key and its associated value with a common style"""
-    click.echo("{} {}".format(k, click.style(v, **alt_style)))
+    click.echo(f"{k} {click.style(v, **alt_style)}")
 
 
 def echo_json(v):
@@ -888,8 +883,8 @@ def git_sync(
         rm(directory)
     if os.path.exists(directory):
         assert os.path.exists(git_dir), (
-            "Want to git sync {} in {} but {}"
-            " already exists and is not a git root".format(url, directory, directory)
+            f"Want to git sync {url} in {directory} but {directory}"
+            " already exists and is not a git root"
         )
         with cd(directory):
             if reset:
@@ -1021,9 +1016,9 @@ def get_close_matches(words, possibilities, n=3, cutoff=0.6):
     """
 
     if not n > 0:
-        raise ValueError("n must be > 0: {!r}".format(n))
+        raise ValueError(f"n must be > 0: {n!r}")
     if not 0.0 <= cutoff <= 1.0:
-        raise ValueError("cutoff must be in [0.0, 1.0]: {!r}".format(cutoff))
+        raise ValueError(f"cutoff must be in [0.0, 1.0]: {cutoff!r}")
     if not isinstance(words, list):
         words = [words]
     result = []
@@ -1263,7 +1258,7 @@ class ParameterType(click.ParamType):
             self.name = re.sub("([a-z])([A-Z])", "\\1_\\2", self.name).lower()
             # remove the prefix if it match the module
             self.name = re.sub(
-                "^%s(_|)" % self.__module__.split(".")[-1].lower(), "", self.name
+                f"^{self.__module__.split('.')[-1].lower()}(_|)", "", self.name
             )
 
 
@@ -1315,9 +1310,7 @@ def deprecated_module(src, dst):
         and "pluginbase" not in get_frame_info(frame)[0]
     ][-1]
     filename, lineno, line = get_frame_info(frame)
-    return ("{}:{} '{}' => Importing {} is deprecated, import {} instead").format(
-        filename, lineno, line, src, dst
-    )
+    return f"{filename}:{lineno} '{line}' => Importing {src} is deprecated, import {dst} instead"
 
 
 class TablePrinter:
@@ -1412,7 +1405,7 @@ def tabulate(
                 toprint = " ".join(to_string(v) for v in kv[1:])
                 if os.environ.get("TERM") != "dumb":
                     toprint = click.style(toprint, **config.alt_style)
-                data.append("{} {}".format(kv[0], toprint))
+                data.append(f"{kv[0]} {toprint}")
             else:
                 data.append(str(kv[0]))
         return "\n".join(data)
@@ -1427,7 +1420,7 @@ def tabulate(
     elif tablefmt == "json":
         json_data = []
         if not headers and tabular_data:
-            headers = ["key%s" % i for i in range(len(tabular_data[0]))]
+            headers = [f"key{i}" for i in range(len(tabular_data[0]))]
         for ls in tabular_data:
             d = {}
             for i, v in enumerate(ls):
@@ -1448,7 +1441,7 @@ def tabulate(
     elif tablefmt == "json-maps":
         json_data = {}
         if not headers and tabular_data:
-            headers = ["key%s" % i for i in range(len(tabular_data[0]))]
+            headers = [f"key{i}" for i in range(len(tabular_data[0]))]
         for ls in tabular_data:
             d = {}
             for i, v in enumerate(ls[1:]):
@@ -1492,16 +1485,14 @@ def assert_main_module():
 def call_me(*cmd):
     assert_main_module()
     return call(
-        [sys.executable, "-c", "from {} import main; main()".format(main_module)]
-        + list(cmd)
+        [sys.executable, "-c", f"from {main_module} import main; main()"] + list(cmd)
     )
 
 
 def check_my_output(*cmd):
     assert_main_module()
     return safe_check_output(
-        [sys.executable, "-c", "from {} import main; main()".format(main_module)]
-        + list(cmd)
+        [sys.executable, "-c", f"from {main_module} import main; main()"] + list(cmd)
     )
 
 

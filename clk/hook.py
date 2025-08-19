@@ -38,11 +38,9 @@ def register_command(parent=None):
 
     def decorator(command):
         assert not parent.startswith(config.main_command.path + "."), (
-            "The command {} is trying to register as subcommand of '{}'."
+            f"The command {command.name} is trying to register as subcommand of '{parent}'."
             " Since this is not a valid command path,"
-            " it won't do anything, try using '{}' instead :-).".format(
-                command.name, parent, parent[len(config.main_command.path) + 1 :]
-            )
+            f" it won't do anything, try using '{parent[len(config.main_command.path) + 1 :]}' instead :-)."
         )
 
         def load_command():

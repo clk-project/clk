@@ -134,4 +134,4 @@ def install(append, shell, path):
         comp_file = Path("~/.bash_completion").expanduser()
         completion_content = config.completion.content(shell)
         comp_file.open("a").write(completion_content)
-        LOGGER.info("{} completion installed in {}".format(shell, comp_file))
+        LOGGER.info(f"{shell} completion installed in {comp_file}")

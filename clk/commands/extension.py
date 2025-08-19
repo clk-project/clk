@@ -154,7 +154,7 @@ def rename(old, new):
         new = "{}/{}".format(old.name.split("/")[0], new)
     new_loc = config.extension_location(new)
     if os.path.exists(new_loc):
-        raise click.UsageError("{} already exists".format(new_loc))
+        raise click.UsageError(f"{new_loc} already exists")
     move(old.location, new_loc)
     LOGGER.status(
         f"Renamed extension {old.friendly_name} -> {new} in profile"
@@ -190,7 +190,7 @@ def _copy(src, dest):
         dest = "{}/{}".format(src.name.split("/")[0], dest)
     new_loc = config.extension_location(dest)
     if os.path.exists(new_loc):
-        raise click.UsageError("{} already exists".format(new_loc))
+        raise click.UsageError(f"{new_loc} already exists")
     copy(src.location, new_loc)
     LOGGER.status(
         f"Copied extension {Colorer.apply_color_default_value(src.friendly_name, src.parent_name)}"
@@ -303,9 +303,7 @@ def _disable(ctx, extension, all):
         else:
             config.recipe.writable[cmd] = {"enabled": False}
         LOGGER.status(
-            "Disabling extension {} in profile {}".format(
-                cmd, Colorer.apply_color_profilename(config.recipe.writeprofilename)
-            )
+            f"Disabling extension {cmd} in profile {Colorer.apply_color_profilename(config.recipe.writeprofilename)}"
         )
     config.recipe.write()
 
@@ -326,16 +324,12 @@ def unset(ctx, extension, all):
     for cmd in extension:
         if cmd not in config.recipe.writable:
             raise click.UsageError(
-                "Extension {} not set in profile {}".format(
-                    cmd, Colorer.apply_color_profilename(config.recipe.writeprofilename)
-                )
+                f"Extension {cmd} not set in profile {Colorer.apply_color_profilename(config.recipe.writeprofilename)}"
             )
     for cmd in extension:
         del config.recipe.writable[cmd]
         LOGGER.status(
-            "Unsetting {} from profile {}".format(
-                cmd, Colorer.apply_color_profilename(config.recipe.writeprofilename)
-            )
+            f"Unsetting {cmd} from profile {Colorer.apply_color_profilename(config.recipe.writeprofilename)}"
         )
     config.recipe.write()
 
@@ -372,9 +366,7 @@ def __enable(ctx, extension, all, only):
             else:
                 config.recipe.writable[cmd] = {"enabled": False}
             LOGGER.status(
-                "Disabling extension {} in profile {}".format(
-                    cmd, Colorer.apply_color_profilename(config.recipe.writeprofilename)
-                )
+                f"Disabling extension {cmd} in profile {Colorer.apply_color_profilename(config.recipe.writeprofilename)}"
             )
 
     for cmd in extension:
@@ -383,9 +375,7 @@ def __enable(ctx, extension, all, only):
         else:
             config.recipe.writable[cmd] = {"enabled": True}
         LOGGER.status(
-            "Enabling extension {} in profile {}".format(
-                cmd, Colorer.apply_color_profilename(config.recipe.writeprofilename)
-            )
+            f"Enabling extension {cmd} in profile {Colorer.apply_color_profilename(config.recipe.writeprofilename)}"
         )
     config.recipe.write()
 
@@ -431,11 +421,7 @@ def set_order(extension, order):
         else:
             config.recipe.writable[cmd] = {"order": order}
         LOGGER.status(
-            "Set order of {} to {} in profile {}".format(
-                cmd,
-                order,
-                Colorer.apply_color_profilename(config.recipe.writeprofilename),
-            )
+            f"Set order of {cmd} to {order} in profile {Colorer.apply_color_profilename(config.recipe.writeprofilename)}"
         )
     config.recipe.write()
 
@@ -675,7 +661,7 @@ def install(
 def _install_deps(ctx, extension, break_system_packages):
     "Install the dependencies of the extension"
     for rec in extension:
-        LOGGER.status("Handling {}".format(rec.friendly_name))
+        LOGGER.status(f"Handling {rec.friendly_name}")
         if rec.requirements_path.exists():
             pip_args = ["install"]
             if break_system_packages:

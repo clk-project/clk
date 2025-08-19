@@ -2,7 +2,6 @@
 
 from setuptools import find_packages, setup
 
-import fasterentrypoint  # NOQA: For side effects only
 import versioneer
 
 versions = versioneer.get_versions()

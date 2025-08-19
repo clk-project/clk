@@ -139,7 +139,7 @@ def get_command_safe(path):
     try:
         return get_command(path)
     except Exception:
-        LOGGER.debug("Failed to get the command {}".format(path))
+        LOGGER.debug(f"Failed to get the command {path}")
         on_command_loading_error()
         return None
 
@@ -241,9 +241,9 @@ class CoreCommandResolver(CommandResolver):
             else:
                 if attrname in modules_names:
                     try:
-                        mod = importlib.import_module("{}.{}".format(package, attrname))
+                        mod = importlib.import_module(f"{package}.{attrname}")
                     except Exception as e:
-                        LOGGER.warning("When loading command {}: {}".format(name, e))
+                        LOGGER.warning(f"When loading command {name}: {e}")
                         on_command_loading_error()
                         raise
                     if hasattr(mod, attrname + "_") and not hasattr(mod, attrname):
@@ -368,7 +368,7 @@ class ExtraParametersMixin:
             if p.isextension:
                 profile = p.parent_name
                 extension = p.short_name
-        res = ["--{}".format(profile)]
+        res = [f"--{profile}"]
         if extension is not None:
             res += ["--extension", extension]
         return res
@@ -521,7 +521,7 @@ class HelpMixin:
             with formatter.section("Options"):
                 formatter.write_dl(opts[None])
         for group in sorted(group for group in opts.keys() if group is not None):
-            with formatter.section("%s options" % group.capitalize()):
+            with formatter.section(f"{group.capitalize()} options"):
                 formatter.write_dl(opts[group])
 
     def get_help_all(self, ctx):
@@ -610,13 +610,11 @@ class MissingDocumentationMixin:
     def invoke(self, ctx):
         if not ctx.resilient_parsing:
             if not self.help or self.help.strip() == "Description":
-                LOGGER.warn("The command '%s' has no documentation" % self.path)
+                LOGGER.warn(f"The command '{self.path}' has no documentation")
             for param in self.params:
                 if not param.help:
                     LOGGER.warn(
-                        "The parameter '{}' in the command '{}' has no documentation".format(
-                            param.name, self.path
-                        )
+                        f"The parameter '{param.name}' in the command '{self.path}' has no documentation"
                     )
         super().invoke(ctx)
 
@@ -627,11 +625,11 @@ class DeprecatedMixin:
 
     def invoke_handle_deprecated(self, ctx, *args, **kwargs):
         if self.deprecated:
-            msg = "'%s' is deprecated" % self.path.replace(".", " ")
+            msg = f"'{self.path.replace('.', ' ')}' is deprecated"
             version = self.deprecated.get("version")
             message = self.deprecated.get("message")
             if version:
-                msg += " since version %s" % version
+                msg += f" since version {version}"
             if message:
                 msg += ". " + message
             LOGGER.deprecated(msg)
@@ -660,11 +658,7 @@ class Command(
 
         ctx.complete_arguments = list(args)
         LOGGER.develop(
-            "In the {} '{}', parsing the args {}".format(
-                self.__class__.__name__,
-                ctx.command.path,
-                args,
-            )
+            f"In the {self.__class__.__name__} '{ctx.command.path}', parsing the args {args}"
         )
         click.Command.parse_args(self, ctx, args)
 
@@ -672,9 +666,7 @@ class Command(
         super().invoke_handle_deprecated(ctx, *args, **kwargs)
         if config.dry_run and not self.handle_dry_run:
             LOGGER.warning(
-                "'{}' does not support dry-run mode: I won't call it".format(
-                    ctx.command_path
-                )
+                f"'{ctx.command_path}' does not support dry-run mode: I won't call it"
             )
             raise SystemExit()
         return super().invoke(ctx, *args, **kwargs)
@@ -804,9 +796,7 @@ class Group(
             with formatter.indentation():
                 formatter.write_text(
                     "When run without sub-command,"
-                    " the sub-command '{}' is implicitly run".format(
-                        self.default_cmd_name
-                    )
+                    f" the sub-command '{self.default_cmd_name}' is implicitly run"
                 )
 
     def set_default_command(self, command):
@@ -837,11 +827,7 @@ class Group(
             args = [help_option] + args
         ctx.complete_arguments = args[:]
         LOGGER.develop(
-            "In the {} '{}', parsing the args {}".format(
-                self.__class__.__name__,
-                ctx.command.path,
-                args,
-            )
+            f"In the {self.__class__.__name__} '{ctx.command.path}', parsing the args {args}"
         )
         if self.default_cmd_name is not None and not ctx.resilient_parsing:
             # this must be done before calling the super class to avoid the help message
@@ -949,7 +935,7 @@ def eval_arg(arg, keepnoeval=False):
             arg = arg[len("noeval:") :]
     elif nexteval_match:
         arg = "eval{}:{}".format(
-            ("(%s)" % nexteval_match.group(1) if nexteval_match.group(1) else ""),
+            (f"({nexteval_match.group(1)})" if nexteval_match.group(1) else ""),
             nexteval_match.group(2),
         )
     elif arg.startswith("value:"):
@@ -983,14 +969,14 @@ def eval_arg(arg, keepnoeval=False):
             import sys  # noqa: F401
 
             evaluated_arg = str(eval(arg[len("pyeval:") :]))
-            LOGGER.develop("{} evaluated to {}".format(arg, evaluated_arg))
+            LOGGER.develop(f"{arg} evaluated to {evaluated_arg}")
             arg = evaluated_arg
         except Exception:
             LOGGER.develop(traceback.format_exc())
             LOGGER.error(
-                "Something went wrong when evaluating {}."
+                f"Something went wrong when evaluating {arg}."
                 " If you did not want it to be evaluated"
-                " please use the following syntax: noeval:{}".format(arg, arg)
+                f" please use the following syntax: noeval:{arg}"
             )
             exit(1)
     elif str(arg).startswith("project:"):
@@ -1003,14 +989,14 @@ def eval_arg(arg, keepnoeval=False):
         try:
             evaluate = get_cached_evaluator(int(eval_match.group(1) or "-1"))
             evaluated_arg = type_(evaluate(config.project, eval_match.group(2)))
-            LOGGER.develop("{} evaluated to {}".format(arg, evaluated_arg))
+            LOGGER.develop(f"{arg} evaluated to {evaluated_arg}")
             arg = evaluated_arg
         except Exception:
             LOGGER.develop(traceback.format_exc())
             LOGGER.error(
-                "Something went wrong when evaluating {}."
+                f"Something went wrong when evaluating {arg}."
                 " If you did not want it to be evaluated"
-                " please use the following syntax: noeval:{}".format(arg, arg)
+                f" please use the following syntax: noeval:{arg}"
             )
             exit(1)
     return type_(arg)
@@ -1095,9 +1081,7 @@ class ParameterMixin(click.Parameter):
             else:
                 value = super().get_default(ctx, call=True)
         else:
-            LOGGER.develop(
-                "Getting default value {}={}".format(self.get_path(ctx), value)
-            )
+            LOGGER.develop(f"Getting default value {self.get_path(ctx)}={value}")
             value = self.__process_value(ctx, value)
             value = self.type_cast_value(ctx, value)
         return value
@@ -1110,14 +1094,14 @@ class ParameterMixin(click.Parameter):
         if res is None:
             metavar = self.type.get_metavar(self)
             if metavar:
-                metavar = "{} {}".format(self.human_readable_name, metavar)
+                metavar = f"{self.human_readable_name} {metavar}"
             else:
                 metavar = self.human_readable_name
             res = (metavar, self.help)
         default = self._get_default_from_values(ctx)
         canon_default = self.default
         if isinstance(canon_default, (list, tuple)):
-            canon_default = ", ".join("%s" % d for d in self.default)
+            canon_default = ", ".join(str(d) for d in self.default)
         elif callable(canon_default):
             canon_default = canon_default()
         canon_default = str(canon_default)
@@ -1126,9 +1110,7 @@ class ParameterMixin(click.Parameter):
             res1 = res[1]
             res1 += "  [default: "
             if default:
-                res1 += default + " (computed from value.default.{}".format(
-                    self.get_path(ctx)
-                )
+                res1 += default + f" (computed from value.default.{self.get_path(ctx)}"
                 if self.default:
                     res1 += " and overriding static one: " + canon_default
                 res1 += ")"
@@ -1138,7 +1120,7 @@ class ParameterMixin(click.Parameter):
                     .get(canon_default[len("value:") :], {"value": "None"})
                     .get("value")
                 )
-                res1 += " (computed from {})".format(canon_default)
+                res1 += f" (computed from {canon_default})"
             else:
                 res1 += canon_default
             res1 += "]"
@@ -1149,7 +1131,7 @@ class ParameterMixin(click.Parameter):
         if self.deprecated:
             res = (
                 res[0],
-                res[1] + " (deprecated: {})".format(self.deprecated),
+                res[1] + f" (deprecated: {self.deprecated})",
             )
         return res
 
@@ -1264,7 +1246,7 @@ def option(*args, **kwargs):
 
         def new_callback(ctx, attr, value):
             if attr.name not in ctx.clk_default_catch:
-                LOGGER.warning("{} is deprecated: {}".format(attr.opts[0], deprecated))
+                LOGGER.warning(f"{attr.opts[0]} is deprecated: {deprecated}")
             if callback:
                 return callback(ctx, attr, value)
             else:
@@ -1289,7 +1271,7 @@ def argument(*args, **kwargs):
 
         def new_callback(ctx, attr, value):
             if attr.name not in ctx.clk_default_catch:
-                LOGGER.warning("{} is deprecated: {}".format(attr.opts[0], deprecated))
+                LOGGER.warning(f"{attr.opts[0]} is deprecated: {deprecated}")
             if callback:
                 return callback(ctx, attr, value)
             else:
@@ -1513,9 +1495,7 @@ class MainCommand(
                 res = click.MultiCommand.parse_args(self, ctx, new_extra_args + args)
                 new_extra_args = self.get_extra_args()
             LOGGER.develop(
-                "In the {} '{}', parsing args {} (initial args: {})".format(
-                    self.__class__.__name__, ctx.command.path, new_extra_args, args
-                ),
+                f"In the {self.__class__.__name__} '{ctx.command.path}', parsing args {new_extra_args} (initial args: {args})",
             )
             ctx.complete_arguments = list(new_extra_args)
         return res
@@ -1589,9 +1569,7 @@ class FlowOption(Option):
             o = o[0]
         else:
             raise Exception(
-                "No '{}' option in the '{}' command".format(
-                    target_option, target_command.name
-                )
+                f"No '{target_option}' option in the '{target_command.name}' command"
             )
         self.target_command = target_command
         self.target_parameter = o
@@ -1646,9 +1624,7 @@ class FlowArgument(Argument):
             o = o[0]
         else:
             raise Exception(
-                "No '{}' argument in the '{}' command".format(
-                    target_argument, target_command.name
-                )
+                f"No '{target_argument}' argument in the '{target_command.name}' command"
             )
         self.target_command = target_command
         self.target_parameter = o
@@ -1669,7 +1645,7 @@ def entry_point(cls=None, **kwargs):
         if cls is None:
             path = f.__name__
             _cls = type(
-                "{}Main".format(path),
+                f"{path}Main",
                 (MainCommand,),
                 {
                     "path": path,

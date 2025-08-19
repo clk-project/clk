@@ -71,7 +71,7 @@ def basic_entry_point(
     def decorator(f):
         path = f.__name__
         config_cls = type(
-            "{}Config".format(path),
+            f"{path}Config",
             (Config,),
             {
                 "app_dir_name": path,

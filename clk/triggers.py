@@ -9,7 +9,7 @@ LOGGER = get_logger(__name__)
 
 def run_triggers(name, path, commands):
     if commands:
-        LOGGER.debug("Running the {} trigger for {}".format(name, path))
+        LOGGER.debug(f"Running the {name} trigger for {path}")
     for command in commands:
         if isinstance(command, type(lambda x: x)):
             command()

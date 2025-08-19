@@ -117,10 +117,10 @@ def use_settings(settings_name, settings_cls, override=True, default_profile="co
             if profile.explicit
         ]:
             f = flag(
-                "--{}".format(profile),
+                f"--{profile}",
                 "profile",
                 flag_value=profile,
-                help="Consider only the {} profile".format(profile),
+                help=f"Consider only the {profile} profile",
                 callback=profile_callback,
             )(f)
         f = flag(
@@ -145,7 +145,7 @@ def use_settings(settings_name, settings_cls, override=True, default_profile="co
             del kwargs["extension"]
             del kwargs["profile"]
             LOGGER.debug(
-                "Will use the settings at profile {}".format(settings_store.readprofile)
+                f"Will use the settings at profile {settings_store.readprofile}"
             )
             return f(*args, **kwargs)
 
@@ -256,4 +256,4 @@ if __name__ == "__main__":
     ]
     symbols = [k for k in symbols if not k.startswith("_")]
     symbols = [k for k in symbols if k not in ["print_function", "absolute_import"]]
-    print("__all__ = %s" % repr(symbols))
+    print(f"__all__ = {repr(symbols)}")

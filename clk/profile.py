@@ -113,7 +113,7 @@ def load_settings(path):
                 return json.load(f)
             except ValueError:
                 # just give up on the data in the file
-                LOGGER.warning("Can't read settings from %s" % path)
+                LOGGER.warning(f"Can't read settings from {path}")
     return {}
 
 
@@ -291,14 +291,13 @@ class DirectoryProfile(Profile):
 
     def create_extension(self, name, mkdir=True):
         name = self.extension_full_name(name)
-        if not re.match("^{}/{}$".format(self.name, self.extension_name_re), name):
+        if not re.match(f"^{self.name}/{self.extension_name_re}$", name):
             raise click.UsageError(
-                "Invalid extension name: %s. An extension's name must contain only letters or _"
-                % name
+                f"Invalid extension name: {name}. An extension's name must contain only letters or _"
             )
         location = self.extension_location(name)
         if os.path.exists(location):
-            raise click.UsageError("{} already exists".format(location))
+            raise click.UsageError(f"{location} already exists")
         p = ProfileFactory.create_or_get_by_location(
             location, name=name, app_name=self.app_name, explicit=True
         )
@@ -409,9 +408,7 @@ class DirectoryProfile(Profile):
         ]
         self._version = None
         self.location = location
-        self.settings_path = os.path.join(
-            self.location, "{}.json".format(self.app_name)
-        )
+        self.settings_path = os.path.join(self.location, f"{self.app_name}.json")
         self.dry_run = dry_run
         self.name = name
 
@@ -426,15 +423,10 @@ class DirectoryProfile(Profile):
         self.old_version = self.version
         if self.version > self.max_version:
             LOGGER.error(
-                "The profile at location {} is at version {}."
-                " I can only manage till version {}."
+                f"The profile at location {self.location} is at version {self.old_version}."
+                f" I can only manage till version {self.max_version}."
                 " It will be ignored."
-                " Please upgrade {} and try again.".format(
-                    self.location,
-                    self.old_version,
-                    self.max_version,
-                    self.app_name,
-                )
+                f" Please upgrade {self.app_name} and try again."
             )
             self.frozen_during_migration = True
         self.computed_location = None
@@ -442,9 +434,7 @@ class DirectoryProfile(Profile):
         self.backup_location = self.location + "_backup"
         if os.path.exists(self.backup_location):
             LOGGER.warning(
-                "The backup directory for profile in location {} already exist".format(
-                    self.location
-                )
+                f"The backup directory for profile in location {self.location} already exist"
             )
         self.migration_impact = (
             [
@@ -452,7 +442,7 @@ class DirectoryProfile(Profile):
             ]
             + [
                 os.path.basename(f)
-                for f in glob(self.location + "/{}*json".format(self.app_name))
+                for f in glob(self.location + f"/{self.app_name}*json")
             ]
             + ["extensions"]
         )
@@ -490,32 +480,22 @@ class DirectoryProfile(Profile):
                     mod.load_plugin()
                 after = datetime.now()
                 spent_time = (after - before).total_seconds()
-                LOGGER.develop(
-                    "Plugin {} loaded in {} seconds".format(plugin, spent_time)
-                )
+                LOGGER.develop(f"Plugin {plugin} loaded in {spent_time} seconds")
                 threshold = 0.1
                 if spent_time > threshold:
                     LOGGER.debug(
-                        "Plugin {} took more than {} seconds to load ({})."
+                        f"Plugin {plugin} took more than {threshold} seconds to load ({spent_time})."
                         " You might consider disabling the plugin when you don't use it."
-                        " Or contribute to its dev to make it load faster.".format(
-                            plugin,
-                            threshold,
-                            spent_time,
-                        )
+                        " Or contribute to its dev to make it load faster."
                     )
             except Exception as e:
                 ctx = click_get_current_context_safe()
                 if ctx is None or not ctx.resilient_parsing:
                     plugin_name = plugin.replace("_", "/")
                     LOGGER.warning(
-                        "Error when loading plugin {}"
+                        f"Error when loading plugin {plugin_name}"
                         " (if the plugin is no more useful,"
-                        " consider uninstalling the plugins {}): {}".format(
-                            plugin_name,
-                            plugin_name,
-                            e,
-                        )
+                        f" consider uninstalling the plugins {plugin_name}): {e}"
                     )
                     on_command_loading_error()
             self.plugin_cache.add(plugin)
@@ -563,7 +543,7 @@ class DirectoryProfile(Profile):
         return os.path.basename(os.path.dirname(self.location)) == "extensions"
 
     def alias_has_documentation(self):
-        for settings_file in glob(self.location + "/{}*json".format(self.app_name)):
+        for settings_file in glob(self.location + f"/{self.app_name}*json"):
             with json_file(settings_file) as settings:
                 if "alias" not in settings:
                     continue
@@ -582,7 +562,7 @@ class DirectoryProfile(Profile):
         return True
 
     def stack_of_git_records(self):
-        for settings_file in glob(self.location + "/{}*json".format(self.app_name)):
+        for settings_file in glob(self.location + f"/{self.app_name}*json"):
             with json_file(settings_file) as settings:
                 if "git_record" not in settings:
                     continue
@@ -637,7 +617,7 @@ class DirectoryProfile(Profile):
             )
             move(
                 settings_level_file,
-                extensions_dir + "/" + name + "/{}.json".format(self.app_name),
+                extensions_dir + "/" + name + f"/{self.app_name}.json",
             )
             createfile(
                 extensions_dir + "/" + name + "/version.txt", str(self.version + 1)
@@ -654,11 +634,9 @@ class DirectoryProfile(Profile):
             return True
 
         migrate_something = False
-        for settings_level_file in glob(
-            self.location + "/{}-*.json".format(self.app_name)
-        ):
+        for settings_level_file in glob(self.location + f"/{self.app_name}-*.json"):
             name = re.sub(
-                ".+{}-([a-zA-Z-]+).json$".format(self.app_name),
+                f".+{self.app_name}-([a-zA-Z-]+).json$",
                 r"\1",
                 settings_level_file,
             )
@@ -668,8 +646,8 @@ class DirectoryProfile(Profile):
             migrate_something |= migrate_settings_to_extension(
                 settings_level_file, name + "_from_settings"
             )
-        private = self.location + "/{}-private.json".format(self.app_name)
-        local = self.location + "/{}.json".format(self.app_name)
+        private = self.location + f"/{self.app_name}-private.json"
+        local = self.location + f"/{self.app_name}.json"
         if os.path.exists(private):
             if open(private, "rb").read().decode("utf-8").strip() != "{}":
                 migrate_something = True
@@ -694,7 +672,7 @@ class DirectoryProfile(Profile):
             self.compute_settings()
 
     def remove_with_legend(self):
-        for settings_file in glob(self.location + "/{}*json".format(self.app_name)):
+        for settings_file in glob(self.location + f"/{self.app_name}*json"):
             content = open(settings_file, "rb").read().decode("utf-8")
             content = content.replace("--with-legend", "--legend")
             open(settings_file, "wb").write(content.encode("utf-8"))
@@ -761,11 +739,9 @@ class DirectoryProfile(Profile):
         ):
             if self.persist and self.old_version != 0:
                 LOGGER.warning(
-                    "Profile in {} is obsolete."
-                    " It has the version {} and current version is {}."
-                    " Migration started.".format(
-                        self.location, self.old_version, self.max_version
-                    )
+                    f"Profile in {self.location} is obsolete."
+                    f" It has the version {self.old_version} and current version is {self.max_version}."
+                    " Migration started."
                 )
             if self.migrate(persist=self.persist) or (
                 self.prevented_persistence and self.persist
@@ -781,13 +757,11 @@ class DirectoryProfile(Profile):
                     LOGGER.debug("Migration not persisted")
 
     def migrate(self, persist=True):
-        LOGGER.action("migrate profile in {}".format(self.location))
+        LOGGER.action(f"migrate profile in {self.location}")
         if self.dry_run:
             return False
         if os.path.exists(self.backup_location):
-            LOGGER.error(
-                "{} already exists. Cannot migrate.".format(self.backup_location)
-            )
+            LOGGER.error(f"{self.backup_location} already exists. Cannot migrate.")
             return False
         makedirs(self.backup_location)
         for name in self.migration_impact:
@@ -809,10 +783,8 @@ class DirectoryProfile(Profile):
         else:
             if persist:
                 LOGGER.warning(
-                    "The migration of {} did not go well,"
-                    " Restoring backup from {}".format(
-                        self.location, self.backup_location
-                    )
+                    f"The migration of {self.location} did not go well,"
+                    f" Restoring backup from {self.backup_location}"
                 )
             for name in self.migration_impact:
                 if os.path.exists(os.path.join(self.backup_location, name)):
@@ -831,9 +803,7 @@ class DirectoryProfile(Profile):
                 next_version = version + 1
                 if persist:
                     LOGGER.info(
-                        "Migrating from version {} to version {}".format(
-                            version, next_version
-                        )
+                        f"Migrating from version {version} to version {next_version}"
                     )
                 if migrator():
                     self._version = next_version
@@ -841,13 +811,11 @@ class DirectoryProfile(Profile):
                     LOGGER.error(
                         "Something went wrong"
                         " when migrating from "
-                        "version {} to version {}".format(version, next_version)
+                        f"version {version} to version {next_version}"
                     )
                     return False
         if persist:
-            LOGGER.status(
-                "Migration successful. Have a nice {} :-).".format(part_of_day())
-            )
+            LOGGER.status(f"Migration successful. Have a nice {part_of_day()} :-).")
         return True
 
 

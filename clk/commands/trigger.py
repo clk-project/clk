@@ -102,15 +102,12 @@ def unset(cmds, position):
     for cmd in cmds:
         if cmd not in config.triggers.writable:
             raise click.ClickException(
-                "The %s configuration has no '%s' triggers registered."
+                f"The {config.triggers.writeprofile} configuration has no '{cmd}' triggers registered."
                 "Try using another profile option (like --local or --global)"
-                % (config.triggers.writeprofile, cmd)
             )
     for cmd in cmds:
         LOGGER.status(
-            "Erasing {} triggers from {} settings".format(
-                cmd, config.triggers.writeprofile
-            )
+            f"Erasing {cmd} triggers from {config.triggers.writeprofile} settings"
         )
         del config.triggers.writable[cmd]
     config.triggers.write()
@@ -172,7 +169,7 @@ def rename(origin, destination, position):
         cmds = data[position]
         for cmd in cmds:
             if cmd[0] == origin:
-                LOGGER.debug("{} renamed in {}".format(origin, a))
+                LOGGER.debug(f"{origin} renamed in {a}")
                 cmd[0] = destination
                 renamed_in.add(a)
     # warn the user if the triggers is used at other profile, and thus has not been renamed there
@@ -181,8 +178,8 @@ def rename(origin, destination, position):
         for cmd in cmds:
             if cmd[0] == origin and a not in renamed_in:
                 LOGGER.warning(
-                    "%s is still used in %s at another configuration profile."
-                    " You may want to correct this manually." % (origin, a)
+                    f"{origin} is still used in {a} at another configuration profile."
+                    " You may want to correct this manually."
                 )
     config.triggers.write()
 

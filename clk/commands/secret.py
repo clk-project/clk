@@ -42,7 +42,7 @@ def _set(key, secret):
 def unset(key, force):
     """Remove the secret"""
     if force or click.confirm(
-        "This will definitely remove the secret for {}. Are you sure?".format(key)
+        f"This will definitely remove the secret for {key}. Are you sure?"
     ):
         get_keyring().delete_password("clk", key)
     else:

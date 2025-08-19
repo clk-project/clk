@@ -255,7 +255,7 @@ class Config:
                 self.merge_settings()
             else:
                 self._project = value
-                LOGGER.critical("{} does not exist. It will be ignored.".format(value))
+                LOGGER.critical(f"{value} does not exist. It will be ignored.")
 
     def guess_project(self):
         if self.project:
@@ -263,9 +263,7 @@ class Config:
         else:
             candidate = self.find_project()
             if candidate:
-                LOGGER.develop(
-                    "Guessing project {} from the local context".format(candidate)
-                )
+                LOGGER.develop(f"Guessing project {candidate} from the local context")
             return candidate
 
     def find_project(self):
@@ -387,7 +385,7 @@ class Config:
         uniq_shortnames = [nam for nam in shortnames if shortnames.count(nam) == 1]
         if name in uniq_shortnames:
             return [r for r in extensions if r.short_name == name][0]
-        raise ValueError("Could not find profile {}".format(name))
+        raise ValueError(f"Could not find profile {name}")
 
     @property
     def workspace(self):
@@ -442,7 +440,7 @@ class Config:
     def workspace_profile(self):
         if self.project:
             return ProfileFactory.create_or_get_by_location(
-                os.path.dirname(self.project) + "/.{}".format(self.main_command.path),
+                os.path.dirname(self.project) + f"/.{self.main_command.path}",
                 name="workspace",
                 app_name=self.app_name,
                 explicit=True,

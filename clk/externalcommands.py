@@ -136,8 +136,8 @@ class ExternalCommandResolver(CommandResolver):
                         )
                         if m is None:
                             raise click.UsageError(
-                                "Expected format in {} is O:name:type:help[:default],"
-                                " got {}".format(path, line)
+                                f"Expected format in {path} is O:name:type:help[:default],"
+                                f" got {line}"
                             )
                         options.append(m.groupdict())
                     if line.startswith("F:"):
@@ -147,8 +147,8 @@ class ExternalCommandResolver(CommandResolver):
                         )
                         if m is None:
                             raise click.UsageError(
-                                "Expected format in {} is F:name:help[:default],"
-                                " got {}".format(path, line)
+                                f"Expected format in {path} is F:name:help[:default],"
+                                f" got {line}"
                             )
                         flags.append(m.groupdict())
                     if line.startswith("A:"):
@@ -158,8 +158,8 @@ class ExternalCommandResolver(CommandResolver):
                         )
                         if m is None:
                             raise click.UsageError(
-                                "Expected format in {} is A:name:type:help[:{{someextrajsondata}}],"
-                                " got {}".format(path, line)
+                                f"Expected format in {path} is A:name:type:help[:{{someextrajsondata}}],"
+                                f" got {line}"
                             )
                         arguments.append(m.groupdict())
                     m = re.match("^N:(?P<help>[^:]+)$", line)

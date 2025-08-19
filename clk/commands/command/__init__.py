@@ -53,7 +53,7 @@ def display_subcommands(ctx: click.Context, cmd: Group, indent: str = ""):
             click.echo(cmd_format(sub_cmd_name, sub_cmd.short_help, indent))
             for param in sub_cmd.params:
                 if not hasattr(param, "help") or not param.help:
-                    LOGGER.warn("no help message in parameter %s" % param.name)
+                    LOGGER.warn(f"no help message in parameter {param.name}")
             if isinstance(sub_cmd, click.Group):
                 if not hasattr(sub_cmd, "original_command"):
                     display_subcommands(ctx, sub_cmd, indent + "  ")
@@ -341,9 +341,9 @@ def bash(
         def guess_type(param):
             if isinstance(param, click.Choice):
                 return json.dumps(list(param.type.choices))
-            elif param.type == int:
+            elif param.type is int:
                 return "int"
-            elif param.type == float:
+            elif param.type is float:
                 return "float"
             else:
                 return "str"

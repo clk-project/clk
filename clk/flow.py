@@ -76,9 +76,7 @@ def get_command_handler(cmd):
     flowdeps_settings = config.settings.get("flowdeps")
     if flowdeps_settings and cmd.path in flowdeps_settings:
         LOGGER.debug(
-            "Overriding flow dependencies of {} with {}".format(
-                cmd.path, flowdeps_settings[cmd.path]
-            )
+            f"Overriding flow dependencies of {cmd.path} with {flowdeps_settings[cmd.path]}"
         )
         new_flow = flowdeps_settings[cmd.path]
         if "[self]" in new_flow:
@@ -326,9 +324,7 @@ def get_flow_wrapper(name, function):
             config.flow_profile.get_settings("parameters").clear()
             if config.flow_verbose:
                 LOGGER.debug(
-                    "Ended executing the flow dependencies, back to the command '{}'".format(
-                        name
-                    )
+                    f"Ended executing the flow dependencies, back to the command '{name}'"
                 )
         res = function(*args, **kwargs)
         return res

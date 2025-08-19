@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+
 import os
 from datetime import datetime
 from itertools import product
@@ -8,14 +9,14 @@ import click
 
 from clk.completion import startswith
 from clk.config import config
-from clk.core import ColorType as Color  # NOQA: just expose the object
-from clk.core import DynamicChoiceType as DynamicChoice  # NOQA: just expose the object
-from clk.core import ExtensionType as Extension  # NOQA: just expose the object
+from clk.core import ColorType as Color  # noqa: F401
+from clk.core import DynamicChoiceType as DynamicChoice
+from clk.core import ExtensionType as Extension  # noqa: F401
 from clk.core import cache_disk
-from clk.launcher import LauncherType as launcher  # NOQA: just expose the object
-from clk.lib import ParameterType as Parameter  # NOQA: just expose the object
+from clk.launcher import LauncherType as launcher  # noqa: F401
+from clk.lib import ParameterType as Parameter
 from clk.log import get_logger
-from clk.overloads import (  # NOQA: just expose the object
+from clk.overloads import (  # noqa: F401
     CommandSettingsKeyType,
     CommandType,
 )

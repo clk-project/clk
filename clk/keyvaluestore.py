@@ -32,14 +32,10 @@ def keyvaluestore_generic_commands(group, settings_name):
         """Rename a key"""
         if src not in getattr(config, settings_name).writable:
             raise click.ClickException(
-                "The %s configuration has no '%s' values registered."
+                "The "
+                f"{Colorer.apply_color_profilename(getattr(config, settings_name).writeprofile)}"
+                f" configuration has no '{src}' values registered."
                 "Try using another profile option (like --local or --global)"
-                % (
-                    Colorer.apply_color_profilename(
-                        getattr(config, settings_name).writeprofile
-                    ),
-                    src,
-                )
             )
         if dst in getattr(config, settings_name).writable and not overwrite:
             LOGGER.error(
@@ -79,14 +75,10 @@ def keyvaluestore_generic_commands(group, settings_name):
         for key in keys:
             if key not in getattr(config, settings_name).writable:
                 raise click.ClickException(
-                    "The %s configuration has no '%s' value registered."
+                    "The "
+                    f"{Colorer.apply_color_profilename(getattr(config, settings_name).writeprofile)}"
+                    f" configuration has no '{key}' value registered."
                     "Try using another profile option (like --local or --global)"
-                    % (
-                        Colorer.apply_color_profilename(
-                            getattr(config, settings_name).writeprofile
-                        ),
-                        key,
-                    )
                 )
         for key in keys:
             LOGGER.status(

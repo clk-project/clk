@@ -54,18 +54,10 @@ def set(cmd, params):
     config.parameters.writable[cmd] = list(params)
     if old is not None:
         LOGGER.info(
-            "Removing {} parameters of {}: {}".format(
-                Colorer.apply_color_profilename(config.parameters.writeprofilename),
-                cmd,
-                format_parameters(old),
-            )
+            f"Removing {Colorer.apply_color_profilename(config.parameters.writeprofilename)} parameters of {cmd}: {format_parameters(old)}"
         )
     LOGGER.info(
-        "New {} parameters for {}: {}".format(
-            Colorer.apply_color_profilename(config.parameters.writeprofilename),
-            cmd,
-            format_parameters(params),
-        )
+        f"New {Colorer.apply_color_profilename(config.parameters.writeprofilename)} parameters for {cmd}: {format_parameters(params)}"
     )
     config.parameters.write()
 
@@ -89,19 +81,11 @@ def edit(cmd):
     else:
         if old:
             LOGGER.info(
-                "Removing {} parameters of {}: {}".format(
-                    Colorer.apply_color_profilename(config.parameters.writeprofilename),
-                    cmd,
-                    format_parameters(old),
-                )
+                f"Removing {Colorer.apply_color_profilename(config.parameters.writeprofilename)} parameters of {cmd}: {format_parameters(old)}"
             )
         params = shlex.split(content)
         LOGGER.info(
-            "New {} parameters for {}: {}".format(
-                Colorer.apply_color_profilename(config.parameters.writeprofilename),
-                cmd,
-                format_parameters(params),
-            )
+            f"New {Colorer.apply_color_profilename(config.parameters.writeprofilename)} parameters for {cmd}: {format_parameters(params)}"
         )
         config.parameters.writable[cmd] = params
         config.parameters.write()
@@ -120,20 +104,11 @@ def append(cmd, params):
     new = old + list(params)
     if old:
         LOGGER.info(
-            "New {} parameters for {}: {} (old parameters) + {}".format(
-                Colorer.apply_color_profilename(config.parameters.writeprofilename),
-                cmd,
-                format_parameters(old),
-                format_parameters(params),
-            )
+            f"New {Colorer.apply_color_profilename(config.parameters.writeprofilename)} parameters for {cmd}: {format_parameters(old)} (old parameters) + {format_parameters(params)}"
         )
     else:
         LOGGER.info(
-            "New {} parameters for {}: {}".format(
-                Colorer.apply_color_profilename(config.parameters.writeprofilename),
-                cmd,
-                format_parameters(params),
-            )
+            f"New {Colorer.apply_color_profilename(config.parameters.writeprofilename)} parameters for {cmd}: {format_parameters(params)}"
         )
     config.parameters.writable[cmd] = new
     config.parameters.write()
@@ -179,9 +154,7 @@ def remove(cmd, params):
         try:
             config.parameters.writable[cmd].remove(param)
         except ValueError:
-            raise click.ClickException(
-                "{} is not in the parameters of {}".format(param, cmd)
-            )
+            raise click.ClickException(f"{param} is not in the parameters of {cmd}")
     LOGGER.info(
         "Erasing {} parameters {} from {} settings".format(
             cmd,
@@ -204,20 +177,14 @@ def unset(cmds):
     for cmd in cmds:
         if cmd not in config.parameters.writable:
             raise click.ClickException(
-                "The command %s has no parameter registered in the %s configuration."
+                f"The command {cmd} has no parameter registered in the "
+                f"{Colorer.apply_color_profilename(config.parameters.writeprofilename)}"
+                " configuration."
                 " Try using another profile option (like --local or --global)"
-                % (
-                    cmd,
-                    Colorer.apply_color_profilename(config.parameters.writeprofilename),
-                )
             )
     for cmd in cmds:
         LOGGER.info(
-            "Erasing {} parameters of {} (was: {})".format(
-                Colorer.apply_color_profilename(config.parameters.writeprofilename),
-                cmd,
-                format_parameters(config.parameters.writable[cmd]),
-            )
+            f"Erasing {Colorer.apply_color_profilename(config.parameters.writeprofilename)} parameters of {cmd} (was: {format_parameters(config.parameters.writable[cmd])})"
         )
         del config.parameters.writable[cmd]
     config.parameters.write()
@@ -273,9 +240,7 @@ def show(ctx, name_only, cmds, under, fields, format, **kwargs):
                     continue
                 if cmd is None:
                     LOGGER.warning(
-                        "You should know that the command {} does not exist".format(
-                            cmd_name
-                        )
+                        f"You should know that the command {cmd_name} does not exist"
                     )
                 args = args or "None"
                 tp.echo(cmd_name, args)

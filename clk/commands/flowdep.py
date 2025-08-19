@@ -156,9 +156,7 @@ def remove(cmd, dependencies):
         try:
             config.flowdeps.writable[cmd].remove(param)
         except ValueError:
-            raise click.ClickException(
-                "{} is not in the flowdeps of {}".format(param, cmd)
-            )
+            raise click.ClickException(f"{param} is not in the flowdeps of {cmd}")
     config.flowdeps.write()
 
 
@@ -174,18 +172,14 @@ def unset(cmds):
     for cmd in cmds:
         if cmd not in config.flowdeps.writable:
             raise click.ClickException(
-                "The %s configuration has no '%s' flow dependency registered."
+                "The "
+                f"{Colorer.apply_color_profilename(config.flowdeps.writeprofilename)}"
+                f" configuration has no '{cmd}' flow dependency registered."
                 "Try using another profile option (like --local, --global)"
-                % (
-                    Colorer.apply_color_profilename(config.flowdeps.writeprofilename),
-                    cmd,
-                )
             )
     for cmd in cmds:
         LOGGER.info(
-            "Erasing {} flow dependencies from {} settings".format(
-                cmd, Colorer.apply_color_profilename(config.flowdeps.writeprofilename)
-            )
+            f"Erasing {cmd} flow dependencies from {Colorer.apply_color_profilename(config.flowdeps.writeprofilename)} settings"
         )
         del config.flowdeps.writable[cmd]
     config.flowdeps.write()
@@ -267,7 +261,7 @@ def compute_dot(
         for cmd in iter_commands(from_paths=cmds):
             if hasattr(cmd, "commands_to_run"):
                 aliases[cmd.path] = cmd.commands_to_run
-            LOGGER.develop("Looking at {}".format(cmd.path))
+            LOGGER.develop(f"Looking at {cmd.path}")
             if strict:
                 deps = config.flowdeps.readonly.get(cmd.path, [])
             else:
@@ -302,13 +296,11 @@ def compute_dot(
     if cluster:
         for parent_path, cmds in clusters.items():
             if lonely or len(cmds.intersection(nodes)) > 1:
-                dot += """  subgraph cluster_{} {{\n""".format(
-                    cluster_replace(parent_path)
-                )
-                dot += """    label="{}";\n""".format(parent_path)
+                dot += f"""  subgraph cluster_{cluster_replace(parent_path)} {{\n"""
+                dot += f"""    label="{parent_path}";\n"""
                 for cmd in cmds:
                     if (lonely or cmd in nodes) and cmd not in clusters.keys():
-                        dot += """    "{}";\n""".format(cmd)
+                        dot += f"""    "{cmd}";\n"""
                 dot += "  }\n"
     for node in nodes:
         if node not in clusters.keys():
@@ -415,7 +407,7 @@ def graph(
                 " Therefore you cannot use this command."
                 " Hint: sudo apt install graphviz"
             )
-        args = [dotpath, "-T{}".format(format)]
+        args = [dotpath, f"-T{format}"]
         p = subprocess.Popen(
             args,
             stdin=subprocess.PIPE,
@@ -429,7 +421,7 @@ def graph(
     elif output:
         open(output, "wb").write(out)
     elif format not in ["x11"]:
-        path = os.path.join(tempfile.gettempdir(), "flow.{}".format(format))
+        path = os.path.join(tempfile.gettempdir(), f"flow.{format}")
         with open(path, "wb") as f:
             f.write(out)
         webbrowser.open("file://" + path)
@@ -444,7 +436,7 @@ def get_sub_commands(ctx, cmd, prefix=""):
             if isinstance(sub_cmd, click.Group):
                 if not hasattr(sub_cmd, "original_command"):
                     res += get_sub_commands(
-                        ctx, sub_cmd, prefix="{}{}.".format(prefix, sub_cmd_name)
+                        ctx, sub_cmd, prefix=f"{prefix}{sub_cmd_name}."
                     )
         else:
             LOGGER.warn("Can't get " + sub_cmd_name)
