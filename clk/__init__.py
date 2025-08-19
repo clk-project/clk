@@ -1,29 +1,29 @@
 #!/usr/bin/env python
 
-# keep it at the begin in order to get an accurate startup time
+# ruff: noqa: E402
+
 from datetime import datetime
 
-from . import _version
-
+# keep it at the begin in order to get an accurate startup time
 startup_time = datetime.now()
 
 from clk import (
-    log,  # NOQA: E402
-    monkeypatch,  # NOQA: E402
+    log,
+    monkeypatch,
 )
-from clk.config import config  # NOQA: E402, F401
-from clk.core import run  # NOQA: E402, F401
-from clk.decorators import (  # NOQA: E402, F401
+from clk.config import config  # NOQA: F401
+from clk.core import run  # NOQA: F401
+from clk.decorators import (  # NOQA: F401
     argument,
     command,
     flag,
     group,
     option,
     table_fields,
-    table_format,  # NOQA: E402, F401
+    table_format,  # NOQA: F401
     use_settings,
 )
-from clk.lib import (  # NOQA: E402, F401
+from clk.lib import (  # NOQA: F401
     TablePrinter,
     call,
     check_output,
@@ -32,8 +32,10 @@ from clk.lib import (  # NOQA: E402, F401
     makedirs,
     rm,
 )
-from clk.log import get_logger  # NOQA: E402, F401
-from clk.overloads import entry_point  # NOQA: E402, F401
+from clk.log import get_logger  # NOQA: F401
+from clk.overloads import entry_point  # NOQA: F401
+
+from . import _version
 
 monkeypatch.do()
 
