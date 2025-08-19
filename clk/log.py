@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 
 import logging
 import os
@@ -15,16 +14,18 @@ class DevelopColorFormatter(click_log.core.ColorFormatter):
     def format(self, record):
         if not record.exc_info:
             level = record.levelname.lower()
-            prefix = click.style('{}({}): {}: '.format(record.name, record.lineno, level), **self.colors.get(level, {}))
-            record.msg = '\n'.join(prefix + x for x in str(record.msg).splitlines())
+            prefix = click.style(
+                "{}({}): {}: ".format(record.name, record.lineno, level),
+                **self.colors.get(level, {}),
+            )
+            record.msg = "\n".join(prefix + x for x in str(record.msg).splitlines())
         return logging.Formatter.format(self, record)
 
 
 class LogLevelExitException(Exception):
-
     def __init__(self):
-        message = 'Aborting because log level greater than {}'.format(exit_on_log_level)
-        super(LogLevelExitException, self).__init__(message)
+        message = "Aborting because log level greater than {}".format(exit_on_log_level)
+        super().__init__(message)
 
 
 exit_on_log_level = None
@@ -38,16 +39,20 @@ class Handler(logging.Handler):
 
     def emit(self, record):
         from clk import completion
+
         if completion.IN_COMPLETION and record.levelno < 40:
             return
         try:
             msg = self.format(record)
-            if os.environ.get('TERM') == 'dumb':
+            if os.environ.get("TERM") == "dumb":
                 msg = click.unstyle(msg)
             click.echo(msg, err=True)
         except Exception:
             self.handleError(record)
-        if (exit_on_log_level is not None and record.levelno >= LOG_LEVELS[exit_on_log_level.lower()]):
+        if (
+            exit_on_log_level is not None
+            and record.levelno >= LOG_LEVELS[exit_on_log_level.lower()]
+        ):
             raise LogLevelExitException()
 
 
@@ -75,8 +80,8 @@ def set_level(level):
 
 def get_logger(name):
     # type: (str) -> Logger
-    if name.startswith('pluginbase.'):
-        name = re.sub(r'^pluginbase\._internalspace.[^.]+\.', 'clk.plugins.', name)
+    if name.startswith("pluginbase."):
+        name = re.sub(r"^pluginbase\._internalspace.[^.]+\.", "clk.plugins.", name)
     return logging.getLogger(name)
 
 
@@ -85,20 +90,20 @@ LOGGER = get_logger(__name__)
 
 def getLogger(name):
     # type: (str) -> Logger
-    LOGGER.deprecated('getLogger is deprecated. Please use get_logger instead')
+    LOGGER.deprecated("getLogger is deprecated. Please use get_logger instead")
     return get_logger(name)
 
 
 class Logger(logging.getLoggerClass()):
-
     def develop(self, msg, *args, **kwargs):
         if self.isEnabledFor(DEVELOP):
             self._log(DEVELOP, msg, args, **kwargs)
 
     def action(self, msg, *args, **kwargs):
         from clk import lib
+
         if lib.dry_run:
-            click.echo('(dry-run) {}'.format(msg))
+            click.echo("(dry-run) {}".format(msg))
         elif self.isEnabledFor(ACTION):
             self._log(ACTION, msg, args, **kwargs)
 
@@ -114,26 +119,36 @@ class Logger(logging.getLoggerClass()):
 logging.setLoggerClass(Logger)
 
 DEVELOP = 5
-logging.addLevelName(DEVELOP, 'DEVELOP')
-DevelopColorFormatter.colors['develop'] = DevelopColorFormatter.colors['debug']
+logging.addLevelName(DEVELOP, "DEVELOP")
+DevelopColorFormatter.colors["develop"] = DevelopColorFormatter.colors["debug"]
 
 ACTION = 15
-logging.addLevelName(ACTION, 'ACTION')
-DevelopColorFormatter.colors['action'] = dict(fg='green')
+logging.addLevelName(ACTION, "ACTION")
+DevelopColorFormatter.colors["action"] = dict(fg="green")
 
 STATUS = 17
-logging.addLevelName(STATUS, 'STATUS')
+logging.addLevelName(STATUS, "STATUS")
 # don't register the colors dict in order to avoid the 'status: ' prefix
 
 DEPRECATED = 18
-logging.addLevelName(DEPRECATED, 'DEPRECATED')
-DevelopColorFormatter.colors['deprecated'] = dict(fg='magenta')
+logging.addLevelName(DEPRECATED, "DEPRECATED")
+DevelopColorFormatter.colors["deprecated"] = dict(fg="magenta")
 
 DEBUG = logging.DEBUG
 INFO = logging.INFO
 WARN = logging.WARN
 WARNING = logging.WARNING
 ERROR = logging.ERROR
-LOG_LEVELS = dict([('develop', DEVELOP), ('debug', logging.DEBUG), ('action', ACTION), ('status', STATUS),
-                   ('deprecated', DEPRECATED), ('info', logging.INFO), ('warning', logging.WARNING),
-                   ('error', logging.ERROR), ('critical', logging.CRITICAL)])
+LOG_LEVELS = dict(
+    [
+        ("develop", DEVELOP),
+        ("debug", logging.DEBUG),
+        ("action", ACTION),
+        ("status", STATUS),
+        ("deprecated", DEPRECATED),
+        ("info", logging.INFO),
+        ("warning", logging.WARNING),
+        ("error", logging.ERROR),
+        ("critical", logging.CRITICAL),
+    ]
+)

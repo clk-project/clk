@@ -1,11 +1,10 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 
 import fnmatch as fnmatchlib
 import os
 
-CASE_INSENSITIVE_ENV = '_CLK_CASE_INSENSITIVE_COMPLETION'
-COMPLETE_OPTIONS = '_CLK_COMPLETE_OPTIONS'
+CASE_INSENSITIVE_ENV = "_CLK_CASE_INSENSITIVE_COMPLETION"
+COMPLETE_OPTIONS = "_CLK_COMPLETE_OPTIONS"
 
 
 def startswith(string, incomplete):

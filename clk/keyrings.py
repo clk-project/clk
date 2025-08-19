@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 
 import json
 import os
@@ -12,7 +11,9 @@ from clk import netrc
 try:
     import keyring.backend
 except ModuleNotFoundError:
-    raise click.UsageError('You have to install keyring `pip install keyring` for this to work')
+    raise click.UsageError(
+        "You have to install keyring `pip install keyring` for this to work"
+    )
 
 
 class NetrcKeyring(netrc.Netrc, keyring.backend.KeyringBackend):
@@ -30,7 +31,7 @@ class DummyFileKeyring(keyring.backend.KeyringBackend):
     priority = 1
 
     def __init__(self):
-        path = os.environ['DUMMYFILEKEYRINGPATH']
+        path = os.environ["DUMMYFILEKEYRINGPATH"]
         self.path = Path(path)
 
     @property

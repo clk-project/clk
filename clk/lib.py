@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 """General purpose functions, not directly linked to clk"""
 
 import datetime
@@ -42,13 +41,15 @@ main_module = None
 
 
 def read_properties_file(file_name):
-    return dict([line.strip().split('=') for line in open(file_name, 'r').readlines() if '=' in line])
+    return dict(
+        [line.strip().split("=") for line in open(file_name).readlines() if "=" in line]
+    )
 
 
 def ensure_unicode(value):
     """Convert a string in unicode"""
     if not isinstance(value, str):
-        return value.decode('utf-8')
+        return value.decode("utf-8")
     else:
         return value
 
@@ -59,7 +60,7 @@ def ln(src, link_name):
         src = str(src)
     if isinstance(link_name, Path):
         link_name = str(link_name)
-    LOGGER.action('create symlink {} -> {}'.format(link_name, src))
+    LOGGER.action("create symlink {} -> {}".format(link_name, src))
     if not dry_run:
         os.symlink(src, link_name)
 
@@ -72,7 +73,7 @@ def makedirs(dir):
 
     """
     if not os.path.exists(dir):
-        LOGGER.action('create directory {}'.format(dir))
+        LOGGER.action("create directory {}".format(dir))
         if not dry_run:
             os.makedirs(dir)
     return Path(dir)
@@ -83,7 +84,7 @@ _makedirs = makedirs
 
 def chmod(file, mode):
     """Change the mode bits of a file"""
-    LOGGER.action('chmod {} to {}'.format(file, oct(mode)))
+    LOGGER.action("chmod {} to {}".format(file, oct(mode)))
     if not dry_run:
         os.chmod(file, mode)
 
@@ -94,14 +95,16 @@ def move(src, dst):
     See shutil.move
 
     """
-    LOGGER.action('Move {} to {}'.format(src, dst))
+    LOGGER.action("Move {} to {}".format(src, dst))
     if not dry_run:
         shutil.move(src, dst)
 
 
-def createfile(name, content, append=False, internal=False, force=False, makedirs=False, mode=None):
+def createfile(
+    name, content, append=False, internal=False, force=False, makedirs=False, mode=None
+):
     if os.path.exists(name) and not force:
-        click.UsageError(f'{name} already exists')
+        click.UsageError(f"{name} already exists")
     if makedirs:
         _makedirs(Path(name).parent)
     if internal:
@@ -109,16 +112,16 @@ def createfile(name, content, append=False, internal=False, force=False, makedir
     else:
         logger = LOGGER.action
     if append:
-        logger('appending to the file {}'.format(name))
+        logger("appending to the file {}".format(name))
     else:
-        logger('writing to the file {}'.format(name))
+        logger("writing to the file {}".format(name))
     if dry_run:
-        logger('with content {}'.format(content))
+        logger("with content {}".format(content))
     else:
-        flag = 'a' if append else 'w'
+        flag = "a" if append else "w"
         if isinstance(content, str):
-            content = content.encode('utf-8')
-        flag += 'b'
+            content = content.encode("utf-8")
+        flag += "b"
         open(name, flag).write(content)
     if mode:
         chmod(name, mode)
@@ -131,7 +134,7 @@ def copy(src, dst):
     if isinstance(dst, Path):
         dst = str(dst)
 
-    LOGGER.action('copy {} to {}'.format(src, dst))
+    LOGGER.action("copy {} to {}".format(src, dst))
     if dry_run:
         return
     if os.path.isdir(src):
@@ -141,9 +144,9 @@ def copy(src, dst):
 
 
 def link(src, dst):
-    if platform.system() == 'Windows':
+    if platform.system() == "Windows":
         return copy(src, dst)
-    LOGGER.action('hard link {} to {}'.format(src, dst))
+    LOGGER.action("hard link {} to {}".format(src, dst))
     if dry_run:
         return
     os.link(src, dst)
@@ -157,13 +160,13 @@ def which(executable, path=None):
     os.environ['PATH'].  Returns the complete filename or None if not found.
     """
     if path is None:
-        path = os.environ['PATH']
+        path = os.environ["PATH"]
     paths = path.split(os.pathsep)
     base, ext = os.path.splitext(executable)
 
-    exts = ['']
-    if (sys.platform == 'win32' or os.name == 'os2') and (ext != '.exe'):
-        exts = ['.cmd', '.bat', '.exe', '.com'] + exts
+    exts = [""]
+    if (sys.platform == "win32" or os.name == "os2") and (ext != ".exe"):
+        exts = [".cmd", ".bat", ".exe", ".com"] + exts
 
     for ext in exts:
         e = executable + ext
@@ -194,13 +197,13 @@ def glob_first(expr, default=None):
 
 
 def main_default(**default_options):
-    u"""Change the default values of the main method of a Command"""
+    """Change the default values of the main method of a Command"""
 
     def decorator(f):
         oldmain = f.main
 
         def main(*args, **options):
-            LOGGER.develop('Calling with args: {}'.format(args))
+            LOGGER.develop("Calling with args: {}".format(args))
             newopts = dict(default_options)
             newopts.update(options)
             oldmain(*args, **newopts)
@@ -220,56 +223,70 @@ def get_all_files_recursive(dir, exclude):
 
 
 def check_uptodate(src, dst, src_exclude=[], dst_exclude=[]):
-    assert os.path.exists(src), u'{} must exist'.format(src)
+    assert os.path.exists(src), "{} must exist".format(src)
     if not os.path.exists(dst):
         return False
     if os.path.isfile(src):
         src_mtime = os.stat(src).st_mtime
         src_f = src
     elif os.path.isdir(src):
-        src_mtime, src_f = max(map(lambda f: (os.stat(f).st_mtime, f), get_all_files_recursive(src, src_exclude)),
-                               key=lambda e: e[0])
+        src_mtime, src_f = max(
+            map(
+                lambda f: (os.stat(f).st_mtime, f),
+                get_all_files_recursive(src, src_exclude),
+            ),
+            key=lambda e: e[0],
+        )
     else:
         raise NotImplementedError
     if os.path.isfile(dst):
         dst_mtime = os.stat(dst).st_mtime
         dst_f = dst
     elif os.path.isdir(dst):
-        dst_mtime, dst_f = min(map(lambda f: (os.stat(f).st_mtime, f), get_all_files_recursive(dst, dst_exclude)),
-                               key=lambda e: e[0])
+        dst_mtime, dst_f = min(
+            map(
+                lambda f: (os.stat(f).st_mtime, f),
+                get_all_files_recursive(dst, dst_exclude),
+            ),
+            key=lambda e: e[0],
+        )
     else:
         raise NotImplementedError
-    LOGGER.debug(u'Comparing mtimes of {} ({}) with {} ({})'.format(
-        src_f,
-        src_mtime,
-        dst_f,
-        dst_mtime,
-    ))
+    LOGGER.debug(
+        "Comparing mtimes of {} ({}) with {} ({})".format(
+            src_f,
+            src_mtime,
+            dst_f,
+            dst_mtime,
+        )
+    )
     return src_mtime < dst_mtime
 
 
 def call(args, **kwargs):
-    u"""Run a program and deal with debugging and signals"""
-    internal = kwargs.get('internal')
-    if 'internal' in kwargs.keys():
-        del kwargs['internal']
+    """Run a program and deal with debugging and signals"""
+    internal = kwargs.get("internal")
+    if "internal" in kwargs.keys():
+        del kwargs["internal"]
     # deal with backward compatibility
-    if 'force' in kwargs.keys():
-        LOGGER.deprecated("'force' argument is deprecated since version 0.9.0, use 'internal' instead.")
-        internal = kwargs['force']
-        del kwargs['force']
-    launcher = kwargs.get('launcher_command')
-    if 'launcher_command' in kwargs.keys():
-        del kwargs['launcher_command']
+    if "force" in kwargs.keys():
+        LOGGER.deprecated(
+            "'force' argument is deprecated since version 0.9.0, use 'internal' instead."
+        )
+        internal = kwargs["force"]
+        del kwargs["force"]
+    launcher = kwargs.get("launcher_command")
+    if "launcher_command" in kwargs.keys():
+        del kwargs["launcher_command"]
     args = [str(arg) for arg in args]
     if launcher:
         args = launcher + args
     args = [str(arg) for arg in args]
-    message = ' '.join(quote(arg) for arg in args)
-    action_message = 'run: {}'.format(message)
-    cwd = kwargs.get('cwd')
+    message = " ".join(quote(arg) for arg in args)
+    action_message = "run: {}".format(message)
+    cwd = kwargs.get("cwd")
     if cwd:
-        action_message = 'in %s, %s' % (cwd, action_message)
+        action_message = "in {}, {}".format(cwd, action_message)
     if internal:
         LOGGER.develop(action_message)
     else:
@@ -283,7 +300,7 @@ call_merge_stdout_and_stderr = False
 
 
 def _call(args, kwargs):
-    signal_hook = kwargs.pop('signal_hook', None)
+    signal_hook = kwargs.pop("signal_hook", None)
 
     def signal_handler(num, stack):
         if signal_hook:
@@ -294,20 +311,20 @@ def _call(args, kwargs):
     signal.signal(signal.SIGINT, signal_handler)
     signal.signal(signal.SIGTERM, signal_handler)
     if call_merge_stdout_and_stderr:
-        kwargs['stderr'] = subprocess.STDOUT
-    if kwargs.pop('to_stderr', False):
-        kwargs['stdout'] = subprocess.PIPE
+        kwargs["stderr"] = subprocess.STDOUT
+    if kwargs.pop("to_stderr", False):
+        kwargs["stdout"] = subprocess.PIPE
     if call_capture_stdout:
-        kwargs['stdout'] = subprocess.PIPE
+        kwargs["stdout"] = subprocess.PIPE
     try:
         if call_capture_stdout:
             p = subprocess.Popen(args, **kwargs)
             stdout = []
             while True:
-                line = p.stdout.readline().decode('utf-8')
+                line = p.stdout.readline().decode("utf-8")
                 print(line[:-1])
                 stdout.append(line)
-                if line == u'' and p.poll() is not None:
+                if line == "" and p.poll() is not None:
                     break
             p.wait()
             if p.returncode != 0:
@@ -318,7 +335,7 @@ def _call(args, kwargs):
             if p.returncode:
                 raise subprocess.CalledProcessError(p.returncode, args)
     except OSError as e:
-        raise click.ClickException(u'Failed to call %s: %s' % (args[0], e.strerror))
+        raise click.ClickException("Failed to call {}: {}".format(args[0], e.strerror))
     finally:
         signal.signal(signal.SIGINT, signal.SIG_DFL)
         signal.signal(signal.SIGTERM, signal.SIG_DFL)
@@ -327,8 +344,8 @@ def _call(args, kwargs):
 def popen(args, internal=False, **kwargs):
     """Run a program and deal with debugging and signals"""
     args = [str(arg) for arg in args]
-    message = ' '.join(quote(arg) for arg in args)
-    action_message = 'run: {}'.format(message)
+    message = " ".join(quote(arg) for arg in args)
+    action_message = "run: {}".format(message)
     if internal:
         LOGGER.develop(action_message)
     else:
@@ -339,9 +356,9 @@ def popen(args, internal=False, **kwargs):
 
 @contextmanager
 def tempdir(dir=None):
-    u"""Create a temporary to use be in a with statement"""
+    """Create a temporary to use be in a with statement"""
     d = Path(tempfile.mkdtemp(dir=dir))
-    LOGGER.action(f'Creating a temporary directory at {d}')
+    LOGGER.action(f"Creating a temporary directory at {d}")
     try:
         yield d
     except Exception:
@@ -352,15 +369,15 @@ def tempdir(dir=None):
 
 @contextmanager
 def temporary_file(dir=None, suffix=None, nameonly=False, content=None):
-    u"""Create a temporary file to use in a with statement"""
+    """Create a temporary file to use in a with statement"""
     d = tempfile.NamedTemporaryFile(delete=nameonly, suffix=suffix)
     if content is not None:
         if not isinstance(content, bytes):
-            content = content.encode('utf8')
+            content = content.encode("utf8")
         d.write(content)
     if nameonly or content is not None:
         d.close()
-    LOGGER.action(f'Creating a temporary file at {d.name}')
+    LOGGER.action(f"Creating a temporary file at {d.name}")
     try:
         yield d
     except Exception:
@@ -373,7 +390,7 @@ def temporary_file(dir=None, suffix=None, nameonly=False, content=None):
 
 @contextmanager
 def cd(dir, internal=False, makedirs=False):
-    u"""Change to a directory temporarily. To be used in a with statement"""
+    """Change to a directory temporarily. To be used in a with statement"""
     if makedirs:
         _makedirs(dir)
     if internal:
@@ -381,37 +398,37 @@ def cd(dir, internal=False, makedirs=False):
     else:
         logger = LOGGER.action
     prevdir = os.getcwd()
-    logger(u'go to directory {}'.format(dir))
+    logger("go to directory {}".format(dir))
     if not dry_run:
         os.chdir(dir)
-        LOGGER.debug(u'In directory {}'.format(dir))
+        LOGGER.debug("In directory {}".format(dir))
     yield os.path.realpath(dir)
-    logger(u'go back into directory {}'.format(prevdir))
+    logger("go back into directory {}".format(prevdir))
     if not dry_run:
-        LOGGER.debug('Back to directory {}'.format(prevdir))
+        LOGGER.debug("Back to directory {}".format(prevdir))
     os.chdir(prevdir)
 
 
 def ccd(dir):
     """Create and change to a directory temporarily. To be used in a with statement"""
-    LOGGER.deprecated('`ccd(dir)` is deprecated, use `cd(dir, makedirs=True)` instead')
+    LOGGER.deprecated("`ccd(dir)` is deprecated, use `cd(dir, makedirs=True)` instead")
     return cd(dir, makedirs=True)
 
 
 @contextmanager
 def updated_env(**kwargs):
-    u"""Temporarily update the environment. To be used in a with statement"""
+    """Temporarily update the environment. To be used in a with statement"""
     oldenv = dict(os.environ)
     for k, v in kwargs.items():
         if v is None:
             if k in os.environ:
-                LOGGER.develop('environment %s removed' % k)
+                LOGGER.develop("environment %s removed" % k)
                 del os.environ[k]
             else:
                 # already not there, nothing to do
                 pass
         else:
-            LOGGER.develop('environment %s="%s"' % (k, v))
+            LOGGER.develop('environment {}="{}"'.format(k, v))
             os.environ[k] = v
     yield
     os.environ.clear()
@@ -420,7 +437,7 @@ def updated_env(**kwargs):
 
 @contextmanager
 def env(**kwargs):
-    u"""Temporarily override the environment. To be used in a with statement"""
+    """Temporarily override the environment. To be used in a with statement"""
     oldenv = dict(os.environ)
     os.environ.clear()
     os.environ.update(kwargs)
@@ -430,7 +447,7 @@ def env(**kwargs):
 
 
 def format_opt(opt):
-    return u'--%s' % opt.replace(u'_', u'-')
+    return "--%s" % opt.replace("_", "-")
 
 
 def format_options(options, glue=False):
@@ -443,12 +460,12 @@ def format_options(options, glue=False):
             # this is a multi value option
             for v in value:
                 if glue:
-                    cmd.append('{}={}'.format(format_opt(opt), v))
+                    cmd.append("{}={}".format(format_opt(opt), v))
                 else:
                     cmd.extend([format_opt(opt), v])
         elif value:
             if glue:
-                cmd.append('{}={}'.format(format_opt(opt), value))
+                cmd.append("{}={}".format(format_opt(opt), value))
             else:
                 cmd.extend([format_opt(opt), value])
     return cmd
@@ -457,27 +474,29 @@ def format_options(options, glue=False):
 def cpu_count():
     try:
         import psutil
+
         return psutil.cpu_count(logical=False)
     except ImportError:
         import multiprocessing
+
         return multiprocessing.cpu_count()
 
 
-component_re = re.compile(r'(\d+ | [a-z]+ | \.| -)', re.VERBOSE)
-replace = {'pre': 'c', 'preview': 'c', '-': 'final-', 'rc': 'c', 'dev': '@'}.get
+component_re = re.compile(r"(\d+ | [a-z]+ | \.| -)", re.VERBOSE)
+replace = {"pre": "c", "preview": "c", "-": "final-", "rc": "c", "dev": "@"}.get
 
 
 def _parse_version_parts(s):
     for part in component_re.split(s):
         part = replace(part, part)
-        if not part or part == '.':
+        if not part or part == ".":
             continue
-        if part[:1] in '0123456789':
+        if part[:1] in "0123456789":
             yield part.zfill(8)  # pad for numeric comparison
         else:
-            yield '*' + part
+            yield "*" + part
 
-    yield '*final'  # ensure that alpha/beta/candidate are before final
+    yield "*final"  # ensure that alpha/beta/candidate are before final
 
 
 def parse_version(s):
@@ -513,12 +532,12 @@ def parse_version(s):
     """
     parts = []
     for part in _parse_version_parts(s.lower()):
-        if part.startswith('*'):
-            if part < '*final':  # remove '-' before a prerelease tag
-                while parts and parts[-1] == '*final-':
+        if part.startswith("*"):
+            if part < "*final":  # remove '-' before a prerelease tag
+                while parts and parts[-1] == "*final-":
                     parts.pop()
             # remove trailing zeros from each series of numeric parts
-            while parts and parts[-1] == '00000000':
+            while parts and parts[-1] == "00000000":
                 parts.pop()
         parts.append(part)
     return tuple(parts)
@@ -526,101 +545,110 @@ def parse_version(s):
 
 def safe_check_output(*args, **kwargs):
     """Return the process output or an empty string when the process fail and never raise"""
-    if 'stdout' in kwargs:
-        raise ValueError('stdout argument not allowed, it will be overridden.')
-    if 'stderr' not in kwargs:
-        kwargs['stderr'] = subprocess.PIPE
-    internal = kwargs.get('internal')
-    if 'internal' in kwargs:
-        del kwargs['internal']
+    if "stdout" in kwargs:
+        raise ValueError("stdout argument not allowed, it will be overridden.")
+    if "stderr" not in kwargs:
+        kwargs["stderr"] = subprocess.PIPE
+    internal = kwargs.get("internal")
+    if "internal" in kwargs:
+        del kwargs["internal"]
     # deal with backward compatibility
-    if 'force' in kwargs.keys():
-        LOGGER.deprecated("'force' argument is deprecated since version 0.9.0, use 'internal' instead.")
-        internal = kwargs['force']
-        del kwargs['force']
-    action_message = 'run: {}'.format(' '.join(map(str, args[0])))
+    if "force" in kwargs.keys():
+        LOGGER.deprecated(
+            "'force' argument is deprecated since version 0.9.0, use 'internal' instead."
+        )
+        internal = kwargs["force"]
+        del kwargs["force"]
+    action_message = "run: {}".format(" ".join(map(str, args[0])))
     if internal:
         LOGGER.develop(action_message)
     else:
         LOGGER.action(action_message)
     if dry_run and not internal:
-        return ''
+        return ""
     try:
         process = subprocess.Popen(stdout=subprocess.PIPE, *args, **kwargs)
         output, _ = process.communicate()
         if process.poll():
-            return ''
+            return ""
         else:
-            return output.decode('utf-8')
+            return output.decode("utf-8")
     except Exception:
-        return ''
+        return ""
 
 
 def check_output(cmd, *args, **kwargs):
     """Return the process output"""
     if isinstance(cmd, str):
         cmd = shlex.split(cmd)
-    message = ' '.join(quote(str(arg)) for arg in cmd)
+    message = " ".join(quote(str(arg)) for arg in cmd)
     try:
-        nostderr = kwargs.pop('nostderr')
+        nostderr = kwargs.pop("nostderr")
     except KeyError:
         nostderr = False
     try:
-        internal = kwargs.pop('internal')
+        internal = kwargs.pop("internal")
     except KeyError:
         internal = False
     try:
-        safe = kwargs.pop('safe')
+        safe = kwargs.pop("safe")
     except KeyError:
         safe = False
     # deal with backward compatibility
-    if 'force' in kwargs.keys():
-        LOGGER.deprecated("'force' argument is deprecated since version 0.9.0, use 'internal' instead.")
-        internal = kwargs['force']
-        del kwargs['force']
-    action_message = 'run: {}'.format(message)
+    if "force" in kwargs.keys():
+        LOGGER.deprecated(
+            "'force' argument is deprecated since version 0.9.0, use 'internal' instead."
+        )
+        internal = kwargs["force"]
+        del kwargs["force"]
+    action_message = "run: {}".format(message)
     if internal:
         LOGGER.develop(action_message)
     else:
         LOGGER.action(action_message)
     if not (dry_run and not internal and not safe):
         if call_capture_stdout:
-            kwargs['stderr'] = subprocess.PIPE
-            kwargs['stdout'] = subprocess.PIPE
+            kwargs["stderr"] = subprocess.PIPE
+            kwargs["stdout"] = subprocess.PIPE
             p = subprocess.Popen(cmd, *args, **kwargs)
             while True:
-                line = p.stderr.readline().decode('utf-8')
+                line = p.stderr.readline().decode("utf-8")
                 if not nostderr:
                     sys.stderr.write(line)
-                if line == u'' and p.poll() is not None:
+                if line == "" and p.poll() is not None:
                     break
             p.wait()
-            stdout = p.stdout.read().decode('utf-8')
+            stdout = p.stdout.read().decode("utf-8")
             if p.returncode != 0:
                 raise subprocess.CalledProcessError(p.returncode, args, output=stdout)
             return stdout
         else:
             if nostderr:
-                kwargs['stderr'] = subprocess.PIPE
-            return subprocess.check_output(cmd, *args, **kwargs).decode('utf-8')
+                kwargs["stderr"] = subprocess.PIPE
+            return subprocess.check_output(cmd, *args, **kwargs).decode("utf-8")
 
 
 def is_pip_install(src_dir):
     try:
         with cd(src_dir, internal=True):
-            pip_install = subprocess.Popen(['git', 'rev-parse'], stdout=subprocess.PIPE, stderr=subprocess.PIPE).wait()
+            pip_install = subprocess.Popen(
+                ["git", "rev-parse"], stdout=subprocess.PIPE, stderr=subprocess.PIPE
+            ).wait()
             # make sure that src_dir is actually in the project repository (and not in homebrew for example)
-            pip_install = pip_install or not safe_check_output(['git', 'ls-files'], internal=True)
+            pip_install = pip_install or not safe_check_output(
+                ["git", "ls-files"], internal=True
+            )
     except OSError:
         pip_install = True
     return pip_install
 
 
 def get_netrc_keyring():
-    netrcfile = os.path.expanduser('~/.netrc')
-    if os.path.exists(netrcfile) and platform.system() != 'Windows':
+    netrcfile = os.path.expanduser("~/.netrc")
+    if os.path.exists(netrcfile) and platform.system() != "Windows":
         chmod(netrcfile, 0o600)
     from clk.keyrings import NetrcKeyring
+
     return NetrcKeyring()
 
 
@@ -628,35 +656,41 @@ def get_keyring():
     try:
         import keyring
     except ModuleNotFoundError:
-        LOGGER.status('keyring is not installed `pip install keyring`. Falling back on netrc')
+        LOGGER.status(
+            "keyring is not installed `pip install keyring`. Falling back on netrc"
+        )
         from clk.netrc import Netrc
+
         return Netrc()
 
     if isinstance(keyring.get_keyring(), keyring.backends.fail.Keyring):
-        LOGGER.debug('could not find a correct keyring backend, fallback on the netrc one')
+        LOGGER.debug(
+            "could not find a correct keyring backend, fallback on the netrc one"
+        )
         from clk.keyrings import NetrcKeyring
+
         keyring.set_keyring(NetrcKeyring())
 
     return keyring.get_keyring()
 
 
 def get_secret(key):
-    return get_keyring().get_password('clk', key)
+    return get_keyring().get_password("clk", key)
 
 
 # taken from
 # https://stackoverflow.com/questions/71459213/requests-tqdm-to-a-variable
 def _download_as_byteio_with_progress(url: str) -> bytes:
     resp = requests.get(url, stream=True)
-    total = int(resp.headers.get('content-length', 0))
+    total = int(resp.headers.get("content-length", 0))
     bio = io.BytesIO()
     if sys.stderr.isatty():
         with tqdm.tqdm(
-                desc=url,
-                total=total,
-                unit='b',
-                unit_scale=True,
-                unit_divisor=1024,
+            desc=url,
+            total=total,
+            unit="b",
+            unit_scale=True,
+            unit_divisor=1024,
         ) as bar:
             for chunk in resp.iter_content(chunk_size=65536):
                 bar.update(len(chunk))
@@ -668,28 +702,29 @@ def _download_as_byteio_with_progress(url: str) -> bytes:
     return bio
 
 
-def extract(url, dest=Path('.')):
+def extract(url, dest=Path(".")):
     """Download and extract all the files in the archive at url in dest"""
     dest = Path(dest)
     import tarfile
     import zipfile
+
     makedirs(dest)
 
     archname = os.path.basename(url)
     bio = _download_as_byteio_with_progress(url)
-    if archname.endswith('.zip'):
+    if archname.endswith(".zip"):
         zipfile.ZipFile(bio).extractall(path=dest)
     else:
         tarfile.open(fileobj=bio).extractall(dest)
 
 
 def download(url, outdir=None, outfilename=None, mkdir=False, sha256=None, mode=None):
-    outdir = Path(outdir or '.')
+    outdir = Path(outdir or ".")
     outfilename = outfilename or os.path.basename(url)
     if not os.path.exists(outdir) and mkdir:
         makedirs(outdir)
     outpath = outdir / outfilename
-    LOGGER.action('download %s' % url)
+    LOGGER.action("download %s" % url)
     if dry_run:
         return outpath
 
@@ -697,10 +732,10 @@ def download(url, outdir=None, outfilename=None, mkdir=False, sha256=None, mode=
     value = bio.getvalue()
 
     if sha256 is not None:
-        LOGGER.debug('Checking for corruption')
+        LOGGER.debug("Checking for corruption")
         h = hashlib.sha256(value).hexdigest()
         if h != sha256:
-            raise click.ClickException(f'Hash mismatch got {h}, expected {sha256}')
+            raise click.ClickException(f"Hash mismatch got {h}, expected {sha256}")
 
     outpath.write_bytes(value)
     if mode is not None:
@@ -710,34 +745,38 @@ def download(url, outdir=None, outfilename=None, mkdir=False, sha256=None, mode=
 
 def part_of_day():
     import datetime
+
     hour = datetime.datetime.now().hour
     if hour < 11:
-        return 'morning'
+        return "morning"
     elif 11 <= hour < 13:
-        return 'lunch'
+        return "lunch"
     elif 13 <= hour < 17:
-        return 'afternoon'
+        return "afternoon"
     elif 17 <= hour < 18:
-        return 'tea'
+        return "tea"
     else:
-        return 'night'
+        return "night"
 
 
 def pid_exists(pidpath):
     """Check whether a program is running or not, based on its pid file"""
-    LOGGER.develop('Checking %s' % pidpath)
+    LOGGER.develop("Checking %s" % pidpath)
     running = False
     if os.path.exists(pidpath):
         with open(pidpath) as f:
             pid = int(f.readline().strip())
             try:
                 import psutil
+
                 running = psutil.pid_exists(pid)
                 if running:
                     proc = psutil.Process(pid)
                     running = proc.status() != psutil.STATUS_ZOMBIE
             except ImportError:
-                LOGGER.warn("Can't check the program is actually running. Please install psutils.")
+                LOGGER.warn(
+                    "Can't check the program is actually running. Please install psutils."
+                )
                 # pid file still exists, so lets say rest is running
                 running = True
     return running
@@ -745,14 +784,14 @@ def pid_exists(pidpath):
 
 def pid_kill(pidpath, signal=signal.SIGTERM):
     """Send a signal to a process, based on its pid file"""
-    LOGGER.develop('Checking %s' % pidpath)
+    LOGGER.develop("Checking %s" % pidpath)
     if os.path.exists(pidpath):
         pid = int(read(pidpath))
-        LOGGER.action('kill -{} {}'.format(signal, pid))
+        LOGGER.action("kill -{} {}".format(signal, pid))
         os.kill(pid, signal)
 
 
-_find_unsafe = re.compile(r'[^\w@%+=:,./-]').search
+_find_unsafe = re.compile(r"[^\w@%+=:,./-]").search
 
 
 def single_quote(s):
@@ -768,7 +807,7 @@ def single_quote(s):
 
 
 def double_quote(s):
-    '''Return a shell-escaped version of the string *s*.'''
+    """Return a shell-escaped version of the string *s*."""
     if not s:
         return '""'
     if _find_unsafe(s) is None:
@@ -786,9 +825,9 @@ def quote(s):
     return sq if len(sq) <= len(dq) else dq
 
 
-def echo_key_value(k, v, alt_style={'dim': True}):
+def echo_key_value(k, v, alt_style={"dim": True}):
     """Print a key and its associated value with a common style"""
-    click.echo('%s %s' % (k, click.style(v, **alt_style)))
+    click.echo("{} {}".format(k, click.style(v, **alt_style)))
 
 
 def echo_json(v):
@@ -802,10 +841,11 @@ def colorize_json(v):
     Don't colorize in case of using a dumb terminal.
     """
     result = json_dumps(v)
-    if os.environ.get('TERM') == 'dumb':
+    if os.environ.get("TERM") == "dumb":
         return result
     else:
         from pygments import formatters, highlight, lexers
+
         return highlight(result, lexers.JsonLexer(), formatters.TerminalFormatter())
 
 
@@ -815,75 +855,102 @@ def ordered_unique(ls):
     return [elem for elem in ls if not (elem in seen or seen.add(elem))]
 
 
-def git_sync(url,
-             directory,
-             commit_ish='master',
-             extra_branches=(),
-             force=False,
-             push_url=None,
-             quiet=False,
-             last_tag=False,
-             reset=False,
-             use_shallow=False):
+def git_sync(
+    url,
+    directory,
+    commit_ish="master",
+    extra_branches=(),
+    force=False,
+    push_url=None,
+    quiet=False,
+    last_tag=False,
+    reset=False,
+    use_shallow=False,
+):
     """Retrieve and/or update a git repository"""
-    version = re.search('git version (.+)', safe_check_output(['git', '--version'], internal=True)).group(1)
-    use_shallow = use_shallow and parse_version(version) >= parse_version('2.1.4') and not last_tag
-    directory = os.path.abspath(directory or re.split('[:/]', url)[-1])
-    git_dir = os.path.join(directory, '.git')
-    ref_file = os.path.abspath(f'{directory}/.git/clk-git-sync-reference')
+    version = re.search(
+        "git version (.+)", safe_check_output(["git", "--version"], internal=True)
+    ).group(1)
+    use_shallow = (
+        use_shallow
+        and parse_version(version) >= parse_version("2.1.4")
+        and not last_tag
+    )
+    directory = os.path.abspath(directory or re.split("[:/]", url)[-1])
+    git_dir = os.path.join(directory, ".git")
+    ref_file = os.path.abspath(f"{directory}/.git/clk-git-sync-reference")
     updated = False
-    quiet = ['--quiet'] if quiet else []
+    quiet = ["--quiet"] if quiet else []
     parent = os.path.dirname(directory)
     if not os.path.exists(parent):
         makedirs(parent)
     if force and os.path.exists(directory):
         rm(directory)
     if os.path.exists(directory):
-        assert os.path.exists(git_dir), ('Want to git sync {} in {} but {}'
-                                         ' already exists and is not a git root'.format(url, directory, directory))
+        assert os.path.exists(git_dir), (
+            "Want to git sync {} in {} but {}"
+            " already exists and is not a git root".format(url, directory, directory)
+        )
         with cd(directory):
             if reset:
-                call(['git', 'reset', '--hard'] + quiet)
-            call(['git', 'remote', 'set-url', 'origin', url])
+                call(["git", "reset", "--hard"] + quiet)
+            call(["git", "remote", "set-url", "origin", url])
             # always fetch, just in case something went missing
-            call(['git', 'fetch', '--tags'] + quiet)
+            call(["git", "fetch", "--tags"] + quiet)
             if os.path.exists(ref_file) and open(ref_file).read() != commit_ish:
                 # reference has changed. Unfortunately we can't continue with the single branch shallow repository
-                call(['git', 'remote', 'set-branches', 'origin', '*'])
-                if os.path.exists(f'{directory}/.git/shallow'):
-                    call(['git', 'fetch', '--unshallow', '--tags'] + quiet)
-            prevrev = check_output(['git', 'rev-parse', 'HEAD'], internal=True)
+                call(["git", "remote", "set-branches", "origin", "*"])
+                if os.path.exists(f"{directory}/.git/shallow"):
+                    call(["git", "fetch", "--unshallow", "--tags"] + quiet)
+            prevrev = check_output(["git", "rev-parse", "HEAD"], internal=True)
             # just to make sure the user hasn't done anything by himself
             if commit_ish:
-                call(['git', 'checkout'] + quiet + [commit_ish])
-            if check_output(['git', 'rev-parse', '--abbrev-ref', 'HEAD'], internal=True).strip() != 'HEAD':
+                call(["git", "checkout"] + quiet + [commit_ish])
+            if (
+                check_output(
+                    ["git", "rev-parse", "--abbrev-ref", "HEAD"], internal=True
+                ).strip()
+                != "HEAD"
+            ):
                 # not in a detached head, ok, we can use pull
-                call(['git', 'pull'] + quiet)
-            updated = prevrev != check_output(['git', 'rev-parse', 'HEAD'], internal=True)
+                call(["git", "pull"] + quiet)
+            updated = prevrev != check_output(
+                ["git", "rev-parse", "HEAD"], internal=True
+            )
     else:
-        commit_ish = commit_ish or 'master'
-        ref_exists = check_output(['git', 'ls-remote', url, commit_ish], internal=True).strip() != ''
+        commit_ish = commit_ish or "master"
+        ref_exists = (
+            check_output(["git", "ls-remote", url, commit_ish], internal=True).strip()
+            != ""
+        )
         if ref_exists:
-            call(['git', 'clone'] + quiet + (['--depth', '1'] if use_shallow else []) +
-                 ['-b', commit_ish, url, directory])
+            call(
+                ["git", "clone"]
+                + quiet
+                + (["--depth", "1"] if use_shallow else [])
+                + ["-b", commit_ish, url, directory]
+            )
         else:
-            call(['git', 'clone'] + quiet + ['-n', url, directory])
+            call(["git", "clone"] + quiet + ["-n", url, directory])
             with cd(directory):
-                call(['git', 'checkout', commit_ish])
+                call(["git", "checkout", commit_ish])
         if extra_branches:
             with cd(directory):
-                call(['git', 'remote', 'set-branches', '--add', 'origin'] + list(extra_branches))
-                call(['git', 'fetch'] + quiet)
+                call(
+                    ["git", "remote", "set-branches", "--add", "origin"]
+                    + list(extra_branches)
+                )
+                call(["git", "fetch"] + quiet)
     # save the reference used, so we can compare it with the asked reference in case of update
     if commit_ish:
         createfile(ref_file, commit_ish)
     if push_url:
         with cd(directory):
-            call(['git', 'remote', 'set-url', '--push', 'origin', push_url])
+            call(["git", "remote", "set-url", "--push", "origin", push_url])
     if last_tag:
         with cd(directory):
-            tag = check_output(['git', 'describe', '--tags', '--abbrev=0']).strip()
-            call(['git', 'checkout'] + quiet + [tag])
+            tag = check_output(["git", "describe", "--tags", "--abbrev=0"]).strip()
+            call(["git", "checkout"] + quiet + [tag])
     return updated
 
 
@@ -892,7 +959,7 @@ def get_option_choices(option_name):
 
     This is useful to avoid duplicating the choice list."""
     context = click_get_current_context_safe()
-    if not context or not hasattr(context, 'command'):
+    if not context or not hasattr(context, "command"):
         return ()
     options = [o for o in context.command.params if o.name == option_name]
     if not options:
@@ -906,14 +973,18 @@ def get_option_choices(option_name):
 def clear_ansi_color_codes(v):
     """make sure we don't have any terminal chars"""
     if isinstance(v, str):
-        v = colorama.AnsiToWin32.ANSI_CSI_RE.sub('', v)
-        v = colorama.AnsiToWin32.ANSI_OSC_RE.sub('', v)
+        v = colorama.AnsiToWin32.ANSI_CSI_RE.sub("", v)
+        v = colorama.AnsiToWin32.ANSI_OSC_RE.sub("", v)
     return v
 
 
 def get_tabulate_formats():
     import tabulate
-    return click.Choice(list(tabulate._table_formats.keys()) + ['csv', 'json', 'key_value', 'json-map', 'json-maps'])
+
+    return click.Choice(
+        list(tabulate._table_formats.keys())
+        + ["csv", "json", "key_value", "json-map", "json-maps"]
+    )
 
 
 def get_key_values_formats():
@@ -950,9 +1021,9 @@ def get_close_matches(words, possibilities, n=3, cutoff=0.6):
     """
 
     if not n > 0:
-        raise ValueError('n must be > 0: %r' % (n, ))
+        raise ValueError("n must be > 0: {!r}".format(n))
     if not 0.0 <= cutoff <= 1.0:
-        raise ValueError('cutoff must be in [0.0, 1.0]: %r' % (cutoff, ))
+        raise ValueError("cutoff must be in [0.0, 1.0]: {!r}".format(cutoff))
     if not isinstance(words, list):
         words = [words]
     result = []
@@ -961,9 +1032,11 @@ def get_close_matches(words, possibilities, n=3, cutoff=0.6):
         s.set_seq2(word)
         for x in possibilities:
             s.set_seq1(x)
-            if s.real_quick_ratio() >= cutoff and \
-               s.quick_ratio() >= cutoff and \
-               s.ratio() >= cutoff:
+            if (
+                s.real_quick_ratio() >= cutoff
+                and s.quick_ratio() >= cutoff
+                and s.ratio() >= cutoff
+            ):
                 result.append((s.ratio(), x))
 
     # Move the best scorers to head of list
@@ -979,7 +1052,7 @@ def json_dump_file(path, content, internal=False):
 
 def json_dumps(content):
     """Dump a python object using a nicely formated json format"""
-    return json.dumps(content, indent=4, sort_keys=True).replace(' \n', '\n') + '\n'
+    return json.dumps(content, indent=4, sort_keys=True).replace(" \n", "\n") + "\n"
 
 
 def grep(
@@ -989,16 +1062,19 @@ def grep(
 ):
     args = args or []
     args = [quote(arg) for arg in args]
-    color_opt = ['--color=always'] if sys.stdout.isatty() else []
-    xargs = subprocess.Popen('xargs -0 grep ' + ' '.join(color_opt + list(args)) + (' | less' if pager else ''),
-                             stdin=subprocess.PIPE,
-                             shell=True)
-    xargs.communicate(input='\0'.join(file_list).encode('utf-8'))
+    color_opt = ["--color=always"] if sys.stdout.isatty() else []
+    xargs = subprocess.Popen(
+        "xargs -0 grep "
+        + " ".join(color_opt + list(args))
+        + (" | less" if pager else ""),
+        stdin=subprocess.PIPE,
+        shell=True,
+    )
+    xargs.communicate(input="\0".join(file_list).encode("utf-8"))
     xargs.wait()
 
 
 class NullContext:
-
     def __enter__(self):
         pass
 
@@ -1013,10 +1089,10 @@ class NullContext:
 null_context = NullContext()
 
 
-class Spinner(object):
-    spinner_cycle = itertools.cycle(['-', '\\', '|', '/'])
+class Spinner:
+    spinner_cycle = itertools.cycle(["-", "\\", "|", "/"])
 
-    def __init__(self, message=''):
+    def __init__(self, message=""):
         self.stop_running = None
         self.spin_thread = None
         self.message = message
@@ -1024,7 +1100,7 @@ class Spinner(object):
     def start(self):
         if sys.stderr.isatty():
             if self.message:
-                sys.stderr.write(self.message + ' ')
+                sys.stderr.write(self.message + " ")
             self.stop_running = threading.Event()
             self.spin_thread = threading.Thread(target=self.init_spin)
             self.spin_thread.start()
@@ -1036,9 +1112,9 @@ class Spinner(object):
             self.stop_running.set()
             self.spin_thread.join()
             if self.message:
-                sys.stderr.write('\b' * (len(self.message) + 1))
-                sys.stderr.write(' ' * (len(self.message) + 2))
-                sys.stderr.write('\b' * (len(self.message) + 2))
+                sys.stderr.write("\b" * (len(self.message) + 1))
+                sys.stderr.write(" " * (len(self.message) + 2))
+                sys.stderr.write("\b" * (len(self.message) + 2))
                 sys.stderr.flush()
 
     def init_spin(self):
@@ -1046,7 +1122,7 @@ class Spinner(object):
             sys.stderr.write(next(self.spinner_cycle))
             sys.stderr.flush()
             time.sleep(0.25)
-            sys.stderr.write('\b')
+            sys.stderr.write("\b")
             sys.stderr.flush()
 
     def __enter__(self):
@@ -1062,7 +1138,7 @@ class Spinner(object):
         pass
 
 
-def spinner(disabled=False, message=''):
+def spinner(disabled=False, message=""):
     if disabled:
         return null_context
     return Spinner(message)
@@ -1070,7 +1146,7 @@ def spinner(disabled=False, message=''):
 
 def read(f):
     """Read a file an return its content in utf-8"""
-    return open(f, 'rb').read().decode('utf-8')
+    return open(f, "rb").read().decode("utf-8")
 
 
 def natural_delta(value):
@@ -1091,17 +1167,25 @@ def natural_delta(value):
     days = days % 365
 
     if years:
-        return '%s year%s %s day%s' % (years, 's' if years > 1 else '', days, 's' if days > 1 else '')
+        return "{} year{} {} day{}".format(
+            years, "s" if years > 1 else "", days, "s" if days > 1 else ""
+        )
     elif days:
-        return '%s day%s %s hour%s' % (days, 's' if days > 1 else '', hours, 's' if hours > 1 else '')
+        return "{} day{} {} hour{}".format(
+            days, "s" if days > 1 else "", hours, "s" if hours > 1 else ""
+        )
     elif hours:
-        return '%s hour%s %s minute%s' % (hours, 's' if hours > 1 else '', minutes, 's' if minutes > 1 else '')
+        return "{} hour{} {} minute{}".format(
+            hours, "s" if hours > 1 else "", minutes, "s" if minutes > 1 else ""
+        )
     elif minutes:
-        return '%s minute%s %s second%s' % (minutes, 's' if minutes > 1 else '', seconds, 's' if seconds > 1 else '')
+        return "{} minute{} {} second{}".format(
+            minutes, "s" if minutes > 1 else "", seconds, "s" if seconds > 1 else ""
+        )
     elif delta.microseconds:
-        seconds = seconds + abs(delta.microseconds) / 10.**6
-        return '%1.3f second%s' % (seconds, 's' if seconds > 1 else '')
-    return '%s second%s' % (seconds, 's' if seconds > 1 else '')
+        seconds = seconds + abs(delta.microseconds) / 10.0**6
+        return "{:1.3f} second{}".format(seconds, "s" if seconds > 1 else "")
+    return "{} second{}".format(seconds, "s" if seconds > 1 else "")
 
 
 def natural_time(value, future=False, months=True):
@@ -1115,6 +1199,7 @@ def natural_time(value, future=False, months=True):
 
     import dateutil.tz
     from humanize.time import _, naturaldelta
+
     now = datetime.now(dateutil.tz.tzlocal())
     date, delta = date_and_delta(value)
     if date is None:
@@ -1123,11 +1208,11 @@ def natural_time(value, future=False, months=True):
     if isinstance(value, (datetime, timedelta)):
         future = date > now
 
-    ago = _('%s from now') if future else _('%s ago')
+    ago = _("%s from now") if future else _("%s ago")
     delta = naturaldelta(delta, months)
 
-    if delta == _('a moment'):
-        return _('now')
+    if delta == _("a moment"):
+        return _("now")
 
     return ago % delta
 
@@ -1139,6 +1224,7 @@ def date_and_delta(value):
 
     import dateutil.tz
     from humanize.time import _abs_timedelta
+
     now = datetime.now(dateutil.tz.tzlocal())
     if isinstance(value, datetime):
         date = value
@@ -1158,35 +1244,38 @@ def date_and_delta(value):
 
 def read_cmakecache(file):
     content = open(file).read()
-    return dict(re.findall('^([a-zA-Z_]+)(?::[^=]+=)(.+)$', content, flags=re.MULTILINE))
+    return dict(
+        re.findall("^([a-zA-Z_]+)(?::[^=]+=)(.+)$", content, flags=re.MULTILINE)
+    )
 
 
 class ParameterType(click.ParamType):
-
     def __init__(self):
         click.ParamType.__init__(self)
-        if not hasattr(self, 'name'):
+        if not hasattr(self, "name"):
             self.name = self.__class__.__name__
-            if self.name.endswith('Type'):
-                self.name = self.name[:-len('Type')]
+            if self.name.endswith("Type"):
+                self.name = self.name[: -len("Type")]
         if not self.name:
             class_name = self.__class__.__name__
-            self.name = re.sub('(Param(eter|)|)Type$', '', class_name)
+            self.name = re.sub("(Param(eter|)|)Type$", "", class_name)
             # switch to snake case
-            self.name = re.sub('([a-z])([A-Z])', '\\1_\\2', self.name).lower()
+            self.name = re.sub("([a-z])([A-Z])", "\\1_\\2", self.name).lower()
             # remove the prefix if it match the module
-            self.name = re.sub('^%s(_|)' % self.__module__.split('.')[-1].lower(), '', self.name)
+            self.name = re.sub(
+                "^%s(_|)" % self.__module__.split(".")[-1].lower(), "", self.name
+            )
 
 
 @contextmanager
 def json_file(location):
-    if (not os.path.exists(location) or open(location, 'r').read().strip() == ''):
-        open(location, 'w').write('{}')
+    if not os.path.exists(location) or open(location).read().strip() == "":
+        open(location, "w").write("{}")
     values = json.load(open(location))
     oldvalues = deepcopy(values)
     yield values
     if values != oldvalues:
-        json.dump(values, open(location, 'w'))
+        json.dump(values, open(location, "w"))
 
 
 def flat_map(elem):
@@ -1220,21 +1309,24 @@ def deprecated_module(src, dst):
 
     # find a relevant frame
     frame = [
-        frame for frame in stack[:-2]
-        if 'frozen' not in get_frame_info(frame)[0] and 'pluginbase' not in get_frame_info(frame)[0]
+        frame
+        for frame in stack[:-2]
+        if "frozen" not in get_frame_info(frame)[0]
+        and "pluginbase" not in get_frame_info(frame)[0]
     ][-1]
     filename, lineno, line = get_frame_info(frame)
-    return ("{}:{} '{}' =>"
-            ' Importing {} is deprecated, import {} instead').format(filename, lineno, line, src, dst)
+    return ("{}:{} '{}' => Importing {} is deprecated, import {} instead").format(
+        filename, lineno, line, src, dst
+    )
 
 
-class TablePrinter(object):
-    direct_output_formats = ['key_value', 'csv']
+class TablePrinter:
+    direct_output_formats = ["key_value", "csv"]
 
-    def __init__(self, fields=(), tablefmt=None, separator=' ', headers=(), **options):
+    def __init__(self, fields=(), tablefmt=None, separator=" ", headers=(), **options):
         fields = fields or self.fields_from_context()
         headers = headers or self.headers_from_context()
-        self._tablefmt = tablefmt or self.format_from_context() or 'simple'
+        self._tablefmt = tablefmt or self.format_from_context() or "simple"
         self._options = options
         self._headers = fields or headers
         self._separator = separator
@@ -1243,28 +1335,32 @@ class TablePrinter(object):
 
     @staticmethod
     def headers_from_context():
-        return get_option_choices('fields')
+        return get_option_choices("fields")
 
     @staticmethod
     def fields_from_context():
         context = click_get_current_context_safe()
-        if not context or not hasattr(context, 'params'):
+        if not context or not hasattr(context, "params"):
             return ()
-        return context.params.get('fields', ())
+        return context.params.get("fields", ())
 
     @staticmethod
     def format_from_context():
         context = click_get_current_context_safe()
-        if not context or not hasattr(context, 'params'):
+        if not context or not hasattr(context, "params"):
             return ()
-        return context.params.get('format', ())
+        return context.params.get("format", ())
 
     def __enter__(self):
         return self
 
     def __exit__(self, exc_type, exc_val, exc_tb):
         if self._tablefmt not in self.direct_output_formats:
-            click.echo(tabulate(self._data, self._headers, tablefmt=self._tablefmt, **self._options))
+            click.echo(
+                tabulate(
+                    self._data, self._headers, tablefmt=self._tablefmt, **self._options
+                )
+            )
 
     def echo(self, *args, stripped=False):
         if self._field_indices and not stripped:
@@ -1275,7 +1371,14 @@ class TablePrinter(object):
                 arg = self._separator.join(arg)
             cleaned_args.append(arg)
         if self._tablefmt in self.direct_output_formats:
-            click.echo(tabulate([cleaned_args], self._headers, tablefmt=self._tablefmt, **self._options))
+            click.echo(
+                tabulate(
+                    [cleaned_args],
+                    self._headers,
+                    tablefmt=self._tablefmt,
+                    **self._options,
+                )
+            )
         else:
             self._data.append(cleaned_args)
 
@@ -1288,38 +1391,43 @@ class TablePrinter(object):
             self.echo(*[record[value] for value in self.headers_from_context()])
 
 
-def tabulate(tabular_data,
-             headers=(),
-             tablefmt='simple',
-             floatfmt='g',
-             numalign='decimal',
-             stralign='left',
-             missingval=''):
+def tabulate(
+    tabular_data,
+    headers=(),
+    tablefmt="simple",
+    floatfmt="g",
+    numalign="decimal",
+    stralign="left",
+    missingval="",
+):
     """Tabulate the data"""
     from tabulate import tabulate as tabulate_
-    if tablefmt == 'key_value':
+
+    if tablefmt == "key_value":
         from clk.config import config
+
         data = []
         for kv in tabular_data:
             if len(kv) > 1:
-                toprint = u' '.join(to_string(v) for v in kv[1:])
-                if os.environ.get('TERM') != 'dumb':
+                toprint = " ".join(to_string(v) for v in kv[1:])
+                if os.environ.get("TERM") != "dumb":
                     toprint = click.style(toprint, **config.alt_style)
-                data.append('%s %s' % (kv[0], toprint))
+                data.append("{} {}".format(kv[0], toprint))
             else:
                 data.append(str(kv[0]))
-        return '\n'.join(data)
-    elif tablefmt == 'csv':
+        return "\n".join(data)
+    elif tablefmt == "csv":
         import csv
+
         f = csv.StringIO()
         csvwriter = csv.writer(f)
         csvwriter.writerows(tabular_data)
         f.seek(0)
-        return f.read().rstrip('\n')
-    elif tablefmt == 'json':
+        return f.read().rstrip("\n")
+    elif tablefmt == "json":
         json_data = []
         if not headers and tabular_data:
-            headers = ['key%s' % i for i in range(len(tabular_data[0]))]
+            headers = ["key%s" % i for i in range(len(tabular_data[0]))]
         for ls in tabular_data:
             d = {}
             for i, v in enumerate(ls):
@@ -1328,14 +1436,19 @@ def tabulate(tabular_data,
                 d[headers[i]] = v
             json_data.append(d)
         return colorize_json(json_data)
-    elif tablefmt == 'json-map':
+    elif tablefmt == "json-map":
         return colorize_json(
-            dict(
-                (d[0], clear_ansi_color_codes(str_join(' ', d[1:])) if len(d[1:]) > 1 else d[1]) for d in tabular_data))
-    elif tablefmt == 'json-maps':
+            {
+                d[0]: clear_ansi_color_codes(str_join(" ", d[1:]))
+                if len(d[1:]) > 1
+                else d[1]
+                for d in tabular_data
+            }
+        )
+    elif tablefmt == "json-maps":
         json_data = {}
         if not headers and tabular_data:
-            headers = ['key%s' % i for i in range(len(tabular_data[0]))]
+            headers = ["key%s" % i for i in range(len(tabular_data[0]))]
         for ls in tabular_data:
             d = {}
             for i, v in enumerate(ls[1:]):
@@ -1343,22 +1456,26 @@ def tabulate(tabular_data,
                 d[headers[i + 1]] = v
             json_data[clear_ansi_color_codes(ls[0])] = d
         return colorize_json(json_data)
-    elif tablefmt == 'plain':
-        return tabulate_(tabular_data=tabular_data,
-                         headers=(),
-                         tablefmt='plain',
-                         floatfmt=floatfmt,
-                         numalign=numalign,
-                         stralign=stralign,
-                         missingval=missingval)
+    elif tablefmt == "plain":
+        return tabulate_(
+            tabular_data=tabular_data,
+            headers=(),
+            tablefmt="plain",
+            floatfmt=floatfmt,
+            numalign=numalign,
+            stralign=stralign,
+            missingval=missingval,
+        )
     else:
-        return tabulate_(tabular_data=tabular_data,
-                         headers=headers,
-                         tablefmt=tablefmt,
-                         floatfmt=floatfmt,
-                         numalign=numalign,
-                         stralign=stralign,
-                         missingval=missingval)
+        return tabulate_(
+            tabular_data=tabular_data,
+            headers=headers,
+            tablefmt=tablefmt,
+            floatfmt=floatfmt,
+            numalign=numalign,
+            stralign=stralign,
+            missingval=missingval,
+        )
 
 
 def str_join(sep, ls):
@@ -1367,22 +1484,31 @@ def str_join(sep, ls):
 
 
 def assert_main_module():
-    assert main_module != '__main__', ('You cannot call the main module, for there is none.')
+    assert main_module != "__main__", (
+        "You cannot call the main module, for there is none."
+    )
 
 
 def call_me(*cmd):
     assert_main_module()
-    return call([sys.executable, '-c', 'from {} import main; main()'.format(main_module)] + list(cmd))
+    return call(
+        [sys.executable, "-c", "from {} import main; main()".format(main_module)]
+        + list(cmd)
+    )
 
 
 def check_my_output(*cmd):
     assert_main_module()
-    return safe_check_output([sys.executable, '-c', 'from {} import main; main()'.format(main_module)] + list(cmd))
+    return safe_check_output(
+        [sys.executable, "-c", "from {} import main; main()".format(main_module)]
+        + list(cmd)
+    )
 
 
 def to_bool(s):
     """Converts a string to a boolean"""
     from distutils.util import strtobool
+
     return bool(strtobool(s))
 
 
@@ -1396,30 +1522,32 @@ def parsedatetime(value):
     if isinstance(value, datetime.datetime):
         return value, None
     import parsedatetime as _parsedatetime
+
     cal = _parsedatetime.Calendar()
     return cal.parseDT(value, sourceTime=datetime.datetime.today())
 
 
 def value_to_string(value):
     if isinstance(value, tuple):
-        return (' '.join([value_to_string(element) for element in value]))
+        return " ".join([value_to_string(element) for element in value])
     elif isinstance(value, datetime.datetime):
         return value.isoformat()
     elif value:
         return str(value)
     else:
-        return ''
+        return ""
 
 
-def is_port_available(port, hostname='127.0.0.1'):
+def is_port_available(port, hostname="127.0.0.1"):
     import socket
+
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     result = s.connect_ex((hostname, port))
     s.close()
     return result != 0
 
 
-def find_available_port(start_port, hostname='127.0.0.1'):
+def find_available_port(start_port, hostname="127.0.0.1"):
     port = start_port
     while not is_port_available(port, hostname):
         port += 1

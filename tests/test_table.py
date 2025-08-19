@@ -1,12 +1,11 @@
 #!/usr/bin/env python3
-# -*- coding: utf-8 -*-
 
 import json
 
 
 def test_table(lib, pythondir):
     # given a group of commands that allows playing with http
-    (pythondir / 'table.py').write_text("""#!/usr/bin/env python3
+    (pythondir / "table.py").write_text("""#!/usr/bin/env python3
 # -*- coding:utf-8 -*-
 
 
@@ -30,14 +29,23 @@ def table(fields, format):
         tp.echo(1, 2, 3)
         tp.echo("a", "b", "c")
 """)
-    assert lib.cmd('table') == '''
+    assert (
+        lib.cmd("table")
+        == """
 1 2 3
 a b c
-'''.strip()
-    assert lib.cmd('table --format orgtbl') == '''
+""".strip()
+    )
+    assert (
+        lib.cmd("table --format orgtbl")
+        == """
 | col1   | col2   | col3   |
 |--------+--------+--------|
 | 1      | 2      | 3      |
 | a      | b      | c      |
-'''.strip()
-    assert json.loads(lib.cmd('table --format json --field col2')) == [{'col2': 2}, {'col2': 'b'}]
+""".strip()
+    )
+    assert json.loads(lib.cmd("table --format json --field col2")) == [
+        {"col2": 2},
+        {"col2": "b"},
+    ]

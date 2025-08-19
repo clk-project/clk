@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 
 from clk.config import config
 from clk.log import get_logger
@@ -12,7 +11,11 @@ afterloads_cache = set()
 
 
 def load_plugins():
-    directory_profiles = [profile for profile in config.all_profiles if isinstance(profile, DirectoryProfile)]
+    directory_profiles = [
+        profile
+        for profile in config.all_profiles
+        if isinstance(profile, DirectoryProfile)
+    ]
     for profile in directory_profiles:
         profile.load_plugins()
 

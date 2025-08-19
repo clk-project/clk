@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 
 import json
 import os
@@ -21,10 +20,9 @@ LOGGER = get_logger(__name__)
 
 
 class Value:
-
     def __getattr__(self, name):
         try:
-            return config.settings2['value'][name]['value']
+            return config.settings2["value"][name]["value"]
         except Exception:
             return getattr(super(), name)
 
@@ -32,29 +30,28 @@ class Value:
         return self.__getattr__(name)
 
     def __dir__(self):
-        return list(config.settings2['value'].keys())
+        return list(config.settings2["value"].keys())
 
 
 class DynamicConfigBase:
     """Base class meant to be inherited from and used in callbacks
 
-Define the subclass as
+    Define the subclass as
 
-class SomeConfig(DynamicConfigBase):
-    name = 'thenameintheconfig'
+    class SomeConfig(DynamicConfigBase):
+        name = 'thenameintheconfig'
 
-Then declare some option like
+    Then declare some option like
 
-@option("--someoption", callback=SomeConfig.get_callback())
+    @option("--someoption", callback=SomeConfig.get_callback())
 
-Then, get the option with config.thenameintheconfig.someoption. Because it uses
-callbacks, the value is available very early, even before running the
-command. Hence the name dynamic
-"""
+    Then, get the option with config.thenameintheconfig.someoption. Because it uses
+    callbacks, the value is available very early, even before running the
+    command. Hence the name dynamic
+    """
 
     @classmethod
     def get_callback(klass):
-
         def cb(ctx, attr, value):
             if not hasattr(config, klass.name):
                 inst = klass()
@@ -71,11 +68,14 @@ def migrate_profiles():
     ctx = click_get_current_context_safe()
     for profile in config.root_profiles + list(config.all_extensions):
         if profile is not None:
-            profile.migrate_if_needed(config.persist_migration and not (ctx is not None and ctx.resilient_parsing))
+            profile.migrate_if_needed(
+                config.persist_migration
+                and not (ctx is not None and ctx.resilient_parsing)
+            )
 
 
 def get_appdir(appname):
-    config = os.environ.get(f'{appname.upper()}CONFIGDIR')
+    config = os.environ.get(f"{appname.upper()}CONFIGDIR")
     if config:
         return config
     return click.get_app_dir(appname)
@@ -86,7 +86,7 @@ def merge_settings(settings):
     computed_settings2 = {}
     for s in settings:
         for k, v in s.items():
-            if k == '_self':
+            if k == "_self":
                 # self is not mergeable, for ot gives information about the file itself
                 continue
             if k not in computed_settings:
@@ -97,7 +97,9 @@ def merge_settings(settings):
                     computed_settings[k].update(v)
                     for k2, v2 in v.items():
                         if isinstance(v2, list):
-                            computed_settings2[k][k2] = computed_settings2[k].get(k2, []) + v2
+                            computed_settings2[k][k2] = (
+                                computed_settings2[k].get(k2, []) + v2
+                            )
                         elif isinstance(v2, dict):
                             s2v = computed_settings2[k].get(k2)
                             if s2v is None:
@@ -107,19 +109,19 @@ def merge_settings(settings):
                         elif isinstance(v2, str):
                             computed_settings2[k] = v2
                         else:
-                            raise NotImplementedError('Please help us code this part')
+                            raise NotImplementedError("Please help us code this part")
                 elif isinstance(v, list):
                     computed_settings[k].extend(v)
                 else:
-                    raise NotImplementedError('Please help us code this part')
+                    raise NotImplementedError("Please help us code this part")
     return computed_settings, computed_settings2
 
 
-class Config(object):
-    app_dir_name = 'clk'
-    app_name = 'clk'
+class Config:
+    app_dir_name = "clk"
+    app_name = "clk"
     main_command = None
-    log_level_default = 'deprecated'
+    log_level_default = "deprecated"
 
     def __init__(self):
         self.ask_secret_callback = None
@@ -137,19 +139,19 @@ class Config(object):
         self.persist_migration = False
         # environment values
         self.env = None
-        self.override_env = {'CLK_INSTALL_LOCATION': str(Path(__file__).parent)}
+        self.override_env = {"CLK_INSTALL_LOCATION": str(Path(__file__).parent)}
         self.old_env = os.environ.copy()
         self.distribution_profile_location = None
         self._all_profiles_cache = None
         self.value = Value()
-        self.groups = set(['clk'])
+        self.groups = {"clk"}
         self.flow_verbose = False
         self.level_settings = {}
 
     @cached_property
     def commandline_profile(self):
         return ProfileFactory.create_preset_profile(
-            'commandline',
+            "commandline",
             settings=defaultdict(lambda: defaultdict(list)),
             explicit=False,
             isroot=True,
@@ -159,7 +161,7 @@ class Config(object):
     @cached_property
     def flow_profile(self):
         return ProfileFactory.create_preset_profile(
-            'flow',
+            "flow",
             settings=defaultdict(lambda: defaultdict(list)),
             explicit=False,
             isroot=True,
@@ -168,23 +170,26 @@ class Config(object):
 
     @cached_property
     def env_profile(self):
-        profile = ProfileFactory.create_preset_profile('env',
-                                                       settings=defaultdict(lambda: defaultdict(list)),
-                                                       explicit=True,
-                                                       isroot=True,
-                                                       activation_level=ActivationLevel.global_,
-                                                       default_color='bold-True')
-        parameters_prefix = f'{self.app_name}_P_'.upper()
-        profile.settings['parameters'] = {
-            key[len(parameters_prefix):].replace('__', '-').replace('_', '.').lower(): shlex.split(value)
+        profile = ProfileFactory.create_preset_profile(
+            "env",
+            settings=defaultdict(lambda: defaultdict(list)),
+            explicit=True,
+            isroot=True,
+            activation_level=ActivationLevel.global_,
+            default_color="bold-True",
+        )
+        parameters_prefix = f"{self.app_name}_P_".upper()
+        profile.settings["parameters"] = {
+            key[len(parameters_prefix) :]
+            .replace("__", "-")
+            .replace("_", ".")
+            .lower(): shlex.split(value)
             for key, value in os.environ.items()
             if key.startswith(parameters_prefix)
         }
-        extensions_prefix = f'{self.app_name}_E_'.upper()
-        profile.settings['recipe'] = {
-            key[len(extensions_prefix):]: {
-                'enabled': json.loads(value)
-            }
+        extensions_prefix = f"{self.app_name}_E_".upper()
+        profile.settings["recipe"] = {
+            key[len(extensions_prefix) :]: {"enabled": json.loads(value)}
             for key, value in os.environ.items()
             if key.startswith(extensions_prefix)
         }
@@ -199,16 +204,28 @@ class Config(object):
         env = {}
 
         while ctx:
-            env.update({(ctx.command_path.replace(' ', '_') + '__' + key).upper(): (value_to_string(value))
-                        for key, value in ctx.params.items()})
+            env.update(
+                {
+                    (ctx.command_path.replace(" ", "_") + "__" + key).upper(): (
+                        value_to_string(value)
+                    )
+                    for key, value in ctx.params.items()
+                }
+            )
             ctx = ctx.parent
         return env
 
     @property
     def group_command_line_parameters_as_environ_variables(self):
-        return {('CLK_P_' + path.replace('-', '__').replace('.', '_')).upper(): ' '.join(map(quote, parameters))
-                for path, parameters in self.commandline_profile.settings['parameters'].items()
-                if path in self.groups and parameters}
+        return {
+            ("CLK_P_" + path.replace("-", "__").replace(".", "_")).upper(): " ".join(
+                map(quote, parameters)
+            )
+            for path, parameters in self.commandline_profile.settings[
+                "parameters"
+            ].items()
+            if path in self.groups and parameters
+        }
 
     @property
     def external_commands_environ_variables(self):
@@ -216,9 +233,9 @@ class Config(object):
             **self.context_parameters_as_environ_variables,
             **self.group_command_line_parameters_as_environ_variables,
             **{
-                'CLK_APPNAME': self.app_name,
-                'CLK_APPNAME_UPPER': self.app_name.upper(),
-            }
+                "CLK_APPNAME": self.app_name,
+                "CLK_APPNAME_UPPER": self.app_name.upper(),
+            },
         }
 
     @property
@@ -238,7 +255,7 @@ class Config(object):
                 self.merge_settings()
             else:
                 self._project = value
-                LOGGER.critical('{} does not exist. It will be ignored.'.format(value))
+                LOGGER.critical("{} does not exist. It will be ignored.".format(value))
 
     def guess_project(self):
         if self.project:
@@ -246,14 +263,16 @@ class Config(object):
         else:
             candidate = self.find_project()
             if candidate:
-                LOGGER.develop('Guessing project {} from the local context'.format(candidate))
+                LOGGER.develop(
+                    "Guessing project {} from the local context".format(candidate)
+                )
             return candidate
 
     def find_project(self):
         """Find the current project directory"""
         dir = os.getcwd()
         prevdir = None
-        localprofilename = '.' + self.main_command.path
+        localprofilename = "." + self.main_command.path
         while dir != prevdir:
             if os.path.exists(os.path.join(dir, localprofilename)):
                 return dir
@@ -264,7 +283,7 @@ class Config(object):
     def require_project(self):
         """Check that a project is set and is valid"""
         if not self.project:
-            raise click.UsageError('No project provided')
+            raise click.UsageError("No project provided")
 
     def init(self):
         self._all_profiles_cache = None
@@ -286,16 +305,24 @@ class Config(object):
         """Put the values of self.env and self.override_env into environment variables"""
         for k, v in self.override_env.items():
             os.environ[k] = v
-        self.env = dict((k, os.pathsep.join(os.path.normpath(p) for p in ps if p)) for k, ps in self.env.items())
+        self.env = {
+            k: os.pathsep.join(os.path.normpath(p) for p in ps if p)
+            for k, ps in self.env.items()
+        }
         for k, v in self.env.items():
-            sep = os.pathsep if (k.endswith('PATH') or k.endswith('DIR') or k.endswith('DIRS')) else ' '
+            sep = (
+                os.pathsep
+                if (k.endswith("PATH") or k.endswith("DIR") or k.endswith("DIRS"))
+                else " "
+            )
             if k in os.environ:
                 os.environ[k] = v + sep + os.environ[k]
             else:
                 os.environ[k] = v
-        for k, v in self.get_settings('environment').items():
+        for k, v in self.get_settings("environment").items():
             from clk.overloads import eval_arg
-            os.environ[k] = eval_arg(v['value'])
+
+            os.environ[k] = eval_arg(v["value"])
 
     def get_settings(self, section):
         if self.settings is None:
@@ -315,7 +342,9 @@ class Config(object):
         explicit_only = explicit_only or only_this_extension
         for profile in self.all_enabled_profiles:
             if not explicit_only or profile.explicit:
-                yield from self.load_settings_from_profile(profile, only_this_extension=only_this_extension)
+                yield from self.load_settings_from_profile(
+                    profile, only_this_extension=only_this_extension
+                )
 
     def merge_settings(self):
         for profile in self.all_enabled_profiles:
@@ -334,14 +363,18 @@ class Config(object):
         This ensure that the path
         ~/.config/clk/extension/someext/python/somecommand.py will return
         ~/.config/clk/extension/someext and never ~/.config/clk/."""
-        candidates = [profile for profile in self.all_enabled_profiles if profile.contains(path)]
+        candidates = [
+            profile for profile in self.all_enabled_profiles if profile.contains(path)
+        ]
         if candidates:
             return max(candidates, key=lambda profile: profile.location)
         else:
             return None
 
     def load_settings_from_profile(self, profile, only_this_extension=None):
-        if profile is not None and (not only_this_extension or profile.short_name == only_this_extension):
+        if profile is not None and (
+            not only_this_extension or profile.short_name == only_this_extension
+        ):
             yield profile.settings
 
     def get_profile(self, name):
@@ -354,7 +387,7 @@ class Config(object):
         uniq_shortnames = [nam for nam in shortnames if shortnames.count(nam) == 1]
         if name in uniq_shortnames:
             return [r for r in extensions if r.short_name == name][0]
-        raise ValueError('Could not find profile {}'.format(name))
+        raise ValueError("Could not find profile {}".format(name))
 
     @property
     def workspace(self):
@@ -367,13 +400,13 @@ class Config(object):
     def local_profile(self):
         if self.project:
             return ProfileFactory.create_or_get_by_location(
-                os.path.join(self.project, '.' + self.main_command.path),
-                name='local',
+                os.path.join(self.project, "." + self.main_command.path),
+                name="local",
                 app_name=self.app_name,
                 explicit=True,
                 isroot=True,
                 activation_level=ActivationLevel.local,
-                default_color='fg-green',
+                default_color="fg-green",
             )
         else:
             return None
@@ -383,9 +416,9 @@ class Config(object):
         settings = {}
         proj = self.guess_project()
         if proj:
-            settings['parameters'] = {self.main_command.path: ['--project', proj]}
+            settings["parameters"] = {self.main_command.path: ["--project", proj]}
         return ProfileFactory.create_preset_profile(
-            'currentdirectorypreset',
+            "currentdirectorypreset",
             settings=settings,
             explicit=False,
             isroot=True,
@@ -396,8 +429,8 @@ class Config(object):
     def localpreset_profile(self):
         if self.project:
             return ProfileFactory.create_preset_profile(
-                'localpreset',
-                settings={'customcommands': self.local_profile.custom_command_paths},
+                "localpreset",
+                settings={"customcommands": self.local_profile.custom_command_paths},
                 explicit=False,
                 isroot=True,
                 activation_level=ActivationLevel.local,
@@ -409,13 +442,13 @@ class Config(object):
     def workspace_profile(self):
         if self.project:
             return ProfileFactory.create_or_get_by_location(
-                os.path.dirname(self.project) + '/.{}'.format(self.main_command.path),
-                name='workspace',
+                os.path.dirname(self.project) + "/.{}".format(self.main_command.path),
+                name="workspace",
                 app_name=self.app_name,
                 explicit=True,
                 isroot=True,
                 activation_level=ActivationLevel.local,
-                default_color='fg-magenta',
+                default_color="fg-magenta",
             )
         else:
             return None
@@ -424,7 +457,7 @@ class Config(object):
     def workspacepreset_profile(self):
         if self.project:
             return ProfileFactory.create_preset_profile(
-                'workspacepreset',
+                "workspacepreset",
                 settings={},
                 explicit=False,
                 isroot=True,
@@ -437,36 +470,59 @@ class Config(object):
     def global_profile(self):
         return ProfileFactory.create_or_get_by_location(
             self.app_dir,
-            name='global',
+            name="global",
             app_name=self.app_name,
             explicit=True,
             isroot=True,
             activation_level=ActivationLevel.global_,
-            default_color='fg-cyan',
+            default_color="fg-cyan",
         )
 
     @cached_property
     def globalpreset_profile(self):
         return ProfileFactory.create_preset_profile(
-            'globalpreset',
+            "globalpreset",
             settings={
-                'launchers': {
-                    'gdb': ['gdb', '--quiet', '--args'],
-                    'dlvdebug': ['dlv', 'debug'],
-                    'gorun': ['go', 'run'],
-                    'gdb-jvm': ['gdb', '--quiet', '--eval-command=handle SIGSEGV nostop noprint pass', '--args'],
-                    'lldb': ['lldb', '--'],
-                    'memcheck': ['valgrind', '--tool=memcheck', '--leak-check=full'],
-                    'callgrind': ['valgrind', '--tool=callgrind', '--separate-callers=2'],
-                    'massif': ['valgrind', '--tool=massif'],
-                    'heaptrack': ['heaptrack'],
-                    'perf-record': ['perf', 'record', '-e', 'cpu-clock', '--call-graph', 'dwarf', '-F', '99'],
-                    'xvfb': ['xvfb-run', '-a', '--server-args', '-screen 0 1024x768x24 -extension RANDR'],
-                    'time': ['time', '-v'],
-                    'gdbserver': ['gdbserver', 'localhost:9999'],
+                "launchers": {
+                    "gdb": ["gdb", "--quiet", "--args"],
+                    "dlvdebug": ["dlv", "debug"],
+                    "gorun": ["go", "run"],
+                    "gdb-jvm": [
+                        "gdb",
+                        "--quiet",
+                        "--eval-command=handle SIGSEGV nostop noprint pass",
+                        "--args",
+                    ],
+                    "lldb": ["lldb", "--"],
+                    "memcheck": ["valgrind", "--tool=memcheck", "--leak-check=full"],
+                    "callgrind": [
+                        "valgrind",
+                        "--tool=callgrind",
+                        "--separate-callers=2",
+                    ],
+                    "massif": ["valgrind", "--tool=massif"],
+                    "heaptrack": ["heaptrack"],
+                    "perf-record": [
+                        "perf",
+                        "record",
+                        "-e",
+                        "cpu-clock",
+                        "--call-graph",
+                        "dwarf",
+                        "-F",
+                        "99",
+                    ],
+                    "xvfb": [
+                        "xvfb-run",
+                        "-a",
+                        "--server-args",
+                        "-screen 0 1024x768x24 -extension RANDR",
+                    ],
+                    "time": ["time", "-v"],
+                    "gdbserver": ["gdbserver", "localhost:9999"],
                 },
-                'customcommands': self.global_profile.custom_command_paths,
-                'alias': {},
+                "customcommands": self.global_profile.custom_command_paths,
+                "alias": {},
             },
             explicit=False,
             isroot=True,
@@ -478,7 +534,7 @@ class Config(object):
         if self.distribution_profile_location is not None:
             return ProfileFactory.create_or_get_by_location(
                 self.distribution_profile_location,
-                name='distribution',
+                name="distribution",
                 app_name=self.app_name,
                 explicit=False,
                 isroot=True,
@@ -493,12 +549,21 @@ class Config(object):
         return self.filter_enabled_profiles(self.all_profiles)
 
     def filter_enabled_profiles(self, profiles):
-        return (profile for profile in profiles
-                if (not profile.isextension or self.is_extension_enabled(profile.short_name)))
+        return (
+            profile
+            for profile in profiles
+            if (
+                not profile.isextension or self.is_extension_enabled(profile.short_name)
+            )
+        )
 
     @property
     def all_directory_profiles(self):
-        return [profile for profile in self.all_profiles if isinstance(profile, DirectoryProfile)]
+        return [
+            profile
+            for profile in self.all_profiles
+            if isinstance(profile, DirectoryProfile)
+        ]
 
     @property
     def all_profiles(self):
@@ -511,13 +576,14 @@ class Config(object):
                 for extension in self.sorted_extensions(profile.extensions):
                     res.append(
                         ProfileFactory.create_preset_profile(
-                            f'{extension.name}preset',
-                            settings={'customcommands': extension.custom_command_paths},
+                            f"{extension.name}preset",
+                            settings={"customcommands": extension.custom_command_paths},
                             explicit=False,
                             isroot=False,
                             isextension=True,
                             activation_level=ActivationLevel.global_,
-                        ))
+                        )
+                    )
                     res.append(extension)
                 res.append(profile)
 
@@ -537,7 +603,9 @@ class Config(object):
 
     @property
     def implicit_profiles(self):
-        return [profile for profile in self.all_enabled_profiles if not profile.explicit]
+        return [
+            profile for profile in self.all_enabled_profiles if not profile.explicit
+        ]
 
     @property
     def root_profiles(self):
@@ -546,11 +614,14 @@ class Config(object):
     @property
     def all_extensions(self):
         for profile in self.root_profiles:
-            for extension in self.sorted_extensions(profile.extensions):
-                yield extension
+            yield from self.sorted_extensions(profile.extensions)
 
     def get_enabled_extensions_by_short_name(self, short_name):
-        return (extension for extension in self.all_enabled_extensions if extension.short_name == short_name)
+        return (
+            extension
+            for extension in self.all_enabled_extensions
+            if extension.short_name == short_name
+        )
 
     @property
     def all_disabled_extensions(self):
@@ -570,10 +641,10 @@ class Config(object):
     def get_extension_order(self, extension):
         if self.settings is None:
             return 0
-        return self.settings.get('recipe', {}).get(extension, {}).get('order', 1000)
+        return self.settings.get("recipe", {}).get(extension, {}).get("order", 1000)
 
     def get_profile_containing_extension(self, name):
-        profile_name = name.split('/')[0]
+        profile_name = name.split("/")[0]
         profile = self.get_profile(profile_name)
         return profile
 
@@ -582,26 +653,39 @@ class Config(object):
         return profile.extension_location(name)
 
     def get_extension(self, name):
-        name, profile_name = name.split('/')
+        name, profile_name = name.split("/")
         profile = self.get_profile(profile_name)
         return profile.get_extension(name)
 
     def is_extension_enabled(self, shortname):
-        if shortname.endswith('preset'):
+        if shortname.endswith("preset"):
             # the preset profile associated to a extension must have the same
             # enabling than the extension itself
-            shortname = shortname[:-len('preset')]
-        return (self.settings2 or {}).get('recipe', {}).get(shortname, {}).get('enabled', True)
+            shortname = shortname[: -len("preset")]
+        return (
+            (self.settings2 or {})
+            .get("recipe", {})
+            .get(shortname, {})
+            .get("enabled", True)
+        )
 
     def filter_unset_extensions(self, extensions):
-        return [extension for extension in extensions if self.is_extension_enabled(extension.short_name) is None]
+        return [
+            extension
+            for extension in extensions
+            if self.is_extension_enabled(extension.short_name) is None
+        ]
 
     def filter_disabled_extensions(self, extensions):
-        return [extension for extension in extensions if self.is_extension_enabled(extension.short_name) is False]
+        return [
+            extension
+            for extension in extensions
+            if self.is_extension_enabled(extension.short_name) is False
+        ]
 
     @property
     def log_level(self):
-        if hasattr(self, '_log_level'):
+        if hasattr(self, "_log_level"):
             return self._log_level
         else:
             return None
@@ -616,13 +700,13 @@ class Config(object):
     def develop(self):
         if self.log_level is None:
             return False
-        return LOG_LEVELS[self.log_level] <= LOG_LEVELS['develop']
+        return LOG_LEVELS[self.log_level] <= LOG_LEVELS["develop"]
 
     @property
     def debug(self):
         if self.log_level is None:
             return False
-        return LOG_LEVELS[self.log_level] <= LOG_LEVELS['debug']
+        return LOG_LEVELS[self.log_level] <= LOG_LEVELS["debug"]
 
     @property
     def dry_run(self):
@@ -634,16 +718,19 @@ class Config(object):
         for profile in self.all_profiles:
             profile.dry_run = value
         from clk import lib, liblp
+
         lib.dry_run = value
         liblp.dry_run = value
 
     def get_value(self, path, default=None):
-        return self.get_settings('value').get(path, {'value': default})['value']
+        return self.get_settings("value").get(path, {"value": default})["value"]
 
     def get_parameters(self, path, implicit_only=False):
         return [
-            setting for profile in self.all_enabled_profiles if implicit_only is False or not profile.explicit
-            for setting in profile.get_settings('parameters').get(path, [])
+            setting
+            for profile in self.all_enabled_profiles
+            if implicit_only is False or not profile.explicit
+            for setting in profile.get_settings("parameters").get(path, [])
         ]
 
 
@@ -653,7 +740,10 @@ config_cls = None
 
 def setup_config_class(cls=Config):
     from clk import completion
-    completion.CASE_INSENSITIVE_ENV = '_{}_CASE_INSENSITIVE_COMPLETION'.format(cls.app_name.upper().replace('-', '_'))
+
+    completion.CASE_INSENSITIVE_ENV = "_{}_CASE_INSENSITIVE_COMPLETION".format(
+        cls.app_name.upper().replace("-", "_")
+    )
     global config_cls
     config_cls = cls
     del configs[:]
@@ -663,8 +753,7 @@ def setup_config_class(cls=Config):
 setup_config_class()
 
 
-class ConfigProxy(object):
-
+class ConfigProxy:
     def __getattr__(self, k):
         return getattr(configs[-1], k)
 

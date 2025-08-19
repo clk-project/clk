@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 
 from collections import defaultdict
 
@@ -38,11 +37,13 @@ def register_command(parent=None):
     parent = parent or config.main_command.path
 
     def decorator(command):
-        assert not parent.startswith(config.main_command.path + '.'), (
+        assert not parent.startswith(config.main_command.path + "."), (
             "The command {} is trying to register as subcommand of '{}'."
-            ' Since this is not a valid command path,'
-            " it won't do anything, try using '{}' instead :-).".format(command.name, parent,
-                                                                        parent[len(config.main_command.path) + 1:]))
+            " Since this is not a valid command path,"
+            " it won't do anything, try using '{}' instead :-).".format(
+                command.name, parent, parent[len(config.main_command.path) + 1 :]
+            )
+        )
 
         def load_command():
             return command
@@ -53,8 +54,7 @@ def register_command(parent=None):
     return decorator
 
 
-class command_loader(object):
-
+class command_loader:
     def __init__(self, name, parent=None):
         self.name = name
         self.parent = parent or config.main_command.path
@@ -66,8 +66,7 @@ class command_loader(object):
 command_hooks = defaultdict(list)
 
 
-class command_hook(object):
-
+class command_hook:
     def __init__(self, name):
         self.name = name
 
@@ -76,18 +75,20 @@ class command_hook(object):
 
 
 class HookCommandResolver(CommandResolver):
-    name = 'hook'
+    name = "hook"
 
     def _list_command_paths(self, parent=None):
         res = {
-            parent_path + '.' + cmd if parent_path is not config.main_command.path else cmd
+            parent_path + "." + cmd
+            if parent_path is not config.main_command.path
+            else cmd
             for (parent_path, cmds) in command_loaders.items()
             for cmd in cmds.keys()
         }
         return res
 
     def _get_command(self, path, parent):
-        parts = path.split('.')
+        parts = path.split(".")
         parent_path = parent.path
         cmd = parts[-1]
         return command_loaders.get(parent_path, {}).get(cmd, None)()

@@ -1,11 +1,18 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 
 import click
 
 from clk.colors import Colorer
 from clk.config import config
-from clk.decorators import argument, flag, group, pass_context, table_fields, table_format, use_settings
+from clk.decorators import (
+    argument,
+    flag,
+    group,
+    pass_context,
+    table_fields,
+    table_format,
+    use_settings,
+)
 from clk.launcher import LauncherType
 from clk.lib import TablePrinter, quote
 from clk.log import get_logger
@@ -13,12 +20,12 @@ from clk.log import get_logger
 LOGGER = get_logger(__name__)
 
 
-class LaunchersConfig(object):
+class LaunchersConfig:
     pass
 
 
-@group(default_command='show')
-@use_settings('launchers', LaunchersConfig, override=False)
+@group(default_command="show")
+@use_settings("launchers", LaunchersConfig, override=False)
 def launcher():
     """Manipulate launchers
 
@@ -41,9 +48,11 @@ def launcher():
     pass
 
 
-@launcher.command(ignore_unknown_options=True, change_directory_options=False, handle_dry_run=True)
-@argument('launcher', type=LauncherType(missing_ok=True), help='The launcher name')
-@argument('command', nargs=-1, help='The launcher command')
+@launcher.command(
+    ignore_unknown_options=True, change_directory_options=False, handle_dry_run=True
+)
+@argument("launcher", type=LauncherType(missing_ok=True), help="The launcher name")
+@argument("command", nargs=-1, help="The launcher command")
 def set(launcher, command):
     """Set a launcher"""
     config.launchers.writable[launcher] = command
@@ -51,8 +60,8 @@ def set(launcher, command):
 
 
 @launcher.command(ignore_unknown_options=True, handle_dry_run=True)
-@argument('launcher', type=LauncherType(), help='The launcher name')
-@argument('params', nargs=-1, help='The parameters to append')
+@argument("launcher", type=LauncherType(), help="The launcher name")
+@argument("params", nargs=-1, help="The parameters to append")
 def append(launcher, params):
     """Add a parameters at the end of a launcher"""
     params = config.launchers.writable.get(launcher, []) + list(params)
@@ -61,41 +70,55 @@ def append(launcher, params):
 
 
 @launcher.command(handle_dry_run=True)
-@argument('launchers', nargs=-1, type=LauncherType(), help='The launcher name')
+@argument("launchers", nargs=-1, type=LauncherType(), help="The launcher name")
 def unset(launchers):
     """Unset a launcher"""
     for launcher in launchers:
         if launcher not in config.launchers.writable:
-            raise click.ClickException('The command %s has no parameter registered in the %s configuration.'
-                                       'Try using another profile option (like --local or --global)' %
-                                       (launcher, config.launchers.writeprofile))
+            raise click.ClickException(
+                "The command %s has no parameter registered in the %s configuration."
+                "Try using another profile option (like --local or --global)"
+                % (launcher, config.launchers.writeprofile)
+            )
     for launcher in launchers:
-        LOGGER.status('Erasing {} launchers from {} settings'.format(launcher, config.launchers.writeprofile))
+        LOGGER.status(
+            "Erasing {} launchers from {} settings".format(
+                launcher, config.launchers.writeprofile
+            )
+        )
         del config.launchers.writable[launcher]
     config.launchers.write()
 
 
 @launcher.command(handle_dry_run=True)
-@flag('--name-only/--no-name-only', help='Only display the command names')
+@flag("--name-only/--no-name-only", help="Only display the command names")
 @Colorer.color_options(full_default=True)
-@table_format(default='key_value')
-@table_fields(choices=['launcher', 'command'])
-@argument('launchers', nargs=-1, default=None, type=LauncherType(), help='The launcher names')
+@table_format(default="key_value")
+@table_fields(choices=["launcher", "command"])
+@argument(
+    "launchers", nargs=-1, default=None, type=LauncherType(), help="The launcher names"
+)
 @pass_context
 def show(ctx, name_only, launchers, fields, format, **kwargs):
     """Show the launchers"""
-    launchers = launchers or sorted(config.settings.get('launchers', {}))
+    launchers = launchers or sorted(config.settings.get("launchers", {}))
     with TablePrinter(fields, format) as tp, Colorer(kwargs) as colorer:
         for launcher_name in launchers:
             if name_only:
                 click.echo(launcher_name)
             else:
-                if config.launchers.readprofile == 'settings-file':
+                if config.launchers.readprofile == "settings-file":
                     args = config.launchers.readonly.get(launcher_name, [])
                 else:
                     values = {
-                        profile.name:
-                        ' '.join([quote(p) for p in config.launchers.all_settings[profile.name].get(launcher_name, [])])
+                        profile.name: " ".join(
+                            [
+                                quote(p)
+                                for p in config.launchers.all_settings[
+                                    profile.name
+                                ].get(launcher_name, [])
+                            ]
+                        )
                         for profile in config.all_enabled_profiles
                     }
                     args = colorer.colorize(values, config.launchers.readprofile)

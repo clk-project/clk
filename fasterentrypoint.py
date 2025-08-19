@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # noqa: D300,D400
 # Copyright (c) 2016, Aaron Christianson
 # All rights reserved.
@@ -25,12 +24,13 @@
 # LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
 # NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-'''
+"""
 Monkey patch setuptools to write a simple bash script that run the entry point
 
 
 From the work of Aaron Christianson in http://github.com/ninjaaron/fast-entry_points
-'''
+"""
+
 import sys
 
 from setuptools.command import easy_install
@@ -42,14 +42,17 @@ def get_args(cls, dist, header=None):  # noqa: D205,D400
     Yield write_script() argument tuples for a distribution's
     console_scripts and gui_scripts entry points.
     """
-    for type_ in 'console', 'gui':
-        group = type_ + '_scripts'
+    for type_ in "console", "gui":
+        group = type_ + "_scripts"
         for name, ep in dist.get_entry_map(group).items():
             # pylint: disable=E1101
-            args = cls._get_script_args(type_, name, '#!/usr/bin/env sh\n',
-                                        f"""exec {sys.executable} -m clk.main "$@" """.rstrip())
-            for res in args:
-                yield res
+            args = cls._get_script_args(
+                type_,
+                name,
+                "#!/usr/bin/env sh\n",
+                f"""exec {sys.executable} -m clk.main "$@" """.rstrip(),
+            )
+            yield from args
 
 
 # pylint: disable=E1101

@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-# -*- coding: utf-8 -*-
 
 from clk import lib
 from clk.alias import AliasCommandResolver, AliasToGroupResolver
@@ -11,7 +10,13 @@ from clk.flow import setup as setup_flow
 from clk.hook import HookCommandResolver
 from clk.hook import setup as setup_hook
 from clk.log import basic_config, get_logger
-from clk.overloads import CoreCommandResolver, Group, GroupCommandResolver, MainCommand, entry_point
+from clk.overloads import (
+    CoreCommandResolver,
+    Group,
+    GroupCommandResolver,
+    MainCommand,
+    entry_point,
+)
 
 LOGGER = get_logger(__name__)
 
@@ -30,7 +35,7 @@ def classic_setup(
     setup_hook()
     for package in extra_command_packages:
         basic_config(package)
-    CoreCommandResolver.commands_packages = extra_command_packages + ['clk.commands']
+    CoreCommandResolver.commands_packages = extra_command_packages + ["clk.commands"]
     CoreCommandResolver.include_core_commands = include_core_commands
     CoreCommandResolver.exclude_core_commands = exclude_core_commands
     Group.commandresolvers = [
@@ -63,13 +68,16 @@ def basic_entry_point(
     include_core_commands=None,
     exclude_core_commands=None,
 ):
-
     def decorator(f):
         path = f.__name__
-        config_cls = type('{}Config'.format(path), (Config, ), {
-            'app_dir_name': path,
-            'app_name': path,
-        })
+        config_cls = type(
+            "{}Config".format(path),
+            (Config,),
+            {
+                "app_dir_name": path,
+                "app_name": path,
+            },
+        )
         return classic_setup(
             main_module,
             config_cls=config_cls,

@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-# -*- coding: utf-8 -*-
 
 from pathlib import Path
 
@@ -7,10 +6,11 @@ from clk.lib import cd
 
 
 def test_default_with_converter(lib):
-    lib.cmd('command create python a --no-open --group')
-    path = lib.cmd('command which a')
+    lib.cmd("command create python a --no-open --group")
+    path = lib.cmd("command which a")
     Path(path).write_text(
-        Path(path).read_text() + """
+        Path(path).read_text()
+        + """
 
 class Test(DynamicChoice):
 
@@ -26,61 +26,77 @@ class Test(DynamicChoice):
 def test(test):
     "Description"
     print(test)
-""")
-    assert lib.cmd('a test --test bar') == 'BAR'
-    assert lib.cmd('a test') == 'FOO'
+"""
+    )
+    assert lib.cmd("a test --test bar") == "BAR"
+    assert lib.cmd("a test") == "FOO"
 
 
 def test_suggestion(lib):
-    lib.cmd('command create python a --no-open --group')
-    path = lib.cmd('command which a')
+    lib.cmd("command create python a --no-open --group")
+    path = lib.cmd("command which a")
     Path(path).write_text(
-        Path(path).read_text() + """
+        Path(path).read_text()
+        + """
 from clk.types import Suggestion
 @a.command()
 @option("--something", type=Suggestion(['a', 'b']))
 def b(something):
     print(something)
-""")
-    assert lib.cmd('a b --something c') == 'c'
-    assert lib.cmd('completion try a b --something') == 'plain,a\nplain,b'
+"""
+    )
+    assert lib.cmd("a b --something c") == "c"
+    assert lib.cmd("completion try a b --something") == "plain,a\nplain,b"
 
 
 def test_date(lib):
-    lib.cmd('command create python a --no-open --group')
-    path = lib.cmd('command which a')
+    lib.cmd("command create python a --no-open --group")
+    path = lib.cmd("command which a")
     Path(path).write_text(
-        Path(path).read_text() + """
+        Path(path).read_text()
+        + """
 from clk.types import Date
 @a.command()
 @option("--someday", type=Date())
 def b(someday):
     print(f"{someday:%Y-%m-%d}")
-""")
-    assert lib.cmd('a b --someday "May 4th 2022"') == '2022-05-04'
-    assert lib.cmd('a b --someday "2022-05-04"') == '2022-05-04'
+"""
+    )
+    assert lib.cmd('a b --someday "May 4th 2022"') == "2022-05-04"
+    assert lib.cmd('a b --someday "2022-05-04"') == "2022-05-04"
 
 
 def test_complete_date(lib):
-    lib.cmd('command create python a --no-open --group')
-    path = lib.cmd('command which a')
+    lib.cmd("command create python a --no-open --group")
+    path = lib.cmd("command which a")
     Path(path).write_text(
-        Path(path).read_text() + """
+        Path(path).read_text()
+        + """
 from clk.types import Date
 @a.command()
 @option("--someday", type=Date())
 def b(someday):
     print(f"{someday:%Y-%m-%d}")
-""")
-    assert lib.cmd(r'completion try --last a b --someday next\ da') == 'plain,next day'
-    assert lib.cmd(r'completion try --last a b --someday last\ sun') == 'plain,last sunday'
-    assert lib.cmd(r'completion try --last a b --someday in\ two\ mont') == 'plain,in two months'
-    assert lib.cmd(r'completion try --last a b --someday two\ days\ a') == 'plain,two days ago'
+"""
+    )
+    assert lib.cmd(r"completion try --last a b --someday next\ da") == "plain,next day"
+    assert (
+        lib.cmd(r"completion try --last a b --someday last\ sun") == "plain,last sunday"
+    )
+    assert (
+        lib.cmd(r"completion try --last a b --someday in\ two\ mont")
+        == "plain,in two months"
+    )
+    assert (
+        lib.cmd(r"completion try --last a b --someday two\ days\ a")
+        == "plain,two days ago"
+    )
 
 
 def test_custom_types_in_command(lib):
     lib.create_bash_command(
-        'a', """#!/bin/bash -eu
+        "a",
+        """#!/bin/bash -eu
 
 source "_clk.sh"
 
@@ -106,13 +122,22 @@ then
    echo ${CLK___SOMEFILE}
 fi
 
-""")
-    assert lib.cmd(r'completion try --last a --someday next\ da') == 'plain,next day'
-    assert lib.cmd(r'completion try --last a --someday last\ sun') == 'plain,last sunday'
-    assert lib.cmd(r'completion try --last a --someday in\ two\ mont') == 'plain,in two months'
-    assert lib.cmd(r'completion try --last a --someday two\ days\ a') == 'plain,two days ago'
-    assert lib.cmd('a --someday "2022/08/30"') == '2022-08-30T00:00:00'
+""",
+    )
+    assert lib.cmd(r"completion try --last a --someday next\ da") == "plain,next day"
+    assert (
+        lib.cmd(r"completion try --last a --someday last\ sun") == "plain,last sunday"
+    )
+    assert (
+        lib.cmd(r"completion try --last a --someday in\ two\ mont")
+        == "plain,in two months"
+    )
+    assert (
+        lib.cmd(r"completion try --last a --someday two\ days\ a")
+        == "plain,two days ago"
+    )
+    assert lib.cmd('a --someday "2022/08/30"') == "2022-08-30T00:00:00"
     # only deals with dates, not time
-    assert lib.cmd('a --someday "2022/08/30 18:12"') == '2022-08-30T00:00:00'
-    with cd('/tmp'):
-        assert lib.cmd('a --somefile .') == '/tmp'
+    assert lib.cmd('a --someday "2022/08/30 18:12"') == "2022-08-30T00:00:00"
+    with cd("/tmp"):
+        assert lib.cmd("a --somefile .") == "/tmp"

@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 
 from clk.decorators import group, use_settings
 from clk.keyvaluestore import keyvaluestore_generic_commands
@@ -8,12 +7,12 @@ from clk.log import get_logger
 LOGGER = get_logger(__name__)
 
 
-class ValueConfig(object):
+class ValueConfig:
     pass
 
 
-@group(default_command='show')
-@use_settings('value', ValueConfig)
+@group(default_command="show")
+@use_settings("value", ValueConfig)
 def value():
     """Manipulate the values
 
@@ -27,4 +26,4 @@ def value():
     """
 
 
-keyvaluestore_generic_commands(value, 'value')
+keyvaluestore_generic_commands(value, "value")

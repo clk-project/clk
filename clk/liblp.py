@@ -1,6 +1,5 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
-# [[file:lib.org::*weave][weave:1]]
+# [[id:2e87b087-e2f0-4159-a415-e7599626d358][weave:1]]
 # GENERATED USING lib.org, DO NOT EDIT
 
 import os
@@ -19,7 +18,7 @@ def rm(*file_or_tree):
     Does nothing in case dry run is set.
     """
 
-    LOGGER.action('remove {}'.format(' '.join(map(str, file_or_tree))))
+    LOGGER.action("remove {}".format(" ".join(map(str, file_or_tree))))
     if dry_run:
         return
     for f in file_or_tree:
