@@ -9,15 +9,11 @@ repos:
   - id: check-yaml
   - id: check-added-large-files
   - id: check-builtin-literals
-- repo: https://github.com/asottile/pyupgrade
-  rev: v3.20.0
-  hooks:
-  - id: pyupgrade
 - repo: https://github.com/astral-sh/ruff-pre-commit
   rev: v0.12.9
   hooks:
     - id: ruff
-      args: [--fix, --extend-select, I]
+      args: [--fix, --extend-select, "I, UP"]
     - id: ruff-format
 - repo: https://github.com/hadialqattan/pycln
   rev: v2.5.0
