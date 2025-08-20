@@ -75,7 +75,7 @@ class command_hook:
 class HookCommandResolver(CommandResolver):
     name = "hook"
 
-    def _list_command_paths(self, parent=None):
+    def _list_command_paths(self, parent):
         res = {
             parent_path + "." + cmd
             if parent_path is not config.main_command.path

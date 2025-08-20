@@ -244,7 +244,7 @@ def rename(source, destination):
         if source in profile.settings.get("alias", {}):
             break
     else:
-        raise Exception(f"{source} not found")
+        raise click.UsageError(f"{source} not found")
     profile.settings["alias"][destination] = profile.settings["alias"][source]
     del profile.settings["alias"][source]
     # rename the alias when used in the other aliases
@@ -282,7 +282,7 @@ def move(source, destination):
         if source in profile.settings.get("alias", {}):
             break
     else:
-        raise Exception(f"{source} not found")
+        raise click.UsageError(f"{source} not found")
     destination_store = destination.settings.get("alias", {})
     destination_store[source] = profile.settings["alias"][source]
     destination.settings["alias"] = destination_store
@@ -303,7 +303,7 @@ def copy(source, destination):
         if source in profile.settings.get("alias", {}):
             break
     else:
-        raise Exception(f"{source} not found")
+        raise click.UsageError(f"{source} not found")
     profile.settings["alias"][destination] = profile.settings["alias"][source]
     profile.write_settings()
     LOGGER.info(f"Copied alias {source} -> {destination} in {profile.name}")

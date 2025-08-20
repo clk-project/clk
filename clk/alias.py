@@ -93,7 +93,7 @@ class AliasCommandResolver(CommandResolver):
 
     def _list_command_paths(self, parent):
         if isinstance(parent, config.main_command.__class__):
-            return [a for a in config.get_settings("alias").keys()]
+            return list(config.get_settings("alias").keys())
         else:
             return [
                 a

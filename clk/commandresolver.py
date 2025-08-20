@@ -2,7 +2,7 @@
 
 
 class CommandResolver:
-    def _list_command_paths(self, parent=None):
+    def _list_command_paths(self, parent):
         raise NotImplementedError(
             "The class method _list_command_paths must be implemented"
         )
