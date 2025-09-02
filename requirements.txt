@@ -29,7 +29,7 @@ decorator==5.2.1
     # via
     #   ipdb
     #   ipython
-executing==2.2.0
+executing==2.2.1
     # via stack-data
 glob2==0.7
     # via clk (setup.py)
@@ -39,7 +39,7 @@ idna==3.10
     # via requests
 ipdb==0.13.13
     # via clk (setup.py)
-ipython==9.4.0
+ipython==9.5.0
     # via ipdb
 ipython-pygments-lexers==1.1.1
     # via ipython
@@ -51,13 +51,13 @@ networkx==3.5
     # via clk (setup.py)
 parsedatetime==2.6
     # via clk (setup.py)
-parso==0.8.4
+parso==0.8.5
     # via jedi
 pexpect==4.9.0
     # via ipython
 pluginbase==1.0.1
     # via clk (setup.py)
-prompt-toolkit==3.0.51
+prompt-toolkit==3.0.52
     # via ipython
 ptyprocess==0.7.0
     # via pexpect
@@ -74,7 +74,7 @@ pyparsing==3.2.3
     # via pydotplus
 python-dateutil==2.9.0.post0
     # via clk (setup.py)
-requests==2.32.4
+requests==2.32.5
     # via clk (setup.py)
 six==1.17.0
     # via python-dateutil
