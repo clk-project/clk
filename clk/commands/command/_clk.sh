@@ -28,6 +28,12 @@ clk_value ( ) {
     echo "$(eval "echo \"${variable_call}\"")"
 }
 
+clk_value_seq ( ) {
+    local name="$1"
+    local new_name="${2-${name}}"
+    readarray -t "${new_name}" < <(jq -r ".\"${name}\"[]" <<< "${CLK____JSON}")
+}
+
 clk_extension ( ) {
     local value="$1"
     echo "${value}"|sed -r 's|^(.+)\.([^.]+)$|\2|'
