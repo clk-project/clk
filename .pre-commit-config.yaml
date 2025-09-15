@@ -10,7 +10,7 @@ repos:
   - id: check-added-large-files
   - id: check-builtin-literals
 - repo: https://github.com/astral-sh/ruff-pre-commit
-  rev: v0.12.9
+  rev: v0.13.0
   hooks:
     - id: ruff-check
       args: [--fix, --extend-select, "I,UP", --exclude, versioneer.py, --exclude, ./clk/_version.py]
