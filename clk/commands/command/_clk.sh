@@ -17,6 +17,10 @@ clk_name_to_env () {
     echo "CLK___$(echo "${name}"|sed -r 's/^-+//g'|sed 's/-/_/g'|tr '[:lower:]' '[:upper:]')"
 }
 
+clk_dry_run () {
+    test "${CLK__DRY_RUN}" = "True"
+}
+
 clk_drop_duplicate () {
     cat -n | sort -uk2 | sort -n | cut -f2-
 }
