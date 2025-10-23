@@ -103,7 +103,7 @@ def set_documentation(alias, documentation):
     """Set the documentation of the alias"""
     if alias not in config.alias.writable:
         raise click.ClickException(
-            "The "
+            "The profile "
             f"{Colorer.apply_color_profilename(config.alias.writeprofilename)}"
             f" has no '{alias}' alias registered."
             "Try using another profile option (like --local or --global)"
@@ -124,9 +124,9 @@ def unset(aliases):
     for cmd in aliases:
         if cmd not in config.alias.writable:
             raise click.ClickException(
-                "The "
+                "The profile "
                 f"{Colorer.apply_color_profilename(config.alias.writeprofilename)}"
-                f" has no '{alias}' alias registered."
+                f" has no alias named '{cmd}'."
                 "Try using another profile option (like --local or --global)"
             )
     for cmd in aliases:
@@ -157,7 +157,7 @@ def unset_documentation(aliases):
     for cmd in aliases:
         if cmd not in config.alias.writable:
             raise click.ClickException(
-                "The "
+                "The profile "
                 f"{Colorer.apply_color_profilename(config.alias.writeprofilename)}"
                 f" configuration has no '{cmd}' alias registered."
                 " Try using another profile option (like --local or --global)"
