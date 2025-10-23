@@ -6,9 +6,9 @@ from clk.setup import basic_entry_point, main
 
 def print_version(ctx, attr, value):
     if value:
-        from clk._version import get_versions
+        from clk._version import __version__
 
-        print(get_versions()["version"])
+        print(__version__)
         exit(0)
 
 

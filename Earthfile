@@ -3,7 +3,7 @@ IMPORT github.com/Konubinix/Earthfile AS e
 
 requirements:
     FROM e+alpine-python-user-venv --packages=pip-tools --workdir=/app
-    COPY --dir fasterentrypoint.py versioneer.py setup.cfg setup.py /app
+    COPY --dir fasterentrypoint.py setup.py /app
     RUN --no-cache /app/venv/bin/pip-compile
     SAVE ARTIFACT requirements.txt AS LOCAL requirements.txt
 
@@ -36,7 +36,7 @@ git-files:
 
 sources:
     FROM scratch
-    COPY --dir pyproject.toml MANIFEST.in setup.py fasterentrypoint.py setup.cfg versioneer.py ./clk /app/
+    COPY --dir pyproject.toml MANIFEST.in setup.py fasterentrypoint.py ./clk /app/
     SAVE ARTIFACT /app /app
 
 INSTALL:
@@ -64,14 +64,14 @@ INSTALL:
     END
 
 build:
-    FROM e+alpine-python-user-venv --packages="wheel" --extra_packages=git
+    FROM e+alpine-python-user-venv --packages="build" --extra_packages=git
     COPY +sources/app /app
     ARG use_git=true
     IF [ "$use_git" = "true" ]
         COPY --dir +git-files/app/* /app
         RUN git checkout . && git reset --hard HEAD
     END
-    RUN python3 setup.py bdist_wheel
+    RUN python3 -m build --wheel
     SAVE ARTIFACT dist /dist
 
 dist:

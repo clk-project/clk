@@ -1496,13 +1496,6 @@ def check_my_output(*cmd):
     )
 
 
-def to_bool(s):
-    """Converts a string to a boolean"""
-    from distutils.util import strtobool
-
-    return bool(strtobool(s))
-
-
 def to_string(s):
     if isinstance(s, str):
         return s

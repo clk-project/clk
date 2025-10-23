@@ -11,6 +11,7 @@ from clk import (
     log,
     monkeypatch,
 )
+from clk._version import __version__  # NOQA: F401
 from clk.config import config  # NOQA: F401
 from clk.core import run  # NOQA: F401
 from clk.decorators import (  # NOQA: F401
@@ -33,14 +34,9 @@ from clk.lib import (  # NOQA: F401
     rm,
 )
 from clk.log import get_logger  # NOQA: F401
-from clk.overloads import entry_point  # NOQA: F401
-
-from . import _version
 
 monkeypatch.do()
 
 LOGGER = log.get_logger(__name__)
 log.basic_config(LOGGER)
 LOGGERS = {LOGGER}
-
-__version__ = _version.get_versions()["version"]
