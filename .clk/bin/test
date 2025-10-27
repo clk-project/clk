@@ -9,18 +9,23 @@ $0
 Run the tests
 --
 O:--test-args:str:The arguments to provide to the test command
+F:--interactive,-i:To give to earthfly
 EOF
 }
 
 clk_help_handler "$@"
-
 args=()
+earthly_args=()
 if clk_given test-args
 then
     args+=(--test_args "$(clk_value test-args)")
 fi
+if clk_given interactive
+then
+    earthly_args+=("--interactive")
+fi
 pushd "${CLK__PROJECT}" > /dev/null
 {
-    earthly +local-sanity-check --use_git=true "${args[@]}"
+    earthly "${earthly_args[@]}" +local-sanity-check --use_git=true "${args[@]}"
 }
 popd > /dev/null
