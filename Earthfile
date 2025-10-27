@@ -109,10 +109,10 @@ test:
 
 sandbox:
     # to be used with earthly -i
-    FROM e+debian-python-user-venv --extra_packages="git curl"
+    FROM e+debian-python-user-venv --extra_packages="git curl" # --packages="clk"
     WORKDIR /app
     COPY --dir +git-files/app/* +sources/app/* +side-files/app/* +test-files/app/* .
-    RUN pip install -e .
+    # RUN pip install -e .
     RUN false
 
 
