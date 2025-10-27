@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+import re
 
 
 def test_main_help(lib):
@@ -7,6 +8,13 @@ def test_main_help(lib):
     )
     assert some_part_of_the_help_message in lib.cmd("--help")
     assert some_part_of_the_help_message in lib.cmd("help")
+
+
+def test_main_version(lib):
+    assert re.match(
+        r"^\d+\.\d+\.\d+(\.[a-z0-9\.\+\-]+)?$",
+        lib.cmd("--version").strip(),
+    )
 
 
 def test_command_help(lib):
