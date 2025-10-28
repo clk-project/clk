@@ -27,7 +27,7 @@
 [![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=clk-project_clk&metric=security_rating)](https://sonarcloud.io/dashboard?id=clk-project_clk)
 
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=clk-project_clk&metric=alert_status)](https://sonarcloud.io/dashboard?id=clk-project_clk)
-[![CircleCI](https://circleci.com/gh/clk-project/clk.svg?style=svg)](https://app.circleci.com/pipelines/github/clk-project/clk)
+[![CI](https://github.com/clk-project/clk/actions/workflows/ci.yml/badge.svg)](https://github.com/clk-project/clk/actions/workflows/ci.yml)
 
 ![Gitter ](https://img.shields.io/gitter/room/clk-project/clk)
 ![Libera](https://raster.shields.io/badge/libera.chat-%23clk-blue)
