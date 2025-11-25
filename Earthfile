@@ -3,7 +3,7 @@ IMPORT github.com/Konubinix/Earthfile AS e
 
 requirements:
     FROM e+alpine-python-user-venv --packages=pip-tools --workdir=/app
-    COPY --dir fasterentrypoint.py setup.py /app
+    COPY --dir fasterentrypoint.py pyproject.toml /app
     RUN --no-cache /app/venv/bin/pip-compile
     SAVE ARTIFACT requirements.txt AS LOCAL requirements.txt
 
