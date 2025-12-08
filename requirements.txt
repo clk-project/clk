@@ -39,7 +39,7 @@ idna==3.11
     # via requests
 ipdb==0.13.13
     # via clk (pyproject.toml)
-ipython==9.7.0
+ipython==9.8.0
     # via ipdb
 ipython-pygments-lexers==1.1.1
     # via ipython
@@ -88,7 +88,7 @@ traitlets==5.14.3
     # via
     #   ipython
     #   matplotlib-inline
-urllib3==2.5.0
+urllib3==2.6.0
     # via requests
 wcwidth==0.2.14
     # via prompt-toolkit
