@@ -16,10 +16,13 @@ def rm(*file_or_tree):
     Does nothing in case dry run is set.
     """
 
-    LOGGER.action('remove {}'.format(' '.join(map(str, file_or_tree))))
+    LOGGER.action("remove {}".format(" ".join(map(str, file_or_tree))))
     if dry_run:
         return
     for f in file_or_tree:
+        if not (os.path.exists(f) or os.path.islink(f)):
+            LOGGER.debug(f"{f} not removed because already missing")
+            return
         if os.path.isdir(f) and not os.path.islink(f):
             shutil.rmtree(f)
         else:

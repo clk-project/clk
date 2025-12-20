@@ -25,6 +25,28 @@ def test_ln():
         Path("b").read_text()
 
 
+def test_rm():
+    a = Path("a")
+    b = Path("b")
+    a.write_text("a")
+    lib.ln(a, b)
+
+    # check that a symlink to an existing file gets removed
+    assert b.is_symlink()
+    lib.rm(b)
+    assert not b.is_symlink()
+
+    assert a.exists()
+    lib.rm(a)
+    assert not a.exists()
+
+    # a is gone. check that a dangling symlink gets removed
+    lib.ln(a, b)
+    assert b.is_symlink()
+    lib.rm(b)
+    assert not b.is_symlink()
+
+
 def test_link():
     Path("a").write_text("a")
     lib.link("a", Path("b"))

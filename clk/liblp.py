@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-# [[id:2e87b087-e2f0-4159-a415-e7599626d358][weave:1]]
+# [[id:919c606c-d455-403e-a201-b5c506420b64][weave:1]]
 # GENERATED USING lib.org, DO NOT EDIT
 
 import os
@@ -22,6 +22,9 @@ def rm(*file_or_tree):
     if dry_run:
         return
     for f in file_or_tree:
+        if not (os.path.exists(f) or os.path.islink(f)):
+            LOGGER.debug(f"{f} not removed because already missing")
+            return
         if os.path.isdir(f) and not os.path.islink(f):
             shutil.rmtree(f)
         else:

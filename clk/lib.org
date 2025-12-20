@@ -34,10 +34,13 @@
         Does nothing in case dry run is set.
         """
 
-        LOGGER.action('remove {}'.format(' '.join(map(str, file_or_tree))))
+        LOGGER.action("remove {}".format(" ".join(map(str, file_or_tree))))
         if dry_run:
             return
         for f in file_or_tree:
+            if not (os.path.exists(f) or os.path.islink(f)):
+                LOGGER.debug(f"{f} not removed because already missing")
+                return
             if os.path.isdir(f) and not os.path.islink(f):
                 shutil.rmtree(f)
             else:
@@ -46,36 +49,14 @@
 
 * weave                                                            :noexport:
   :PROPERTIES:
-  :ID:       2e87b087-e2f0-4159-a415-e7599626d358
-  :CUSTOM_ID: 8206f949-aecf-41de-ba0b-3ab96360cedc
+  :ID:       919c606c-d455-403e-a201-b5c506420b64
   :END:
   #+BEGIN_SRC python :results none :exports code :noweb yes :tangle liblp.py :shebang "#!/usr/bin/env python"
-    # GENERATED USING lib.org, DO NOT EDIT
 
-    import os
-    import shutil
-
-    from clk.log import get_logger
-
-    LOGGER = get_logger(__name__)
-    dry_run = None
+    <<header>>
 
 
-    def rm(*file_or_tree):
-        """
-        Removing some files or directories.
-
-        Does nothing in case dry run is set.
-        """
-
-        LOGGER.action("remove {}".format(" ".join(map(str, file_or_tree))))
-        if dry_run:
-            return
-        for f in file_or_tree:
-            if os.path.isdir(f) and not os.path.islink(f):
-                shutil.rmtree(f)
-            else:
-                os.unlink(f)
+    <<rm>>
 
 
     # end
