@@ -373,6 +373,7 @@ def temporary_file(dir=None, suffix=None, nameonly=False, content=None):
     if nameonly or content is not None:
         d.close()
     LOGGER.action(f"Creating a temporary file at {d.name}")
+    LOGGER.develop(f"with content: {content}")
     try:
         yield d
     except Exception:
