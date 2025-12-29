@@ -20,7 +20,7 @@ from clk.decorators import (
 from clk.lib import TablePrinter, quote
 from clk.log import get_logger
 from clk.overloads import CommandSettingsKeyType, CommandType
-from clk.profile import profile_name_to_commandline_name
+from clk.profile import profile_name_to_commandline
 from clk.types import DirectoryProfile as DirectoryProfileType
 
 LOGGER = get_logger(__name__)
@@ -79,7 +79,9 @@ def _set(alias, command, documentation, params, flowdep):
         run(
             [
                 "flowdep",
-                "--" + profile_name_to_commandline_name(config.alias.writeprofilename),
+            ]
+            + profile_name_to_commandline(config.alias.writeprofilename)
+            + [
                 "set",
                 alias,
             ]

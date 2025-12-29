@@ -22,10 +22,6 @@ from clk.overloads import (
     group,
     option,
 )
-from clk.profile import (
-    commandline_name_to_profile_name,
-    profile_name_to_commandline_name,
-)
 
 LOGGER = get_logger(__name__)
 
@@ -107,14 +103,12 @@ def use_settings(settings_name, settings_cls, override=True, default_profile="co
 
         def profile_callback(ctx, attr, value):
             if value:
-                ctx.clk_profile = commandline_name_to_profile_name(value)
+                ctx.clk_profile = value
                 setup_settings(ctx)
             return value
 
         for profile in [
-            profile_name_to_commandline_name(profile.name)
-            for profile in config.root_profiles
-            if profile.explicit
+            profile.name for profile in config.root_profiles if profile.explicit
         ]:
             f = flag(
                 f"--{profile}",

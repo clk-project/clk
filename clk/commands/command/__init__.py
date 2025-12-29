@@ -24,7 +24,7 @@ from clk.flow import get_flow_commands_to_run
 from clk.lib import TablePrinter, copy, createfile, makedirs, move, quote, rm
 from clk.log import get_logger
 from clk.overloads import Argument, CommandType, Group, Option, get_command
-from clk.profile import profile_name_to_commandline_name
+from clk.profile import profile_name_to_commandline
 from clk.types import DirectoryProfile as DirectoryProfileType
 
 LOGGER = get_logger(__name__)
@@ -442,7 +442,9 @@ clk_help_handler "$@"
         run(
             [
                 "alias",
-                f"--{profile_name_to_commandline_name(config.customcommands.profile.name)}",
+            ]
+            + profile_name_to_commandline(config.customcommands.profile.name)
+            + [
                 "unset",
                 name,
             ]

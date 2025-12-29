@@ -187,7 +187,7 @@ class DirectoryProfile(Profile):
             if self.settings.get(setting):
                 print(
                     f"I found some {command}, try running"
-                    f" `clk{enable_argument} {command} --{profile_name_to_commandline_name(self.name)} show`"
+                    f" `clk{enable_argument} {command} {' '.join(profile_name_to_commandline(self.name))} show`"
                     " to know more."
                 )
         found_some_executable = False
@@ -199,7 +199,7 @@ class DirectoryProfile(Profile):
         ):
             print(
                 f"I found some executable commands, try running"
-                f" `clk{enable_argument} command --{profile_name_to_commandline_name(self.name)} list`"
+                f" `clk{enable_argument} command {' '.join(profile_name_to_commandline(self.name))} list`"
                 " to know more."
             )
             found_some_executable = True
@@ -221,7 +221,7 @@ class DirectoryProfile(Profile):
                 ):
                     print(
                         f"I found some{' more' if found_some_executable else ''} executable commands, try running"
-                        f" `clk{enable_argument} command --{profile_name_to_commandline_name(preset_extension.name)} list`"
+                        f" `clk{enable_argument} command {' '.join(profile_name_to_commandline(preset_extension.name))} list`"
                         " to know more."
                     )
         if plugins := self.plugin_source.list_plugins():
@@ -867,9 +867,9 @@ class PresetProfile(Profile):
         pass
 
 
-def profile_name_to_commandline_name(name):
-    return name.replace("/", "-")
-
-
-def commandline_name_to_profile_name(name):
-    return name.replace("-", "/")
+def profile_name_to_commandline(name):
+    profile, *extension = name.split("/")
+    res = [f"--{profile}"]
+    if extension:
+        res += ["--extension", extension[0]]
+    return res
