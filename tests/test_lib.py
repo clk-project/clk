@@ -46,6 +46,9 @@ def test_rm():
     lib.rm(b)
     assert not b.is_symlink()
 
+    # now, check that the missing a don't raise an error if removed again
+    lib.rm(a)
+
 
 def test_link():
     Path("a").write_text("a")
