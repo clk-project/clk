@@ -173,7 +173,7 @@ class Config:
         profile = ProfileFactory.create_preset_profile(
             "env",
             settings=defaultdict(lambda: defaultdict(list)),
-            explicit=True,
+            explicit=False,
             isroot=True,
             activation_level=ActivationLevel.global_,
             default_color="bold-True",
