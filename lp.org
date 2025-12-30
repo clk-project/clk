@@ -1,6 +1,6 @@
 #+NAME: check-result
 #+BEGIN_SRC elisp :results none :exports none
-(defun konix/org-babel-expand-noweb-references/add-check-result (orig-func info &optional parent-buffer)
+(defun konix/org-babel-expand-noweb-references/add-check-result (orig-func info &optional parent-buffer context)
   (let (
         (code (second info))
         )
