@@ -104,3 +104,10 @@ Here are some use cases that hopefully will have the following properties:
   :END:
 
   If you don't want to use the clk command line tool, you can [[file:rolling_your_own.org][roll your own]].
+
+* publish my code
+  :PROPERTIES:
+  :CREATED:  [2025-12-30 17:32]
+  :END:
+
+  In that case, you would like to take a look at [[file:creating_extensions.org][how to create your own extensions]].

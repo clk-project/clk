@@ -6,6 +6,7 @@
 - [project](#57153b01-e474-42f0-baa2-26b1b1611ae7)
 - [flow](#8ad4d10e-1ece-45ef-a558-905b5996ddc4)
 - [is it a tool or a library?](#f291ada8-c504-4624-baa7-9c7d600d5c53)
+- [publish my code](#orgb6ca7f2)
 
 Here are some use cases that hopefully will have the following properties:
 
@@ -90,3 +91,10 @@ clk does not want to compete with flow tools, like nodered, but it helps having 
 # is it a tool or a library?
 
 If you don't want to use the clk command line tool, you can [roll your own](rolling_your_own.md).
+
+
+<a id="orgb6ca7f2"></a>
+
+# publish my code
+
+In that case, you would like to take a look at [how to create your own extensions](creating_extensions.md).

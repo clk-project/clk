@@ -75,3 +75,7 @@ def test_ipfs_name_publish():
 
 def test_send_sms():
     call_script("send_sms.sh")
+
+
+def test_creating_extensions():
+    call_script("creating_extensions.sh")

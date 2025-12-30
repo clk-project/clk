@@ -1,0 +1,281 @@
+:PROPERTIES:
+:ID:       f47428c2-56ea-4d91-97d9-4f2ff63ef052
+:END:
+#+language: en
+#+EXPORT_FILE_NAME: ./creating_extensions.md
+
+#+CALL: ../../lp.org:check-result()
+
+#+name: init
+#+BEGIN_SRC bash :results none :exports none :session f47428c2-56ea-4d91-97d9-4f2ff63ef052
+  . ./sandboxing.sh
+#+END_SRC
+Extensions are folders that contain clk configurations and commands. You can create and share those with your colleagues.
+
+For instance, let's suppose you need to bootstrap a development environment to
+work with k8s, you would need to create commands to:
+- install the needed binaries dependencies,
+- run the cluster,
+- start some controllers of your choice,
+- run the development environment that would update the cluster automatically.
+
+
+The real life extension can be found in [[https://github.com/clk-project/clk_extension_k8s][here]]. In this document, we will mock its
+behavior. There should be something like.
+
+#+NAME: k8s
+#+BEGIN_SRC python :results none :exports code
+@k8s.command()
+def install_dependencies():
+    """Install the required binary dependencies for k8s development."""
+    print("installing dependencies")
+
+@k8s.command(flowdepends=["k8s.install-dependencies"])
+def run_cluster():
+    """Start the Kubernetes cluster."""
+    print("starting k8s cluster")
+
+@k8s.command(flowdepends=["k8s.run-cluster"])
+def start_controllers():
+    """Start the necessary controllers for the k8s environment."""
+    print("starting controllers")
+
+@k8s.command(flowdepends=["k8s.start-controllers"])
+def run_dev_env():
+    """Run the development environment with automatic cluster updates."""
+    print("running development environment")
+
+#+END_SRC
+
+To share them, you would first need to create the extension named k8s.
+
+#+NAME: create_extension
+#+BEGIN_SRC bash :results none :exports code :session f47428c2-56ea-4d91-97d9-4f2ff63ef052
+clk extension create k8s
+#+END_SRC
+
+Them, create the k8s command inside the extension.
+
+#+NAME: create_k8s
+#+BEGIN_SRC bash :results none :exports code :session f47428c2-56ea-4d91-97d9-4f2ff63ef052 :noweb yes
+clk command create --extension k8s python k8s --group --description "Deal with k8s stuff" --body '
+<<k8s>>
+'
+#+END_SRC
+
+Try it with
+
+#+NAME: try-it
+#+BEGIN_SRC bash :results verbatim :cache yes :exports both :session f47428c2-56ea-4d91-97d9-4f2ff63ef052
+clk k8s run-dev-env --flow
+#+END_SRC
+
+#+RESULTS[dca9e20533f99e1b8bd8894585c93baaa2938506]: try-it
+: installing dependencies
+: starting k8s cluster
+: starting controllers
+: running development environment
+
+
+Note that once it is there, the extension is automatically enabled.
+
+Now, if you decide that you don't want to be bothered with that extension anymore, you can disable it.
+
+#+NAME: disable
+#+BEGIN_SRC bash :results verbatim :cache yes :exports both :session f47428c2-56ea-4d91-97d9-4f2ff63ef052
+clk extension disable k8s
+clk k8s run-dev-env --flow
+#+END_SRC
+
+#+RESULTS[632ab5ada4fef95c675764586c4d6a267543b257]: disable
+: Usage: clk [OPTIONS] COMMAND [ARGS]...
+: error: No such command 'k8s'.
+
+You can enable it again with.
+
+#+NAME: enable
+#+BEGIN_SRC bash :results verbatim :cache yes :exports both :session f47428c2-56ea-4d91-97d9-4f2ff63ef052
+clk extension enable k8s
+clk k8s run-dev-env --flow
+#+END_SRC
+
+#+RESULTS[3c1f493beb6eb515edfa22cf711b155a53381dc1]: enable
+: installing dependencies
+: starting k8s cluster
+: starting controllers
+: running development environment
+
+
+In case you lost that extension folder and want to find it again, simply run.
+
+#+NAME: find-it
+#+BEGIN_SRC bash :results verbatim :cache yes :exports both :session f47428c2-56ea-4d91-97d9-4f2ff63ef052
+clk extension where-is global/k8s | sed "s|$(pwd)|.|"
+#+END_SRC
+
+#+RESULTS[fdf739e7f5ceedbc992fd1f6e53445a736cbccf9]: find-it
+: ./clk-root/extensions/k8s
+
+You can git init that code and push it to some remote repository. Your
+colleagues then can get it with ~clk extension install yourextensionurl~.
+
+Let's try to install another extension for the sake of learning. Let's try to
+install the one available in https://github.com/clk-project/clk_extension_hello
+. It does nothing useful. It simply says hello in a funny way.
+
+There are three ways to provide the url to the extension:
+1. use the full url to the git remote,
+2. if it is hosted in github, and its repository name is something like
+   ~clk_extension_NAME~, then you can simply pass ~<GITHUB_OWNER>/<NAME>~. This
+   will be automatically changed into ~https://github.com/<GITHUB_OWNER>/clk_extension_<NAME>~.
+3. if it is an official extension provided by clk (meaning hosted at https://github.com/orgs/clk-project/repositories with the
+   prefix ~clk_extension_~), then the name will suffice.
+
+
+Let's try the three methods.
+
+#+NAME: install-extension
+#+BEGIN_SRC bash :results verbatim :cache yes :exports both :session f47428c2-56ea-4d91-97d9-4f2ff63ef052
+clk extension install https://github.com/clk-project/clk_extension_hello > /dev/null 2>&1
+clk hello
+#+END_SRC
+
+#+RESULTS[ddc8b5f07fbf3c07198b62e1c6dd77537bdce685]: install-extension
+#+begin_example
+_____
+| hello |
+  =====
+       \
+        \
+         \
+          \
+                                / \\  //\\
+                 |\\___/|      /   \\//  \\\\
+                 /0  0  \\__  /    //  | \\ \\
+                /     /  \\/_/    //   |  \\  \\
+                \@_^_\@'/   \\/_   //    |   \\   \\
+                //_^_/     \\/_ //     |    \\    \\
+             ( //) |        \\///      |     \\     \\
+           ( / /) _|_ /   )  //       |      \\     _\\
+         ( // /) '/,_ _ _/  ( ; -.    |    _ _\\.-~        .-~~~^-.
+       (( / / )) ,-{        _      `-.|.-~-.           .~         `.
+      (( // / ))  '/\\      /                 ~-. _ .-~      .-~^-.  \\
+      (( /// ))      `.   {            }                   /      \\  \\
+       (( / ))     .----~-.\\        \\-'                 .~         \\  `. \\^-.
+                  ///.----..>        \\             _ -~             `.  ^-`  ^-_
+                    ///-._ _ _ _ _ _ _}^ - - - - ~                     ~-- ,.-~
+                                                                       /.-~
+#+end_example
+
+Remove the extension with
+
+#+NAME: remove-extension
+#+BEGIN_SRC bash :results verbatim :cache yes :exports both :session f47428c2-56ea-4d91-97d9-4f2ff63ef052
+clk extension remove hello
+clk hello
+#+END_SRC
+
+#+RESULTS[16bb914fcc2d2d14fd1d6f6aa8abf780c09ddedd]: remove-extension
+: Usage: clk [OPTIONS] COMMAND [ARGS]...
+: error: No such command 'hello'.
+: error:
+: error: Did you mean one of these?
+: error:     help
+: error:     log
+
+Because it is hosted on github, this should do as well to install it.
+
+#+NAME: install-extension-github
+#+BEGIN_SRC bash :results verbatim :cache yes :exports both :session f47428c2-56ea-4d91-97d9-4f2ff63ef052
+clk extension install clk-project/hello > /dev/null 2>&1
+clk hello
+#+END_SRC
+
+#+RESULTS[49c1c62970af8db344f9ad2e27ecb87082431174]: install-extension-github
+#+begin_example
+_____
+| hello |
+  =====
+       \
+        \
+         \
+          \
+                                / \\  //\\
+                 |\\___/|      /   \\//  \\\\
+                 /0  0  \\__  /    //  | \\ \\
+                /     /  \\/_/    //   |  \\  \\
+                \@_^_\@'/   \\/_   //    |   \\   \\
+                //_^_/     \\/_ //     |    \\    \\
+             ( //) |        \\///      |     \\     \\
+           ( / /) _|_ /   )  //       |      \\     _\\
+         ( // /) '/,_ _ _/  ( ; -.    |    _ _\\.-~        .-~~~^-.
+       (( / / )) ,-{        _      `-.|.-~-.           .~         `.
+      (( // / ))  '/\\      /                 ~-. _ .-~      .-~^-.  \\
+      (( /// ))      `.   {            }                   /      \\  \\
+       (( / ))     .----~-.\\        \\-'                 .~         \\  `. \\^-.
+                  ///.----..>        \\             _ -~             `.  ^-`  ^-_
+                    ///-._ _ _ _ _ _ _}^ - - - - ~                     ~-- ,.-~
+                                                                       /.-~
+#+end_example
+
+And because this is also a clk provided extension, the name is enough.
+
+#+NAME: install-extension-name
+#+BEGIN_SRC bash :results verbatim :cache yes :exports both :session f47428c2-56ea-4d91-97d9-4f2ff63ef052
+clk extension remove hello
+clk extension install hello > /dev/null 2>&1
+clk hello
+#+END_SRC
+
+#+RESULTS[57260c733fd9dbb7ef455f4c6a567e0fab79bc82]: install-extension-name
+#+begin_example
+_____
+| hello |
+  =====
+       \
+        \
+         \
+          \
+                                / \\  //\\
+                 |\\___/|      /   \\//  \\\\
+                 /0  0  \\__  /    //  | \\ \\
+                /     /  \\/_/    //   |  \\  \\
+                \@_^_\@'/   \\/_   //    |   \\   \\
+                //_^_/     \\/_ //     |    \\    \\
+             ( //) |        \\///      |     \\     \\
+           ( / /) _|_ /   )  //       |      \\     _\\
+         ( // /) '/,_ _ _/  ( ; -.    |    _ _\\.-~        .-~~~^-.
+       (( / / )) ,-{        _      `-.|.-~-.           .~         `.
+      (( // / ))  '/\\      /                 ~-. _ .-~      .-~^-.  \\
+      (( /// ))      `.   {            }                   /      \\  \\
+       (( / ))     .----~-.\\        \\-'                 .~         \\  `. \\^-.
+                  ///.----..>        \\             _ -~             `.  ^-`  ^-_
+                    ///-._ _ _ _ _ _ _}^ - - - - ~                     ~-- ,.-~
+                                                                       /.-~
+#+end_example
+
+
+#+NAME: all
+#+BEGIN_SRC bash :results none :exports none :tangle ../../tests/use_cases/creating_extensions.sh :noweb yes :shebang "#!/bin/bash -eu"
+<<init>>
+
+<<create_extension>>
+
+<<create_k8s>>
+
+check-result(try-it)
+
+check-result(disable)
+
+check-result(enable)
+
+check-result(find-it)
+
+check-result(install-extension)
+
+check-result(remove-extension)
+
+check-result(install-extension-github)
+
+check-result(install-extension-name)
+#+END_SRC

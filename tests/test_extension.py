@@ -36,16 +36,6 @@ def test_can_use_settings(lib):
     )
 
 
-def test_install_extension(lib):
-    lib.cmd("extension install hello")
-    lib.cmd("hello")
-
-
-def test_install_extension_with_github_syntax(lib):
-    lib.cmd("extension install clk-project/hello")
-    lib.cmd("hello")
-
-
 def test_update_extension(lib):
     lib.cmd("extension install hello")
     lib.cmd("extension update hello")
