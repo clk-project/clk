@@ -1,3 +1,8 @@
+- [creating our own extension](#org0b04b41)
+- [enable/disable it](#orgaba3ac9)
+- [publish it](#orgff036f5)
+- [get an extension](#org2d821ed)
+
 Extensions are folders that contain clk configurations and commands. You can create and share those with your colleagues.
 
 For instance, let's suppose you need to bootstrap a development environment to work with k8s, you would need to create commands to:
@@ -6,6 +11,11 @@ For instance, let's suppose you need to bootstrap a development environment to w
 -   run the cluster,
 -   start some controllers of your choice,
 -   run the development environment that would update the cluster automatically.
+
+
+<a id="org0b04b41"></a>
+
+# creating our own extension
 
 The real life extension can be found in [here](https://github.com/clk-project/clk_extension_k8s). In this document, we will mock its behavior. There should be something like.
 
@@ -76,6 +86,11 @@ clk k8s run-dev-env --flow
     starting controllers
     running development environment
 
+
+<a id="orgaba3ac9"></a>
+
+# enable/disable it
+
 Note that once it is there, the extension is automatically enabled.
 
 Now, if you decide that you don't want to be bothered with that extension anymore, you can disable it.
@@ -100,6 +115,11 @@ clk k8s run-dev-env --flow
     starting controllers
     running development environment
 
+
+<a id="orgff036f5"></a>
+
+# publish it
+
 In case you lost that extension folder and want to find it again, simply run.
 
 ```bash
@@ -109,6 +129,11 @@ clk extension where-is global/k8s | sed "s|$(pwd)|.|"
     ./clk-root/extensions/k8s
 
 You can git init that code and push it to some remote repository. Your colleagues then can get it with `clk extension install yourextensionurl`.
+
+
+<a id="org2d821ed"></a>
+
+# get an extension
 
 Let's try to install another extension for the sake of learning. Let's try to install the one available in <https://github.com/clk-project/clk_extension_hello> . It does nothing useful. It simply says hello in a funny way.
 

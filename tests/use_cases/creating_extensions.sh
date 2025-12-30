@@ -1,5 +1,5 @@
 #!/bin/bash -eu
-# [[id:f47428c2-56ea-4d91-97d9-4f2ff63ef052::all][all]]
+# [[id:2907a837-a58d-479b-8d19-7cba1c9a408f::all][all]]
 . ./sandboxing.sh
 
 clk extension create k8s

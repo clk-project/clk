@@ -2,6 +2,7 @@
 :ID:       f47428c2-56ea-4d91-97d9-4f2ff63ef052
 :END:
 #+language: en
+#+options: toc:t
 #+EXPORT_FILE_NAME: ./creating_extensions.md
 
 #+CALL: ../../lp.org:check-result()
@@ -19,6 +20,11 @@ work with k8s, you would need to create commands to:
 - start some controllers of your choice,
 - run the development environment that would update the cluster automatically.
 
+* creating our own extension
+  :PROPERTIES:
+  :CREATED:  [2025-12-30 17:36]
+  :ID:       ce7e4602-baad-4ce6-8b44-33d5480a264b
+  :END:
 
 The real life extension can be found in [[https://github.com/clk-project/clk_extension_k8s][here]]. In this document, we will mock its
 behavior. There should be something like.
@@ -77,6 +83,11 @@ clk k8s run-dev-env --flow
 : running development environment
 
 
+* enable/disable it
+  :PROPERTIES:
+  :CREATED:  [2025-12-30 17:36]
+  :END:
+
 Note that once it is there, the extension is automatically enabled.
 
 Now, if you decide that you don't want to be bothered with that extension anymore, you can disable it.
@@ -87,7 +98,7 @@ clk extension disable k8s
 clk k8s run-dev-env --flow
 #+END_SRC
 
-#+RESULTS[632ab5ada4fef95c675764586c4d6a267543b257]: disable
+#+RESULTS[caa531b03ee6b31d35eed3a0dc93b254d4545bbc]: disable
 : Usage: clk [OPTIONS] COMMAND [ARGS]...
 : error: No such command 'k8s'.
 
@@ -99,12 +110,16 @@ clk extension enable k8s
 clk k8s run-dev-env --flow
 #+END_SRC
 
-#+RESULTS[3c1f493beb6eb515edfa22cf711b155a53381dc1]: enable
+#+RESULTS[4e819e7f946a0c3fb4c8bc4ba83d438fa796c0c5]: enable
 : installing dependencies
 : starting k8s cluster
 : starting controllers
 : running development environment
 
+* publish it
+  :PROPERTIES:
+  :CREATED:  [2025-12-30 17:37]
+  :END:
 
 In case you lost that extension folder and want to find it again, simply run.
 
@@ -118,6 +133,12 @@ clk extension where-is global/k8s | sed "s|$(pwd)|.|"
 
 You can git init that code and push it to some remote repository. Your
 colleagues then can get it with ~clk extension install yourextensionurl~.
+
+* get an extension
+  :PROPERTIES:
+  :CREATED:  [2025-12-30 17:37]
+  :ID:       2907a837-a58d-479b-8d19-7cba1c9a408f
+  :END:
 
 Let's try to install another extension for the sake of learning. Let's try to
 install the one available in https://github.com/clk-project/clk_extension_hello
@@ -253,7 +274,6 @@ _____
                     ///-._ _ _ _ _ _ _}^ - - - - ~                     ~-- ,.-~
                                                                        /.-~
 #+end_example
-
 
 #+NAME: all
 #+BEGIN_SRC bash :results none :exports none :tangle ../../tests/use_cases/creating_extensions.sh :noweb yes :shebang "#!/bin/bash -eu"
