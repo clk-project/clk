@@ -65,7 +65,11 @@ cat <<EOF > "${TMP}/clk-root/clk.json"
             "--keyring", "clk.keyrings.DummyFileKeyring"
         ],
         "command.create.python": [
-            "--no-open"
+            "--no-open",
+            "--force"
+        ],
+        "extension.remove": [
+            "--force"
         ],
         "completion.try": [
             "--call"

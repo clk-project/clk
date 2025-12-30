@@ -70,7 +70,11 @@
               "--keyring", "clk.keyrings.DummyFileKeyring"
           ],
           "command.create.python": [
-              "--no-open"
+              "--no-open",
+              "--force"
+          ],
+          "extension.remove": [
+              "--force"
           ],
           "completion.try": [
               "--call"
