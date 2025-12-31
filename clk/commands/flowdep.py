@@ -246,6 +246,7 @@ def compute_dot(
         return str.replace(".", "_").replace("-", "_")
 
     dot = """digraph {\n"""
+    dot += """  start = "fixed";\n"""
     if left_right:
         dot += """  rankdir = LR;\n"""
     clusters = defaultdict(set)
@@ -289,20 +290,21 @@ def compute_dot(
             register_cluster(cmd.path)
 
     fill_graph(cmds)
-    nodes = g.nodes()
-    adjacency = g.edges()
+    nodes = sorted(g.nodes())
+    adjacency = sorted(g.edges())
     if not adjacency:
         return None
     if cluster:
-        for parent_path, cmds in clusters.items():
+        for parent_path in sorted(clusters.keys()):
+            cmds = clusters[parent_path]
             if lonely or len(cmds.intersection(nodes)) > 1:
                 dot += f"""  subgraph cluster_{cluster_replace(parent_path)} {{\n"""
                 dot += f"""    label="{parent_path}";\n"""
-                for cmd in cmds:
+                for cmd in sorted(cmds):
                     if (lonely or cmd in nodes) and cmd not in clusters.keys():
                         dot += f"""    "{cmd}";\n"""
                 dot += "  }\n"
-    for node in nodes:
+    for node in sorted(nodes):
         if node not in clusters.keys():
             dot += """  "{}" [label= "{}{}{}", fillcolor = {}, style = filled];\n""".format(
                 node,
@@ -320,7 +322,8 @@ def compute_dot(
                 "greenyellow" if (display_aliases and node in aliases) else "skyblue",
             )
     if alias_links:
-        for source, destination in aliases.items():
+        for source in sorted(aliases.keys()):
+            destination = aliases[source]
             destination_context = get_ctx(
                 destination[-1], side_effects=False, resilient_parsing=True
             )
@@ -330,7 +333,7 @@ def compute_dot(
             dot += f"""  "{source}" -> "{destination_context.command.path}" [{label}style=dashed, color=grey]
 """
     source_order = defaultdict(int)
-    for src, dst in adjacency:
+    for src, dst in sorted(adjacency):
         source_order[dst] = source_order[dst] + 1
         dot += f"""  "{src}" -> "{dst}" [headlabel="{source_order[dst]}"];\n"""
     dot += "}"
