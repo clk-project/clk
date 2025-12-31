@@ -15,6 +15,7 @@ from pathlib import Path
 
 import appdirs
 import click
+from click.core import ParameterSource
 
 from clk import completion, log, startup_time
 from clk.atexit import trigger
@@ -736,7 +737,8 @@ def debug_on_command_load_error_callback(ctx, attr, value):
 
 @main_command_options_callback
 def flow_verbose_callback(ctx, attr, value):
-    config.flow_verbose = value
+    if ctx.get_parameter_source(attr.name) != ParameterSource.DEFAULT:
+        config.flow_verbose = value
 
 
 def report_file_callback(ctx, attr, value):
