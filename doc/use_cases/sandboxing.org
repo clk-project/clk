@@ -4,6 +4,7 @@
 
 #+NAME: sandboxing
 #+BEGIN_SRC bash :exports none :results none :tangle ../../tests/use_cases/sandboxing.sh
+  export TQDM_NCOLS=60
   SRCDIR="$(pwd)"
   CLK_COV="$(readlink -f "$(dirname "$BASH_SOURCE")/../clk_coverage.sh")"
   if ! test -e "${CLK_COV}"

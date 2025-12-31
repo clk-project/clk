@@ -146,6 +146,7 @@ class Config:
         self.value = Value()
         self.groups = {"clk"}
         self.flow_verbose = False
+        self.flow_progress = False
         self.level_settings = {}
 
     @cached_property

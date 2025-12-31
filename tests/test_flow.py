@@ -241,15 +241,15 @@ def flow():
     # then I can see the succession of commands
     assert (
         lib.cmd(" --flow-verbose threed flow", stderr=STDOUT).splitlines()
-        == """Running step 'threed slicer'
+        == """1/5 Running step 'threed slicer'
 slicer
-Running step 'threed feed'
+2/5 Running step 'threed feed'
 feed
-Running step 'threed calib'
+3/5 Running step 'threed calib'
 calib
-Running step 'threed upload'
+4/5 Running step 'threed upload'
 upload
-Running step 'threed print'
+5/5 Running step 'threed print'
 print
 done
 """.splitlines()

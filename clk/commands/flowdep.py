@@ -338,7 +338,7 @@ def compute_dot(
         dot += f"""  "{src}" -> "{dst}" [headlabel="{source_order[dst]}"];\n"""
     dot += "}"
     LOGGER.develop(dot)
-    return dot
+    return dot + "\n"
 
 
 @flowdep.command()

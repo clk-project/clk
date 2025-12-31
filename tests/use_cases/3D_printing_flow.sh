@@ -162,10 +162,11 @@ exit 1
 }
 
 
-clk flowdep graph printer.send --format png --output flow.png
+clk flowdep graph printer.send --format dot --output flow.dot
+dot -Tpng flow.dot > flow.png
 
 echo "Checking the resulting flow.png file"
-test "$(sha256sum flow.png|cut -f1 -d' ')" = "$(sha256sum ${SRCDIR}/../../doc/use_cases/flow.png|cut -f1 -d' ')"
+test "$(sha256sum flow.dot|cut -f1 -d' ')" = "$(sha256sum ${SRCDIR}/../../doc/use_cases/flow.dot|cut -f1 -d' ')"
 
 
 flow-verbose_code () {
@@ -174,9 +175,9 @@ flow-verbose_code () {
 
 flow-verbose_expected () {
       cat<<"EOEXPECTED"
-Running step 'printer calibrate'
+1/2 Running step 'printer calibrate'
 Running some stuff for the printer to be ready to go
-Running step 'printer slice'
+2/2 Running step 'printer slice'
 Slicing someothermodel to model.gcode
 Printing model.gcode using myprinter
 EOEXPECTED
@@ -199,10 +200,10 @@ flow-step_code () {
 
 flow-step_expected () {
       cat<<"EOEXPECTED"
-About to run step 'printer calibrate'
+1/2 About to run step 'printer calibrate'
 Press Enter to start this step: Here we go!
 Running some stuff for the printer to be ready to go
-About to run step 'printer slice'
+2/2 About to run step 'printer slice'
 Press Enter to start this step: Here we go!
 Slicing someothermodel to model.gcode
 Printing model.gcode using myprinter
@@ -215,6 +216,30 @@ echo 'Run flow-step'
 flow-step_expected > "${TMP}/expected.txt" 2>&1
 diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
 echo "Something went wrong when trying flow-step"
+exit 1
+}
+
+
+
+flow-progress_code () {
+      clk --flow-progress printer send myprinter --flow 2>&1|sed -r -e 's|█+|████████|' -e 's|[0-9]+\.[0-9]+it/s|XX.XXit/s|' -e 's|\r||g'
+}
+
+flow-progress_expected () {
+      cat<<"EOEXPECTED"
+Executing flow steps:   0%|           | 0/2 [00:00<?, ?it/s]printer calibrate:   0%|              | 0/2 [00:00<?, ?it/s]Running some stuff for the printer to be ready to go
+printer slice:   0%|                  | 0/2 [00:00<?, ?it/s]Slicing someothermodel to model.gcode
+printer slice: 100%|████████| 2/2 [00:00<00:00, XX.XXit/s]
+Printing model.gcode using myprinter
+EOEXPECTED
+}
+
+echo 'Run flow-progress'
+
+{ flow-progress_code || true ; } > "${TMP}/code.txt" 2>&1
+flow-progress_expected > "${TMP}/expected.txt" 2>&1
+diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+echo "Something went wrong when trying flow-progress"
 exit 1
 }
 

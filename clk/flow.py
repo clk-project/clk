@@ -3,6 +3,7 @@
 from collections import defaultdict
 
 import click
+from tqdm import tqdm
 
 from clk import overloads
 from clk.config import config, temp_config
@@ -141,11 +142,6 @@ def get_flow_commands_to_run(
 
 def execute_flow_step(cmd, args=None):
     cmd.extend(args or [])
-    if config.flow_verbose:
-        # LOGGER.info('--------------')
-        LOGGER.info(
-            f"{'About to run' if config.flowstep else 'Running'} step '{' '.join(cmd)}'"
-        )
     if config.flowstep:
         click.prompt(
             "Press Enter to start this step",
@@ -176,8 +172,20 @@ def all_part(path):
 
 def execute_flow_dependencies(cmd, flow_from=None, flow_after=None):
     torun = get_flow_commands_to_run(cmd, flow_from=flow_from, flow_after=flow_after)
-    for dep in torun:
+
+    total = len(torun)
+    padding = len(str(total))
+    if config.flow_progress:
+        torun = tqdm(torun, desc="Executing flow steps")
+    for index, dep in enumerate(torun):
         cmd = dep.split(".")
+        if config.flow_verbose:
+            progress = f"{str(index + 1).zfill(padding)}/{total}"
+            LOGGER.info(
+                f"{progress} {'About to run' if config.flowstep else 'Running'} step '{' '.join(cmd)}'"
+            )
+        if config.flow_progress:
+            torun.set_description(" ".join(cmd))
         execute_flow_step(cmd)
 
 

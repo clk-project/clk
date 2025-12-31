@@ -233,15 +233,20 @@ clk flowdep show printer.send --all
 
 Then, you can show the graph
 
+#+BEGIN_SRC bash :results none :exports code
+clk flowdep graph printer.send --format png --output flow.png
+#+END_SRC
+
 #+NAME: flowdep-graph
 #+BEGIN_SRC bash :results none :exports both :session 73f5d57e-d16a-490a-b4e1-0254d6296590
-clk flowdep graph printer.send --format png --output flow.png
+clk flowdep graph printer.send --format dot --output flow.dot
+dot -Tpng flow.dot > flow.png
 #+END_SRC
 
 #+NAME: make-sure-flow-is-ok
 #+BEGIN_SRC bash :results none :exports none :session 73f5d57e-d16a-490a-b4e1-0254d6296590
 echo "Checking the resulting flow.png file"
-test "$(sha256sum flow.png|cut -f1 -d' ')" = "$(sha256sum ${SRCDIR}/../../doc/use_cases/flow.png|cut -f1 -d' ')"
+test "$(sha256sum flow.dot|cut -f1 -d' ')" = "$(sha256sum ${SRCDIR}/../../doc/use_cases/flow.dot|cut -f1 -d' ')"
 #+END_SRC
 
 [[file:flow.png]]
@@ -254,9 +259,9 @@ clk --flow-verbose printer send myprinter --flow
 #+END_SRC
 
 #+RESULTS[bac3490cda02deac283f2778315a62eae8ab2442]: flow-verbose
-: Running step 'printer calibrate'
+: 1/2 Running step 'printer calibrate'
 : Running some stuff for the printer to be ready to go
-: Running step 'printer slice'
+: 2/2 Running step 'printer slice'
 : Slicing someothermodel to model.gcode
 : Printing model.gcode using myprinter
 
@@ -269,13 +274,38 @@ yes | clk --flow-step printer send myprinter --flow
 #+END_SRC
 
 #+RESULTS[0e5785173df5a838051727cea938370894ca08c7]: flow-step
-: About to run step 'printer calibrate'
+: 1/2 About to run step 'printer calibrate'
 : Press Enter to start this step: Here we go!
 : Running some stuff for the printer to be ready to go
-: About to run step 'printer slice'
+: 2/2 About to run step 'printer slice'
 : Press Enter to start this step: Here we go!
 : Slicing someothermodel to model.gcode
 : Printing model.gcode using myprinter
+
+Note that there also exists a ~--flow-progress~ option that may be useful if
+your commands are silent by default. In that case, the output shall be a bit
+messy.
+
+
+#+NAME: flow-progress-code
+#+BEGIN_SRC bash :results nono :exports code
+clk --flow-progress printer send myprinter --flow
+#+END_SRC
+
+
+#+NAME: flow-progress
+#+BEGIN_SRC bash :results verbatim :exports results :session 73f5d57e-d16a-490a-b4e1-0254d6296590 :cache yes :noweb yes
+<<flow-progress-code>> 2>&1|sed -r -e 's|█+|████████|' -e 's|[0-9]+\.[0-9]+it/s|XX.XXit/s|' -e 's|\r||g'
+#+END_SRC
+
+#+RESULTS[d6aff2966dfc26115375f365169c14d84f129605]: flow-progress
+: Executing flow steps:   0%|           | 0/2 [00:00<?, ?it/s]printer calibrate:   0%|              | 0/2 [00:00<?, ?it/s]Running some stuff for the printer to be ready to go
+: printer slice:   0%|                  | 0/2 [00:00<?, ?it/s]Slicing someothermodel to model.gcode
+: printer slice: 100%|████████| 2/2 [00:00<00:00, XX.XXit/s]
+: Printing model.gcode using myprinter
+
+Of course, using it with ~--flow-step~ would make things even more messy, so use
+the right option for the flows you will run, depending on your use cases.
 
 * when the flow is wrong
   :PROPERTIES:
@@ -345,6 +375,8 @@ Beware that this means that you have to check that this command it actually defi
   check-result(flow-verbose)
 
   check-result(flow-step)
+
+  check-result(flow-progress)
 
   <<install-with-wrong-flow-deps>>
 

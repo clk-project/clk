@@ -1,0 +1,14 @@
+digraph {
+  start = "fixed";
+  subgraph cluster_printer {
+    label="printer";
+    "printer.calibrate";
+    "printer.send";
+    "printer.slice";
+  }
+  "printer.calibrate" [label= "printer.calibrate", fillcolor = skyblue, style = filled];
+  "printer.send" [label= "printer.send", fillcolor = skyblue, style = filled];
+  "printer.slice" [label= "printer.slice", fillcolor = skyblue, style = filled];
+  "printer.calibrate" -> "printer.slice" [headlabel="1"];
+  "printer.slice" -> "printer.send" [headlabel="1"];
+}

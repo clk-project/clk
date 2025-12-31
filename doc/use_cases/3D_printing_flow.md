@@ -1,5 +1,5 @@
 - [alternative use case, explicitly defining the flow](#db06b88c-a231-4f46-b8f7-54e98db07e17)
-- [more information about the flow](#org35737d6)
+- [more information about the flow](#org46b9502)
 - [when the flow is wrong](#96a6905e-06bd-48d5-a117-7e81ebde9399)
 
 When you get used to create groups of commands, you generally end up having a sequence that comes out quite naturally.
@@ -154,7 +154,7 @@ clk printer send myprinter --flow
 Here, your mileage may vary. Choose the implementation that suits you better.
 
 
-<a id="org35737d6"></a>
+<a id="org46b9502"></a>
 
 # more information about the flow
 
@@ -174,6 +174,11 @@ Then, you can show the graph
 clk flowdep graph printer.send --format png --output flow.png
 ```
 
+```bash
+clk flowdep graph printer.send --format dot --output flow.dot
+dot -Tpng flow.dot > flow.png
+```
+
 ![img](flow.png)
 
 To get more insight of when a part of the flow is running, you can try to enable the verbose mode.
@@ -182,9 +187,9 @@ To get more insight of when a part of the flow is running, you can try to enable
 clk --flow-verbose printer send myprinter --flow
 ```
 
-    Running step 'printer calibrate'
+    1/2 Running step 'printer calibrate'
     Running some stuff for the printer to be ready to go
-    Running step 'printer slice'
+    2/2 Running step 'printer slice'
     Slicing someothermodel to model.gcode
     Printing model.gcode using myprinter
 
@@ -194,13 +199,26 @@ And, to make sure not to miss anything, you can run the step by step mode as wel
 yes | clk --flow-step printer send myprinter --flow
 ```
 
-    About to run step 'printer calibrate'
+    1/2 About to run step 'printer calibrate'
     Press Enter to start this step: Here we go!
     Running some stuff for the printer to be ready to go
-    About to run step 'printer slice'
+    2/2 About to run step 'printer slice'
     Press Enter to start this step: Here we go!
     Slicing someothermodel to model.gcode
     Printing model.gcode using myprinter
+
+Note that there also exists a `--flow-progress` option that may be useful if your commands are silent by default. In that case, the output shall be a bit messy.
+
+```bash
+clk --flow-progress printer send myprinter --flow
+```
+
+    Executing flow steps:   0%|           | 0/2 [00:00<?, ?it/s]printer calibrate:   0%|              | 0/2 [00:00<?, ?it/s]Running some stuff for the printer to be ready to go
+    printer slice:   0%|                  | 0/2 [00:00<?, ?it/s]Slicing someothermodel to model.gcode
+    printer slice: 100%|████████| 2/2 [00:00<00:00, XX.XXit/s]
+    Printing model.gcode using myprinter
+
+Of course, using it with `--flow-step` would make things even more messy, so use the right option for the flows you will run, depending on your use cases.
 
 
 <a id="96a6905e-06bd-48d5-a117-7e81ebde9399"></a>

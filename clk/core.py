@@ -493,6 +493,12 @@ def main_command_decoration(f, cls, **kwargs):
         callback=flow_verbose_callback,
     )(f)
     f = main_command_option(
+        "--flow-progress",
+        is_flag=True,
+        help="Show a progress bar when running flow dependencies",
+        callback=flow_progress_callback,
+    )(f)
+    f = main_command_option(
         "--report-file",
         help="Create a report file to put with bug reports",
         callback=report_file_callback,
@@ -739,6 +745,12 @@ def debug_on_command_load_error_callback(ctx, attr, value):
 def flow_verbose_callback(ctx, attr, value):
     if ctx.get_parameter_source(attr.name) != ParameterSource.DEFAULT:
         config.flow_verbose = value
+
+
+@main_command_options_callback
+def flow_progress_callback(ctx, attr, value):
+    if ctx.get_parameter_source(attr.name) != ParameterSource.DEFAULT:
+        config.flow_progress = value
 
 
 def report_file_callback(ctx, attr, value):
