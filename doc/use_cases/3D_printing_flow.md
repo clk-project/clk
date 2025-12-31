@@ -1,4 +1,5 @@
 - [alternative use case, explicitly defining the flow](#db06b88c-a231-4f46-b8f7-54e98db07e17)
+- [more information about the flow](#org35737d6)
 - [when the flow is wrong](#96a6905e-06bd-48d5-a117-7e81ebde9399)
 
 When you get used to create groups of commands, you generally end up having a sequence that comes out quite naturally.
@@ -153,6 +154,55 @@ clk printer send myprinter --flow
 Here, your mileage may vary. Choose the implementation that suits you better.
 
 
+<a id="org35737d6"></a>
+
+# more information about the flow
+
+If you feel lost about what the current flow has become, you have a few ways to dig into it.
+
+First, you can list the commands that would be run in a flow using the flowdep command.
+
+```bash
+clk flowdep show printer.send --all
+```
+
+    printer.send printer.calibrate printer.slice
+
+Then, you can show the graph
+
+```bash
+clk flowdep graph printer.send --format png --output flow.png
+```
+
+![img](flow.png)
+
+To get more insight of when a part of the flow is running, you can try to enable the verbose mode.
+
+```bash
+clk --flow-verbose printer send myprinter --flow
+```
+
+    Running step 'printer calibrate'
+    Running some stuff for the printer to be ready to go
+    Running step 'printer slice'
+    Slicing someothermodel to model.gcode
+    Printing model.gcode using myprinter
+
+And, to make sure not to miss anything, you can run the step by step mode as well. Note that this will also enable automatically the flow-verbose option.
+
+```bash
+yes | clk --flow-step printer send myprinter --flow
+```
+
+    About to run step 'printer calibrate'
+    Press Enter to start this step: Here we go!
+    Running some stuff for the printer to be ready to go
+    About to run step 'printer slice'
+    Press Enter to start this step: Here we go!
+    Slicing someothermodel to model.gcode
+    Printing model.gcode using myprinter
+
+
 <a id="96a6905e-06bd-48d5-a117-7e81ebde9399"></a>
 
 # when the flow is wrong
@@ -184,7 +234,7 @@ def send(gcode, warn_when_done, printer):
 ```
 
 ```bash
-  clk command create python --force --group printer --description "This is a group of commands to deal with 3D printing." --body '
+  clk command create python --group printer --description "This is a group of commands to deal with 3D printing." --body '
 @printer.command()
 def calibrate():
     """Run everything that is needed to have the printer ready to print"""

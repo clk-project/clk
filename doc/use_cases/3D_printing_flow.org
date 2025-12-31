@@ -171,7 +171,7 @@ Yet get something like this.
 
 #+name: commands-with-explicit-flow
 #+BEGIN_SRC bash :results none :exports none :session 73f5d57e-d16a-490a-b4e1-0254d6296590 :noweb yes
-  clk command create python --force --group printer --description "This is a group of commands to deal with 3D printing." --body '
+  clk command create python --group printer --description "This is a group of commands to deal with 3D printing." --body '
 <<with_explicit_flow>>
 '
 #+END_SRC
@@ -213,6 +213,70 @@ clk printer send myprinter --flow
 
 Here, your mileage may vary. Choose the implementation that suits you better.
 
+* more information about the flow
+  :PROPERTIES:
+  :CREATED:  [2025-12-31 16:00]
+  :END:
+
+  If you feel lost about what the current flow has become, you have a few ways to dig into it.
+
+  First, you can list the commands that would be run in a flow using the flowdep command.
+
+#+NAME: flowdep-show
+#+BEGIN_SRC bash :results verbatim :exports both :session 73f5d57e-d16a-490a-b4e1-0254d6296590 :cache yes
+clk flowdep show printer.send --all
+#+END_SRC
+
+#+RESULTS[03bbaa76b02cd96216ea4be5d49fdf33b6b3d1ab]: flowdep-show
+: printer.send printer.calibrate printer.slice
+
+
+Then, you can show the graph
+
+#+NAME: flowdep-graph
+#+BEGIN_SRC bash :results none :exports both :session 73f5d57e-d16a-490a-b4e1-0254d6296590
+clk flowdep graph printer.send --format png --output flow.png
+#+END_SRC
+
+#+NAME: make-sure-flow-is-ok
+#+BEGIN_SRC bash :results none :exports none :session 73f5d57e-d16a-490a-b4e1-0254d6296590
+echo "Checking the resulting flow.png file"
+test "$(sha256sum flow.png|cut -f1 -d' ')" = "$(sha256sum ${SRCDIR}/../../doc/use_cases/flow.png|cut -f1 -d' ')"
+#+END_SRC
+
+[[file:flow.png]]
+
+To get more insight of when a part of the flow is running, you can try to enable the verbose mode.
+
+#+NAME: flow-verbose
+#+BEGIN_SRC bash :results verbatim :exports both :session 73f5d57e-d16a-490a-b4e1-0254d6296590 :cache yes
+clk --flow-verbose printer send myprinter --flow
+#+END_SRC
+
+#+RESULTS[bac3490cda02deac283f2778315a62eae8ab2442]: flow-verbose
+: Running step 'printer calibrate'
+: Running some stuff for the printer to be ready to go
+: Running step 'printer slice'
+: Slicing someothermodel to model.gcode
+: Printing model.gcode using myprinter
+
+And, to make sure not to miss anything, you can run the step by step mode as
+well. Note that this will also enable automatically the flow-verbose option.
+
+#+NAME: flow-step
+#+BEGIN_SRC bash :results verbatim :exports both :session 73f5d57e-d16a-490a-b4e1-0254d6296590 :cache yes
+yes | clk --flow-step printer send myprinter --flow
+#+END_SRC
+
+#+RESULTS[0e5785173df5a838051727cea938370894ca08c7]: flow-step
+: About to run step 'printer calibrate'
+: Press Enter to start this step: Here we go!
+: Running some stuff for the printer to be ready to go
+: About to run step 'printer slice'
+: Press Enter to start this step: Here we go!
+: Slicing someothermodel to model.gcode
+: Printing model.gcode using myprinter
+
 * when the flow is wrong
   :PROPERTIES:
   :CREATED:  [2024-02-16 17:20]
@@ -235,7 +299,7 @@ Here, your mileage may vary. Choose the implementation that suits you better.
 
 #+name: install-with-wrong-flow-deps
 #+BEGIN_SRC bash :results none :exports code :session 73f5d57e-d16a-490a-b4e1-0254d6296590 :noweb yes
-  clk command create python --force --group printer --description "This is a group of commands to deal with 3D printing." --body '
+  clk command create python --group printer --description "This is a group of commands to deal with 3D printing." --body '
 <<wrong-flow-deps>>
 '
 #+END_SRC
@@ -271,6 +335,16 @@ Beware that this means that you have to check that this command it actually defi
   check-result(running-the-explicit-flow)
 
   check-result(running-the-explicit-flow-with-model)
+
+  check-result(flowdep-show)
+
+  <<flowdep-graph>>
+
+  <<make-sure-flow-is-ok>>
+
+  check-result(flow-verbose)
+
+  check-result(flow-step)
 
   <<install-with-wrong-flow-deps>>
 
