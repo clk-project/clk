@@ -657,13 +657,16 @@ def install(
     help="The name of the extensions to consider",
 )
 @flag("--break-system-packages", help="Use this flag of pip")
+@flag("--silent", help="Try to be as silent as possible")
 @pass_context
-def _install_deps(ctx, extension, break_system_packages):
+def _install_deps(ctx, extension, break_system_packages, silent):
     "Install the dependencies of the extension"
     for rec in extension:
         LOGGER.status(f"Handling {rec.friendly_name}")
         if rec.requirements_path.exists():
             pip_args = ["install"]
+            if silent:
+                pip_args += ["--quiet"]
             if break_system_packages:
                 pip_args += ["--break-system-packages"]
             pip_args += ["--upgrade", "-r", rec.requirements_path]
