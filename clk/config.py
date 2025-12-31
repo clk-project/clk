@@ -520,12 +520,7 @@ class Config:
                     "gdbserver": ["gdbserver", "localhost:9999"],
                 },
                 "customcommands": self.global_profile.custom_command_paths,
-                "alias": {
-                    "upgrade": {
-                        "commands": [["pip", "install", "--upgrade", "clk"]],
-                        "documentation": "Upgrade clk to the latest version",
-                    }
-                },
+                "alias": {},
             },
             explicit=False,
             isroot=True,
