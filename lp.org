@@ -17,7 +17,10 @@ EOEXPECTED
 }
 
 echo 'Run \\1'
-diff -uBw <(\\1_code 2>&1) <(\\1_expected) || {
+
+{ \\1_code || true ; } > \"${TMP}/code.txt\" 2>&1
+\\1_expected > \"${TMP}/expected.txt\" 2>&1
+diff -uBw \"${TMP}/code.txt\" \"${TMP}/expected.txt\" || {
 echo \"Something went wrong when trying \\1\"
 exit 1
 }

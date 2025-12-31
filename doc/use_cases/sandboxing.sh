@@ -10,7 +10,7 @@ if test -n "${CLK_TEST_ROOT-}"
 then
     TMP="${CLK_TEST_ROOT}"
 else
-    TMP="$(mktemp -d)"
+    TMP="$(mktemp -d -t clk-test.XXXXXXXXXX)"
 fi
 SANDBOX_CACHE="${TMP}/cache"
 export XDG_CACHE_HOME="${TMP}/cache"
