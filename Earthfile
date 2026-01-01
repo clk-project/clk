@@ -130,8 +130,10 @@ export-image:
     SAVE IMAGE clk:${ref}
 
 pre-commit-base:
-    # ruamel does not provide wheels that work for alpine. Therefore we use debian here
-    FROM e+debian-python-user-venv --extra_packages="git" --packages="pre-commit"
+    # ruamel stopped providing wheels since 0.19.0, see
+    LET ruamel_deps="python3-dev build-essential"
+    LET ruamel_python_deps="setuptools-zig ziglang"
+    FROM e+debian-python-user-venv --extra_packages="git ${ruamel_deps}" --packages="pre-commit ${ruamel_python_deps}"
 
 export-pre-commit-update:
     FROM +pre-commit-base
