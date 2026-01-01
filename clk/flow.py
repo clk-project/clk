@@ -147,6 +147,7 @@ def execute_flow_step(cmd, args=None):
             "Press Enter to start this step",
             default="",
             show_default=False,
+            err=True,
         )
         if config.flow_verbose:
             LOGGER.info("Here we go!")
