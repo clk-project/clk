@@ -54,14 +54,21 @@
       echo "now: ${CLK_FAKED_TIME}"
   }
   cat<<EOF > "${TMP}/bin/clk"
-  #!/bin/bash -eu
+  #!/bin/bash
+  TMP="\$(mktemp -d)"
+  trap "rm -rf '\${TMP}'" 0
 
-  if test -n "\${CLK_FAKED_TIME-}"
-  then
-      faketime "\${CLK_FAKED_TIME}" "${CLK_COV}" "\$@"
-  else
-      "${CLK_COV}" "\$@"
-  fi
+  {
+      if test -n "\${CLK_FAKED_TIME-}"
+      then
+          faketime "\${CLK_FAKED_TIME}" "${CLK_COV}" "\$@"
+      else
+          "${CLK_COV}" "\$@"
+      fi
+  } > "\${TMP}/output.txt" 2>&1
+  res=\$?
+  sed "s|\$(pwd)|.|g" "\${TMP}/output.txt"
+  exit \$res
   EOF
   chmod +x "${TMP}/bin/clk"
   cat <<EOF > "${TMP}/clk-root/clk.json"
