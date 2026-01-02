@@ -35,7 +35,7 @@ class ExternalCommandResolver(CommandResolver):
         formatter.write_paragraph()
         with formatter.indentation():
             formatter.write_text(
-                f"Edit this command by running `clk command edit {command.path}`"
+                f"Edit this external command by running `clk command edit {command.path}`"
             )
             formatter.write_text(f"Or edit {command.customcommand_path} directly.")
 

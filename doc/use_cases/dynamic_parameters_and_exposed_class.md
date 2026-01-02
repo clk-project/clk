@@ -4,7 +4,7 @@ Let's imagine for example that you want to create a tool to perform http request
 
 Let's start by focusing on how you would use such tool.
 
-You most likely want to have a command for each http verb: get, post, put&#x2026;
+You most likely want to have a command for each http verb: get, post, put&hellip;
 
 ```bash
 clk get http://url/something
@@ -159,6 +159,33 @@ clk command create python --group http
 ```
 
 Then, in the newly opened file paste the above code.
+
+Hint: If you want to edit that file afterwards, you can use a dedicated command `clk command edit http`. This will use the value of the environment variable `EDITOR` to open it. Or you can show the help of the command to see where it is actually located.
+
+```bash
+clk http --help | head -10
+```
+
+```
+Usage: clk http [OPTIONS] COMMAND [ARGS]...
+
+  Commands to make http requests
+
+  Edit this custom command by running `clk command edit http`
+  Or edit ./clk-root/python/http.py directly.
+
+Options:
+  --base-url TEXT  The url to use as a basis for all commands  [required]
+  --help-all       Show the full help message, automatic options included.
+```
+
+Note that there also exists a command to only output its location, useful for scripting purposes.
+
+```bash
+clk command which http
+```
+
+    ./clk-root/python/http.py
 
 Try calling the command with:
 

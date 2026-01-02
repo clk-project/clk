@@ -89,7 +89,7 @@ Usage: clk mycommand [OPTIONS]
 
   Command that says something
 
-  Edit this command by running `clk command edit mycommand`
+  Edit this external command by running `clk command edit mycommand`
   Or edit ./clk-root/bin/mycommand directly.
 
 Options:

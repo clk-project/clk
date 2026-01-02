@@ -219,6 +219,41 @@ Then, in the newly opened file paste the above code.
   EOF
 #+END_SRC
 
+Hint: If you want to edit that file afterwards, you can use a dedicated command
+~clk command edit http~. This will use the value of the environment variable
+~EDITOR~ to open it. Or you can show the help of the command to see where it is
+actually located.
+
+#+NAME: help
+#+BEGIN_SRC bash :results verbatim :exports both :session e451aef8-b5f8-4529-972b-4b341833c797 :cache yes
+clk http --help | head -10
+#+END_SRC
+
+#+RESULTS[eaaac02ca2f213cf70b945c7ba5ad576430d9592]: help
+#+begin_example
+Usage: clk http [OPTIONS] COMMAND [ARGS]...
+
+  Commands to make http requests
+
+  Edit this custom command by running `clk command edit http`
+  Or edit ./clk-root/python/http.py directly.
+
+Options:
+  --base-url TEXT  The url to use as a basis for all commands  [required]
+  --help-all       Show the full help message, automatic options included.
+#+end_example
+
+Note that there also exists a command to only output its location, useful for
+scripting purposes.
+
+#+NAME: which
+#+BEGIN_SRC bash :results verbatim :exports both :session e451aef8-b5f8-4529-972b-4b341833c797 :cache yes
+clk command which http
+#+END_SRC
+
+#+RESULTS[15e4fe949bd7a856b28448081a02e782e23cdb7a]: which
+: ./clk-root/python/http.py
+
 Try calling the command with:
 
 #+NAME: simpleget
@@ -304,6 +339,10 @@ Now, let's try creating an alias to play with somesite, as explained above.
 <<create>>
 
 <<copy>>
+
+check-result(help)
+
+check-result(which)
 
 check-result(simpleget)
 

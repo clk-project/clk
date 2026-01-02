@@ -1,5 +1,5 @@
 #!/bin/bash -eu
-# [[file:../../doc/use_cases/dynamic_parameters_and_exposed_class.org::final][final]]
+# [[id:e451aef8-b5f8-4529-972b-4b341833c797::final][final]]
 . ./sandboxing.sh
 
 clk command create python --group http
@@ -48,6 +48,58 @@ def post(path, body):
 EOF
 
 
+help_code () {
+      clk http --help | head -10
+}
+
+help_expected () {
+      cat<<"EOEXPECTED"
+Usage: clk http [OPTIONS] COMMAND [ARGS]...
+
+  Commands to make http requests
+
+  Edit this custom command by running `clk command edit http`
+  Or edit ./clk-root/python/http.py directly.
+
+Options:
+  --base-url TEXT  The url to use as a basis for all commands  [required]
+  --help-all       Show the full help message, automatic options included.
+
+EOEXPECTED
+}
+
+echo 'Run help'
+
+{ help_code || true ; } > "${TMP}/code.txt" 2>&1
+help_expected > "${TMP}/expected.txt" 2>&1
+diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+echo "Something went wrong when trying help"
+exit 1
+}
+
+
+
+which_code () {
+      clk command which http
+}
+
+which_expected () {
+      cat<<"EOEXPECTED"
+./clk-root/python/http.py
+EOEXPECTED
+}
+
+echo 'Run which'
+
+{ which_code || true ; } > "${TMP}/code.txt" 2>&1
+which_expected > "${TMP}/expected.txt" 2>&1
+diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+echo "Something went wrong when trying which"
+exit 1
+}
+
+
+
 simpleget_code () {
       clk http --base-url http://url get /path
 }
@@ -60,7 +112,11 @@ res = None
 EOEXPECTED
 }
 
-diff -uBw <(simpleget_code 2>&1) <(simpleget_expected) || {
+echo 'Run simpleget'
+
+{ simpleget_code || true ; } > "${TMP}/code.txt" 2>&1
+simpleget_expected > "${TMP}/expected.txt" 2>&1
+diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
 echo "Something went wrong when trying simpleget"
 exit 1
 }
@@ -79,7 +135,11 @@ res = None
 EOEXPECTED
 }
 
-diff -uBw <(simplepost_code 2>&1) <(simplepost_expected) || {
+echo 'Run simplepost'
+
+{ simplepost_code || true ; } > "${TMP}/code.txt" 2>&1
+simplepost_expected > "${TMP}/expected.txt" 2>&1
+diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
 echo "Something went wrong when trying simplepost"
 exit 1
 }
@@ -98,7 +158,11 @@ completion1_expected () {
 EOEXPECTED
 }
 
-diff -uBw <(completion1_code 2>&1) <(completion1_expected) || {
+echo 'Run completion1'
+
+{ completion1_code || true ; } > "${TMP}/code.txt" 2>&1
+completion1_expected > "${TMP}/expected.txt" 2>&1
+diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
 echo "Something went wrong when trying completion1"
 exit 1
 }
@@ -117,7 +181,11 @@ completion2_expected () {
 EOEXPECTED
 }
 
-diff -uBw <(completion2_code 2>&1) <(completion2_expected) || {
+echo 'Run completion2'
+
+{ completion2_code || true ; } > "${TMP}/code.txt" 2>&1
+completion2_expected > "${TMP}/expected.txt" 2>&1
+diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
 echo "Something went wrong when trying completion2"
 exit 1
 }
@@ -142,7 +210,11 @@ res = None
 EOEXPECTED
 }
 
-diff -uBw <(try-somesite_code 2>&1) <(try-somesite_expected) || {
+echo 'Run try-somesite'
+
+{ try-somesite_code || true ; } > "${TMP}/code.txt" 2>&1
+try-somesite_expected > "${TMP}/expected.txt" 2>&1
+diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
 echo "Something went wrong when trying try-somesite"
 exit 1
 }
