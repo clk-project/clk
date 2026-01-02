@@ -70,7 +70,7 @@ def edit_alias_command(path):
     exit(0)
 
 
-class AliasToGroupResolver(CommandResolver):
+class AliasToGroupCommandResolver(CommandResolver):
     name = "alias to group"
 
     def _list_command_paths(self, parent):
@@ -116,7 +116,7 @@ class AliasCommandResolver(CommandResolver):
         formatter.write_paragraph()
         with formatter.indentation():
             formatter.write_text(
-                f"Edit this command by running `clk alias edit {command.path}`"
+                f"Edit this alias by running `clk alias edit {command.path}`"
             )
 
     def _list_command_paths(self, parent):

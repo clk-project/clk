@@ -969,7 +969,7 @@ def eval_arg(arg, keepnoeval=False):
             return type_(res)
         elif not clk.completion.IN_COMPLETION:
             message = f"Could not find the secret for {key}"
-            if config.ask_secret_callback:
+            if config.ask_secret:
                 LOGGER.warning(message)
                 from click.termui import prompt
 

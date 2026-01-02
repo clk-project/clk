@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 from clk import lib
-from clk.alias import AliasCommandResolver, AliasToGroupResolver
+from clk.alias import AliasCommandResolver, AliasToGroupCommandResolver
 from clk.config import Config, config, setup_config_class
 from clk.core import main  # NOQA: F401
 from clk.customcommands import CustomCommandResolver
@@ -39,7 +39,7 @@ def classic_setup(
         AliasCommandResolver(),
         ExternalCommandResolver(),
         GroupCommandResolver(),
-        AliasToGroupResolver(),
+        AliasToGroupCommandResolver(),
     ]
     MainCommand.commandresolvers = [
         AliasCommandResolver(),

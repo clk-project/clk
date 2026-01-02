@@ -630,7 +630,7 @@ def log_level_callback(ctx, attr, value):
 @main_command_options_callback
 def ask_secret_callback(ctx, attr, value):
     if value is not None:
-        config.ask_secret_callback = value
+        config.ask_secret = value
     return value
 
 

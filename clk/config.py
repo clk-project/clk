@@ -124,7 +124,7 @@ class Config:
     log_level_default = "deprecated"
 
     def __init__(self):
-        self.ask_secret_callback = None
+        self.ask_secret = None
         self.settings2 = None
         self.debug_on_command_load_error_callback = False
         self.frozen = False
