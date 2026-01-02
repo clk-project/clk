@@ -101,6 +101,28 @@ clk alias show music.play
 #+RESULTS[ec752b2d64d3875b3cd1344259fc4b3c49233e01]: show-alias
 : music.play exec mpc start-server, exec mpc play --random --use-speakers --replaygain
 
+Note that showing the help of the command also gives that information.
+
+#+NAME: help-alias
+#+BEGIN_SRC bash :results verbatim :exports both :session e6078fc8-4b12-44ad-b008-20f0b7311069 :cache yes
+clk music play --help|head -10
+#+END_SRC
+
+#+RESULTS[da13213a5b95d29790482b257f938028808294d4]: help-alias
+#+begin_example
+Usage: clk music play [OPTIONS] [COMMAND]...
+
+  Alias for: exec mpc start-server , exec mpc play --random --use-speakers --replaygain
+
+  The current parameters set for this command are: --repeat
+
+  Edit this command by running `clk alias edit music.play`
+
+Arguments:
+  COMMAND  The command to execute
+#+end_example
+
+
 Even doing so, you may at some point want more control about what you are doing,
 like waiting for the music server to be ready, you will have to fall back in a
 real command. Replacing this alias with a shell command is straightforward:
@@ -169,6 +191,7 @@ Arguments:
   check-result(use_parameters)
   check-result(more_complicated_alias)
   check-result(show-alias)
+  check-result(help-alias)
   check-result(bootstrap)
   check-result(try_command)
   check-result(which)

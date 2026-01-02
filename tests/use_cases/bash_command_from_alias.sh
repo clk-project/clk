@@ -1,5 +1,5 @@
 #!/bin/bash -eu
-# [[id:e6078fc8-4b12-44ad-b008-20f0b7311069::+BEGIN_SRC bash :exports none :tangle ../../tests/use_cases/bash_command_from_alias.sh :noweb yes :shebang "#!/bin/bash -eu"][No heading:13]]
+# [[id:e6078fc8-4b12-44ad-b008-20f0b7311069::+BEGIN_SRC bash :exports none :tangle ../../tests/use_cases/bash_command_from_alias.sh :noweb yes :shebang "#!/bin/bash -eu"][No heading:14]]
 . ./sandboxing.sh
 cat <<"EOF" > "${TMP}/bin/mpc"
 #!/bin/bash
@@ -113,6 +113,36 @@ exit 1
 }
 
 
+help-alias_code () {
+      clk music play --help|head -10
+}
+
+help-alias_expected () {
+      cat<<"EOEXPECTED"
+Usage: clk music play [OPTIONS] [COMMAND]...
+
+  Alias for: exec mpc start-server , exec mpc play --random --use-speakers --replaygain
+
+  The current parameters set for this command are: --repeat
+
+  Edit this command by running `clk alias edit music.play`
+
+Arguments:
+  COMMAND  The command to execute
+
+EOEXPECTED
+}
+
+echo 'Run help-alias'
+
+{ help-alias_code || true ; } > "${TMP}/code.txt" 2>&1
+help-alias_expected > "${TMP}/expected.txt" 2>&1
+diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+echo "Something went wrong when trying help-alias"
+exit 1
+}
+
+
 bootstrap_code () {
       clk command create bash --replace-alias music.play
 }
@@ -202,4 +232,4 @@ diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
 echo "Something went wrong when trying help"
 exit 1
 }
-# No heading:13 ends here
+# No heading:14 ends here
