@@ -50,7 +50,17 @@ clk music play MyAlbum
     Running mpc with: start-server
     Running mpc with: play --random --use-speakers --replaygain --repeat MyAlbum
 
-But in case you want more control about what you are doing, like waiting for the music server to be ready, you will have to fall back in a real command. In case you just need to bootstrap a shell command out of the alias, here is how you do this.
+As aliases grow, you may need to take a look at what it does to avoid getting lost.
+
+You can call the alias command to do so.
+
+```bash
+clk alias show music.play
+```
+
+    music.play exec mpc start-server, exec mpc play --random --use-speakers --replaygain
+
+Even doing so, you may at some point want more control about what you are doing, like waiting for the music server to be ready, you will have to fall back in a real command. Replacing this alias with a shell command is straightforward:
 
 ```bash
 clk command create bash --replace-alias music.play
@@ -67,4 +77,33 @@ clk music play MyAlbum
     Running mpc with: start-server
     Running mpc with: play --random --use-speakers --replaygain --repeat MyAlbum
 
-Now, we fan change its content to do whatever we want, like waiting for the music server to be ready, trying to switch on the speakers and falling back to some other ones etc.
+Now, we can change its content to do whatever complicated flow we like.
+
+You can simply run `clk command edit music.play` and it will be open in the editor mentioned in the `EDITOR` environment variable.
+
+If instead, you want to get the path of the command to open it yourself, you can simply ask for it.
+
+```bash
+clk command which music.play|sed "s|$(pwd)|.|"
+```
+
+    ./clk-root/bin/music.play
+
+Note that it is also shown in the help of the command.
+
+```bash
+clk music play --help|sed "s|$(pwd)|.|"|head -10
+```
+
+```
+Usage: clk music play [OPTIONS] [ARGS]...
+
+  Description Converted from the alias music.play
+
+  The current parameters set for this command are: --repeat
+
+  Edit this command by running `clk command edit music.play`
+  Or edit ./clk-root/bin/music.play directly.
+
+Arguments:
+```
