@@ -1,8 +1,46 @@
 #!/bin/bash -eu
-# [[id:85c8e385-7f24-48ac-9a85-30cfc354aebf::+BEGIN_SRC bash :exports none :tangle ../../tests/use_cases/bash_command.sh :noweb yes :shebang "#!/bin/bash -eu"][No heading:9]]
+# [[id:85c8e385-7f24-48ac-9a85-30cfc354aebf::+BEGIN_SRC bash :exports none :tangle ../../tests/use_cases/bash_command.sh :noweb yes :shebang "#!/bin/bash -eu"][No heading:10]]
 . ./sandboxing.sh
 
 clk command create bash mycommand
+
+
+help-create_code () {
+      clk command create --help
+}
+
+help-create_expected () {
+      cat<<"EOEXPECTED"
+Usage: clk command create [OPTIONS] COMMAND [ARGS]...
+
+  Create custom commands directly from the command line.
+
+  This is a built-in command.
+
+Options:
+  --help-all             Show the full help message, automatic options included.
+  --extension EXTENSION  Use this extension
+  --context              Guess the profile  [default: False]
+  --global               Consider only the global profile  [default: False]
+  --help                 Show this message and exit.
+
+Commands:
+  bash       Create a bash custom command
+  from-file  Install the given file as a customcommand, infering its type.
+  python     Create a bash custom command
+
+EOEXPECTED
+}
+
+echo 'Run help-create'
+
+{ help-create_code || true ; } > "${TMP}/code.txt" 2>&1
+help-create_expected > "${TMP}/expected.txt" 2>&1
+diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+echo "Something went wrong when trying help-create"
+exit 1
+}
+
 
 
 show_it_code () {
@@ -117,4 +155,4 @@ diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
 echo "Something went wrong when trying use_it"
 exit 1
 }
-# No heading:9 ends here
+# No heading:10 ends here

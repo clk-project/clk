@@ -6,6 +6,32 @@ clk command create bash mycommand
 
 Your editor will be used to first edit the command. This command will already contain some code to get you started.
 
+Note that you can always get the help of any command using `--help`. So don't hesitate to try.
+
+```bash
+clk command create --help
+```
+
+```
+Usage: clk command create [OPTIONS] COMMAND [ARGS]...
+
+  Create custom commands directly from the command line.
+
+  This is a built-in command.
+
+Options:
+  --help-all             Show the full help message, automatic options included.
+  --extension EXTENSION  Use this extension
+  --context              Guess the profile  [default: False]
+  --global               Consider only the global profile  [default: False]
+  --help                 Show this message and exit.
+
+Commands:
+  bash       Create a bash custom command
+  from-file  Install the given file as a customcommand, infering its type.
+  python     Create a bash custom command
+```
+
 Let's look at this file together.
 
 ```bash
