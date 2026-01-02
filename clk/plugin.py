@@ -19,8 +19,4 @@ def load_plugins():
     for profile in directory_profiles:
         profile.load_plugins()
 
-    for hook in afterloads:
-        if hook not in afterloads_cache:
-            hook()
-            afterloads_cache.add(hook)
     config.init()

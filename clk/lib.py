@@ -295,16 +295,6 @@ call_merge_stdout_and_stderr = False
 
 
 def _call(args, kwargs):
-    signal_hook = kwargs.pop("signal_hook", None)
-
-    def signal_handler(num, stack):
-        if signal_hook:
-            signal_hook(p, num, stack)
-        else:
-            os.kill(p.pid, num)
-
-    signal.signal(signal.SIGINT, signal_handler)
-    signal.signal(signal.SIGTERM, signal_handler)
     if call_merge_stdout_and_stderr:
         kwargs["stderr"] = subprocess.STDOUT
     if kwargs.pop("to_stderr", False):

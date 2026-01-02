@@ -7,8 +7,6 @@ from clk.core import main  # NOQA: F401
 from clk.customcommands import CustomCommandResolver
 from clk.externalcommands import ExternalCommandResolver
 from clk.flow import setup as setup_flow
-from clk.hook import HookCommandResolver
-from clk.hook import setup as setup_hook
 from clk.log import basic_config, get_logger
 from clk.overloads import (
     CoreCommandResolver,
@@ -32,7 +30,6 @@ def classic_setup(
     lib.main_module = main_module
     setup_config_class(config_cls)
     setup_flow()
-    setup_hook()
     for package in extra_command_packages:
         basic_config(package)
     CoreCommandResolver.commands_packages = extra_command_packages + ["clk.commands"]
@@ -41,14 +38,12 @@ def classic_setup(
     Group.commandresolvers = [
         AliasCommandResolver(),
         ExternalCommandResolver(),
-        HookCommandResolver(),
         GroupCommandResolver(),
         AliasToGroupResolver(),
     ]
     MainCommand.commandresolvers = [
         AliasCommandResolver(),
         ExternalCommandResolver(),
-        HookCommandResolver(),
         CustomCommandResolver(),
         CoreCommandResolver(),
     ]
