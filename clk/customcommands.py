@@ -33,6 +33,14 @@ def build_update_extension_callback(profile):
 class CustomCommandResolver(CommandResolver):
     name = "customcommand"
 
+    def add_edition_hint(self, ctx, command, formatter):
+        formatter.write_paragraph()
+        with formatter.indentation():
+            formatter.write_text(
+                f"Edit this command by running `clk command edit {command.path}`"
+            )
+            formatter.write_text(f"Or edit {command.customcommand_path} directly.")
+
     def __init__(self, settings=None):
         self._base = None
         self._source = None

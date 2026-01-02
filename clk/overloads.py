@@ -190,6 +190,11 @@ class CoreCommandResolver(CommandResolver):
     include_core_commands = None
     exclude_core_commands = None
 
+    def add_edition_hint(self, ctx, command, formatter):
+        formatter.write_paragraph()
+        with formatter.indentation():
+            formatter.write_text("This is a built-in command.")
+
     def _list_command_paths(self, parent=None):
         res = []
         for i, commands_package in enumerate(self.commands_packages):
@@ -680,6 +685,11 @@ class Command(
     def flow_argument(self, *args, **kwargs):
         return flow_argument(*args, target_command=self, **kwargs)
 
+    def format_help_text(self, ctx, formatter):
+        super().format_help_text(ctx, formatter)
+        resolver = get_command2(self.path)[1]
+        resolver.add_edition_hint(ctx, self, formatter)
+
 
 def _list_matching_commands_from_resolver(
     resolver, parent_path, include_subcommands=False
@@ -752,6 +762,14 @@ class GroupCommandResolver(CommandResolver):
         ctx = click_get_current_context_safe()
         return super(Group, parent).get_command(ctx, cmd_name)
 
+    def add_edition_hint(self, ctx, command, formatter):
+        cmd, resolver = get_command2(command.path)
+        while isinstance(resolver, GroupCommandResolver):
+            ctx = ctx.parent
+            cmd, resolver = get_command2(ctx.command.path)
+
+        resolver.add_edition_hint(ctx, ctx.command, formatter)
+
 
 allow_dotted_commands = False
 
@@ -798,6 +816,8 @@ class Group(
                     "When run without sub-command,"
                     f" the sub-command '{self.default_cmd_name}' is implicitly run"
                 )
+        resolver = get_command2(self.path)[1]
+        resolver.add_edition_hint(ctx, self, formatter)
 
     def set_default_command(self, command):
         if isinstance(command, str):

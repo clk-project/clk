@@ -9,3 +9,6 @@ class CommandResolver:
 
     def _get_command(self, path, parent):
         raise NotImplementedError("The class method get_method must be implemented")
+
+    def add_edition_hint(self, ctx, command, formatter):
+        raise NotImplementedError()

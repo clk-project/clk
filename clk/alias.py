@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+import re
 import shlex
 
 import click
@@ -18,6 +19,7 @@ from clk.overloads import (
     Group,
     command,
     get_command,
+    get_command2,
     group,
     list_commands,
 )
@@ -87,9 +89,35 @@ class AliasToGroupResolver(CommandResolver):
         original_path = f"{parent.path}.{cmd_name}"
         return get_command(original_path)
 
+    def add_edition_hint(self, ctx, command, formatter):
+        ctx = ctx.parent
+        group_, _ = get_command2(ctx.command.path)
+
+        original_path = group_.original_command.path
+        original, _ = get_command2(original_path)
+
+        formatter.write_paragraph()
+
+        original_command = re.sub(
+            "^" + group_.path + r"\.", original.path + ".", command.path
+        ).replace(".", " ")
+        with formatter.indentation():
+            formatter.write_text(
+                f"This is a sub command of '{group_.path}' that is an alias towards '{original_path}'"
+                " To edit it, try getting help from both of them or from the subcommand"
+                f" of the original group (something like `clk {original_command}` --help)"
+            )
+
 
 class AliasCommandResolver(CommandResolver):
     name = "alias"
+
+    def add_edition_hint(self, ctx, command, formatter):
+        formatter.write_paragraph()
+        with formatter.indentation():
+            formatter.write_text(
+                f"Edit this command by running `clk alias edit {command.path}`"
+            )
 
     def _list_command_paths(self, parent):
         if isinstance(parent, config.main_command.__class__):

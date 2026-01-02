@@ -31,6 +31,14 @@ class ExternalCommandResolver(CommandResolver):
     def __init__(self, settings=None):
         self.settings = settings
 
+    def add_edition_hint(self, ctx, command, formatter):
+        formatter.write_paragraph()
+        with formatter.indentation():
+            formatter.write_text(
+                f"Edit this command by running `clk command edit {command.path}`"
+            )
+            formatter.write_text(f"Or edit {command.customcommand_path} directly.")
+
     @property
     def customcommands(self):
         return (
