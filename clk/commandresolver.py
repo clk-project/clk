@@ -1,14 +1,13 @@
 #!/usr/bin/env python
+from abc import ABC, abstractmethod
 
 
-class CommandResolver:
-    def _list_command_paths(self, parent):
-        raise NotImplementedError(
-            "The class method _list_command_paths must be implemented"
-        )
+class CommandResolver(ABC):
+    @abstractmethod
+    def _list_command_paths(self, parent): ...
 
-    def _get_command(self, path, parent):
-        raise NotImplementedError("The class method get_method must be implemented")
+    @abstractmethod
+    def _get_command(self, path, parent): ...
 
-    def add_edition_hint(self, ctx, command, formatter):
-        raise NotImplementedError()
+    @abstractmethod
+    def add_edition_hint(self, ctx, command, formatter): ...
