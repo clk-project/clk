@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+import sys
 from itertools import cycle
 
 import click
@@ -8,6 +9,14 @@ from clk.config import config
 from clk.core import ColorType
 from clk.decorators import flag, option
 from clk.lib import clear_ansi_color_codes
+
+
+def color_callback(ctx, attr, value):
+    if value is False:
+        # make sure no special character is output, not even the reset one at
+        # the end of the string
+        config.alt_style = {"reset": False}
+    return value
 
 
 class Colorer:
@@ -123,8 +132,9 @@ class Colorer:
             )(f)
             f = flag(
                 "--color/--no-color",
-                default=config.get_value("config.show.color", True),
+                default=config.get_value("config.show.color", sys.stdout.isatty()),
                 help="Show profiles in color",
+                callback=color_callback,
             )(f)
             f = flag(
                 "--full/--explicit-only",

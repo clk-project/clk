@@ -83,6 +83,9 @@
           "command.create.bash": [
               "--no-open",
               "--force"
+          ],
+          "alias.show": [
+              "--no-color"
           ]
       }
   }

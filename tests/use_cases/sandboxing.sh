@@ -78,6 +78,9 @@ cat <<EOF > "${TMP}/clk-root/clk.json"
         "command.create.bash": [
             "--no-open",
             "--force"
+        ],
+        "alias.show": [
+            "--no-color"
         ]
     }
 }
