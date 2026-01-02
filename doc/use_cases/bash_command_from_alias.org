@@ -116,7 +116,7 @@ Usage: clk music play [OPTIONS] [COMMAND]...
 
   The current parameters set for this command are: --repeat
 
-  Edit this command by running `clk alias edit music.play`
+  Edit this alias by running `clk alias edit music.play`
 
 Arguments:
   COMMAND  The command to execute
@@ -155,20 +155,20 @@ If instead, you want to get the path of the command to open it yourself, you can
 
 #+NAME: which
 #+BEGIN_SRC bash :results verbatim :exports both :session e6078fc8-4b12-44ad-b008-20f0b7311069 :cache yes
-clk command which music.play|sed "s|$(pwd)|.|"
+clk command which music.play
 #+END_SRC
 
-#+RESULTS[31deb56c47cb15509bc85e871dbd05209035902a]: which
+#+RESULTS[322038d7fe4653f51bd57db2b6a3b0747fffe040]: which
 : ./clk-root/bin/music.play
 
 Note that it is also shown in the help of the command.
 
 #+NAME: help
 #+BEGIN_SRC bash :results verbatim :exports both :session e6078fc8-4b12-44ad-b008-20f0b7311069 :cache yes
-clk music play --help|sed "s|$(pwd)|.|"|head -10
+clk music play --help|head -10
 #+END_SRC
 
-#+RESULTS[0ae97cb9941ed81229e5157191e0c7ddf020e5b4]: help
+#+RESULTS[da13213a5b95d29790482b257f938028808294d4]: help
 #+begin_example
 Usage: clk music play [OPTIONS] [ARGS]...
 
@@ -176,7 +176,7 @@ Usage: clk music play [OPTIONS] [ARGS]...
 
   The current parameters set for this command are: --repeat
 
-  Edit this command by running `clk command edit music.play`
+  Edit this external command by running `clk command edit music.play`
   Or edit ./clk-root/bin/music.play directly.
 
 Arguments:

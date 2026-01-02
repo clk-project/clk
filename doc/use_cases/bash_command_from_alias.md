@@ -73,7 +73,7 @@ Usage: clk music play [OPTIONS] [COMMAND]...
 
   The current parameters set for this command are: --repeat
 
-  Edit this command by running `clk alias edit music.play`
+  Edit this alias by running `clk alias edit music.play`
 
 Arguments:
   COMMAND  The command to execute
@@ -103,7 +103,7 @@ You can simply run `clk command edit music.play` and it will be open in the edit
 If instead, you want to get the path of the command to open it yourself, you can simply ask for it.
 
 ```bash
-clk command which music.play|sed "s|$(pwd)|.|"
+clk command which music.play
 ```
 
     ./clk-root/bin/music.play
@@ -111,7 +111,7 @@ clk command which music.play|sed "s|$(pwd)|.|"
 Note that it is also shown in the help of the command.
 
 ```bash
-clk music play --help|sed "s|$(pwd)|.|"|head -10
+clk music play --help|head -10
 ```
 
 ```
@@ -121,7 +121,7 @@ Usage: clk music play [OPTIONS] [ARGS]...
 
   The current parameters set for this command are: --repeat
 
-  Edit this command by running `clk command edit music.play`
+  Edit this external command by running `clk command edit music.play`
   Or edit ./clk-root/bin/music.play directly.
 
 Arguments:
