@@ -17,7 +17,7 @@ from clk.decorators import (
     table_format,
     use_settings,
 )
-from clk.lib import TablePrinter, quote
+from clk.lib import TablePrinter
 from clk.log import get_logger
 from clk.overloads import CommandSettingsKeyType, CommandType
 from clk.profile import profile_name_to_commandline
@@ -216,25 +216,29 @@ def show(name_only, aliases, under, fields, format, **kwargs):
                     ).get(alias)["commands"]
                 ]
             else:
-                all_values = [
-                    (
-                        profile.name,
-                        config.alias.all_settings.get(profile.name, {}).get(alias),
+
+                def format_alias(profile):
+                    commands = config.alias.all_settings.get(profile.name, {}).get(
+                        alias
                     )
-                    for profile in config.all_enabled_profiles
-                ]
+                    if commands is not None:
+                        return ", ".join(
+                            " ".join(command) for command in commands["commands"]
+                        )
+
                 all_values = [
-                    (profile, value)
-                    for profile, value in all_values
-                    if value is not None
+                    (profile.name, format_alias(profile))
+                    for profile in config.all_enabled_profiles
+                    if format_alias(profile)
                 ]
-                last_profile, last_value = all_values[-1]
-                last_command = last_value["commands"]
-                args = [
-                    colorer.apply_color(" ".join(map(quote, token)), last_profile)
-                    for token in last_command
-                ]
-            tp.echo(alias, args)
+                # keep only the one at the most right
+                if all_values:
+                    all_values = dict([all_values[-1]])
+                else:
+                    all_values = {}
+                args = colorer.colorize(all_values, config.alias.readprofile)
+            if args:
+                tp.echo(alias, args)
 
 
 @alias.command(handle_dry_run=True)
