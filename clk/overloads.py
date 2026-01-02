@@ -978,6 +978,7 @@ def eval_arg(arg, keepnoeval=False):
                         f"Please provide the secret {key}",
                         hide_input=True,
                         confirmation_prompt=True,
+                        err=True,
                     )
                 )
             else:
