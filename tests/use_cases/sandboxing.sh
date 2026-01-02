@@ -49,21 +49,14 @@ say_now () {
     echo "now: ${CLK_FAKED_TIME}"
 }
 cat<<EOF > "${TMP}/bin/clk"
-#!/bin/bash
-TMP="\$(mktemp -d)"
-trap "rm -rf '\${TMP}'" 0
+#!/bin/bash -eu
 
-{
     if test -n "\${CLK_FAKED_TIME-}"
     then
         faketime "\${CLK_FAKED_TIME}" "${CLK_COV}" "\$@"
     else
         "${CLK_COV}" "\$@"
     fi
-} > "\${TMP}/output.txt" 2>&1
-res=\$?
-sed "s|\$(pwd)|.|g" "\${TMP}/output.txt"
-exit \$res
 EOF
 chmod +x "${TMP}/bin/clk"
 cat <<EOF > "${TMP}/clk-root/clk.json"
@@ -71,7 +64,8 @@ cat <<EOF > "${TMP}/clk-root/clk.json"
     "parameters": {
         "clk": [
             "--keyring", "clk.keyrings.DummyFileKeyring",
-            "--forced-width"
+            "--forced-width",
+            "--reproducible-output"
         ],
         "command.create.python": [
             "--no-open",

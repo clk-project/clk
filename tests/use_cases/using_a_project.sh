@@ -1,5 +1,5 @@
 #!/bin/bash -eu
-# [[file:../../doc/use_cases/using_a_project.org::run][run]]
+# [[id:6de55de4-c0b3-41d6-952a-25e0fe06c881::run][run]]
 . ./sandboxing.sh
 
 mkdir myprojet && cd myprojet && mkdir .clk
@@ -15,7 +15,11 @@ New local alias for somelocalcommand: echo hello
 EOEXPECTED
 }
 
-diff -uBw <(usingaliases_code 2>&1) <(usingaliases_expected) || {
+echo 'Run usingaliases'
+
+{ usingaliases_code || true ; } > "${TMP}/code.txt" 2>&1
+usingaliases_expected > "${TMP}/expected.txt" 2>&1
+diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
 echo "Something went wrong when trying usingaliases"
 exit 1
 }
@@ -32,7 +36,11 @@ hello
 EOEXPECTED
 }
 
-diff -uBw <(callingthealias_code 2>&1) <(callingthealias_expected) || {
+echo 'Run callingthealias'
+
+{ callingthealias_code || true ; } > "${TMP}/code.txt" 2>&1
+callingthealias_expected > "${TMP}/expected.txt" 2>&1
+diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
 echo "Something went wrong when trying callingthealias"
 exit 1
 }
@@ -55,7 +63,11 @@ error:     command
 EOEXPECTED
 }
 
-diff -uBw <(callingthealiasoutsideoftheproject_code 2>&1) <(callingthealiasoutsideoftheproject_expected) || {
+echo 'Run callingthealiasoutsideoftheproject'
+
+{ callingthealiasoutsideoftheproject_code || true ; } > "${TMP}/code.txt" 2>&1
+callingthealiasoutsideoftheproject_expected > "${TMP}/expected.txt" 2>&1
+diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
 echo "Something went wrong when trying callingthealiasoutsideoftheproject"
 exit 1
 }
@@ -76,7 +88,11 @@ hello world
 EOEXPECTED
 }
 
-diff -uBw <(createaparameter_code 2>&1) <(createaparameter_expected) || {
+echo 'Run createaparameter'
+
+{ createaparameter_code || true ; } > "${TMP}/code.txt" 2>&1
+createaparameter_expected > "${TMP}/expected.txt" 2>&1
+diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
 echo "Something went wrong when trying createaparameter"
 exit 1
 }
@@ -95,7 +111,11 @@ hello world
 EOEXPECTED
 }
 
-diff -uBw <(callingparameteroutsideofproject_code 2>&1) <(callingparameteroutsideofproject_expected) || {
+echo 'Run callingparameteroutsideofproject'
+
+{ callingparameteroutsideofproject_code || true ; } > "${TMP}/code.txt" 2>&1
+callingparameteroutsideofproject_expected > "${TMP}/expected.txt" 2>&1
+diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
 echo "Something went wrong when trying callingparameteroutsideofproject"
 exit 1
 }
@@ -113,7 +133,11 @@ somecontent
 EOEXPECTED
 }
 
-diff -uBw <(projectprefix_code 2>&1) <(projectprefix_expected) || {
+echo 'Run projectprefix'
+
+{ projectprefix_code || true ; } > "${TMP}/code.txt" 2>&1
+projectprefix_expected > "${TMP}/expected.txt" 2>&1
+diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
 echo "Something went wrong when trying projectprefix"
 exit 1
 }

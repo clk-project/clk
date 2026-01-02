@@ -71,7 +71,6 @@ EOEXPECTED
 echo 'Run help'
 
 { help_code || true ; } > "${TMP}/code.txt" 2>&1
-sed -i "s|$(pwd)|.|g" "${TMP}/code.txt"
 help_expected > "${TMP}/expected.txt" 2>&1
 diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
 echo "Something went wrong when trying help"
@@ -93,7 +92,6 @@ EOEXPECTED
 echo 'Run which'
 
 { which_code || true ; } > "${TMP}/code.txt" 2>&1
-sed -i "s|$(pwd)|.|g" "${TMP}/code.txt"
 which_expected > "${TMP}/expected.txt" 2>&1
 diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
 echo "Something went wrong when trying which"
@@ -117,7 +115,6 @@ EOEXPECTED
 echo 'Run simpleget'
 
 { simpleget_code || true ; } > "${TMP}/code.txt" 2>&1
-sed -i "s|$(pwd)|.|g" "${TMP}/code.txt"
 simpleget_expected > "${TMP}/expected.txt" 2>&1
 diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
 echo "Something went wrong when trying simpleget"
@@ -141,7 +138,6 @@ EOEXPECTED
 echo 'Run simplepost'
 
 { simplepost_code || true ; } > "${TMP}/code.txt" 2>&1
-sed -i "s|$(pwd)|.|g" "${TMP}/code.txt"
 simplepost_expected > "${TMP}/expected.txt" 2>&1
 diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
 echo "Something went wrong when trying simplepost"
@@ -165,7 +161,6 @@ EOEXPECTED
 echo 'Run completion1'
 
 { completion1_code || true ; } > "${TMP}/code.txt" 2>&1
-sed -i "s|$(pwd)|.|g" "${TMP}/code.txt"
 completion1_expected > "${TMP}/expected.txt" 2>&1
 diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
 echo "Something went wrong when trying completion1"
@@ -189,7 +184,6 @@ EOEXPECTED
 echo 'Run completion2'
 
 { completion2_code || true ; } > "${TMP}/code.txt" 2>&1
-sed -i "s|$(pwd)|.|g" "${TMP}/code.txt"
 completion2_expected > "${TMP}/expected.txt" 2>&1
 diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
 echo "Something went wrong when trying completion2"
@@ -219,7 +213,6 @@ EOEXPECTED
 echo 'Run try-somesite'
 
 { try-somesite_code || true ; } > "${TMP}/code.txt" 2>&1
-sed -i "s|$(pwd)|.|g" "${TMP}/code.txt"
 try-somesite_expected > "${TMP}/expected.txt" 2>&1
 diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
 echo "Something went wrong when trying try-somesite"

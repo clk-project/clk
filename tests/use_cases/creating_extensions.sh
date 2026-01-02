@@ -42,7 +42,10 @@ EOEXPECTED
 }
 
 echo 'Run try-it'
-diff -uBw <(try-it_code 2>&1) <(try-it_expected) || {
+
+{ try-it_code || true ; } > "${TMP}/code.txt" 2>&1
+try-it_expected > "${TMP}/expected.txt" 2>&1
+diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
 echo "Something went wrong when trying try-it"
 exit 1
 }
@@ -62,7 +65,10 @@ EOEXPECTED
 }
 
 echo 'Run disable'
-diff -uBw <(disable_code 2>&1) <(disable_expected) || {
+
+{ disable_code || true ; } > "${TMP}/code.txt" 2>&1
+disable_expected > "${TMP}/expected.txt" 2>&1
+diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
 echo "Something went wrong when trying disable"
 exit 1
 }
@@ -84,7 +90,10 @@ EOEXPECTED
 }
 
 echo 'Run enable'
-diff -uBw <(enable_code 2>&1) <(enable_expected) || {
+
+{ enable_code || true ; } > "${TMP}/code.txt" 2>&1
+enable_expected > "${TMP}/expected.txt" 2>&1
+diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
 echo "Something went wrong when trying enable"
 exit 1
 }
@@ -102,7 +111,10 @@ EOEXPECTED
 }
 
 echo 'Run find-it'
-diff -uBw <(find-it_code 2>&1) <(find-it_expected) || {
+
+{ find-it_code || true ; } > "${TMP}/code.txt" 2>&1
+find-it_expected > "${TMP}/expected.txt" 2>&1
+diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
 echo "Something went wrong when trying find-it"
 exit 1
 }
@@ -144,7 +156,10 @@ EOEXPECTED
 }
 
 echo 'Run install-extension'
-diff -uBw <(install-extension_code 2>&1) <(install-extension_expected) || {
+
+{ install-extension_code || true ; } > "${TMP}/code.txt" 2>&1
+install-extension_expected > "${TMP}/expected.txt" 2>&1
+diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
 echo "Something went wrong when trying install-extension"
 exit 1
 }
@@ -168,7 +183,10 @@ EOEXPECTED
 }
 
 echo 'Run remove-extension'
-diff -uBw <(remove-extension_code 2>&1) <(remove-extension_expected) || {
+
+{ remove-extension_code || true ; } > "${TMP}/code.txt" 2>&1
+remove-extension_expected > "${TMP}/expected.txt" 2>&1
+diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
 echo "Something went wrong when trying remove-extension"
 exit 1
 }
@@ -210,7 +228,10 @@ EOEXPECTED
 }
 
 echo 'Run install-extension-github'
-diff -uBw <(install-extension-github_code 2>&1) <(install-extension-github_expected) || {
+
+{ install-extension-github_code || true ; } > "${TMP}/code.txt" 2>&1
+install-extension-github_expected > "${TMP}/expected.txt" 2>&1
+diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
 echo "Something went wrong when trying install-extension-github"
 exit 1
 }
@@ -253,7 +274,10 @@ EOEXPECTED
 }
 
 echo 'Run install-extension-name'
-diff -uBw <(install-extension-name_code 2>&1) <(install-extension-name_expected) || {
+
+{ install-extension-name_code || true ; } > "${TMP}/code.txt" 2>&1
+install-extension-name_expected > "${TMP}/expected.txt" 2>&1
+diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
 echo "Something went wrong when trying install-extension-name"
 exit 1
 }

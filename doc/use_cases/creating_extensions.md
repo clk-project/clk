@@ -1,7 +1,7 @@
-- [creating our own extension](#org0b04b41)
-- [enable/disable it](#orgaba3ac9)
-- [publish it](#orgff036f5)
-- [get an extension](#org2d821ed)
+- [creating our own extension](#org045261c)
+- [enable/disable it](#org488f1c5)
+- [publish it](#org4472bd0)
+- [get an extension](#orga653ed9)
 
 Extensions are folders that contain clk configurations and commands. You can create and share those with your colleagues.
 
@@ -13,7 +13,7 @@ For instance, let's suppose you need to bootstrap a development environment to w
 -   run the development environment that would update the cluster automatically.
 
 
-<a id="org0b04b41"></a>
+<a id="org045261c"></a>
 
 # creating our own extension
 
@@ -87,7 +87,7 @@ clk k8s run-dev-env --flow
     running development environment
 
 
-<a id="orgaba3ac9"></a>
+<a id="org488f1c5"></a>
 
 # enable/disable it
 
@@ -116,7 +116,7 @@ clk k8s run-dev-env --flow
     running development environment
 
 
-<a id="orgff036f5"></a>
+<a id="org4472bd0"></a>
 
 # publish it
 
@@ -131,7 +131,7 @@ clk extension where-is global/k8s | sed "s|$(pwd)|.|"
 You can git init that code and push it to some remote repository. Your colleagues then can get it with `clk extension install yourextensionurl`.
 
 
-<a id="org2d821ed"></a>
+<a id="orga653ed9"></a>
 
 # get an extension
 

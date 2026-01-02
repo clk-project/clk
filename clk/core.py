@@ -8,6 +8,7 @@ import platform
 import pstats
 import re
 import subprocess
+import sys
 import time
 from datetime import datetime
 from io import StringIO
@@ -506,6 +507,15 @@ def main_command_decoration(f, cls, **kwargs):
         callback=flow_progress_callback,
     )(f)
     f = main_command_option(
+        "--reproducible-output",
+        is_flag=True,
+        help=(
+            "Ensure the output is reproducible by redacting the project location"
+            " (used to have reproducible tests)"
+        ),
+        callback=reproducible_output_callback,
+    )(f)
+    f = main_command_option(
         "--report-file",
         help="Create a report file to put with bug reports",
         callback=report_file_callback,
@@ -764,6 +774,35 @@ def flow_verbose_callback(ctx, attr, value):
 def flow_progress_callback(ctx, attr, value):
     if ctx.get_parameter_source(attr.name) != ParameterSource.DEFAULT:
         config.flow_progress = value
+
+
+class RedactMessages:
+    def __init__(self, stream):
+        self.stream = stream
+
+    def write(self, message):
+        message = message.replace(
+            config.global_profile.location,
+            "./"
+            + os.path.relpath(
+                Path(config.global_profile.location).absolute(),
+                Path(".").absolute(),
+            ),
+        )
+        self.stream.write(message)
+
+    def flush(self):
+        self.stream.flush()
+
+    def __getattr__(self, name):
+        return getattr(self.stream, name)
+
+
+@main_command_options_callback
+def reproducible_output_callback(ctx, attr, value):
+    if value:
+        sys.stdout = RedactMessages(sys.stdout)
+    return value
 
 
 def report_file_callback(ctx, attr, value):

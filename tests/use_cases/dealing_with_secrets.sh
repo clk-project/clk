@@ -1,5 +1,5 @@
 #!/bin/bash -eu
-# [[file:dealing_with_secrets.org::test][test]]
+# [[id:1ff4115c-af33-4c97-a343-a49148bf2ec8::test][test]]
 . ./sandboxing.sh
 
 clk command create python --group http
@@ -33,7 +33,11 @@ New global parameters for http: --bearer mytoken
 EOEXPECTED
 }
 
-diff -uBw <(setsecretinparameter_code 2>&1) <(setsecretinparameter_expected) || {
+echo 'Run setsecretinparameter'
+
+{ setsecretinparameter_code || true ; } > "${TMP}/code.txt" 2>&1
+setsecretinparameter_expected > "${TMP}/expected.txt" 2>&1
+diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
 echo "Something went wrong when trying setsecretinparameter"
 exit 1
 }
@@ -50,7 +54,11 @@ Calling someurl/someendpoint with bearer token mytoken
 EOEXPECTED
 }
 
-diff -uBw <(usesecretinparameter_code 2>&1) <(usesecretinparameter_expected) || {
+echo 'Run usesecretinparameter'
+
+{ usesecretinparameter_code || true ; } > "${TMP}/code.txt" 2>&1
+usesecretinparameter_expected > "${TMP}/expected.txt" 2>&1
+diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
 echo "Something went wrong when trying usesecretinparameter"
 exit 1
 }
@@ -68,7 +76,11 @@ New global parameters for http: --bearer secret:http_bearer
 EOEXPECTED
 }
 
-diff -uBw <(usethebearefromsecret_code 2>&1) <(usethebearefromsecret_expected) || {
+echo 'Run usethebearefromsecret'
+
+{ usethebearefromsecret_code || true ; } > "${TMP}/code.txt" 2>&1
+usethebearefromsecret_expected > "${TMP}/expected.txt" 2>&1
+diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
 echo "Something went wrong when trying usethebearefromsecret"
 exit 1
 }
@@ -85,7 +97,11 @@ error: Could not find the secret for http_bearer
 EOEXPECTED
 }
 
-diff -uBw <(httpwithsecretfail_code 2>&1) <(httpwithsecretfail_expected) || {
+echo 'Run httpwithsecretfail'
+
+{ httpwithsecretfail_code || true ; } > "${TMP}/code.txt" 2>&1
+httpwithsecretfail_expected > "${TMP}/expected.txt" 2>&1
+diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
 echo "Something went wrong when trying httpwithsecretfail"
 exit 1
 }
@@ -165,7 +181,11 @@ Calling someurl/someendpoint with bearer token test
 EOEXPECTED
 }
 
-diff -uBw <(call_ask_for_real_code 2>&1) <(call_ask_for_real_expected) || {
+echo 'Run call_ask_for_real'
+
+{ call_ask_for_real_code || true ; } > "${TMP}/code.txt" 2>&1
+call_ask_for_real_expected > "${TMP}/expected.txt" 2>&1
+diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
 echo "Something went wrong when trying call_ask_for_real"
 exit 1
 }
@@ -247,7 +267,11 @@ Please provide the secret http_bearer:
 EOEXPECTED
 }
 
-diff -uBw <(call_ask_for_real_error_code 2>&1) <(call_ask_for_real_error_expected) || {
+echo 'Run call_ask_for_real_error'
+
+{ call_ask_for_real_error_code || true ; } > "${TMP}/code.txt" 2>&1
+call_ask_for_real_error_expected > "${TMP}/expected.txt" 2>&1
+diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
 echo "Something went wrong when trying call_ask_for_real_error"
 exit 1
 }
@@ -264,7 +288,11 @@ try-completion_expected () {
 EOEXPECTED
 }
 
-diff -uBw <(try-completion_code 2>&1) <(try-completion_expected) || {
+echo 'Run try-completion'
+
+{ try-completion_code || true ; } > "${TMP}/code.txt" 2>&1
+try-completion_expected > "${TMP}/expected.txt" 2>&1
+diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
 echo "Something went wrong when trying try-completion"
 exit 1
 }
@@ -281,7 +309,11 @@ try-completion-without-ask-secret_expected () {
 EOEXPECTED
 }
 
-diff -uBw <(try-completion-without-ask-secret_code 2>&1) <(try-completion-without-ask-secret_expected) || {
+echo 'Run try-completion-without-ask-secret'
+
+{ try-completion-without-ask-secret_code || true ; } > "${TMP}/code.txt" 2>&1
+try-completion-without-ask-secret_expected > "${TMP}/expected.txt" 2>&1
+diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
 echo "Something went wrong when trying try-completion-without-ask-secret"
 exit 1
 }
@@ -302,7 +334,11 @@ http_bearer *****
 EOEXPECTED
 }
 
-diff -uBw <(showsecret_code 2>&1) <(showsecret_expected) || {
+echo 'Run showsecret'
+
+{ showsecret_code || true ; } > "${TMP}/code.txt" 2>&1
+showsecret_expected > "${TMP}/expected.txt" 2>&1
+diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
 echo "Something went wrong when trying showsecret"
 exit 1
 }
@@ -319,7 +355,11 @@ http_bearer mytoken
 EOEXPECTED
 }
 
-diff -uBw <(reallyshowsecret_code 2>&1) <(reallyshowsecret_expected) || {
+echo 'Run reallyshowsecret'
+
+{ reallyshowsecret_code || true ; } > "${TMP}/code.txt" 2>&1
+reallyshowsecret_expected > "${TMP}/expected.txt" 2>&1
+diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
 echo "Something went wrong when trying reallyshowsecret"
 exit 1
 }
@@ -336,7 +376,11 @@ mytoken
 EOEXPECTED
 }
 
-diff -uBw <(reallyshowonlysecret_code 2>&1) <(reallyshowonlysecret_expected) || {
+echo 'Run reallyshowonlysecret'
+
+{ reallyshowonlysecret_code || true ; } > "${TMP}/code.txt" 2>&1
+reallyshowonlysecret_expected > "${TMP}/expected.txt" 2>&1
+diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
 echo "Something went wrong when trying reallyshowonlysecret"
 exit 1
 }
@@ -353,7 +397,11 @@ Calling someurl/someendpoint with bearer token mytoken
 EOEXPECTED
 }
 
-diff -uBw <(httpwithsecret_code 2>&1) <(httpwithsecret_expected) || {
+echo 'Run httpwithsecret'
+
+{ httpwithsecret_code || true ; } > "${TMP}/code.txt" 2>&1
+httpwithsecret_expected > "${TMP}/expected.txt" 2>&1
+diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
 echo "Something went wrong when trying httpwithsecret"
 exit 1
 }
@@ -380,7 +428,11 @@ mytoken
 EOEXPECTED
 }
 
-diff -uBw <(showgetsecret_code 2>&1) <(showgetsecret_expected) || {
+echo 'Run showgetsecret'
+
+{ showgetsecret_code || true ; } > "${TMP}/code.txt" 2>&1
+showgetsecret_expected > "${TMP}/expected.txt" 2>&1
+diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
 echo "Something went wrong when trying showgetsecret"
 exit 1
 }
@@ -401,7 +453,11 @@ warning: No secret set
 EOEXPECTED
 }
 
-diff -uBw <(checkthatthesecretisgone_code 2>&1) <(checkthatthesecretisgone_expected) || {
+echo 'Run checkthatthesecretisgone'
+
+{ checkthatthesecretisgone_code || true ; } > "${TMP}/code.txt" 2>&1
+checkthatthesecretisgone_expected > "${TMP}/expected.txt" 2>&1
+diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
 echo "Something went wrong when trying checkthatthesecretisgone"
 exit 1
 }
@@ -423,7 +479,11 @@ http_bearer thevalue
 EOEXPECTED
 }
 
-diff -uBw <(using_netrc_code 2>&1) <(using_netrc_expected) || {
+echo 'Run using_netrc'
+
+{ using_netrc_code || true ; } > "${TMP}/code.txt" 2>&1
+using_netrc_expected > "${TMP}/expected.txt" 2>&1
+diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
 echo "Something went wrong when trying using_netrc"
 exit 1
 }
