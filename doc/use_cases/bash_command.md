@@ -53,16 +53,21 @@ sed -i 's/Description/Command that says something/g' "$(clk command which mycomm
 ```
 
 ```bash
-clk mycommand --help
+clk mycommand --help|sed "s|$(pwd)|.|"
 ```
 
-    Usage: clk mycommand [OPTIONS]
+```
+Usage: clk mycommand [OPTIONS]
 
-      Command that says something
+  Command that says something
 
-    Options:
-      --help-all  Show the full help message, automatic options included.
-      --help      Show this message and exit.
+  Edit this command by running `clk command edit mycommand`
+  Or edit ./clk-root/bin/mycommand directly.
+
+Options:
+  --help-all  Show the full help message, automatic options included.
+  --help      Show this message and exit.
+```
 
 The last part `clk_help_handler "$@"` is the glue code that makes clk parse the command line. After this line, you can write the content of your command line.
 

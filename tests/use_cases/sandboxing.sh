@@ -63,7 +63,8 @@ cat <<EOF > "${TMP}/clk-root/clk.json"
 {
     "parameters": {
         "clk": [
-            "--keyring", "clk.keyrings.DummyFileKeyring"
+            "--keyring", "clk.keyrings.DummyFileKeyring",
+            "--forced-width"
         ],
         "command.create.python": [
             "--no-open",

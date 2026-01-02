@@ -15,6 +15,7 @@ from pathlib import Path
 
 import appdirs
 import click
+from click import formatting
 from click.core import ParameterSource
 
 from clk import completion, log, startup_time
@@ -417,6 +418,12 @@ def main_command_decoration(f, cls, **kwargs):
         type=ColorType(),
     )(f)
     f = main_command_option(
+        "--forced-width",
+        help="Force the width of the terminal (used to have reproducible tests)",
+        callback=forced_width_callback,
+        is_flag=True,
+    )(f)
+    f = main_command_option(
         "--ask-secret/--no-ask-secret",
         help=(
             "Interactively ask for the secret if the secret manager does not provide it"
@@ -724,6 +731,12 @@ def flowstep_callback(ctx, attr, value):
 @main_command_options_callback
 def alternate_style_callback(ctx, attr, value):
     config.alt_style = value
+
+
+@main_command_options_callback
+def forced_width_callback(ctx, attr, value):
+    if value is True:
+        formatting.FORCED_WIDTH = 120
 
 
 @main_command_options_callback
