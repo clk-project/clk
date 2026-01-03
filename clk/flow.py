@@ -180,7 +180,7 @@ def execute_flow_dependencies(cmd, flow_from=None, flow_after=None):
         torun = tqdm(torun, desc="Executing flow steps")
     for index, dep in enumerate(torun):
         cmd = dep.split(".")
-        if config.flow_verbose:
+        if config.flow_verbose and not config.flow_progress:
             progress = f"{str(index + 1).zfill(padding)}/{total}"
             LOGGER.info(
                 f"{progress} {'About to run' if config.flowstep else 'Running'} step '{' '.join(cmd)}'"
