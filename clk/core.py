@@ -495,13 +495,13 @@ def main_command_decoration(f, cls, **kwargs):
         callback=debug_on_command_load_error_callback,
     )(f)
     f = main_command_option(
-        "--flow-verbose",
+        "--flow-verbose/--no-flow-verbose",
         is_flag=True,
         help="Show more precisely when a flow starts and when it ends",
         callback=flow_verbose_callback,
     )(f)
     f = main_command_option(
-        "--flow-progress",
+        "--flow-progress/--no-flow-progress",
         is_flag=True,
         help="Show a progress bar when running flow dependencies",
         callback=flow_progress_callback,
