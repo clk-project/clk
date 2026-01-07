@@ -311,6 +311,27 @@ done"""
     )
 
 
+def test_flow_to_subcommand_of_refactored_group(lib):
+    # first, a has a subcommand in its flow
+    lib.cmd("alias set a echo 'in a'")
+    lib.cmd("alias set b.c echo 'in b.c'")
+    lib.cmd("flowdep set a b.c")
+    assert (
+        lib.cmd("a --flow")
+        == """in b.c
+in a"""
+    )
+    # then, b.c becomes simply b after some refactoring
+    lib.cmd("alias unset b.c")
+    lib.cmd("alias set b echo 'in b'")
+    with pytest.raises(CalledProcessError) as e:
+        lib.cmd("a --flow", stderr=PIPE)
+    assert (
+        "Could not load the flow of a with the error: b is not a group (while trying to load b.c)"
+        in e.value.stderr
+    )
+
+
 def test_reuse_flow_parameters(pythondir, lib):
     (pythondir / "somegroup.py").write_text("""
 from clk.decorators import group, option

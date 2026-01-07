@@ -29,6 +29,18 @@ from clk.triggers import TriggerMixin
 LOGGER = get_logger(__name__)
 
 
+class NotAGroupException(Exception):
+    def __init__(self, cmd_path, context=None):
+        self.cmd_path = cmd_path
+        self.context = context
+
+    def __str__(self):
+        res = f"{self.cmd_path} is not a group"
+        if self.context:
+            res += f" ({self.context})"
+        return res
+
+
 class CommandNotFound(Exception):
     def __init__(self, cmd_name_or_path, parent=None):
         self.cmd_name_or_path = cmd_name_or_path
@@ -44,6 +56,8 @@ class CommandNotFound(Exception):
 
 def list_commands(parent_path):
     parent = get_command(parent_path)
+    if not hasattr(parent, "commandresolvers"):
+        raise NotAGroupException(parent_path)
     ctx = get_ctx([])
     return parent.list_commands(ctx)
 
@@ -81,6 +95,8 @@ def get_command2(path):
                 " I deliberately chose to ignore it."
             )
             raise CommandNotFound(cmd_name, parent)
+        elif not hasattr(parent, "commandresolvers"):
+            raise NotAGroupException(parent_path, f"while trying to load {path}")
     else:
         parent = config.main_command
     if cmd_name.startswith("_"):

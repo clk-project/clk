@@ -119,7 +119,12 @@ def get_flow_commands_to_run(
             torun.insert(0, dep)
             populate_torun(dep)
 
-    populate_torun(cmd_path)
+    try:
+        populate_torun(cmd_path)
+    except Exception as e:
+        LOGGER.error(f"Could not load the flow of {cmd_path} with the error: {e}")
+        raise
+
     torun = ordered_unique(torun)
     if "[STOP]" in torun:
         torun = torun[torun.index("[STOP]") + 1 :]
