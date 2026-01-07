@@ -12,7 +12,6 @@ from clk.lib import flat_map, ordered_unique
 from clk.log import get_logger
 from clk.overloads import (
     AutomaticOption,
-    CommandNotFound,
     FlowArgument,
     FlowOption,
     get_command,
@@ -86,11 +85,7 @@ def get_command_handler(cmd):
                 new_flow[:self_index] + flowdeps[cmd.path] + new_flow[self_index + 1 :]
             )
         flowdeps[cmd.path] = new_flow
-    try:
-        cmd_has_flow = has_flow(cmd.path)
-    except CommandNotFound as e:
-        LOGGER.error(f"The flow of {cmd.path} could not be resolved. {e}")
-        cmd_has_flow = None
+    cmd_has_flow = has_flow(cmd.path)
     if cmd_has_flow:
         setup_flow_params(cmd)
         cmd.callback = get_flow_wrapper(cmd.name, cmd.callback)

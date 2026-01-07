@@ -277,9 +277,7 @@ run-with-wrong-flow-deps_expected () {
       cat<<"EOEXPECTED"
 error: Could not load the flow of printer.slice with the error: Command printer.calib not found
 error: Could not load the flow of printer.send with the error: Command printer.calib not found
-Usage: clk printer send [OPTIONS] PRINTER
-error: No such option: --flow
-Hint: If you don't know where this option comes from, try checking the parameters (with clk --no-parameter parameters show).
+error: printer.send could not be loaded. Re run with clk --develop to see the stacktrace or clk --debug-on-command-load-error to debug the load error
 EOEXPECTED
 }
 
