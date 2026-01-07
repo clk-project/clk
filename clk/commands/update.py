@@ -7,7 +7,7 @@ from clk.decorators import command, flag
 
 @command()
 @flag("--silent", help="Try to be as silent as possible")
-def upgrade(silent):
+def update(silent):
     """Upgrade clk"""
     pip_args = ["pip", "install", "--upgrade"]
     if silent:
