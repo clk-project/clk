@@ -342,8 +342,8 @@ clk printer send --flow myprinter
 #+END_SRC
 
 #+RESULTS[a6e0572d6385dc840dd38fe6aebc100866184f32]: run-with-wrong-flow-deps
-: error: The flow of printer.slice could not be resolved. Command printer.calib not found
-: error: The flow of printer.send could not be resolved. Command printer.calib not found
+: error: Could not load the flow of printer.slice with the error: Command printer.calib not found
+: error: Could not load the flow of printer.send with the error: Command printer.calib not found
 : Usage: clk printer send [OPTIONS] PRINTER
 : error: No such option: --flow
 : Hint: If you don't know where this option comes from, try checking the parameters (with clk --no-parameter parameters show).
