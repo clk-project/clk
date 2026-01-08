@@ -365,12 +365,14 @@ class ExtraParametersMixin:
         self.params.append(edit_param_opt)
         self.params.append(no_param_opt)
 
-    def get_extra_args(self, implicit_only=False):
-        return config.get_parameters(self.path, implicit_only=implicit_only)
+    def get_extra_args(self, implicit_only=False, explicit_only=False):
+        return config.get_parameters(
+            self.path, implicit_only=implicit_only, explicit_only=explicit_only
+        )
 
     def format_help_text(self, ctx, formatter):
         super().format_help_text(ctx, formatter)
-        extra_args = self.get_extra_args()
+        extra_args = self.get_extra_args(explicit_only=True)
         if "--help" in extra_args:
             extra_args.remove("--help")
         if extra_args:

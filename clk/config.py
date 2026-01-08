@@ -724,11 +724,12 @@ class Config:
     def get_value(self, path, default=None):
         return self.get_settings("value").get(path, {"value": default})["value"]
 
-    def get_parameters(self, path, implicit_only=False):
+    def get_parameters(self, path, implicit_only=False, explicit_only=False):
         return [
             setting
             for profile in self.all_enabled_profiles
-            if implicit_only is False or not profile.explicit
+            if (implicit_only is False or not profile.explicit)
+            and (explicit_only is False or profile.explicit)
             for setting in profile.get_settings("parameters").get(path, [])
         ]
 
