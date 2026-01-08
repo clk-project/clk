@@ -51,7 +51,7 @@ clk myserver
 
 #+RESULTS[fb7d9a56c93eb67a40bc4a6c33e8e5afd828bf8d]: withpyeval
 : Removing global alias of myserver: echo curl http://myserverip/somecommand
-: New global alias for myserver: echo curl pyeval:"http://{MYSERVER}/sommecommand".format(**os.environ)
+: New global alias for myserver: echo curl 'pyeval:"http://{MYSERVER}/sommecommand".format(**os.environ)'
 : curl http://myserverip/sommecommand
 
 This might be useful in some situation, but as you can see it is quite verbose.
@@ -66,8 +66,8 @@ clk myserver
 #+END_SRC
 
 #+RESULTS[0ec604238a04951a9d54de506f036e19657e96d1]: witheval
-: Removing global alias of myserver: echo curl pyeval:"http://{MYSERVER}/sommecommand".format(**os.environ)
-: New global alias for myserver: echo curl eval:sh -c "echo http://${MYSERVER}/sommecommand"
+: Removing global alias of myserver: echo curl 'pyeval:"http://{MYSERVER}/sommecommand".format(**os.environ)'
+: New global alias for myserver: echo curl 'eval:sh -c "echo http://${MYSERVER}/sommecommand"'
 : curl http://myserverip/sommecommand
 
 That's better. But still very verbose compared to what I want.
@@ -81,8 +81,8 @@ clk myserver
 #+END_SRC
 
 #+RESULTS[eb1807bf279e1cc2fe61db043455a3d0dd78ddbd]: withtpl
-: Removing global alias of myserver: echo curl eval:sh -c "echo http://${MYSERVER}/sommecommand"
-: New global alias for myserver: echo curl tpl:http://{MYSERVER}/sommecommand
+: Removing global alias of myserver: echo curl 'eval:sh -c "echo http://${MYSERVER}/sommecommand"'
+: New global alias for myserver: echo curl 'tpl:http://{MYSERVER}/sommecommand'
 : curl http://myserverip/sommecommand
 
 That's much better!

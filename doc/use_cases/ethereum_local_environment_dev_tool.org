@@ -195,8 +195,8 @@ with is dynamically updated.
   #+END_SRC
 
   #+RESULTS[c5577dd3830533db1bd7de78a528c5e966a21b5d]: issue-using-with-cache
-  : Removing global alias of eth.mycontract: eth contract --abi-path some.json --address eval:clk eth get-address
-  : New global alias for eth.mycontract: eth contract --abi-path some.json --address eval(60):clk eth get-address
+  : Removing global alias of eth.mycontract: eth contract --abi-path some.json --address 'eval:clk eth get-address'
+  : New global alias for eth.mycontract: eth contract --abi-path some.json --address 'eval(60):clk eth get-address'
   : I would discuss with the contract whose address is 47156ddb404b893cbbe9c85509710f64 and abi path is some.json
   : I would call the function dosomething
   : Contract deployed at address: ed5b4c043e36c30f31a158e8bda16e2b
@@ -256,7 +256,7 @@ with is dynamically updated.
   #+END_SRC
 
   #+RESULTS[2f4b47e077ee2abe4cbf81c2fe8f288968e41245]: alias-with-project
-  : New local alias for eth.mycontract: eth contract --abi-path project:some.json --address eval:clk eth get-address
+  : New local alias for eth.mycontract: eth contract --abi-path project:some.json --address 'eval:clk eth get-address'
 
   Similarly to the ~--address~ option, we need to prepend it with ~noeval:~, or
   the alias would be defined with the absolute location of the file instead of
@@ -291,6 +291,7 @@ with is dynamically updated.
 * Footnotes
   :PROPERTIES:
   :CUSTOM_ID: 1f8655b0-2399-4908-9452-364abac1b6c5
+  :ID:       8d9e97a5-dcf5-46ff-a584-7a38e680edb8
   :END:
 
 [fn:1] For the sake of the example, I replace the absolute path with

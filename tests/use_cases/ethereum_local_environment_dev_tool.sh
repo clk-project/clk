@@ -1,5 +1,5 @@
 #!/bin/bash -eu
-# [[file:../../doc/use_cases/ethereum_local_environment_dev_tool.org::test][test]]
+# [[id:8d9e97a5-dcf5-46ff-a584-7a38e680edb8::test][test]]
 . ./sandboxing.sh
 
 clk command create python eth --description "Play with ethereum" --group --body "
@@ -29,7 +29,11 @@ I would call the function dosomething
 EOEXPECTED
 }
 
-diff -uBw <(call_some_code 2>&1) <(call_some_expected) || {
+echo 'Run call_some'
+
+{ call_some_code || true ; } > "${TMP}/code.txt" 2>&1
+call_some_expected > "${TMP}/expected.txt" 2>&1
+diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
 echo "Something went wrong when trying call_some"
 exit 1
 }
@@ -49,7 +53,11 @@ I would call the function dosomething
 EOEXPECTED
 }
 
-diff -uBw <(call_alias_code 2>&1) <(call_alias_expected) || {
+echo 'Run call_alias'
+
+{ call_alias_code || true ; } > "${TMP}/code.txt" 2>&1
+call_alias_expected > "${TMP}/expected.txt" 2>&1
+diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
 echo "Something went wrong when trying call_alias"
 exit 1
 }
@@ -67,7 +75,11 @@ dosomethingelse
 EOEXPECTED
 }
 
-diff -uBw <(try_completion_code 2>&1) <(try_completion_expected) || {
+echo 'Run try_completion'
+
+{ try_completion_code || true ; } > "${TMP}/code.txt" 2>&1
+try_completion_expected > "${TMP}/expected.txt" 2>&1
+diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
 echo "Something went wrong when trying try_completion"
 exit 1
 }
@@ -103,7 +115,11 @@ Contract deployed at address: 223632c428784fecaaa3e2a6aaaf6d8e
 EOEXPECTED
 }
 
-diff -uBw <(try_deploy_code 2>&1) <(try_deploy_expected) || {
+echo 'Run try_deploy'
+
+{ try_deploy_code || true ; } > "${TMP}/code.txt" 2>&1
+try_deploy_expected > "${TMP}/expected.txt" 2>&1
+diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
 echo "Something went wrong when trying try_deploy"
 exit 1
 }
@@ -122,7 +138,11 @@ New global alias for eth.get-address: exec cat contract-address.txt
 EOEXPECTED
 }
 
-diff -uBw <(get-address_code 2>&1) <(get-address_expected) || {
+echo 'Run get-address'
+
+{ get-address_code || true ; } > "${TMP}/code.txt" 2>&1
+get-address_expected > "${TMP}/expected.txt" 2>&1
+diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
 echo "Something went wrong when trying get-address"
 exit 1
 }
@@ -147,7 +167,11 @@ I would call the function dosomething
 EOEXPECTED
 }
 
-diff -uBw <(try-command-with-eval_code 2>&1) <(try-command-with-eval_expected) || {
+echo 'Run try-command-with-eval'
+
+{ try-command-with-eval_code || true ; } > "${TMP}/code.txt" 2>&1
+try-command-with-eval_expected > "${TMP}/expected.txt" 2>&1
+diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
 echo "Something went wrong when trying try-command-with-eval"
 exit 1
 }
@@ -163,8 +187,8 @@ issue-using-with-cache_code () {
 
 issue-using-with-cache_expected () {
       cat<<"EOEXPECTED"
-Removing global alias of eth.mycontract: eth contract --abi-path some.json --address eval:clk eth get-address
-New global alias for eth.mycontract: eth contract --abi-path some.json --address eval(60):clk eth get-address
+Removing global alias of eth.mycontract: eth contract --abi-path some.json --address 'eval:clk eth get-address'
+New global alias for eth.mycontract: eth contract --abi-path some.json --address 'eval(60):clk eth get-address'
 I would discuss with the contract whose address is 47156ddb404b893cbbe9c85509710f64 and abi path is some.json
 I would call the function dosomething
 Contract deployed at address: ed5b4c043e36c30f31a158e8bda16e2b
@@ -173,7 +197,11 @@ I would call the function dosomething
 EOEXPECTED
 }
 
-diff -uBw <(issue-using-with-cache_code 2>&1) <(issue-using-with-cache_expected) || {
+echo 'Run issue-using-with-cache'
+
+{ issue-using-with-cache_code || true ; } > "${TMP}/code.txt" 2>&1
+issue-using-with-cache_expected > "${TMP}/expected.txt" 2>&1
+diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
 echo "Something went wrong when trying issue-using-with-cache"
 exit 1
 }
@@ -196,7 +224,11 @@ I would call the function dosomething
 EOEXPECTED
 }
 
-diff -uBw <(dropping-the-cache-when-deploying_code 2>&1) <(dropping-the-cache-when-deploying_expected) || {
+echo 'Run dropping-the-cache-when-deploying'
+
+{ dropping-the-cache-when-deploying_code || true ; } > "${TMP}/code.txt" 2>&1
+dropping-the-cache-when-deploying_expected > "${TMP}/expected.txt" 2>&1
+diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
 echo "Something went wrong when trying dropping-the-cache-when-deploying"
 exit 1
 }
@@ -212,11 +244,15 @@ alias-with-project_code () {
 
 alias-with-project_expected () {
       cat<<"EOEXPECTED"
-New local alias for eth.mycontract: eth contract --abi-path project:some.json --address eval:clk eth get-address
+New local alias for eth.mycontract: eth contract --abi-path project:some.json --address 'eval:clk eth get-address'
 EOEXPECTED
 }
 
-diff -uBw <(alias-with-project_code 2>&1) <(alias-with-project_expected) || {
+echo 'Run alias-with-project'
+
+{ alias-with-project_code || true ; } > "${TMP}/code.txt" 2>&1
+alias-with-project_expected > "${TMP}/expected.txt" 2>&1
+diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
 echo "Something went wrong when trying alias-with-project"
 exit 1
 }
@@ -235,7 +271,11 @@ Contract deployed at address: 68b329da9893e34099c7d8ad5cb9c940
 EOEXPECTED
 }
 
-diff -uBw <(deploy-again_code 2>&1) <(deploy-again_expected) || {
+echo 'Run deploy-again'
+
+{ deploy-again_code || true ; } > "${TMP}/code.txt" 2>&1
+deploy-again_expected > "${TMP}/expected.txt" 2>&1
+diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
 echo "Something went wrong when trying deploy-again"
 exit 1
 }
@@ -253,7 +293,11 @@ I would call the function dosomething
 EOEXPECTED
 }
 
-diff -uBw <(run-with-project-abi_code 2>&1) <(run-with-project-abi_expected) || {
+echo 'Run run-with-project-abi'
+
+{ run-with-project-abi_code || true ; } > "${TMP}/code.txt" 2>&1
+run-with-project-abi_expected > "${TMP}/expected.txt" 2>&1
+diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
 echo "Something went wrong when trying run-with-project-abi"
 exit 1
 }

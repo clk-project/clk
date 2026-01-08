@@ -140,8 +140,8 @@ clk eth deploy
 clk eth mycontract call dosomething
 ```
 
-    Removing global alias of eth.mycontract: eth contract --abi-path some.json --address eval:clk eth get-address
-    New global alias for eth.mycontract: eth contract --abi-path some.json --address eval(60):clk eth get-address
+    Removing global alias of eth.mycontract: eth contract --abi-path some.json --address 'eval:clk eth get-address'
+    New global alias for eth.mycontract: eth contract --abi-path some.json --address 'eval(60):clk eth get-address'
     I would discuss with the contract whose address is 47156ddb404b893cbbe9c85509710f64 and abi path is some.json
     I would call the function dosomething
     Contract deployed at address: ed5b4c043e36c30f31a158e8bda16e2b
@@ -188,7 +188,7 @@ Then, let's create the command again, using the shortcut `project:`.
 clk alias set eth.mycontract eth contract --abi-path noeval:project:some.json --address "noeval:eval:clk eth get-address"
 ```
 
-    New local alias for eth.mycontract: eth contract --abi-path project:some.json --address eval:clk eth get-address
+    New local alias for eth.mycontract: eth contract --abi-path project:some.json --address 'eval:clk eth get-address'
 
 Similarly to the `--address` option, we need to prepend it with `noeval:`, or the alias would be defined with the absolute location of the file instead of the instruction to evaluate it when run.
 

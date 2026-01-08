@@ -74,9 +74,8 @@ Usage: clk music play [OPTIONS] [COMMAND]...
   The current parameters set for this command are: --repeat
 
   Edit this alias by running `clk alias edit music.play`
-
-Arguments:
-  COMMAND  The command to execute
+  Or adjust this command `clk alias set music.play exec mpc start-server , exec mpc play --random --use-speakers
+  --replaygain`
 ```
 
 Even doing so, you may at some point want more control about what you are doing, like waiting for the music server to be ready, you will have to fall back in a real command. Replacing this alias with a shell command is straightforward:

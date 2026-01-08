@@ -30,7 +30,7 @@ clk myserver
 ```
 
     Removing global alias of myserver: echo curl http://myserverip/somecommand
-    New global alias for myserver: echo curl pyeval:"http://{MYSERVER}/sommecommand".format(**os.environ)
+    New global alias for myserver: echo curl 'pyeval:"http://{MYSERVER}/sommecommand".format(**os.environ)'
     curl http://myserverip/sommecommand
 
 This might be useful in some situation, but as you can see it is quite verbose.
@@ -42,8 +42,8 @@ clk alias set myserver echo curl 'noeval:eval:sh -c "echo http://${MYSERVER}/som
 clk myserver
 ```
 
-    Removing global alias of myserver: echo curl pyeval:"http://{MYSERVER}/sommecommand".format(**os.environ)
-    New global alias for myserver: echo curl eval:sh -c "echo http://${MYSERVER}/sommecommand"
+    Removing global alias of myserver: echo curl 'pyeval:"http://{MYSERVER}/sommecommand".format(**os.environ)'
+    New global alias for myserver: echo curl 'eval:sh -c "echo http://${MYSERVER}/sommecommand"'
     curl http://myserverip/sommecommand
 
 That's better. But still very verbose compared to what I want.
@@ -55,8 +55,8 @@ clk alias set myserver echo curl 'noeval:tpl:http://{MYSERVER}/sommecommand'
 clk myserver
 ```
 
-    Removing global alias of myserver: echo curl eval:sh -c "echo http://${MYSERVER}/sommecommand"
-    New global alias for myserver: echo curl tpl:http://{MYSERVER}/sommecommand
+    Removing global alias of myserver: echo curl 'eval:sh -c "echo http://${MYSERVER}/sommecommand"'
+    New global alias for myserver: echo curl 'tpl:http://{MYSERVER}/sommecommand'
     curl http://myserverip/sommecommand
 
 That's much better!
