@@ -4,7 +4,7 @@ import re
 
 import click
 
-from clk.alias import edit_alias_command, format, parse
+from clk.alias import edit_alias_command, format_commands, parse
 from clk.colors import Colorer
 from clk.config import config
 from clk.core import run
@@ -63,14 +63,14 @@ def _set(alias, command, documentation, params, flowdep):
             "Removing {} alias of {}: {}".format(
                 Colorer.apply_color_profilename(config.alias.writeprofilename),
                 alias,
-                format(old["commands"]),
+                format_commands(old["commands"]),
             )
         )
     LOGGER.info(
         "New {} alias for {}: {}".format(
             Colorer.apply_color_profilename(config.alias.writeprofilename),
             alias,
-            format(data["commands"]),
+            format_commands(data["commands"]),
         )
     )
     config.alias.writable[alias] = data

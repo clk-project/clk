@@ -40,14 +40,14 @@ def parse(words):
     return commands
 
 
-def format(cmds, sep=" , "):
+def format_commands(cmds, sep=" , "):
     """Format the alias command"""
-    return sep.join(" ".join(cmd) for cmd in cmds)
+    return sep.join(" ".join(quote(arg) for arg in cmd) for cmd in cmds)
 
 
 def edit_alias_command_in_profile(path, profile):
     old_value = profile.settings.get("alias", {}).get(path)
-    old_value = format(old_value["commands"], sep="\n")
+    old_value = format_commands(old_value["commands"], sep="\n")
     value = click.edit(old_value, extension=f"_{path}.txt")
     if value == old_value or value is None:
         LOGGER.info("Nothing changed")
@@ -133,9 +133,7 @@ class AliasCommandResolver(CommandResolver):
         name = path.split(".")[-1]
         commands_to_run = config.get_settings("alias")[path]["commands"]
         cmdhelp = config.get_settings("alias")[path]["documentation"]
-        cmdhelp = cmdhelp or "Alias for: {}".format(
-            " , ".join(" ".join(quote(arg) for arg in cmd) for cmd in commands_to_run)
-        )
+        cmdhelp = cmdhelp or f"Alias for: {format_commands(commands_to_run)}"
         short_help = cmdhelp.splitlines()[0]
         if len(cmdhelp) > 55:
             short_help = cmdhelp[:52] + "..."
