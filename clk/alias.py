@@ -118,6 +118,10 @@ class AliasCommandResolver(CommandResolver):
             formatter.write_text(
                 f"Edit this alias by running `clk alias edit {command.path}`"
             )
+            formatter.write_text(
+                f"Or adjust this command `clk alias set {command.path}"
+                f" {format_commands(config.get_settings('alias')[command.path]['commands'])}`"
+            )
 
     def _list_command_paths(self, parent):
         if isinstance(parent, config.main_command.__class__):
