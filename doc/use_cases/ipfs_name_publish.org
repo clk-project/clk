@@ -40,6 +40,48 @@ Let's check that we can call it.
 : bob
 : charly
 
+Note that I did not have to create the intermediate groups ~ipfs~ and
+~ipfs.key~. I simply created the command and clk did the magic for me.
+
+#+NAME: call-ipfs
+#+BEGIN_SRC bash :results verbatim :exports both :session 344b2d46-b85a-40ea-a50b-ad95ddc177f4 :cache yes
+clk ipfs --help
+clk ipfs key --help
+#+END_SRC
+
+#+RESULTS[d6f257268c41cbe1db7c369e7045e634ae6e17fe]: call-ipfs
+#+begin_example
+Usage: clk ipfs [OPTIONS] COMMAND [ARGS]...
+
+  Automatically created group to organize subcommands
+
+  This is a built in created group. To remove it, simply remove all its subcommands (with `clk command remove SUBCMD`,
+  or `clk alias unset SUBCMD`). To rename it, simply rename them (with `clk command rename SUBCMD` or `clk alias rename
+  SUBCMD`)
+
+Options:
+  --help-all  Show the full help message, automatic options included.
+  --help      Show this message and exit.
+
+Commands:
+  key  Automatically created group to organize subcommands
+Usage: clk ipfs key [OPTIONS] COMMAND [ARGS]...
+
+  Automatically created group to organize subcommands
+
+  This is a built in created group. To remove it, simply remove all its subcommands (with `clk command remove SUBCMD`,
+  or `clk alias unset SUBCMD`). To rename it, simply rename them (with `clk command rename SUBCMD` or `clk alias rename
+  SUBCMD`)
+
+Options:
+  --help-all  Show the full help message, automatic options included.
+  --help      Show this message and exit.
+
+Commands:
+  list  List the available keys
+#+end_example
+
+
 Now, I want to have a command that uses this content as possible values for a
 key argument. Therefore, I create another command at the path ipfs.name.publish
 with the following content.
@@ -111,6 +153,8 @@ clk ipfs name publish somecid alice
   <<list-key>>
 
   check-result(call-ipfs-key-list)
+
+  check-result(call-ipfs)
 
   <<name-publish>>
 

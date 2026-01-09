@@ -24,6 +24,44 @@ clk ipfs key list
     bob
     charly
 
+Note that I did not have to create the intermediate groups `ipfs` and `ipfs.key`. I simply created the command and clk did the magic for me.
+
+```bash
+clk ipfs --help
+clk ipfs key --help
+```
+
+```
+Usage: clk ipfs [OPTIONS] COMMAND [ARGS]...
+
+  Automatically created group to organize subcommands
+
+  This is a built in created group. To remove it, simply remove all its subcommands (with `clk command remove SUBCMD`,
+  or `clk alias unset SUBCMD`). To rename it, simply rename them (with `clk command rename SUBCMD` or `clk alias rename
+  SUBCMD`)
+
+Options:
+  --help-all  Show the full help message, automatic options included.
+  --help      Show this message and exit.
+
+Commands:
+  key  Automatically created group to organize subcommands
+Usage: clk ipfs key [OPTIONS] COMMAND [ARGS]...
+
+  Automatically created group to organize subcommands
+
+  This is a built in created group. To remove it, simply remove all its subcommands (with `clk command remove SUBCMD`,
+  or `clk alias unset SUBCMD`). To rename it, simply rename them (with `clk command rename SUBCMD` or `clk alias rename
+  SUBCMD`)
+
+Options:
+  --help-all  Show the full help message, automatic options included.
+  --help      Show this message and exit.
+
+Commands:
+  list  List the available keys
+```
+
 Now, I want to have a command that uses this content as possible values for a key argument. Therefore, I create another command at the path ipfs.name.publish with the following content.
 
 ```bash

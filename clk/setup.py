@@ -7,6 +7,7 @@ from clk.core import main  # NOQA: F401
 from clk.customcommands import CustomCommandResolver
 from clk.externalcommands import ExternalCommandResolver
 from clk.flow import setup as setup_flow
+from clk.intermediategroup import IntermediateEphemeralGroupResolver
 from clk.log import basic_config, get_logger
 from clk.overloads import (
     CoreCommandResolver,
@@ -40,12 +41,14 @@ def classic_setup(
         ExternalCommandResolver(),
         GroupCommandResolver(),
         AliasToGroupCommandResolver(),
+        IntermediateEphemeralGroupResolver(),
     ]
     MainCommand.commandresolvers = [
         AliasCommandResolver(),
         ExternalCommandResolver(),
         CustomCommandResolver(),
         CoreCommandResolver(),
+        IntermediateEphemeralGroupResolver(),
     ]
     config.distribution_profile_location = distribution_profile_location
 

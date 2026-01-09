@@ -110,10 +110,6 @@ def get_command2(path):
         cmd_name,
     )
     if cmd is None:
-        for subcmd in list_commands_with_resolvers(resolvers, parent.path, True):
-            if subcmd.startswith(cmd_name + "."):
-                cmd = group(name=cmd_name, help="Group of commands")(lambda: None)
-    if cmd is None:
         raise CommandNotFound(cmd_name, parent)
     # adjust the path
     if cmd.path is None:
@@ -761,6 +757,8 @@ def get_command_with_resolvers(resolvers, parent_path, name):
                 )
                 raise
             break
+    else:
+        resolver = None
     return cmd, resolver
 
 

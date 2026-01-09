@@ -1,5 +1,5 @@
 #!/bin/bash -eu
-# [[file:../../doc/use_cases/ipfs_name_publish.org::run][run]]
+# [[id:344b2d46-b85a-40ea-a50b-ad95ddc177f4::run][run]]
 . ./sandboxing.sh
 
 clk command create bash ipfs.key.list --description "List the available keys" --body "
@@ -23,8 +23,62 @@ charly
 EOEXPECTED
 }
 
-diff -uBw <(call-ipfs-key-list_code 2>&1) <(call-ipfs-key-list_expected) || {
+echo 'Run call-ipfs-key-list'
+
+{ call-ipfs-key-list_code || true ; } > "${TMP}/code.txt" 2>&1
+call-ipfs-key-list_expected > "${TMP}/expected.txt" 2>&1
+diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
 echo "Something went wrong when trying call-ipfs-key-list"
+exit 1
+}
+
+
+
+call-ipfs_code () {
+      clk ipfs --help
+      clk ipfs key --help
+}
+
+call-ipfs_expected () {
+      cat<<"EOEXPECTED"
+Usage: clk ipfs [OPTIONS] COMMAND [ARGS]...
+
+  Automatically created group to organize subcommands
+
+  This is a built in created group. To remove it, simply remove all its subcommands (with `clk command remove SUBCMD`,
+  or `clk alias unset SUBCMD`). To rename it, simply rename them (with `clk command rename SUBCMD` or `clk alias rename
+  SUBCMD`)
+
+Options:
+  --help-all  Show the full help message, automatic options included.
+  --help      Show this message and exit.
+
+Commands:
+  key  Automatically created group to organize subcommands
+Usage: clk ipfs key [OPTIONS] COMMAND [ARGS]...
+
+  Automatically created group to organize subcommands
+
+  This is a built in created group. To remove it, simply remove all its subcommands (with `clk command remove SUBCMD`,
+  or `clk alias unset SUBCMD`). To rename it, simply rename them (with `clk command rename SUBCMD` or `clk alias rename
+  SUBCMD`)
+
+Options:
+  --help-all  Show the full help message, automatic options included.
+  --help      Show this message and exit.
+
+Commands:
+  list  List the available keys
+
+EOEXPECTED
+}
+
+echo 'Run call-ipfs'
+
+{ call-ipfs_code || true ; } > "${TMP}/code.txt" 2>&1
+call-ipfs_expected > "${TMP}/expected.txt" 2>&1
+diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+echo "Something went wrong when trying call-ipfs"
 exit 1
 }
 
@@ -62,7 +116,11 @@ alice
 EOEXPECTED
 }
 
-diff -uBw <(try-completion_code 2>&1) <(try-completion_expected) || {
+echo 'Run try-completion'
+
+{ try-completion_code || true ; } > "${TMP}/code.txt" 2>&1
+try-completion_expected > "${TMP}/expected.txt" 2>&1
+diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
 echo "Something went wrong when trying try-completion"
 exit 1
 }
@@ -79,7 +137,11 @@ ipfs name publish --key=alice somecid
 EOEXPECTED
 }
 
-diff -uBw <(call-publish_code 2>&1) <(call-publish_expected) || {
+echo 'Run call-publish'
+
+{ call-publish_code || true ; } > "${TMP}/code.txt" 2>&1
+call-publish_expected > "${TMP}/expected.txt" 2>&1
+diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
 echo "Something went wrong when trying call-publish"
 exit 1
 }
