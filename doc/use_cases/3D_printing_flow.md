@@ -1,5 +1,5 @@
 - [alternative use case, explicitly defining the flow](#db06b88c-a231-4f46-b8f7-54e98db07e17)
-- [more information about the flow](#org801d544)
+- [more information about the flow](#org1371876)
 - [when the flow is wrong](#96a6905e-06bd-48d5-a117-7e81ebde9399)
 
 When you get used to create groups of commands, you generally end up having a sequence that comes out quite naturally.
@@ -154,7 +154,7 @@ clk printer send myprinter --flow
 Here, your mileage may vary. Choose the implementation that suits you better.
 
 
-<a id="org801d544"></a>
+<a id="org1371876"></a>
 
 # more information about the flow
 
@@ -285,6 +285,7 @@ clk printer send --flow myprinter
 
     error: Could not load the flow of printer.slice with the error: Command printer.calib not found
     error: Could not load the flow of printer.send with the error: Command printer.calib not found
+    warning: Failed to get the command printer.send: Command printer.calib not found
     error: printer.send could not be loaded. Re run with clk --develop to see the stacktrace or clk --debug-on-command-load-error to debug the load error
 
 Beware that this means that you have to check that this command it actually defined.

@@ -99,6 +99,7 @@ clk k8s run-dev-env --flow
 #+END_SRC
 
 #+RESULTS[caa531b03ee6b31d35eed3a0dc93b254d4545bbc]: disable
+: warning: Failed to get the command k8s: Command k8s not found
 : Usage: clk [OPTIONS] COMMAND [ARGS]...
 : error: No such command 'k8s'.
 
@@ -197,6 +198,7 @@ clk hello
 #+END_SRC
 
 #+RESULTS[16bb914fcc2d2d14fd1d6f6aa8abf780c09ddedd]: remove-extension
+: warning: Failed to get the command hello: Command hello not found
 : Usage: clk [OPTIONS] COMMAND [ARGS]...
 : error: No such command 'hello'.
 : error:

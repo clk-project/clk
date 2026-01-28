@@ -344,6 +344,7 @@ clk printer send --flow myprinter
 #+RESULTS[a6e0572d6385dc840dd38fe6aebc100866184f32]: run-with-wrong-flow-deps
 : error: Could not load the flow of printer.slice with the error: Command printer.calib not found
 : error: Could not load the flow of printer.send with the error: Command printer.calib not found
+: warning: Failed to get the command printer.send: Command printer.calib not found
 : error: printer.send could not be loaded. Re run with clk --develop to see the stacktrace or clk --debug-on-command-load-error to debug the load error
 
 Beware that this means that you have to check that this command it actually defined.

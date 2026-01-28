@@ -1,5 +1,5 @@
 #!/bin/bash -eu
-# [[id:841a8082-597b-45cc-8a4d-115e31137dc9::script][script]]
+# [[file:../../doc/use_cases/3D_printing_flow.org::script][script]]
 . ./sandboxing.sh
 
 clk command create python --group printer --description "This is a group of commands to deal with 3D printing."
@@ -277,6 +277,7 @@ run-with-wrong-flow-deps_expected () {
       cat<<"EOEXPECTED"
 error: Could not load the flow of printer.slice with the error: Command printer.calib not found
 error: Could not load the flow of printer.send with the error: Command printer.calib not found
+warning: Failed to get the command printer.send: Command printer.calib not found
 error: printer.send could not be loaded. Re run with clk --develop to see the stacktrace or clk --debug-on-command-load-error to debug the load error
 EOEXPECTED
 }

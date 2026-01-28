@@ -150,8 +150,8 @@ def get_command2(path):
 def get_command_safe(path):
     try:
         return get_command(path)
-    except Exception:
-        LOGGER.debug(f"Failed to get the command {path}")
+    except Exception as e:
+        LOGGER.warn(f"Failed to get the command {path}: {e}")
         on_command_loading_error()
         return None
 

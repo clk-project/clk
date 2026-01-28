@@ -36,6 +36,7 @@ cd ..
 clk somelocalcommand
 ```
 
+    warning: Failed to get the command somelocalcommand: Command somelocalcommand not found
     Usage: clk [OPTIONS] COMMAND [ARGS]...
     error: No such command 'somelocalcommand'.
     error:

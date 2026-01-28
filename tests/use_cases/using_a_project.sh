@@ -1,5 +1,5 @@
 #!/bin/bash -eu
-# [[id:6de55de4-c0b3-41d6-952a-25e0fe06c881::run][run]]
+# [[file:../../doc/use_cases/using_a_project.org::run][run]]
 . ./sandboxing.sh
 
 mkdir myprojet && cd myprojet && mkdir .clk
@@ -55,6 +55,7 @@ callingthealiasoutsideoftheproject_code () {
 
 callingthealiasoutsideoftheproject_expected () {
       cat<<"EOEXPECTED"
+warning: Failed to get the command somelocalcommand: Command somelocalcommand not found
 Usage: clk [OPTIONS] COMMAND [ARGS]...
 error: No such command 'somelocalcommand'.
 error:

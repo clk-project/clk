@@ -1,5 +1,5 @@
 #!/bin/bash -eu
-# [[id:2907a837-a58d-479b-8d19-7cba1c9a408f::all][all]]
+# [[file:../../doc/use_cases/creating_extensions.org::all][all]]
 . ./sandboxing.sh
 
 clk extension create k8s
@@ -59,6 +59,7 @@ disable_code () {
 
 disable_expected () {
       cat<<"EOEXPECTED"
+warning: Failed to get the command k8s: Command k8s not found
 Usage: clk [OPTIONS] COMMAND [ARGS]...
 error: No such command 'k8s'.
 EOEXPECTED
@@ -173,6 +174,7 @@ remove-extension_code () {
 
 remove-extension_expected () {
       cat<<"EOEXPECTED"
+warning: Failed to get the command hello: Command hello not found
 Usage: clk [OPTIONS] COMMAND [ARGS]...
 error: No such command 'hello'.
 error:

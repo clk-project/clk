@@ -63,6 +63,7 @@ clk somelocalcommand
 #+END_SRC
 
 #+RESULTS[6d570aedac0dd9c98e79c8e989bdf8cce7ec7db1]: callingthealiasoutsideoftheproject
+: warning: Failed to get the command somelocalcommand: Command somelocalcommand not found
 : Usage: clk [OPTIONS] COMMAND [ARGS]...
 : error: No such command 'somelocalcommand'.
 : error:
