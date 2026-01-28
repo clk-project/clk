@@ -334,12 +334,8 @@ def _call(args, kwargs):
     original_handlers = {}
     for sig_name in signals_to_handle:
         sig = getattr(signal, sig_name)
-        try:
-            original_handlers[sig] = signal.getsignal(sig)
-            signal.signal(sig, signal.SIG_IGN)
-        except (OSError, ValueError):
-            # Cannot get/set handler for this signal, so we skip it.
-            pass
+        original_handlers[sig] = signal.getsignal(sig)
+        signal.signal(sig, signal.SIG_IGN)
 
     # Using a mutable object to hold the original preexec_fn
     # so we can call it from the wrapper.
