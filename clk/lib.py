@@ -301,6 +301,61 @@ def _call(args, kwargs):
         kwargs["stdout"] = subprocess.PIPE
     if call_capture_stdout:
         kwargs["stdout"] = subprocess.PIPE
+    # This block implements a signal handling strategy to allow child processes
+    # to correctly handle signals (like SIGINT from Ctrl-C) without the parent (clk)
+    # terminating prematurely.
+    #
+    # The core problem is that a signal is sent to both the parent and child. If the parent
+    # reacts by exiting, it will interfere with the child's own signal handler (e.g., a 'trap' in bash).
+    #
+    # The strategy is as follows:
+    #
+    # 1. The parent process temporarily ignores common termination signals. This is the crucial step.
+    #    By doing this, the `p.wait()` call below will NOT be interrupted by a `KeyboardInterrupt`.
+    #    The parent will wait patiently for the child to exit on its own terms.
+    #
+    # 2. The child process, which inherits the "ignore" setting, must have its default signal
+    #    behaviors restored. This is done in the `preexec_fn_wrapper`. This allows
+    #    the child script to receive the signals and run its trap handlers.
+    #
+    # By preventing `p.wait()` from terminating early, we give the child's trap handler the
+    # time and stable terminal environment it needs to run to completion.
+    signals_to_handle = [
+        s
+        for s in [
+            "SIGINT",
+            "SIGTERM",
+            "SIGHUP",
+            "SIGQUIT",
+        ]
+        if hasattr(signal, s)
+    ]
+
+    original_handlers = {}
+    for sig_name in signals_to_handle:
+        sig = getattr(signal, sig_name)
+        try:
+            original_handlers[sig] = signal.getsignal(sig)
+            signal.signal(sig, signal.SIG_IGN)
+        except (OSError, ValueError):
+            # Cannot get/set handler for this signal, so we skip it.
+            pass
+
+    # Using a mutable object to hold the original preexec_fn
+    # so we can call it from the wrapper.
+    original_preexec_fn_holder = [kwargs.get("preexec_fn")]
+
+    def preexec_fn_wrapper():
+        # This code runs in the child process after fork() and before exec().
+        # We restore the default signal handlers.
+        for sig in original_handlers:
+            signal.signal(sig, signal.SIG_DFL)
+        if original_preexec_fn_holder[0]:
+            original_preexec_fn_holder[0]()
+
+    kwargs["preexec_fn"] = preexec_fn_wrapper
+
+    terminating_signal = None
     try:
         if call_capture_stdout:
             p = subprocess.Popen(args, **kwargs)
@@ -313,17 +368,30 @@ def _call(args, kwargs):
                     break
             p.wait()
             if p.returncode != 0:
-                raise subprocess.CalledProcessError(p.returncode, args, output=stdout)
+                if p.returncode < 0:
+                    terminating_signal = -p.returncode
+                else:
+                    raise subprocess.CalledProcessError(
+                        p.returncode, args, output=stdout
+                    )
         else:
             p = subprocess.Popen(args, **kwargs)
             p.wait()
             if p.returncode:
-                raise subprocess.CalledProcessError(p.returncode, args)
+                if p.returncode < 0:
+                    terminating_signal = -p.returncode
+                else:
+                    raise subprocess.CalledProcessError(p.returncode, args)
     except OSError as e:
         raise click.ClickException(f"Failed to call {args[0]}: {e.strerror}")
     finally:
-        signal.signal(signal.SIGINT, signal.SIG_DFL)
-        signal.signal(signal.SIGTERM, signal.SIG_DFL)
+        # Restore the original signal handlers in the parent.
+        for sig, handler in original_handlers.items():
+            signal.signal(sig, handler)
+    if terminating_signal is not None:
+        # The child was killed by a signal it did not catch.
+        # Propagate that signal to ourselves now that our original handlers are restored.
+        os.kill(os.getpid(), terminating_signal)
 
 
 def popen(args, internal=False, **kwargs):

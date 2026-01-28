@@ -7,6 +7,7 @@ import pickle
 import platform
 import pstats
 import re
+import signal
 import subprocess
 import sys
 import time
@@ -842,9 +843,14 @@ def main():
         except:  # NOQA: E722
             log.exit_on_log_level = None
             raise
-    except click.exceptions.Abort:
-        LOGGER.debug("Abooooooooort!!")
-        exitcode = 1
+    except click.exceptions.Abort as e:
+        if isinstance(e.__context__, KeyboardInterrupt):
+            click.echo("\nAborted!", err=True)
+            # follow the posix convention 128 + signum where the signal is sigint
+            exitcode = 128 + signal.SIGINT
+        else:
+            LOGGER.debug("Program explicitly aborted.")
+            exitcode = 1
     except click.ClickException as e:
         if isinstance(e, click.UsageError) and e.ctx is not None:
             click.echo(e.ctx.get_usage())
@@ -894,7 +900,7 @@ def main():
             f" with {config.main_command.path} --post-mortem or {config.main_command.path} --develop"
         )
         post_mortem()
-        exitcode = 1
+        exitcode = getattr(e, "exit_code", 1)
     finally:
         if profiling is not None:
             profiling.disable()

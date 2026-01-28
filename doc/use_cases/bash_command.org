@@ -148,6 +148,74 @@ clk mycommand
 #+RESULTS[b51c75a0bbe5bf44990b233b589594473c828e43]: use_it
 : something
 
+clk will try hard to respect the exit code of the bash command.
+
+Let's assume for instance that you created a command that simply exits with the code 5.
+
+#+NAME: create-exit-5
+#+BEGIN_SRC bash :results none :exports code :session 85c8e385-7f24-48ac-9a85-30cfc354aebf
+  clk command create bash --body "exit 5" --description "Simply exiting with the code 5" exit5
+#+END_SRC
+
+Then, let's call it and check its exit code.
+
+#+NAME: exit-5
+#+BEGIN_SRC bash :results verbatim :exports both :session 85c8e385-7f24-48ac-9a85-30cfc354aebf :cache yes
+clk exit5 || echo $?
+#+END_SRC
+
+#+RESULTS[810c710ebd06b1a4c9c46ab7fad8e571670b9497]: exit-5
+: 5
+
+Additionally, you can put whatever traps you want in your code and clk will try to respect them.
+
+#+NAME: trap-code
+#+BEGIN_SRC bash :results none :exports code :session 85c8e385-7f24-48ac-9a85-30cfc354aebf
+  clk command create bash --body "
+  clean () {
+echo 'cleaning'
+}
+trap clean EXIT
+echo 'starting'
+sleep 3600
+  " --description "Simply wait but clean before exiting" clean-test
+#+END_SRC
+
+  #+NAME: clean_test-command
+  #+BEGIN_SRC bash :results none :exports code
+    clk clean-test
+  #+END_SRC
+
+  #+NAME: generate_expect_clean_test
+  #+BEGIN_SRC bash :results none :exports none :noweb yes :session 85c8e385-7f24-48ac-9a85-30cfc354aebf
+
+    # GENERATED USING AUTOEXPECT
+    cat<<"EOEXPECT" > "pass.exp"
+    #!/usr/bin/expect -f
+
+    set timeout -1
+    spawn <<clean_test-command>>
+    match_max 100000
+    expect -exact "starting\r"
+    set pid [exp_pid]
+    exec kill $pid
+    expect -exact "cleaning\r"
+    expect eof
+    EOEXPECT
+
+  #+END_SRC
+
+  #+NAME: clean-test-expect
+  #+BEGIN_SRC bash :results verbatim :exports results :session 85c8e385-7f24-48ac-9a85-30cfc354aebf :cache yes
+    expect pass.exp |tail -n+2
+  #+END_SRC
+
+  When starting this command and then killing it, you will get.
+
+  #+RESULTS[2a3f753a601200e8c62ae847a25cb45790129b38]: clean-test-expect
+  : starting
+  : cleaning
+
 
 #+BEGIN_SRC bash :exports none :tangle ../../tests/use_cases/bash_command.sh :noweb yes :shebang "#!/bin/bash -eu"
 <<init>>
@@ -167,4 +235,14 @@ check-result(help)
 <<say_something>>
 
 check-result(use_it)
+
+<<create-exit-5>>
+
+check-result(exit-5)
+
+<<trap-code>>
+
+<<generate_expect_clean_test>>
+
+check-result(clean-test-expect)
 #+END_SRC

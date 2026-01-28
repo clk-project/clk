@@ -1,5 +1,5 @@
 #!/bin/bash -eu
-# [[id:85c8e385-7f24-48ac-9a85-30cfc354aebf::+BEGIN_SRC bash :exports none :tangle ../../tests/use_cases/bash_command.sh :noweb yes :shebang "#!/bin/bash -eu"][No heading:10]]
+# [[file:../../doc/use_cases/tests/use_cases/bash_command.sh :noweb yes :shebang "#!/bin/bash -eu"][No heading:16]]
 . ./sandboxing.sh
 
 clk command create bash mycommand
@@ -155,4 +155,75 @@ diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
 echo "Something went wrong when trying use_it"
 exit 1
 }
-# No heading:10 ends here
+
+
+clk command create bash --body "exit 5" --description "Simply exiting with the code 5" exit5
+
+
+exit-5_code () {
+      clk exit5 || echo $?
+}
+
+exit-5_expected () {
+      cat<<"EOEXPECTED"
+5
+EOEXPECTED
+}
+
+echo 'Run exit-5'
+
+{ exit-5_code || true ; } > "${TMP}/code.txt" 2>&1
+exit-5_expected > "${TMP}/expected.txt" 2>&1
+diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+echo "Something went wrong when trying exit-5"
+exit 1
+}
+
+
+  clk command create bash --body "
+  clean () {
+echo 'cleaning'
+}
+trap clean EXIT
+echo 'starting'
+sleep 3600
+  " --description "Simply wait but clean before exiting" clean-test
+
+
+# GENERATED USING AUTOEXPECT
+cat<<"EOEXPECT" > "pass.exp"
+#!/usr/bin/expect -f
+
+set timeout -1
+spawn clk clean-test
+match_max 100000
+expect -exact "starting\r"
+set pid [exp_pid]
+exec kill $pid
+expect -exact "cleaning\r"
+expect eof
+EOEXPECT
+
+
+
+clean-test-expect_code () {
+      expect pass.exp |tail -n+2
+}
+
+clean-test-expect_expected () {
+      cat<<"EOEXPECTED"
+starting
+
+cleaning
+EOEXPECTED
+}
+
+echo 'Run clean-test-expect'
+
+{ clean-test-expect_code || true ; } > "${TMP}/code.txt" 2>&1
+clean-test-expect_expected > "${TMP}/expected.txt" 2>&1
+diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+echo "Something went wrong when trying clean-test-expect"
+exit 1
+}
+# No heading:16 ends here

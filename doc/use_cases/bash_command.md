@@ -110,3 +110,41 @@ clk mycommand
 ```
 
     something
+
+clk will try hard to respect the exit code of the bash command.
+
+Let's assume for instance that you created a command that simply exits with the code 5.
+
+```bash
+clk command create bash --body "exit 5" --description "Simply exiting with the code 5" exit5
+```
+
+Then, let's call it and check its exit code.
+
+```bash
+clk exit5 || echo $?
+```
+
+    5
+
+Additionally, you can put whatever traps you want in your code and clk will try to respect them.
+
+```bash
+  clk command create bash --body "
+  clean () {
+echo 'cleaning'
+}
+trap clean EXIT
+echo 'starting'
+sleep 3600
+  " --description "Simply wait but clean before exiting" clean-test
+```
+
+```bash
+clk clean-test
+```
+
+When starting this command and then killing it, you will get.
+
+    starting
+    cleaning
