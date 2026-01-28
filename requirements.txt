@@ -70,7 +70,7 @@ pygments==2.19.2
     #   clk (pyproject.toml)
     #   ipython
     #   ipython-pygments-lexers
-pyparsing==3.3.1
+pyparsing==3.3.2
     # via pydotplus
 python-dateutil==2.9.0.post0
     # via clk (pyproject.toml)
@@ -90,5 +90,5 @@ traitlets==5.14.3
     #   matplotlib-inline
 urllib3==2.6.3
     # via requests
-wcwidth==0.2.14
+wcwidth==0.5.0
     # via prompt-toolkit
