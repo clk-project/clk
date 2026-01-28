@@ -9,3 +9,4 @@ README.html
 .tox
 /fixed
 /tests/.coverage
+/.agent-shell
