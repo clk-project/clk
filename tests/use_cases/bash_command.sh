@@ -189,21 +189,22 @@ echo 'starting'
 sleep 3600
   " --description "Simply wait but clean before exiting" clean-test
 
-
-# GENERATED USING AUTOEXPECT
-cat<<"EOEXPECT" > "pass.exp"
+cat<<EOF > pass.exp
 #!/usr/bin/expect -f
 
 set timeout -1
 spawn clk clean-test
 match_max 100000
 expect -exact "starting\r"
-set pid [exp_pid]
-exec kill $pid
-expect -exact "cleaning\r"
+sleep 0.1
+send "\x03"
+expect -exact "cleaning"
+expect -exact "\r"
+expect -exact "\r"
+expect -exact "\r"
+expect -exact "Aborted!"
 expect eof
-EOEXPECT
-
+EOF
 
 
 clean-test-expect_code () {
@@ -214,7 +215,13 @@ clean-test-expect_expected () {
       cat<<"EOEXPECTED"
 starting
 
-cleaning
+^Ccleaning
+
+
+
+
+
+Aborted!
 EOEXPECTED
 }
 

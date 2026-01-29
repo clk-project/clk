@@ -188,21 +188,22 @@ sleep 3600
 
   #+NAME: generate_expect_clean_test
   #+BEGIN_SRC bash :results none :exports none :noweb yes :session 85c8e385-7f24-48ac-9a85-30cfc354aebf
+cat<<EOF > pass.exp
+#!/usr/bin/expect -f
 
-    # GENERATED USING AUTOEXPECT
-    cat<<"EOEXPECT" > "pass.exp"
-    #!/usr/bin/expect -f
-
-    set timeout -1
-    spawn <<clean_test-command>>
-    match_max 100000
-    expect -exact "starting\r"
-    set pid [exp_pid]
-    exec kill $pid
-    expect -exact "cleaning\r"
-    expect eof
-    EOEXPECT
-
+set timeout -1
+spawn clk clean-test
+match_max 100000
+expect -exact "starting\r"
+sleep 0.1
+send "\x03"
+expect -exact "cleaning"
+expect -exact "\r"
+expect -exact "\r"
+expect -exact "\r"
+expect -exact "Aborted!"
+expect eof
+EOF
   #+END_SRC
 
   #+NAME: clean-test-expect
@@ -210,11 +211,14 @@ sleep 3600
     expect pass.exp |tail -n+2
   #+END_SRC
 
-  When starting this command and then killing it, you will get.
+  When starting this command and then killing it with Ctrl-C, you will get.
 
   #+RESULTS[2a3f753a601200e8c62ae847a25cb45790129b38]: clean-test-expect
   : starting
-  : cleaning
+  : ^Ccleaning
+  :
+  :
+  : Aborted!
 
 
 #+BEGIN_SRC bash :exports none :tangle ../../tests/use_cases/bash_command.sh :noweb yes :shebang "#!/bin/bash -eu"

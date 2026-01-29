@@ -144,7 +144,10 @@ sleep 3600
 clk clean-test
 ```
 
-When starting this command and then killing it, you will get.
+When starting this command and then killing it with Ctrl-C, you will get.
 
     starting
-    cleaning
+    ^Ccleaning
+
+
+    Aborted!
