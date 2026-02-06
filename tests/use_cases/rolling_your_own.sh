@@ -12,6 +12,7 @@ export PATH="$(pwd)/venv/bin/:${PATH}"
 
 # this reproduces the logic in the INSTALLER function in the root Earthfile. It
 # might be good to refactor this in the future.
+from=${from-}
 if test "$from" = "pypi"
 then
     ./venv/bin/pip install clk${pypi_version}
@@ -21,7 +22,7 @@ then
 else
     # fall back in assuming that I run this from my machine, where clk is
     # installed in editable mode
-    ./venv/bin/pip install "${CURRENT_CLK}"
+    ./venv/bin/pip install --force-reinstall "${CURRENT_CLK}"
 fi
 
 mkdir -p "${TMP}/mytool-root"
@@ -54,7 +55,11 @@ Hello world
 EOEXPECTED
 }
 
-diff -uBw <(call_code 2>&1) <(call_expected) || {
+echo 'Run call'
+
+{ call_code || true ; } > "${TMP}/code.txt" 2>&1
+call_expected > "${TMP}/expected.txt" 2>&1
+diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
 echo "Something went wrong when trying call"
 exit 1
 }

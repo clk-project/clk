@@ -52,6 +52,7 @@ export PATH="$(pwd)/venv/bin/:${PATH}"
 #+BEGIN_SRC bash :results none :exports none :session 807c02cd-a6cf-432f-b982-530fc81dbbf4
   # this reproduces the logic in the INSTALLER function in the root Earthfile. It
   # might be good to refactor this in the future.
+  from=${from-}
   if test "$from" = "pypi"
   then
       ./venv/bin/pip install clk${pypi_version}
@@ -61,7 +62,7 @@ export PATH="$(pwd)/venv/bin/:${PATH}"
   else
       # fall back in assuming that I run this from my machine, where clk is
       # installed in editable mode
-      ./venv/bin/pip install "${CURRENT_CLK}"
+      ./venv/bin/pip install --force-reinstall "${CURRENT_CLK}"
   fi
 #+END_SRC
 
