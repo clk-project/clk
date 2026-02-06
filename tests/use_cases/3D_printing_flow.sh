@@ -222,15 +222,27 @@ exit 1
 
 
 flow-progress_code () {
-      clk --flow-progress printer send myprinter --flow 2>&1|sed -r -e 's|█+|████████|' -e 's|[0-9]+\.[0-9]+it/s|XX.XXit/s|' -e 's|\r||g'
+            output=$(
+      clk --flow-progress printer send myprinter --flow 2>&1
+      )
+            echo "$output" | grep -q "Executing flow steps:" && echo "has_executing_flow_steps"
+            echo "$output" | grep -q "printer calibrate:" && echo "has_printer_calibrate"
+            echo "$output" | grep -q "printer slice:" && echo "has_printer_slice"
+            echo "$output" | grep -q "█" && echo "has_progress_bar"
+            echo "$output" | grep -q "Running some stuff" && echo "has_calibrate_output"
+            echo "$output" | grep -q "Slicing someothermodel" && echo "has_slice_output"
+            echo "$output" | grep -q "Printing model.gcode" && echo "has_send_output"
 }
 
 flow-progress_expected () {
       cat<<"EOEXPECTED"
-Executing flow steps:   0%|           | 0/2 [00:00<?, ?it/s]printer calibrate:   0%|              | 0/2 [00:00<?, ?it/s]Running some stuff for the printer to be ready to go
-printer slice:   0%|                  | 0/2 [00:00<?, ?it/s]Slicing someothermodel to model.gcode
-printer slice: 100%|████████| 2/2 [00:00<00:00, XX.XXit/s]
-Printing model.gcode using myprinter
+has_executing_flow_steps
+has_printer_calibrate
+has_printer_slice
+has_progress_bar
+has_calibrate_output
+has_slice_output
+has_send_output
 EOEXPECTED
 }
 

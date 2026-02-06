@@ -1,5 +1,5 @@
 - [alternative use case, explicitly defining the flow](#db06b88c-a231-4f46-b8f7-54e98db07e17)
-- [more information about the flow](#org1371876)
+- [more information about the flow](#org1da81ba)
 - [when the flow is wrong](#96a6905e-06bd-48d5-a117-7e81ebde9399)
 
 When you get used to create groups of commands, you generally end up having a sequence that comes out quite naturally.
@@ -154,7 +154,7 @@ clk printer send myprinter --flow
 Here, your mileage may vary. Choose the implementation that suits you better.
 
 
-<a id="org1371876"></a>
+<a id="org1da81ba"></a>
 
 # more information about the flow
 
@@ -213,10 +213,13 @@ Note that there also exists a `--flow-progress` option that may be useful if you
 clk --flow-progress printer send myprinter --flow
 ```
 
-    Executing flow steps:   0%|           | 0/2 [00:00<?, ?it/s]printer calibrate:   0%|              | 0/2 [00:00<?, ?it/s]Running some stuff for the printer to be ready to go
-    printer slice:   0%|                  | 0/2 [00:00<?, ?it/s]Slicing someothermodel to model.gcode
-    printer slice: 100%|████████| 2/2 [00:00<00:00, XX.XXit/s]
-    Printing model.gcode using myprinter
+    has_executing_flow_steps
+    has_printer_calibrate
+    has_printer_slice
+    has_progress_bar
+    has_calibrate_output
+    has_slice_output
+    has_send_output
 
 Of course, using it with `--flow-step` would make things even more messy, so use the right option for the flows you will run, depending on your use cases.
 
