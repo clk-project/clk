@@ -81,8 +81,10 @@ def resolve_ctx(cli, prog_name, args, resilient_parsing=True):
         A new context corresponding to the current command
     """
     ctx = cli.make_context(prog_name, list(args), resilient_parsing=resilient_parsing)
-    while ctx.args + ctx.protected_args and isinstance(ctx.command, click.MultiCommand):
-        a = ctx.protected_args + ctx.args
+    while ctx.args + ctx._protected_args and isinstance(
+        ctx.command, click.MultiCommand
+    ):
+        a = ctx._protected_args + ctx.args
         cmd = ctx.command.get_command(ctx, a[0])
         if cmd is None:
             return None

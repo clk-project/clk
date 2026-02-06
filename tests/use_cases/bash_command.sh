@@ -20,8 +20,8 @@ Usage: clk command create [OPTIONS] COMMAND [ARGS]...
 Options:
   --help-all             Show the full help message, automatic options included.
   --extension EXTENSION  Use this extension
-  --context              Guess the profile  [default: False]
-  --global               Consider only the global profile  [default: False]
+  --context              Guess the profile
+  --global               Consider only the global profile
   --help                 Show this message and exit.
 
 Commands:
@@ -214,12 +214,7 @@ clean-test-expect_code () {
 clean-test-expect_expected () {
       cat<<"EOEXPECTED"
 starting
-
 ^Ccleaning
-
-
-
-
 
 Aborted!
 EOEXPECTED

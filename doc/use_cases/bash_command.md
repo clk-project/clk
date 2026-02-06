@@ -22,8 +22,8 @@ Usage: clk command create [OPTIONS] COMMAND [ARGS]...
 Options:
   --help-all             Show the full help message, automatic options included.
   --extension EXTENSION  Use this extension
-  --context              Guess the profile  [default: False]
-  --global               Consider only the global profile  [default: False]
+  --context              Guess the profile
+  --global               Consider only the global profile
   --help                 Show this message and exit.
 
 Commands:
@@ -148,6 +148,5 @@ When starting this command and then killing it with Ctrl-C, you will get.
 
     starting
     ^Ccleaning
-
 
     Aborted!

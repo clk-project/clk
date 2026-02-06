@@ -12,6 +12,7 @@ from pathlib import Path
 
 import click
 import click_didyoumean
+from click.core import UNSET
 from click.exceptions import MissingParameter
 from click.utils import make_default_short_help
 
@@ -869,15 +870,17 @@ class Group(
             # this must be done before calling the super class to avoid the help message
             args = args or [self.default_cmd_name]
         newargs = click.Group.parse_args(self, ctx, args)
-        if ctx.protected_args and ctx.protected_args[0] in ctx.complete_arguments:
+        if ctx._protected_args and ctx._protected_args[0] in ctx.complete_arguments:
             # we want to record the complete arguments given to the command, except
             # for the part that starts a new subcommand. After parse_args, the
-            # ctx.protected_args informs us of the part to keep away
-            index_first_subcommand = ctx.complete_arguments.index(ctx.protected_args[0])
+            # ctx._protected_args informs us of the part to keep away
+            index_first_subcommand = ctx.complete_arguments.index(
+                ctx._protected_args[0]
+            )
             ctx.complete_arguments = ctx.complete_arguments[:index_first_subcommand]
         if self.default_cmd_name is not None and not ctx.resilient_parsing:
             # and this must be done here in case option where passed to the group
-            ctx.protected_args = ctx.protected_args or [self.default_cmd_name]
+            ctx._protected_args = ctx._protected_args or [self.default_cmd_name]
         return newargs
 
     def format_options(self, ctx, formatter, include_auto_opts=False):
@@ -1075,6 +1078,8 @@ class ParameterMixin(click.Parameter):
         # processing it or it won't fit its type
         # I don't want to get rid of the noeval because I will be evaluated
         # again just after processing
+        if value is UNSET:
+            value = None
         value = eval_arg(value, keepnoeval=True)
         try:
             value = super().process_value(ctx, value)
@@ -1083,7 +1088,7 @@ class ParameterMixin(click.Parameter):
                 value = self.get_default(ctx)
             else:
                 raise
-        if value is None:
+        if value is None or value is UNSET:
             value = self.get_default(ctx)
         # I now want to check whether the processed value can be evaluated
         value = eval_arg(value)
@@ -1121,6 +1126,8 @@ class ParameterMixin(click.Parameter):
             LOGGER.develop(f"Getting default value {self.get_path(ctx)}={value}")
             value = self.__process_value(ctx, value)
             value = self.type_cast_value(ctx, value)
+        if value is UNSET:
+            value = None
         return value
 
     def get_help_record(self, ctx):
@@ -1129,7 +1136,7 @@ class ParameterMixin(click.Parameter):
         res = super().get_help_record(ctx)
         self.show_default = show_default
         if res is None:
-            metavar = self.type.get_metavar(self)
+            metavar = self.type.get_metavar(self, ctx)
             if metavar:
                 metavar = f"{self.human_readable_name} {metavar}"
             else:
@@ -1143,7 +1150,7 @@ class ParameterMixin(click.Parameter):
             canon_default = canon_default()
         canon_default = str(canon_default)
 
-        if self.default is not None and self.show_default:
+        if self.default is not UNSET and self.show_default:
             res1 = res[1]
             res1 += "  [default: "
             if default:
@@ -1481,7 +1488,7 @@ class MainCommand(
     HelpMixin,
     ExtraParametersMixin,
     RememberParametersMixin,
-    click.MultiCommand,
+    click.Group,
 ):
     auto_envvar_prefix = "CLK"
     path = "clk"
@@ -1555,7 +1562,7 @@ class MainCommand(
         if not hasattr(ctx, "has_subcommands"):
             ctx.has_subcommands = True
         if not ctx.resilient_parsing:
-            if ctx.protected_args:
+            if ctx._protected_args:
                 ctx.has_subcommands = True
             else:
                 ctx.has_subcommands = False

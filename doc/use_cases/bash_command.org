@@ -40,8 +40,8 @@ Usage: clk command create [OPTIONS] COMMAND [ARGS]...
 Options:
   --help-all             Show the full help message, automatic options included.
   --extension EXTENSION  Use this extension
-  --context              Guess the profile  [default: False]
-  --global               Consider only the global profile  [default: False]
+  --context              Guess the profile
+  --global               Consider only the global profile
   --help                 Show this message and exit.
 
 Commands:
@@ -216,7 +216,6 @@ EOF
   #+RESULTS[2a3f753a601200e8c62ae847a25cb45790129b38]: clean-test-expect
   : starting
   : ^Ccleaning
-  :
   :
   : Aborted!
 

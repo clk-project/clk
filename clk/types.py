@@ -30,7 +30,7 @@ class Suggestion(click.Choice):
     def convert(self, value, param, ctx):
         return value
 
-    def get_metavar(self, param):
+    def get_metavar(self, param, ctx):
         return "[{}|...]".format("|".join(self.choices))
 
 
