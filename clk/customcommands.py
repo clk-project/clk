@@ -80,32 +80,34 @@ class CustomCommandResolver(CommandResolver):
             )
         cmd = getattr(module, plugin_name)
         cmd.customcommand_path = module.__file__
-        cmd.params.append(
-            AutomaticOption(
-                ["--edit-command"],
-                is_flag=True,
-                expose_value=False,
-                help="Edit this command",
-                callback=lambda ctx, param, value: edit_custom_command(
-                    cmd.customcommand_path
-                )
-                if value is True
-                else None,
-            )
-        )
-        profile = config.get_profile_that_contains(cmd.customcommand_path)
-        if profile is not None and profile.explicit:
+        if not any("--edit-command" in param.opts for param in cmd.params):
             cmd.params.append(
                 AutomaticOption(
-                    ["--update-extension"],
+                    ["--edit-command"],
                     is_flag=True,
                     expose_value=False,
-                    help=(
-                        "Update the extension"
-                        " that contains this command"
-                        f" ({profile.location})"
-                    ),
-                    callback=build_update_extension_callback(profile),
+                    help="Edit this command",
+                    callback=lambda ctx, param, value: edit_custom_command(
+                        cmd.customcommand_path
+                    )
+                    if value is True
+                    else None,
                 )
             )
+        profile = config.get_profile_that_contains(cmd.customcommand_path)
+        if profile is not None and profile.explicit:
+            if not any("--update-extension" in param.opts for param in cmd.params):
+                cmd.params.append(
+                    AutomaticOption(
+                        ["--update-extension"],
+                        is_flag=True,
+                        expose_value=False,
+                        help=(
+                            "Update the extension"
+                            " that contains this command"
+                            f" ({profile.location})"
+                        ),
+                        callback=build_update_extension_callback(profile),
+                    )
+                )
         return cmd

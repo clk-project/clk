@@ -30,6 +30,8 @@ def setup_flow_params(cmd):
         if "--flow" not in param.opts
         and "--flow-from" not in param.opts
         and "--flow-after" not in param.opts
+        and "--show-flow" not in param.opts
+        and "--show-flow-graph" not in param.opts
     ]
     flow_default = cmd.clk_flow if hasattr(cmd, "clk_flow") else None
     flowfrom_default = cmd.clk_flowfrom if hasattr(cmd, "clk_flowfrom") else None

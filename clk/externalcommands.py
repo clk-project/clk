@@ -301,31 +301,37 @@ class ExternalCommandResolver(CommandResolver):
             handle_dry_run=True,
             flowdepends=cmdflowdepends,
         )(external_command)
-        external_command.params.append(
-            AutomaticOption(
-                ["--edit-command"],
-                help="Edit the external command",
-                expose_value=False,
-                is_flag=True,
-                callback=lambda ctx, param, value: edit_external_command(command_path)
-                if value is True
-                else None,
+        if not any("--edit-command" in param.opts for param in external_command.params):
+            external_command.params.append(
+                AutomaticOption(
+                    ["--edit-command"],
+                    help="Edit the external command",
+                    expose_value=False,
+                    is_flag=True,
+                    callback=lambda ctx, param, value: edit_external_command(
+                        command_path
+                    )
+                    if value is True
+                    else None,
+                )
             )
-        )
         external_command.customcommand_path = command_path
         profile = config.get_profile_that_contains(command_path)
         if profile is not None and profile.explicit:
-            external_command.params.append(
-                AutomaticOption(
-                    ["--update-extension"],
-                    is_flag=True,
-                    expose_value=False,
-                    help=(
-                        "Update the extension"
-                        " that contains this command"
-                        f" ({profile.location})"
-                    ),
-                    callback=build_update_extension_callback(profile),
+            if not any(
+                "--update-extension" in param.opts for param in external_command.params
+            ):
+                external_command.params.append(
+                    AutomaticOption(
+                        ["--update-extension"],
+                        is_flag=True,
+                        expose_value=False,
+                        help=(
+                            "Update the extension"
+                            " that contains this command"
+                            f" ({profile.location})"
+                        ),
+                        callback=build_update_extension_callback(profile),
+                    )
                 )
-            )
         return external_command

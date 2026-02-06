@@ -23,7 +23,14 @@ from clk.externalcommands import ExternalCommandResolver
 from clk.flow import get_flow_commands_to_run
 from clk.lib import TablePrinter, copy, createfile, makedirs, move, quote, rm
 from clk.log import get_logger
-from clk.overloads import Argument, CommandType, Group, Option, get_command
+from clk.overloads import (
+    Argument,
+    AutomaticOption,
+    CommandType,
+    Group,
+    Option,
+    get_command,
+)
 from clk.profile import profile_name_to_commandline
 from clk.types import DirectoryProfile as DirectoryProfileType
 
@@ -349,6 +356,9 @@ def bash(
                 return "str"
 
         for param in alias_cmd.params:
+            # Skip automatic options as they are added automatically by clk
+            if isinstance(param, AutomaticOption):
+                continue
             if isinstance(param, Option):
                 if param.is_flag:
                     flags.append(
