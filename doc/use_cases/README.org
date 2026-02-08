@@ -35,6 +35,7 @@ Here are some use cases that hopefully will have the following properties:
   :PROPERTIES:
   :CREATED:  [2025-08-05 22:16]
   :CUSTOM_ID: fa3df212-fc5f-4c3e-9e3e-3f71e897c9b1
+  :ID:       7ae07d9d-d665-48cb-980b-53552c73b7a7
   :END:
   Sometimes, you might want to have some control about how the arguments of the
   command lines are evaluated, take a look at [[file:controlling_a_server_using_an_environment_variable.org][this use case]] to know more about them.
@@ -123,6 +124,7 @@ Here are some use cases that hopefully will have the following properties:
 * publish my code
   :PROPERTIES:
   :CREATED:  [2025-12-30 17:32]
+  :CUSTOM_ID: 875fe27e-ca39-4733-a459-e2a35bcfa124
   :END:
 
   In that case, you would like to take a look at [[file:creating_extensions.org][how to create your own extensions]].
