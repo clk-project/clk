@@ -18,15 +18,17 @@ access to values computed or validated by the parent Python command.
 For example, imagine you have a deployment tool where you select an environment
 (dev, staging, prod) once, and all subcommands should use that environment.
 
-First, create a Python command group.
+First, create a Python command group:
 
-#+NAME: create-ext
+#+NAME: create-ext-cmd
 #+BEGIN_SRC bash :results none :exports code :session 1edede93-21b4-4109-a904-b746df3c2e8d
-clk command create python myenv --group
-cat <<'EOF' > "$(clk command which myenv)"
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
+clk command create python myenv --group --description "Commands that work with a specific environment"
+#+END_SRC
 
+Then edit it to add the option and set environment variables:
+
+#+NAME: myenv-code
+#+BEGIN_SRC python :results none :exports code
 import click
 
 from clk.config import config
@@ -40,6 +42,15 @@ def myenv(env):
     config.override_env["MYENV_NAME"] = env
     config.override_env["MYENV_URL"] = f"https://{env}.example.com"
     config.init()
+#+END_SRC
+
+#+NAME: create-ext
+#+BEGIN_SRC bash :results none :exports none :session 1edede93-21b4-4109-a904-b746df3c2e8d :noweb yes
+cat <<'EOF' > "$(clk command which myenv)"
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+
+<<myenv-code>>
 EOF
 #+END_SRC
 
@@ -115,6 +126,8 @@ This pattern is particularly useful when:
 
 #+BEGIN_SRC bash :exports none :tangle ../../tests/use_cases/multi_environment_deployment_tool.sh :noweb yes :shebang "#!/bin/bash -eu"
 <<init>>
+
+<<create-ext-cmd>>
 
 <<create-ext>>
 

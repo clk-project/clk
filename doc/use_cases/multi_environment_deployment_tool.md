@@ -2,14 +2,15 @@ Sometimes you want a group of commands to share configuration through environmen
 
 For example, imagine you have a deployment tool where you select an environment (dev, staging, prod) once, and all subcommands should use that environment.
 
-First, create a Python command group.
+First, create a Python command group:
 
 ```bash
-clk command create python myenv --group
-cat <<'EOF' > "$(clk command which myenv)"
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
+clk command create python myenv --group --description "Commands that work with a specific environment"
+```
 
+Then edit it to add the option and set environment variables:
+
+```python
 import click
 
 from clk.config import config
@@ -23,7 +24,6 @@ def myenv(env):
     config.override_env["MYENV_NAME"] = env
     config.override_env["MYENV_URL"] = f"https://{env}.example.com"
     config.init()
-EOF
 ```
 
 The key line is `config.override_env["MYENV_NAME"] = env`. This makes the `MYENV_NAME` environment variable available to all subcommands, including bash commands.

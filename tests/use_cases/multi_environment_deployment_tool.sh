@@ -1,8 +1,9 @@
 #!/bin/bash -eu
-# [[file:../../doc/use_cases/tests/use_cases/multi_environment_deployment_tool.sh :noweb yes :shebang "#!/bin/bash -eu"][No heading:8]]
+# [[file:../../doc/use_cases/tests/use_cases/multi_environment_deployment_tool.sh :noweb yes :shebang "#!/bin/bash -eu"][No heading:10]]
 . ./sandboxing.sh
 
-clk command create python myenv --group
+clk command create python myenv --group --description "Commands that work with a specific environment"
+
 cat <<'EOF' > "$(clk command which myenv)"
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
@@ -104,4 +105,4 @@ diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
 echo "Something went wrong when trying test-deploy-staging"
 exit 1
 }
-# No heading:8 ends here
+# No heading:10 ends here
