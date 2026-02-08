@@ -7,7 +7,7 @@
 - [project](#57153b01-e474-42f0-baa2-26b1b1611ae7)
 - [flow](#8ad4d10e-1ece-45ef-a558-905b5996ddc4)
 - [is it a tool or a library?](#f291ada8-c504-4624-baa7-9c7d600d5c53)
-- [publish my code](#org3097f30)
+- [publish my code](#orgb007428)
 
 Here are some use cases that hopefully will have the following properties:
 
@@ -40,6 +40,8 @@ The basics of creating python commands are covered [here](python_command.md). Fo
 
 Sometimes, you might want to have some control about how the arguments of the command lines are evaluated, take a look at [this use case](controlling_a_server_using_an_environment_variable.md) to know more about them.
 
+If you want to share configuration between a Python group and its bash subcommands through environment variables, see the [multi-environment deployment tool](multi_environment_deployment_tool.md) example.
+
 For an example of using aliases with templated environment variables to create flexible workflows, see the [podcast automation](podcast_automation.md) example.
 
 
@@ -67,7 +69,7 @@ This example of an [ethereum local environment dev tool](ethereum_local_environm
 
 Like python, clk try hard to provide most of the things you want in a generic command line tool.
 
-In shell command, the library included by default (called \_clk.sh) provides some useful [helpers](bash_command_built_in_lib.md) to help you create a nice and friendly command, despite, well&hellip; bash.
+In shell command, the library included by default (called \_clk.sh) provides some useful [helpers](bash_command_built_in_lib.md) to help you create a nice and friendly command, despite, well&#x2026; bash.
 
 When you want to provide some choices in command, it might be worthwhile to look at [those examples](choices.md).
 
@@ -103,7 +105,7 @@ clk does not want to compete with flow tools, like nodered, but it helps having 
 If you don't want to use the clk command line tool, you can [roll your own](rolling_your_own.md).
 
 
-<a id="orgb6ca7f2"></a>
+<a id="orgb007428"></a>
 
 # publish my code
 

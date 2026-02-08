@@ -91,3 +91,7 @@ def test_hello_world():
 
 def test_python_command():
     call_script("python_command.sh")
+
+
+def test_multi_environment_deployment_tool():
+    call_script("multi_environment_deployment_tool.sh")

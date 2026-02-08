@@ -1,0 +1,130 @@
+:PROPERTIES:
+:ID:       1edede93-21b4-4109-a904-b746df3c2e8d
+:END:
+#+language: en
+#+EXPORT_FILE_NAME: ./multi_environment_deployment_tool.md
+
+#+CALL: ../../lp.org:check-result()
+
+#+name: init
+#+BEGIN_SRC bash :results none :exports none :session 1edede93-21b4-4109-a904-b746df3c2e8d
+  . ./sandboxing.sh
+#+END_SRC
+
+Sometimes you want a group of commands to share configuration through
+environment variables. This is useful when you have bash subcommands that need
+access to values computed or validated by the parent Python command.
+
+For example, imagine you have a deployment tool where you select an environment
+(dev, staging, prod) once, and all subcommands should use that environment.
+
+First, create a Python command group.
+
+#+NAME: create-ext
+#+BEGIN_SRC bash :results none :exports code :session 1edede93-21b4-4109-a904-b746df3c2e8d
+clk command create python myenv --group
+cat <<'EOF' > "$(clk command which myenv)"
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+
+import click
+
+from clk.config import config
+from clk.decorators import group, option
+
+
+@group()
+@option("--env", "-e", type=click.Choice(["dev", "staging", "prod"]), default="dev", help="The environment to use")
+def myenv(env):
+    "Commands that work with a specific environment"
+    config.override_env["MYENV_NAME"] = env
+    config.override_env["MYENV_URL"] = f"https://{env}.example.com"
+    config.init()
+EOF
+#+END_SRC
+
+The key line is ~config.override_env["MYENV_NAME"] = env~. This makes the
+~MYENV_NAME~ environment variable available to all subcommands, including bash
+commands.
+
+Now let's add a bash subcommand that uses these environment variables.
+
+#+NAME: create-status
+#+BEGIN_SRC bash :results none :exports code :session 1edede93-21b4-4109-a904-b746df3c2e8d
+clk command create bash myenv.status --description "Show the current environment status" --body '
+echo "Environment: ${MYENV_NAME}"
+echo "URL: ${MYENV_URL}"
+echo "Checking status..."
+# In real life, you might do: curl -s "${MYENV_URL}/health"
+echo "Status: OK"
+'
+#+END_SRC
+
+Let's test it.
+
+#+NAME: test-status-dev
+#+BEGIN_SRC bash :results verbatim :exports both :session 1edede93-21b4-4109-a904-b746df3c2e8d :cache yes
+clk myenv status
+#+END_SRC
+
+#+RESULTS[ccd70a73328ed0031b997b8c992c2164b69d21ba]: test-status-dev
+: Environment: dev
+: URL: https://dev.example.com
+: Checking status...
+: Status: OK
+
+#+NAME: test-status-prod
+#+BEGIN_SRC bash :results verbatim :exports both :session 1edede93-21b4-4109-a904-b746df3c2e8d :cache yes
+clk myenv --env prod status
+#+END_SRC
+
+#+RESULTS[afb601fa19e078fc8a905ca5d98adb1ce3fc05a2]: test-status-prod
+: Environment: prod
+: URL: https://prod.example.com
+: Checking status...
+: Status: OK
+
+The bash command automatically has access to ~MYENV_NAME~ and ~MYENV_URL~ because the parent group set them in ~config.override_env~.
+
+Let's add another bash command that deploys to the selected environment.
+
+#+NAME: create-deploy
+#+BEGIN_SRC bash :results none :exports none :session 1edede93-21b4-4109-a904-b746df3c2e8d
+clk command create bash myenv.deploy --description "Deploy to the current environment" --body '
+echo "Deploying to ${MYENV_NAME} at ${MYENV_URL}..."
+# In real life: kubectl --context "${MYENV_NAME}" apply -f manifests/
+echo "Deployment complete!"
+'
+#+END_SRC
+
+#+NAME: test-deploy-staging
+#+BEGIN_SRC bash :results verbatim :exports both :session 1edede93-21b4-4109-a904-b746df3c2e8d :cache yes
+clk myenv --env staging deploy
+#+END_SRC
+
+#+RESULTS[efacbcd9afa25a6f8c467fdf9a62ad2817db562d]: test-deploy-staging
+: Deploying to staging at https://staging.example.com...
+: Deployment complete!
+
+This pattern is particularly useful when:
+
+- You have a CLI that targets different servers or contexts
+- Configuration is computed dynamically in Python but used in bash scripts
+- You want to validate options once at the group level rather than in each subcommand
+
+
+#+BEGIN_SRC bash :exports none :tangle ../../tests/use_cases/multi_environment_deployment_tool.sh :noweb yes :shebang "#!/bin/bash -eu"
+<<init>>
+
+<<create-ext>>
+
+<<create-status>>
+
+check-result(test-status-dev)
+
+check-result(test-status-prod)
+
+<<create-deploy>>
+
+check-result(test-deploy-staging)
+#+END_SRC
