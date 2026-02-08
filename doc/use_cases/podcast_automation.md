@@ -20,7 +20,7 @@ Now, I want this command to be wrapped into an alias to ease making it part of m
 clk alias set podcast.dwim echo 'Would do something before' , podcast download --number 'noeval:tpl:{NUMBER_TO_DOWNLOAD}' , echo 'would do something after'
 ```
 
-    New global alias for podcast.dwim: echo Would do something before , podcast download --number tpl:{NUMBER_TO_DOWNLOAD} , echo would do something after
+    New global alias for podcast.dwim: echo 'Would do something before' , podcast download --number 'tpl:{NUMBER_TO_DOWNLOAD}' , echo 'would do something after'
 
 Then I can call it with:
 

@@ -16,5 +16,7 @@ from clk.decorators import argument, command, flag, option
 @argument("message", nargs=-1, help="The message to display")
 def echo(message, style, no_newline):
     """Log a message"""
-    style = style or {}
-    click.echo(click.style(" ".join(message), **style), nl=not no_newline)
+    text = " ".join(message)
+    if style:
+        text = click.style(text, **style)
+    click.echo(text, nl=not no_newline)

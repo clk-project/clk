@@ -39,6 +39,9 @@ Here are some use cases that hopefully will have the following properties:
   Sometimes, you might want to have some control about how the arguments of the
   command lines are evaluated, take a look at [[file:controlling_a_server_using_an_environment_variable.org][this use case]] to know more about them.
 
+  For an example of using aliases with templated environment variables to create
+  flexible workflows, see the [[file:podcast_automation.org][podcast automation]] example.
+
 * how to structure your commands
   :PROPERTIES:
   :CREATED:  [2025-08-05 22:16]

@@ -40,6 +40,8 @@ The basics of creating python commands are covered [here](python_command.md). Fo
 
 Sometimes, you might want to have some control about how the arguments of the command lines are evaluated, take a look at [this use case](controlling_a_server_using_an_environment_variable.md) to know more about them.
 
+For an example of using aliases with templated environment variables to create flexible workflows, see the [podcast automation](podcast_automation.md) example.
+
 
 <a id="6abcb030-192b-4c73-a62f-4551d1e92a77"></a>
 

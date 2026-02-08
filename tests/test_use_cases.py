@@ -81,6 +81,10 @@ def test_creating_extensions():
     call_script("creating_extensions.sh")
 
 
+def test_podcast_automation():
+    call_script("podcast_automation.sh")
+
+
 def test_hello_world():
     call_script("hello_world.sh")
 

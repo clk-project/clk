@@ -21,7 +21,11 @@ Downloading 10 episodes
 EOEXPECTED
 }
 
-diff -uBw <(tryit_code 2>&1) <(tryit_expected) || {
+echo 'Run tryit'
+
+{ tryit_code || true ; } > "${TMP}/code.txt" 2>&1
+tryit_expected > "${TMP}/expected.txt" 2>&1
+diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
 echo "Something went wrong when trying tryit"
 exit 1
 }
@@ -34,11 +38,15 @@ makeitalias_code () {
 
 makeitalias_expected () {
       cat<<"EOEXPECTED"
-New global alias for podcast.dwim: echo Would do something before , podcast download --number tpl:{NUMBER_TO_DOWNLOAD} , echo would do something after
+New global alias for podcast.dwim: echo 'Would do something before' , podcast download --number 'tpl:{NUMBER_TO_DOWNLOAD}' , echo 'would do something after'
 EOEXPECTED
 }
 
-diff -uBw <(makeitalias_code 2>&1) <(makeitalias_expected) || {
+echo 'Run makeitalias'
+
+{ makeitalias_code || true ; } > "${TMP}/code.txt" 2>&1
+makeitalias_expected > "${TMP}/expected.txt" 2>&1
+diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
 echo "Something went wrong when trying makeitalias"
 exit 1
 }
@@ -58,7 +66,11 @@ would do something after
 EOEXPECTED
 }
 
-diff -uBw <(callit_code 2>&1) <(callit_expected) || {
+echo 'Run callit'
+
+{ callit_code || true ; } > "${TMP}/code.txt" 2>&1
+callit_expected > "${TMP}/expected.txt" 2>&1
+diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
 echo "Something went wrong when trying callit"
 exit 1
 }

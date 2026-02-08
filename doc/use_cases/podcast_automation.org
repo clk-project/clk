@@ -48,7 +48,7 @@ clk alias set podcast.dwim echo 'Would do something before' , podcast download -
 #+END_SRC
 
 #+RESULTS[878bae04a233b829b08b4b6deaa8bbec63a73d61]: makeitalias
-: New global alias for podcast.dwim: echo Would do something before , podcast download --number tpl:{NUMBER_TO_DOWNLOAD} , echo would do something after
+: New global alias for podcast.dwim: echo 'Would do something before' , podcast download --number 'tpl:{NUMBER_TO_DOWNLOAD}' , echo 'would do something after'
 
 Then I can call it with:
 
