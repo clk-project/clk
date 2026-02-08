@@ -44,6 +44,8 @@ If you want to share configuration between a Python group and its bash subcomman
 
 For an example of using aliases with templated environment variables to create flexible workflows, see the [podcast automation](podcast_automation.md) example.
 
+If you want to persist command options so you don't have to repeat them, and optionally override them per-project, see the [cloud provider CLI wrapper](wrapping_a_cloud_provider_cli.md) example.
+
 
 <a id="6abcb030-192b-4c73-a62f-4551d1e92a77"></a>
 

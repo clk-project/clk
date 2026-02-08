@@ -95,3 +95,7 @@ def test_python_command():
 
 def test_multi_environment_deployment_tool():
     call_script("multi_environment_deployment_tool.sh")
+
+
+def test_wrapping_a_cloud_provider_cli():
+    call_script("wrapping_a_cloud_provider_cli.sh")

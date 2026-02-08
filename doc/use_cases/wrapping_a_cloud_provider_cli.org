@@ -1,0 +1,280 @@
+:PROPERTIES:
+:ID:       2a1f20f5-2f74-4221-bcab-677a045d3a8f
+:END:
+#+language: en
+#+EXPORT_FILE_NAME: ./wrapping_a_cloud_provider_cli.md
+
+#+CALL: ../../lp.org:check-result()
+
+#+name: init
+#+BEGIN_SRC bash :results none :exports none :session 2a1f20f5-2f74-4221-bcab-677a045d3a8f
+  . ./sandboxing.sh
+#+END_SRC
+
+I use AWS a lot at work. The AWS CLI is powerful but verbose. Every command
+needs ~--profile~ to specify which account I'm targeting, and often ~--region~
+too. I find myself typing things like:
+
+#+BEGIN_SRC bash :results none :exports code
+aws --profile company-prod --region eu-west-1 s3 ls s3://some-bucket
+aws --profile company-prod --region eu-west-1 ec2 describe-instances
+aws --profile company-staging --region eu-west-1 s3 cp file.txt s3://staging-bucket/
+#+END_SRC
+
+This gets old fast. I wanted something where I could set my usual profile once
+and forget about it, but still be able to switch when needed.
+
+* wrapping AWS with clk
+  :PROPERTIES:
+  :CUSTOM_ID: wrapping-aws
+  :END:
+
+I created a clk wrapper around AWS. The idea is simple: a group command that
+handles the ~--profile~ and ~--region~ options, then passes them to subcommands
+via environment variables.
+
+Here's a simplified version (in real life, the subcommands would call the actual
+~aws~ CLI).
+
+First, create the group:
+
+#+NAME: create-aws-cmd
+#+BEGIN_SRC bash :results none :exports code :session 2a1f20f5-2f74-4221-bcab-677a045d3a8f
+clk command create python aws --group --description "AWS CLI wrapper"
+#+END_SRC
+
+Then edit it to add the options. The code looks like this:
+
+#+NAME: aws-code
+#+BEGIN_SRC python :results none :exports code
+from clk.config import config
+from clk.decorators import group, option
+
+
+@group()
+@option("--profile", "-p", default="default", help="The AWS profile to use")
+@option("--region", "-r", default="us-east-1", help="The AWS region")
+def aws(profile, region):
+    "AWS CLI wrapper with persistent configuration"
+    config.override_env["AWS_PROFILE"] = profile
+    config.override_env["AWS_REGION"] = region
+    config.init()
+
+
+@aws.group()
+def s3():
+    "S3 operations"
+#+END_SRC
+
+#+NAME: create-aws
+#+BEGIN_SRC bash :results none :exports none :session 2a1f20f5-2f74-4221-bcab-677a045d3a8f :noweb yes
+cat <<'EOF' > "$(clk command which aws)"
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+
+<<aws-code>>
+EOF
+#+END_SRC
+
+The subcommands are bash scripts that use the environment variables set by the
+parent group. We can declare arguments directly on the command line:
+
+#+NAME: create-s3-ls
+#+BEGIN_SRC bash :results none :exports code :session 2a1f20f5-2f74-4221-bcab-677a045d3a8f
+clk command create bash aws.s3.ls --description "List S3 buckets or objects" \
+    --argument 'path:str:S3 path to list:{"required": false}' \
+    --body 'echo "[${AWS_PROFILE}/${AWS_REGION}] aws s3 ls ${CLK___PATH:-}"'
+#+END_SRC
+
+#+NAME: create-s3-cp
+#+BEGIN_SRC bash :results none :exports code :session 2a1f20f5-2f74-4221-bcab-677a045d3a8f
+clk command create bash aws.s3.cp --description "Copy files to/from S3" \
+    --argument 'source:str:Source path' \
+    --argument 'destination:str:Destination path' \
+    --body 'echo "[${AWS_PROFILE}/${AWS_REGION}] aws s3 cp ${CLK___SOURCE} ${CLK___DESTINATION}"'
+#+END_SRC
+
+#+NAME: create-ec2
+#+BEGIN_SRC bash :results none :exports code :session 2a1f20f5-2f74-4221-bcab-677a045d3a8f
+clk command create bash aws.ec2 --description "EC2 operations" \
+    --argument 'args:str:EC2 command arguments:{"nargs": -1}' \
+    --body 'echo "[${AWS_PROFILE}/${AWS_REGION}] aws ec2 ${CLK___ARGS}"'
+#+END_SRC
+
+Now I can use it like this:
+
+#+NAME: try-explicit
+#+BEGIN_SRC bash :results verbatim :exports both :session 2a1f20f5-2f74-4221-bcab-677a045d3a8f :cache yes
+clk aws --profile company-prod --region eu-west-1 s3 ls s3://prod-bucket
+#+END_SRC
+
+#+RESULTS[0c6754333bc8d6aa6da470bac57156050a8ae930]: try-explicit
+: [company-prod/eu-west-1] aws s3 ls s3://prod-bucket
+
+That's better, but I still have to type the profile every time.
+
+* setting default parameters
+  :PROPERTIES:
+  :CUSTOM_ID: default-parameters
+  :END:
+
+Here's where clk shines. I can persist options so they become the default.
+
+#+NAME: set-parameters
+#+BEGIN_SRC bash :results verbatim :exports both :session 2a1f20f5-2f74-4221-bcab-677a045d3a8f :cache yes
+clk parameter set aws --profile company-prod --region eu-west-1
+#+END_SRC
+
+#+RESULTS[6aa36a675863382e697af76c9cb2a5fd705d252b]: set-parameters
+: New global parameters for aws: --profile company-prod --region eu-west-1
+
+Now I don't need to specify them anymore:
+
+#+NAME: try-with-defaults
+#+BEGIN_SRC bash :results verbatim :exports both :session 2a1f20f5-2f74-4221-bcab-677a045d3a8f :cache yes
+clk aws s3 ls s3://prod-bucket
+clk aws s3 cp backup.sql s3://prod-bucket/backups/
+clk aws ec2 describe-instances
+#+END_SRC
+
+#+RESULTS[101661699a6f7234832ce0be4dacc0df14c61295]: try-with-defaults
+: [company-prod/eu-west-1] aws s3 ls s3://prod-bucket
+: [company-prod/eu-west-1] aws s3 cp backup.sql s3://prod-bucket/backups/
+: [company-prod/eu-west-1] aws ec2 describe-instances
+
+Much cleaner! And when I need to work with staging, I just override:
+
+#+NAME: try-override
+#+BEGIN_SRC bash :results verbatim :exports both :session 2a1f20f5-2f74-4221-bcab-677a045d3a8f :cache yes
+clk aws --profile company-staging s3 ls s3://staging-bucket
+#+END_SRC
+
+#+RESULTS[175b6f1fd1ebb4b614b9ffefb7ff0e73530701a9]: try-override
+: [company-staging/eu-west-1] aws s3 ls s3://staging-bucket
+
+The region is still ~eu-west-1~ from my persisted parameters, only the profile
+changed.
+
+* managing parameters
+  :PROPERTIES:
+  :CUSTOM_ID: managing-parameters
+  :END:
+
+I can check what's currently set:
+
+#+NAME: show-parameters
+#+BEGIN_SRC bash :results verbatim :exports both :session 2a1f20f5-2f74-4221-bcab-677a045d3a8f :cache yes
+clk parameter show aws
+#+END_SRC
+
+#+RESULTS[22cbbb2da55bc7bdc50453cae5d1868d09603ae1]: show-parameters
+: aws --profile company-prod --region eu-west-1
+
+And remove options I no longer want persisted:
+
+#+NAME: unset-region
+#+BEGIN_SRC bash :results verbatim :exports both :session 2a1f20f5-2f74-4221-bcab-677a045d3a8f :cache yes
+clk parameter remove aws --region eu-west-1
+clk parameter show aws
+#+END_SRC
+
+#+RESULTS[b58105ce5a5cf470b0d3356e588173fa74660e0c]: unset-region
+: Erasing aws parameters --region eu-west-1 from global settings
+: aws --profile company-prod
+
+Or clear everything:
+
+#+NAME: unset-all
+#+BEGIN_SRC bash :results verbatim :exports both :session 2a1f20f5-2f74-4221-bcab-677a045d3a8f :cache yes
+clk parameter unset aws
+clk aws s3 ls
+#+END_SRC
+
+#+RESULTS[65e5e029f679e8f3257927910171c06af26d1a3f]: unset-all
+: Erasing global parameters of aws (was: --profile company-prod)
+: [default/us-east-1] aws s3 ls
+
+* per-project configuration
+  :PROPERTIES:
+  :CUSTOM_ID: per-project
+  :END:
+
+Different projects often use different AWS accounts. I can set parameters at the
+project level so they only apply when I'm in that directory.
+
+#+NAME: setup-project
+#+BEGIN_SRC bash :results none :exports code :session 2a1f20f5-2f74-4221-bcab-677a045d3a8f
+mkdir -p webapp-project
+cd webapp-project
+mkdir .clk
+#+END_SRC
+
+Note that simply creating the ~.clk~ dir make webapp-project a project in clk point of view.
+
+#+NAME: set-project-parameters
+#+BEGIN_SRC bash :results verbatim :exports both :session 2a1f20f5-2f74-4221-bcab-677a045d3a8f :cache yes
+clk --project . parameter set aws --profile webapp-prod --region ap-southeast-1
+clk parameter show aws
+#+END_SRC
+
+#+RESULTS[5702401435bac00af24a5b9fe43f8e54b1b4bb03]: set-project-parameters
+: New local parameters for aws: --profile webapp-prod --region ap-southeast-1
+: aws --profile webapp-prod --region ap-southeast-1
+
+#+NAME: try-project-parameters
+#+BEGIN_SRC bash :results verbatim :exports both :session 2a1f20f5-2f74-4221-bcab-677a045d3a8f :cache yes
+clk aws s3 ls s3://webapp-assets
+#+END_SRC
+
+#+RESULTS[ec223a15ca5b8f4b51b9dde1f84874b8e408b77c]: try-project-parameters
+: [webapp-prod/ap-southeast-1] aws s3 ls s3://webapp-assets
+
+When I leave the project, my global defaults (or lack thereof) take over again:
+
+#+NAME: leave-project
+#+BEGIN_SRC bash :results verbatim :exports both :session 2a1f20f5-2f74-4221-bcab-677a045d3a8f :cache yes
+cd ..
+clk aws s3 ls
+#+END_SRC
+
+#+RESULTS[fc9aa02151267d7b9e075a005193baf10d283902]: leave-project
+: [default/us-east-1] aws s3 ls
+
+This way, I never accidentally run a command against the wrong account just
+because I forgot to switch profiles.
+
+#+BEGIN_SRC bash :exports none :tangle ../../tests/use_cases/wrapping_a_cloud_provider_cli.sh :noweb yes :shebang "#!/bin/bash -eu"
+<<init>>
+
+<<create-aws-cmd>>
+
+<<create-aws>>
+
+<<create-s3-ls>>
+
+<<create-s3-cp>>
+
+<<create-ec2>>
+
+check-result(try-explicit)
+
+check-result(set-parameters)
+
+check-result(try-with-defaults)
+
+check-result(try-override)
+
+check-result(show-parameters)
+
+check-result(unset-region)
+
+check-result(unset-all)
+
+<<setup-project>>
+
+check-result(set-project-parameters)
+
+check-result(try-project-parameters)
+
+check-result(leave-project)
+#+END_SRC

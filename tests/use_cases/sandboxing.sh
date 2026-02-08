@@ -1,4 +1,4 @@
-# [[id:8e7e1dba-e84b-4569-9701-be3a1e073505::sandboxing][sandboxing]]
+# [[file:../../doc/use_cases/sandboxing.org::sandboxing][sandboxing]]
 export TQDM_NCOLS=60
 SRCDIR="$(pwd)"
 CLK_COV="$(readlink -f "$(dirname "$BASH_SOURCE")/../clk_coverage.sh")"
@@ -80,6 +80,9 @@ cat <<EOF > "${TMP}/clk-root/clk.json"
         "command.create.bash": [
             "--no-open",
             "--force"
+        ],
+        "parameter.show": [
+            "--no-color"
         ],
         "alias.show": [
             "--no-color"

@@ -46,6 +46,9 @@ Here are some use cases that hopefully will have the following properties:
   For an example of using aliases with templated environment variables to create
   flexible workflows, see the [[file:podcast_automation.org][podcast automation]] example.
 
+  If you want to persist command options so you don't have to repeat them, and
+  optionally override them per-project, see the [[file:wrapping_a_cloud_provider_cli.org][cloud provider CLI wrapper]] example.
+
 * how to structure your commands
   :PROPERTIES:
   :CREATED:  [2025-08-05 22:16]

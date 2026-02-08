@@ -297,6 +297,24 @@ def from_file(file, name, delete, force):
     default=True,
 )
 @option("--from-file", help="Copy this file instead of using the template")
+@option(
+    "--argument",
+    "arguments_",
+    help="Add an argument (format: NAME:TYPE:HELP or NAME:TYPE:HELP:JSON_OPTS)",
+    multiple=True,
+)
+@option(
+    "--option",
+    "options_",
+    help="Add an option (format: --name:TYPE:HELP)",
+    multiple=True,
+)
+@option(
+    "--flag",
+    "flags_",
+    help="Add a flag (format: --name:HELP)",
+    multiple=True,
+)
 def bash(
     name,
     open,
@@ -308,6 +326,9 @@ def bash(
     flowdeps,
     source_bash_helpers,
     from_file,
+    arguments_,
+    options_,
+    flags_,
 ):
     """Create a bash custom command"""
     if from_alias and replace_alias:
@@ -326,9 +347,9 @@ def bash(
         raise click.UsageError(
             f"I won't overwrite {script_path} unless explicitly asked so with --force"
         )
-    options = []
-    arguments = []
-    flags = []
+    options = [f"O:{o}" if not o.startswith("O:") else o for o in options_]
+    arguments = [f"A:{a}" if not a.startswith("A:") else a for a in arguments_]
+    flags = [f"F:{f}" if not f.startswith("F:") else f for f in flags_]
     remaining = ""
     args = ""
     from_alias = from_alias or (replace_alias and name)

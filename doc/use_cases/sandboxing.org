@@ -86,6 +86,9 @@
               "--no-open",
               "--force"
           ],
+          "parameter.show": [
+              "--no-color"
+          ],
           "alias.show": [
               "--no-color"
           ]
