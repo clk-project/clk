@@ -10,4 +10,4 @@ README.html
 /fixed
 /tests/.coverage
 /.agent-shell
-**/.claude
+**/.claude/settings.local.json
