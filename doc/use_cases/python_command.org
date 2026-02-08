@@ -1,0 +1,303 @@
+:PROPERTIES:
+:ID:       b115ee6f-3575-46e0-a64c-880cfa22d4e3
+:END:
+#+language: en
+#+EXPORT_FILE_NAME: ./python_command.md
+
+#+CALL: ../../lp.org:check-result()
+
+#+name: init
+#+BEGIN_SRC bash :results none :exports none :session b115ee6f-3575-46e0-a64c-880cfa22d4e3
+  . ./sandboxing.sh
+#+END_SRC
+
+To create a python command, you can simply call the following command.
+
+#+name: create
+#+BEGIN_SRC bash :results none :exports code :session b115ee6f-3575-46e0-a64c-880cfa22d4e3
+clk command create python mycommand
+#+END_SRC
+
+Your editor will be used to first edit the command. This command will already
+contain some code to get you started.
+
+Note that you can always get the help of any command using ~--help~. So don't
+hesitate to try.
+
+#+NAME: help-create
+#+BEGIN_SRC bash :results verbatim :exports both :session b115ee6f-3575-46e0-a64c-880cfa22d4e3 :cache yes
+clk command create python --help
+#+END_SRC
+
+#+RESULTS[79bb39f6967899be6a29ac0b6c90699bf3a824a2]: help-create
+#+begin_example
+Usage: clk command create python [OPTIONS] NAME
+
+  Create a bash custom command
+
+  The current parameters set for this command are: --no-open --force
+
+  This is a built-in command.
+
+Arguments:
+  NAME  The name of the new command
+
+Options:
+  --open / --no-open   Also open the file after its creation  [default: True]
+  --force              Overwrite a file if it already exists  [default: False]
+  --group / --command  Bootstrap a command or a group of commands  [default: False]
+  --with-data          Create a directory module instead of a single file. So that you can ship data with it  [default:
+                       False]
+  --body TEXT          The initial body to put  [default: ]
+  --description TEXT   The initial description to put  [default: Description]
+  --from-file TEXT     Copy this file instead of using the template
+  --help-all           Show the full help message, automatic options included.
+  --help               Show this message and exit.
+#+end_example
+
+Let's look at the file that was created.
+
+#+NAME: show_it
+#+BEGIN_SRC bash :results verbatim :exports both :session b115ee6f-3575-46e0-a64c-880cfa22d4e3 :cache yes
+cat $(clk command which mycommand)
+#+END_SRC
+
+#+RESULTS[f1f70dbaf02e9ced27bf20557c8ec71e3d29f6a5]: show_it
+#+begin_example
+#!/usr/bin/env python3
+# -*- coding:utf-8 -*-
+
+from pathlib import Path
+
+import click
+
+from clk.decorators import (
+    argument,
+    flag,
+    option,
+    command,
+    use_settings,
+    table_format,
+    table_fields,
+)
+from clk.lib import (
+    TablePrinter,
+    call,
+)
+from clk.config import config
+from clk.log import get_logger
+from clk.types import DynamicChoice
+
+
+LOGGER = get_logger(__name__)
+
+
+@command()
+def mycommand():
+    "Description"
+#+end_example
+
+The ~@command()~ decorator is provided by clk. It is a thin wrapper around the
+click ~@command()~ decorator that adds some features like automatic option
+handling.
+
+Let's run this command.
+
+#+NAME: try
+#+BEGIN_SRC bash :results verbatim :exports both :session b115ee6f-3575-46e0-a64c-880cfa22d4e3 :cache yes
+clk mycommand
+#+END_SRC
+
+#+RESULTS[c79c1298c6898b13962d7526bd02cf22c63d1d54]: try
+: warning: The command 'mycommand' has no documentation
+
+If you keep the word ~Description~ in the help message, clk will warn you that
+you should replace it with something more interesting.
+
+Let's write something in here.
+
+#+name: set_description
+#+BEGIN_SRC bash :results none :exports both :session b115ee6f-3575-46e0-a64c-880cfa22d4e3
+sed -i 's/"Description"/"Command that says something"/g' "$(clk command which mycommand)"
+#+END_SRC
+
+#+NAME: help
+#+BEGIN_SRC bash :results verbatim :exports both :session b115ee6f-3575-46e0-a64c-880cfa22d4e3 :cache yes
+clk mycommand --help | head -10
+#+END_SRC
+
+#+RESULTS[fe88f92e0d201f6a77507ea5266987c47bb4b62d]: help
+#+begin_example
+Usage: clk mycommand [OPTIONS]
+
+  Command that says something
+
+  Edit this custom command by running `clk command edit mycommand`
+  Or edit ./clk-root/python/mycommand.py directly.
+
+Options:
+  --help-all  Show the full help message, automatic options included.
+  --help      Show this message and exit.
+#+end_example
+
+Let's make this command say something.
+
+#+name: say_something
+#+BEGIN_SRC bash :results none :exports code :session b115ee6f-3575-46e0-a64c-880cfa22d4e3
+cat<<'EOF' > "$(clk command which mycommand)"
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+
+from clk.decorators import command
+
+
+@command()
+def mycommand():
+    "Command that says something"
+    print("something")
+EOF
+#+END_SRC
+
+#+NAME: use_it
+#+BEGIN_SRC bash :results verbatim :exports both :session b115ee6f-3575-46e0-a64c-880cfa22d4e3 :cache yes
+clk mycommand
+#+END_SRC
+
+#+RESULTS[c79c1298c6898b13962d7526bd02cf22c63d1d54]: use_it
+: something
+
+* adding options and arguments
+  :PROPERTIES:
+  :CUSTOM_ID: adding-options-and-arguments
+  :END:
+
+You can add options and arguments to your command using click decorators. clk
+provides wrappers for them in ~clk.decorators~.
+
+#+name: with_options
+#+BEGIN_SRC bash :results none :exports code :session b115ee6f-3575-46e0-a64c-880cfa22d4e3
+cat<<'EOF' > "$(clk command which mycommand)"
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+
+from clk.decorators import command, option, argument
+
+
+@command()
+@option("--name", default="world", help="Name to greet")
+@argument("greeting", default="Hello")
+def mycommand(name, greeting):
+    "A greeting command"
+    print(f"{greeting}, {name}!")
+EOF
+#+END_SRC
+
+#+NAME: use_with_options
+#+BEGIN_SRC bash :results verbatim :exports both :session b115ee6f-3575-46e0-a64c-880cfa22d4e3 :cache yes
+clk mycommand
+#+END_SRC
+
+#+RESULTS[c79c1298c6898b13962d7526bd02cf22c63d1d54]: use_with_options
+: warning: The parameter 'greeting' in the command 'mycommand' has no documentation
+: Hello, world!
+
+#+NAME: use_with_options2
+#+BEGIN_SRC bash :results verbatim :exports both :session b115ee6f-3575-46e0-a64c-880cfa22d4e3 :cache yes
+clk mycommand --name clk Goodbye
+#+END_SRC
+
+#+RESULTS[af16c7dfc8e6d93fc671a29deb20e345466a5c3a]: use_with_options2
+: warning: The parameter 'greeting' in the command 'mycommand' has no documentation
+: Goodbye, clk!
+
+* possible mistake: forgetting the decorator
+  :PROPERTIES:
+  :CUSTOM_ID: forgetting-the-decorator
+  :END:
+
+When creating python custom commands manually, you need to use the ~@command()~
+or ~@group()~ decorator from clk. If you forget to do so, clk will provide a
+helpful error message. Note however that if you use ~clk command create~, you
+should not worry about that.
+
+Let's create a python file that defines a function but forgets to decorate it.
+
+#+NAME: create-bad-command
+#+BEGIN_SRC bash :results none :exports code :session b115ee6f-3575-46e0-a64c-880cfa22d4e3
+cat <<'EOF' > "${CLKCONFIGDIR}/python/myenv.py"
+def myenv():
+    """My environment command"""
+    print("hello")
+EOF
+#+END_SRC
+
+When trying to run this command, clk will tell you that it found a function
+instead of a click command.
+
+#+NAME: try-bad-command
+#+BEGIN_SRC bash :results verbatim :exports both :session b115ee6f-3575-46e0-a64c-880cfa22d4e3 :cache yes
+clk myenv 2>&1|sed "s|$(pwd)|.|"
+#+END_SRC
+
+#+RESULTS[9f593cff8587c3153dd9920cd184ca552f4d1d67]: try-bad-command
+: error: Found the command myenv in the resolver customcommand but could not load it.
+: warning: Failed to get the command myenv: The file ./clk-root/python/myenv.py must contain a click command or group named myenv, but found a function instead. Did you forget the @command or @group decorator?
+: error: clk.myenv could not be loaded. Re run with clk --develop to see the stacktrace or clk --debug-on-command-load-error to debug the load error
+
+To fix this, simply add the ~@command()~ decorator from clk.
+
+#+NAME: fix-command
+#+BEGIN_SRC bash :results none :exports code :session b115ee6f-3575-46e0-a64c-880cfa22d4e3
+cat <<'EOF' > "${CLKCONFIGDIR}/python/myenv.py"
+from clk.decorators import command
+
+@command()
+def myenv():
+    """My environment command"""
+    print("hello")
+EOF
+#+END_SRC
+
+Now the command works as expected.
+
+#+NAME: try-fixed-command
+#+BEGIN_SRC bash :results verbatim :exports both :session b115ee6f-3575-46e0-a64c-880cfa22d4e3 :cache yes
+clk myenv
+#+END_SRC
+
+#+RESULTS[e073a22027d65d24304cb4d9e3633779c9593da4]: try-fixed-command
+: hello
+
+#+BEGIN_SRC bash :exports none :tangle ../../tests/use_cases/python_command.sh :noweb yes :shebang "#!/bin/bash -eu"
+<<init>>
+
+<<create>>
+
+check-result(help-create)
+
+check-result(show_it)
+
+check-result(try)
+
+<<set_description>>
+
+check-result(help)
+
+<<say_something>>
+
+check-result(use_it)
+
+<<with_options>>
+
+check-result(use_with_options)
+
+check-result(use_with_options2)
+
+<<create-bad-command>>
+
+check-result(try-bad-command)
+
+<<fix-command>>
+
+check-result(try-fixed-command)
+#+END_SRC

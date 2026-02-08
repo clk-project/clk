@@ -79,6 +79,11 @@ class CustomCommandResolver(CommandResolver):
                 f"The file {module.__file__} must contain a command or a group named {plugin_name}"
             )
         cmd = getattr(module, plugin_name)
+        if not isinstance(cmd, click.BaseCommand):
+            raise BadCustomCommandError(
+                f"The file {module.__file__} must contain a click command or group named {plugin_name}, "
+                f"but found a {type(cmd).__name__} instead. Did you forget the @command or @group decorator?"
+            )
         cmd.customcommand_path = module.__file__
         if not any("--edit-command" in param.opts for param in cmd.params):
             cmd.params.append(

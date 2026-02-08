@@ -1,4 +1,5 @@
 - [bash commands](#932f47a6-803b-40df-ba30-ac437aac92e2)
+- [python commands](#python-commands)
 - [parameters, alias etc](#fa3df212-fc5f-4c3e-9e3e-3f71e897c9b1)
 - [how to structure your commands](#6abcb030-192b-4c73-a62f-4551d1e92a77)
   - [commands as first order objects](#d82b6533-b098-43e7-b4b8-30e283419b9b)
@@ -6,7 +7,7 @@
 - [project](#57153b01-e474-42f0-baa2-26b1b1611ae7)
 - [flow](#8ad4d10e-1ece-45ef-a558-905b5996ddc4)
 - [is it a tool or a library?](#f291ada8-c504-4624-baa7-9c7d600d5c53)
-- [publish my code](#orgb6ca7f2)
+- [publish my code](#org3097f30)
 
 Here are some use cases that hopefully will have the following properties:
 
@@ -24,6 +25,13 @@ The basics are covered [here](bash_command.md). To get more into how to provide 
 If you find out that your bash command starts to become quite big, read [this](bash_command_import.md) to find out how to split your code.
 
 Most of my bash commands start with simple aliases. You can read more about this way of thinking in [here](bash_command_from_alias.md).
+
+
+<a id="python-commands"></a>
+
+# python commands
+
+The basics of creating python commands are covered [here](python_command.md). For more advanced patterns involving dynamic parameters and exposed classes, see the section on [how to structure your commands](#6abcb030-192b-4c73-a62f-4551d1e92a77).
 
 
 <a id="fa3df212-fc5f-4c3e-9e3e-3f71e897c9b1"></a>

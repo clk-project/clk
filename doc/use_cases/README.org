@@ -22,6 +22,15 @@ Here are some use cases that hopefully will have the following properties:
   Most of my bash commands start with simple aliases. You can read more about
   this way of thinking in [[file:bash_command_from_alias.org][here]].
 
+* python commands
+  :PROPERTIES:
+  :CUSTOM_ID: python-commands
+  :END:
+
+  The basics of creating python commands are covered [[file:python_command.org][here]]. For more advanced
+  patterns involving dynamic parameters and exposed classes, see the section on
+  [[*how to structure your commands][how to structure your commands]].
+
 * parameters, alias etc
   :PROPERTIES:
   :CREATED:  [2025-08-05 22:16]

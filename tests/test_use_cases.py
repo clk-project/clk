@@ -79,3 +79,7 @@ def test_send_sms():
 
 def test_creating_extensions():
     call_script("creating_extensions.sh")
+
+
+def test_python_command():
+    call_script("python_command.sh")
