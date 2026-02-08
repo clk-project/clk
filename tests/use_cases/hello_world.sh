@@ -15,7 +15,11 @@ Hello world
 EOEXPECTED
 }
 
-diff -uBw <(run_code 2>&1) <(run_expected) || {
+echo 'Run run'
+
+{ run_code || true ; } > "${TMP}/code.txt" 2>&1
+run_expected > "${TMP}/expected.txt" 2>&1
+diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
 echo "Something went wrong when trying run"
 exit 1
 }

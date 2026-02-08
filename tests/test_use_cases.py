@@ -81,5 +81,9 @@ def test_creating_extensions():
     call_script("creating_extensions.sh")
 
 
+def test_hello_world():
+    call_script("hello_world.sh")
+
+
 def test_python_command():
     call_script("python_command.sh")
