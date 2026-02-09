@@ -126,3 +126,25 @@ echo OK
     somebinary.chmod(0o755)
     os.environ["PATH"] = os.environ["PATH"] + os.pathsep + str(somebindir)
     assert lib.cmd("completion try --last exec somebin") == "plain,somebinary"
+
+
+def test_completion_with_saved_parameter(lib):
+    """Options should still be offered for completion even when already set via parameters."""
+    lib.cmd("command create python a --no-open --group")
+    path = lib.cmd("command which a")
+    Path(path).write_text(
+        Path(path).read_text()
+        + """
+@a.command()
+@option("--foo", type=click.Choice(["a", "b"]))
+@option("--bar", type=click.Choice(["c", "d"]))
+def b(foo, bar):
+    pass
+"""
+    )
+    # Set --foo via parameter
+    lib.cmd("parameter set a.b --foo a")
+    # --foo should still appear in completions (to allow overriding)
+    assert lib.cmd("completion try --last a b --f") == "plain,--foo"
+    # --bar should also still appear
+    assert lib.cmd("completion try --last a b --b") == "plain,--bar"

@@ -621,6 +621,15 @@ class RememberParametersMixin:
             config.merge_settings()
             config.level_settings["appended_parameters"] = appended_parameters
 
+    def clear_parameter_source_for_completion(self, ctx):
+        """Clear parameter sources so click's shell_complete offers all options.
+
+        clk injects parameters as command-line args, which would otherwise
+        cause click to filter them out of completions.
+        """
+        if ctx.resilient_parsing:
+            ctx._parameter_source.clear()
+
 
 class MissingDocumentationMixin:
     """A mixin to use to display a waring when running a command that miss some documentation, either on the command
@@ -681,6 +690,7 @@ class Command(
             f"In the {self.__class__.__name__} '{ctx.command.path}', parsing the args {args}"
         )
         click.Command.parse_args(self, ctx, args)
+        self.clear_parameter_source_for_completion(ctx)
 
     def invoke(self, ctx, *args, **kwargs):
         super().invoke_handle_deprecated(ctx, *args, **kwargs)
@@ -870,6 +880,7 @@ class Group(
             # this must be done before calling the super class to avoid the help message
             args = args or [self.default_cmd_name]
         newargs = click.Group.parse_args(self, ctx, args)
+        self.clear_parameter_source_for_completion(ctx)
         if ctx._protected_args and ctx._protected_args[0] in ctx.complete_arguments:
             # we want to record the complete arguments given to the command, except
             # for the part that starts a new subcommand. After parse_args, the
@@ -1566,6 +1577,7 @@ class MainCommand(
                 ctx.has_subcommands = True
             else:
                 ctx.has_subcommands = False
+        self.clear_parameter_source_for_completion(ctx)
         config.init()
         return res
 
