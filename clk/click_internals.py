@@ -12,6 +12,11 @@ deprecation of protected_args in Click 8.2), only this module needs updating.
 from click.core import ParameterSource
 
 
+def get_click_params(f):
+    """Return the click parameters of a command."""
+    return f.__click_params__
+
+
 def was_explicitly_provided(ctx, param_name):
     """Check if a parameter was explicitly provided (not from defaults).
 

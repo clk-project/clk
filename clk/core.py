@@ -23,6 +23,7 @@ from clk import completion, log, startup_time
 from clk.atexit import trigger
 from clk.click_helpers import click_get_current_context_safe
 from clk.click_internals import (
+    get_click_params,
     get_unparsed_args,
     has_unparsed_args,
     was_explicitly_provided,
@@ -171,7 +172,7 @@ def main_command_option(*args, **kwargs):
         f = decorator(f)
         # we assume that the option is the last in the param list (click
         # implementation dependent)
-        option = f.__click_params__[-1]
+        option = get_click_params(f)[-1]
         main_command_parameters.add(option)
         return f
 

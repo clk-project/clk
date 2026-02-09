@@ -20,6 +20,7 @@ import clk.completion
 from clk.click_helpers import click_get_current_context_safe
 from clk.click_internals import (
     clear_parameter_source,
+    get_click_params,
     get_protected_args,
     set_protected_args,
     was_explicitly_provided,
@@ -1350,7 +1351,7 @@ def flow_command(flowdepends=None, flow_from=None, flow_after=None, **kwargs):
 
     def decorator(f):
         try:
-            params = list(f.__click_params__)
+            params = list(get_click_params(f))
             params.reverse()
         except AttributeError:
             params = []
