@@ -622,13 +622,19 @@ class RememberParametersMixin:
             config.level_settings["appended_parameters"] = appended_parameters
 
     def clear_parameter_source_for_completion(self, ctx):
-        """Clear parameter sources so click's shell_complete offers all options.
+        """Clear parameter sources for options so click's shell_complete offers all options.
 
         clk injects parameters as command-line args, which would otherwise
-        cause click to filter them out of completions.
+        cause click to filter them out of completions. Only clears sources for
+        options, not arguments, to preserve argument completion order.
         """
         if ctx.resilient_parsing:
-            ctx._parameter_source.clear()
+            for param in self.get_params(ctx):
+                if (
+                    isinstance(param, click.Option)
+                    and param.name in ctx._parameter_source
+                ):
+                    del ctx._parameter_source[param.name]
 
 
 class MissingDocumentationMixin:
