@@ -887,17 +887,18 @@ class Group(
             args = args or [self.default_cmd_name]
         newargs = click.Group.parse_args(self, ctx, args)
         self.clear_parameter_source_for_completion(ctx)
-        if ctx._protected_args and ctx._protected_args[0] in ctx.complete_arguments:
+        # NOTE: protected_args is deprecated in Click 8.2 and will be removed in Click 9.0.
+        # When upgrading to Click 9.0, use ctx.args instead (it will contain all unparsed tokens).
+        if ctx.protected_args and ctx.protected_args[0] in ctx.complete_arguments:
             # we want to record the complete arguments given to the command, except
             # for the part that starts a new subcommand. After parse_args, the
-            # ctx._protected_args informs us of the part to keep away
-            index_first_subcommand = ctx.complete_arguments.index(
-                ctx._protected_args[0]
-            )
+            # ctx.protected_args informs us of the part to keep away
+            index_first_subcommand = ctx.complete_arguments.index(ctx.protected_args[0])
             ctx.complete_arguments = ctx.complete_arguments[:index_first_subcommand]
         if self.default_cmd_name is not None and not ctx.resilient_parsing:
             # and this must be done here in case option where passed to the group
-            ctx._protected_args = ctx._protected_args or [self.default_cmd_name]
+            # NOTE: We must use _protected_args for assignment since protected_args is read-only
+            ctx._protected_args = ctx.protected_args or [self.default_cmd_name]
         return newargs
 
     def format_options(self, ctx, formatter, include_auto_opts=False):
