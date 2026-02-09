@@ -7,10 +7,7 @@ from datetime import datetime
 # keep it at the begin in order to get an accurate startup time
 startup_time = datetime.now()
 
-from clk import (
-    log,
-    monkeypatch,
-)
+from clk import log
 from clk._version import __version__  # NOQA: F401
 from clk.config import config  # NOQA: F401
 from clk.core import run  # NOQA: F401
@@ -34,8 +31,6 @@ from clk.lib import (  # NOQA: F401
     rm,
 )
 from clk.log import get_logger  # NOQA: F401
-
-monkeypatch.do()
 
 LOGGER = log.get_logger(__name__)
 log.basic_config(LOGGER)
