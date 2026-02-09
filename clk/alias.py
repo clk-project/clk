@@ -4,8 +4,8 @@ import re
 import shlex
 
 import click
-from click.core import ParameterSource
 
+from clk.click_helpers import was_explicitly_provided
 from clk.commandresolver import CommandResolver
 from clk.config import config
 from clk.core import get_ctx, run
@@ -294,7 +294,7 @@ class AliasCommandResolver(CommandResolver):
             alias_param_names = list(map(lambda c: c.name, alias_command.params))
 
             def was_given(param):
-                return c.get_parameter_source(param.name) != ParameterSource.DEFAULT
+                return was_explicitly_provided(c, param.name)
 
             alias_command.params = [
                 param

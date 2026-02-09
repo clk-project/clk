@@ -18,11 +18,10 @@ from pathlib import Path
 import appdirs
 import click
 from click import formatting
-from click.core import ParameterSource
 
 from clk import completion, log, startup_time
 from clk.atexit import trigger
-from clk.click_helpers import click_get_current_context_safe
+from clk.click_helpers import click_get_current_context_safe, was_explicitly_provided
 from clk.completion import startswith
 from clk.config import Config, config, migrate_profiles, temp_config
 from clk.lib import ParameterType, main_default, makedirs, natural_delta, rm
@@ -769,13 +768,13 @@ def debug_on_command_load_error_callback(ctx, attr, value):
 
 @main_command_options_callback
 def flow_verbose_callback(ctx, attr, value):
-    if ctx.get_parameter_source(attr.name) != ParameterSource.DEFAULT:
+    if was_explicitly_provided(ctx, attr.name):
         config.flow_verbose = value
 
 
 @main_command_options_callback
 def flow_progress_callback(ctx, attr, value):
-    if ctx.get_parameter_source(attr.name) != ParameterSource.DEFAULT:
+    if was_explicitly_provided(ctx, attr.name):
         config.flow_progress = value
 
 

@@ -12,12 +12,12 @@ from pathlib import Path
 
 import click
 import click_didyoumean
-from click.core import UNSET, ParameterSource
+from click.core import UNSET
 from click.exceptions import MissingParameter
 from click.utils import make_default_short_help
 
 import clk.completion
-from clk.click_helpers import click_get_current_context_safe
+from clk.click_helpers import click_get_current_context_safe, was_explicitly_provided
 from clk.commandresolver import CommandResolver
 from clk.completion import startswith
 from clk.config import config
@@ -1111,9 +1111,7 @@ class ParameterMixin(click.Parameter):
         # I now want to check whether the processed value can be evaluated
         value = eval_arg(value)
         if self.expose_class:
-            if ctx.get_parameter_source(
-                self.name
-            ) != ParameterSource.DEFAULT or not hasattr(
+            if was_explicitly_provided(ctx, self.name) or not hasattr(
                 getattr(config, exposed_class_name), self.name
             ):
                 setattr(getattr(config, exposed_class_name), self.name, value)
@@ -1309,7 +1307,7 @@ def option(*args, **kwargs):
     if deprecated:
 
         def new_callback(ctx, attr, value):
-            if ctx.get_parameter_source(attr.name) != ParameterSource.DEFAULT:
+            if was_explicitly_provided(ctx, attr.name):
                 LOGGER.warning(f"{attr.opts[0]} is deprecated: {deprecated}")
             if callback:
                 return callback(ctx, attr, value)
@@ -1334,7 +1332,7 @@ def argument(*args, **kwargs):
     if deprecated:
 
         def new_callback(ctx, attr, value):
-            if ctx.get_parameter_source(attr.name) != ParameterSource.DEFAULT:
+            if was_explicitly_provided(ctx, attr.name):
                 LOGGER.warning(f"{attr.opts[0]} is deprecated: {deprecated}")
             if callback:
                 return callback(ctx, attr, value)
