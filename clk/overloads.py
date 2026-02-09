@@ -7,7 +7,7 @@ import re
 import shlex
 import traceback
 from collections import defaultdict
-from copy import copy, deepcopy
+from copy import copy
 from pathlib import Path
 
 import click
@@ -1621,42 +1621,76 @@ class MainCommand(
 
 
 class FlowOption(Option):
+    """An option that mirrors a target option for flow parameter forwarding.
+
+    Uses composition: stores reference to target and delegates attribute
+    access rather than copying internal state.
+    """
+
+    # Attributes that FlowOption defines itself (not delegated)
+    _own_attrs = frozenset(
+        {
+            "target_command",
+            "target_parameter",
+            "name",
+            "opts",
+            "secondary_opts",
+            "default",
+            "_own_attrs",
+            "group",
+        }
+    )
+
     def __init__(self, param_decls, target_command, target_option=None, **kwargs):
         name, opts, secondary_opts = self._parse_decls(
             param_decls or (), kwargs.get("expose_value")
         )
         target_option = target_option or name
-        o = [p for p in target_command.params if p.name == target_option]
-        if o:
-            o = o[0]
-        else:
-            raise Exception(
-                f"No '{target_option}' option in the '{target_command.name}' command"
-            )
+        o = self._find_target_param(target_command, target_option)
+
         self.target_command = target_command
         self.target_parameter = o
-        okwargs = deepcopy(o.__dict__)
-        del okwargs["name"]
-        del okwargs["opts"]
-        del okwargs["secondary_opts"]
-        del okwargs["is_bool_flag"]
-        del okwargs["_custom_shell_complete"]
-        del okwargs["_flag_needs_value"]
-        if okwargs["is_flag"] and isinstance(okwargs["flag_value"], bool):
-            # required to properly set he is_bool_flag, because of a bug in click.Option.__init__
-            del okwargs["type"]
+
+        # Build param_decls from target if not provided
         if not opts and not secondary_opts:
-            zipped_options = ["/".join(c) for c in zip(o.opts, o.secondary_opts)]
-            param_decls = (
-                [target_option]
-                + zipped_options
-                + o.opts[len(zipped_options) :]
-                + o.secondary_opts[len(zipped_options) :]
-            )
-        # change the default value to None in order to detect when the value should be passed to the previous commands
-        # in the flow
-        okwargs["default"] = None
-        Option.__init__(self, param_decls, **okwargs)
+            param_decls = self._build_param_decls_from_target(o, target_option)
+
+        # Initialize with minimal kwargs - rest is delegated via __getattr__
+        # default=None to detect when the value should be passed to previous commands in the flow
+        Option.__init__(
+            self,
+            param_decls,
+            type=o.type if not (o.is_flag and isinstance(o.flag_value, bool)) else None,
+            is_flag=o.is_flag,
+            flag_value=o.flag_value,
+            multiple=o.multiple,
+            help=o.help,
+            default=None,
+            **kwargs,
+        )
+
+    def _find_target_param(self, target_command, target_option):
+        for p in target_command.params:
+            if p.name == target_option:
+                return p
+        raise Exception(
+            f"No '{target_option}' option in the '{target_command.name}' command"
+        )
+
+    def _build_param_decls_from_target(self, o, target_option):
+        zipped_options = ["/".join(c) for c in zip(o.opts, o.secondary_opts)]
+        return (
+            [target_option]
+            + zipped_options
+            + o.opts[len(zipped_options) :]
+            + o.secondary_opts[len(zipped_options) :]
+        )
+
+    def __getattr__(self, name):
+        """Delegate unknown attributes to target_parameter."""
+        if name.startswith("_") or name in FlowOption._own_attrs:
+            raise AttributeError(name)
+        return getattr(self.target_parameter, name)
 
     def _parse_decls(self, decls, expose_value):
         try:
@@ -1676,30 +1710,61 @@ class FlowOption(Option):
 
 
 class FlowArgument(Argument):
+    """An argument that mirrors a target argument for flow parameter forwarding.
+
+    Uses composition: stores reference to target and delegates attribute
+    access rather than copying internal state.
+    """
+
+    # Attributes that FlowArgument defines itself (not delegated)
+    _own_attrs = frozenset(
+        {
+            "target_command",
+            "target_parameter",
+            "name",
+            "opts",
+            "secondary_opts",
+            "default",
+            "_own_attrs",
+        }
+    )
+
     def __init__(self, param_decls, target_command, target_argument=None, **kwargs):
         name, opts, secondary_opts = self._parse_decls(
             param_decls or (), kwargs.get("expose_value")
         )
         target_argument = target_argument or name
-        o = [p for p in target_command.params if p.name == target_argument]
-        if o:
-            o = o[0]
-        else:
-            raise Exception(
-                f"No '{target_argument}' argument in the '{target_command.name}' command"
-            )
+        o = self._find_target_param(target_command, target_argument)
+
         self.target_command = target_command
         self.target_parameter = o
-        okwargs = deepcopy(o.__dict__)
-        del okwargs["name"]
-        del okwargs["opts"]
-        del okwargs["secondary_opts"]
-        del okwargs["_custom_shell_complete"]
-        del okwargs["multiple"]
-        # change the default value to None in order to detect when the value should be passed to the previous commands
-        # in the flow
-        okwargs["default"] = None
-        Argument.__init__(self, param_decls, **okwargs)
+
+        # Initialize with minimal kwargs - rest is delegated via __getattr__
+        # default=None to detect when the value should be passed to previous commands in the flow
+        # help is passed explicitly because Argument.__init__ sets it from kwargs
+        Argument.__init__(
+            self,
+            param_decls,
+            type=o.type,
+            nargs=o.nargs,
+            help=getattr(o, "help", ""),
+            default=None,
+            **kwargs,
+        )
+
+    def _find_target_param(self, target_command, target_argument):
+        for p in target_command.params:
+            if p.name == target_argument:
+                return p
+        raise Exception(
+            f"No '{target_argument}' argument in the '{target_command.name}' command"
+        )
+
+    def __getattr__(self, name):
+        """Delegate unknown attributes to target_parameter."""
+        if name.startswith("_") or name in FlowArgument._own_attrs:
+            raise AttributeError(name)
+        return getattr(self.target_parameter, name)
 
 
 def entry_point(cls=None, **kwargs):
