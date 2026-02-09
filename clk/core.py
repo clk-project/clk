@@ -21,7 +21,12 @@ from click import formatting
 
 from clk import completion, log, startup_time
 from clk.atexit import trigger
-from clk.click_helpers import click_get_current_context_safe, was_explicitly_provided
+from clk.click_helpers import click_get_current_context_safe
+from clk.click_internals import (
+    get_unparsed_args,
+    has_unparsed_args,
+    was_explicitly_provided,
+)
 from clk.completion import startswith
 from clk.config import Config, config, migrate_profiles, temp_config
 from clk.lib import ParameterType, main_default, makedirs, natural_delta, rm
@@ -80,10 +85,8 @@ def resolve_ctx(cli, prog_name, args, resilient_parsing=True):
         A new context corresponding to the current command
     """
     ctx = cli.make_context(prog_name, list(args), resilient_parsing=resilient_parsing)
-    # NOTE: protected_args is deprecated in Click 8.2 and will be removed in Click 9.0.
-    # When upgrading to Click 9.0, use ctx.args instead (it will contain all unparsed tokens).
-    while ctx.args + ctx.protected_args and isinstance(ctx.command, click.MultiCommand):
-        a = ctx.protected_args + ctx.args
+    while has_unparsed_args(ctx) and isinstance(ctx.command, click.MultiCommand):
+        a = get_unparsed_args(ctx)
         cmd = ctx.command.get_command(ctx, a[0])
         if cmd is None:
             return None

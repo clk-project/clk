@@ -17,7 +17,13 @@ from click.exceptions import MissingParameter
 from click.utils import make_default_short_help
 
 import clk.completion
-from clk.click_helpers import click_get_current_context_safe, was_explicitly_provided
+from clk.click_helpers import click_get_current_context_safe
+from clk.click_internals import (
+    clear_parameter_source,
+    get_protected_args,
+    set_protected_args,
+    was_explicitly_provided,
+)
 from clk.commandresolver import CommandResolver
 from clk.completion import startswith
 from clk.config import config
@@ -630,11 +636,8 @@ class RememberParametersMixin:
         """
         if ctx.resilient_parsing:
             for param in self.get_params(ctx):
-                if (
-                    isinstance(param, click.Option)
-                    and param.name in ctx._parameter_source
-                ):
-                    del ctx._parameter_source[param.name]
+                if isinstance(param, click.Option):
+                    clear_parameter_source(ctx, param.name)
 
 
 class MissingDocumentationMixin:
@@ -887,18 +890,16 @@ class Group(
             args = args or [self.default_cmd_name]
         newargs = click.Group.parse_args(self, ctx, args)
         self.clear_parameter_source_for_completion(ctx)
-        # NOTE: protected_args is deprecated in Click 8.2 and will be removed in Click 9.0.
-        # When upgrading to Click 9.0, use ctx.args instead (it will contain all unparsed tokens).
-        if ctx.protected_args and ctx.protected_args[0] in ctx.complete_arguments:
+        protected_args = get_protected_args(ctx)
+        if protected_args and protected_args[0] in ctx.complete_arguments:
             # we want to record the complete arguments given to the command, except
             # for the part that starts a new subcommand. After parse_args, the
-            # ctx.protected_args informs us of the part to keep away
-            index_first_subcommand = ctx.complete_arguments.index(ctx.protected_args[0])
+            # protected_args informs us of the part to keep away
+            index_first_subcommand = ctx.complete_arguments.index(protected_args[0])
             ctx.complete_arguments = ctx.complete_arguments[:index_first_subcommand]
         if self.default_cmd_name is not None and not ctx.resilient_parsing:
             # and this must be done here in case option where passed to the group
-            # NOTE: We must use _protected_args for assignment since protected_args is read-only
-            ctx._protected_args = ctx.protected_args or [self.default_cmd_name]
+            set_protected_args(ctx, protected_args or [self.default_cmd_name])
         return newargs
 
     def format_options(self, ctx, formatter, include_auto_opts=False):
@@ -1580,10 +1581,7 @@ class MainCommand(
         if not hasattr(ctx, "has_subcommands"):
             ctx.has_subcommands = True
         if not ctx.resilient_parsing:
-            if ctx._protected_args:
-                ctx.has_subcommands = True
-            else:
-                ctx.has_subcommands = False
+            ctx.has_subcommands = bool(get_protected_args(ctx))
         self.clear_parameter_source_for_completion(ctx)
         config.init()
         return res

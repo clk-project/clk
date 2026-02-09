@@ -5,7 +5,7 @@ import shlex
 
 import click
 
-from clk.click_helpers import was_explicitly_provided
+from clk.click_internals import was_explicitly_provided
 from clk.commandresolver import CommandResolver
 from clk.config import config
 from clk.core import get_ctx, run
