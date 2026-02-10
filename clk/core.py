@@ -165,6 +165,50 @@ def main_command_options_callback(f):
     return decorator
 
 
+def _make_config_setter(attr, transform=None):
+    """Factory for simple config attribute setters.
+
+    Creates a callback that sets config.{attr} = value (or transform(value)).
+    """
+
+    @main_command_options_callback
+    def callback(ctx, attr_param, value):
+        setattr(config, attr, transform(value) if transform else value)
+        return value
+
+    return callback
+
+
+def _make_flag_setter(attr):
+    """Factory for flag-based config setters.
+
+    Creates a callback that sets config.{attr} = True when value is truthy.
+    """
+
+    @main_command_options_callback
+    def callback(ctx, attr_param, value):
+        if value:
+            setattr(config, attr, True)
+        return value
+
+    return callback
+
+
+def _make_log_level_setter(level):
+    """Factory for log level setters.
+
+    Creates a callback that sets config.log_level to a specific level when value is truthy.
+    """
+
+    @main_command_options_callback
+    def callback(ctx, attr, value):
+        if value:
+            config.log_level = level
+        return value
+
+    return callback
+
+
 def main_command_option(*args, **kwargs):
     decorator = click.option(*args, **kwargs)
 
@@ -584,10 +628,7 @@ def main_command_decoration(f, cls, **kwargs):
 ################################
 
 
-@main_command_options_callback
-def project_callback(ctx, attr, value):
-    config.project = value
-    return value
+project_callback = _make_config_setter("project")
 
 
 @main_command_options_callback
@@ -643,11 +684,7 @@ def log_level_callback(ctx, attr, value):
     return value
 
 
-@main_command_options_callback
-def ask_secret_callback(ctx, attr, value):
-    if value is not None:
-        config.ask_secret = value
-    return value
+ask_secret_callback = _make_config_setter("ask_secret")
 
 
 @main_command_options_callback
@@ -655,11 +692,7 @@ def exit_on_log_level_callback(ctx, attr, value):
     log.exit_on_log_level = value
 
 
-@main_command_options_callback
-def debug_callback(ctx, attr, value):
-    if value:
-        config.log_level = "debug"
-    return value
+debug_callback = _make_log_level_setter("debug")
 
 
 @main_command_options_callback
@@ -670,18 +703,10 @@ def develop_callback(ctx, attr, value):
     return value
 
 
-@main_command_options_callback
-def action_callback(ctx, attr, value):
-    if value:
-        config.log_level = "action"
-    return value
+action_callback = _make_log_level_setter("action")
 
 
-@main_command_options_callback
-def dry_run_callback(ctx, attr, value):
-    if value:
-        config.dry_run = True
-    return value
+dry_run_callback = _make_flag_setter("dry_run")
 
 
 @main_command_options_callback
@@ -733,9 +758,7 @@ def post_mortem_callback(ctx, attr, value):
     _post_mortem = value
 
 
-@main_command_options_callback
-def autoflow_callback(ctx, attr, value):
-    config.autoflow = value
+autoflow_callback = _make_config_setter("autoflow")
 
 
 @main_command_options_callback
@@ -744,9 +767,7 @@ def flowstep_callback(ctx, attr, value):
     config.flowstep = value
 
 
-@main_command_options_callback
-def alternate_style_callback(ctx, attr, value):
-    config.alt_style = value
+alternate_style_callback = _make_config_setter("alt_style")
 
 
 @main_command_options_callback
@@ -755,19 +776,15 @@ def forced_width_callback(ctx, attr, value):
         formatting.FORCED_WIDTH = 120
 
 
-@main_command_options_callback
-def persist_migration_callback(ctx, attr, value):
-    config.persist_migration = value
+persist_migration_callback = _make_config_setter("persist_migration")
 
 
-@main_command_options_callback
-def plugin_dirs_callback(ctx, attr, value):
-    config.plugindirs = list(value)
+plugin_dirs_callback = _make_config_setter("plugindirs", transform=list)
 
 
-@main_command_options_callback
-def debug_on_command_load_error_callback(ctx, attr, value):
-    config.debug_on_command_load_error_callback = value
+debug_on_command_load_error_callback = _make_config_setter(
+    "debug_on_command_load_error_callback"
+)
 
 
 @main_command_options_callback
