@@ -345,15 +345,24 @@ class Config:
                     profile, only_this_extension=only_this_extension
                 )
 
-    def merge_settings(self):
+    def _compute_all_profile_settings(self):
+        """Trigger settings computation for all enabled profiles."""
         for profile in self.all_enabled_profiles:
             profile.compute_settings()
+
+    def _merge_settings_two_pass(self):
+        """Merge settings in two passes.
+
+        First pass gets initial settings. Second pass runs after we have enough
+        settings to decide which extensions to enable.
+        """
+        for _ in range(2):
+            self.settings, self.settings2 = merge_settings(self.iter_settings())
+
+    def merge_settings(self):
+        self._compute_all_profile_settings()
         migrate_profiles()
-        # first step to get the initial settings
-        self.settings, self.settings2 = merge_settings(self.iter_settings())
-        # second step now that the we have enough settings to decide which
-        # extensions to enable
-        self.settings, self.settings2 = merge_settings(self.iter_settings())
+        self._merge_settings_two_pass()
 
     def get_profile_that_contains(self, path):
         """Among all profiles that contain the path, return the one with the
