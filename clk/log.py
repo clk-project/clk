@@ -88,12 +88,6 @@ def get_logger(name):
 LOGGER = get_logger(__name__)
 
 
-def getLogger(name):
-    # type: (str) -> Logger
-    LOGGER.deprecated("getLogger is deprecated. Please use get_logger instead")
-    return get_logger(name)
-
-
 class Logger(logging.getLoggerClass()):
     def develop(self, msg, *args, **kwargs):
         if self.isEnabledFor(DEVELOP):
