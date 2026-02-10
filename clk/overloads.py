@@ -1393,19 +1393,21 @@ class CommandSettingsKeyType(ParameterType):
         return settings_stores[self.name].readonly
 
     def shell_complete(self, ctx, param, incomplete):
-        @cache_disk(expire=600)
-        def get_shortdoc(path):
-            cmd = get_command_safe(path)
-            if cmd is None:
-                return "Broken command"
-            else:
-                return cmd.short_help
+        settings = self.settings(ctx)
 
-        choices = [(path, get_shortdoc(path)) for path in self.settings(ctx).keys()]
+        # Filter FIRST, before any lookups
+        matching_keys = [k for k in settings.keys() if startswith(k, incomplete)]
+
+        # Get help from settings directly - no need to load commands
+        def get_help(key):
+            value = settings.get(key, {})
+            if isinstance(value, dict) and "documentation" in value:
+                return value["documentation"] or ""
+            return ""
+
         return [
-            click.shell_completion.CompletionItem(cmd, help=cmd_help)
-            for cmd, cmd_help in choices
-            if startswith(cmd, incomplete)
+            click.shell_completion.CompletionItem(key, help=get_help(key))
+            for key in matching_keys
         ]
 
     def convert(self, value, param, ctx):
