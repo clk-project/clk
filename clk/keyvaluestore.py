@@ -13,13 +13,18 @@ LOGGER = get_logger(__name__)
 
 
 def keyvaluestore_generic_commands(group, settings_name):
+    def get_store():
+        """Get the settings store for this key-value store."""
+        return getattr(config, settings_name)
+
     @group.command(ignore_unknown_options=True)
     @argument("key", help="The key")
     @argument("value", help="The value")
     def _set(key, value):
         """Set a value"""
-        getattr(config, settings_name).writable[key] = {"value": value}
-        getattr(config, settings_name).write()
+        store = get_store()
+        store.writable[key] = {"value": value}
+        store.write()
 
     @group.command(handle_dry_run=True)
     @argument("src", type=CommandSettingsKeyType(settings_name), help="The current key")
@@ -30,38 +35,26 @@ def keyvaluestore_generic_commands(group, settings_name):
     )
     def rename(src, dst, overwrite):
         """Rename a key"""
-        if src not in getattr(config, settings_name).writable:
+        store = get_store()
+        if src not in store.writable:
             raise click.ClickException(
                 "The "
-                f"{Colorer.apply_color_profilename(getattr(config, settings_name).writeprofile)}"
+                f"{Colorer.apply_color_profilename(store.writeprofile)}"
                 f" configuration has no '{src}' values registered."
                 "Try using another profile option (like --local or --global)"
             )
-        if dst in getattr(config, settings_name).writable and not overwrite:
+        if dst in store.writable and not overwrite:
             LOGGER.error(
-                "{} already exists at profile {}"
-                " use --overwrite to perform the renaming anyway".format(
-                    dst,
-                    Colorer.apply_color_profilename(
-                        getattr(config, settings_name).writeprofile
-                    ),
-                )
+                f"{dst} already exists at profile {Colorer.apply_color_profilename(store.writeprofile)}"
+                " use --overwrite to perform the renaming anyway"
             )
             exit(1)
-        getattr(config, settings_name).writable[dst] = getattr(
-            config, settings_name
-        ).writable[src]
-        del getattr(config, settings_name).writable[src]
+        store.writable[dst] = store.writable[src]
+        del store.writable[src]
         LOGGER.status(
-            "Rename {} -> {} in profile {}".format(
-                src,
-                dst,
-                Colorer.apply_color_profilename(
-                    getattr(config, settings_name).writeprofile
-                ),
-            )
+            f"Rename {src} -> {dst} in profile {Colorer.apply_color_profilename(store.writeprofile)}"
         )
-        getattr(config, settings_name).write()
+        store.write()
 
     @group.command(handle_dry_run=True)
     @argument(
@@ -72,25 +65,21 @@ def keyvaluestore_generic_commands(group, settings_name):
     )
     def unset(keys):
         """Unset some values"""
+        store = get_store()
         for key in keys:
-            if key not in getattr(config, settings_name).writable:
+            if key not in store.writable:
                 raise click.ClickException(
                     "The "
-                    f"{Colorer.apply_color_profilename(getattr(config, settings_name).writeprofile)}"
+                    f"{Colorer.apply_color_profilename(store.writeprofile)}"
                     f" configuration has no '{key}' value registered."
                     "Try using another profile option (like --local or --global)"
                 )
         for key in keys:
             LOGGER.status(
-                "Erasing {} value from {} settings".format(
-                    key,
-                    Colorer.apply_color_profilename(
-                        getattr(config, settings_name).writeprofile
-                    ),
-                )
+                f"Erasing {key} value from {Colorer.apply_color_profilename(store.writeprofile)} settings"
             )
-            del getattr(config, settings_name).writable[key]
-        getattr(config, settings_name).write()
+            del store.writable[key]
+        store.write()
 
     @group.command(handle_dry_run=True)
     @Colorer.color_options
@@ -104,27 +93,19 @@ def keyvaluestore_generic_commands(group, settings_name):
     )
     def show(fields, format, keys, **kwargs):
         """Show the values"""
+        store = get_store()
         keys = keys or (
             sorted(config.settings.get(settings_name, {}))
             if all
-            else sorted(getattr(config, settings_name).readonly.keys())
+            else sorted(store.readonly.keys())
         )
         with TablePrinter(fields, format) as tp, Colorer(kwargs) as colorer:
             for key in keys:
-                if getattr(config, settings_name).readprofile == "settings-file":
-                    args = [
-                        format(
-                            getattr(config, settings_name)
-                            .readonly.get(key, {})
-                            .get("commands", [])
-                        )
-                    ]
-                elif "/" in getattr(config, settings_name).readprofile:
+                if store.readprofile == "settings-file":
+                    args = [format(store.readonly.get(key, {}).get("commands", []))]
+                elif "/" in store.readprofile:
                     args = (
-                        getattr(config, settings_name)
-                        .all_settings.get(
-                            getattr(config, settings_name).readprofile, {}
-                        )
+                        store.all_settings.get(store.readprofile, {})
                         .get(key, {})
                         .get("value")
                     )
@@ -134,9 +115,7 @@ def keyvaluestore_generic_commands(group, settings_name):
                     all_values = [
                         (
                             profile.name,
-                            getattr(config, settings_name)
-                            .all_settings.get(profile.name, {})
-                            .get(key),
+                            store.all_settings.get(profile.name, {}).get(key),
                         )
                         for profile in config.all_enabled_profiles
                     ]
