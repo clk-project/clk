@@ -305,69 +305,42 @@ class ProfileChoice(click.Choice):
 class ExtraParametersMixin:
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        set_param_opt = AutomaticOption(
-            ["--set-parameter"],
-            expose_value=False,
-            callback=self.set_parameter_callback,
-            group="parameters",
-            help="Set the parameters for this command",
-            type=ProfileChoice(),
+        # Parameter options with args (set, append, remove pass raw_args to the command)
+        for action in ("set", "append", "remove"):
+            self.params.append(
+                AutomaticOption(
+                    [f"--{action}-parameter"],
+                    expose_value=False,
+                    callback=self._make_parameter_callback(action, include_args=True),
+                    group="parameters",
+                    help=f"{action.capitalize()} the parameters for this command",
+                    type=ProfileChoice(),
+                )
+            )
+        # Parameter options without args (unset, show, edit don't pass raw_args)
+        for action in ("unset", "show", "edit"):
+            extra = ["context"] if action in ("show", "edit") else None
+            self.params.append(
+                AutomaticOption(
+                    [f"--{action}-parameter"],
+                    expose_value=False,
+                    callback=self._make_parameter_callback(action, include_args=False),
+                    group="parameters",
+                    help=f"{action.capitalize()} the parameters for this command",
+                    type=ProfileChoice(extra=extra) if extra else ProfileChoice(),
+                )
+            )
+        # No-parameter flag
+        self.params.append(
+            AutomaticOption(
+                ["--no-parameter"],
+                expose_value=False,
+                is_flag=True,
+                is_eager=True,
+                group="parameters",
+                help="Don't use the parameters settings for this commands",
+            )
         )
-        append_param_opt = AutomaticOption(
-            ["--append-parameter"],
-            expose_value=False,
-            callback=self.append_parameter_callback,
-            group="parameters",
-            help="append the parameters for this command",
-            type=ProfileChoice(),
-        )
-        remove_param_opt = AutomaticOption(
-            ["--remove-parameter"],
-            expose_value=False,
-            callback=self.remove_parameter_callback,
-            group="parameters",
-            help="remove the parameters for this command",
-            type=ProfileChoice(),
-        )
-        unset_param_opt = AutomaticOption(
-            ["--unset-parameter"],
-            expose_value=False,
-            callback=self.unset_parameter_callback,
-            group="parameters",
-            help="Unset the parameters for this command",
-            type=ProfileChoice(),
-        )
-        show_param_opt = AutomaticOption(
-            ["--show-parameter"],
-            expose_value=False,
-            callback=self.show_parameter_callback,
-            group="parameters",
-            help="Show the parameters for this command",
-            type=ProfileChoice(extra=["context"]),
-        )
-        edit_param_opt = AutomaticOption(
-            ["--edit-parameter"],
-            expose_value=False,
-            callback=self.edit_parameter_callback,
-            group="parameters",
-            help="Edit the parameters for this command",
-            type=ProfileChoice(extra=["context"]),
-        )
-        no_param_opt = AutomaticOption(
-            ["--no-parameter"],
-            expose_value=False,
-            is_flag=True,
-            is_eager=True,
-            group="parameters",
-            help="Don't use the parameters settings for this commands",
-        )
-        self.params.append(set_param_opt)
-        self.params.append(append_param_opt)
-        self.params.append(remove_param_opt)
-        self.params.append(show_param_opt)
-        self.params.append(unset_param_opt)
-        self.params.append(edit_param_opt)
-        self.params.append(no_param_opt)
 
     def get_extra_args(self, implicit_only=False, explicit_only=False):
         return config.get_parameters(
@@ -387,7 +360,7 @@ class ExtraParametersMixin:
                 ).format(" ".join(extra_args))
                 formatter.write_text(parameters_help)
 
-    def parameters_callback_split_value(self, value):
+    def _parameters_callback_split_value(self, value):
         profile = value
         extension = None
         if value != "context":
@@ -400,95 +373,32 @@ class ExtraParametersMixin:
             res += ["--extension", extension]
         return res
 
-    def unset_parameter_callback(self, ctx, param, value):
-        if value and not ctx.resilient_parsing:
-            raw_args = config.commandline_profile.get_settings("parameters")[self.path]
-            index = raw_args.index("--unset-parameter")
-            raw_args = raw_args[:index] + raw_args[index + 2 :]
-            config.commandline_profile.get_settings("parameters")[self.path] = raw_args
-            config.merge_settings()
-            run(
-                ["parameter"]
-                + self.parameters_callback_split_value(value)
-                + ["unset", self.path]
-            )
-            exit(0)
+    def _make_parameter_callback(self, action, include_args):
+        """Factory for parameter action callbacks."""
+        option_name = f"--{action}-parameter"
 
-    def set_parameter_callback(self, ctx, param, value):
-        if value and not ctx.resilient_parsing:
-            raw_args = config.commandline_profile.get_settings("parameters")[self.path]
-            index = raw_args.index("--set-parameter")
-            raw_args = raw_args[:index] + raw_args[index + 2 :]
-            config.commandline_profile.get_settings("parameters")[self.path] = raw_args
-            config.merge_settings()
-            run(
-                ["parameter"]
-                + self.parameters_callback_split_value(value)
-                + ["set", self.path]
-                + ["--"]
-                + raw_args
-            )
-            exit(0)
+        def callback(ctx, param, value):
+            if value and not ctx.resilient_parsing:
+                raw_args = config.commandline_profile.get_settings("parameters")[
+                    self.path
+                ]
+                index = raw_args.index(option_name)
+                raw_args = raw_args[:index] + raw_args[index + 2 :]
+                config.commandline_profile.get_settings("parameters")[self.path] = (
+                    raw_args
+                )
+                config.merge_settings()
+                cmd = (
+                    ["parameter"]
+                    + self._parameters_callback_split_value(value)
+                    + [action, self.path]
+                )
+                if include_args:
+                    cmd += ["--"] + raw_args
+                run(cmd)
+                exit(0)
 
-    def append_parameter_callback(self, ctx, param, value):
-        if value and not ctx.resilient_parsing:
-            raw_args = config.commandline_profile.get_settings("parameters")[self.path]
-            index = raw_args.index("--append-parameter")
-            raw_args = raw_args[:index] + raw_args[index + 2 :]
-            config.commandline_profile.get_settings("parameters")[self.path] = raw_args
-            config.merge_settings()
-            run(
-                ["parameter"]
-                + self.parameters_callback_split_value(value)
-                + ["append", self.path]
-                + ["--"]
-                + raw_args
-            )
-            exit(0)
-
-    def remove_parameter_callback(self, ctx, param, value):
-        if value and not ctx.resilient_parsing:
-            raw_args = config.commandline_profile.get_settings("parameters")[self.path]
-            index = raw_args.index("--remove-parameter")
-            raw_args = raw_args[:index] + raw_args[index + 2 :]
-            config.commandline_profile.get_settings("parameters")[self.path] = raw_args
-            config.merge_settings()
-            run(
-                ["parameter"]
-                + self.parameters_callback_split_value(value)
-                + ["remove", self.path]
-                + ["--"]
-                + raw_args
-            )
-            exit(0)
-
-    def show_parameter_callback(self, ctx, param, value):
-        if value and not ctx.resilient_parsing:
-            raw_args = config.commandline_profile.get_settings("parameters")[self.path]
-            index = raw_args.index("--show-parameter")
-            raw_args = raw_args[:index] + raw_args[index + 2 :]
-            config.commandline_profile.get_settings("parameters")[self.path] = raw_args
-            config.merge_settings()
-            run(
-                ["parameter"]
-                + self.parameters_callback_split_value(value)
-                + ["show", self.path]
-            )
-            exit(0)
-
-    def edit_parameter_callback(self, ctx, param, value):
-        if value and not ctx.resilient_parsing:
-            raw_args = config.commandline_profile.get_settings("parameters")[self.path]
-            index = raw_args.index("--edit-parameter")
-            raw_args = raw_args[:index] + raw_args[index + 2 :]
-            config.commandline_profile.get_settings("parameters")[self.path] = raw_args
-            config.merge_settings()
-            run(
-                ["parameter"]
-                + self.parameters_callback_split_value(value)
-                + ["edit", self.path]
-            )
-            exit(0)
+        return callback
 
 
 class HelpMixin:
