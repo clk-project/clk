@@ -55,7 +55,12 @@ export PATH="$(pwd)/venv/bin/:${PATH}"
   from=${from-}
   if test "$from" = "pypi"
   then
-      ./venv/bin/pip install --force-reinstall clk${pypi_version}
+      if test -n "${pypi_version}"
+      then
+          ./venv/bin/pip install --force-reinstall clk${pypi_version}
+      else
+          echo "No reinstalling clk. It should be brought in as dependency of mytool"
+      fi
   elif test "$from" = "build"
   then
       ./venv/bin/pip install --force-reinstall /dist/*
