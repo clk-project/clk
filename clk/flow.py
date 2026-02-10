@@ -42,24 +42,22 @@ def setup_flow_params(cmd):
 
 
 def clean_flow_arguments(arguments):
-    arguments = arguments[:]
-    while "--flow" in arguments:
-        del arguments[arguments.index("--flow")]
-    while "--flow-from" in arguments:
-        del arguments[arguments.index("--flow-from") + 1]
-        del arguments[arguments.index("--flow-from")]
-    to_remove = [i for i, arg in enumerate(arguments) if arg.startswith("--flow-from=")]
-    for i in reversed(to_remove):
-        del arguments[i]
-    while "--flow-after" in arguments:
-        del arguments[arguments.index("--flow-after") + 1]
-        del arguments[arguments.index("--flow-after")]
-    to_remove = [
-        i for i, arg in enumerate(arguments) if arg.startswith("--flow-after=")
-    ]
-    for i in reversed(to_remove):
-        del arguments[i]
-    return arguments
+    """Remove --flow, --flow-from, and --flow-after options from arguments."""
+    result = []
+    skip_next = False
+    for arg in arguments:
+        if skip_next:
+            skip_next = False
+            continue
+        if arg == "--flow":
+            continue
+        if arg in ("--flow-from", "--flow-after"):
+            skip_next = True
+            continue
+        if arg.startswith("--flow-from=") or arg.startswith("--flow-after="):
+            continue
+        result.append(arg)
+    return result
 
 
 def get_command_handler(cmd):
