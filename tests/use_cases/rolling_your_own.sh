@@ -15,10 +15,10 @@ export PATH="$(pwd)/venv/bin/:${PATH}"
 from=${from-}
 if test "$from" = "pypi"
 then
-    ./venv/bin/pip install clk${pypi_version}
+    ./venv/bin/pip install --force-reinstall clk${pypi_version}
 elif test "$from" = "build"
 then
-    ./venv/bin/pip install /dist/*
+    ./venv/bin/pip install --force-reinstall /dist/*
 else
     # fall back in assuming that I run this from my machine, where clk is
     # installed in editable mode
