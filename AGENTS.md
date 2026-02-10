@@ -2,6 +2,18 @@
 
 clk is a framework for building command-line tools with Click, providing features like aliases, parameters, flows, and custom commands.
 
+## Literate Programming Source Files
+
+Some core modules are written using org-mode literate programming:
+
+- `clk/lib.org` - Source for `clk/liblp.py`
+
+These `.org` files contain the authoritative source code. The corresponding `.py` files are **generated** and should not be edited directly. When making changes:
+
+1. Edit the `.org` file
+2. Tangle to regenerate the `.py` file (in Emacs: `C-c C-v t` or `M-x org-babel-tangle`)
+3. The generated file will have a comment at the top: `# GENERATED USING lib.org, DO NOT EDIT`
+
 ## Use Cases Documentation
 
 Use cases are documented in `doc/use_cases/` as org-mode literate programming files.
