@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+import contextvars
 import json
 import os
 import shlex
@@ -742,8 +743,24 @@ class Config:
         ]
 
 
-configs = []
-config_cls = None
+_config_var: contextvars.ContextVar["Config"] = contextvars.ContextVar("config")
+_config_cls = None
+
+
+class ConfigProxy:
+    """Proxy that delegates all attribute access to the current Config in the ContextVar."""
+
+    def __getattr__(self, k):
+        return getattr(_config_var.get(), k)
+
+    def __setattr__(self, k, v):
+        return setattr(_config_var.get(), k, v)
+
+    def __dir__(self):
+        return dir(_config_var.get())
+
+
+config: Config = ConfigProxy()
 
 
 def setup_config_class(cls=Config):
@@ -752,38 +769,23 @@ def setup_config_class(cls=Config):
     completion.CASE_INSENSITIVE_ENV = "_{}_CASE_INSENSITIVE_COMPLETION".format(
         cls.app_name.upper().replace("-", "_")
     )
-    global config_cls
-    config_cls = cls
-    del configs[:]
-    configs.append(config_cls())
+    global _config_cls
+    _config_cls = cls
+    _config_var.set(_config_cls())
 
 
 setup_config_class()
 
 
-class ConfigProxy:
-    def __getattr__(self, k):
-        return getattr(configs[-1], k)
-
-    def __setattr__(self, k, v):
-        return setattr(configs[-1], k, v)
-
-    def __dir__(self):
-        return dir(configs[-1])
-
-
-config: Config = ConfigProxy()
-
-
 @contextmanager
 def temp_config():
     with updated_env():
-        configs.append(deepcopy(configs[-1]))
-        config.level_settings = {}
+        token = _config_var.set(deepcopy(_config_var.get()))
+        _config_var.get().level_settings = {}
         try:
             yield
         finally:
-            configs.pop()
+            _config_var.reset(token)
 
 
 @contextmanager
