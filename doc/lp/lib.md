@@ -20,11 +20,12 @@ def rm(*file_or_tree):
     if dry_run:
         return
     for f in file_or_tree:
-        if not (os.path.exists(f) or os.path.islink(f)):
+        p = Path(f)
+        if not (p.exists() or p.is_symlink()):
             LOGGER.debug(f"{f} not removed because already missing")
             return
-        if os.path.isdir(f) and not os.path.islink(f):
+        if p.is_dir() and not p.is_symlink():
             shutil.rmtree(f)
         else:
-            os.unlink(f)
+            p.unlink()
 ```

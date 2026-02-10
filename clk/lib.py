@@ -72,11 +72,12 @@ def makedirs(dir):
     nothing.
 
     """
-    if not os.path.exists(dir):
+    dir_path = Path(dir)
+    if not dir_path.exists():
         LOGGER.action(f"create directory {dir}")
         if not dry_run:
-            os.makedirs(dir)
-    return Path(dir)
+            dir_path.mkdir(parents=True)
+    return dir_path
 
 
 _makedirs = makedirs
@@ -103,7 +104,7 @@ def move(src, dst):
 def createfile(
     name, content, append=False, internal=False, force=False, makedirs=False, mode=None
 ):
-    if os.path.exists(name) and not force:
+    if Path(name).exists() and not force:
         click.UsageError(f"{name} already exists")
     if makedirs:
         _makedirs(Path(name).parent)
@@ -137,7 +138,7 @@ def copy(src, dst):
     LOGGER.action(f"copy {src} to {dst}")
     if dry_run:
         return
-    if os.path.isdir(src):
+    if Path(src).is_dir():
         shutil.copytree(src, dst)
     else:
         shutil.copy(src, dst)
@@ -162,22 +163,23 @@ def which(executable, path=None):
     if path is None:
         path = os.environ["PATH"]
     paths = path.split(os.pathsep)
-    base, ext = os.path.splitext(executable)
+    exec_path = Path(executable)
+    ext = exec_path.suffix
 
     exts = [""]
     if (sys.platform == "win32" or os.name == "os2") and (ext != ".exe"):
         exts = [".cmd", ".bat", ".exe", ".com"] + exts
 
     for ext in exts:
-        e = executable + ext
-        if os.path.isfile(e):
-            return e
+        e = Path(executable + ext)
+        if e.is_file():
+            return str(e)
         else:
             for p in paths:
-                f = os.path.join(p, e)
-                if os.path.isfile(f):
+                f = Path(p) / e
+                if f.is_file():
                     # the file exists, we have a shot at spawn working
-                    return f
+                    return str(f)
 
     return None
 
@@ -219,33 +221,35 @@ def get_all_files_recursive(dir, exclude):
         for excluded in set(exclude) & set(subdirs):
             del subdirs[subdirs.index(excluded)]
         for file in files:
-            yield os.path.join(dir, file)
+            yield str(Path(dir) / file)
 
 
 def check_uptodate(src, dst, src_exclude=[], dst_exclude=[]):
-    assert os.path.exists(src), f"{src} must exist"
-    if not os.path.exists(dst):
+    src_path = Path(src)
+    dst_path = Path(dst)
+    assert src_path.exists(), f"{src} must exist"
+    if not dst_path.exists():
         return False
-    if os.path.isfile(src):
-        src_mtime = os.stat(src).st_mtime
+    if src_path.is_file():
+        src_mtime = src_path.stat().st_mtime
         src_f = src
-    elif os.path.isdir(src):
+    elif src_path.is_dir():
         src_mtime, src_f = max(
             map(
-                lambda f: (os.stat(f).st_mtime, f),
+                lambda f: (Path(f).stat().st_mtime, f),
                 get_all_files_recursive(src, src_exclude),
             ),
             key=lambda e: e[0],
         )
     else:
         raise NotImplementedError
-    if os.path.isfile(dst):
-        dst_mtime = os.stat(dst).st_mtime
+    if dst_path.is_file():
+        dst_mtime = dst_path.stat().st_mtime
         dst_f = dst
-    elif os.path.isdir(dst):
+    elif dst_path.is_dir():
         dst_mtime, dst_f = min(
             map(
-                lambda f: (os.stat(f).st_mtime, f),
+                lambda f: (Path(f).stat().st_mtime, f),
                 get_all_files_recursive(dst, dst_exclude),
             ),
             key=lambda e: e[0],
@@ -428,13 +432,14 @@ def temporary_file(dir=None, suffix=None, nameonly=False, content=None):
         d.close()
     LOGGER.action(f"Creating a temporary file at {d.name}")
     LOGGER.develop(f"with content: {content}")
+    temp_path = Path(d.name)
     try:
         yield d
     except Exception:
-        if os.path.exists(d.name):
+        if temp_path.exists():
             rm(d.name)
         raise
-    if os.path.exists(d.name):
+    if temp_path.exists():
         rm(d.name)
 
 
@@ -452,7 +457,7 @@ def cd(dir, internal=False, makedirs=False):
     if not dry_run:
         os.chdir(dir)
         LOGGER.debug(f"In directory {dir}")
-    yield os.path.realpath(dir)
+    yield str(Path(dir).resolve())
     logger(f"go back into directory {prevdir}")
     if not dry_run:
         LOGGER.debug(f"Back to directory {prevdir}")
@@ -694,8 +699,8 @@ def is_pip_install(src_dir):
 
 
 def get_netrc_keyring():
-    netrcfile = os.path.expanduser("~/.netrc")
-    if os.path.exists(netrcfile) and platform.system() != "Windows":
+    netrcfile = Path.home() / ".netrc"
+    if netrcfile.exists() and platform.system() != "Windows":
         chmod(netrcfile, 0o600)
     from clk.keyrings import NetrcKeyring
 
@@ -760,7 +765,7 @@ def extract(url, dest=Path(".")):
 
     makedirs(dest)
 
-    archname = os.path.basename(url)
+    archname = Path(url).name
     bio = _download_as_byteio_with_progress(url)
     if archname.endswith(".zip"):
         zipfile.ZipFile(bio).extractall(path=dest)
@@ -770,8 +775,8 @@ def extract(url, dest=Path(".")):
 
 def download(url, outdir=None, outfilename=None, mkdir=False, sha256=None, mode=None):
     outdir = Path(outdir or ".")
-    outfilename = outfilename or os.path.basename(url)
-    if not os.path.exists(outdir) and mkdir:
+    outfilename = outfilename or Path(url).name
+    if not outdir.exists() and mkdir:
         makedirs(outdir)
     outpath = outdir / outfilename
     LOGGER.action(f"download {url}")
@@ -789,7 +794,7 @@ def download(url, outdir=None, outfilename=None, mkdir=False, sha256=None, mode=
 
     outpath.write_bytes(value)
     if mode is not None:
-        os.chmod(outpath, mode)
+        outpath.chmod(mode)
     return outpath
 
 
@@ -813,7 +818,8 @@ def pid_exists(pidpath):
     """Check whether a program is running or not, based on its pid file"""
     LOGGER.develop(f"Checking {pidpath}")
     running = False
-    if os.path.exists(pidpath):
+    pidpath = Path(pidpath)
+    if pidpath.exists():
         with open(pidpath) as f:
             pid = int(f.readline().strip())
             try:
@@ -835,7 +841,8 @@ def pid_exists(pidpath):
 def pid_kill(pidpath, signal=signal.SIGTERM):
     """Send a signal to a process, based on its pid file"""
     LOGGER.develop(f"Checking {pidpath}")
-    if os.path.exists(pidpath):
+    pidpath = Path(pidpath)
+    if pidpath.exists():
         pid = int(read(pidpath))
         LOGGER.action(f"kill -{signal} {pid}")
         os.kill(pid, signal)
@@ -926,18 +933,18 @@ def git_sync(
         and parse_version(version) >= parse_version("2.1.4")
         and not last_tag
     )
-    directory = os.path.abspath(directory or re.split("[:/]", url)[-1])
-    git_dir = os.path.join(directory, ".git")
-    ref_file = os.path.abspath(f"{directory}/.git/clk-git-sync-reference")
+    directory = Path(directory or re.split("[:/]", url)[-1]).resolve()
+    git_dir = directory / ".git"
+    ref_file = git_dir / "clk-git-sync-reference"
     updated = False
     quiet = ["--quiet"] if quiet else []
-    parent = os.path.dirname(directory)
-    if not os.path.exists(parent):
+    parent = directory.parent
+    if not parent.exists():
         makedirs(parent)
-    if force and os.path.exists(directory):
+    if force and directory.exists():
         rm(directory)
-    if os.path.exists(directory):
-        assert os.path.exists(git_dir), (
+    if directory.exists():
+        assert git_dir.exists(), (
             f"Want to git sync {url} in {directory} but {directory}"
             " already exists and is not a git root"
         )
@@ -947,10 +954,10 @@ def git_sync(
             call(["git", "remote", "set-url", "origin", url])
             # always fetch, just in case something went missing
             call(["git", "fetch", "--tags"] + quiet)
-            if os.path.exists(ref_file) and open(ref_file).read() != commit_ish:
+            if ref_file.exists() and open(ref_file).read() != commit_ish:
                 # reference has changed. Unfortunately we can't continue with the single branch shallow repository
                 call(["git", "remote", "set-branches", "origin", "*"])
-                if os.path.exists(f"{directory}/.git/shallow"):
+                if (git_dir / "shallow").exists():
                     call(["git", "fetch", "--unshallow", "--tags"] + quiet)
             prevrev = check_output(["git", "rev-parse", "HEAD"], internal=True)
             # just to make sure the user hasn't done anything by himself
@@ -1319,8 +1326,9 @@ class ParameterType(click.ParamType):
 
 @contextmanager
 def json_file(location):
-    if not os.path.exists(location) or open(location).read().strip() == "":
-        open(location, "w").write("{}")
+    location = Path(location)
+    if not location.exists() or location.read_text().strip() == "":
+        location.write_text("{}")
     values = json.load(open(location))
     oldvalues = deepcopy(values)
     yield values

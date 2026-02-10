@@ -2,7 +2,6 @@
 
 import collections
 import json
-import os
 import re
 import traceback
 from datetime import datetime
@@ -107,7 +106,7 @@ class ProfileFactory:
 
 
 def load_settings(path):
-    if path is not None and os.path.exists(path):
+    if path is not None and Path(path).exists():
         with open(path) as f:
             try:
                 return json.load(f)
@@ -125,8 +124,8 @@ def write_settings(settings_path, settings, dry_run):
             del settings[key]
     if dry_run:
         return
-    parent_dir = os.path.dirname(settings_path)
-    if not os.path.exists(parent_dir):
+    parent_dir = Path(settings_path).parent
+    if not parent_dir.exists():
         makedirs(parent_dir)
     json_dump_file(settings_path, settings, internal=True)
 
@@ -247,13 +246,17 @@ class DirectoryProfile(Profile):
 
     def extension_location(self, name):
         name = self.extension_short_name(name)
-        return os.path.join(self.location, "extensions", name)
+        return str(Path(self.location) / "extensions" / name)
 
     def contains(self, path):
         """Indicate whether or not this profile contains this path"""
         canonlocation = Path(self.location).resolve()
         canonpath = Path(path).resolve()
-        return os.path.commonprefix([canonpath, canonlocation]) == str(canonlocation)
+        try:
+            canonpath.relative_to(canonlocation)
+            return True
+        except ValueError:
+            return False
 
     @property
     def executable_paths(self):
@@ -296,7 +299,7 @@ class DirectoryProfile(Profile):
                 f"Invalid extension name: {name}. An extension's name must contain only letters or _"
             )
         location = self.extension_location(name)
-        if os.path.exists(location):
+        if Path(location).exists():
             raise click.UsageError(f"{location} already exists")
         p = ProfileFactory.create_or_get_by_location(
             location, name=name, app_name=self.app_name, explicit=True
@@ -342,19 +345,19 @@ class DirectoryProfile(Profile):
     def extensions(self):
         if self.isextension:
             return []
-        extensions_dir = os.path.join(self.location, "extensions")
-        if not os.path.exists(extensions_dir):
+        extensions_dir = Path(self.location) / "extensions"
+        if not extensions_dir.exists():
             return []
         res = sorted(
             [
                 ProfileFactory.create_or_get_by_location(
                     location,
-                    name=self.name + "/" + os.path.basename(location),
+                    name=self.name + "/" + Path(location).name,
                     app_name=self.app_name,
                     isroot=False,
                     explicit=True,
                 )
-                for location in glob(os.path.join(extensions_dir, "*"))
+                for location in glob(str(extensions_dir / "*"))
                 if not location.endswith(self.JSON_FILE_EXTENSION)
                 and not location.endswith("_backup")
             ],
@@ -408,16 +411,17 @@ class DirectoryProfile(Profile):
         ]
         self._version = None
         self.location = location
-        self.settings_path = os.path.join(self.location, f"{self.app_name}.json")
+        self._location_path = Path(location)
+        self.settings_path = str(self._location_path / f"{self.app_name}.json")
         self.dry_run = dry_run
         self.name = name
 
         def file_name_if_exists(file_name):
-            return os.path.exists(file_name) and file_name or None
+            return Path(file_name).exists() and file_name or None
 
         self.persist = True
         self.prevented_persistence = False
-        self.pluginsdir = os.path.join(self.location, "plugins")
+        self.pluginsdir = str(self._location_path / "plugins")
         self.frozen_during_migration = False
         self.plugin_cache = set()
         self.old_version = self.version
@@ -432,18 +436,15 @@ class DirectoryProfile(Profile):
         self.computed_location = None
         self.compute_settings()
         self.backup_location = self.location + "_backup"
-        if os.path.exists(self.backup_location):
+        if Path(self.backup_location).exists():
             LOGGER.warning(
                 f"The backup directory for profile in location {self.location} already exist"
             )
         self.migration_impact = (
             [
-                os.path.basename(self.version_file_name),
+                Path(self.version_file_name).name,
             ]
-            + [
-                os.path.basename(f)
-                for f in glob(self.location + f"/{self.app_name}*json")
-            ]
+            + [Path(f).name for f in glob(self.location + f"/{self.app_name}*json")]
             + ["extensions"]
         )
 
@@ -508,18 +509,20 @@ class DirectoryProfile(Profile):
 
     @property
     def version_file_name(self):
-        return os.path.join(self.location, "version.txt")
+        return str(self._location_path / "version.txt")
 
     @property
     def version(self):
         if self._version is not None:
             return self._version
-        elif not os.path.exists(self.location) or not os.listdir(self.location):
+        loc = self._location_path
+        if not loc.exists() or not any(loc.iterdir()):
             return self.max_version
-        elif not os.path.exists(self.version_file_name):
+        version_file = Path(self.version_file_name)
+        if not version_file.exists():
             return 0
         else:
-            return int(open(self.version_file_name, "rb").read().decode("utf-8"))
+            return int(version_file.read_text())
 
     @property
     def max_version(self):
@@ -533,14 +536,14 @@ class DirectoryProfile(Profile):
         else:
             self.settings = (
                 load_settings(self.settings_path)
-                if os.path.exists(self.settings_path)
+                if Path(self.settings_path).exists()
                 else {}
             )
         self.computed_location = self.location
 
     @property
     def isextension(self):
-        return os.path.basename(os.path.dirname(self.location)) == "extensions"
+        return self._location_path.parent.name == "extensions"
 
     def alias_has_documentation(self):
         for settings_file in glob(self.location + f"/{self.app_name}*json"):
@@ -646,21 +649,18 @@ class DirectoryProfile(Profile):
             migrate_something |= migrate_settings_to_extension(
                 settings_level_file, name + "_from_settings"
             )
-        private = self.location + f"/{self.app_name}-private.json"
-        local = self.location + f"/{self.app_name}.json"
-        if os.path.exists(private):
-            if open(private, "rb").read().decode("utf-8").strip() != "{}":
+        private = Path(self.location) / f"{self.app_name}-private.json"
+        local = Path(self.location) / f"{self.app_name}.json"
+        if private.exists():
+            if private.read_text().strip() != "{}":
                 migrate_something = True
             else:
                 rm(private)
         if migrate_something is True:
             name = "migrated_local"
-            if (
-                os.path.exists(local)
-                and not open(local, "rb").read().decode("utf-8").strip() == "{}"
-            ):
-                migrate_settings_to_extension(local, name)
-            if os.path.exists(private):
+            if local.exists() and local.read_text().strip() != "{}":
+                migrate_settings_to_extension(str(local), name)
+            if private.exists():
                 move(private, local)
             with json_file(local) as values:
                 extensions = values.get("recipe", {})
@@ -702,7 +702,7 @@ class DirectoryProfile(Profile):
 
     def recipe_to_extension(self):
         recipes_dir = Path(self.location) / "recipes"
-        if os.path.exists(recipes_dir):
+        if recipes_dir.exists():
             extensions_dir = Path(self.location) / "extensions"
             move(recipes_dir, extensions_dir)
             for recipe in glob(f"{extensions_dir}/clk_recipe_*"):
@@ -760,16 +760,16 @@ class DirectoryProfile(Profile):
         LOGGER.action(f"migrate profile in {self.location}")
         if self.dry_run:
             return False
-        if os.path.exists(self.backup_location):
+        backup_path = Path(self.backup_location)
+        loc_path = self._location_path
+        if backup_path.exists():
             LOGGER.error(f"{self.backup_location} already exists. Cannot migrate.")
             return False
         makedirs(self.backup_location)
         for name in self.migration_impact:
-            if os.path.exists(os.path.join(self.location, name)):
-                copy(
-                    os.path.join(self.location, name),
-                    os.path.join(self.backup_location, name),
-                )
+            src = loc_path / name
+            if src.exists():
+                copy(src, backup_path / name)
         try:
             res = self._migrate(persist)
         except Exception as e:
@@ -787,13 +787,12 @@ class DirectoryProfile(Profile):
                     f" Restoring backup from {self.backup_location}"
                 )
             for name in self.migration_impact:
-                if os.path.exists(os.path.join(self.backup_location, name)):
-                    if os.path.exists(os.path.join(self.location, name)):
-                        rm(os.path.join(self.location, name))
-                    copy(
-                        os.path.join(self.backup_location, name),
-                        os.path.join(self.location, name),
-                    )
+                backup_file = backup_path / name
+                loc_file = loc_path / name
+                if backup_file.exists():
+                    if loc_file.exists():
+                        rm(loc_file)
+                    copy(backup_file, loc_file)
             rm(self.backup_location)
         return res
 

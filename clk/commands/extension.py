@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 
 import io
-import os
 import re
 import subprocess
 import tarfile
@@ -152,8 +151,8 @@ def rename(old, new):
     """Rename an extension"""
     if "/" not in new:
         new = "{}/{}".format(old.name.split("/")[0], new)
-    new_loc = config.extension_location(new)
-    if os.path.exists(new_loc):
+    new_loc = Path(config.extension_location(new))
+    if new_loc.exists():
         raise click.UsageError(f"{new_loc} already exists")
     move(old.location, new_loc)
     LOGGER.status(
@@ -188,8 +187,8 @@ def _copy(src, dest):
     """Copy an extension"""
     if "/" not in dest:
         dest = "{}/{}".format(src.name.split("/")[0], dest)
-    new_loc = config.extension_location(dest)
-    if os.path.exists(new_loc):
+    new_loc = Path(config.extension_location(dest))
+    if new_loc.exists():
         raise click.UsageError(f"{new_loc} already exists")
     copy(src.location, new_loc)
     LOGGER.status(
@@ -483,10 +482,11 @@ def process_url(name, url):
         urls.append(url)
         name = name or m["name"]
     elif url.startswith("file:"):
-        url = str(Path(url[len("file:") :]).absolute())
+        url_path = Path(url[len("file:") :]).absolute()
+        url = str(url_path)
         install_type = "file"
-        name = name or Path(url).name
-        urls.append(os.path.abspath(url))
+        name = name or url_path.name
+        urls.append(str(url_path))
     elif re.match(
         r"(\w+://)(.+@)*([\w\d\.]+)(:[\d]+)?/*(.*)|(.+@)*([\w\d\.]+):(.*)", url
     ):
@@ -494,8 +494,9 @@ def process_url(name, url):
         urls.append(url)
     elif Path(url).exists():
         install_type = "file"
-        name = name or Path(url).name
-        urls.append(os.path.abspath(url))
+        url_path = Path(url).absolute()
+        name = name or url_path.name
+        urls.append(str(url_path))
     else:
         install_type = "git"
         urls.append(url)
@@ -585,18 +586,19 @@ def install(
         )
 
     extension_path = (Path(profile.location) / "extensions").resolve() / name
+    git_dir = extension_path / ".git"
     if extension_path.exists() or extension_path.is_symlink():
         if force:
             rm(extension_path)
         else:
-            if not os.path.exists(f"{extension_path}/.git"):
+            if not git_dir.exists():
                 raise click.UsageError(
                     f"An extension already exists at location {extension_path}"
                     " Use --force to override it."
                 )
     if install_type == "git":
         # check if we already have that extension locally
-        if os.path.exists(f"{extension_path}/.git"):
+        if git_dir.exists():
             with cd(extension_path):
                 url = check_output(["git", "remote", "get-url", "origin"]).strip()
                 if url not in urls:

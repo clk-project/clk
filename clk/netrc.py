@@ -2,6 +2,7 @@
 
 import netrc
 import os
+from pathlib import Path
 
 
 class Netrc:
@@ -10,9 +11,10 @@ class Netrc:
 
     def get_password(self, servicename, username):
         try:
-            authenticator = netrc.netrc(
-                os.path.expanduser(os.environ.get("CLK_NETRC_LOCATION", ("~/.netrc")))
-            ).authenticators(username)
+            netrc_path = Path(
+                os.environ.get("CLK_NETRC_LOCATION", "~/.netrc")
+            ).expanduser()
+            authenticator = netrc.netrc(str(netrc_path)).authenticators(username)
             return authenticator[2]
         except:  # NOQA: E722
             return None

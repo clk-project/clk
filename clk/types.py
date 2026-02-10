@@ -4,6 +4,7 @@
 import os
 from datetime import datetime
 from itertools import product
+from pathlib import Path
 
 import click
 
@@ -146,9 +147,7 @@ class ExecutableType(Parameter):
     @cache_disk(expire=600)
     def path(self, ctx):
         return [
-            path
-            for path in os.environ["PATH"].split(os.pathsep)
-            if os.path.exists(path)
+            path for path in os.environ["PATH"].split(os.pathsep) if Path(path).exists()
         ]
 
 

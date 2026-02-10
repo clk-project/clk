@@ -804,14 +804,14 @@ class RedactMessages:
         self.stream = stream
 
     def write(self, message):
-        message = message.replace(
-            config.global_profile.location,
-            "./"
-            + os.path.relpath(
-                Path(config.global_profile.location).absolute(),
-                Path(".").absolute(),
-            ),
-        )
+        global_loc = Path(config.global_profile.location).absolute()
+        cwd = Path.cwd()
+        try:
+            relative_loc = "./" + str(global_loc.relative_to(cwd))
+        except ValueError:
+            # Paths are not relative to each other (e.g., different drives on Windows)
+            relative_loc = "./" + str(global_loc)
+        message = message.replace(config.global_profile.location, relative_loc)
         self.stream.write(message)
 
     def flush(self):
@@ -830,7 +830,7 @@ def reproducible_output_callback(ctx, attr, value):
 
 def report_file_callback(ctx, attr, value):
     if value and not ctx.resilient_parsing:
-        filepath = os.path.abspath(value)
+        filepath = Path(value).resolve()
         handler = logging.FileHandler(filepath)
         handler.setLevel(1)
         from clk import LOGGERS
@@ -976,22 +976,23 @@ def cache_disk(
 
         def inner_function(*args, **kwargs):
             key = compute_key(args, kwargs)
-            if not os.path.exists(cache_folder):
+            cache_path = Path(cache_folder)
+            if not cache_path.exists():
                 makedirs(cache_folder)
-            filepath = os.path.join(cache_folder, key)
-            if os.path.exists(filepath):
-                modified = os.path.getmtime(filepath)
+            filepath = cache_path / key
+            if filepath.exists():
+                modified = filepath.stat().st_mtime
                 age_seconds = time.time() - modified
                 if expire is None or age_seconds < expire:
                     if renew:
-                        Path(filepath).touch()
+                        filepath.touch()
                     return pickle.load(open(filepath, "rb"))
             result = f(*args, **kwargs)
             pickle.dump(result, open(filepath, "wb"))
             # to have a coherent behavior when using faketime in the tests, I need
             # to touch the file, so that it has the modification date specified
             # in faketime. I don't know why open is impervious to faketime
-            Path(filepath).touch()
+            filepath.touch()
             return result
 
         def drop(*args, **kwargs):

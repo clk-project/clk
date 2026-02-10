@@ -1,10 +1,10 @@
 #!/usr/bin/env python
 
-import os
 import subprocess
 import tempfile
 import webbrowser
 from collections import defaultdict
+from pathlib import Path
 from shlex import join as shlexjoin
 
 import click
@@ -424,10 +424,9 @@ def graph(
     elif output:
         open(output, "wb").write(out)
     elif format not in ["x11"]:
-        path = os.path.join(tempfile.gettempdir(), f"flow.{format}")
-        with open(path, "wb") as f:
-            f.write(out)
-        webbrowser.open("file://" + path)
+        path = Path(tempfile.gettempdir()) / f"flow.{format}"
+        path.write_bytes(out)
+        webbrowser.open(path.as_uri())
 
 
 def get_sub_commands(ctx, cmd, prefix=""):

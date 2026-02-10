@@ -241,14 +241,15 @@ class Config:
 
     @property
     def project(self):
-        if self._project and os.path.exists(self._project):
+        if self._project and Path(self._project).exists():
             return self._project
 
     @project.setter
     def project(self, value):
         if value and value != self._project:
-            if os.path.exists(value):
-                value = os.path.abspath(value)
+            value_path = Path(value)
+            if value_path.exists():
+                value = str(value_path.resolve())
                 self._project = value
                 # clean the profiles cache to make sure the new profile is taken
                 # into account
@@ -269,14 +270,11 @@ class Config:
 
     def find_project(self):
         """Find the current project directory"""
-        dir = os.getcwd()
-        prevdir = None
+        current = Path.cwd()
         localprofilename = "." + self.main_command.path
-        while dir != prevdir:
-            if os.path.exists(os.path.join(dir, localprofilename)):
-                return dir
-            prevdir = dir
-            dir = os.path.dirname(dir)
+        for dir in [current] + list(current.parents):
+            if (dir / localprofilename).exists():
+                return str(dir)
         return None
 
     def require_project(self):
@@ -305,7 +303,7 @@ class Config:
         for k, v in self.override_env.items():
             os.environ[k] = v
         self.env = {
-            k: os.pathsep.join(os.path.normpath(p) for p in ps if p)
+            k: os.pathsep.join(str(Path(p)) for p in ps if p)
             for k, ps in self.env.items()
         }
         for k, v in self.env.items():
@@ -400,7 +398,7 @@ class Config:
     @property
     def workspace(self):
         if self.project:
-            return os.path.dirname(self.project)
+            return str(Path(self.project).parent)
         else:
             return None
 
@@ -408,7 +406,7 @@ class Config:
     def local_profile(self):
         if self.project:
             return ProfileFactory.create_or_get_by_location(
-                os.path.join(self.project, "." + self.main_command.path),
+                str(Path(self.project) / ("." + self.main_command.path)),
                 name="local",
                 app_name=self.app_name,
                 explicit=True,
@@ -449,8 +447,9 @@ class Config:
     @property
     def workspace_profile(self):
         if self.project:
+            workspace_path = Path(self.project).parent / f".{self.main_command.path}"
             return ProfileFactory.create_or_get_by_location(
-                os.path.dirname(self.project) + f"/.{self.main_command.path}",
+                str(workspace_path),
                 name="workspace",
                 app_name=self.app_name,
                 explicit=True,

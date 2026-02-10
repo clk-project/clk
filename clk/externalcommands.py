@@ -55,11 +55,13 @@ class ExternalCommandResolver(CommandResolver):
         if not hasattr(self, "_external_cmds"):
             self._external_cmds = []
             for path in reversed(self.cmddirs):
-                if os.path.isdir(path):
+                p = Path(path)
+                if p.is_dir():
                     for file in os.listdir(path):
-                        abspath = os.path.join(path, file)
-                        if os.path.isfile(abspath) and os.access(abspath, os.X_OK):
-                            cmd_name, ext = os.path.splitext(file)
+                        abspath = p / file
+                        if abspath.is_file() and os.access(abspath, os.X_OK):
+                            cmd_name = abspath.stem
+                            ext = abspath.suffix
                             if ext in (".sh", ".py"):
                                 name = cmd_name + "@" + ext[1:]
                             else:
@@ -72,7 +74,7 @@ class ExternalCommandResolver(CommandResolver):
         cmdhelp = "external command"
         command_name = name
         paths = reversed(self.cmddirs)
-        command_path = os.path.abspath(which(command_name, os.pathsep.join(paths)))
+        command_path = str(Path(which(command_name, os.pathsep.join(paths))).resolve())
         options = []
         arguments = []
         flags = []

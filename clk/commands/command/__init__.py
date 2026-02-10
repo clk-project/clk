@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 
 import json
-import os
 from pathlib import Path
 
 import click
@@ -572,10 +571,11 @@ def {command_name.replace("-", "_")}():
 @flag("--force", help="Overwrite destination")
 def rename(customcommand, new_name, force):
     """Rename a custom commands"""
-    ext = os.path.splitext(customcommand.customcommand_path)[1]
+    cmd_path = Path(customcommand.customcommand_path)
+    ext = cmd_path.suffix
     if ext in {".sh", ".py"} and not new_name.endswith(ext):
         new_name += ext
-    new_path = Path(customcommand.customcommand_path).parent / new_name
+    new_path = cmd_path.parent / new_name
     if new_path.exists() and not force:
         raise click.UsageError(
             f"I won't overwrite {new_path} unless explicitly called with --force"
