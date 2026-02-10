@@ -778,39 +778,49 @@ class Group(
         super().invoke_handle_deprecated(ctx, *args, **kwargs)
         return super().invoke(ctx, *args, **kwargs)
 
+    def _extract_help_option(self, args):
+        """Extract --help or --help-all from args, returning (help_option, filtered_args)."""
+        for opt in ("--help", "--help-all"):
+            if opt in args:
+                index = args.index(opt)
+                return opt, args[:index] + args[index + 1 :]
+        return None, args
+
+    def _trim_complete_arguments_at_subcommand(self, ctx):
+        """Remove subcommand args from complete_arguments."""
+        protected_args = get_protected_args(ctx)
+        if protected_args and protected_args[0] in ctx.complete_arguments:
+            index = ctx.complete_arguments.index(protected_args[0])
+            ctx.complete_arguments = ctx.complete_arguments[:index]
+        return protected_args
+
     def parse_args(self, ctx, args):
         res, remaining = self.split_args_remaining(ctx, args)
-        help_option = (
-            ("--help" in res) and "--help" or ("--help-all" in res) and "--help-all"
-        )
-        if help_option:
-            index_help = res.index(help_option)
-            res = res[:index_help] + res[index_help + 1 :]
+        help_option, res = self._extract_help_option(res)
         self.append_commandline_settings_once(ctx, res)
+
         args = self.get_extra_args(implicit_only=("--no-parameter" in args)) + list(
             remaining
         )
         if help_option:
             args = [help_option] + args
         ctx.complete_arguments = args[:]
+
         LOGGER.develop(
             f"In the {self.__class__.__name__} '{ctx.command.path}', parsing the args {args}"
         )
+
+        # Handle default command before super call to avoid help message issues
         if self.default_cmd_name is not None and not ctx.resilient_parsing:
-            # this must be done before calling the super class to avoid the help message
             args = args or [self.default_cmd_name]
+
         newargs = click.Group.parse_args(self, ctx, args)
         self.clear_parameter_source_for_completion(ctx)
-        protected_args = get_protected_args(ctx)
-        if protected_args and protected_args[0] in ctx.complete_arguments:
-            # we want to record the complete arguments given to the command, except
-            # for the part that starts a new subcommand. After parse_args, the
-            # protected_args informs us of the part to keep away
-            index_first_subcommand = ctx.complete_arguments.index(protected_args[0])
-            ctx.complete_arguments = ctx.complete_arguments[:index_first_subcommand]
+
+        protected_args = self._trim_complete_arguments_at_subcommand(ctx)
         if self.default_cmd_name is not None and not ctx.resilient_parsing:
-            # and this must be done here in case option where passed to the group
             set_protected_args(ctx, protected_args or [self.default_cmd_name])
+
         return newargs
 
     def format_options(self, ctx, formatter, include_auto_opts=False):
