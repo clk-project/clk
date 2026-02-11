@@ -14,6 +14,7 @@ from clk.overloads import (
     Group,
     GroupCommandResolver,
     MainCommand,
+    MainGroupCommandResolver,
     entry_point,
 )
 
@@ -49,6 +50,7 @@ def classic_setup(
         CustomCommandResolver(),
         CoreCommandResolver(),
         IntermediateEphemeralGroupResolver(),
+        MainGroupCommandResolver(),
     ]
     config.distribution_profile_location = distribution_profile_location
 

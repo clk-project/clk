@@ -131,3 +131,16 @@ Here are some use cases that hopefully will have the following properties:
   :END:
 
   In that case, you would like to take a look at [[file:creating_extensions.org][how to create your own extensions]].
+* plugins
+  :PROPERTIES:
+  :CREATED:  [2026-02-11 22:00]
+  :END:
+
+  In case clk does not fit your use cases totally, and you want to dynamically
+  monkey-patch its internal (at your own risks), you can use the plugin
+  mechanism.
+
+  We [[file:using_a_plugin.org][describe here]] how a command could be added along with some modification of
+  behavior of clk invoke system. This is almost dark magic, so we don't actually
+  expect you to need this, but it has been useful in a few very specific
+  situations.

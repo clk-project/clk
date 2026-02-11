@@ -8,6 +8,7 @@
 - [flow](#8ad4d10e-1ece-45ef-a558-905b5996ddc4)
 - [is it a tool or a library?](#f291ada8-c504-4624-baa7-9c7d600d5c53)
 - [publish my code](#875fe27e-ca39-4733-a459-e2a35bcfa124)
+- [plugins](#orgca4a716)
 
 Here are some use cases that hopefully will have the following properties:
 
@@ -112,3 +113,12 @@ If you don't want to use the clk command line tool, you can [roll your own](roll
 # publish my code
 
 In that case, you would like to take a look at [how to create your own extensions](creating_extensions.md).
+
+
+<a id="orgca4a716"></a>
+
+# plugins
+
+In case clk does not fit your use cases totally, and you want to dynamically monkey-patch its internal (at your own risks), you can use the plugin mechanism.
+
+We [describe here](using_a_plugin.md) how a command could be added along with some modification of behavior of clk invoke system. This is almost dark magic, so we don't actually expect you to need this, but it has been useful in a few very specific situations.

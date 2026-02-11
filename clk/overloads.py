@@ -32,7 +32,6 @@ from clk.core import cache_disk, get_ctx, main_command_decoration, run, settings
 from clk.lib import ParameterType, cd, check_output, ordered_unique, updated_env
 from clk.log import get_logger
 from clk.plugin import load_plugins
-from clk.triggers import TriggerMixin
 
 LOGGER = get_logger(__name__)
 
@@ -88,7 +87,6 @@ def get_command2(path):
         return commands_cache[path]
     if path == config.main_command.path:
         return config.main_command, None
-
     pathsplit = path.split(".")
     cmd_name = pathsplit[-1]
     if pathsplit[0] == config.main_command.path:
@@ -587,7 +585,6 @@ class DeprecatedMixin:
 class Command(
     MissingDocumentationMixin,
     DeprecatedMixin,
-    TriggerMixin,
     HelpMixin,
     ExtraParametersMixin,
     RememberParametersMixin,
@@ -699,7 +696,7 @@ class GroupCommandResolver(CommandResolver):
     def _list_command_paths(self, parent):
         ctx = click_get_current_context_safe()
         res = {
-            parent.path + "." + cmd for cmd in super(Group, parent).list_commands(ctx)
+            parent.path + "." + cmd for cmd in click.Group.list_commands(parent, ctx)
         }
         return res
 
@@ -707,15 +704,26 @@ class GroupCommandResolver(CommandResolver):
         path = path.split(".")
         cmd_name = path[-1]
         ctx = click_get_current_context_safe()
-        return super(Group, parent).get_command(ctx, cmd_name)
+        return click.Group.get_command(parent, ctx, cmd_name)
 
     def add_edition_hint(self, ctx, command, formatter):
         cmd, resolver = get_command2(command.path)
         while isinstance(resolver, GroupCommandResolver):
             ctx = ctx.parent
             cmd, resolver = get_command2(ctx.command.path)
-
         resolver.add_edition_hint(ctx, ctx.command, formatter)
+
+
+class MainGroupCommandResolver(GroupCommandResolver):
+    name = "maingroup"
+
+    def _list_command_paths(self, parent):
+        ctx = click_get_current_context_safe()
+        res = click.Group.list_commands(parent, ctx)
+        return res
+
+    def add_edition_hint(self, ctx, command, formatter):
+        pass
 
 
 allow_dotted_commands = False
@@ -725,7 +733,6 @@ class Group(
     click_didyoumean.DYMMixin,
     MissingDocumentationMixin,
     DeprecatedMixin,
-    TriggerMixin,
     HelpMixin,
     ExtraParametersMixin,
     RememberParametersMixin,
@@ -1426,7 +1433,6 @@ class CommandSettingsKeyType(ParameterType):
 class MainCommand(
     click_didyoumean.DYMMixin,
     DeprecatedMixin,
-    TriggerMixin,
     HelpMixin,
     ExtraParametersMixin,
     RememberParametersMixin,

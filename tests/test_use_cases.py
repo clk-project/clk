@@ -99,3 +99,7 @@ def test_multi_environment_deployment_tool():
 
 def test_wrapping_a_cloud_provider_cli():
     call_script("wrapping_a_cloud_provider_cli.sh")
+
+
+def test_using_a_plugin():
+    call_script("using_a_plugin.sh")
