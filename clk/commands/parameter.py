@@ -201,7 +201,11 @@ def unset(cmds):
 @table_format(default="key_value")
 @table_fields(choices=["command", "parameters"])
 @argument(
-    "cmds", nargs=-1, default=None, type=CommandType(), help="The commands to show"
+    "cmds",
+    nargs=-1,
+    default=None,
+    type=CommandSettingsKeyType("parameters"),
+    help="The commands to show",
 )
 @pass_context
 def show(ctx, name_only, cmds, under, fields, format, **kwargs):
