@@ -8,7 +8,7 @@ CURRENT_CLK="$(clk python -c 'from pathlib import Path; import clk ; print(Path(
 
 python3 -m venv venv
 ./venv/bin/pip install ./mytool
-export PATH="$(pwd)/venv/bin/:${PATH}"
+echo "export PATH=$(pwd)/venv/bin/:${PATH}" >> "${TMP}/.envrc" && direnv allow
 
 # this reproduces the logic in the INSTALLER function in the root Earthfile. It
 # might be good to refactor this in the future.

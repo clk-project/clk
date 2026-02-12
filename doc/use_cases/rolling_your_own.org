@@ -32,7 +32,7 @@ clk fork mytool
 #+END_SRC
 
 #+RESULTS: fork
-: Now, install mytool with either `pipx install ./mytool` or `python3 -m venv venv && ./venv/bin/pip install ./mytool` followed by `export "PATH=$(pwd)/venv/bin/:${PATH}"`. Then, enable its completion with `mytool completion install` and don't forget to have fun
+: Now, install mytool with either `pipx install ./mytool` or `python3 -m venv venv && ./venv/bin/pip install ./mytool` followed by `export PATH="$(pwd)/venv/bin/:${PATH}"`. Then, enable its completion with `mytool completion install` and don't forget to have fun
 
 Now, simply install this tool, like suggested.
 
@@ -45,7 +45,7 @@ CURRENT_CLK="$(clk python -c 'from pathlib import Path; import clk ; print(Path(
 #+BEGIN_SRC bash :results none :exports code :session 807c02cd-a6cf-432f-b982-530fc81dbbf4 :noweb yes
 python3 -m venv venv
 ./venv/bin/pip install ./mytool
-export PATH="$(pwd)/venv/bin/:${PATH}"
+echo "export PATH=$(pwd)/venv/bin/:${PATH}" >> "${TMP}/.envrc" && direnv allow
 #+END_SRC
 
 #+NAME: install-current-clk

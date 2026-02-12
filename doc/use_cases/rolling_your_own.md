@@ -13,14 +13,14 @@ clk provides out of the box a command to bootstrap your own tool.
 clk fork mytool
 ```
 
-    Now, install mytool with either `pipx install ./mytool` or `python3 -m venv venv && ./venv/bin/pip install ./mytool` followed by `export "PATH=$(pwd)/venv/bin/:${PATH}"`. Then, enable its completion with `mytool completion install` and don't forget to have fun
+    Now, install mytool with either `pipx install ./mytool` or `python3 -m venv venv && ./venv/bin/pip install ./mytool` followed by `export PATH="$(pwd)/venv/bin/:${PATH}"`. Then, enable its completion with `mytool completion install` and don't forget to have fun
 
 Now, simply install this tool, like suggested.
 
 ```bash
 python3 -m venv venv
 ./venv/bin/pip install ./mytool
-export PATH="$(pwd)/venv/bin/:${PATH}"
+echo "export PATH=$(pwd)/venv/bin/:${PATH}" >> "${TMP}/.envrc" && direnv allow
 ```
 
 From there, you can play with this new toy.
