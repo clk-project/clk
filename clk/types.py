@@ -14,7 +14,6 @@ from clk.core import ColorType as Color  # noqa: F401
 from clk.core import DynamicChoiceType as DynamicChoice
 from clk.core import ExtensionType as Extension  # noqa: F401
 from clk.core import cache_disk
-from clk.launcher import LauncherType as launcher  # noqa: F401
 from clk.lib import ParameterType as Parameter
 from clk.log import get_logger
 from clk.overloads import (  # noqa: F401

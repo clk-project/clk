@@ -524,14 +524,6 @@ def main_command_decoration(f, cls, **kwargs):
         default=None,
     )(f)
     f = main_command_option(
-        "--exit-on-log-level",
-        default=None,
-        type=click.Choice(LOG_LEVELS.keys()),
-        callback=exit_on_log_level_callback,
-        help="Exit when one log of this level is issued."
-        " Useful to reproduce the -Werror behavior of gcc",
-    )(f)
-    f = main_command_option(
         "--post-mortem/--no-post-mortem",
         help="Run a post-mortem debugger in case of exception",
         callback=post_mortem_callback,
@@ -685,11 +677,6 @@ def log_level_callback(ctx, attr, value):
 
 
 ask_secret_callback = _make_config_setter("ask_secret")
-
-
-@main_command_options_callback
-def exit_on_log_level_callback(ctx, attr, value):
-    log.exit_on_log_level = value
 
 
 debug_callback = _make_log_level_setter("debug")
@@ -860,11 +847,7 @@ def post_mortem():
 def main():
     exitcode = 0
     try:
-        try:
-            config.main_command()
-        except:  # NOQA: E722
-            log.exit_on_log_level = None
-            raise
+        config.main_command()
     except click.exceptions.Abort as e:
         if isinstance(e.__context__, KeyboardInterrupt):
             click.echo("\nAborted!", err=True)
@@ -909,7 +892,7 @@ def main():
         LOGGER.error(str(e))
         post_mortem()
         exitcode = 1
-    except (Exception, log.LogLevelExitException) as e:
+    except Exception as e:
         log_trace()
         LOGGER.exception(str(e))
         LOGGER.error(

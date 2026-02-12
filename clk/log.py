@@ -22,15 +22,6 @@ class DevelopColorFormatter(click_log.core.ColorFormatter):
         return logging.Formatter.format(self, record)
 
 
-class LogLevelExitException(Exception):
-    def __init__(self):
-        message = f"Aborting because log level greater than {exit_on_log_level}"
-        super().__init__(message)
-
-
-exit_on_log_level = None
-
-
 class Handler(logging.Handler):
     """clk log handler
 
@@ -49,11 +40,6 @@ class Handler(logging.Handler):
             click.echo(msg, err=True)
         except Exception:
             self.handleError(record)
-        if (
-            exit_on_log_level is not None
-            and record.levelno >= LOG_LEVELS[exit_on_log_level.lower()]
-        ):
-            raise LogLevelExitException()
 
 
 default_handler = Handler()

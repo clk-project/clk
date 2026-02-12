@@ -212,13 +212,7 @@ class AliasCommandResolver(CommandResolver):
 
             # Build the final command with arguments
             arguments = clean_flow_arguments(ctx.complete_arguments[:])
-            if "--" in commands[-1]:
-                separator_index = commands[-1].index("--")
-                processed_part = commands[-1][:separator_index]
-                ignored_part = commands[-1][separator_index + 1 :]
-                whole_command = processed_part + arguments + ["--"] + ignored_part
-            else:
-                whole_command = commands[-1] + arguments
+            whole_command = commands[-1] + arguments
 
             # Resolve context chain
             original_command_ctx = get_ctx(whole_command, side_effects=True)

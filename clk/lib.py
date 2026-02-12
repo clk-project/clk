@@ -274,12 +274,7 @@ def call(args, **kwargs):
         )
         internal = kwargs["force"]
         del kwargs["force"]
-    launcher = kwargs.get("launcher_command")
-    if "launcher_command" in kwargs.keys():
-        del kwargs["launcher_command"]
     args = [str(arg) for arg in args]
-    if launcher:
-        args = launcher + args
     args = [str(arg) for arg in args]
     message = " ".join(quote(arg) for arg in args)
     action_message = f"run: {message}"
