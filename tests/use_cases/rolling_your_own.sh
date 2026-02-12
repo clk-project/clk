@@ -9,6 +9,7 @@ CURRENT_CLK="$(clk python -c 'from pathlib import Path; import clk ; print(Path(
 python3 -m venv venv
 ./venv/bin/pip install ./mytool
 echo "export PATH=$(pwd)/venv/bin/:${PATH}" >> "${TMP}/.envrc" && direnv allow
+source "${TMP}/.envrc"
 
 # this reproduces the logic in the INSTALLER function in the root Earthfile. It
 # might be good to refactor this in the future.
@@ -43,9 +44,8 @@ cat <<EOF > "${TMP}/mytool-root/mytool.json"
     }
 }
 EOF
-eval "$(direnv hook bash)"
-export MYTOOLCONFIGDIR=${TMP}/mytool-root
 echo "export MYTOOLCONFIGDIR=${TMP}/mytool-root" >> "${TMP}/.envrc" && direnv allow
+source "${TMP}/.envrc"
 
 mytool command create bash hello-world --description "Just say hello" --body 'echo "Hello world"'
 

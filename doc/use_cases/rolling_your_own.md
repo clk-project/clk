@@ -21,6 +21,7 @@ Now, simply install this tool, like suggested.
 python3 -m venv venv
 ./venv/bin/pip install ./mytool
 echo "export PATH=$(pwd)/venv/bin/:${PATH}" >> "${TMP}/.envrc" && direnv allow
+source "${TMP}/.envrc"
 ```
 
 From there, you can play with this new toy.

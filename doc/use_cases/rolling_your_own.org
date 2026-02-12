@@ -43,9 +43,10 @@ CURRENT_CLK="$(clk python -c 'from pathlib import Path; import clk ; print(Path(
 
 #+NAME: install
 #+BEGIN_SRC bash :results none :exports code :session 807c02cd-a6cf-432f-b982-530fc81dbbf4 :noweb yes
-python3 -m venv venv
-./venv/bin/pip install ./mytool
-echo "export PATH=$(pwd)/venv/bin/:${PATH}" >> "${TMP}/.envrc" && direnv allow
+  python3 -m venv venv
+  ./venv/bin/pip install ./mytool
+  echo "export PATH=$(pwd)/venv/bin/:${PATH}" >> "${TMP}/.envrc" && direnv allow
+  source "${TMP}/.envrc"
 #+END_SRC
 
 #+NAME: install-current-clk
@@ -88,9 +89,8 @@ From there, you can play with this new toy.
       }
   }
   EOF
-  eval "$(direnv hook bash)"
-  export MYTOOLCONFIGDIR=${TMP}/mytool-root
   echo "export MYTOOLCONFIGDIR=${TMP}/mytool-root" >> "${TMP}/.envrc" && direnv allow
+  source "${TMP}/.envrc"
 #+END_SRC
 
 #+NAME: create-command
