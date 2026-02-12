@@ -25,9 +25,9 @@ elif test "$from" = "build"
 then
     ./venv/bin/pip install --force-reinstall /dist/*
 else
-    # fall back in assuming that I run this from my machine, where clk is
+    # fallback in assuming that I run this from my machine, where clk is
     # installed in editable mode
-    ./venv/bin/pip install --force-reinstall "${CURRENT_CLK}"
+    ./venv/bin/pip install --force-reinstall --editable "${CURRENT_CLK}"
 fi
 
 mkdir -p "${TMP}/mytool-root"
