@@ -11,3 +11,4 @@ README.html
 /tests/.coverage
 /.agent-shell
 **/.claude/settings.local.json
+**/venv
