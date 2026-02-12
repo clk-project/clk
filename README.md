@@ -53,6 +53,12 @@ Install with
 curl -sSL https://clk-project.org/install.sh | bash
 ```
 
+Update with
+
+```bash
+clk update
+```
+
 Then create a hello world command with
 
 ```bash

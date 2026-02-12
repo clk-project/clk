@@ -62,6 +62,23 @@ might write even more [[./doc][documentation]].
     curl -sSL https://clk-project.org/install.sh | bash
   #+END_SRC
 
+  #+NAME: cwd
+  #+BEGIN_SRC bash :results none :exports none :session fe60735c-91c2-4f54-8ae2-7e3b307f27a5
+    cd tests/use_cases/
+  #+END_SRC
+
+  #+NAME: init
+  #+BEGIN_SRC bash :results none :exports none :session fe60735c-91c2-4f54-8ae2-7e3b307f27a5
+    . ./sandboxing.sh
+  #+END_SRC
+
+  Update with
+
+  #+NAME: update
+  #+BEGIN_SRC bash :results none :exports code
+    clk update
+  #+END_SRC
+
   Then create a hello world command with
 
   #+NAME: cwd
