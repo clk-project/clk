@@ -84,6 +84,9 @@ cat <<EOF > "${TMP}/clk-root/clk.json"
         "parameter.show": [
             "--no-color"
         ],
+        "plugin.show": [
+            "--no-color"
+        ],
         "alias.show": [
             "--no-color"
         ]

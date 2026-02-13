@@ -26,7 +26,7 @@ side-files:
 
 test-files:
     FROM scratch
-    COPY --dir tests doc /app/
+    COPY --dir tests doc contrib /app/
     SAVE ARTIFACT /app /app
 
 git-files:
@@ -91,7 +91,7 @@ test:
     RUN mkdir coverage
     RUN coverage run --source clk -m clk completion --case-insensitive install bash && echo 'source "${HOME}/.bash_completion"' >> "${HOME}/.bashrc"
     RUN cd coverage && coverage combine --append ../.coverage
-    COPY --dir +test-files/app/tests +test-files/app/doc /app
+    COPY --dir +test-files/app/* /app
     ARG test_args
     ENV CLK_ALLOW_INTRUSIVE_TEST=True
     RUN coverage run --source clk -m pytest ${test_args}
