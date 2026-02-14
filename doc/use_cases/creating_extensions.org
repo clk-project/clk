@@ -24,6 +24,7 @@ work with k8s, you would need to create commands to:
   :PROPERTIES:
   :CREATED:  [2025-12-30 17:36]
   :ID:       ce7e4602-baad-4ce6-8b44-33d5480a264b
+  :CUSTOM_ID: 578ef2c9-a4d4-448a-9d56-be4afe4ac64a
   :END:
 
 The real life extension can be found in [[https://github.com/clk-project/clk_extension_k8s][here]]. In this document, we will mock its
@@ -82,10 +83,10 @@ clk k8s run-dev-env --flow
 : starting controllers
 : running development environment
 
-
 * enable/disable it
   :PROPERTIES:
   :CREATED:  [2025-12-30 17:36]
+  :CUSTOM_ID: 72f61beb-cd79-4fdd-86a2-2c56ef08292c
   :END:
 
 Note that once it is there, the extension is automatically enabled.
@@ -120,6 +121,7 @@ clk k8s run-dev-env --flow
 * publish it
   :PROPERTIES:
   :CREATED:  [2025-12-30 17:37]
+  :CUSTOM_ID: 21d2895b-db01-4a09-b2a2-18e34e2830b6
   :END:
 
 In case you lost that extension folder and want to find it again, simply run.
@@ -139,6 +141,7 @@ colleagues then can get it with ~clk extension install yourextensionurl~.
   :PROPERTIES:
   :CREATED:  [2025-12-30 17:37]
   :ID:       2907a837-a58d-479b-8d19-7cba1c9a408f
+  :CUSTOM_ID: b7bcef53-dd68-4660-9c5c-d9aa029d1a72
   :END:
 
 Let's try to install another extension for the sake of learning. Let's try to
@@ -277,6 +280,128 @@ _____
                                                                        /.-~
 #+end_example
 
+* using temporary files and directories
+  :PROPERTIES:
+  :CREATED:  [2025-12-30 17:38]
+  :ID:       a1b2c3d4-5678-90ab-cdef-1234567890ab
+  :CUSTOM_ID: 795e915b-29f5-4fbc-a8d9-480a094d3e37
+  :END:
+
+When writing extensions, you often need to work with temporary files or
+directories. clk provides two helpers in ~clk.lib~: ~tempdir~ and
+~temporary_file~. They are context managers that automatically clean up after
+themselves.
+
+** tempdir
+   :PROPERTIES:
+   :CUSTOM_ID: 60d4bff1-366d-45cb-b0ce-3bb7468734aa
+   :END:
+
+~tempdir()~ creates a temporary directory and returns its path. It is useful
+when you need to extract archives and move files around.
+
+Let's mock a typical use case: installing a tool by extracting an archive and
+moving the binary to a destination. This pattern is used in the [[https://github.com/clk-project/clk_extension_k8s][k8s extension]]
+to install helm, tilt, etc.
+
+#+NAME: create_tempdir_extension
+#+BEGIN_SRC bash :results none :exports code :session f47428c2-56ea-4d91-97d9-4f2ff63ef052
+clk extension create tempdir-demo
+#+END_SRC
+
+#+NAME: create_tempdir_command
+#+BEGIN_SRC bash :results none :exports code :session f47428c2-56ea-4d91-97d9-4f2ff63ef052
+clk command create --extension tempdir-demo python tempdir-demo --group --description "Demonstrate tempdir usage" --body '
+from pathlib import Path
+from clk.lib import tempdir, makedirs, move
+
+@tempdir_demo.command()
+def install_mock_tool():
+    """Mock installing a tool by extracting an archive to a temp dir."""
+    install_dir = Path(".")
+    with tempdir() as d:
+        # Simulate extracting an archive (in real code: extract(url, d))
+        extracted_dir = Path(d) / "tool-1.0.0"
+        makedirs(extracted_dir)
+        tool_binary = extracted_dir / "tool"
+        tool_binary.write_text("#!/bin/sh\necho tool v1.0.0")
+
+        # Move the binary to install location
+        dest = install_dir / "mock-tool"
+        move(tool_binary, dest)
+        print(f"Installed: {dest.read_text()}")
+    # temp dir is automatically cleaned up
+    # clean up the installed file for the demo
+    (install_dir / "mock-tool").unlink()
+'
+#+END_SRC
+
+#+NAME: run-tempdir-demo
+#+BEGIN_SRC bash :results verbatim :cache yes :exports both :session f47428c2-56ea-4d91-97d9-4f2ff63ef052
+clk tempdir-demo install-mock-tool
+#+END_SRC
+
+#+RESULTS[f49599b43da3200cf9e53511db4e2aa74ea4fcc3]: run-tempdir-demo
+: Installed: #!/bin/sh
+: echo tool v1.0.0
+
+** temporary_file
+   :PROPERTIES:
+   :CUSTOM_ID: d18237dd-7e05-4225-b9de-bf63f09b6d99
+   :END:
+
+~temporary_file()~ creates a temporary file. You can optionally pass ~content~
+to write initial content. The file is automatically removed when leaving the
+context.
+
+This is useful when you need to pass configuration to a command that reads from
+a file. The [[https://github.com/clk-project/clk_extension_k8s][k8s extension]] uses this pattern to pass YAML configuration to
+kubectl.
+
+#+NAME: create_tempfile_command
+#+BEGIN_SRC bash :results none :exports code :session f47428c2-56ea-4d91-97d9-4f2ff63ef052
+clk command create --extension tempdir-demo python apply-mock-config --description "Demonstrate temporary_file usage" --body '
+from clk.lib import temporary_file, check_output
+
+@command()
+def apply_mock_config():
+    """Mock applying a k8s config using a temporary file."""
+    config = """apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: my-config
+data:
+  key: value
+"""
+    with temporary_file(content=config) as f:
+        # In real code: call(["kubectl", "apply", "-f", f.name])
+        # Here we just cat the file to show it works
+        result = check_output(["cat", f.name])
+        print("Applied config:")
+        print(result.strip())
+    # temp file is automatically cleaned up
+'
+#+END_SRC
+
+#+NAME: run-tempfile-demo
+#+BEGIN_SRC bash :results verbatim :cache yes :exports both :session f47428c2-56ea-4d91-97d9-4f2ff63ef052
+clk apply-mock-config
+#+END_SRC
+
+#+RESULTS[d60f9eef68024528f834ad05173540d29f525def]: run-tempfile-demo
+: Applied config:
+: apiVersion: v1
+: kind: ConfigMap
+: metadata:
+:   name: my-config
+: data:
+:   key: value
+
+#+NAME: cleanup-tempdir-demo
+#+BEGIN_SRC bash :results none :exports none :session f47428c2-56ea-4d91-97d9-4f2ff63ef052
+clk extension remove tempdir-demo
+#+END_SRC
+
 #+NAME: all
 #+BEGIN_SRC bash :results none :exports none :tangle ../../tests/use_cases/creating_extensions.sh :noweb yes :shebang "#!/bin/bash -eu"
 <<init>>
@@ -300,4 +425,16 @@ check-result(remove-extension)
 check-result(install-extension-github)
 
 check-result(install-extension-name)
+
+<<create_tempdir_extension>>
+
+<<create_tempdir_command>>
+
+check-result(run-tempdir-demo)
+
+<<create_tempfile_command>>
+
+check-result(run-tempfile-demo)
+
+<<cleanup-tempdir-demo>>
 #+END_SRC

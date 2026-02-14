@@ -283,4 +283,104 @@ diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
 echo "Something went wrong when trying install-extension-name"
 exit 1
 }
+
+
+clk extension create tempdir-demo
+
+clk command create --extension tempdir-demo python tempdir-demo --group --description "Demonstrate tempdir usage" --body '
+from pathlib import Path
+from clk.lib import tempdir, makedirs, move
+
+@tempdir_demo.command()
+def install_mock_tool():
+    """Mock installing a tool by extracting an archive to a temp dir."""
+    install_dir = Path(".")
+    with tempdir() as d:
+        # Simulate extracting an archive (in real code: extract(url, d))
+        extracted_dir = Path(d) / "tool-1.0.0"
+        makedirs(extracted_dir)
+        tool_binary = extracted_dir / "tool"
+        tool_binary.write_text("#!/bin/sh\necho tool v1.0.0")
+
+        # Move the binary to install location
+        dest = install_dir / "mock-tool"
+        move(tool_binary, dest)
+        print(f"Installed: {dest.read_text()}")
+    # temp dir is automatically cleaned up
+    # clean up the installed file for the demo
+    (install_dir / "mock-tool").unlink()
+'
+
+
+run-tempdir-demo_code () {
+      clk tempdir-demo install-mock-tool
+}
+
+run-tempdir-demo_expected () {
+      cat<<"EOEXPECTED"
+Installed: #!/bin/sh
+echo tool v1.0.0
+EOEXPECTED
+}
+
+echo 'Run run-tempdir-demo'
+
+{ run-tempdir-demo_code || true ; } > "${TMP}/code.txt" 2>&1
+run-tempdir-demo_expected > "${TMP}/expected.txt" 2>&1
+diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+echo "Something went wrong when trying run-tempdir-demo"
+exit 1
+}
+
+
+clk command create --extension tempdir-demo python apply-mock-config --description "Demonstrate temporary_file usage" --body '
+from clk.lib import temporary_file, check_output
+
+@command()
+def apply_mock_config():
+    """Mock applying a k8s config using a temporary file."""
+    config = """apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: my-config
+data:
+  key: value
+"""
+    with temporary_file(content=config) as f:
+        # In real code: call(["kubectl", "apply", "-f", f.name])
+        # Here we just cat the file to show it works
+        result = check_output(["cat", f.name])
+        print("Applied config:")
+        print(result.strip())
+    # temp file is automatically cleaned up
+'
+
+
+run-tempfile-demo_code () {
+      clk apply-mock-config
+}
+
+run-tempfile-demo_expected () {
+      cat<<"EOEXPECTED"
+Applied config:
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: my-config
+data:
+  key: value
+EOEXPECTED
+}
+
+echo 'Run run-tempfile-demo'
+
+{ run-tempfile-demo_code || true ; } > "${TMP}/code.txt" 2>&1
+run-tempfile-demo_expected > "${TMP}/expected.txt" 2>&1
+diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+echo "Something went wrong when trying run-tempfile-demo"
+exit 1
+}
+
+
+clk extension remove tempdir-demo
 # all ends here

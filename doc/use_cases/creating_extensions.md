@@ -1,7 +1,10 @@
-- [creating our own extension](#org610b3e9)
-- [enable/disable it](#orgd8cd727)
-- [publish it](#orgf40a5c7)
-- [get an extension](#org87dd386)
+- [creating our own extension](#578ef2c9-a4d4-448a-9d56-be4afe4ac64a)
+- [enable/disable it](#72f61beb-cd79-4fdd-86a2-2c56ef08292c)
+- [publish it](#21d2895b-db01-4a09-b2a2-18e34e2830b6)
+- [get an extension](#b7bcef53-dd68-4660-9c5c-d9aa029d1a72)
+- [using temporary files and directories](#795e915b-29f5-4fbc-a8d9-480a094d3e37)
+  - [tempdir](#60d4bff1-366d-45cb-b0ce-3bb7468734aa)
+  - [temporary\_file](#d18237dd-7e05-4225-b9de-bf63f09b6d99)
 
 Extensions are folders that contain clk configurations and commands. You can create and share those with your colleagues.
 
@@ -13,7 +16,7 @@ For instance, let's suppose you need to bootstrap a development environment to w
 -   run the development environment that would update the cluster automatically.
 
 
-<a id="org610b3e9"></a>
+<a id="578ef2c9-a4d4-448a-9d56-be4afe4ac64a"></a>
 
 # creating our own extension
 
@@ -87,7 +90,7 @@ clk k8s run-dev-env --flow
     running development environment
 
 
-<a id="orgd8cd727"></a>
+<a id="72f61beb-cd79-4fdd-86a2-2c56ef08292c"></a>
 
 # enable/disable it
 
@@ -117,7 +120,7 @@ clk k8s run-dev-env --flow
     running development environment
 
 
-<a id="orgf40a5c7"></a>
+<a id="21d2895b-db01-4a09-b2a2-18e34e2830b6"></a>
 
 # publish it
 
@@ -132,7 +135,7 @@ clk extension where-is global/k8s | sed "s|$(pwd)|.|"
 You can git init that code and push it to some remote repository. Your colleagues then can get it with `clk extension install yourextensionurl`.
 
 
-<a id="org87dd386"></a>
+<a id="b7bcef53-dd68-4660-9c5c-d9aa029d1a72"></a>
 
 # get an extension
 
@@ -258,3 +261,101 @@ _____
                     ///-._ _ _ _ _ _ _}^ - - - - ~                     ~-- ,.-~
                                                                        /.-~
 ```
+
+
+<a id="795e915b-29f5-4fbc-a8d9-480a094d3e37"></a>
+
+# using temporary files and directories
+
+When writing extensions, you often need to work with temporary files or directories. clk provides two helpers in `clk.lib`: `tempdir` and `temporary_file`. They are context managers that automatically clean up after themselves.
+
+
+<a id="60d4bff1-366d-45cb-b0ce-3bb7468734aa"></a>
+
+## tempdir
+
+`tempdir()` creates a temporary directory and returns its path. It is useful when you need to extract archives and move files around.
+
+Let's mock a typical use case: installing a tool by extracting an archive and moving the binary to a destination. This pattern is used in the [k8s extension](https://github.com/clk-project/clk_extension_k8s) to install helm, tilt, etc.
+
+```bash
+clk extension create tempdir-demo
+```
+
+```bash
+clk command create --extension tempdir-demo python tempdir-demo --group --description "Demonstrate tempdir usage" --body '
+from pathlib import Path
+from clk.lib import tempdir, makedirs, move
+
+@tempdir_demo.command()
+def install_mock_tool():
+    """Mock installing a tool by extracting an archive to a temp dir."""
+    install_dir = Path(".")
+    with tempdir() as d:
+        # Simulate extracting an archive (in real code: extract(url, d))
+        extracted_dir = Path(d) / "tool-1.0.0"
+        makedirs(extracted_dir)
+        tool_binary = extracted_dir / "tool"
+        tool_binary.write_text("#!/bin/sh\necho tool v1.0.0")
+
+        # Move the binary to install location
+        dest = install_dir / "mock-tool"
+        move(tool_binary, dest)
+        print(f"Installed: {dest.read_text()}")
+    # temp dir is automatically cleaned up
+    # clean up the installed file for the demo
+    (install_dir / "mock-tool").unlink()
+'
+```
+
+```bash
+clk tempdir-demo install-mock-tool
+```
+
+    Installed: #!/bin/sh
+    echo tool v1.0.0
+
+
+<a id="d18237dd-7e05-4225-b9de-bf63f09b6d99"></a>
+
+## temporary\_file
+
+`temporary_file()` creates a temporary file. You can optionally pass `content` to write initial content. The file is automatically removed when leaving the context.
+
+This is useful when you need to pass configuration to a command that reads from a file. The [k8s extension](https://github.com/clk-project/clk_extension_k8s) uses this pattern to pass YAML configuration to kubectl.
+
+```bash
+clk command create --extension tempdir-demo python apply-mock-config --description "Demonstrate temporary_file usage" --body '
+from clk.lib import temporary_file, check_output
+
+@command()
+def apply_mock_config():
+    """Mock applying a k8s config using a temporary file."""
+    config = """apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: my-config
+data:
+  key: value
+"""
+    with temporary_file(content=config) as f:
+        # In real code: call(["kubectl", "apply", "-f", f.name])
+        # Here we just cat the file to show it works
+        result = check_output(["cat", f.name])
+        print("Applied config:")
+        print(result.strip())
+    # temp file is automatically cleaned up
+'
+```
+
+```bash
+clk apply-mock-config
+```
+
+    Applied config:
+    apiVersion: v1
+    kind: ConfigMap
+    metadata:
+      name: my-config
+    data:
+      key: value
