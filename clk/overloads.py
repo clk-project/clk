@@ -1071,7 +1071,6 @@ class ParameterMixin(click.Parameter):
                 value = super().get_default(ctx, call=True)
         else:
             LOGGER.develop(f"Getting default value {self.get_path(ctx)}={value}")
-            value = self.__process_value(ctx, value)
             value = self.type_cast_value(ctx, value)
         if value is UNSET:
             value = None

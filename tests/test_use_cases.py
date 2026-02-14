@@ -103,3 +103,7 @@ def test_wrapping_a_cloud_provider_cli():
 
 def test_using_a_plugin():
     call_script("using_a_plugin.sh")
+
+
+def test_setting_default_values():
+    call_script("setting_default_values.sh")

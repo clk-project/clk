@@ -49,6 +49,11 @@ Here are some use cases that hopefully will have the following properties:
   If you want to persist command options so you don't have to repeat them, and
   optionally override them per-project, see the [[file:wrapping_a_cloud_provider_cli.org][cloud provider CLI wrapper]] example.
 
+  When parameters become tedious because you need to set the same option on many
+  commands, consider using [[file:setting_default_values.org][values to set semantic defaults]] instead. This use
+  case also explains the difference between syntactic (parameters) and semantic
+  (values) configuration, with a comparison to git config.
+
 * how to structure your commands
   :PROPERTIES:
   :CREATED:  [2025-08-05 22:16]

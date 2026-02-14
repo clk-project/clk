@@ -80,17 +80,13 @@ cat <<EOF > "${TMP}/clk-root/clk.json"
         "command.create.bash": [
             "--no-open",
             "--force"
-        ],
-        "parameter.show": [
-            "--no-color"
-        ],
-        "plugin.show": [
-            "--no-color"
-        ],
-        "alias.show": [
-            "--no-color"
         ]
-    }
+    },
+  "value": {
+      "config.show.color": {
+          "value": "false"
+      }
+  }
 }
 EOF
 cd "${TMP}"

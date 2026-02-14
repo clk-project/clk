@@ -1,0 +1,302 @@
+:PROPERTIES:
+:ID:       e4c7f2a8-3d91-4f62-b8e0-7a9c1d2e4f56
+:END:
+#+language: en
+#+EXPORT_FILE_NAME: ./setting_default_values.md
+
+#+CALL: ../../lp.org:check-result()
+
+#+name: init
+#+BEGIN_SRC bash :results none :exports none :session e4c7f2a8-3d91-4f62-b8e0-7a9c1d2e4f56
+  . ./sandboxing.sh
+#+END_SRC
+
+Parameters are a powerful way to persist options for specific commands (see
+[[file:wrapping_a_cloud_provider_cli.org][the cloud provider CLI wrapper example]]). But sometimes, you want to set
+the same kind of option across many different commands. That's where the ~value~
+command shines.
+
+* the problem with parameters
+  :PROPERTIES:
+  :CUSTOM_ID: the-problem-with-parameters
+  :END:
+
+Many built-in clk commands display information with colors. For example, ~alias
+show~, ~parameter show~, ~value show~, ~extension show~, and ~command show~ all
+have a ~--color/--no-color~ option.
+
+If you want to disable colors everywhere (maybe you're piping to a file or your
+terminal doesn't support them), you could use parameters:
+
+#+NAME: set-parameters-verbose
+#+BEGIN_SRC bash :results verbatim :exports both :session e4c7f2a8-3d91-4f62-b8e0-7a9c1d2e4f56 :cache yes
+clk parameter set alias.show --no-color
+clk parameter set parameter.show --no-color
+clk parameter set value.show --no-color
+clk parameter set extension.show --no-color
+#+END_SRC
+
+#+RESULTS[73a78c39df9434905335464308a50fe9a778c2b5]: set-parameters-verbose
+: New global parameters for alias.show: --no-color
+: New global parameters for parameter.show: --no-color
+: New global parameters for value.show: --no-color
+: New global parameters for extension.show: --no-color
+
+This works, but it's tedious. You have to remember every command that has a
+~--color~ option. And when a new command is added, you need to set its parameter
+too. Parameters work at the *syntactic* level: you're saying "for this specific
+command, add these specific flags".
+
+* values: semantic configuration
+  :PROPERTIES:
+  :CUSTOM_ID: values-semantic-configuration
+  :END:
+
+The ~value~ command provides a different approach. Instead of configuring each
+command's syntax, you configure the *meaning* of an option across all commands
+that care about it.
+
+First, let's clean up those parameters:
+
+#+NAME: unset-parameters
+#+BEGIN_SRC bash :results none :exports code :session e4c7f2a8-3d91-4f62-b8e0-7a9c1d2e4f56
+clk parameter unset alias.show
+clk parameter unset parameter.show
+clk parameter unset value.show
+clk parameter unset extension.show
+#+END_SRC
+
+Now, here's the magic: all the built-in "show" commands read their color default
+from a single value called ~config.show.color~. Set it once, and it applies
+everywhere:
+
+#+NAME: set-value-color
+#+BEGIN_SRC bash :results none :exports code :session e4c7f2a8-3d91-4f62-b8e0-7a9c1d2e4f56
+clk value set config.show.color false
+#+END_SRC
+
+Let's create an alias and some parameters to see this in action:
+
+#+NAME: setup-data
+#+BEGIN_SRC bash :results none :exports code :session e4c7f2a8-3d91-4f62-b8e0-7a9c1d2e4f56
+clk alias set hello echo Hello
+clk parameter set hello --some-option
+#+END_SRC
+
+Now all show commands respect this setting. We can verify by checking the help
+to see that color defaults to false:
+
+#+NAME: show-help-color
+#+BEGIN_SRC bash :results verbatim :exports both :session e4c7f2a8-3d91-4f62-b8e0-7a9c1d2e4f56 :cache yes
+clk alias show --help 2>&1 | grep -- "--color"
+#+END_SRC
+
+#+RESULTS[3f4819c0da9e8bef448e4def303a22608f60d140]: show-help-color
+: --color / --no-color            Show profiles in color  [default: false]
+
+The default is now ~false~ instead of ~True~. This applies to all show commands
+with a single configuration.
+
+* other shared values
+  :PROPERTIES:
+  :CUSTOM_ID: other-shared-values
+  :END:
+
+The same pattern applies to other display options. The built-in show commands
+also share:
+
+- ~config.show.legend~: whether to display a color legend at the bottom
+- ~config.show.full~: whether to show all profiles or only explicit ones
+
+#+NAME: set-other-values
+#+BEGIN_SRC bash :results verbatim :exports both :session e4c7f2a8-3d91-4f62-b8e0-7a9c1d2e4f56 :cache yes
+clk value set config.show.legend false
+clk value show
+#+END_SRC
+
+#+RESULTS[6a58b204c7c5fc91bf7fa33584a39467b92319ea]: set-other-values
+: config.show.color false
+: config.show.legend false
+
+* you can still override
+  :PROPERTIES:
+  :CUSTOM_ID: override-values
+  :END:
+
+The value just sets the default. You can always override it on the command line.
+
+Even though the default is false, passing ~--color~ on the command line will
+enable colors for a specific invocation.
+
+* per-option defaults with default.
+  :PROPERTIES:
+  :CUSTOM_ID: per-option-defaults
+  :END:
+
+The ~config.show.*~ values are special because the built-in commands explicitly
+read them. But you can also set defaults for any option using the
+~default.<command>.<option>~ pattern:
+
+#+NAME: set-default-option
+#+BEGIN_SRC bash :results verbatim :exports both :session e4c7f2a8-3d91-4f62-b8e0-7a9c1d2e4f56 :cache yes
+clk value set default.alias.show.format plain
+clk alias show --help 2>&1 | grep -A1 -- "--format" | tail -1 | sed -r 's|^.+(default: [a-zA-Z-]+).+$|\1|'
+#+END_SRC
+
+#+RESULTS[77955e8dbec8c6f604f4ce070f06feadc6c4441d]: set-default-option
+: default: plain
+
+When an option's default comes from a value, clk tells you in the help output.
+
+* syntax vs semantics: choosing the right tool
+  :PROPERTIES:
+  :CUSTOM_ID: syntax-vs-semantics
+  :END:
+
+Both ~parameter~ and ~value~ let you configure defaults, but they work at
+different levels:
+
+| Feature    | parameter                           | value                                     |
+|------------+-------------------------------------+-------------------------------------------|
+| Scope      | One specific command                | All commands reading that value           |
+| Level      | Syntactic (raw flags)               | Semantic (option meaning)                 |
+| Use case   | "Always pass these flags"           | "This option should default to X"         |
+| Override   | Prepended to command line           | Becomes the option's default              |
+
+Use ~parameter~ when you want to configure a whole command's behavior with
+multiple related options. Use ~value~ when you want to set a default that
+applies across many commands sharing the same concept (like "show colors").
+
+* using values in your own commands
+  :PROPERTIES:
+  :CUSTOM_ID: using-values-in-commands
+  :END:
+
+You can use the same pattern in your own Python commands. Here's an example of a
+command that reads from ~config.show.color~, just like the built-in commands do:
+
+#+NAME: show-items-code
+#+BEGIN_SRC python :results none :exports code
+import click
+
+from clk.decorators import command, option
+from clk.config import config
+
+
+@command()
+@option(
+    "--color/--no-color",
+    default=config.get_value("config.show.color", True),
+    help="Show output in color",
+)
+def show_items(color):
+    "Display some items"
+    items = ["apple", "banana", "cherry"]
+    for item in items:
+        if color:
+            click.secho(item, fg="green")
+        else:
+            click.echo(item)
+#+END_SRC
+
+#+NAME: create-custom-command
+#+BEGIN_SRC bash :results none :exports none :session e4c7f2a8-3d91-4f62-b8e0-7a9c1d2e4f56 :noweb yes
+clk command create python show-items --no-open --force
+cat <<'EOF' > "$(clk command which show-items)"
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+
+<<show-items-code>>
+EOF
+#+END_SRC
+
+The key is using ~config.get_value("config.show.color", True)~ as the default.
+The second argument (~True~) is the fallback if the value is not set.
+
+Now this command shares the same color setting as all the built-in show
+commands:
+
+#+NAME: show-custom-help
+#+BEGIN_SRC bash :results verbatim :exports both :session e4c7f2a8-3d91-4f62-b8e0-7a9c1d2e4f56 :cache yes
+clk show-items --help 2>&1 | grep -- "--color"
+#+END_SRC
+
+#+RESULTS[c5f119211b589636ccabe600bea0b25bd7a8727c]: show-custom-help
+: --color / --no-color  Show output in color  [default: false]
+
+Because we set ~config.show.color~ to ~false~ earlier, this new command also
+defaults to no color.
+
+Now let's change the value back to ~true~ and see how it affects all commands:
+
+#+NAME: change-value-true
+#+BEGIN_SRC bash :results verbatim :exports both :session e4c7f2a8-3d91-4f62-b8e0-7a9c1d2e4f56 :cache yes
+clk value set config.show.color true
+clk show-items --help 2>&1 | grep -- "--color"
+clk alias show --help 2>&1 | grep -- "--color"
+#+END_SRC
+
+#+RESULTS[0f17b2ce3478bfb7e7932428d2b951a8779604f1]: change-value-true
+: --color / --no-color  Show output in color  [default: true]
+: --color / --no-color            Show profiles in color  [default: true]
+
+One value controls them all.
+
+* a familiar pattern: git config
+  :PROPERTIES:
+  :CUSTOM_ID: git-comparison
+  :END:
+
+If you've used git, this pattern might feel familiar. Git has ~git config~ which
+lets you set defaults that affect many commands:
+
+#+BEGIN_SRC bash :results none :exports code :eval never
+# Git's approach
+git config --global user.name "Your Name"
+git config --global core.editor vim
+git config --global color.ui false
+#+END_SRC
+
+Similarly, clk uses ~clk value~ to configure defaults:
+
+#+BEGIN_SRC bash :results none :exports code :eval never
+# clk's approach
+clk value set config.show.color false
+clk value set config.show.legend false
+#+END_SRC
+
+Both tools recognize that some settings are too pervasive to configure
+per-command. They provide a central place to declare "this is how I want things
+to work" and let individual invocations override when needed.
+
+The key insight is that good CLI tools need both:
+- *Syntactic configuration* (parameters, git aliases) for "run this command with
+  these exact flags"
+- *Semantic configuration* (values, git config) for "this setting should apply
+  everywhere"
+
+clk gives you both, so you can choose the right tool for each situation.
+
+#+BEGIN_SRC bash :exports none :tangle ../../tests/use_cases/setting_default_values.sh :noweb yes :shebang "#!/bin/bash -eu"
+<<init>>
+
+check-result(set-parameters-verbose)
+
+<<unset-parameters>>
+
+<<set-value-color>>
+
+<<setup-data>>
+
+check-result(show-help-color)
+
+check-result(set-other-values)
+
+check-result(set-default-option)
+
+<<create-custom-command>>
+
+check-result(show-custom-help)
+
+check-result(change-value-true)
+#+END_SRC

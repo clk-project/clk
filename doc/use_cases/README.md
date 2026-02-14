@@ -8,7 +8,7 @@
 - [flow](#8ad4d10e-1ece-45ef-a558-905b5996ddc4)
 - [is it a tool or a library?](#f291ada8-c504-4624-baa7-9c7d600d5c53)
 - [publish my code](#875fe27e-ca39-4733-a459-e2a35bcfa124)
-- [plugins](#orgca4a716)
+- [plugins](#org5c1a0fd)
 
 Here are some use cases that hopefully will have the following properties:
 
@@ -46,6 +46,8 @@ If you want to share configuration between a Python group and its bash subcomman
 For an example of using aliases with templated environment variables to create flexible workflows, see the [podcast automation](podcast_automation.md) example.
 
 If you want to persist command options so you don't have to repeat them, and optionally override them per-project, see the [cloud provider CLI wrapper](wrapping_a_cloud_provider_cli.md) example.
+
+When parameters become tedious because you need to set the same option on many commands, consider using [values to set semantic defaults](setting_default_values.md) instead. This use case also explains the difference between syntactic (parameters) and semantic (values) configuration, with a comparison to git config.
 
 
 <a id="6abcb030-192b-4c73-a62f-4551d1e92a77"></a>
@@ -115,7 +117,7 @@ If you don't want to use the clk command line tool, you can [roll your own](roll
 In that case, you would like to take a look at [how to create your own extensions](creating_extensions.md).
 
 
-<a id="orgca4a716"></a>
+<a id="org5c1a0fd"></a>
 
 # plugins
 
