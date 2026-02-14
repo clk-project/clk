@@ -1,0 +1,44 @@
+[
+    {
+        "description": "Vacances de Noël",
+        "start_date": "2024-12-21",
+        "end_date": "2025-01-06",
+        "location": "Zone A",
+        "population": "Élèves"
+    },
+    {
+        "description": "Vacances de Noël",
+        "start_date": "2024-12-21",
+        "end_date": "2025-01-06",
+        "location": "Zone B",
+        "population": "Élèves"
+    },
+    {
+        "description": "Vacances d'hiver",
+        "start_date": "2025-02-08",
+        "end_date": "2025-02-24",
+        "location": "Zone A",
+        "population": "Élèves"
+    },
+    {
+        "description": "Vacances d'hiver",
+        "start_date": "2025-02-22",
+        "end_date": "2025-03-10",
+        "location": "Zone B",
+        "population": "Élèves"
+    },
+    {
+        "description": "Vacances de printemps",
+        "start_date": "2025-04-05",
+        "end_date": "2025-04-22",
+        "location": "Zone A",
+        "population": "Élèves"
+    },
+    {
+        "description": "Vacances de printemps",
+        "start_date": "2025-04-19",
+        "end_date": "2025-05-05",
+        "location": "Zone B",
+        "population": "Élèves"
+    }
+]
