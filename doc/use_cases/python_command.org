@@ -142,9 +142,8 @@ Options:
 
 Let's make this command say something.
 
-#+name: say_something
-#+BEGIN_SRC bash :results none :exports code :session b115ee6f-3575-46e0-a64c-880cfa22d4e3
-cat<<'EOF' > "$(clk command which mycommand)"
+#+name: say_something_code
+#+BEGIN_SRC python :exports code
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
@@ -155,6 +154,12 @@ from clk.decorators import command
 def mycommand():
     "Command that says something"
     print("something")
+#+END_SRC
+
+#+name: say_something
+#+BEGIN_SRC bash :results none :exports none :session b115ee6f-3575-46e0-a64c-880cfa22d4e3 :noweb yes
+cat<<'EOF' > "$(clk command which mycommand)"
+<<say_something_code>>
 EOF
 #+END_SRC
 
@@ -174,9 +179,8 @@ clk mycommand
 You can add options and arguments to your command using click decorators. clk
 provides wrappers for them in ~clk.decorators~.
 
-#+name: with_options
-#+BEGIN_SRC bash :results none :exports code :session b115ee6f-3575-46e0-a64c-880cfa22d4e3
-cat<<'EOF' > "$(clk command which mycommand)"
+#+name: with_options_code
+#+BEGIN_SRC python :exports code
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
@@ -189,6 +193,12 @@ from clk.decorators import command, option, argument
 def mycommand(name, greeting):
     "A greeting command"
     print(f"{greeting}, {name}!")
+#+END_SRC
+
+#+name: with_options
+#+BEGIN_SRC bash :results none :exports none :session b115ee6f-3575-46e0-a64c-880cfa22d4e3 :noweb yes
+cat<<'EOF' > "$(clk command which mycommand)"
+<<with_options_code>>
 EOF
 #+END_SRC
 
@@ -210,6 +220,61 @@ clk mycommand --name clk Goodbye
 : warning: The parameter 'greeting' in the command 'mycommand' has no documentation
 : Goodbye, clk!
 
+* outputting JSON data
+  :PROPERTIES:
+  :CUSTOM_ID: outputting-json-data
+  :END:
+
+When your command needs to output structured data, ~echo_json~ from ~clk.lib~
+provides formatted and syntax-highlighted JSON output.
+
+#+name: with_echo_json_code
+#+BEGIN_SRC python :exports code
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+
+from clk.decorators import command, option
+from clk.lib import echo_json
+
+
+@command()
+@option("--name", default="world", help="Name to include")
+def mycommand(name):
+    "Output some data as JSON"
+    data = {
+        "greeting": "Hello",
+        "name": name,
+        "items": ["one", "two", "three"]
+    }
+    echo_json(data)
+#+END_SRC
+
+#+name: with_echo_json
+#+BEGIN_SRC bash :results none :exports none :session b115ee6f-3575-46e0-a64c-880cfa22d4e3 :noweb yes
+cat<<'EOF' > "$(clk command which mycommand)"
+<<with_echo_json_code>>
+EOF
+#+END_SRC
+
+#+NAME: use_echo_json
+#+BEGIN_SRC bash :results verbatim :exports both :session b115ee6f-3575-46e0-a64c-880cfa22d4e3 :cache yes
+clk mycommand --name clk
+#+END_SRC
+
+#+RESULTS[78f97b1fe6b7129e3969af62a23289830630feea]: use_echo_json
+: {
+:     "greeting": "Hello",
+:     "items": [
+:         "one",
+:         "two",
+:         "three"
+:     ],
+:     "name": "clk"
+: }
+
+The output is automatically colorized in terminals that support colors. When
+piping to other commands or in dumb terminals, plain JSON is produced.
+
 * possible mistake: forgetting the decorator
   :PROPERTIES:
   :CUSTOM_ID: forgetting-the-decorator
@@ -222,12 +287,17 @@ should not worry about that.
 
 Let's create a python file that defines a function but forgets to decorate it.
 
-#+NAME: create-bad-command
-#+BEGIN_SRC bash :results none :exports code :session b115ee6f-3575-46e0-a64c-880cfa22d4e3
-cat <<'EOF' > "${CLKCONFIGDIR}/python/myenv.py"
+#+NAME: bad-command-code
+#+BEGIN_SRC python :exports code
 def myenv():
     """My environment command"""
     print("hello")
+#+END_SRC
+
+#+NAME: create-bad-command
+#+BEGIN_SRC bash :results none :exports none :session b115ee6f-3575-46e0-a64c-880cfa22d4e3 :noweb yes
+cat <<'EOF' > "${CLKCONFIGDIR}/python/myenv.py"
+<<bad-command-code>>
 EOF
 #+END_SRC
 
@@ -246,15 +316,20 @@ clk myenv 2>&1|sed "s|$(pwd)|.|"
 
 To fix this, simply add the ~@command()~ decorator from clk.
 
-#+NAME: fix-command
-#+BEGIN_SRC bash :results none :exports code :session b115ee6f-3575-46e0-a64c-880cfa22d4e3
-cat <<'EOF' > "${CLKCONFIGDIR}/python/myenv.py"
+#+NAME: fix-command-code
+#+BEGIN_SRC python :exports code
 from clk.decorators import command
 
 @command()
 def myenv():
     """My environment command"""
     print("hello")
+#+END_SRC
+
+#+NAME: fix-command
+#+BEGIN_SRC bash :results none :exports none :session b115ee6f-3575-46e0-a64c-880cfa22d4e3 :noweb yes
+cat <<'EOF' > "${CLKCONFIGDIR}/python/myenv.py"
+<<fix-command-code>>
 EOF
 #+END_SRC
 
@@ -292,6 +367,10 @@ check-result(use_it)
 check-result(use_with_options)
 
 check-result(use_with_options2)
+
+<<with_echo_json>>
+
+check-result(use_echo_json)
 
 <<create-bad-command>>
 
