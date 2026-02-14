@@ -1,0 +1,174 @@
+:PROPERTIES:
+:ID:       c56d5c09-96eb-49ed-b33f-3c9e6189d862
+:END:
+#+language: en
+#+EXPORT_FILE_NAME: ./fetching_and_displaying_json_data.md
+
+#+CALL: ../../lp.org:check-result()
+
+#+name: init
+#+BEGIN_SRC bash :results none :exports none :session c56d5c09-96eb-49ed-b33f-3c9e6189d862
+  . ./sandboxing.sh
+#+END_SRC
+
+A common use case when building CLI tools is fetching data from an API and
+displaying it to the user. This example shows how to create a command that
+downloads JSON data and outputs it in a nicely formatted way.
+
+Let's create a tool to fetch and display school holidays data.
+
+* Fetching and displaying JSON
+
+First, let's create the group of commands.
+
+#+name: create-group
+#+BEGIN_SRC bash :results none :exports code :session c56d5c09-96eb-49ed-b33f-3c9e6189d862
+  clk command create python --group holidays --description "Fetch and display school holidays"
+#+END_SRC
+
+We'll use ~download~ from ~clk.lib~ to fetch the JSON file and ~echo_json~ to
+display it with syntax highlighting.
+
+#+NAME: fetch_code
+#+BEGIN_SRC python :exports code
+def fetch_holidays():
+    """Download and parse the holidays JSON file."""
+    url = "https://github.com/clk-project/clk/raw/main/tests/holidays.json"
+    with temporary_file(suffix=".json") as f:
+        download(url, outdir=Path(f.name).parent, outfilename=Path(f.name).name)
+        return json.loads(Path(f.name).read_text())
+#+END_SRC
+
+Now let's create the ~cat~ command that dumps the raw JSON data.
+
+#+NAME: cat_code
+#+BEGIN_SRC python :exports code
+@holidays.command()
+def cat():
+    """Dump the holidays data as JSON."""
+    echo_json(fetch_holidays())
+#+END_SRC
+
+When your command needs to output structured data, ~echo_json~ from ~clk.lib~
+provides formatted and syntax-highlighted JSON output. The output is
+automatically colorized in terminals that support colors. When piping to other
+commands or in dumb terminals, plain JSON is produced.
+
+#+NAME: copy
+#+BEGIN_SRC bash :results none :exports none :noweb yes :session c56d5c09-96eb-49ed-b33f-3c9e6189d862
+  cat<<EOF >> "${CLKCONFIGDIR}/python/holidays.py"
+import json
+from pathlib import Path
+from clk.lib import download, echo_json, temporary_file
+
+<<fetch_code>>
+
+<<cat_code>>
+EOF
+#+END_SRC
+
+Let's try it out.
+
+#+NAME: run_cat
+#+BEGIN_SRC bash :results verbatim :exports both :session c56d5c09-96eb-49ed-b33f-3c9e6189d862 :cache yes
+  clk holidays cat 2>/dev/null | head -19
+#+END_SRC
+
+#+RESULTS[3ccdf9ca7a23f413388e555506f52ca825622fbb]: run_cat
+#+begin_example
+[
+    {
+        "description": "Vacances de No\u00ebl",
+        "end_date": "2025-01-06",
+        "location": "Zone A",
+        "population": "\u00c9l\u00e8ves",
+        "start_date": "2024-12-21"
+    },
+    {
+        "description": "Vacances de No\u00ebl",
+        "end_date": "2025-01-06",
+        "location": "Zone B",
+        "population": "\u00c9l\u00e8ves",
+        "start_date": "2024-12-21"
+    },
+    {
+        "description": "Vacances d'hiver",
+        "end_date": "2025-02-24",
+        "location": "Zone A",
+#+end_example
+
+* Filtering the data
+
+Now let's add a command that filters holidays by location.
+
+#+NAME: filter_code
+#+BEGIN_SRC python :exports code
+@holidays.command()
+@argument("location", help="Location to filter by (e.g., 'Zone A')")
+def show(location):
+    """Show holidays for a specific location."""
+    data = fetch_holidays()
+    filtered = [h for h in data if h["location"] == location]
+    echo_json(filtered)
+#+END_SRC
+
+#+NAME: copy_filter
+#+BEGIN_SRC bash :results none :exports none :noweb yes :session c56d5c09-96eb-49ed-b33f-3c9e6189d862
+  cat<<EOF >> "${CLKCONFIGDIR}/python/holidays.py"
+
+<<filter_code>>
+EOF
+#+END_SRC
+
+#+NAME: run_filter
+#+BEGIN_SRC bash :results verbatim :exports both :session c56d5c09-96eb-49ed-b33f-3c9e6189d862 :cache yes
+  clk holidays show "Zone A" 2>/dev/null
+#+END_SRC
+
+#+RESULTS[1e025c358c6edfccb97fa00a6ac2a5d13d4c16bd]: run_filter
+#+begin_example
+[
+    {
+        "description": "Vacances de No\u00ebl",
+        "end_date": "2025-01-06",
+        "location": "Zone A",
+        "population": "\u00c9l\u00e8ves",
+        "start_date": "2024-12-21"
+    },
+    {
+        "description": "Vacances d'hiver",
+        "end_date": "2025-02-24",
+        "location": "Zone A",
+        "population": "\u00c9l\u00e8ves",
+        "start_date": "2025-02-08"
+    },
+    {
+        "description": "Vacances de printemps",
+        "end_date": "2025-04-22",
+        "location": "Zone A",
+        "population": "\u00c9l\u00e8ves",
+        "start_date": "2025-04-05"
+    }
+]
+#+end_example
+
+* Caching the downloaded data
+
+If you're going to call this command frequently, you might want to cache the
+downloaded data to avoid repeated network requests. See [[file:scrapping_the_web.org][scrapping the web]] for
+how to use ~cache_disk~ to cache the results.
+
+#+NAME: script
+#+BEGIN_SRC bash :results none :exports none :tangle ../../tests/use_cases/fetching_and_displaying_json_data.sh :noweb yes :shebang "#!/bin/bash -eu"
+  <<init>>
+
+  <<create-group>>
+
+  <<copy>>
+
+  check-result(run_cat)
+
+  <<copy_filter>>
+
+  check-result(run_filter)
+#+END_SRC

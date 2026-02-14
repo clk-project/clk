@@ -730,7 +730,7 @@ def get_secret(key):
 
 # taken from
 # https://stackoverflow.com/questions/71459213/requests-tqdm-to-a-variable
-def _download_as_byteio_with_progress(url: str) -> bytes:
+def _download_as_byteio(url: str) -> bytes:
     resp = requests.get(url, stream=True)
     total = int(resp.headers.get("content-length", 0))
     bio = io.BytesIO()
@@ -761,7 +761,7 @@ def extract(url, dest=Path(".")):
     makedirs(dest)
 
     archname = Path(url).name
-    bio = _download_as_byteio_with_progress(url)
+    bio = _download_as_byteio(url)
     if archname.endswith(".zip"):
         zipfile.ZipFile(bio).extractall(path=dest)
     else:
@@ -778,7 +778,7 @@ def download(url, outdir=None, outfilename=None, mkdir=False, sha256=None, mode=
     if dry_run:
         return outpath
 
-    bio = _download_as_byteio_with_progress(url)
+    bio = _download_as_byteio(url)
     value = bio.getvalue()
 
     if sha256 is not None:

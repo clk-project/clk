@@ -12,48 +12,35 @@ There are several stuff that you will always need to have at hand when
 developing command line commands.
 
 * Getting files
+  :PROPERTIES:
+  :CUSTOM_ID: 780a9f7a-801f-4f4b-83ef-7bfffdf71372
+  :END:
 
 Often, files are available as zip of tar archives in web servers. A function
 that, given a url, would download and extract its content would be very useful.
 
 #+name:extract
 #+BEGIN_SRC python :results verbatim :exports both :session
-from pathlib import Path
-
-from clk.lib import extract
-
-f = Path('readme')
-
-assert not f.exists()
-extract('https://github.com/clk-project/clk/raw/main/tests/zipfile.zip')
-assert f.exists()
-assert f.read_text() == 'hello from some zip file\n'
-#+END_SRC
-
-If you wish to simply download the file, just call download.
-
-#+name:download
-#+BEGIN_SRC python :results verbatim :exports both :session
-    import zipfile
     from pathlib import Path
 
-    from clk.lib import download
+    from clk.lib import extract
 
-    f = Path('zipfile.zip')
+    f = Path("readme")
+
     assert not f.exists()
-
-    download('https://github.com/clk-project/clk/raw/main/tests/zipfile.zip',
-             sha256='702bb46372dfad9632c8dc3d8b5bbe945f9efd2f5575723bf66a0128486b7fb5')
-
+    extract("https://github.com/clk-project/clk/raw/main/tests/zipfile.zip")
     assert f.exists()
-    z = zipfile.ZipFile(f)
-    assert z.read('readme').decode() == 'hello from some zip file\n'
+    assert f.read_text() == "hello from some zip file\n"
 #+END_SRC
 
+If you wish to simply download the file, just call download. See
+[[file:fetching_and_displaying_json_data.org][fetching and displaying JSON data]] for a complete example of using ~download~.
+
 * Tangling                                                         :noexport:
-#+BEGIN_SRC python :tangle ../../tests/use_cases/../test_lib2.py :exports none  :noweb yes
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
+  :PROPERTIES:
+  :CUSTOM_ID: 4deb6976-5708-4527-8ed8-c2ab9de8cc38
+  :END:
+#+BEGIN_SRC python :tangle ../../tests/use_cases/../test_lib2.py :exports none  :noweb yes :shebang "#!/usr/bin/env python3"
 
 # Automatically generated, don't edit
 
@@ -62,7 +49,5 @@ def test_extract():
     <<extract>>
 
 
-def test_download():
-    <<download>>
 
 #+END_SRC

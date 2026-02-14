@@ -1,5 +1,4 @@
 - [adding options and arguments](#adding-options-and-arguments)
-- [outputting JSON data](#outputting-json-data)
 - [possible mistake: forgetting the decorator](#forgetting-the-decorator)
 
 To create a python command, you can simply call the following command.
@@ -172,49 +171,6 @@ clk mycommand --name clk Goodbye
 
     warning: The parameter 'greeting' in the command 'mycommand' has no documentation
     Goodbye, clk!
-
-
-<a id="outputting-json-data"></a>
-
-# outputting JSON data
-
-When your command needs to output structured data, `echo_json` from `clk.lib` provides formatted and syntax-highlighted JSON output.
-
-```python
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-
-from clk.decorators import command, option
-from clk.lib import echo_json
-
-
-@command()
-@option("--name", default="world", help="Name to include")
-def mycommand(name):
-    "Output some data as JSON"
-    data = {
-        "greeting": "Hello",
-        "name": name,
-        "items": ["one", "two", "three"]
-    }
-    echo_json(data)
-```
-
-```bash
-clk mycommand --name clk
-```
-
-    {
-        "greeting": "Hello",
-        "items": [
-            "one",
-            "two",
-            "three"
-        ],
-        "name": "clk"
-    }
-
-The output is automatically colorized in terminals that support colors. When piping to other commands or in dumb terminals, plain JSON is produced.
 
 
 <a id="forgetting-the-decorator"></a>

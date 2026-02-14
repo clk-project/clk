@@ -1,9 +1,9 @@
-- [Getting files](#org011df44)
+- [Getting files](#780a9f7a-801f-4f4b-83ef-7bfffdf71372)
 
 There are several stuff that you will always need to have at hand when developing command line commands.
 
 
-<a id="org011df44"></a>
+<a id="780a9f7a-801f-4f4b-83ef-7bfffdf71372"></a>
 
 # Getting files
 
@@ -14,29 +14,12 @@ from pathlib import Path
 
 from clk.lib import extract
 
-f = Path('readme')
+f = Path("readme")
 
 assert not f.exists()
-extract('https://github.com/clk-project/clk/raw/main/tests/zipfile.zip')
+extract("https://github.com/clk-project/clk/raw/main/tests/zipfile.zip")
 assert f.exists()
-assert f.read_text() == 'hello from some zip file\n'
+assert f.read_text() == "hello from some zip file\n"
 ```
 
-If you wish to simply download the file, just call download.
-
-```python
-import zipfile
-from pathlib import Path
-
-from clk.lib import download
-
-f = Path('zipfile.zip')
-assert not f.exists()
-
-download('https://github.com/clk-project/clk/raw/main/tests/zipfile.zip',
-         sha256='702bb46372dfad9632c8dc3d8b5bbe945f9efd2f5575723bf66a0128486b7fb5')
-
-assert f.exists()
-z = zipfile.ZipFile(f)
-assert z.read('readme').decode() == 'hello from some zip file\n'
-```
+If you wish to simply download the file, just call download. See [fetching and displaying JSON data](fetching_and_displaying_json_data.md) for a complete example of using `download`.

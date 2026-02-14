@@ -246,55 +246,6 @@ exit 1
 }
 
 
-cat<<'EOF' > "$(clk command which mycommand)"
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-
-from clk.decorators import command, option
-from clk.lib import echo_json
-
-
-@command()
-@option("--name", default="world", help="Name to include")
-def mycommand(name):
-    "Output some data as JSON"
-    data = {
-        "greeting": "Hello",
-        "name": name,
-        "items": ["one", "two", "three"]
-    }
-    echo_json(data)
-EOF
-
-
-use_echo_json_code () {
-      clk mycommand --name clk
-}
-
-use_echo_json_expected () {
-      cat<<"EOEXPECTED"
-{
-    "greeting": "Hello",
-    "items": [
-        "one",
-        "two",
-        "three"
-    ],
-    "name": "clk"
-}
-EOEXPECTED
-}
-
-echo 'Run use_echo_json'
-
-{ use_echo_json_code || true ; } > "${TMP}/code.txt" 2>&1
-use_echo_json_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying use_echo_json"
-exit 1
-}
-
-
 cat <<'EOF' > "${CLKCONFIGDIR}/python/myenv.py"
 def myenv():
     """My environment command"""
