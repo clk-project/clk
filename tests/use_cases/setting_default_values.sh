@@ -175,4 +175,52 @@ diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
 echo "Something went wrong when trying change-value-true"
 exit 1
 }
+
+
+clk value set config.show.color false
+
+clk value set myapp.colr true
+
+
+rename-value_code () {
+      clk value rename myapp.colr myapp.color
+      clk value show myapp.color
+}
+
+rename-value_expected () {
+      cat<<"EOEXPECTED"
+myapp.color true
+EOEXPECTED
+}
+
+echo 'Run rename-value'
+
+{ rename-value_code || true ; } > "${TMP}/code.txt" 2>&1
+rename-value_expected > "${TMP}/expected.txt" 2>&1
+diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+echo "Something went wrong when trying rename-value"
+exit 1
+}
+
+
+
+unset-value_code () {
+      clk value unset myapp.color
+      clk value show 2>&1 | grep -q myapp.color || echo "myapp.color is gone"
+}
+
+unset-value_expected () {
+      cat<<"EOEXPECTED"
+myapp.color is gone
+EOEXPECTED
+}
+
+echo 'Run unset-value'
+
+{ unset-value_code || true ; } > "${TMP}/code.txt" 2>&1
+unset-value_expected > "${TMP}/expected.txt" 2>&1
+diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+echo "Something went wrong when trying unset-value"
+exit 1
+}
 # a familiar pattern: git config:3 ends here

@@ -242,6 +242,49 @@ clk alias show --help 2>&1 | grep -- "--color"
 
 One value controls them all.
 
+#+NAME: reset-color
+#+BEGIN_SRC bash :results none :exports none :session e4c7f2a8-3d91-4f62-b8e0-7a9c1d2e4f56
+clk value set config.show.color false
+#+END_SRC
+
+
+* managing values: rename and unset
+  :PROPERTIES:
+  :CUSTOM_ID: managing-values
+  :END:
+
+As your configuration evolves, you may need to rename or remove values. The
+~value~ command provides tools for this.
+
+Let's say you initially set a value with a confusing name:
+
+#+NAME: set-confusing-value
+#+BEGIN_SRC bash :results none :exports code :session e4c7f2a8-3d91-4f62-b8e0-7a9c1d2e4f56
+clk value set myapp.colr true
+#+END_SRC
+
+You can rename it to fix the typo:
+
+#+NAME: rename-value
+#+BEGIN_SRC bash :results verbatim :exports both :session e4c7f2a8-3d91-4f62-b8e0-7a9c1d2e4f56 :cache yes
+clk value rename myapp.colr myapp.color
+clk value show myapp.color
+#+END_SRC
+
+#+RESULTS[3aa5afaec8b2e236c7de4089f90c1829f4269037]: rename-value
+: myapp.color true
+
+And when you no longer need a value, you can unset it:
+
+#+NAME: unset-value
+#+BEGIN_SRC bash :results verbatim :exports both :session e4c7f2a8-3d91-4f62-b8e0-7a9c1d2e4f56 :cache yes
+clk value unset myapp.color
+clk value show 2>&1 | grep -q myapp.color || echo "myapp.color is gone"
+#+END_SRC
+
+#+RESULTS[b3fe9ae05dda34d53342ff2d29ce9f743f88f41d]: unset-value
+: myapp.color is gone
+
 * a familiar pattern: git config
   :PROPERTIES:
   :CUSTOM_ID: git-comparison
@@ -299,4 +342,12 @@ check-result(set-default-option)
 check-result(show-custom-help)
 
 check-result(change-value-true)
+
+<<reset-color>>
+
+<<set-confusing-value>>
+
+check-result(rename-value)
+
+check-result(unset-value)
 #+END_SRC
