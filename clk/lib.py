@@ -40,12 +40,6 @@ dry_run = None
 main_module = None
 
 
-def read_properties_file(file_name):
-    return dict(
-        [line.strip().split("=") for line in open(file_name).readlines() if "=" in line]
-    )
-
-
 def ensure_unicode(value):
     """Convert a string in unicode"""
     if not isinstance(value, str):
@@ -192,12 +186,6 @@ def glob(pathname, *args, **kwargs):
     return glob2.glob(pathname, *args, **kwargs)
 
 
-def glob_first(expr, default=None):
-    """Return the first result of the globbing expression or 'default'"""
-    res = glob(expr)
-    return res[0] if res else default
-
-
 def main_default(**default_options):
     """Change the default values of the main method of a Command"""
 
@@ -214,52 +202,6 @@ def main_default(**default_options):
         return f
 
     return decorator
-
-
-def get_all_files_recursive(dir, exclude):
-    for dir, subdirs, files in os.walk(dir):
-        for excluded in set(exclude) & set(subdirs):
-            del subdirs[subdirs.index(excluded)]
-        for file in files:
-            yield str(Path(dir) / file)
-
-
-def check_uptodate(src, dst, src_exclude=[], dst_exclude=[]):
-    src_path = Path(src)
-    dst_path = Path(dst)
-    assert src_path.exists(), f"{src} must exist"
-    if not dst_path.exists():
-        return False
-    if src_path.is_file():
-        src_mtime = src_path.stat().st_mtime
-        src_f = src
-    elif src_path.is_dir():
-        src_mtime, src_f = max(
-            map(
-                lambda f: (Path(f).stat().st_mtime, f),
-                get_all_files_recursive(src, src_exclude),
-            ),
-            key=lambda e: e[0],
-        )
-    else:
-        raise NotImplementedError
-    if dst_path.is_file():
-        dst_mtime = dst_path.stat().st_mtime
-        dst_f = dst
-    elif dst_path.is_dir():
-        dst_mtime, dst_f = min(
-            map(
-                lambda f: (Path(f).stat().st_mtime, f),
-                get_all_files_recursive(dst, dst_exclude),
-            ),
-            key=lambda e: e[0],
-        )
-    else:
-        raise NotImplementedError
-    LOGGER.debug(
-        f"Comparing mtimes of {src_f} ({src_mtime}) with {dst_f} ({dst_mtime})"
-    )
-    return src_mtime < dst_mtime
 
 
 def call(args, **kwargs):
@@ -389,19 +331,6 @@ def _call(args, kwargs):
         os.kill(os.getpid(), terminating_signal)
 
 
-def popen(args, internal=False, **kwargs):
-    """Run a program and deal with debugging and signals"""
-    args = [str(arg) for arg in args]
-    message = " ".join(quote(arg) for arg in args)
-    action_message = f"run: {message}"
-    if internal:
-        LOGGER.develop(action_message)
-    else:
-        LOGGER.action(action_message)
-    if not dry_run or internal:
-        return subprocess.Popen(args, **kwargs)
-
-
 @contextmanager
 def tempdir(dir=None):
     """Create a temporary to use be in a with statement"""
@@ -519,17 +448,6 @@ def format_options(options, glue=False):
             else:
                 cmd.extend([format_opt(opt), value])
     return cmd
-
-
-def cpu_count():
-    try:
-        import psutil
-
-        return psutil.cpu_count(logical=False)
-    except ImportError:
-        import multiprocessing
-
-        return multiprocessing.cpu_count()
 
 
 component_re = re.compile(r"(\d+ | [a-z]+ | \.| -)", re.VERBOSE)
@@ -678,30 +596,6 @@ def check_output(cmd, *args, **kwargs):
             return subprocess.check_output(cmd, *args, **kwargs).decode("utf-8")
 
 
-def is_pip_install(src_dir):
-    try:
-        with cd(src_dir, internal=True):
-            pip_install = subprocess.Popen(
-                ["git", "rev-parse"], stdout=subprocess.PIPE, stderr=subprocess.PIPE
-            ).wait()
-            # make sure that src_dir is actually in the project repository (and not in homebrew for example)
-            pip_install = pip_install or not safe_check_output(
-                ["git", "ls-files"], internal=True
-            )
-    except OSError:
-        pip_install = True
-    return pip_install
-
-
-def get_netrc_keyring():
-    netrcfile = Path.home() / ".netrc"
-    if netrcfile.exists() and platform.system() != "Windows":
-        chmod(netrcfile, 0o600)
-    from clk.keyrings import NetrcKeyring
-
-    return NetrcKeyring()
-
-
 def get_keyring():
     try:
         import keyring
@@ -807,40 +701,6 @@ def part_of_day():
         return "tea"
     else:
         return "night"
-
-
-def pid_exists(pidpath):
-    """Check whether a program is running or not, based on its pid file"""
-    LOGGER.develop(f"Checking {pidpath}")
-    running = False
-    pidpath = Path(pidpath)
-    if pidpath.exists():
-        with open(pidpath) as f:
-            pid = int(f.readline().strip())
-            try:
-                import psutil
-
-                running = psutil.pid_exists(pid)
-                if running:
-                    proc = psutil.Process(pid)
-                    running = proc.status() != psutil.STATUS_ZOMBIE
-            except ImportError:
-                LOGGER.warn(
-                    "Can't check the program is actually running. Please install psutils."
-                )
-                # pid file still exists, so lets say rest is running
-                running = True
-    return running
-
-
-def pid_kill(pidpath, signal=signal.SIGTERM):
-    """Send a signal to a process, based on its pid file"""
-    LOGGER.develop(f"Checking {pidpath}")
-    pidpath = Path(pidpath)
-    if pidpath.exists():
-        pid = int(read(pidpath))
-        LOGGER.action(f"kill -{signal} {pid}")
-        os.kill(pid, signal)
 
 
 _find_unsafe = re.compile(r"[^\w@%+=:,./-]").search
