@@ -10,13 +10,7 @@ then
     exit 1
 fi
 
-# Use per-test coverage file if CLK_COVERAGE_TEST_ID is set
-if test -n "${CLK_COVERAGE_TEST_ID-}"
-then
-    base_coverage="${base_dir}/.coverage.${CLK_COVERAGE_TEST_ID}"
-else
-    base_coverage="${base_dir}/.coverage"
-fi
+base_coverage="${base_dir}/.coverage.${CLK_COVERAGE_TEST_ID}"
 cur_coverage="$(pwd)/.coverage"
 
 args=()

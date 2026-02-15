@@ -129,11 +129,8 @@ class Lib:
             assert current_coverage_location != coverage_location
 
             # Use per-test coverage file if test ID is set
-            test_id = os.environ.get("CLK_COVERAGE_TEST_ID")
-            if test_id:
-                coverage_file = coverage_location / f".coverage.{test_id}"
-            else:
-                coverage_file = coverage_location / ".coverage"
+            test_id = os.environ["CLK_COVERAGE_TEST_ID"]
+            coverage_file = coverage_location / f".coverage.{test_id}"
 
             # Set COVERAGE_FILE for the combine command
             os.environ["COVERAGE_FILE"] = str(coverage_file)
