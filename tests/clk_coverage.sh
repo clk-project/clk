@@ -9,7 +9,14 @@ then
     echo "Won't mess up with the coverage'"
     exit 1
 fi
-base_coverage="${base_dir}/.coverage"
+
+# Use per-test coverage file if CLK_COVERAGE_TEST_ID is set
+if test -n "${CLK_COVERAGE_TEST_ID-}"
+then
+    base_coverage="${base_dir}/.coverage.${CLK_COVERAGE_TEST_ID}"
+else
+    base_coverage="${base_dir}/.coverage"
+fi
 cur_coverage="$(pwd)/.coverage"
 
 args=()
@@ -38,7 +45,7 @@ set -e
 
 pushd "${base_dir}" > /dev/null
 {
-    coverage combine "${args[@]}" "${cur_coverage}">/dev/null 2>/dev/null
+    COVERAGE_FILE="${base_coverage}" coverage combine "${args[@]}" "${cur_coverage}">/dev/null 2>/dev/null
 }
 popd > /dev/null
 

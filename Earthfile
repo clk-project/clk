@@ -94,18 +94,22 @@ test:
     COPY --dir +test-files/app/* /app
     ARG test_args
     ENV CLK_ALLOW_INTRUSIVE_TEST=True
-    RUN coverage run --source clk -m pytest ${test_args}
-    RUN cd coverage && coverage combine --append ../.coverage
-    IF [ -e tests/.coverage ]
-        RUN cd coverage && coverage combine --append ../tests/.coverage
-    END
+    # Run pytest - per-test coverage is handled by conftest.py hooks
+    RUN pytest ${test_args}
+    # Collect per-test coverage files into output
+    RUN mkdir -p output/coverage-per-test
+    # Copy all per-test coverage files (both from Lib.cmd() and pytest hook)
+    RUN cp tests/.coverage.* output/coverage-per-test/ 2>/dev/null || true
+    # Combine all coverage for the main coverage.xml (for sonar and existing workflow)
+    # The glob .coverage.* matches both .coverage.pytest.* and .coverage.{test_id} files
+    RUN cd coverage && coverage combine --append ../tests/.coverage.* 2>/dev/null || true
     RUN cd coverage && coverage xml
-        RUN sed -r -i 's|filename=".+/site-packages/|filename="|g' coverage/coverage.xml
-    RUN mkdir output && mv coverage output
+    RUN sed -r -i 's|filename=".+/site-packages/|filename="|g' coverage/coverage.xml
+    RUN mv coverage output/
     IF [ "${from}" = "build" ]
         RUN mkdir output/dist && mv /dist/* output/dist/
     END
-        SAVE ARTIFACT output /output
+    SAVE ARTIFACT output /output
 
 sandbox:
     # to be used with earthly -i

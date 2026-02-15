@@ -97,6 +97,7 @@ export DUMMYFILEKEYRINGPATH="${TMP}/keyring.json"
 export CLK_NETRC_LOCATION="${TMP}/netrc"
 export CLK_BIN="${CLK_BIN}"
 export PATH="${TMP}/bin:${PATH}"
+export CLK_COVERAGE_TEST_ID="${CLK_COVERAGE_TEST_ID-}"
 EOF
 # source the env file to use it in automatic test
 source "${TMP}/.envrc"

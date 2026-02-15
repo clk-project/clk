@@ -6,7 +6,11 @@ from shlex import split
 from shutil import copytree, rmtree
 from subprocess import STDOUT, check_call, check_output
 
+import coverage
 import pytest
+
+# Global coverage instance for per-test coverage tracking
+_per_test_cov = None
 
 
 @pytest.fixture()
@@ -17,6 +21,37 @@ def project():
 
 
 project1 = project
+
+
+def _test_id_from_nodeid(nodeid):
+    """Convert pytest nodeid to a safe filename component."""
+    return (
+        nodeid.replace("/", "_").replace("::", "_").replace("[", "_").replace("]", "_")
+    )
+
+
+@pytest.hookimpl(hookwrapper=True)
+def pytest_runtest_protocol(item, nextitem):
+    """Start per-test coverage before each test."""
+    global _per_test_cov
+
+    test_id = _test_id_from_nodeid(item.nodeid)
+    coverage_file = Path(__file__).parent / f".coverage.pytest.{test_id}"
+
+    # Start coverage for this test
+    _per_test_cov = coverage.Coverage(
+        data_file=str(coverage_file),
+        source=["clk"],
+    )
+    _per_test_cov.start()
+
+    yield
+
+    # Stop and save coverage for this test
+    if _per_test_cov is not None:
+        _per_test_cov.stop()
+        _per_test_cov.save()
+        _per_test_cov = None
 
 
 @pytest.fixture(autouse=True)
@@ -30,6 +65,8 @@ def rootdir(request):
     os.environ["CLK_TEST_ROOT"] = str(Path(root))
     os.environ["CURRENT_CLK"] = str(Path(__file__).parent.parent)
     os.environ["CLKCONFIGDIR"] = str(Path(root) / "clk-root")
+    # Set test identifier for per-test coverage files
+    os.environ["CLK_COVERAGE_TEST_ID"] = _test_id_from_nodeid(request.node.nodeid)
     print(root)
     (Path(root) / ".envrc").write_text('export CLKCONFIGDIR="$(pwd)/clk-root"')
     Lib.run("direnv allow")
@@ -37,6 +74,9 @@ def rootdir(request):
     del os.environ["CLKCONFIGDIR"]
     del os.environ["CLK_TEST_ROOT"]
     del os.environ["CURRENT_CLK"]
+    del os.environ["CLK_COVERAGE_TEST_ID"]
+    # Clean up COVERAGE_FILE to avoid leaking to subsequent tests
+    os.environ.pop("COVERAGE_FILE", None)
     os.chdir(prev)
 
 
@@ -57,7 +97,8 @@ def bindir():
 
 
 class Lib:
-    first_call = True
+    # Track first call per test for coverage combining
+    _first_call_per_test = {}
 
     def __init__(self, bindir):
         self.bindir = bindir
@@ -76,23 +117,42 @@ class Lib:
         return check_output(split(cmd), *args, encoding="utf-8", **kwargs).strip()
 
     def cmd(self, remaining, *args, **kwargs):
-        command = "python3 -u -m coverage run --source clk -m clk " + remaining
+        # Save and clear COVERAGE_FILE so subprocess writes to local .coverage
+        saved_coverage_file = os.environ.pop("COVERAGE_FILE", None)
         try:
+            command = "python3 -u -m coverage run --source clk -m clk " + remaining
             res = self.out(command, *args, **kwargs)
         finally:
             old_dir = os.getcwd()
             current_coverage_location = (Path(os.getcwd()) / ".coverage").resolve()
             coverage_location = (Path(__file__).parent).resolve()
             assert current_coverage_location != coverage_location
+
+            # Use per-test coverage file if test ID is set
+            test_id = os.environ.get("CLK_COVERAGE_TEST_ID")
+            if test_id:
+                coverage_file = coverage_location / f".coverage.{test_id}"
+            else:
+                coverage_file = coverage_location / ".coverage"
+
+            # Set COVERAGE_FILE for the combine command
+            os.environ["COVERAGE_FILE"] = str(coverage_file)
+
             combine_command = "coverage combine "
-            if Lib.first_call:
-                Lib.first_call = False
+            is_first_call = test_id not in Lib._first_call_per_test
+            if is_first_call:
+                Lib._first_call_per_test[test_id] = True
             else:
                 combine_command += " --append "
+
             combine_command += str(current_coverage_location)
             os.chdir(Path(__file__).parent)
             self.run(combine_command)
             os.chdir(old_dir)
+
+            # Restore original COVERAGE_FILE if it was set
+            if saved_coverage_file is not None:
+                os.environ["COVERAGE_FILE"] = saved_coverage_file
         return res
 
     def create_bash_command(self, name, content):
