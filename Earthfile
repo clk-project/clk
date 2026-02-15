@@ -129,6 +129,23 @@ export-coverage:
     RUN cd /app/output/coverage && coverage html
     SAVE ARTIFACT /app/output/coverage AS LOCAL coverage
 
+analyze-coverage:
+    FROM +test
+    ARG show_subsets=no
+    ARG show_unique=no
+    ARG min_unique_lines=0
+    LET args=""
+    IF [ "$show_subsets" = "yes" ]
+        SET args="$args --show-subsets"
+    END
+    IF [ "$show_unique" = "yes" ]
+        SET args="$args --show-unique"
+    END
+    IF [ "$min_unique_lines" != "0" ]
+        SET args="$args --min-unique-lines=$min_unique_lines"
+    END
+    RUN python3 tests/analyze_coverage.py $args /app/output/coverage-per-test
+
 export-image:
     FROM +docker
     SAVE IMAGE clk:${ref}
