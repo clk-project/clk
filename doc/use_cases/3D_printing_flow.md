@@ -1,5 +1,6 @@
 - [alternative use case, explicitly defining the flow](#db06b88c-a231-4f46-b8f7-54e98db07e17)
-- [more information about the flow](#org1da81ba)
+- [more information about the flow](#orgc601aa4)
+- [dynamically adjusting the flow](#orgf4b6fb5)
 - [when the flow is wrong](#96a6905e-06bd-48d5-a117-7e81ebde9399)
 
 When you get used to create groups of commands, you generally end up having a sequence that comes out quite naturally.
@@ -154,7 +155,7 @@ clk printer send myprinter --flow
 Here, your mileage may vary. Choose the implementation that suits you better.
 
 
-<a id="org1da81ba"></a>
+<a id="orgc601aa4"></a>
 
 # more information about the flow
 
@@ -222,6 +223,92 @@ clk --flow-progress printer send myprinter --flow
     has_send_output
 
 Of course, using it with `--flow-step` would make things even more messy, so use the right option for the flows you will run, depending on your use cases.
+
+
+<a id="orgf4b6fb5"></a>
+
+# dynamically adjusting the flow
+
+Sometimes you need to adjust the flow without modifying the code. For instance, you might want to add a cleaning step before calibration, or remove a step temporarily.
+
+Let's say you want to add a `clean` command that should run before calibration.
+
+```bash
+clk alias set printer.clean echo "Cleaning the printer bed"
+```
+
+You can insert it at the beginning of the calibrate flow using `flowdep set`.
+
+```bash
+clk flowdep set printer.calibrate printer.clean
+clk printer send myprinter --flow
+```
+
+    New global flowdep for printer.calibrate: printer.clean
+    Cleaning the printer bed
+    Running some stuff for the printer to be ready to go
+    Slicing someothermodel to model.gcode
+    Printing model.gcode using myprinter
+
+Now, let's say you also want to add a `preheat` step after clean but before calibrate. You can append it to the existing flow.
+
+```bash
+clk alias set printer.preheat echo "Preheating the nozzle"
+```
+
+```bash
+clk flowdep append printer.calibrate printer.preheat
+clk printer send myprinter --flow
+```
+
+    Cleaning the printer bed
+    Preheating the nozzle
+    Running some stuff for the printer to be ready to go
+    Slicing someothermodel to model.gcode
+    Printing model.gcode using myprinter
+
+You can also insert a step at the beginning of an existing flow. Let's add a `check-filament` step before everything else.
+
+```bash
+clk alias set printer.check-filament echo "Checking filament level"
+```
+
+```bash
+clk flowdep insert printer.calibrate printer.check-filament
+clk printer send myprinter --flow
+```
+
+    Checking filament level
+    Cleaning the printer bed
+    Preheating the nozzle
+    Running some stuff for the printer to be ready to go
+    Slicing someothermodel to model.gcode
+    Printing model.gcode using myprinter
+
+If you decide that the preheat step is not needed anymore, you can remove it.
+
+```bash
+clk flowdep remove printer.calibrate printer.preheat
+clk printer send myprinter --flow
+```
+
+    Checking filament level
+    Cleaning the printer bed
+    Running some stuff for the printer to be ready to go
+    Slicing someothermodel to model.gcode
+    Printing model.gcode using myprinter
+
+Finally, if you want to completely reset the flow dependencies for calibrate and go back to the original behavior, use `flowdep unset`.
+
+```bash
+clk flowdep unset printer.calibrate
+clk printer send myprinter --flow
+```
+
+    Erasing printer.calibrate flow dependencies from global settings
+    Running some stuff for the printer to be ready to go
+    Slicing someothermodel to model.gcode
+    Printing model.gcode using myprinter
 
 
 <a id="96a6905e-06bd-48d5-a117-7e81ebde9399"></a>

@@ -256,6 +256,142 @@ exit 1
 }
 
 
+clk alias set printer.clean echo "Cleaning the printer bed"
+
+
+flowdep-set-clean_code () {
+      clk flowdep set printer.calibrate printer.clean
+      clk printer send myprinter --flow
+}
+
+flowdep-set-clean_expected () {
+      cat<<"EOEXPECTED"
+New global flowdep for printer.calibrate: printer.clean
+Cleaning the printer bed
+Running some stuff for the printer to be ready to go
+Slicing someothermodel to model.gcode
+Printing model.gcode using myprinter
+EOEXPECTED
+}
+
+echo 'Run flowdep-set-clean'
+
+{ flowdep-set-clean_code || true ; } > "${TMP}/code.txt" 2>&1
+flowdep-set-clean_expected > "${TMP}/expected.txt" 2>&1
+diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+echo "Something went wrong when trying flowdep-set-clean"
+exit 1
+}
+
+
+clk alias set printer.preheat echo "Preheating the nozzle"
+
+
+flowdep-append_code () {
+      clk flowdep append printer.calibrate printer.preheat
+      clk printer send myprinter --flow
+}
+
+flowdep-append_expected () {
+      cat<<"EOEXPECTED"
+Cleaning the printer bed
+Preheating the nozzle
+Running some stuff for the printer to be ready to go
+Slicing someothermodel to model.gcode
+Printing model.gcode using myprinter
+EOEXPECTED
+}
+
+echo 'Run flowdep-append'
+
+{ flowdep-append_code || true ; } > "${TMP}/code.txt" 2>&1
+flowdep-append_expected > "${TMP}/expected.txt" 2>&1
+diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+echo "Something went wrong when trying flowdep-append"
+exit 1
+}
+
+
+clk alias set printer.check-filament echo "Checking filament level"
+
+
+flowdep-insert_code () {
+      clk flowdep insert printer.calibrate printer.check-filament
+      clk printer send myprinter --flow
+}
+
+flowdep-insert_expected () {
+      cat<<"EOEXPECTED"
+Checking filament level
+Cleaning the printer bed
+Preheating the nozzle
+Running some stuff for the printer to be ready to go
+Slicing someothermodel to model.gcode
+Printing model.gcode using myprinter
+EOEXPECTED
+}
+
+echo 'Run flowdep-insert'
+
+{ flowdep-insert_code || true ; } > "${TMP}/code.txt" 2>&1
+flowdep-insert_expected > "${TMP}/expected.txt" 2>&1
+diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+echo "Something went wrong when trying flowdep-insert"
+exit 1
+}
+
+
+
+flowdep-remove_code () {
+      clk flowdep remove printer.calibrate printer.preheat
+      clk printer send myprinter --flow
+}
+
+flowdep-remove_expected () {
+      cat<<"EOEXPECTED"
+Checking filament level
+Cleaning the printer bed
+Running some stuff for the printer to be ready to go
+Slicing someothermodel to model.gcode
+Printing model.gcode using myprinter
+EOEXPECTED
+}
+
+echo 'Run flowdep-remove'
+
+{ flowdep-remove_code || true ; } > "${TMP}/code.txt" 2>&1
+flowdep-remove_expected > "${TMP}/expected.txt" 2>&1
+diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+echo "Something went wrong when trying flowdep-remove"
+exit 1
+}
+
+
+
+flowdep-unset_code () {
+      clk flowdep unset printer.calibrate
+      clk printer send myprinter --flow
+}
+
+flowdep-unset_expected () {
+      cat<<"EOEXPECTED"
+Erasing printer.calibrate flow dependencies from global settings
+Running some stuff for the printer to be ready to go
+Slicing someothermodel to model.gcode
+Printing model.gcode using myprinter
+EOEXPECTED
+}
+
+echo 'Run flowdep-unset'
+
+{ flowdep-unset_code || true ; } > "${TMP}/code.txt" 2>&1
+flowdep-unset_expected > "${TMP}/expected.txt" 2>&1
+diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+echo "Something went wrong when trying flowdep-unset"
+exit 1
+}
+
+
   clk command create python --group printer --description "This is a group of commands to deal with 3D printing." --body '
 @printer.command()
 def calibrate():

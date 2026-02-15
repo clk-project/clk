@@ -319,6 +319,110 @@ clk --flow-progress printer send myprinter --flow
 Of course, using it with ~--flow-step~ would make things even more messy, so use
 the right option for the flows you will run, depending on your use cases.
 
+* dynamically adjusting the flow
+  :PROPERTIES:
+  :CREATED:  [2026-02-15 15:00]
+  :END:
+
+Sometimes you need to adjust the flow without modifying the code. For instance,
+you might want to add a cleaning step before calibration, or remove a step
+temporarily.
+
+Let's say you want to add a ~clean~ command that should run before calibration.
+
+#+NAME: create-clean
+#+BEGIN_SRC bash :results none :exports code :session 73f5d57e-d16a-490a-b4e1-0254d6296590
+clk alias set printer.clean echo "Cleaning the printer bed"
+#+END_SRC
+
+You can insert it at the beginning of the calibrate flow using ~flowdep set~.
+
+#+NAME: flowdep-set-clean
+#+BEGIN_SRC bash :results verbatim :exports both :session 73f5d57e-d16a-490a-b4e1-0254d6296590 :cache yes
+clk flowdep set printer.calibrate printer.clean
+clk printer send myprinter --flow
+#+END_SRC
+
+#+RESULTS[4ece043a28d90c9c45606b200fb5fefee29e7d6e]: flowdep-set-clean
+: New global flowdep for printer.calibrate: printer.clean
+: Cleaning the printer bed
+: Running some stuff for the printer to be ready to go
+: Slicing someothermodel to model.gcode
+: Printing model.gcode using myprinter
+
+Now, let's say you also want to add a ~preheat~ step after clean but before
+calibrate. You can append it to the existing flow.
+
+#+NAME: create-preheat
+#+BEGIN_SRC bash :results none :exports code :session 73f5d57e-d16a-490a-b4e1-0254d6296590
+clk alias set printer.preheat echo "Preheating the nozzle"
+#+END_SRC
+
+#+NAME: flowdep-append
+#+BEGIN_SRC bash :results verbatim :exports both :session 73f5d57e-d16a-490a-b4e1-0254d6296590 :cache yes
+clk flowdep append printer.calibrate printer.preheat
+clk printer send myprinter --flow
+#+END_SRC
+
+#+RESULTS[b5257a2c4b06138feeec07559637a144e5595657]: flowdep-append
+: Cleaning the printer bed
+: Preheating the nozzle
+: Running some stuff for the printer to be ready to go
+: Slicing someothermodel to model.gcode
+: Printing model.gcode using myprinter
+
+You can also insert a step at the beginning of an existing flow. Let's add a
+~check-filament~ step before everything else.
+
+#+NAME: create-check-filament
+#+BEGIN_SRC bash :results none :exports code :session 73f5d57e-d16a-490a-b4e1-0254d6296590
+clk alias set printer.check-filament echo "Checking filament level"
+#+END_SRC
+
+#+NAME: flowdep-insert
+#+BEGIN_SRC bash :results verbatim :exports both :session 73f5d57e-d16a-490a-b4e1-0254d6296590 :cache yes
+clk flowdep insert printer.calibrate printer.check-filament
+clk printer send myprinter --flow
+#+END_SRC
+
+#+RESULTS[e427040c2ce1a2700d5209a728550aeeeeec734e]: flowdep-insert
+: Checking filament level
+: Cleaning the printer bed
+: Preheating the nozzle
+: Running some stuff for the printer to be ready to go
+: Slicing someothermodel to model.gcode
+: Printing model.gcode using myprinter
+
+If you decide that the preheat step is not needed anymore, you can remove it.
+
+#+NAME: flowdep-remove
+#+BEGIN_SRC bash :results verbatim :exports both :session 73f5d57e-d16a-490a-b4e1-0254d6296590 :cache yes
+clk flowdep remove printer.calibrate printer.preheat
+clk printer send myprinter --flow
+#+END_SRC
+
+#+RESULTS[a0a0b72fd7b815773596bcfb053b719106df4326]: flowdep-remove
+: Checking filament level
+: Cleaning the printer bed
+: Running some stuff for the printer to be ready to go
+: Slicing someothermodel to model.gcode
+: Printing model.gcode using myprinter
+
+Finally, if you want to completely reset the flow dependencies for calibrate
+and go back to the original behavior, use ~flowdep unset~.
+
+#+NAME: flowdep-unset
+#+BEGIN_SRC bash :results verbatim :exports both :session 73f5d57e-d16a-490a-b4e1-0254d6296590 :cache yes
+clk flowdep unset printer.calibrate
+clk printer send myprinter --flow
+#+END_SRC
+
+#+RESULTS[836d59f9cccf28b6172effe6e43d7ac74d13fa11]: flowdep-unset
+: Erasing printer.calibrate flow dependencies from global settings
+: Running some stuff for the printer to be ready to go
+: Slicing someothermodel to model.gcode
+: Printing model.gcode using myprinter
+
 * when the flow is wrong
   :PROPERTIES:
   :CREATED:  [2024-02-16 17:20]
@@ -388,6 +492,22 @@ Beware that this means that you have to check that this command it actually defi
   check-result(flow-step)
 
   check-result(flow-progress)
+
+  <<create-clean>>
+
+  check-result(flowdep-set-clean)
+
+  <<create-preheat>>
+
+  check-result(flowdep-append)
+
+  <<create-check-filament>>
+
+  check-result(flowdep-insert)
+
+  check-result(flowdep-remove)
+
+  check-result(flowdep-unset)
 
   <<install-with-wrong-flow-deps>>
 
