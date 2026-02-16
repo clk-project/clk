@@ -131,14 +131,14 @@ analyze-coverage:
     # Install TestIQ for coverage analysis
     RUN pip install testiq
     # Convert coverage.py JSON to TestIQ format
-    RUN python3 tests/convert_to_testiq.py /app/output/coverage-contexts.json /app/output/testiq-coverage.json
+    RUN python3 tests/convert_to_testiq.py /app/output/coverage/coverage-contexts.json /app/output/testiq-coverage.json
     # Run TestIQ analysis
-    RUN testiq analyze /app/output/testiq-coverage.json --format html --output /app/output/testiq-report.html
+    RUN mkdir -p /app/output/coverage-reports
+    RUN testiq analyze /app/output/testiq-coverage.json --format html --output /app/output/coverage-reports/testiq-report.html
     # Also generate coverage HTML with contexts (built-in line heat map)
-    RUN cd /app/output && coverage html --show-contexts -d coverage-html
+    RUN cd /app/output/coverage && coverage html --show-contexts -d /app/output/coverage-reports/coverage-html
     SAVE ARTIFACT /app/output /output
-    SAVE ARTIFACT /app/output/testiq-report.html AS LOCAL output/testiq-report.html
-    SAVE ARTIFACT /app/output/coverage-html AS LOCAL output/coverage-html
+    SAVE ARTIFACT /app/output/coverage-reports AS LOCAL output/coverage-reports
 
 export-image:
     FROM +docker
