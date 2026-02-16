@@ -102,7 +102,7 @@ test:
     # Generate JSON with contexts for per-test coverage analysis
     RUN cd coverage && coverage json --show-contexts -o coverage-contexts.json
     RUN sed -r -i 's|filename=".+/site-packages/|filename="|g' coverage/coverage.xml
-    RUN mv coverage output/
+    RUN mkdir -p output && mv coverage output/
     IF [ "${from}" = "build" ]
         RUN mkdir output/dist && mv /dist/* output/dist/
     END
