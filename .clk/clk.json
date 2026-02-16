@@ -6,7 +6,8 @@
                     "exec",
                     "--in-project",
                     "earthly",
-                    "+analyze-coverage"
+                    "--artifact",
+                    "+test/output"
                 ]
             ],
             "documentation": null

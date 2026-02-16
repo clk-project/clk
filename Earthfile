@@ -106,6 +106,18 @@ test:
     IF [ "${from}" = "build" ]
         RUN mkdir output/dist && mv /dist/* output/dist/
     END
+    # Generate coverage analysis reports
+    RUN pip install testiq
+    RUN python3 tests/convert_to_testiq.py /app/output/coverage/coverage-contexts.json /app/output/testiq-coverage.json
+    RUN mkdir -p /app/output/coverage-reports
+    RUN testiq analyze /app/output/testiq-coverage.json --format markdown --output /app/output/coverage-reports/testiq-report.md
+    RUN testiq analyze /app/output/testiq-coverage.json --format html --output /app/output/coverage-reports/testiq-report.html
+    RUN python3 tests/analyze_coverage.py /app/output/coverage/coverage-contexts.json \
+        --overlap-md /app/output/coverage-reports/overlap.md \
+        --overlap-html /app/output/coverage-reports/overlap.html \
+        --line-heat-md /app/output/coverage-reports/line-heat.md \
+        --line-heat-html /app/output/coverage-reports/line-heat.html
+    RUN python3 tests/sanitize_coverage_reports.py /app/output/coverage-reports/*.md
     SAVE ARTIFACT output /output
 
 sandbox:
@@ -125,20 +137,6 @@ export-coverage:
     FROM +test --test_args="$test_args" --from="$from" --test_args="$test_args" --use_git="$use_git"
     RUN cd /app/output/coverage && coverage html
     SAVE ARTIFACT /app/output/coverage AS LOCAL coverage
-
-analyze-coverage:
-    FROM +test
-    # Install TestIQ for coverage analysis
-    RUN pip install testiq
-    # Convert coverage.py JSON to TestIQ format
-    RUN python3 tests/convert_to_testiq.py /app/output/coverage/coverage-contexts.json /app/output/testiq-coverage.json
-    # Run TestIQ analysis
-    RUN mkdir -p /app/output/coverage-reports
-    RUN testiq analyze /app/output/testiq-coverage.json --format html --output /app/output/coverage-reports/testiq-report.html
-    # Also generate coverage HTML with contexts (built-in line heat map)
-    RUN cd /app/output/coverage && coverage html --show-contexts -d /app/output/coverage-reports/coverage-html
-    SAVE ARTIFACT /app/output /output
-    SAVE ARTIFACT /app/output/coverage-reports AS LOCAL output/coverage-reports
 
 export-image:
     FROM +docker
@@ -236,6 +234,8 @@ sanity-check:
     ARG build_requirements=no
     COPY (+sonar/output --use_branch="${use_branch}" --use_git="${use_git}" --build_requirements="${build_requirements}") /output
     SAVE ARTIFACT /output
+    SAVE ARTIFACT /output/coverage-reports AS LOCAL output/coverage-reports
+    SAVE ARTIFACT /output/coverage-reports/*.md AS LOCAL coverage/reports/
 
 deploy:
     FROM e+alpine-python-user-venv --extra_packages=twine

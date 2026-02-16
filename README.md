@@ -26,6 +26,8 @@
 ![Gitter ](https://img.shields.io/gitter/room/clk-project/clk)
 ![Libera](https://raster.shields.io/badge/libera.chat-%23clk-blue)
 
+See also: [Test Coverage Reports](./coverage/reports/)
+
 Come and discuss clk with us on
 
 -   [#clk on Libera](https://web.libera.chat/?channels)
