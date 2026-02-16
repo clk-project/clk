@@ -1,1 +1,15 @@
-{}
+{
+    "alias": {
+        "analyse-coverage": {
+            "commands": [
+                [
+                    "exec",
+                    "--in-project",
+                    "earthly",
+                    "+analyze-coverage"
+                ]
+            ],
+            "documentation": null
+        }
+    }
+}
