@@ -96,14 +96,11 @@ test:
     ENV CLK_ALLOW_INTRUSIVE_TEST=True
     # Run pytest - per-test coverage is handled by conftest.py hooks
     RUN pytest ${test_args}
-    # Collect per-test coverage files into output
-    RUN mkdir -p output/coverage-per-test
-    # Copy all per-test coverage files (both from Lib.cmd() and pytest hook)
-    RUN cp tests/.coverage.* output/coverage-per-test/ 2>/dev/null || true
-    # Combine all coverage for the main coverage.xml (for sonar and existing workflow)
-    # The glob .coverage.* matches both .coverage.pytest.* and .coverage.{test_id} files
+    # Combine all per-test coverage files (preserves contexts for per-test analysis)
     RUN cd coverage && coverage combine --append ../tests/.coverage.* 2>/dev/null || true
     RUN cd coverage && coverage xml
+    # Generate JSON with contexts for per-test coverage analysis
+    RUN cd coverage && coverage json --show-contexts -o coverage-contexts.json
     RUN sed -r -i 's|filename=".+/site-packages/|filename="|g' coverage/coverage.xml
     RUN mv coverage output/
     IF [ "${from}" = "build" ]
@@ -131,20 +128,17 @@ export-coverage:
 
 analyze-coverage:
     FROM +test
-    ARG show_subsets=no
-    ARG show_unique=no
-    ARG min_unique_lines=0
-    LET args=""
-    IF [ "$show_subsets" = "yes" ]
-        SET args="$args --show-subsets"
-    END
-    IF [ "$show_unique" = "yes" ]
-        SET args="$args --show-unique"
-    END
-    IF [ "$min_unique_lines" != "0" ]
-        SET args="$args --min-unique-lines=$min_unique_lines"
-    END
-    RUN python3 tests/analyze_coverage.py $args /app/output/coverage-per-test
+    # Install TestIQ for coverage analysis
+    RUN pip install testiq
+    # Convert coverage.py JSON to TestIQ format
+    RUN python3 tests/convert_to_testiq.py /app/output/coverage-contexts.json /app/output/testiq-coverage.json
+    # Run TestIQ analysis
+    RUN testiq analyze /app/output/testiq-coverage.json --format html --output /app/output/testiq-report.html
+    # Also generate coverage HTML with contexts (built-in line heat map)
+    RUN cd /app/output && coverage html --show-contexts -d coverage-html
+    SAVE ARTIFACT /app/output /output
+    SAVE ARTIFACT /app/output/testiq-report.html AS LOCAL output/testiq-report.html
+    SAVE ARTIFACT /app/output/coverage-html AS LOCAL output/coverage-html
 
 export-image:
     FROM +docker

@@ -30,18 +30,35 @@ def _test_id_from_nodeid(nodeid):
     )
 
 
+def _short_test_name(nodeid):
+    """Convert pytest nodeid to a short test name for context."""
+    # tests/test_foo.py::test_bar -> foo:bar
+    name = nodeid
+    if name.startswith("tests/test_"):
+        name = name[len("tests/test_") :]
+    if ".py::test_" in name:
+        parts = name.split(".py::test_")
+        return f"{parts[0]}:{parts[1]}"
+    if ".py::" in name:
+        parts = name.split(".py::")
+        return f"{parts[0]}:{parts[1]}"
+    return name
+
+
 @pytest.hookimpl(hookwrapper=True)
 def pytest_runtest_protocol(item, nextitem):
     """Start per-test coverage before each test."""
     global _per_test_cov
 
     test_id = _test_id_from_nodeid(item.nodeid)
+    context_name = _short_test_name(item.nodeid)
     coverage_file = Path(__file__).parent / f".coverage.pytest.{test_id}"
 
-    # Start coverage for this test
+    # Start coverage for this test with context
     _per_test_cov = coverage.Coverage(
         data_file=str(coverage_file),
         source=["clk"],
+        context=context_name,
     )
     _per_test_cov.start()
 
@@ -67,6 +84,8 @@ def rootdir(request):
     os.environ["CLKCONFIGDIR"] = str(Path(root) / "clk-root")
     # Set test identifier for per-test coverage files
     os.environ["CLK_COVERAGE_TEST_ID"] = _test_id_from_nodeid(request.node.nodeid)
+    # Set context name for coverage (used by Lib.cmd)
+    os.environ["CLK_COVERAGE_CONTEXT"] = _short_test_name(request.node.nodeid)
     print(root)
     (Path(root) / ".envrc").write_text('export CLKCONFIGDIR="$(pwd)/clk-root"')
     Lib.run("direnv allow")
@@ -75,6 +94,7 @@ def rootdir(request):
     del os.environ["CLK_TEST_ROOT"]
     del os.environ["CURRENT_CLK"]
     del os.environ["CLK_COVERAGE_TEST_ID"]
+    del os.environ["CLK_COVERAGE_CONTEXT"]
     # Clean up COVERAGE_FILE to avoid leaking to subsequent tests
     os.environ.pop("COVERAGE_FILE", None)
     os.chdir(prev)
@@ -119,8 +139,14 @@ class Lib:
     def cmd(self, remaining, *args, **kwargs):
         # Save and clear COVERAGE_FILE so subprocess writes to local .coverage
         saved_coverage_file = os.environ.pop("COVERAGE_FILE", None)
+        # Get context name from environment
+        context_name = os.environ.get("CLK_COVERAGE_CONTEXT", "")
         try:
-            command = "python3 -u -m coverage run --source clk -m clk " + remaining
+            context_arg = f"--context={context_name}" if context_name else ""
+            command = (
+                f"python3 -u -m coverage run --source clk {context_arg} -m clk "
+                + remaining
+            )
             res = self.out(command, *args, **kwargs)
         finally:
             old_dir = os.getcwd()
