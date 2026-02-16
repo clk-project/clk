@@ -81,7 +81,7 @@ dist:
 
 test:
     # we expect the end user to have an environment closer to debian than alpine. Therefore we use debian here.
-    FROM e+debian-python-user-venv --extra_packages="git expect direnv faketime jq graphviz procps" --packages="coverage pytest keyring"
+    FROM e+debian-python-user-venv --extra_packages="git expect direnv faketime jq graphviz procps" --packages="coverage pytest keyring testiq"
     RUN echo 'source <(direnv hook bash)' >> "${HOME}/.bashrc"
     ARG from=source
     ARG use_git=no
@@ -107,7 +107,6 @@ test:
         RUN mkdir output/dist && mv /dist/* output/dist/
     END
     # Generate coverage analysis reports
-    RUN pip install testiq
     RUN python3 tests/convert_to_testiq.py /app/output/coverage/coverage-contexts.json /app/output/testiq-coverage.json
     RUN mkdir -p /app/output/coverage-reports
     RUN testiq analyze /app/output/testiq-coverage.json --format markdown --output /app/output/coverage-reports/testiq-report.md
