@@ -33,7 +33,7 @@ if ! test -e "${PYTHON}"
 then
     PYTHON=python3
 fi
-"${PYTHON}" -u -m coverage run --source clk -m clk "$@"
+"${PYTHON}" -u -m coverage run --source clk --context=${CLK_COVERAGE_CONTEXT} -m clk "$@"
 res=$?
 set -e
 
