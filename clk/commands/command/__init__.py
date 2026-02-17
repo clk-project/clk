@@ -228,7 +228,7 @@ def _remove(force, customcommand):
 def edit(customcommand):
     """Edit the given custom command"""
     path = Path(customcommand.customcommand_path)
-    click.edit(filename=path)
+    click.edit(filename=str(path))
 
 
 class AliasesType(DynamicChoiceType):

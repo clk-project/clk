@@ -101,11 +101,25 @@ clk mycommand
 #+RESULTS[b51c75a0bbe5bf44990b233b589594473c828e43]: try
 : warning: The command 'mycommand' has no documentation
 
-Let's write something in here.
+Let's write something in here. You can edit the file directly using ~clk command
+edit~.
+
+#+name: edit
+#+BEGIN_SRC bash :results none :exports code
+clk command edit mycommand
+#+END_SRC
+
+For the sake of this tutorial, we will provide a custom ~EDITOR~ that
+automatically makes the change.
 
 #+name: set_description
 #+BEGIN_SRC bash :results none :exports both :session 85c8e385-7f24-48ac-9a85-30cfc354aebf
-sed -i 's/Description/Command that says something/g' "$(clk command which mycommand)"
+cat<<'EOF' > myeditor
+#!/bin/bash -eu
+sed -i 's/Description/Command that says something/g' "${1}"
+EOF
+chmod +x myeditor
+VISUAL=./myeditor clk command edit mycommand
 #+END_SRC
 
 #+NAME: help

@@ -72,10 +72,21 @@ clk mycommand
 
     warning: The command 'mycommand' has no documentation
 
-Let's write something in here.
+Let's write something in here. You can edit the file directly using `clk command edit`.
 
 ```bash
-sed -i 's/Description/Command that says something/g' "$(clk command which mycommand)"
+clk command edit mycommand
+```
+
+For the sake of this tutorial, we will provide a custom `EDITOR` that automatically makes the change.
+
+```bash
+cat<<'EOF' > myeditor
+#!/bin/bash -eu
+sed -i 's/Description/Command that says something/g' "${1}"
+EOF
+chmod +x myeditor
+VISUAL=./myeditor clk command edit mycommand
 ```
 
 ```bash

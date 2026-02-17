@@ -1,5 +1,5 @@
 #!/bin/bash -eu
-# [[file:../../doc/use_cases/tests/use_cases/bash_command.sh :noweb yes :shebang "#!/bin/bash -eu"][No heading:16]]
+# [[file:../../doc/use_cases/tests/use_cases/bash_command.sh :noweb yes :shebang "#!/bin/bash -eu"][No heading:17]]
 . ./sandboxing.sh
 
 clk command create bash mycommand
@@ -99,7 +99,12 @@ exit 1
 }
 
 
-sed -i 's/Description/Command that says something/g' "$(clk command which mycommand)"
+cat<<'EOF' > myeditor
+#!/bin/bash -eu
+sed -i 's/Description/Command that says something/g' "${1}"
+EOF
+chmod +x myeditor
+VISUAL=./myeditor clk command edit mycommand
 
 
 help_code () {
@@ -228,4 +233,4 @@ diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
 echo "Something went wrong when trying clean-test-expect"
 exit 1
 }
-# No heading:16 ends here
+# No heading:17 ends here
