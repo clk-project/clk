@@ -119,7 +119,10 @@ def get_ctx(path, side_effects=False, resilient_parsing=None) -> click.Context:
         ctx = click_get_current_context_safe()
         resilient_parsing = (ctx is not None and ctx.resilient_parsing) or False
 
-    key = tuple(path)
+    # Include resilient_parsing in cache key because contexts created with
+    # resilient_parsing=True have empty _parameter_source (cleared for completion),
+    # and must not be reused when resilient_parsing=False is expected.
+    key = (tuple(path), resilient_parsing)
     if key not in get_ctx_cache:
         if side_effects:
             # https://konubinix.eu/braindump/posts/f6965d2d-5deb-4dd3-89b5-00a29d885fa8/?title=clk_config_per_level_and_overriding

@@ -1,0 +1,122 @@
+:PROPERTIES:
+:ID:       a7b3c8d2-4e5f-6a1b-9c0d-e2f3a4b5c6d7
+:END:
+#+language: en
+#+EXPORT_FILE_NAME: ./environment_deployment.md
+
+#+CALL: ../../lp.org:check-result()
+
+#+name: init
+#+BEGIN_SRC bash :results none :exports none :session a7b3c8d2-4e5f-6a1b-9c0d-e2f3a4b5c6d7
+  . ./sandboxing.sh
+#+END_SRC
+
+When deploying applications, you often want to target different environments
+like staging, production, or development. A good deployment tool should be
+smart about defaults: when you don't specify an environment, it could
+auto-detect based on context (like the current git branch), but when you
+explicitly choose one, it should respect that choice.
+
+* A smart deployment command
+
+Let's create a deploy command that auto-detects the environment when not
+specified, but uses the explicit value when provided:
+
+#+NAME: deploy_body
+#+BEGIN_SRC python :results none :exports code
+@group()
+def app():
+    "Application management"
+
+@app.command()
+@option('--environment', '-e', default='staging', help='Target environment')
+def deploy(environment):
+    "Deploy the application"
+    import click
+    ctx = click.get_current_context()
+    source = ctx.get_parameter_source('environment')
+
+    if source.name == 'DEFAULT':
+        print(f"No environment specified, auto-detecting...")
+        print(f"Detected: production (from git branch)")
+        print(f"Deploying to production")
+    else:
+        print(f"Environment explicitly set to: {environment}")
+        print(f"Deploying to {environment}")
+#+END_SRC
+
+#+NAME: deploy
+#+BEGIN_SRC bash :results none :exports none :session a7b3c8d2-4e5f-6a1b-9c0d-e2f3a4b5c6d7 :noweb yes
+clk command create python app --group --force
+cat<<'EOF' >> "${CLKCONFIGDIR}/python/app.py"
+<<deploy_body>>
+EOF
+#+END_SRC
+
+When called without the environment flag, it auto-detects:
+
+#+NAME: deploy_default
+#+BEGIN_SRC bash :results verbatim :exports both :session a7b3c8d2-4e5f-6a1b-9c0d-e2f3a4b5c6d7 :cache yes
+clk app deploy
+#+END_SRC
+
+#+RESULTS[321f608a132e0538f1c72ea10d310e69f072bc46]: deploy_default
+: No environment specified, auto-detecting...
+: Detected: production (from git branch)
+: Deploying to production
+
+When called with an explicit environment, it uses that:
+
+#+NAME: deploy_explicit
+#+BEGIN_SRC bash :results verbatim :exports both :session a7b3c8d2-4e5f-6a1b-9c0d-e2f3a4b5c6d7 :cache yes
+clk app deploy --environment staging
+#+END_SRC
+
+#+RESULTS[4961eca31e849b986ed3b202e7b1fbf54fa67e5d]: deploy_explicit
+: Environment explicitly set to: staging
+: Deploying to staging
+
+* Shortcut aliases for common targets
+
+To make deployments even more convenient, let's create aliases for the most
+common targets:
+
+#+NAME: create_aliases
+#+BEGIN_SRC bash :results verbatim :exports both :session a7b3c8d2-4e5f-6a1b-9c0d-e2f3a4b5c6d7 :cache yes
+clk alias set app.deploy-prod app deploy --environment production
+clk alias set app.deploy-staging app deploy --environment staging
+#+END_SRC
+
+#+RESULTS[d809f9bc1cd709c1b6c869658dbef684b5b4427f]: create_aliases
+: New global alias for app.deploy-prod: app deploy --environment production
+: New global alias for app.deploy-staging: app deploy --environment staging
+
+The alias provides an explicit environment value, so the command correctly
+recognizes it as an explicit choice rather than falling back to auto-detection:
+
+#+NAME: deploy_via_alias
+#+BEGIN_SRC bash :results verbatim :exports both :session a7b3c8d2-4e5f-6a1b-9c0d-e2f3a4b5c6d7 :cache yes
+clk app deploy-prod
+#+END_SRC
+
+#+RESULTS[ec409d287fe4b557be0f2dc7cd25663bb1ee6814]: deploy_via_alias
+: Environment explicitly set to: production
+: Deploying to production
+
+This way, ~clk app deploy~ auto-detects while ~clk app deploy-prod~ always
+targets production.
+
+#+NAME: run
+#+BEGIN_SRC bash :results none :exports none :tangle ../../tests/use_cases/environment_deployment.sh :noweb yes :shebang "#!/bin/bash -eu"
+<<init>>
+
+<<deploy>>
+
+check-result(deploy_default)
+
+check-result(deploy_explicit)
+
+check-result(create_aliases)
+
+check-result(deploy_via_alias)
+#+END_SRC
