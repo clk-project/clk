@@ -7,7 +7,7 @@
                     "--in-project",
                     "earthly",
                     "--artifact",
-                    "+test/output"
+                    "+local-sanity-check/output"
                 ]
             ],
             "documentation": null
