@@ -1,14 +1,11 @@
 #!/usr/bin/env python
 
-import io
 import re
 import subprocess
-import tarfile
 from pathlib import Path
 from shlex import split
 
 import click
-import requests
 
 from clk import run
 from clk.colors import Colorer
@@ -33,7 +30,6 @@ from clk.lib import (
     check_output,
     copy,
     get_option_choices,
-    glob,
     ln,
     move,
     rm,
@@ -477,10 +473,6 @@ def process_url(name, url):
         install_type = "git"
         if name is None:
             name = extension
-    elif m := re.match("^https://github.com/.+/(?P<name>[^/]+)/tarball/.+$", url):
-        install_type = "webtar"
-        urls.append(url)
-        name = name or m["name"]
     elif url.startswith("file:"):
         url_path = Path(url[len("file:") :]).absolute()
         url = str(url_path)
@@ -631,13 +623,10 @@ def install(
         else:
             copy(url, extension_path)
             (extension_path / "url").write_text(url)
-    elif install_type == "webtar":
-        LOGGER.info(f"Getting the tarfile from {url}")
-        tar = tarfile.open(fileobj=io.BytesIO(requests.get(url).content))
-        tar.extractall(extension_path)
-        for file in glob(f"{extension_path}/*/*"):
-            move(file, extension_path)
-        (extension_path / "url").write_text(url)
+    else:
+        raise NotImplementedError(
+            f"Unknown install type '{install_type}'. Supported types are: 'git', 'file'."
+        )
 
     extension = profile.get_extension(name)
 
