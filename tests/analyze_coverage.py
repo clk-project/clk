@@ -200,7 +200,7 @@ def generate_overlap_html(test_coverages, output_path):
                 row.append(round((intersection / size_a) * 100, 1))
         matrix_data.append(row)
 
-    html = f"""<!DOCTYPE html>
+    html_content = f"""<!DOCTYPE html>
 <html>
 <head>
     <title>Test Coverage Overlap Matrix</title>
@@ -331,7 +331,7 @@ def generate_overlap_html(test_coverages, output_path):
 </body>
 </html>
 """
-    output_path.write_text(html)
+    output_path.write_text(html_content)
     print(f"Generated overlap matrix: {output_path}")
 
 
@@ -416,23 +416,70 @@ def generate_line_heat_markdown(line_tests, total_tests, output_path):
     print(f"Generated line heat map: {output_path}")
 
 
-def generate_line_heat_html(line_tests, total_tests, output_path):
-    """Generate interactive HTML line heat map."""
+def read_source_file(filename, source_root=None):
+    """Read source file, trying path mappings if needed."""
+    # Try direct path first
+    path = Path(filename)
+    if path.exists():
+        return path.read_text().splitlines()
+
+    # Try mapping /app/clk/ to source_root/clk/
+    if source_root and filename.startswith("/app/"):
+        mapped = source_root / filename[5:]  # Remove "/app/"
+        if mapped.exists():
+            return mapped.read_text().splitlines()
+
+    # Try relative to current directory
+    if filename.startswith("/app/"):
+        relative = filename[5:]  # Remove "/app/"
+        if Path(relative).exists():
+            return Path(relative).read_text().splitlines()
+
+    return None
+
+
+def generate_line_heat_html(line_tests, total_tests, output_path, source_root=None):
+    """Generate interactive HTML line heat map with source code."""
     files_data = []
+
     for filename, lines in sorted(line_tests.items()):
+        # Try to read source file
+        source_lines = read_source_file(filename, source_root)
+
         lines_data = []
         for line_num, tests in sorted(lines.items()):
             heat = len(tests)
             pct = round(heat / total_tests * 100, 1)
+
+            # Get source code for this line if available
+            source_code = ""
+            if source_lines and 1 <= line_num <= len(source_lines):
+                source_code = source_lines[line_num - 1]
+
             lines_data.append(
-                {"num": line_num, "heat": heat, "pct": pct, "tests": sorted(set(tests))}
+                {
+                    "num": line_num,
+                    "heat": heat,
+                    "pct": pct,
+                    "tests": sorted(set(tests)),
+                    "code": source_code,
+                }
             )
+
         hot_lines = sum(1 for line in lines_data if line["pct"] == 100)
         files_data.append(
-            {"name": filename, "lines": lines_data, "hot_lines": hot_lines}
+            {
+                "name": filename,
+                "lines": lines_data,
+                "hot_lines": hot_lines,
+                "has_source": source_lines is not None,
+            }
         )
 
-    html = f"""<!DOCTYPE html>
+    # Escape for JSON embedding
+    files_json = json.dumps(files_data)
+
+    html_content = f"""<!DOCTYPE html>
 <html>
 <head>
     <title>Line Heat Map</title>
@@ -442,6 +489,8 @@ def generate_line_heat_html(line_tests, total_tests, output_path):
         .controls {{ margin-bottom: 20px; padding: 15px; background: #16213e; border-radius: 8px; position: sticky; top: 0; z-index: 100; }}
         .controls label {{ margin-right: 20px; }}
         .controls select, .controls input {{ padding: 5px; border-radius: 4px; border: 1px solid #444; background: #0f0f23; color: #eee; }}
+        .controls button {{ padding: 5px 10px; border-radius: 4px; border: 1px solid #444; background: #0f0f23; color: #eee; cursor: pointer; margin-left: 10px; }}
+        .controls button:hover {{ background: #1e3a5f; }}
         .file-section {{ margin-bottom: 30px; background: #16213e; border-radius: 8px; overflow: hidden; }}
         .file-header {{ padding: 10px 15px; background: #0f0f23; cursor: pointer; display: flex; justify-content: space-between; }}
         .file-header:hover {{ background: #1e3a5f; }}
@@ -451,26 +500,28 @@ def generate_line_heat_html(line_tests, total_tests, output_path):
         .file-content.expanded {{ display: block; }}
         table {{ width: 100%; border-collapse: collapse; font-size: 12px; }}
         tr {{ border-bottom: 1px solid #333; }}
-        tr:hover {{ background: rgba(255,255,255,0.05); }}
-        td {{ padding: 2px 8px; vertical-align: top; }}
-        .line-num {{ color: #666; text-align: right; width: 50px; }}
-        .heat {{ text-align: center; width: 80px; font-weight: bold; }}
-        .tests-preview {{ font-size: 10px; color: #888; }}
+        tr:hover {{ background: rgba(255,255,255,0.1); }}
+        td {{ padding: 2px 8px; vertical-align: top; white-space: pre; }}
+        .line-num {{ color: #666; text-align: right; width: 50px; user-select: none; }}
+        .heat {{ text-align: center; width: 90px; font-weight: bold; }}
+        .code {{ color: #ccc; font-family: 'Consolas', 'Monaco', monospace; overflow-x: auto; }}
+        .tests-preview {{ font-size: 10px; color: #888; max-width: 300px; overflow: hidden; text-overflow: ellipsis; }}
         #tooltip {{ position: fixed; background: #16213e; border: 1px solid #00d4ff; padding: 10px; border-radius: 4px; pointer-events: none; display: none; z-index: 1000; max-width: 500px; max-height: 400px; overflow-y: auto; font-size: 11px; }}
         .legend {{ display: flex; align-items: center; gap: 10px; }}
         .legend-gradient {{ width: 200px; height: 20px; background: linear-gradient(to right, #1e3a5f, #2e8b57, #b8860b, #c41e3a); border-radius: 4px; }}
         .summary {{ margin-bottom: 20px; padding: 15px; background: #16213e; border-radius: 8px; }}
+        .no-source {{ color: #888; font-style: italic; }}
     </style>
 </head>
 <body>
     <h1>Line Heat Map</h1>
     <div class="summary">
-        <p>Total tests: {total_tests} | Lines covered by all tests are "hot" (likely core/init code)</p>
+        <p>Total tests: {total_tests} | Heat = % of tests covering this line | Hover for test list</p>
     </div>
     <div class="controls">
         <label>Min heat %: <input type="number" id="min-heat" value="0" min="0" max="100" step="10"></label>
         <label>File filter: <input type="text" id="file-filter" placeholder="e.g. core"></label>
-        <label><input type="checkbox" id="only-hot"> Only 100% lines</label>
+        <label><input type="checkbox" id="only-hot"> Only ≥80% lines</label>
         <button onclick="expandAll()">Expand All</button>
         <button onclick="collapseAll()">Collapse All</button>
         <div class="legend" style="margin-top:10px"><span>0%</span><div class="legend-gradient"></div><span>100%</span></div>
@@ -478,7 +529,13 @@ def generate_line_heat_html(line_tests, total_tests, output_path):
     <div id="files-container"></div>
     <div id="tooltip"></div>
     <script>
-    const filesData = {json.dumps(files_data)};
+    const filesData = {files_json};
+
+    function escapeHtml(text) {{
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+    }}
 
     function getColor(pct) {{
         if (pct >= 100) return '#c41e3a';
@@ -493,15 +550,18 @@ def generate_line_heat_html(line_tests, total_tests, output_path):
         const minHeat = parseFloat(document.getElementById('min-heat').value) || 0;
         const fileFilter = document.getElementById('file-filter').value.toLowerCase();
         const onlyHot = document.getElementById('only-hot').checked;
+        const hotThreshold = onlyHot ? 80 : 0;
         let html = '';
         for (const file of filesData) {{
             if (fileFilter && !file.name.toLowerCase().includes(fileFilter)) continue;
-            const filteredLines = file.lines.filter(l => (onlyHot ? l.pct >= 100 : true) && l.pct >= minHeat);
+            const filteredLines = file.lines.filter(l => l.pct >= Math.max(minHeat, hotThreshold));
             if (filteredLines.length === 0) continue;
-            html += `<div class="file-section"><div class="file-header" onclick="this.nextElementSibling.classList.toggle('expanded')"><span class="file-name">${{file.name}}</span><span class="file-stats">${{filteredLines.length}} lines, ${{file.hot_lines}} hot</span></div><div class="file-content"><table>`;
+            const hotCount = file.lines.filter(l => l.pct >= 80).length;
+            html += `<div class="file-section"><div class="file-header" onclick="this.nextElementSibling.classList.toggle('expanded')"><span class="file-name">${{file.name}}</span><span class="file-stats">${{filteredLines.length}} lines shown, ${{hotCount}} hot (≥80%)</span></div><div class="file-content"><table>`;
             for (const line of filteredLines) {{
-                const preview = line.tests.slice(0, 3).join(', ') + (line.tests.length > 3 ? '...' : '');
-                html += `<tr data-tests='${{JSON.stringify(line.tests)}}'><td class="line-num">${{line.num}}</td><td class="heat" style="background:${{getColor(line.pct)}}">${{line.heat}} (${{line.pct}}%)</td><td class="tests-preview">${{preview}}</td></tr>`;
+                const codeHtml = line.code ? escapeHtml(line.code) : '<span class="no-source">(source not available)</span>';
+                const preview = line.tests.slice(0, 2).join(', ') + (line.tests.length > 2 ? ` +${{line.tests.length-2}}` : '');
+                html += `<tr data-tests='${{JSON.stringify(line.tests)}}'><td class="line-num">${{line.num}}</td><td class="heat" style="background:${{getColor(line.pct)}}">${{line.heat}}/${{filesData.length > 0 ? line.tests.length : '?'}} (${{line.pct}}%)</td><td class="code">${{codeHtml}}</td><td class="tests-preview">${{preview}}</td></tr>`;
             }}
             html += '</table></div></div>';
         }}
@@ -515,7 +575,8 @@ def generate_line_heat_html(line_tests, total_tests, output_path):
     document.getElementById('files-container').addEventListener('mousemove', e => {{
         const row = e.target.closest('tr');
         if (row && row.dataset.tests) {{
-            tooltip.innerHTML = '<strong>Tests:</strong><br>' + JSON.parse(row.dataset.tests).join('<br>');
+            const tests = JSON.parse(row.dataset.tests);
+            tooltip.innerHTML = '<strong>Tests (' + tests.length + '):</strong><br>' + tests.join('<br>');
             tooltip.style.display = 'block';
             tooltip.style.left = (e.clientX + 15) + 'px';
             tooltip.style.top = (e.clientY + 15) + 'px';
@@ -531,7 +592,7 @@ def generate_line_heat_html(line_tests, total_tests, output_path):
 </body>
 </html>
 """
-    output_path.write_text(html)
+    output_path.write_text(html_content)
     print(f"Generated line heat map: {output_path}")
 
 
@@ -551,6 +612,11 @@ def main():
     )
     parser.add_argument(
         "--line-heat-html", type=Path, help="Output line heat map (HTML)"
+    )
+    parser.add_argument(
+        "--source-root",
+        type=Path,
+        help="Root directory for source files (for path mapping)",
     )
     args = parser.parse_args()
 
@@ -572,7 +638,9 @@ def main():
         generate_line_heat_markdown(line_tests, len(test_coverages), args.line_heat_md)
 
     if args.line_heat_html:
-        generate_line_heat_html(line_tests, len(test_coverages), args.line_heat_html)
+        generate_line_heat_html(
+            line_tests, len(test_coverages), args.line_heat_html, args.source_root
+        )
 
 
 if __name__ == "__main__":

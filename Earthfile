@@ -112,6 +112,7 @@ test:
     RUN testiq analyze /app/output/testiq-coverage.json --format markdown --output /app/output/coverage-reports/testiq-report.md
     RUN testiq analyze /app/output/testiq-coverage.json --format html --output /app/output/coverage-reports/testiq-report.html
     RUN python3 tests/analyze_coverage.py /app/output/coverage/coverage-contexts.json \
+        --source-root /app \
         --overlap-md /app/output/coverage-reports/overlap.md \
         --overlap-html /app/output/coverage-reports/overlap.html \
         --line-heat-md /app/output/coverage-reports/line-heat.md \
