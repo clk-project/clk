@@ -8,7 +8,7 @@ build
 README.html
 .tox
 /fixed
-/tests/.coverage
+/tests/.coverage*
 /.agent-shell
 **/.claude/settings.local.json
 **/venv
