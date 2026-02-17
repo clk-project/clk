@@ -325,9 +325,9 @@ class AliasCommandResolver(CommandResolver):
                 help="Edit the alias",
                 expose_value=False,
                 is_flag=True,
-                callback=lambda ctx, param, value: edit_alias_command(path)
-                if value is True
-                else None,
+                callback=lambda ctx, param, value: (
+                    edit_alias_command(path) if value is True else None
+                ),
             )
         )
 

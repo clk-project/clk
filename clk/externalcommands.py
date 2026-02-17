@@ -310,11 +310,9 @@ class ExternalCommandResolver(CommandResolver):
                     help="Edit the external command",
                     expose_value=False,
                     is_flag=True,
-                    callback=lambda ctx, param, value: edit_external_command(
-                        command_path
-                    )
-                    if value is True
-                    else None,
+                    callback=lambda ctx, param, value: (
+                        edit_external_command(command_path) if value is True else None
+                    ),
                 )
             )
         external_command.customcommand_path = command_path

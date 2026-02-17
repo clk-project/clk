@@ -92,11 +92,11 @@ class CustomCommandResolver(CommandResolver):
                     is_flag=True,
                     expose_value=False,
                     help="Edit this command",
-                    callback=lambda ctx, param, value: edit_custom_command(
-                        cmd.customcommand_path
-                    )
-                    if value is True
-                    else None,
+                    callback=lambda ctx, param, value: (
+                        edit_custom_command(cmd.customcommand_path)
+                        if value is True
+                        else None
+                    ),
                 )
             )
         profile = config.get_profile_that_contains(cmd.customcommand_path)
