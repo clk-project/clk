@@ -1,14 +1,13 @@
+---
+title: Coverage Reports
+---
+
 # Coverage Reports
 
-These markdown reports are automatically generated and committed by CI.
+Coverage reports are automatically generated and committed by CI on each push to main.
 
-- **testiq-report.md** - Test duplicate/redundancy analysis (TestIQ)
-- **overlap.md** - Test coverage overlap analysis
-- **line-heat.md** - Line heat map (lines covered by many tests)
+## Reports
 
-For interactive HTML versions, download from CI artifacts or run locally:
-
-```bash
-earthly +analyze-coverage
-# Reports saved to output/coverage-reports/
-```
+- [TestIQ Report](./reports/testiq-report.md) - Test duplicate/redundancy analysis
+- [Overlap Report](./reports/overlap.md) - Test coverage overlap analysis
+- [Line Heat Map](./reports/line-heat.md) - Lines covered by many tests
