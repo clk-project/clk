@@ -529,12 +529,29 @@ class RememberParametersMixin:
         config.merge_settings()
 
     def append_commandline_settings_once(self, ctx, args):
-        appended_parameters = config.level_settings.get("appended_parameters", [])
-        if self.path not in appended_parameters:
-            appended_parameters.append(self.path)
-            config.commandline_profile.get_settings("parameters")[self.path] += args
-            config.merge_settings()
-            config.level_settings["appended_parameters"] = appended_parameters
+        # Track which args have been appended per path to prevent duplicate appending.
+        # Uses a dict {path: args_list} to preserve tracking across get_ctx calls
+        # during alias resolution (see clk_config_per_level_and_overriding).
+        # We track the actual args appended, not just the path, because:
+        # - First parse may have empty args (e.g., podcast with subcommand 'music')
+        # - Alias expansion may add args (e.g., podcast -d music sound)
+        # - We must allow the new args while preventing re-appending the same args
+        appended_parameters = config.level_settings.get("appended_parameters", {})
+        previously_appended = appended_parameters.get(self.path, [])
+        if list(args) != previously_appended:
+            # Calculate new args to append (args not already appended)
+            new_args = (
+                list(args)[len(previously_appended) :]
+                if list(args)[: len(previously_appended)] == previously_appended
+                else list(args)
+            )
+            if new_args:
+                appended_parameters[self.path] = previously_appended + new_args
+                config.commandline_profile.get_settings("parameters")[self.path] += (
+                    new_args
+                )
+                config.merge_settings()
+                config.level_settings["appended_parameters"] = appended_parameters
 
     def clear_parameter_source_for_completion(self, ctx):
         """Clear parameter sources for options so click's shell_complete offers all options.

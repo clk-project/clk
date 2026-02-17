@@ -66,6 +66,93 @@ clk podcast dwim
 Note that it needs the environment variable to be set, or it will raise an
 error.
 
+* filtering by directory
+  :PROPERTIES:
+  :CUSTOM_ID: filtering-by-directory
+  :END:
+
+As my podcast collection grows, I organize episodes into directories: music,
+stories, news, etc. I want to add a ~--directory~ option to the podcast group so
+I can filter which directories to work with.
+
+#+NAME: podcast_with_directory_body
+#+BEGIN_SRC python :results none :exports code
+@group()
+@option('--directory', '-d', multiple=True, help='Only work with these directories')
+def podcast(directory):
+    'Dealing with podcasts'
+    if directory:
+        print(f'Filtering to directories: {', '.join(directory)}')
+#+END_SRC
+
+#+NAME: podcast_with_directory
+#+BEGIN_SRC bash :results none :exports none :session c8fcfc53-6d2a-4b9c-a836-c303933b6563 :noweb yes
+clk command create python podcast --group --force --description "Dealing with podcasts" --body "
+<<podcast_with_directory_body>>
+
+<<download_body>>
+"
+#+END_SRC
+
+Now I can filter downloads to specific directories:
+
+#+NAME: download_filtered
+#+BEGIN_SRC bash :results verbatim :exports both :session c8fcfc53-6d2a-4b9c-a836-c303933b6563 :cache yes
+clk podcast --directory music download
+#+END_SRC
+
+#+RESULTS[32c14d5399fb13e3c565cd246ec764782be2e08d]: download_filtered
+: Filtering to directories: music
+: Downloading 10 episodes
+
+I frequently work with my music podcasts, so I create an alias to save typing:
+
+#+NAME: music_alias
+#+BEGIN_SRC bash :results verbatim :exports both :session c8fcfc53-6d2a-4b9c-a836-c303933b6563 :cache yes
+clk alias set podcast.music podcast --directory music download
+#+END_SRC
+
+#+RESULTS[151779b6a57982cc8048f4540baede86e36c4a1e]: music_alias
+: New global alias for podcast.music: podcast --directory music download
+
+Now ~clk podcast music~ is a shortcut for downloading music podcasts:
+
+#+NAME: use_music_alias
+#+BEGIN_SRC bash :results verbatim :exports both :session c8fcfc53-6d2a-4b9c-a836-c303933b6563 :cache yes
+clk podcast music
+#+END_SRC
+
+#+RESULTS[ecfba83919f256bb037f9b039ee23eed861a537c]: use_music_alias
+: Filtering to directories: music
+: Downloading 10 episodes
+
+The ~--directory music~ option from the alias is correctly passed to the podcast
+group, and the download command runs as expected.
+
+I can also create an alias that filters multiple directories at once. For
+instance, I want a shortcut for all my audio entertainment (music and songs):
+
+#+NAME: audio_alias
+#+BEGIN_SRC bash :results verbatim :exports both :session c8fcfc53-6d2a-4b9c-a836-c303933b6563 :cache yes
+clk alias set podcast.audio podcast --directory music --directory song download
+#+END_SRC
+
+#+RESULTS[465bbbb90e91bd532c919fda633372f18db53bee]: audio_alias
+: New global alias for podcast.audio: podcast --directory music --directory song download
+
+Now ~clk podcast audio~ downloads from both directories:
+
+#+NAME: use_audio_alias
+#+BEGIN_SRC bash :results verbatim :exports both :session c8fcfc53-6d2a-4b9c-a836-c303933b6563 :cache yes
+clk podcast audio
+#+END_SRC
+
+#+RESULTS[36c6d9b3602151e03c84c2993dcc380484c2dab3]: use_audio_alias
+: Filtering to directories: music, song
+: Downloading 10 episodes
+
+Both directory options are passed correctly to the podcast group.
+
 #+NAME: run
 #+BEGIN_SRC bash :results none :exports none :tangle ../../tests/use_cases/podcast_automation.sh :noweb yes :shebang "#!/bin/bash -eu"
 <<init>>
@@ -77,4 +164,16 @@ check-result(tryit)
 check-result(makeitalias)
 
 check-result(callit)
+
+<<podcast_with_directory>>
+
+check-result(download_filtered)
+
+check-result(music_alias)
+
+check-result(use_music_alias)
+
+check-result(audio_alias)
+
+check-result(use_audio_alias)
 #+END_SRC

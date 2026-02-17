@@ -127,18 +127,24 @@ def get_ctx(path, side_effects=False, resilient_parsing=None) -> click.Context:
         if side_effects:
             # https://konubinix.eu/braindump/posts/f6965d2d-5deb-4dd3-89b5-00a29d885fa8/?title=clk_config_per_level_and_overriding
             old_appended_parameters = config.level_settings.get(
-                "appended_parameters", []
+                "appended_parameters", {}
             )
-            config.level_settings["appended_parameters"] = []
+            # Keep old_appended_parameters to prevent re-appending the same args
+            config.level_settings["appended_parameters"] = dict(old_appended_parameters)
             res = resolve_context_with_side_effects(
                 path, resilient_parsing=resilient_parsing
             )
-            config.level_settings["appended_parameters"] = list(
-                set(
-                    config.level_settings["appended_parameters"]
-                    + old_appended_parameters
-                )
+            # Merge: for each path, combine the args from both dicts
+            merged = dict(old_appended_parameters)
+            for p, args in config.level_settings["appended_parameters"].items():
+                if p in merged:
+                    merged[p] = list(set(merged[p] + args))
+                else:
+                    merged[p] = args
+            LOGGER.develop(
+                f"get_ctx({path}): appended_parameters -> old: {old_appended_parameters}, new: {config.level_settings['appended_parameters']}"
             )
+            config.level_settings["appended_parameters"] = merged
         else:
             with temp_config():
                 res = resolve_context_with_side_effects(
