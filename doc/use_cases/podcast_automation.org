@@ -37,6 +37,8 @@ clk podcast download
 #+RESULTS[9e5e1cc779f8de092e883043b56d2327a255009c]: tryit
 : Downloading 10 episodes
 
+
+
 Now, I want this command to be wrapped into an alias to ease making it part of
 more complicated flows. I want to control the number of podcast to download
 using an environment variable, hence the use of the 'tpl:' pattern appears
@@ -50,6 +52,8 @@ clk alias set podcast.dwim echo 'Would do something before' , podcast download -
 #+RESULTS[878bae04a233b829b08b4b6deaa8bbec63a73d61]: makeitalias
 : New global alias for podcast.dwim: echo 'Would do something before' , podcast download --number 'tpl:{NUMBER_TO_DOWNLOAD}' , echo 'would do something after'
 
+
+
 Then I can call it with:
 
 #+NAME: callit
@@ -62,6 +66,8 @@ clk podcast dwim
 : Would do something before
 : Downloading 100 episodes
 : would do something after
+
+
 
 Note that it needs the environment variable to be set, or it will raise an
 error.
@@ -105,6 +111,8 @@ clk podcast --directory music download
 : Filtering to directories: music
 : Downloading 10 episodes
 
+
+
 I frequently work with my music podcasts, so I create an alias to save typing:
 
 #+NAME: music_alias
@@ -114,6 +122,8 @@ clk alias set podcast.music podcast --directory music download
 
 #+RESULTS[151779b6a57982cc8048f4540baede86e36c4a1e]: music_alias
 : New global alias for podcast.music: podcast --directory music download
+
+
 
 Now ~clk podcast music~ is a shortcut for downloading music podcasts:
 
@@ -125,6 +135,8 @@ clk podcast music
 #+RESULTS[ecfba83919f256bb037f9b039ee23eed861a537c]: use_music_alias
 : Filtering to directories: music
 : Downloading 10 episodes
+
+
 
 The ~--directory music~ option from the alias is correctly passed to the podcast
 group, and the download command runs as expected.
@@ -140,6 +152,8 @@ clk alias set podcast.audio podcast --directory music --directory song download
 #+RESULTS[465bbbb90e91bd532c919fda633372f18db53bee]: audio_alias
 : New global alias for podcast.audio: podcast --directory music --directory song download
 
+
+
 Now ~clk podcast audio~ downloads from both directories:
 
 #+NAME: use_audio_alias
@@ -150,6 +164,8 @@ clk podcast audio
 #+RESULTS[36c6d9b3602151e03c84c2993dcc380484c2dab3]: use_audio_alias
 : Filtering to directories: music, song
 : Downloading 10 episodes
+
+
 
 Both directory options are passed correctly to the podcast group.
 
@@ -182,12 +198,13 @@ Options:
   --help                Show this message and exit.
 
 Commands:
-  audio     Alias for: podcast --directory music --directory song download
+  audio     Alias for: podcast --directory music --directory son...
   download  Downloading podcasts
-  dwim      Alias for: echo 'Would do something before' , podcast download --number 'tpl:{NUMBER_TO_DOWNLOAD}' , echo
-            'would do something after'
+  dwim      Alias for: echo 'Would do something before' , podcas...
   music     Alias for: podcast --directory music download
 #+end_example
+
+
 
 This gives us a quick overview of all our podcast-related commands: the core
 ~download~ command and the shortcuts we created (~audio~, ~music~, ~dwim~). Each

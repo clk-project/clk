@@ -219,10 +219,9 @@ Options:
   --help                Show this message and exit.
 
 Commands:
-  audio     Alias for: podcast --directory music --directory song download
+  audio     Alias for: podcast --directory music --directory son...
   download  Downloading podcasts
-  dwim      Alias for: echo 'Would do something before' , podcast download --number 'tpl:{NUMBER_TO_DOWNLOAD}' , echo
-            'would do something after'
+  dwim      Alias for: echo 'Would do something before' , podcas...
   music     Alias for: podcast --directory music download
 
 EOEXPECTED
