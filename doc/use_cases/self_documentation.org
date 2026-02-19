@@ -1,0 +1,265 @@
+:PROPERTIES:
+:ID:       a1b2c3d4-e5f6-7890-abcd-ef1234567890
+:END:
+#+language: en
+#+EXPORT_FILE_NAME: ./self_documentation.md
+
+#+CALL: ../../lp.org:check-result()
+
+#+name: init
+#+BEGIN_SRC bash :results none :exports none :session a1b2c3d4-e5f6-7890-abcd-ef1234567890
+  . ./sandboxing.sh
+#+END_SRC
+
+When you start using clk extensively, you might end up with many [[file:bash_command_from_alias.org][aliases]],
+[[file:setting_default_values.org][parameters]], [[file:bash_command.org][commands]], and [[file:creating_extensions.org][extensions]] spread across different profiles. The ~clk
+describe~ command helps you discover what features are available in any profile,
+making clk a self-documented tool.
+
+This is particularly useful when:
+- you come back to a [[file:using_a_project.org][project]] after some time and forgot what commands you created,
+- you want to explore what an extension provides before enabling it,
+- you want to understand what configuration exists at different levels (global vs local).
+
+* Describing the global profile
+
+The global profile contains your personal configuration that applies everywhere.
+Let's set up some global configuration first.
+
+#+NAME: setup-global
+#+BEGIN_SRC bash :results verbatim :exports both :session a1b2c3d4-e5f6-7890-abcd-ef1234567890 :cache yes
+clk alias set hello echo Hello
+clk parameter set echo --no-newline
+#+END_SRC
+
+#+RESULTS[914c8e598a39d14ca25e44f82b8eea7e5d6b55b1]: setup-global
+: New global alias for hello: echo Hello
+: New global parameters for echo: --no-newline
+
+Now let's describe the global profile to see what it contains.
+
+#+NAME: describe-global
+#+BEGIN_SRC bash :results verbatim :exports both :session a1b2c3d4-e5f6-7890-abcd-ef1234567890 :cache yes
+clk describe global
+#+END_SRC
+
+#+RESULTS[aec1c31b5a441e23a5dcd19a986e4f0424b0007a]: describe-global
+: The extension global is located at ./clk-root . Let's try to see what it has to offer.
+: ##########
+: I found some alias, try running `clk alias --global show` to know more.
+: I found some parameter, try running `clk parameter --global show` to know more.
+: I found some value, try running `clk value --global show` to know more.
+
+The ~clk describe~ command tells you exactly what commands to run to explore
+further. Let's follow its suggestions.
+
+#+NAME: show-global-alias
+#+BEGIN_SRC bash :results verbatim :exports both :session a1b2c3d4-e5f6-7890-abcd-ef1234567890 :cache yes
+clk alias --global show
+#+END_SRC
+
+#+RESULTS[ffe433ef8c53b13399b50e3da58db1db6118ff3b]: show-global-alias
+: hello echo Hello
+
+#+NAME: show-global-params
+#+BEGIN_SRC bash :results verbatim :exports both :session a1b2c3d4-e5f6-7890-abcd-ef1234567890 :cache yes
+clk parameter --global show | grep echo
+#+END_SRC
+
+#+RESULTS[7c034d5a1104c9e0580fa38d814b61f0e008fcdc]: show-global-params
+: echo --no-newline
+
+* Describing a local project
+
+When working in a project (a directory with a ~.clk~ folder), the local profile
+holds project-specific configuration. Let's create a project and add some local
+configuration.
+
+#+NAME: create-project
+#+BEGIN_SRC bash :results none :exports code :session a1b2c3d4-e5f6-7890-abcd-ef1234567890
+mkdir myproject && cd myproject && mkdir .clk
+#+END_SRC
+
+#+NAME: setup-local
+#+BEGIN_SRC bash :results verbatim :exports both :session a1b2c3d4-e5f6-7890-abcd-ef1234567890 :cache yes
+clk alias set build echo Building the project
+clk alias set test echo Running tests
+clk parameter set build --verbose
+#+END_SRC
+
+#+RESULTS[44804a3376b94c1ac0006864d067c77cff824e1e]: setup-local
+: New local alias for build: echo Building the project
+: New local alias for test: echo Running tests
+: New local parameters for build: --verbose
+
+Now let's describe the local profile.
+
+#+NAME: describe-local
+#+BEGIN_SRC bash :results verbatim :exports both :session a1b2c3d4-e5f6-7890-abcd-ef1234567890 :cache yes
+clk describe local
+#+END_SRC
+
+#+RESULTS[63ae89e7cfb792ba4954bbd848af4549a05e6f75]: describe-local
+: The extension local is located at ./.clk . Let's try to see what it has to offer.
+: ##########
+: I found some alias, try running `clk alias --local show` to know more.
+: I found some parameter, try running `clk parameter --local show` to know more.
+
+This helps you quickly understand what's configured specifically for this project.
+
+#+NAME: show-local-alias
+#+BEGIN_SRC bash :results verbatim :exports both :session a1b2c3d4-e5f6-7890-abcd-ef1234567890 :cache yes
+clk alias --local show
+#+END_SRC
+
+#+RESULTS[b4a0ad0b2b0642d48c663ea70526ddc79d8bb4fe]: show-local-alias
+: build echo Building the project
+: test echo Running tests
+
+* Describing an extension
+
+Extensions are reusable configurations that can be enabled or disabled. They're
+great for grouping related functionality. Let's create an extension with some
+commands and configuration.
+
+#+NAME: create-extension
+#+BEGIN_SRC bash :results verbatim :exports both :session a1b2c3d4-e5f6-7890-abcd-ef1234567890 :cache yes
+clk extension create mytools
+clk alias set --extension mytools greet echo Greetings
+#+END_SRC
+
+#+RESULTS[606f451ddd219485a241372f6c1a0a4d29b72032]: create-extension
+: New local/mytools alias for greet: echo Greetings
+
+#+NAME: create-extension-command
+#+BEGIN_SRC bash :results none :exports code :session a1b2c3d4-e5f6-7890-abcd-ef1234567890
+clk command create --extension mytools bash --description "Show current date and time" --body 'date' now
+#+END_SRC
+
+Now let's describe this extension to see what it provides.
+
+#+NAME: describe-extension
+#+BEGIN_SRC bash :results verbatim :exports both :session a1b2c3d4-e5f6-7890-abcd-ef1234567890 :cache yes
+clk describe local/mytools
+#+END_SRC
+
+#+RESULTS[0e277d71a159bfb01701f0236600f7539e9d7976]: describe-extension
+: The extension local/mytools is located at ./.clk/extensions/mytools . Let's try to see what it has to offer.
+: ##########
+: I found some alias, try running `clk --extension mytools alias --local --extension mytools show` to know more.
+: I found some executable commands, try running `clk --extension mytools command --local --extension mytools list` to know more.
+
+Let's follow these suggestions.
+
+#+NAME: show-extension-alias
+#+BEGIN_SRC bash :results verbatim :exports both :session a1b2c3d4-e5f6-7890-abcd-ef1234567890 :cache yes
+clk --extension mytools alias --local --extension mytools show
+#+END_SRC
+
+#+RESULTS[b5b0c9d9a4d6fadb48475e220e9aaf10744e225b]: show-extension-alias
+: greet echo Greetings
+
+#+NAME: list-extension-commands
+#+BEGIN_SRC bash :results verbatim :exports both :session a1b2c3d4-e5f6-7890-abcd-ef1234567890 :cache yes
+clk --extension mytools command --local --extension mytools list
+#+END_SRC
+
+#+RESULTS[3f23bf8f7a249cbfa03b0ecd5254994a1e9e255f]: list-extension-commands
+: ./.clk/extensions/mytools/bin/now
+
+This is especially useful when you receive an extension from someone else or
+when you want to remember what you put in an extension you created a while ago.
+
+* Comparing profiles
+
+A powerful pattern is to use ~clk describe~ on different profiles to understand
+where configuration comes from. When a command behaves unexpectedly, you can
+check each level.
+
+#+BEGIN_SRC bash :results none :exports code
+clk describe global
+clk describe local
+#+END_SRC
+
+This helps you understand the layered configuration: global settings provide
+defaults, while local settings can override them for specific projects.
+
+* Discovering custom commands
+
+When you or your team create custom bash or python commands, ~clk describe~ will
+detect them too.
+
+#+NAME: create-custom-command
+#+BEGIN_SRC bash :results none :exports code :session a1b2c3d4-e5f6-7890-abcd-ef1234567890
+clk command create bash --description "Deploy the application" --body 'echo Deploying...' deploy
+#+END_SRC
+
+#+NAME: describe-with-commands
+#+BEGIN_SRC bash :results verbatim :exports both :session a1b2c3d4-e5f6-7890-abcd-ef1234567890 :cache yes
+clk describe local
+#+END_SRC
+
+#+RESULTS[63ae89e7cfb792ba4954bbd848af4549a05e6f75]: describe-with-commands
+: The extension local is located at ./.clk . Let's try to see what it has to offer.
+: ##########
+: I found some alias, try running `clk alias --local show` to know more.
+: I found some parameter, try running `clk parameter --local show` to know more.
+: I found some executable commands, try running `clk command --local list` to know more.
+
+#+NAME: list-commands
+#+BEGIN_SRC bash :results verbatim :exports both :session a1b2c3d4-e5f6-7890-abcd-ef1234567890 :cache yes
+clk command --local list
+#+END_SRC
+
+#+RESULTS[8588724d556d880ce5f715dc337cfe1b718ecf2b]: list-commands
+: ./.clk/bin/deploy
+
+* Summary
+
+The ~clk describe~ command is your entry point for exploring any profile's
+configuration. It provides actionable suggestions for diving deeper into:
+
+- *aliases*: shortcuts for frequently used commands
+- *parameters*: default options for commands
+- *executable commands*: custom bash or python commands
+- *flowdeps and triggers*: workflow automation settings
+- *values*: semantic configuration settings
+- *environment variables*: environment customization
+- *plugins*: advanced behavior modifications
+
+This self-documentation capability means you can always find your way around
+clk's configuration, whether you're exploring your own setup after some time
+away, or understanding a configuration shared by a colleague.
+
+#+NAME: run
+#+BEGIN_SRC bash :results none :exports none :tangle ../../tests/use_cases/self_documentation.sh :noweb yes :shebang "#!/bin/bash -eu"
+<<init>>
+
+check-result(setup-global)
+
+check-result(describe-global)
+
+check-result(show-global-alias)
+
+check-result(show-global-params)
+
+<<create-project>>
+
+check-result(setup-local)
+
+check-result(describe-local)
+
+check-result(show-local-alias)
+
+check-result(create-extension)
+
+<<create-extension-command>>
+
+check-result(describe-extension)
+
+<<create-custom-command>>
+
+check-result(describe-with-commands)
+
+check-result(list-commands)
+#+END_SRC

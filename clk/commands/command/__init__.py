@@ -631,7 +631,7 @@ def _list():
     settings = (
         None
         if config.customcommands.readprofile == "context"
-        else config.customcommands.profile.settings
+        else {"customcommands": config.customcommands.profile.custom_command_paths}
     )
     type = CustomCommandType(settings)
 

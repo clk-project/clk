@@ -189,7 +189,6 @@ class DirectoryProfile(Profile):
                     f" `clk{enable_argument} {command} {' '.join(profile_name_to_commandline(self.name))} show`"
                     " to know more."
                 )
-        found_some_executable = False
         if any(
             [
                 next(Path(path).iterdir())
@@ -201,28 +200,6 @@ class DirectoryProfile(Profile):
                 f" `clk{enable_argument} command {' '.join(profile_name_to_commandline(self.name))} list`"
                 " to know more."
             )
-            found_some_executable = True
-        if self.name in ("local", "workspace", "global"):
-            from clk.config import config
-
-            preset_extension = getattr(config, self.name + "preset_profile")
-            if "customcommands" in preset_extension.settings:
-                if any(
-                    [
-                        next(Path(path).iterdir())
-                        for path in (
-                            preset_extension.settings["customcommands"][
-                                "executablepaths"
-                            ]
-                            + preset_extension.settings["customcommands"]["pythonpaths"]
-                        )
-                    ]
-                ):
-                    print(
-                        f"I found some{' more' if found_some_executable else ''} executable commands, try running"
-                        f" `clk{enable_argument} command {' '.join(profile_name_to_commandline(preset_extension.name))} list`"
-                        " to know more."
-                    )
         if plugins := self.plugin_source.list_plugins():
             print(f"I found some plugins called {', '.join(plugins)}")
         if remaining_config := set(self.settings.keys()) - {

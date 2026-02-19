@@ -112,3 +112,7 @@ def test_using_a_plugin(rootdir):
 
 def test_setting_default_values(rootdir):
     call_script("setting_default_values.sh")
+
+
+def test_self_documentation(rootdir):
+    call_script("self_documentation.sh")

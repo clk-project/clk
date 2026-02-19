@@ -100,6 +100,11 @@ Here are some use cases that hopefully will have the following properties:
 
   Some commands might need to use secret, [[file:dealing_with_secrets.org][here is how]] we implement that.
 
+  When you have many aliases, parameters, commands, and extensions spread across
+  different profiles, it can be hard to remember what's available. The ~clk
+  describe~ command helps you [[file:self_documentation.org][explore and document your configuration]], showing
+  what features are available in any profile (global, local, or extension).
+
 * project
   :PROPERTIES:
   :CREATED:  [2025-08-05 22:19]
