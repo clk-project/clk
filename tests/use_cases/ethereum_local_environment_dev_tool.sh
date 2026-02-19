@@ -1,5 +1,5 @@
 #!/bin/bash -eu
-# [[id:8d9e97a5-dcf5-46ff-a584-7a38e680edb8::test][test]]
+# [[file:../../doc/use_cases/ethereum_local_environment_dev_tool.org::test][test]]
 . ./sandboxing.sh
 
 clk command create python eth --description "Play with ethereum" --group --body "
@@ -283,12 +283,12 @@ exit 1
 
 
 run-with-project-abi_code () {
-      clk eth mycontract call dosomething | sed "s|$(pwd)|absolute-path-to-here|"
+      clk eth mycontract call dosomething
 }
 
 run-with-project-abi_expected () {
       cat<<"EOEXPECTED"
-I would discuss with the contract whose address is 68b329da9893e34099c7d8ad5cb9c940 and abi path is absolute-path-to-here/some.json
+I would discuss with the contract whose address is 68b329da9893e34099c7d8ad5cb9c940 and abi path is ./some.json
 I would call the function dosomething
 EOEXPECTED
 }

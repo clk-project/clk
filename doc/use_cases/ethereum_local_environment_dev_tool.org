@@ -280,11 +280,11 @@ with is dynamically updated.
 
   #+NAME: run-with-project-abi
   #+BEGIN_SRC bash :results verbatim :exports both :session cd599835-d6ac-4970-8f7f-34d82068ef4b :cache yes
-    clk eth mycontract call dosomething | sed "s|$(pwd)|absolute-path-to-here|"
+    clk eth mycontract call dosomething
   #+END_SRC
 
-  #+RESULTS[89a79ba76bb8bca5df4fb2f199a8a155a54b1ce1]: run-with-project-abi
-  : I would discuss with the contract whose address is 68b329da9893e34099c7d8ad5cb9c940 and abi path is absolute-path-to-here/some.json
+  #+RESULTS[02c56cb284626fd8e3f8c2dd2579ba88ad84d5f8]: run-with-project-abi
+  : I would discuss with the contract whose address is 68b329da9893e34099c7d8ad5cb9c940 and abi path is ./some.json
   : I would call the function dosomething
 
 

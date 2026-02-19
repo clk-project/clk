@@ -205,10 +205,10 @@ clk eth get-address
 Now, as you can see, the command can be run again. It is now provided with the absolute Path to some.json<sup><a id="fnr.1" class="footref" href="#fn.1" role="doc-backlink">1</a></sup>.
 
 ```bash
-clk eth mycontract call dosomething | sed "s|$(pwd)|absolute-path-to-here|"
+clk eth mycontract call dosomething
 ```
 
-    I would discuss with the contract whose address is 68b329da9893e34099c7d8ad5cb9c940 and abi path is absolute-path-to-here/some.json
+    I would discuss with the contract whose address is 68b329da9893e34099c7d8ad5cb9c940 and abi path is ./some.json
     I would call the function dosomething
 
 ## Footnotes

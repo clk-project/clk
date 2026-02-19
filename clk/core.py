@@ -800,14 +800,22 @@ class RedactMessages:
         self.stream = stream
 
     def write(self, message):
-        global_loc = Path(config.global_profile.location).absolute()
         cwd = Path.cwd()
-        try:
-            relative_loc = "./" + str(global_loc.relative_to(cwd))
-        except ValueError:
-            # Paths are not relative to each other (e.g., different drives on Windows)
-            relative_loc = "./" + str(global_loc)
-        message = message.replace(config.global_profile.location, relative_loc)
+
+        def make_relative(path):
+            abs_path = Path(path).absolute()
+            try:
+                rel = abs_path.relative_to(cwd)
+                return "./" + str(rel) if not str(rel).startswith(".") else str(rel)
+            except ValueError:
+                return str(abs_path)
+
+        message = message.replace(
+            config.global_profile.location,
+            make_relative(config.global_profile.location),
+        )
+        if config.project:
+            message = message.replace(config.project, make_relative(config.project))
         self.stream.write(message)
 
     def flush(self):
