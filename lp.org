@@ -1,5 +1,7 @@
 #+NAME: check-result
 #+BEGIN_SRC elisp :results none :exports none
+(require 'konix_org-run-session-blocks)
+
 (defun konix/org-babel-expand-noweb-references/add-check-result (orig-func info &optional parent-buffer context)
   (let (
         (code (second info))
