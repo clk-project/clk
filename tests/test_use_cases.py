@@ -114,5 +114,13 @@ def test_setting_default_values(rootdir):
     call_script("setting_default_values.sh")
 
 
+def test_environment_deployment(rootdir):
+    call_script("environment_deployment.sh")
+
+
+def test_fetching_and_displaying_json_data(rootdir):
+    call_script("fetching_and_displaying_json_data.sh")
+
+
 def test_self_documentation(rootdir):
     call_script("self_documentation.sh")
