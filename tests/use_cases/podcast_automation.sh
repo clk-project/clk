@@ -197,4 +197,43 @@ diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
 echo "Something went wrong when trying use_audio_alias"
 exit 1
 }
+
+
+
+group_help_with_alias_code () {
+      clk podcast --help
+}
+
+group_help_with_alias_expected () {
+      cat<<"EOEXPECTED"
+Usage: clk podcast [OPTIONS] COMMAND [ARGS]...
+
+  Dealing with podcasts
+
+  Edit this custom command by running `clk command edit podcast`
+  Or edit ./clk-root/python/podcast.py directly.
+
+Options:
+  -d, --directory TEXT  Only work with these directories
+  --help-all            Show the full help message, automatic options included.
+  --help                Show this message and exit.
+
+Commands:
+  audio     Alias for: podcast --directory music --directory song download
+  download  Downloading podcasts
+  dwim      Alias for: echo 'Would do something before' , podcast download --number 'tpl:{NUMBER_TO_DOWNLOAD}' , echo
+            'would do something after'
+  music     Alias for: podcast --directory music download
+
+EOEXPECTED
+}
+
+echo 'Run group_help_with_alias'
+
+{ group_help_with_alias_code || true ; } > "${TMP}/code.txt" 2>&1
+group_help_with_alias_expected > "${TMP}/expected.txt" 2>&1
+diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+echo "Something went wrong when trying group_help_with_alias"
+exit 1
+}
 # run ends here

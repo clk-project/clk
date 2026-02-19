@@ -1,4 +1,5 @@
 - [filtering by directory](#filtering-by-directory)
+- [discovering all podcast commands at a glance](#getting-help-on-groups-with-aliases)
 
 When listening to podcast, I like to download some episode up front.
 
@@ -99,3 +100,37 @@ clk podcast audio
     Downloading 10 episodes
 
 Both directory options are passed correctly to the podcast group.
+
+
+<a id="getting-help-on-groups-with-aliases"></a>
+
+# discovering all podcast commands at a glance
+
+Now that we have several ways to download podcasts—the base `download` command plus specialized shortcuts like `music` and `audio~—it's helpful to see them all in one place. Running ~--help` on the podcast group shows the complete picture.
+
+```bash
+clk podcast --help
+```
+
+```
+Usage: clk podcast [OPTIONS] COMMAND [ARGS]...
+
+  Dealing with podcasts
+
+  Edit this custom command by running `clk command edit podcast`
+  Or edit ./clk-root/python/podcast.py directly.
+
+Options:
+  -d, --directory TEXT  Only work with these directories
+  --help-all            Show the full help message, automatic options included.
+  --help                Show this message and exit.
+
+Commands:
+  audio     Alias for: podcast --directory music --directory song download
+  download  Downloading podcasts
+  dwim      Alias for: echo 'Would do something before' , podcast download --number 'tpl:{NUMBER_TO_DOWNLOAD}' , echo
+            'would do something after'
+  music     Alias for: podcast --directory music download
+```
+
+This gives us a quick overview of all our podcast-related commands: the core `download` command and the shortcuts we created (`audio`, `music`, `dwim`). Each alias shows a brief description of what it does, making it easy to remember which shortcut to use for different podcast categories.

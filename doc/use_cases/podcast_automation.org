@@ -153,6 +153,47 @@ clk podcast audio
 
 Both directory options are passed correctly to the podcast group.
 
+* discovering all podcast commands at a glance
+  :PROPERTIES:
+  :CUSTOM_ID: getting-help-on-groups-with-aliases
+  :END:
+
+Now that we have several ways to download podcasts—the base ~download~ command
+plus specialized shortcuts like ~music~ and ~audio~—it's helpful to see them all
+in one place. Running ~--help~ on the podcast group shows the complete picture.
+
+#+NAME: group_help_with_alias
+#+BEGIN_SRC bash :results verbatim :exports both :session c8fcfc53-6d2a-4b9c-a836-c303933b6563 :cache yes
+clk podcast --help
+#+END_SRC
+
+#+RESULTS[42da70335c90e76d4afe7c525571573ac1577d77]: group_help_with_alias
+#+begin_example
+Usage: clk podcast [OPTIONS] COMMAND [ARGS]...
+
+  Dealing with podcasts
+
+  Edit this custom command by running `clk command edit podcast`
+  Or edit ./clk-root/python/podcast.py directly.
+
+Options:
+  -d, --directory TEXT  Only work with these directories
+  --help-all            Show the full help message, automatic options included.
+  --help                Show this message and exit.
+
+Commands:
+  audio     Alias for: podcast --directory music --directory song download
+  download  Downloading podcasts
+  dwim      Alias for: echo 'Would do something before' , podcast download --number 'tpl:{NUMBER_TO_DOWNLOAD}' , echo
+            'would do something after'
+  music     Alias for: podcast --directory music download
+#+end_example
+
+This gives us a quick overview of all our podcast-related commands: the core
+~download~ command and the shortcuts we created (~audio~, ~music~, ~dwim~). Each
+alias shows a brief description of what it does, making it easy to remember
+which shortcut to use for different podcast categories.
+
 #+NAME: run
 #+BEGIN_SRC bash :results none :exports none :tangle ../../tests/use_cases/podcast_automation.sh :noweb yes :shebang "#!/bin/bash -eu"
 <<init>>
@@ -176,4 +217,6 @@ check-result(use_music_alias)
 check-result(audio_alias)
 
 check-result(use_audio_alias)
+
+check-result(group_help_with_alias)
 #+END_SRC
