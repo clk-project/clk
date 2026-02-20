@@ -225,7 +225,7 @@ local-sanity-check:
     COPY (+test/output --use_git="$use_git" --from="$from" --build_requirements="${build_requirements}") output
     SAVE ARTIFACT /output
     SAVE ARTIFACT /output/coverage-reports AS LOCAL output/coverage-reports
-    SAVE ARTIFACT /output/coverage-reports/*.md AS LOCAL coverage/reports/
+    SAVE ARTIFACT /output/coverage-reports/*.md AS LOCAL coverage-reports/
 
 sanity-check:
     FROM scratch
@@ -238,7 +238,7 @@ sanity-check:
     COPY (+sonar/output --use_branch="${use_branch}" --use_git="${use_git}" --build_requirements="${build_requirements}") /output
     SAVE ARTIFACT /output
     SAVE ARTIFACT /output/coverage-reports AS LOCAL output/coverage-reports
-    SAVE ARTIFACT /output/coverage-reports/*.md AS LOCAL coverage/reports/
+    SAVE ARTIFACT /output/coverage-reports/*.md AS LOCAL coverage-reports/
 
 deploy:
     FROM e+alpine-python-user-venv --extra_packages=twine
