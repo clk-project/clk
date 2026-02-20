@@ -235,7 +235,6 @@ local-sanity-check:
     COPY (+test/output --use_git="$use_git" --from="$from" --build_requirements="${build_requirements}") output
     SAVE ARTIFACT /output
     SAVE ARTIFACT /output/coverage-reports AS LOCAL output/coverage-reports
-    SAVE ARTIFACT /output/coverage-reports/*.md AS LOCAL coverage-reports/
 
 sanity-check:
     FROM scratch
