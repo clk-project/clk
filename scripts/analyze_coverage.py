@@ -197,7 +197,7 @@ def generate_overlap_html(test_coverages, output_path):
             else:
                 cov_b = test_coverages[test_b]
                 intersection = coverage_intersection_size(cov_a, cov_b)
-                row.append(round((intersection / size_a) * 100, 1))
+                row.append((intersection / size_a) * 100)
         matrix_data.append(row)
 
     html_content = f"""<!DOCTYPE html>
@@ -213,15 +213,14 @@ def generate_overlap_html(test_coverages, output_path):
         #matrix-container {{ overflow: auto; max-height: 80vh; }}
         table {{ border-collapse: collapse; font-size: 10px; }}
         th, td {{ padding: 2px 4px; text-align: center; border: 1px solid #333; min-width: 25px; }}
-        th {{ background: #16213e; position: sticky; top: 0; z-index: 10; }}
-        th.row-header {{ position: sticky; left: 0; z-index: 5; text-align: right; padding-right: 8px; max-width: 200px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }}
-        th.corner {{ position: sticky; top: 0; left: 0; z-index: 15; }}
+        th {{ background: #16213e; position: sticky; top: 0; z-index: 10; cursor: pointer; }}
+        th.row-header {{ position: sticky; left: 0; z-index: 5; text-align: right; padding-right: 8px; max-width: 200px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; cursor: pointer; }}
+        th.corner {{ position: sticky; top: 0; left: 0; z-index: 15; cursor: default; }}
         .cell {{ cursor: pointer; }}
         .cell:hover {{ outline: 2px solid #fff; }}
-        .highlight-row {{ background: rgba(0, 212, 255, 0.15) !important; }}
-        .highlight-col {{ background: rgba(0, 212, 255, 0.15) !important; }}
+        .cell.highlight-row, .cell.highlight-col {{ box-shadow: inset 0 0 0 2px rgba(0, 212, 255, 0.7); }}
+        .cell.highlight-row.highlight-col {{ box-shadow: inset 0 0 0 3px #00d4ff; }}
         th.highlight-row, th.highlight-col {{ background: #1e5a7e !important; }}
-        .highlight-row.highlight-col {{ background: rgba(0, 212, 255, 0.3) !important; }}
         #tooltip {{ position: fixed; background: #16213e; border: 1px solid #00d4ff; padding: 10px; border-radius: 4px; pointer-events: none; display: none; z-index: 1000; max-width: 400px; }}
         .legend {{ display: flex; align-items: center; gap: 10px; margin-top: 10px; }}
         .legend-gradient {{ width: 200px; height: 20px; background: linear-gradient(to right, #1e3a5f, #2e8b57, #b8860b, #c41e3a); border-radius: 4px; }}
@@ -240,7 +239,7 @@ def generate_overlap_html(test_coverages, output_path):
         <div class="legend">
             <span>0%</span><div class="legend-gradient"></div><span>100%</span>
             <span style="margin-left: 20px;">Cell = % of row's lines also covered by column</span>
-            <span style="margin-left: 20px; color: #00d4ff;">Click a cell to highlight its row and column</span>
+            <span style="margin-left: 20px; color: #00d4ff;">Click row/column headers to toggle highlights</span>
         </div>
     </div>
     <div id="matrix-container"><table id="matrix"></table></div>
@@ -253,7 +252,7 @@ def generate_overlap_html(test_coverages, output_path):
     let currentOrder = [...Array(testNames.length).keys()];
 
     function getColor(value) {{
-        if (value >= 100) return '#c41e3a';
+        if (value >= 99.995) return '#c41e3a';
         if (value >= 75) return '#b8860b';
         if (value >= 50) return '#2e8b57';
         if (value >= 25) return '#1e3a5f';
@@ -272,7 +271,7 @@ def generate_overlap_html(test_coverages, output_path):
                 const val = matrixData[i][j];
                 const belowThreshold = val < minOverlap && i !== j;
                 const color = belowThreshold ? '#333' : getColor(val);
-                const display = belowThreshold ? '' : val.toFixed(0);
+                const display = belowThreshold ? '' : val.toFixed(2);
                 html += `<td class="cell" style="background:${{color}}" data-i="${{i}}" data-j="${{j}}">${{display}}</td>`;
             }}
             html += '</tr>';
@@ -334,46 +333,62 @@ def generate_overlap_html(test_coverages, output_path):
     let highlightedRow = null;
     let highlightedCol = null;
 
-    function clearHighlights() {{
-        document.querySelectorAll('.highlight-row, .highlight-col').forEach(el => {{
-            el.classList.remove('highlight-row', 'highlight-col');
+    function clearRowHighlight() {{
+        document.querySelectorAll('.highlight-row').forEach(el => {{
+            el.classList.remove('highlight-row');
         }});
         highlightedRow = null;
+    }}
+
+    function clearColHighlight() {{
+        document.querySelectorAll('.highlight-col').forEach(el => {{
+            el.classList.remove('highlight-col');
+        }});
         highlightedCol = null;
     }}
 
-    function highlightRowCol(rowIdx, colIdx) {{
-        clearHighlights();
-        if (rowIdx === null && colIdx === null) return;
-
+    function toggleRowHighlight(rowIdx) {{
+        if (highlightedRow === rowIdx) {{
+            clearRowHighlight();
+            return;
+        }}
+        clearRowHighlight();
         highlightedRow = rowIdx;
+
+        const table = document.getElementById('matrix');
+        const rows = table.querySelectorAll('tr');
+        const rowPos = currentOrder.indexOf(rowIdx);
+
+        if (rowPos >= 0 && rowPos + 1 < rows.length) {{
+            const row = rows[rowPos + 1];
+            const cells = row.querySelectorAll('th, td');
+            cells[0].classList.add('highlight-row');
+            cells.forEach((cell, cIndex) => {{
+                if (cIndex > 0) cell.classList.add('highlight-row');
+            }});
+        }}
+    }}
+
+    function toggleColHighlight(colIdx) {{
+        if (highlightedCol === colIdx) {{
+            clearColHighlight();
+            return;
+        }}
+        clearColHighlight();
         highlightedCol = colIdx;
 
         const table = document.getElementById('matrix');
         const rows = table.querySelectorAll('tr');
-
-        // Find position of rowIdx and colIdx in currentOrder
-        const rowPos = currentOrder.indexOf(rowIdx);
         const colPos = currentOrder.indexOf(colIdx);
 
         rows.forEach((row, rIndex) => {{
             if (rIndex === 0) {{
-                // Header row - highlight column header
                 const ths = row.querySelectorAll('th');
                 if (colPos >= 0 && colPos + 1 < ths.length) {{
                     ths[colPos + 1].classList.add('highlight-col');
                 }}
             }} else {{
                 const cells = row.querySelectorAll('th, td');
-                // Highlight row header if this is the selected row
-                if (rIndex === rowPos + 1) {{
-                    cells[0].classList.add('highlight-row');
-                    // Highlight all cells in this row
-                    cells.forEach((cell, cIndex) => {{
-                        if (cIndex > 0) cell.classList.add('highlight-row');
-                    }});
-                }}
-                // Highlight column cells
                 if (colPos >= 0 && colPos + 1 < cells.length) {{
                     cells[colPos + 1].classList.add('highlight-col');
                 }}
@@ -382,13 +397,23 @@ def generate_overlap_html(test_coverages, output_path):
     }}
 
     document.getElementById('matrix').addEventListener('click', e => {{
-        if (e.target.classList.contains('cell')) {{
-            const i = parseInt(e.target.dataset.i), j = parseInt(e.target.dataset.j);
-            // Toggle: if clicking same cell, clear; otherwise highlight new
-            if (highlightedRow === i && highlightedCol === j) {{
-                clearHighlights();
-            }} else {{
-                highlightRowCol(i, j);
+        // Click on row header to toggle row highlight
+        if (e.target.classList.contains('row-header')) {{
+            const row = e.target.closest('tr');
+            const firstCell = row.querySelector('td.cell');
+            if (firstCell) {{
+                const rowIdx = parseInt(firstCell.dataset.i);
+                toggleRowHighlight(rowIdx);
+            }}
+            return;
+        }}
+        // Click on column header (th in first row, but not corner or row-header) to toggle column highlight
+        if (e.target.tagName === 'TH' && !e.target.classList.contains('corner') && !e.target.classList.contains('row-header')) {{
+            const headerRow = e.target.closest('tr');
+            const ths = headerRow.querySelectorAll('th');
+            const colPos = Array.from(ths).indexOf(e.target) - 1; // -1 for corner cell
+            if (colPos >= 0 && colPos < currentOrder.length) {{
+                toggleColHighlight(currentOrder[colPos]);
             }}
         }}
     }});
