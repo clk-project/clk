@@ -179,10 +179,9 @@ might write even more [[./doc][documentation]].
 * Coverage reports
   :PROPERTIES:
   :CREATED:  [2026-02-20 12:38]
+  :CUSTOM_ID: a53fa97d-ceb5-44e9-b921-89cf03d2775d
   :END:
   Coverage reports are automatically generated and committed by CI on each push to main.
-
-  ## Reports
 
   - [[./coverage-reports/testiq-report.md][TestIQ Report]] - Test duplicate/redundancy analysis
   - [[./coverage-reports/overlap.md][Overlap Report]] - Test coverage overlap analysis

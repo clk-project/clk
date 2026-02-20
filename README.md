@@ -2,7 +2,7 @@
 - [In a nutshell](#fe60735c-91c2-4f54-8ae2-7e3b307f27a5)
 - [Rationale](#7857f3bb-e4c7-4bad-9e27-ea48bf808a44)
 - [Note on version](#8152d0c9-564d-4761-a847-66a40e41aac5)
-- [Coverage reports](#org2ee204f)
+- [Coverage reports](#a53fa97d-ceb5-44e9-b921-89cf03d2775d)
 
 [clk](https://clk-project.org/)
 ==============================================================================
@@ -109,17 +109,15 @@ Nowadays, I use **clk** for most of my day to day use, from communicating in sla
 **clk** is quite old, and most of its concepts are stable. There are still a few areas that I want to dig into before starting a v1. For a start, I want to end up describing all the [use cases](./doc/use_cases) that matter to me before considering it ready.
 
 
-<a id="org2ee204f"></a>
+<a id="a53fa97d-ceb5-44e9-b921-89cf03d2775d"></a>
 
 # Coverage reports
 
 Coverage reports are automatically generated and committed by CI on each push to main.
 
-\## Reports
-
--   [TestIQ Report](./testiq-report.md) - Test duplicate/redundancy analysis
--   [Overlap Report](./overlap.md) - Test coverage overlap analysis
--   [Line Heat Map](./line-heat.md) - Lines covered by many tests
+-   [TestIQ Report](./coverage-reports/testiq-report.md) - Test duplicate/redundancy analysis
+-   [Overlap Report](./coverage-reports/overlap.md) - Test coverage overlap analysis
+-   [Line Heat Map](./coverage-reports/line-heat.md) - Lines covered by many tests
 
 ## Footnotes
 
