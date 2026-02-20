@@ -107,17 +107,20 @@ test:
         RUN mkdir output/dist && mv /dist/* output/dist/
     END
     # Generate coverage analysis reports
-    RUN python3 tests/convert_to_testiq.py /app/output/coverage/coverage-contexts.json /app/output/testiq-coverage.json
+    COPY scripts/convert_to_testiq.py /app/scripts/
+    RUN python3 scripts/convert_to_testiq.py /app/output/coverage/coverage-contexts.json /app/output/testiq-coverage.json
     RUN mkdir -p /app/output/coverage-reports
     RUN testiq analyze /app/output/testiq-coverage.json --format markdown --output /app/output/coverage-reports/testiq-report.md
     RUN testiq analyze /app/output/testiq-coverage.json --format html --output /app/output/coverage-reports/testiq-report.html
-    RUN python3 tests/analyze_coverage.py /app/output/coverage/coverage-contexts.json \
+    COPY scripts/analyze_coverage.py /app/scripts/
+    RUN python3 scripts/analyze_coverage.py /app/output/coverage/coverage-contexts.json \
         --source-root /app \
         --overlap-md /app/output/coverage-reports/overlap.md \
         --overlap-html /app/output/coverage-reports/overlap.html \
         --line-heat-md /app/output/coverage-reports/line-heat.md \
         --line-heat-html /app/output/coverage-reports/line-heat.html
-    RUN python3 tests/sanitize_coverage_reports.py /app/output/coverage-reports/*.md
+    COPY scripts/sanitize_coverage_reports.py /app/scripts/
+    RUN python3 scripts/sanitize_coverage_reports.py /app/output/coverage-reports/*.md
     SAVE ARTIFACT output /output
 
 sandbox:

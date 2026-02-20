@@ -218,6 +218,10 @@ def generate_overlap_html(test_coverages, output_path):
         th.corner {{ position: sticky; top: 0; left: 0; z-index: 15; }}
         .cell {{ cursor: pointer; }}
         .cell:hover {{ outline: 2px solid #fff; }}
+        .highlight-row {{ background: rgba(0, 212, 255, 0.15) !important; }}
+        .highlight-col {{ background: rgba(0, 212, 255, 0.15) !important; }}
+        th.highlight-row, th.highlight-col {{ background: #1e5a7e !important; }}
+        .highlight-row.highlight-col {{ background: rgba(0, 212, 255, 0.3) !important; }}
         #tooltip {{ position: fixed; background: #16213e; border: 1px solid #00d4ff; padding: 10px; border-radius: 4px; pointer-events: none; display: none; z-index: 1000; max-width: 400px; }}
         .legend {{ display: flex; align-items: center; gap: 10px; margin-top: 10px; }}
         .legend-gradient {{ width: 200px; height: 20px; background: linear-gradient(to right, #1e3a5f, #2e8b57, #b8860b, #c41e3a); border-radius: 4px; }}
@@ -236,6 +240,7 @@ def generate_overlap_html(test_coverages, output_path):
         <div class="legend">
             <span>0%</span><div class="legend-gradient"></div><span>100%</span>
             <span style="margin-left: 20px;">Cell = % of row's lines also covered by column</span>
+            <span style="margin-left: 20px; color: #00d4ff;">Click a cell to highlight its row and column</span>
         </div>
     </div>
     <div id="matrix-container"><table id="matrix"></table></div>
@@ -325,6 +330,68 @@ def generate_overlap_html(test_coverages, output_path):
         }}
     }});
     document.getElementById('matrix').addEventListener('mouseout', e => {{ if (e.target.classList.contains('cell')) tooltip.style.display = 'none'; }});
+
+    let highlightedRow = null;
+    let highlightedCol = null;
+
+    function clearHighlights() {{
+        document.querySelectorAll('.highlight-row, .highlight-col').forEach(el => {{
+            el.classList.remove('highlight-row', 'highlight-col');
+        }});
+        highlightedRow = null;
+        highlightedCol = null;
+    }}
+
+    function highlightRowCol(rowIdx, colIdx) {{
+        clearHighlights();
+        if (rowIdx === null && colIdx === null) return;
+
+        highlightedRow = rowIdx;
+        highlightedCol = colIdx;
+
+        const table = document.getElementById('matrix');
+        const rows = table.querySelectorAll('tr');
+
+        // Find position of rowIdx and colIdx in currentOrder
+        const rowPos = currentOrder.indexOf(rowIdx);
+        const colPos = currentOrder.indexOf(colIdx);
+
+        rows.forEach((row, rIndex) => {{
+            if (rIndex === 0) {{
+                // Header row - highlight column header
+                const ths = row.querySelectorAll('th');
+                if (colPos >= 0 && colPos + 1 < ths.length) {{
+                    ths[colPos + 1].classList.add('highlight-col');
+                }}
+            }} else {{
+                const cells = row.querySelectorAll('th, td');
+                // Highlight row header if this is the selected row
+                if (rIndex === rowPos + 1) {{
+                    cells[0].classList.add('highlight-row');
+                    // Highlight all cells in this row
+                    cells.forEach((cell, cIndex) => {{
+                        if (cIndex > 0) cell.classList.add('highlight-row');
+                    }});
+                }}
+                // Highlight column cells
+                if (colPos >= 0 && colPos + 1 < cells.length) {{
+                    cells[colPos + 1].classList.add('highlight-col');
+                }}
+            }}
+        }});
+    }}
+
+    document.getElementById('matrix').addEventListener('click', e => {{
+        if (e.target.classList.contains('cell')) {{
+            const i = parseInt(e.target.dataset.i), j = parseInt(e.target.dataset.j);
+            // Toggle: if clicking same cell, clear; otherwise highlight new
+            if (highlightedRow === i && highlightedCol === j) {{
+                clearHighlights();
+            }} else {{
+                highlightRowCol(i, j);
+            }}
+        }}
+    }});
 
     sortBy('overlap');
     </script>
