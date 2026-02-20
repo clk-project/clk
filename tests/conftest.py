@@ -6,8 +6,9 @@ from shlex import split
 from shutil import copytree, rmtree
 from subprocess import STDOUT, check_call, check_output
 
-import coverage
 import pytest
+
+import coverage
 
 # Global coverage instance for per-test coverage tracking
 _per_test_cov = None
@@ -82,6 +83,7 @@ def rootdir(request):
     os.environ["CLK_TEST_ROOT"] = str(Path(root))
     os.environ["CURRENT_CLK"] = str(Path(__file__).parent.parent)
     os.environ["CLKCONFIGDIR"] = str(Path(root) / "clk-root")
+    os.environ["XDG_CACHE_HOME"] = str(Path(root) / "cache")
     # Set test identifier for per-test coverage files
     os.environ["CLK_COVERAGE_TEST_ID"] = _test_id_from_nodeid(request.node.nodeid)
     # Set context name for coverage (used by Lib.cmd)
@@ -91,6 +93,7 @@ def rootdir(request):
     Lib.run("direnv allow")
     yield root
     del os.environ["CLKCONFIGDIR"]
+    del os.environ["XDG_CACHE_HOME"]
     del os.environ["CLK_TEST_ROOT"]
     del os.environ["CURRENT_CLK"]
     del os.environ["CLK_COVERAGE_TEST_ID"]
