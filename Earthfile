@@ -169,14 +169,21 @@ quality-base:
     FROM +pre-commit-base
     COPY --dir .pre-commit-config.yaml .
     COPY +pre-commit-cache/cache $HOME/.cache/pre-commit
-    COPY --dir +git-files/app/* +sources/app/* +side-files/app/* +test-files/app/* .
+    COPY --dir +sources/app/* +side-files/app/* +test-files/app/* .
+    ARG use_git=true
+    IF [ "$use_git" = "true" ]
+        COPY --dir +git-files/app/* .
+    END
 
 check-quality:
-    FROM +quality-base
+    FROM +quality-base --use_git=false
+    RUN git init && git add -A
     RUN pre-commit run -a
+    RUN rm -rf .git
 
 fix-quality:
-    FROM +quality-base
+    ARG use_git=true
+    FROM +quality-base --use_git="$use_git"
     RUN pre-commit run -a || echo OK
     RUN rm -rf venv
     SAVE ARTIFACT . AS LOCAL fixed
