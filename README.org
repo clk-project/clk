@@ -31,8 +31,6 @@
 
 ![Gitter ](https://img.shields.io/gitter/room/clk-project/clk)
 ![Libera](https://raster.shields.io/badge/libera.chat-%23clk-blue)
-
-See also: [Test Coverage Reports](./coverage-reports/)
 #+END_export
 
 Come and discuss clk with us on
@@ -178,12 +176,23 @@ might write even more [[./doc][documentation]].
   *clk* is quite old, and most of its concepts are stable. There are still a few
   areas that I want to dig into before starting a v1. For a start, I want to end
   up describing all the [[./doc/use_cases][use cases]] that matter to me before considering it ready.
+* Coverage reports
+  :PROPERTIES:
+  :CREATED:  [2026-02-20 12:38]
+  :END:
+  Coverage reports are automatically generated and committed by CI on each push to main.
+
+  ## Reports
+
+  - [[./coverage-reports/testiq-report.md][TestIQ Report]] - Test duplicate/redundancy analysis
+  - [[./coverage-reports/overlap.md][Overlap Report]] - Test coverage overlap analysis
+  - [[./coverage-reports/line-heat.md][Line Heat Map]] - Lines covered by many tests
 
 * Footnotes
   :PROPERTIES:
   :CUSTOM_ID: 073ffd02-dc04-4b32-b804-a9a51b180d69
   :END:
 [fn:2] After more than a decade of use, I still have a hard time finding out how
-       to use *find* for non trivial use cases.
+to use *find* for non trivial use cases.
 
 [fn:1] for that reason, clk is also called the *C*ognitive *L*oad *K*iller.
