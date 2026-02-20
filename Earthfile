@@ -17,7 +17,7 @@ DEPENDENCIES:
         # get a newly generated requirements
         COPY +requirements/requirements.txt /app/requirements.txt
     END
-    RUN python3 -m pip install -r /app/requirements.txt
+    RUN python3 -m pip install -q -r /app/requirements.txt
 
 side-files:
     FROM scratch
@@ -46,21 +46,21 @@ INSTALL:
     IF [ "${from}" = "source" ]
         DO +DEPENDENCIES --build_requirements="${build_requirements}"
         COPY --dir +sources/app/* /app
-        RUN cd /app && python3 -m pip install --editable .
+        RUN cd /app && python3 -m pip install -q --editable .
     ELSE IF [ "${from}" = "build" ]
         DO +DEPENDENCIES --build_requirements="${build_requirements}"
         ARG use_git=true
         COPY (+build/dist --use_git="$use_git") /dist
-        RUN python3 -m pip install /dist/*
+        RUN python3 -m pip install -q /dist/*
     ELSE IF [ "${from}" = "pypi" ]
         ARG pypi_version
-        RUN --no-cache python3 -m pip install clk${pypi_version}
+        RUN --no-cache python3 -m pip install -q clk${pypi_version}
     ELSE IF [ "${from}" = "doc" ]
         COPY ./installer.sh ./
         RUN --no-cache ./installer.sh
     ELSE
         # assume it is the url to install from
-        RUN python3 -m pip install "${from}"
+        RUN python3 -m pip install -q "${from}"
     END
 
 build:
@@ -179,7 +179,7 @@ fix-quality:
 
 test-install-ubuntu:
     FROM ubuntu:24.04
-    RUN apt-get update && apt-get install --yes sudo curl python3 python3-venv
+    RUN apt-get update -qq && apt-get install -qq --yes sudo curl python3 python3-venv
     DO e+USE_USER --sudoer=y --uid=1001
     DO e+PYTHON_VENV --base=$(pwd)/venv
     ARG from=doc
