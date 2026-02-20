@@ -137,6 +137,7 @@ class Config:
         self._dry_run = None
         self._project = None
         self.alt_style = None
+        self.reproducible_output = False
         self.persist_migration = False
         # environment values
         self.env = None
@@ -206,14 +207,13 @@ class Config:
         env = {}
 
         while ctx:
-            env.update(
-                {
-                    (ctx.command_path.replace(" ", "_") + "__" + key).upper(): (
-                        value_to_string(value)
-                    )
-                    for key, value in ctx.params.items()
-                }
-            )
+            for key, value in ctx.params.items():
+                if self.reproducible_output and value:
+                    from clk.core import make_relative
+
+                    value = make_relative(value)
+                env_key = (ctx.command_path.replace(" ", "_") + "__" + key).upper()
+                env[env_key] = value_to_string(value)
             ctx = ctx.parent
         return env
 

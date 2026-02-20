@@ -795,21 +795,38 @@ def flow_progress_callback(ctx, attr, value):
         config.flow_progress = value
 
 
+def make_relative(path):
+    """Convert an absolute path to a relative path from the current working directory.
+
+    Only converts strings that look like absolute paths. Returns the original value otherwise.
+    """
+    if not isinstance(path, str) or not path.startswith("/"):
+        return path
+    cwd = Path.cwd()
+    abs_path = Path(path).absolute()
+    try:
+        rel = abs_path.relative_to(cwd)
+        rel_str = str(rel)
+        if rel_str == ".":
+            return "./"
+        return "./" + rel_str if not rel_str.startswith(".") else rel_str
+    except ValueError:
+        # Try the reverse - maybe cwd is inside the target path
+        try:
+            cwd.relative_to(abs_path)
+            # cwd is inside abs_path, compute relative path using os.path.relpath
+            import os
+
+            return os.path.relpath(abs_path, cwd) + "/"
+        except ValueError:
+            return str(abs_path)
+
+
 class RedactMessages:
     def __init__(self, stream):
         self.stream = stream
 
     def write(self, message):
-        cwd = Path.cwd()
-
-        def make_relative(path):
-            abs_path = Path(path).absolute()
-            try:
-                rel = abs_path.relative_to(cwd)
-                return "./" + str(rel) if not str(rel).startswith(".") else str(rel)
-            except ValueError:
-                return str(abs_path)
-
         message = message.replace(
             config.global_profile.location,
             make_relative(config.global_profile.location),
@@ -828,6 +845,7 @@ class RedactMessages:
 @main_command_options_callback
 def reproducible_output_callback(ctx, attr, value):
     if value:
+        config.reproducible_output = True
         sys.stdout = RedactMessages(sys.stdout)
     return value
 
