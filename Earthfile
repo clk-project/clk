@@ -175,6 +175,7 @@ check-quality:
 fix-quality:
     FROM +quality-base
     RUN pre-commit run -a || echo OK
+    RUN rm -rf venv
     SAVE ARTIFACT . AS LOCAL fixed
 
 test-install-ubuntu:
