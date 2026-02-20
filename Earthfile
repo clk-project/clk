@@ -112,9 +112,10 @@ test:
     RUN mkdir -p /app/output/coverage-reports
     RUN testiq analyze /app/output/testiq-coverage.json --format markdown --output /app/output/coverage-reports/testiq-report.md
     RUN testiq analyze /app/output/testiq-coverage.json --format html --output /app/output/coverage-reports/testiq-report.html
-    COPY scripts/analyze_coverage.py /app/scripts/
+    COPY scripts/analyze_coverage.py scripts/coverage_exclusions.txt /app/scripts/
     RUN python3 scripts/analyze_coverage.py /app/output/coverage/coverage-contexts.json \
         --source-root /app \
+        --exclude /app/scripts/coverage_exclusions.txt \
         --overlap-md /app/output/coverage-reports/overlap.md \
         --overlap-html /app/output/coverage-reports/overlap.html \
         --line-heat-md /app/output/coverage-reports/line-heat.md \
@@ -235,6 +236,8 @@ local-sanity-check:
     COPY (+test/output --use_git="$use_git" --from="$from" --build_requirements="${build_requirements}") output
     SAVE ARTIFACT /output
     SAVE ARTIFACT /output/coverage-reports AS LOCAL output/coverage-reports
+    SAVE ARTIFACT /output/testiq-coverage.json AS LOCAL output/testiq-coverage.json
+    SAVE ARTIFACT /output/coverage/coverage-contexts.json AS LOCAL output/coverage-contexts.json
 
 sanity-check:
     FROM scratch

@@ -13,13 +13,104 @@ from collections import defaultdict
 from pathlib import Path
 
 
-def load_coverage_json(json_path):
+def load_exclusions(exclusions_path, source_root=None):
+    """Load exclusions file with optional content validation.
+
+    Format: one entry per line, either:
+        filename:line_number
+        filename:start-end  (range)
+        filename:line_number:expected_content  (with content check)
+
+    Lines starting with # are comments.
+
+    When expected_content is provided, the exclusion only applies if the
+    source file contains that exact content (stripped) at the given line.
+    This guards against stale exclusions after code changes.
+    """
+    exclusions = set()
+    if not exclusions_path or not exclusions_path.exists():
+        return exclusions
+
+    # Cache for source files
+    source_cache = {}
+
+    def get_source_line(filename, line_num):
+        """Get source line content, using cache."""
+        if filename not in source_cache:
+            source_lines = read_source_file(filename, source_root)
+            source_cache[filename] = source_lines
+        source_lines = source_cache[filename]
+        if source_lines and 1 <= line_num <= len(source_lines):
+            return source_lines[line_num - 1].strip()
+        return None
+
+    for line in exclusions_path.read_text().splitlines():
+        line = line.strip()
+        if not line or line.startswith("#"):
+            continue
+        if ":" not in line:
+            continue
+
+        parts = line.split(":", 2)
+        if len(parts) == 2:
+            # filename:line_spec (no content check)
+            filename, line_spec = parts
+            expected_content = None
+        else:
+            # filename:line_spec:expected_content
+            filename, line_spec, expected_content = parts
+            expected_content = expected_content.strip()
+
+        if "-" in line_spec and expected_content is None:
+            # Range without content check
+            start, end = line_spec.split("-", 1)
+            for ln in range(int(start), int(end) + 1):
+                exclusions.add((filename, ln))
+        else:
+            line_num = (
+                int(line_spec.split("-")[0]) if "-" in line_spec else int(line_spec)
+            )
+            if expected_content:
+                # Validate content matches
+                actual_content = get_source_line(filename, line_num)
+                if actual_content is None:
+                    print(
+                        f"Warning: Cannot read {filename}:{line_num} for exclusion validation",
+                        file=sys.stderr,
+                    )
+                    continue
+                if actual_content != expected_content:
+                    print(
+                        f"Warning: Exclusion mismatch at {filename}:{line_num}",
+                        file=sys.stderr,
+                    )
+                    print(f"  Expected: {expected_content}", file=sys.stderr)
+                    print(f"  Actual:   {actual_content}", file=sys.stderr)
+                    continue
+            if "-" in line_spec:
+                start, end = line_spec.split("-", 1)
+                for ln in range(int(start), int(end) + 1):
+                    exclusions.add((filename, ln))
+            else:
+                exclusions.add((filename, line_num))
+
+    return exclusions
+
+
+def load_coverage_json(json_path, exclusions=None):
     """Load coverage JSON and extract per-test coverage data.
+
+    Args:
+        json_path: Path to coverage JSON file
+        exclusions: Set of (filename, line) tuples to exclude from analysis
 
     Returns:
         test_coverages: {test_name: {filename: set(lines)}}
         line_tests: {filename: {line: [test_names]}}
     """
+    if exclusions is None:
+        exclusions = set()
+
     with open(json_path) as f:
         data = json.load(f)
 
@@ -30,6 +121,9 @@ def load_coverage_json(json_path):
         contexts = file_data.get("contexts", {})
         for line_str, test_names in contexts.items():
             line = int(line_str)
+            # Skip excluded lines
+            if (filename, line) in exclusions:
+                continue
             for test_name in test_names:
                 # Skip empty context (global coverage)
                 if not test_name:
@@ -710,14 +804,23 @@ def main():
         type=Path,
         help="Root directory for source files (for path mapping)",
     )
+    parser.add_argument(
+        "--exclude",
+        type=Path,
+        help="File with lines to exclude from analysis (format: filename:line or filename:start-end)",
+    )
     args = parser.parse_args()
 
     if not args.coverage_json.exists():
         print(f"Error: {args.coverage_json} not found", file=sys.stderr)
         sys.exit(1)
 
+    exclusions = load_exclusions(args.exclude, args.source_root)
+    if exclusions:
+        print(f"Loaded {len(exclusions)} line exclusions")
+
     print(f"Loading {args.coverage_json}...")
-    test_coverages, line_tests = load_coverage_json(args.coverage_json)
+    test_coverages, line_tests = load_coverage_json(args.coverage_json, exclusions)
     print(f"Found {len(test_coverages)} tests")
 
     if args.overlap_md:

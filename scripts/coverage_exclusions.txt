@@ -1,0 +1,20 @@
+# Lines to exclude from coverage analysis
+# These are implementation details that don't represent meaningful test coverage differences
+#
+# Format:
+#   filename:line_number           (no content check)
+#   filename:line_number:content   (validates content matches before excluding)
+#
+# The expected_content is checked against the actual source to detect stale exclusions
+
+# Argument parsing optimization path - taken when extra args don't need iteration
+/app/clk/overloads.py:1498:res = click.MultiCommand.parse_args(self, ctx, new_extra_args + args)
+/app/clk/overloads.py:1499:new_extra_args = self.get_extra_args()
+
+# Settings cleanup - removes empty dict entries before saving
+/app/clk/profile.py:124:del settings[key]
+
+# Profile existence checks - incidental coverage differences
+# Note: line numbers from coverage JSON may differ from local source by 1
+/app/clk/profile.py:497
+/app/clk/profile.py:517
