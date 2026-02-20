@@ -38,6 +38,9 @@ clk alias set somelocalcommand echo hello
 : New local alias for somelocalcommand: echo hello
 
 
+
+
+
 You can call this alias when inside the project.
 
 #+NAME: callingthealias
@@ -47,6 +50,9 @@ clk somelocalcommand
 
 #+RESULTS[6d570aedac0dd9c98e79c8e989bdf8cce7ec7db1]: callingthealias
 : hello
+
+
+
 
 
 
@@ -72,6 +78,9 @@ clk somelocalcommand
 
 
 
+
+
+
 Let's go back in the project and create a parameter.
 
 #+NAME: gettingbackintotheprojectottestparameters
@@ -90,6 +99,9 @@ clk echo world
 : hello world
 
 
+
+
+
 This parameter is also unavailable only inside the project.
 
 #+NAME: callingparameteroutsideofproject
@@ -102,6 +114,9 @@ cd myprojet && clk echo world
 : world
 : hello world
 
+
+
+
 You can reference files inside the project using the ~project:~ prefix.
 
 #+NAME: projectprefix
@@ -112,6 +127,139 @@ clk exec cat project:somefile.txt
 
 #+RESULTS[ede9ec34469ac8de6f94fef707b09be111bece55]: projectprefix
 : somecontent
+
+
+
+
+* running project scripts
+  :PROPERTIES:
+  :CUSTOM_ID: running-project-scripts
+  :END:
+
+Of course, you can create [[file:bash_command.org][bash commands]] to add logic to your project. But
+sometimes, projects just have loose scripts lying around in ~./scripts~ or
+~./tools~ directories. Maybe they were written by someone else, maybe they're
+legacy, or maybe you just prefer keeping them as plain shell scripts.
+
+You can run them through ~clk exec~ to give them access to the project context.
+
+Let's create a simple build script in our project.
+
+#+NAME: create_build_script
+#+BEGIN_SRC bash :results none :exports code :session 6de55de4-c0b3-41d6-952a-25e0fe06c881
+mkdir -p scripts
+cat <<'EOF' > scripts/build.sh
+#!/bin/bash
+echo "Building project at: ${CLK__PROJECT}"
+echo "App: ${CLK_APPNAME}"
+EOF
+chmod +x scripts/build.sh
+#+END_SRC
+
+When you run this script through ~clk exec~, it receives environment variables
+that tell it where the project is located.
+
+#+NAME: run_build_script
+#+BEGIN_SRC bash :results verbatim :exports both :session 6de55de4-c0b3-41d6-952a-25e0fe06c881 :cache yes
+clk exec ./scripts/build.sh
+#+END_SRC
+
+#+RESULTS[4a5fc0c871fbab0229a9785cfb5846af78b8ec0e]: run_build_script
+: Building project at: ./
+: App: clk
+
+
+
+
+This is useful when your script needs to find configuration files or other
+resources relative to the project root, regardless of which subdirectory you're
+currently in.
+
+#+NAME: run_from_subdir
+#+BEGIN_SRC bash :results verbatim :exports both :session 6de55de4-c0b3-41d6-952a-25e0fe06c881 :cache yes
+mkdir -p src/deep/nested
+cd src/deep/nested
+clk exec ../../../scripts/build.sh
+cd ../../..
+#+END_SRC
+
+#+RESULTS[93f222c4140afb27a6eb52ccfef85f379e028f60]: run_from_subdir
+: Building project at: ../../../
+: App: clk
+
+
+
+
+When typing ~clk exec~, completion suggests both programs from your PATH and
+executable scripts in the current directory. If you start typing a path like
+~./~, it switches to file completion to help you navigate to your scripts.
+
+#+NAME: completion_exec_shown
+#+BEGIN_SRC bash :results none :exports code
+clk exec ./<TAB>
+#+END_SRC
+
+#+NAME: completion_exec
+#+BEGIN_SRC bash :results verbatim :exports none :session 6de55de4-c0b3-41d6-952a-25e0fe06c881 :cache yes
+clk completion try --last exec ./ | grep scripts
+#+END_SRC
+
+#+RESULTS[b68cd3075c1100f59e6a91948b9b89f37b759e26]: completion_exec
+: ./scripts/
+
+
+
+You can also complete deeper paths:
+
+#+NAME: completion_exec_deep_shown
+#+BEGIN_SRC bash :results none :exports code
+clk exec ./scripts/b<TAB>
+#+END_SRC
+
+#+NAME: completion_exec_deep
+#+BEGIN_SRC bash :results verbatim :exports none :session 6de55de4-c0b3-41d6-952a-25e0fe06c881 :cache yes
+clk completion try --last exec ./scripts/b
+#+END_SRC
+
+#+RESULTS[55ae13d751a690a48a9a2c3dd550bfe4613acef2]: completion_exec_deep
+: ./scripts/build.sh
+
+
+
+Since ~clk exec~ is a regular clk command, you can use it in flows, aliases or
+add parameters to it. For example, you might have a alias that runs your build
+script before deploying:
+
+#+NAME: create_deploy_script
+#+BEGIN_SRC bash :results none :exports code :session 6de55de4-c0b3-41d6-952a-25e0fe06c881
+cat <<'EOF' > scripts/deploy.sh
+#!/bin/bash
+echo "Deploying from ${CLK__PROJECT}"
+EOF
+chmod +x scripts/deploy.sh
+#+END_SRC
+
+#+NAME: create_flow_alias
+#+BEGIN_SRC bash :results verbatim :exports both :session 6de55de4-c0b3-41d6-952a-25e0fe06c881 :cache yes
+clk alias set deploy exec ./scripts/build.sh , exec ./scripts/deploy.sh
+#+END_SRC
+
+#+RESULTS[6bf7da797d4495965656efad6a362211afc5f7ab]: create_flow_alias
+: New local alias for deploy: exec ./scripts/build.sh , exec ./scripts/deploy.sh
+
+
+
+#+NAME: run_flow
+#+BEGIN_SRC bash :results verbatim :exports both :session 6de55de4-c0b3-41d6-952a-25e0fe06c881 :cache yes
+clk deploy
+#+END_SRC
+
+#+RESULTS[05dfd87f9bb67366ff3623e8f876e97eae7ba97a]: run_flow
+: Building project at: ./
+: App: clk
+: Deploying from ./
+
+
 
 #+NAME: run
 #+BEGIN_SRC bash :results none :exports none :tangle ../../tests/use_cases/using_a_project.sh :noweb yes :shebang "#!/bin/bash -eu"
@@ -134,4 +282,20 @@ check-result(createaparameter)
 check-result(callingparameteroutsideofproject)
 
 check-result(projectprefix)
+
+<<create_build_script>>
+
+check-result(run_build_script)
+
+check-result(run_from_subdir)
+
+check-result(completion_exec)
+
+check-result(completion_exec_deep)
+
+<<create_deploy_script>>
+
+check-result(create_flow_alias)
+
+check-result(run_flow)
 #+END_SRC

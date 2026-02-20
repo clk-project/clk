@@ -178,7 +178,6 @@ with is dynamically updated.
   caching, using ~eval(60):clk eth get-address~. This will cache the result for 60
   seconds, making only the first call be slow.
 
-
   This is particularly handy in case you use the completion of clk a lot and are
   annoying by the time it may take to answer.
 
@@ -287,7 +286,6 @@ with is dynamically updated.
   : I would discuss with the contract whose address is 68b329da9893e34099c7d8ad5cb9c940 and abi path is ./some.json
   : I would call the function dosomething
 
-
 * Footnotes
   :PROPERTIES:
   :CUSTOM_ID: 1f8655b0-2399-4908-9452-364abac1b6c5
@@ -298,9 +296,8 @@ with is dynamically updated.
 ~absolute-path-to-here~ to ease extracting this code snippet into a runable
 test.
 
-
-  #+NAME: test
-  #+BEGIN_SRC bash :results none :exports none :noweb yes :shebang "#!/bin/bash -eu" :tangle ../../tests/use_cases/ethereum_local_environment_dev_tool.sh
+#+NAME: test
+#+BEGIN_SRC bash :results none :exports none :noweb yes :shebang "#!/bin/bash -eu" :tangle ../../tests/use_cases/ethereum_local_environment_dev_tool.sh
     <<init>>
 
     <<install_eth>>

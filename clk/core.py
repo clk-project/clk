@@ -832,7 +832,11 @@ class RedactMessages:
             make_relative(config.global_profile.location),
         )
         if config.project:
-            message = message.replace(config.project, make_relative(config.project))
+            relative_project = make_relative(config.project)
+            # When the relative path ends with /, also replace project/ to avoid double slashes
+            if relative_project.endswith("/"):
+                message = message.replace(config.project + "/", relative_project)
+            message = message.replace(config.project, relative_project.rstrip("/"))
         self.stream.write(message)
 
     def flush(self):

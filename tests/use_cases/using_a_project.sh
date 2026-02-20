@@ -142,4 +142,151 @@ diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
 echo "Something went wrong when trying projectprefix"
 exit 1
 }
+
+
+mkdir -p scripts
+cat <<'EOF' > scripts/build.sh
+#!/bin/bash
+echo "Building project at: ${CLK__PROJECT}"
+echo "App: ${CLK_APPNAME}"
+EOF
+chmod +x scripts/build.sh
+
+
+run_build_script_code () {
+      clk exec ./scripts/build.sh
+}
+
+run_build_script_expected () {
+      cat<<"EOEXPECTED"
+Building project at: ./
+App: clk
+EOEXPECTED
+}
+
+echo 'Run run_build_script'
+
+{ run_build_script_code || true ; } > "${TMP}/code.txt" 2>&1
+run_build_script_expected > "${TMP}/expected.txt" 2>&1
+diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+echo "Something went wrong when trying run_build_script"
+exit 1
+}
+
+
+
+run_from_subdir_code () {
+      mkdir -p src/deep/nested
+      cd src/deep/nested
+      clk exec ../../../scripts/build.sh
+      cd ../../..
+}
+
+run_from_subdir_expected () {
+      cat<<"EOEXPECTED"
+Building project at: ../../../
+App: clk
+EOEXPECTED
+}
+
+echo 'Run run_from_subdir'
+
+{ run_from_subdir_code || true ; } > "${TMP}/code.txt" 2>&1
+run_from_subdir_expected > "${TMP}/expected.txt" 2>&1
+diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+echo "Something went wrong when trying run_from_subdir"
+exit 1
+}
+
+
+
+completion_exec_code () {
+      clk completion try --last exec ./ | grep scripts
+}
+
+completion_exec_expected () {
+      cat<<"EOEXPECTED"
+./scripts/
+EOEXPECTED
+}
+
+echo 'Run completion_exec'
+
+{ completion_exec_code || true ; } > "${TMP}/code.txt" 2>&1
+completion_exec_expected > "${TMP}/expected.txt" 2>&1
+diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+echo "Something went wrong when trying completion_exec"
+exit 1
+}
+
+
+
+completion_exec_deep_code () {
+      clk completion try --last exec ./scripts/b
+}
+
+completion_exec_deep_expected () {
+      cat<<"EOEXPECTED"
+./scripts/build.sh
+EOEXPECTED
+}
+
+echo 'Run completion_exec_deep'
+
+{ completion_exec_deep_code || true ; } > "${TMP}/code.txt" 2>&1
+completion_exec_deep_expected > "${TMP}/expected.txt" 2>&1
+diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+echo "Something went wrong when trying completion_exec_deep"
+exit 1
+}
+
+
+cat <<'EOF' > scripts/deploy.sh
+#!/bin/bash
+echo "Deploying from ${CLK__PROJECT}"
+EOF
+chmod +x scripts/deploy.sh
+
+
+create_flow_alias_code () {
+      clk alias set deploy exec ./scripts/build.sh , exec ./scripts/deploy.sh
+}
+
+create_flow_alias_expected () {
+      cat<<"EOEXPECTED"
+New local alias for deploy: exec ./scripts/build.sh , exec ./scripts/deploy.sh
+EOEXPECTED
+}
+
+echo 'Run create_flow_alias'
+
+{ create_flow_alias_code || true ; } > "${TMP}/code.txt" 2>&1
+create_flow_alias_expected > "${TMP}/expected.txt" 2>&1
+diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+echo "Something went wrong when trying create_flow_alias"
+exit 1
+}
+
+
+
+run_flow_code () {
+      clk deploy
+}
+
+run_flow_expected () {
+      cat<<"EOEXPECTED"
+Building project at: ./
+App: clk
+Deploying from ./
+EOEXPECTED
+}
+
+echo 'Run run_flow'
+
+{ run_flow_code || true ; } > "${TMP}/code.txt" 2>&1
+run_flow_expected > "${TMP}/expected.txt" 2>&1
+diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+echo "Something went wrong when trying run_flow"
+exit 1
+}
 # run ends here
