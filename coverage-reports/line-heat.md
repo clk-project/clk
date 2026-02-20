@@ -2,7 +2,7 @@
 
 ## Summary
 
-- **Total tests:** 106
+- **Total tests:** 104
 - **Total covered lines:** 6324
 - **Hot lines (covered by all tests):** 0
 

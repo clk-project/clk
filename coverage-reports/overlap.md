@@ -2,10 +2,10 @@
 
 ## Summary
 
-- **Total tests:** 106
-- **Full subsets (100%):** 81
-- **High overlap (≥75%):** 4505
-- **Significant overlap (≥50%):** 4701
+- **Total tests:** 104
+- **Full subsets (100%):** 78
+- **High overlap (≥75%):** 4480
+- **Significant overlap (≥50%):** 4676
 
 ## Full Subsets (100% overlap)
 
@@ -54,9 +54,6 @@ These tests have coverage completely contained within another test:
 | parameter:simple_parameter | extension:copy_extension | 2669 |
 | parameter:simple_parameter | extension:move_extension | 2669 |
 | flow:overwrite_flow | flow:extend_flow | 3259 |
-| lib:which | lib:check_output_on_path | 14 |
-| lib:flat_map | use_cases:3D_printing_flow | 2 |
-| lib:which | lib:safe_check_output_on_path | 14 |
 | parameter:simple_parameter | parameter:appending_parameters | 2669 |
 | parameter:appending_parameters | parameter:using_automatic_options | 2677 |
 | parameter:simple_parameter | parameter:parameter_precedence | 2669 |
@@ -133,7 +130,7 @@ These tests have coverage completely contained within another test:
 | use_cases:bash_command_import | use_cases:hello_world | 99.3% | 99.9% | 3163 | 3143 |
 | use_cases:bash_command_use_option | use_cases:hello_world | 95.8% | 99.9% | 3277 | 3143 |
 | use_cases:dynamic_parameters_and_exposed_class | use_cases:environment_deployment | 93.5% | 99.9% | 3453 | 3231 |
-| ... | *4394 more* | | | | |
+| ... | *4372 more* | | | | |
 
 ## Test Sizes
 
@@ -159,4 +156,4 @@ These tests have coverage completely contained within another test:
 | use_cases:using_a_plugin | 3354 |
 | use_cases:send_sms | 3320 |
 | flow:dump_flowdeps | 3295 |
-| ... | *86 more tests* |
+| ... | *84 more tests* |
