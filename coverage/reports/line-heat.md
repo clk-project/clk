@@ -16,4 +16,3 @@ Lines covered by all tests are "hot" - likely core/init code.
 ## Hot Lines Detail
 
 Lines covered by every test (top 5 files):
-
