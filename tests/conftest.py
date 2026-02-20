@@ -6,9 +6,8 @@ from shlex import split
 from shutil import copytree, rmtree
 from subprocess import STDOUT, check_call, check_output
 
-import pytest
-
 import coverage
+import pytest
 
 # Global coverage instance for per-test coverage tracking
 _per_test_cov = None
@@ -113,18 +112,15 @@ def pythondir():
 
 @pytest.fixture()
 def bindir():
-    res = Path(os.environ["CLKCONFIGDIR"]) / "bin"
-    if not res.exists():
-        os.makedirs(res)
-    return res
+    return Path(os.environ["CLKCONFIGDIR"]) / "bin"
 
 
 class Lib:
     # Track first call per test for coverage combining
     _first_call_per_test = {}
 
-    def __init__(self, bindir):
-        self.bindir = bindir
+    def __init__(self):
+        pass
 
     def assert_intrusive(self):
         assert os.environ.get("CLK_ALLOW_INTRUSIVE_TEST") == "True", "Intrusive test"
@@ -182,7 +178,10 @@ class Lib:
         return res
 
     def create_bash_command(self, name, content):
-        path = self.bindir / name
+        bindir = Path(os.environ["CLKCONFIGDIR"]) / "bin"
+        if not bindir.exists():
+            os.makedirs(bindir)
+        path = bindir / name
         path.write_text(content)
         path.chmod(0o755)
 
@@ -201,5 +200,5 @@ class Lib:
 
 
 @pytest.fixture
-def lib(bindir):
-    return Lib(bindir)
+def lib():
+    return Lib()
