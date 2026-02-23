@@ -825,6 +825,9 @@ def make_relative(path):
 class RedactMessages:
     def __init__(self, stream):
         self.stream = stream
+        import socket
+
+        self.hostname = socket.gethostname()
 
     def write(self, message):
         message = message.replace(
@@ -837,6 +840,7 @@ class RedactMessages:
             if relative_project.endswith("/"):
                 message = message.replace(config.project + "/", relative_project)
             message = message.replace(config.project, relative_project.rstrip("/"))
+        message = message.replace(self.hostname, "myhostname")
         self.stream.write(message)
 
     def flush(self):
@@ -851,6 +855,7 @@ def reproducible_output_callback(ctx, attr, value):
     if value:
         config.reproducible_output = True
         sys.stdout = RedactMessages(sys.stdout)
+        sys.stderr = RedactMessages(sys.stderr)
     return value
 
 

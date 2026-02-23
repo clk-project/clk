@@ -1,0 +1,592 @@
+:PROPERTIES:
+:ID:       f8a2b3c4-d5e6-7890-abcd-ef1234567891
+:END:
+#+language: en
+#+EXPORT_FILE_NAME: ./backing_up_documents.md
+
+#+CALL: ../../lp.org:check-result()
+
+#+name: init
+#+BEGIN_SRC bash :results none :exports none :session f8a2b3c4-d5e6-7890-abcd-ef1234567891
+  . ./sandboxing.sh
+#+END_SRC
+
+I have years of personal documents - notes, scanned papers, receipts, photos of
+whiteboards. I want a command line tool to back them up reliably. This use case
+shows how to build a document backup system with clk, starting simple and
+growing as needs evolve.
+
+* starting with a backup group
+
+First, I need a group to hold all backup-related commands. I create a Python
+group called ~backup~ that sets a ~BACKUP_DESTINATION~ environment variable. All
+subcommands - even bash ones - will have access to it.
+
+#+NAME: create-backup-group
+#+BEGIN_SRC bash :results none :exports code :session f8a2b3c4-d5e6-7890-abcd-ef1234567891
+clk command create python backup --group --description "Backup operations"
+#+END_SRC
+
+The code for the group looks like this:
+
+#+NAME: backup-code
+#+BEGIN_SRC python :results none :exports code
+from clk.config import config
+from clk.decorators import group, option
+
+
+@group()
+@option("--dest", default="/mnt/backup", help="Backup destination base directory")
+def backup(dest):
+    "Backup operations"
+    config.override_env["BACKUP_DESTINATION"] = dest
+    config.init()
+#+END_SRC
+
+#+NAME: create-backup
+#+BEGIN_SRC bash :results none :exports none :session f8a2b3c4-d5e6-7890-abcd-ef1234567891 :noweb yes
+cat <<'EOF' > "$(clk command which backup)"
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+
+<<backup-code>>
+EOF
+#+END_SRC
+
+The key line is ~config.override_env["BACKUP_DESTINATION"] = dest~. This makes
+the ~BACKUP_DESTINATION~ environment variable available to all subcommands,
+including bash commands.
+
+Now I create a bash command to back up my docs. Since I want it nested under the
+~backup~ group and inside a ~docs~ subgroup, I name it ~backup.docs.do~. clk
+automatically creates the intermediate ~docs~ group.
+
+#+NAME: create-backup-docs-do
+#+BEGIN_SRC bash :results none :exports code :session f8a2b3c4-d5e6-7890-abcd-ef1234567891
+clk command create bash backup.docs.do \
+    --description "Backup documents to external drive" \
+    --option '--source:str:Source directory:~/docs' \
+    --body 'echo "Backing up documents from ${CLK___SOURCE} to ${BACKUP_DESTINATION}"'
+#+END_SRC
+
+Let's try it.
+
+#+NAME: try-backup-docs-do
+#+BEGIN_SRC bash :results verbatim :exports both :session f8a2b3c4-d5e6-7890-abcd-ef1234567891 :cache yes
+clk backup docs do
+#+END_SRC
+
+#+RESULTS[6ac099e1f8d9a7a71fa425bb837d0c80f99fe4ca]: try-backup-docs-do
+: Backing up documents from ~/docs to /mnt/backup
+
+The bash command automatically has access to ~BACKUP_DESTINATION~ because the
+parent group set it in ~config.override_env~.
+
+The ~backup~ group now has a ~docs~ subgroup.
+
+#+NAME: show-backup-help
+#+BEGIN_SRC bash :results verbatim :exports both :session f8a2b3c4-d5e6-7890-abcd-ef1234567891 :cache yes
+clk backup --help
+#+END_SRC
+
+#+RESULTS[c68e489e34c5f4a54025f419fd5515006eeddcff]: show-backup-help
+#+begin_example
+Usage: clk backup [OPTIONS] COMMAND [ARGS]...
+
+  Backup operations
+
+  Edit this custom command by running `clk command edit backup`
+  Or edit ./clk-root/python/backup.py directly.
+
+Options:
+  --dest TEXT  Backup destination base directory  [default: /mnt/backup]
+  --help-all   Show the full help message, automatic options included.
+  --help       Show this message and exit.
+
+Commands:
+  docs  Automatically created group to organize subcommands
+#+end_example
+
+* persisting the destination
+
+I always backup to the same external drive. Rather than typing ~--dest~ every
+time, I persist it as a parameter on the ~backup~ group. Since ~BACKUP_DESTINATION~
+is set from this option, all subcommands benefit.
+
+#+NAME: set-dest-param
+#+BEGIN_SRC bash :results verbatim :exports both :session f8a2b3c4-d5e6-7890-abcd-ef1234567891 :cache yes
+clk parameter set backup --dest /media/external/documents
+#+END_SRC
+
+#+RESULTS[8555946ca8d5464d5d5a7411e37254c12d2c78de]: set-dest-param
+: New global parameters for backup: --dest /media/external/documents
+
+Now the command uses my preferred destination automatically.
+
+#+NAME: try-with-param
+#+BEGIN_SRC bash :results verbatim :exports both :session f8a2b3c4-d5e6-7890-abcd-ef1234567891 :cache yes
+clk backup docs do
+#+END_SRC
+
+#+RESULTS[6ac099e1f8d9a7a71fa425bb837d0c80f99fe4ca]: try-with-param
+: Backing up documents from ~/docs to /media/external/documents
+
+I can still override it when needed.
+
+#+NAME: override-param
+#+BEGIN_SRC bash :results verbatim :exports both :session f8a2b3c4-d5e6-7890-abcd-ef1234567891 :cache yes
+clk backup --dest /tmp/quick-backup docs do
+#+END_SRC
+
+#+RESULTS[aa4050eb6555f7616ebc106cfc53dce3b90101df]: override-param
+: Backing up documents from ~/docs to /tmp/quick-backup
+
+* adding more backup targets
+
+My backup needs grow. I want to back up my database and photos too. I create
+sibling commands under the ~backup~ group. They all use the same
+~BACKUP_DESTINATION~ environment variable set by the group.
+
+#+NAME: create-backup-database
+#+BEGIN_SRC bash :results none :exports code :session f8a2b3c4-d5e6-7890-abcd-ef1234567891
+clk command create bash backup.database \
+    --description "Backup database" \
+    --option '--db:str:Database name:main.db' \
+    --body 'echo "Dumping database ${CLK___DB} to ${BACKUP_DESTINATION}"'
+#+END_SRC
+
+#+NAME: create-backup-photos
+#+BEGIN_SRC bash :results none :exports code :session f8a2b3c4-d5e6-7890-abcd-ef1234567891
+clk command create bash backup.photos \
+    --description "Backup photos" \
+    --option '--quality:str:Compression quality:high' \
+    --body 'echo "Backing up photos with ${CLK___QUALITY} quality to ${BACKUP_DESTINATION}"'
+#+END_SRC
+
+Now my backup group has three commands.
+
+#+NAME: show-backup-commands
+#+BEGIN_SRC bash :results verbatim :exports both :session f8a2b3c4-d5e6-7890-abcd-ef1234567891 :cache yes
+clk backup --help
+#+END_SRC
+
+#+RESULTS[c68e489e34c5f4a54025f419fd5515006eeddcff]: show-backup-commands
+#+begin_example
+Usage: clk backup [OPTIONS] COMMAND [ARGS]...
+
+  Backup operations
+
+  The current parameters set for this command are: --dest /media/external/documents
+
+  Edit this custom command by running `clk command edit backup`
+  Or edit ./clk-root/python/backup.py directly.
+
+Options:
+  --dest TEXT  Backup destination base directory  [default: /mnt/backup]
+  --help-all   Show the full help message, automatic options included.
+  --help       Show this message and exit.
+
+Commands:
+  database  Backup database
+  docs      Automatically created group to organize subcommands
+  photos    Backup photos
+#+end_example
+
+#+NAME: try-all-backups
+#+BEGIN_SRC bash :results verbatim :exports both :session f8a2b3c4-d5e6-7890-abcd-ef1234567891 :cache yes
+clk backup database
+clk backup photos
+#+END_SRC
+
+#+RESULTS[299bcef965bc261666c9bfc8d1d55bccbef66c20]: try-all-backups
+: Dumping database main.db to /media/external/documents
+: Backing up photos with high quality to /media/external/documents
+
+Notice how both commands use ~/media/external/documents~ - the destination I
+persisted on the ~backup~ group. I didn't have to configure it on each command
+separately.
+
+* organizing with nested groups
+
+As my backup system grows, I need sub-operations for documents. I want commands
+to verify backups and retrieve files. I simply create commands with dots in
+their names - clk automatically created the intermediate ~docs~ group when I
+first created ~backup.docs.do~.
+
+#+NAME: create-docs-verify
+#+BEGIN_SRC bash :results none :exports code :session f8a2b3c4-d5e6-7890-abcd-ef1234567891
+clk command create bash backup.docs.verify \
+    --description "Verify backup integrity" \
+    --body 'echo "Verifying backup integrity at ${BACKUP_DESTINATION}..."'
+#+END_SRC
+
+#+NAME: create-docs-retrieve
+#+BEGIN_SRC bash :results none :exports code :session f8a2b3c4-d5e6-7890-abcd-ef1234567891
+clk command create bash backup.docs.retrieve \
+    --description "Retrieve a file from backup" \
+    --argument 'filename:str:File to retrieve' \
+    --body 'echo "Retrieving ${CLK___FILENAME} from ${BACKUP_DESTINATION}"'
+#+END_SRC
+
+Now ~backup docs~ is a group with several subcommands. All of them have access
+to ~BACKUP_DESTINATION~ from the parent ~backup~ group.
+
+#+NAME: show-docs-group
+#+BEGIN_SRC bash :results verbatim :exports both :session f8a2b3c4-d5e6-7890-abcd-ef1234567891 :cache yes
+clk backup docs --help
+#+END_SRC
+
+#+RESULTS[ee8140f68d7a71aa77a808b5b993fe71da009823]: show-docs-group
+#+begin_example
+Usage: clk backup docs [OPTIONS] COMMAND [ARGS]...
+
+  Automatically created group to organize subcommands
+
+  This is a built in created group. To remove it, simply remove all its subcommands (with `clk command remove SUBCMD`,
+  or `clk alias unset SUBCMD`). To rename it, simply rename them (with `clk command rename SUBCMD` or `clk alias rename
+  SUBCMD`)
+
+Options:
+  --help-all  Show the full help message, automatic options included.
+  --help      Show this message and exit.
+
+Commands:
+  do        Backup documents to external drive
+  retrieve  Retrieve a file from backup
+  verify    Verify backup integrity
+#+end_example
+
+I can call the backup command directly.
+
+#+NAME: call-docs-do
+#+BEGIN_SRC bash :results verbatim :exports both :session f8a2b3c4-d5e6-7890-abcd-ef1234567891 :cache yes
+clk backup docs do
+#+END_SRC
+
+#+RESULTS[6ac099e1f8d9a7a71fa425bb837d0c80f99fe4ca]: call-docs-do
+: Backing up documents from ~/docs to /media/external/documents
+
+Or use the subcommands.
+
+#+NAME: call-docs-subcommands
+#+BEGIN_SRC bash :results verbatim :exports both :session f8a2b3c4-d5e6-7890-abcd-ef1234567891 :cache yes
+clk backup docs verify
+clk backup docs retrieve important-notes.txt
+#+END_SRC
+
+#+RESULTS[0580cd3873a60dd6a8d264f1fb30146959d8cfe3]: call-docs-subcommands
+: Verifying backup integrity at /media/external/documents...
+: Retrieving important-notes.txt from /media/external/documents
+
+* chaining backups with flows
+
+My documents reference database entries, so I want to ensure the database is
+backed up before backing up documents. I use flow dependencies.
+
+#+NAME: set-flowdep
+#+BEGIN_SRC bash :results verbatim :exports both :session f8a2b3c4-d5e6-7890-abcd-ef1234567891 :cache yes
+clk flowdep set backup.docs.do backup.database
+#+END_SRC
+
+#+RESULTS[6884ee47aab2752817f5ec08a49fe711cb34a802]: set-flowdep
+: New global flowdep for backup.docs.do: backup.database
+
+Now when I run ~backup docs do~ with ~--flow~, it first backs up the database.
+
+#+NAME: run-with-flow
+#+BEGIN_SRC bash :results verbatim :exports both :session f8a2b3c4-d5e6-7890-abcd-ef1234567891 :cache yes
+clk backup docs do --flow
+#+END_SRC
+
+#+RESULTS[ca58910ff31b48f4cc81e37ff83469711e42490f]: run-with-flow
+: Dumping database main.db to /media/external/documents
+: Backing up documents from ~/docs to /media/external/documents
+
+* creating a full backup alias
+
+I want a single command to back up everything. I create an alias that chains all
+backup commands.
+
+#+NAME: create-full-alias
+#+BEGIN_SRC bash :results verbatim :exports both :session f8a2b3c4-d5e6-7890-abcd-ef1234567891 :cache yes
+clk alias set backup.full backup database , backup docs do , backup photos
+#+END_SRC
+
+#+RESULTS[65dfa3e184653b1267c08eb8ef80907551f46357]: create-full-alias
+: New global alias for backup.full: backup database , backup docs do , backup photos
+
+#+NAME: run-full-backup
+#+BEGIN_SRC bash :results verbatim :exports both :session f8a2b3c4-d5e6-7890-abcd-ef1234567891 :cache yes
+clk backup full
+#+END_SRC
+
+#+RESULTS[568a73df160aa2a1082c1a3ad8fe20f184154b5b]: run-full-backup
+: Dumping database main.db to /media/external/documents
+: Backing up documents from ~/docs to /media/external/documents
+: Backing up photos with high quality to /media/external/documents
+
+* shortcut aliases for common scenarios
+
+I create aliases for frequent backup patterns.
+
+#+NAME: create-shortcuts
+#+BEGIN_SRC bash :results verbatim :exports both :session f8a2b3c4-d5e6-7890-abcd-ef1234567891 :cache yes
+clk alias set backup.quick backup docs do --source '~/notes'
+clk alias set backup.work backup docs do --source '~/work/documents'
+#+END_SRC
+
+#+RESULTS[d6067778edf44b54be404dd547ae5632568ee655]: create-shortcuts
+: New global alias for backup.quick: backup docs do --source '~/notes'
+: New global alias for backup.work: backup docs do --source '~/work/documents'
+
+#+NAME: try-shortcuts
+#+BEGIN_SRC bash :results verbatim :exports both :session f8a2b3c4-d5e6-7890-abcd-ef1234567891 :cache yes
+clk backup quick
+clk backup work
+#+END_SRC
+
+#+RESULTS[734a48c658572a54c68074500cfb567e1a050798]: try-shortcuts
+: Backing up documents from ~/notes to /media/external/documents
+: Backing up documents from ~/work/documents to /media/external/documents
+
+* per-project backup configuration
+
+Different projects have different backup needs. I use project-local parameters
+so backup commands do the right thing depending on where I am.
+
+#+NAME: setup-project-a
+#+BEGIN_SRC bash :results none :exports code :session f8a2b3c4-d5e6-7890-abcd-ef1234567891
+mkdir -p project-a && cd project-a && mkdir .clk
+#+END_SRC
+
+I set the source directory on the ~backup.docs.do~ command, and the destination
+on the ~backup~ group. Since the destination is on the group, it affects all
+backup commands in this project - documents, database, photos.
+
+#+NAME: set-project-a-params
+#+BEGIN_SRC bash :results verbatim :exports both :session f8a2b3c4-d5e6-7890-abcd-ef1234567891 :cache yes
+clk parameter set backup.docs.do --source ./documentation
+clk parameter set backup --dest /mnt/backup/project-a
+#+END_SRC
+
+#+RESULTS[518b8bda1205e6df5385106c56757cb83f291133]: set-project-a-params
+: New local parameters for backup.docs.do: --source ./documentation
+: New local parameters for backup: --dest /mnt/backup/project-a
+
+#+NAME: run-in-project-a
+#+BEGIN_SRC bash :results verbatim :exports both :session f8a2b3c4-d5e6-7890-abcd-ef1234567891 :cache yes
+clk backup docs do
+#+END_SRC
+
+#+RESULTS[6ac099e1f8d9a7a71fa425bb837d0c80f99fe4ca]: run-in-project-a
+: Backing up documents from ./documentation to /mnt/backup/project-a
+
+When I leave the project, global settings take over.
+
+#+NAME: leave-project
+#+BEGIN_SRC bash :results verbatim :exports both :session f8a2b3c4-d5e6-7890-abcd-ef1234567891 :cache yes
+cd ..
+clk backup docs do
+#+END_SRC
+
+#+RESULTS[9569ad32ff5d8cf776686c91ebf0dcb8f9713495]: leave-project
+: Backing up documents from ~/docs to /media/external/documents
+
+* personal preferences with a hostname extension
+
+I want my personal backup to go to my own NAS, regardless of any project I'm
+in. The solution is to create an extension named after my hostname and put my
+personal preferences there.
+
+#+NAME: create-hostname-extension
+#+BEGIN_SRC bash :results none :exports code :session f8a2b3c4-d5e6-7890-abcd-ef1234567891
+clk extension create "$(hostname)"
+#+END_SRC
+
+I set my personal backup destination inside this extension.
+
+#+NAME: set-hostname-params
+#+BEGIN_SRC bash :results verbatim :exports both :session f8a2b3c4-d5e6-7890-abcd-ef1234567891 :cache yes
+clk parameter --extension "$(hostname)" set backup --dest /mnt/my-nas/documents
+#+END_SRC
+
+#+RESULTS[f0a06af9ce66159b816a933612addfc9e74ce7a5]: set-hostname-params
+: New global/myhostname parameters for backup: --dest /mnt/my-nas/documents
+
+
+Outside any project, the extension's destination is used.
+
+#+NAME: run-with-hostname
+#+BEGIN_SRC bash :results verbatim :exports both :session f8a2b3c4-d5e6-7890-abcd-ef1234567891 :cache yes
+clk backup docs do
+#+END_SRC
+
+#+RESULTS[6ac099e1f8d9a7a71fa425bb837d0c80f99fe4ca]: run-with-hostname
+: Backing up documents from ~/docs to /media/external/documents
+
+Inside a project that defines its own ~--dest~, the project-local parameters
+take precedence. This is useful when a shared project needs a specific backup
+destination that everyone on the team should use.
+
+#+NAME: enter-project-a-hostname
+#+BEGIN_SRC bash :results none :exports code :session f8a2b3c4-d5e6-7890-abcd-ef1234567891
+cd project-a
+#+END_SRC
+
+#+NAME: run-in-project-a-hostname
+#+BEGIN_SRC bash :results verbatim :exports both :session f8a2b3c4-d5e6-7890-abcd-ef1234567891 :cache yes
+clk backup docs do
+#+END_SRC
+
+#+RESULTS[6ac099e1f8d9a7a71fa425bb837d0c80f99fe4ca]: run-in-project-a-hostname
+: Backing up documents from ./documentation to /mnt/backup/project-a
+
+Note that clk will always enable the extension matching your hostname, even if
+you explicitly disable it in a project. Let's try it.
+
+#+NAME: try-disable-hostname
+#+BEGIN_SRC bash :results verbatim :exports both :session f8a2b3c4-d5e6-7890-abcd-ef1234567891 :cache yes
+clk extension disable "$(hostname)"
+clk extension show | grep myhostname
+#+END_SRC
+
+#+RESULTS[165d082fabc4b59d1a0567e58771270d9086058b]: try-disable-hostname
+: myhostname        local            global
+
+Even after disabling, the hostname extension remains active. This is practical
+to put personal preferences that apply everywhere, while still respecting
+project-specific overrides when they exist.
+
+#+NAME: leave-project-a-hostname
+#+BEGIN_SRC bash :results none :exports code :session f8a2b3c4-d5e6-7890-abcd-ef1234567891
+cd ..
+clk extension remove "$(hostname)"
+#+END_SRC
+
+* seeing everything at a glance
+
+As the backup system grows, I can see all available commands with ~--help~.
+
+#+NAME: final-help
+#+BEGIN_SRC bash :results verbatim :exports both :session f8a2b3c4-d5e6-7890-abcd-ef1234567891 :cache yes
+clk backup --help
+#+END_SRC
+
+#+RESULTS[c68e489e34c5f4a54025f419fd5515006eeddcff]: final-help
+#+begin_example
+Usage: clk backup [OPTIONS] COMMAND [ARGS]...
+
+  Backup operations
+
+  The current parameters set for this command are: --dest /media/external/documents
+
+  Edit this custom command by running `clk command edit backup`
+  Or edit ./clk-root/python/backup.py directly.
+
+Options:
+  --dest TEXT  Backup destination base directory  [default: /mnt/backup]
+  --help-all   Show the full help message, automatic options included.
+  --help       Show this message and exit.
+
+Commands:
+  database  Backup database
+  docs      Automatically created group to organize subcommands
+  full      Alias for: backup database , backup docs do , backup...
+  photos    Backup photos
+  quick     Alias for: backup docs do --source '~/notes'
+  work      Alias for: backup docs do --source '~/work/documents'
+#+end_example
+
+This gives me a complete overview: the core commands (~database~, ~docs~,
+~photos~), the convenience aliases (~full~, ~quick~, ~work~), and I can drill
+down into any group for more details.
+
+* summary
+
+This use case demonstrates several clk patterns working together:
+
+- *shared environment variables*: the ~backup~ group sets ~BACKUP_DESTINATION~ for all subcommands
+- *hierarchical commands*: ~backup.docs.do~, ~backup.database~ organize naturally
+- *auto-created groups*: creating ~backup.docs.do~ automatically creates the ~docs~ group
+- *persisted parameters*: set once on the group, used by all subcommands
+- *flow dependencies*: chain dependent operations
+- *aliases*: create shortcuts for common patterns
+- *per-project config*: same command, different behavior based on location
+- *hostname extensions*: personal preferences that apply globally
+
+Starting from a single backup command, we built a complete backup system that's
+easy to use, easy to extend, and self-documenting through ~--help~.
+
+#+BEGIN_SRC bash :exports none :tangle ../../tests/use_cases/backing_up_documents.sh :noweb yes :shebang "#!/bin/bash -eu"
+<<init>>
+
+<<create-backup-group>>
+
+<<create-backup>>
+
+<<create-backup-docs-do>>
+
+check-result(try-backup-docs-do)
+
+check-result(show-backup-help)
+
+check-result(set-dest-param)
+
+check-result(try-with-param)
+
+check-result(override-param)
+
+<<create-backup-database>>
+
+<<create-backup-photos>>
+
+check-result(show-backup-commands)
+
+check-result(try-all-backups)
+
+<<create-docs-verify>>
+
+<<create-docs-retrieve>>
+
+check-result(show-docs-group)
+
+check-result(call-docs-do)
+
+check-result(call-docs-subcommands)
+
+check-result(set-flowdep)
+
+check-result(run-with-flow)
+
+check-result(create-full-alias)
+
+check-result(run-full-backup)
+
+check-result(create-shortcuts)
+
+check-result(try-shortcuts)
+
+<<setup-project-a>>
+
+check-result(set-project-a-params)
+
+check-result(run-in-project-a)
+
+check-result(leave-project)
+
+<<create-hostname-extension>>
+
+check-result(set-hostname-params)
+
+check-result(run-with-hostname)
+
+<<enter-project-a-hostname>>
+
+check-result(run-in-project-a-hostname)
+
+check-result(try-disable-hostname)
+
+<<leave-project-a-hostname>>
+
+check-result(final-help)
+#+END_SRC
