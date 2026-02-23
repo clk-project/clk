@@ -30,7 +30,7 @@ Found 3 groups with 3 duplicate tests:
 
 ## Subset Duplicates
 
-Found 63 tests that are subsets of others (showing top 20 by coverage ratio):
+Found 65 tests that are subsets of others (showing top 20 by coverage ratio):
 
 
   - `command:dynamic_default_value_callback_that_depends_on_another_param` is 100.0% covered by `command:dynamic_option`
@@ -113,12 +113,12 @@ Found 63 tests that are subsets of others (showing top 20 by coverage ratio):
     **Action**: Consider removing if no unique edge cases
 
 
-  ... and 43 more subset duplicates
+  ... and 45 more subset duplicates
 
 
 ## Similar Tests (≥30% overlap)
 
-Found 4466 test pairs with ≥30% similarity (showing top 20):
+Found 4561 test pairs with ≥30% similarity (showing top 20):
 
 
   - `command:dynamic_default_value_callback_that_depends_on_another_param` ↔ `command:dynamic_option`: 100.0% similar
@@ -201,12 +201,12 @@ Found 4466 test pairs with ≥30% similarity (showing top 20):
     **Action**: Review for potential merge or refactoring
 
 
-  ... and 4446 more similar test pairs
+  ... and 4541 more similar test pairs
 
 
 ## Summary
 
-- Total tests analyzed: 104
+- Total tests analyzed: 105
 - Exact duplicates: 3 tests can be removed
-- Subset duplicates: 63 tests may be redundant
-- Similar tests: 4466 pairs need review
+- Subset duplicates: 65 tests may be redundant
+- Similar tests: 4561 pairs need review
