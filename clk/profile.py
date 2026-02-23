@@ -163,7 +163,12 @@ plugin_sources = {}
 
 @ProfileFactory.register_directory_profile
 class DirectoryProfile(Profile):
-    extension_name_re = "[a-z0-9_-]+"
+    extension_extra_chars = ".@[]:><"
+    extension_name_re = r"[a-zA-Z0-9_" + re.escape(extension_extra_chars) + r"-]+"
+    extension_name_hint = (
+        "An extension's name must contain only letters, digits, _ -"
+        " or " + " ".join(extension_extra_chars)
+    )
     JSON_FILE_EXTENSION = ".json"
 
     def describe(self):
@@ -273,7 +278,7 @@ class DirectoryProfile(Profile):
         name = self.extension_full_name(name)
         if not re.match(f"^{self.name}/{self.extension_name_re}$", name):
             raise click.UsageError(
-                f"Invalid extension name: {name}. An extension's name must contain only letters or _"
+                f"Invalid extension name: {name}. {self.extension_name_hint}"
             )
         location = self.extension_location(name)
         if Path(location).exists():

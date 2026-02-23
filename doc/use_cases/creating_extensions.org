@@ -402,6 +402,34 @@ clk apply-mock-config
 clk extension remove tempdir-demo
 #+END_SRC
 
+* extension names with special characters
+  :PROPERTIES:
+  :CREATED:  [2026-02-23 08:00]
+  :CUSTOM_ID: 1a2b3c4d-5678-90ab-cdef-abcdef012345
+  :END:
+
+Sometimes, extension names come from hostnames. For instance, you may want a
+per-machine extension whose name is the machine's hostname. Hostnames can contain
+dots, at signs, brackets or other characters that are unusual in simple
+identifiers. CLK supports this.
+
+#+NAME: create_hostname_extension
+#+BEGIN_SRC bash :results none :exports code :session f47428c2-56ea-4d91-97d9-4f2ff63ef052
+clk extension create "my-host.[example].com"
+#+END_SRC
+
+#+NAME: hostname-extension-visible
+#+BEGIN_SRC bash :results verbatim :cache yes :exports both :session f47428c2-56ea-4d91-97d9-4f2ff63ef052
+clk extension | grep "my-host.\[example\].com"
+#+END_SRC
+
+#+RESULTS[7401030ad5104a118c72e41b09d3d841269ea942]: hostname-extension-visible
+: my-host.[example].com    Unset            global
+
+Note that clk will always enable the extension matching your hostname, even if
+you explicitly disable it in a project. This is practical to put personal
+preference in shared project without disturbing the colleagues.
+
 #+NAME: all
 #+BEGIN_SRC bash :results none :exports none :tangle ../../tests/use_cases/creating_extensions.sh :noweb yes :shebang "#!/bin/bash -eu"
 <<init>>
@@ -437,4 +465,10 @@ check-result(run-tempdir-demo)
 check-result(run-tempfile-demo)
 
 <<cleanup-tempdir-demo>>
+
+<<create_hostname_extension>>
+
+check-result(hostname-extension-visible)
+
+clk extension remove "my-host.[example].com"
 #+END_SRC

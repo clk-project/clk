@@ -9,6 +9,7 @@ from clk.config import config
 from clk.core import ColorType
 from clk.decorators import flag, option
 from clk.lib import clear_ansi_color_codes
+from clk.profile import DirectoryProfile
 
 
 def color_callback(ctx, attr, value):
@@ -17,6 +18,42 @@ def color_callback(ctx, attr, value):
         # the end of the string
         config.alt_style = {"reset": False}
     return value
+
+
+_CHAR_NAMES = {
+    "/": "slash",
+    "-": "dash",
+    ".": "dot",
+    "@": "at",
+    "[": "lbracket",
+    "]": "rbracket",
+    ":": "colon",
+    ">": "gt",
+    "<": "lt",
+}
+
+_PROFILE_NAME_ESCAPES = [
+    ("/", "_slash_"),
+    ("-", "_dash_"),
+] + [
+    (char, f"_{_CHAR_NAMES[char]}_")
+    for char in DirectoryProfile.extension_extra_chars
+    if char not in ("/", "-")
+]
+
+
+def _escape_profile_name(name):
+    """Escape a profile name for use as a Python identifier / CLI option."""
+    for char, replacement in _PROFILE_NAME_ESCAPES:
+        name = name.replace(char, replacement)
+    return name
+
+
+def _unescape_profile_name(name):
+    """Reverse _escape_profile_name."""
+    for char, replacement in _PROFILE_NAME_ESCAPES:
+        name = name.replace(replacement, char)
+    return name
 
 
 class Colorer:
@@ -38,7 +75,7 @@ class Colorer:
             return colors
 
         self.profile_to_color = {
-            name[: -len("_color")].replace("_slash_", "/").replace("_dash_", "-"): value
+            _unescape_profile_name(name[: -len("_color")]): value
             for name, value in kwargs.items()
             if name.endswith("_color")
         }
@@ -143,9 +180,13 @@ class Colorer:
             )(f)
 
             for profile in config.all_enabled_profiles:
+                option_name = profile.name
+                for char, _ in _PROFILE_NAME_ESCAPES:
+                    option_name = option_name.replace(char, "-")
+                param_name = _escape_profile_name(profile.name)
                 f = option(
-                    f"--{profile.name.replace('/', '-')}-color",
-                    f"""{profile.name.replace("/", "_slash_").replace("-", "_dash_")}_color""",
+                    f"--{option_name}-color",
+                    f"{param_name}_color",
                     help=f"Color to show the {profile.name} profile",
                     type=ColorType(),
                     default=profiles_colors[profile.short_name],

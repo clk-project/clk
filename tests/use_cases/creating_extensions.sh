@@ -383,4 +383,29 @@ exit 1
 
 
 clk extension remove tempdir-demo
+
+clk extension create "my-host.[example].com"
+
+
+hostname-extension-visible_code () {
+      clk extension | grep "my-host.\[example\].com"
+}
+
+hostname-extension-visible_expected () {
+      cat<<"EOEXPECTED"
+my-host.[example].com    Unset            global
+EOEXPECTED
+}
+
+echo 'Run hostname-extension-visible'
+
+{ hostname-extension-visible_code || true ; } > "${TMP}/code.txt" 2>&1
+hostname-extension-visible_expected > "${TMP}/expected.txt" 2>&1
+diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+echo "Something went wrong when trying hostname-extension-visible"
+exit 1
+}
+
+
+clk extension remove "my-host.[example].com"
 # all ends here

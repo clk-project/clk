@@ -5,6 +5,7 @@
 - [using temporary files and directories](#795e915b-29f5-4fbc-a8d9-480a094d3e37)
   - [tempdir](#60d4bff1-366d-45cb-b0ce-3bb7468734aa)
   - [temporary\_file](#d18237dd-7e05-4225-b9de-bf63f09b6d99)
+- [extension names with special characters](#1a2b3c4d-5678-90ab-cdef-abcdef012345)
 
 Extensions are folders that contain clk configurations and commands. You can create and share those with your colleagues.
 
@@ -359,3 +360,22 @@ clk apply-mock-config
       name: my-config
     data:
       key: value
+
+
+<a id="1a2b3c4d-5678-90ab-cdef-abcdef012345"></a>
+
+# extension names with special characters
+
+Sometimes, extension names come from hostnames. For instance, you may want a per-machine extension whose name is the machine's hostname. Hostnames can contain dots, at signs, brackets or other characters that are unusual in simple identifiers. CLK supports this.
+
+```bash
+clk extension create "my-host.[example].com"
+```
+
+```bash
+clk extension | grep "my-host.\[example\].com"
+```
+
+    my-host.[example].com    Unset            global
+
+Note that clk will always enable the extension matching your hostname, even if you explicitly disable it in a project. This is practical to put personal preference in shared project without disturbing the colleagues.

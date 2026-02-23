@@ -559,8 +559,7 @@ def install(
 
     if not re.match(f"^{DirectoryProfile.extension_name_re}$", name):
         raise click.UsageError(
-            f"Invalid extension name '{name}'."
-            " an extension's name must contain only letters or _"
+            f"Invalid extension name '{name}'. {DirectoryProfile.extension_name_hint}"
         )
 
     if editable is True and install_type != "file":
