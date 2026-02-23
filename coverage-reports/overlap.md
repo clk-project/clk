@@ -2,10 +2,10 @@
 
 ## Summary
 
-- **Total tests:** 105
-- **Full subsets (100%):** 80
-- **High overlap (≥75%):** 4578
-- **Significant overlap (≥50%):** 4778
+- **Total tests:** 106
+- **Full subsets (100%):** 85
+- **High overlap (≥75%):** 4674
+- **Significant overlap (≥50%):** 4878
 
 ## Full Subsets (100% overlap)
 
@@ -65,56 +65,61 @@ These tests have coverage completely contained within another test:
 | parameter:simple_parameter | parameter_eval:use_value_as_parameter | 2717 |
 | types:default_with_converter | types:date | 2948 |
 | types:default_with_converter | types:suggestion | 2948 |
-| use_cases:use_case[environment_deployment] | use_cases:use_case[3D_printing_flow] | 3274 |
-| use_cases:use_case[bash_command_built_in_lib] | use_cases:use_case[bash_command] | 2960 |
-| use_cases:use_case[bash_command_import] | use_cases:use_case[bash_command] | 3210 |
-| use_cases:use_case[hello_world] | use_cases:use_case[bash_command] | 3183 |
-| use_cases:use_case[bash_command_built_in_lib] | use_cases:use_case[bash_command_import] | 2960 |
-| use_cases:use_case[bash_command_built_in_lib] | use_cases:use_case[bash_command_use_option] | 2960 |
-| use_cases:use_case[bash_command_built_in_lib] | use_cases:use_case[choices] | 2960 |
-| use_cases:use_case[bash_command_built_in_lib] | use_cases:use_case[ethereum_local_environment_dev_tool] | 2960 |
-| use_cases:use_case[bash_command_built_in_lib] | use_cases:use_case[global_workflow_local_implementation] | 2960 |
-| use_cases:use_case[bash_command_built_in_lib] | use_cases:use_case[hello_world] | 2960 |
-| use_cases:use_case[bash_command_built_in_lib] | use_cases:use_case[ipfs_name_publish] | 2960 |
-| use_cases:use_case[bash_command_built_in_lib] | use_cases:use_case[multi_environment_deployment_tool] | 2960 |
-| use_cases:use_case[bash_command_built_in_lib] | use_cases:use_case[self_documentation] | 2960 |
-| use_cases:use_case[bash_command_built_in_lib] | use_cases:use_case[send_sms] | 2960 |
-| use_cases:use_case[bash_command_built_in_lib] | use_cases:use_case[wrapping_a_cloud_provider_cli] | 2960 |
-| use_cases:use_case[bash_command_import] | use_cases:use_case[bash_command_use_option] | 3210 |
-| use_cases:use_case[bash_command_import] | use_cases:use_case[ipfs_name_publish] | 3210 |
-| use_cases:use_case[bash_command_import] | use_cases:use_case[multi_environment_deployment_tool] | 3210 |
-| use_cases:use_case[bash_command_import] | use_cases:use_case[send_sms] | 3210 |
-| use_cases:use_case[bash_command_import] | use_cases:use_case[wrapping_a_cloud_provider_cli] | 3210 |
-| use_cases:use_case[hello_world] | use_cases:use_case[choices] | 3183 |
-| use_cases:use_case[dynamic_parameters_advanced_use_cases] | use_cases:use_case[dynamic_parameters_and_exposed_class] | 3002 |
-| use_cases:use_case[environment_deployment] | use_cases:use_case[ethereum_local_environment_dev_tool] | 3274 |
-| use_cases:use_case[environment_deployment] | use_cases:use_case[podcast_automation] | 3274 |
-| use_cases:use_case[hello_world] | use_cases:use_case[ethereum_local_environment_dev_tool] | 3183 |
-| use_cases:use_case[scrapping_the_web] | use_cases:use_case[ethereum_local_environment_dev_tool] | 3032 |
-| use_cases:use_case[hello_world] | use_cases:use_case[global_workflow_local_implementation] | 3183 |
-| use_cases:use_case[hello_world] | use_cases:use_case[ipfs_name_publish] | 3183 |
-| use_cases:use_case[hello_world] | use_cases:use_case[multi_environment_deployment_tool] | 3183 |
-| use_cases:use_case[hello_world] | use_cases:use_case[send_sms] | 3183 |
-| use_cases:use_case[hello_world] | use_cases:use_case[wrapping_a_cloud_provider_cli] | 3183 |
-| use_cases:use_case[multi_environment_deployment_tool] | use_cases:use_case[wrapping_a_cloud_provider_cli] | 3277 |
+| use_cases:use_case[environment_deployment] | use_cases:use_case[3D_printing_flow] | 3279 |
+| use_cases:use_case[bash_command_built_in_lib] | use_cases:use_case[backing_up_documents] | 2963 |
+| use_cases:use_case[bash_command_import] | use_cases:use_case[backing_up_documents] | 3214 |
+| use_cases:use_case[environment_deployment] | use_cases:use_case[backing_up_documents] | 3279 |
+| use_cases:use_case[hello_world] | use_cases:use_case[backing_up_documents] | 3186 |
+| use_cases:use_case[multi_environment_deployment_tool] | use_cases:use_case[backing_up_documents] | 3281 |
+| use_cases:use_case[bash_command_built_in_lib] | use_cases:use_case[bash_command] | 2963 |
+| use_cases:use_case[bash_command_import] | use_cases:use_case[bash_command] | 3214 |
+| use_cases:use_case[hello_world] | use_cases:use_case[bash_command] | 3186 |
+| use_cases:use_case[bash_command_built_in_lib] | use_cases:use_case[bash_command_import] | 2963 |
+| use_cases:use_case[bash_command_built_in_lib] | use_cases:use_case[bash_command_use_option] | 2963 |
+| use_cases:use_case[bash_command_built_in_lib] | use_cases:use_case[choices] | 2963 |
+| use_cases:use_case[bash_command_built_in_lib] | use_cases:use_case[ethereum_local_environment_dev_tool] | 2963 |
+| use_cases:use_case[bash_command_built_in_lib] | use_cases:use_case[global_workflow_local_implementation] | 2963 |
+| use_cases:use_case[bash_command_built_in_lib] | use_cases:use_case[hello_world] | 2963 |
+| use_cases:use_case[bash_command_built_in_lib] | use_cases:use_case[ipfs_name_publish] | 2963 |
+| use_cases:use_case[bash_command_built_in_lib] | use_cases:use_case[multi_environment_deployment_tool] | 2963 |
+| use_cases:use_case[bash_command_built_in_lib] | use_cases:use_case[self_documentation] | 2963 |
+| use_cases:use_case[bash_command_built_in_lib] | use_cases:use_case[send_sms] | 2963 |
+| use_cases:use_case[bash_command_built_in_lib] | use_cases:use_case[wrapping_a_cloud_provider_cli] | 2963 |
+| use_cases:use_case[bash_command_import] | use_cases:use_case[bash_command_use_option] | 3214 |
+| use_cases:use_case[bash_command_import] | use_cases:use_case[ipfs_name_publish] | 3214 |
+| use_cases:use_case[bash_command_import] | use_cases:use_case[multi_environment_deployment_tool] | 3214 |
+| use_cases:use_case[bash_command_import] | use_cases:use_case[send_sms] | 3214 |
+| use_cases:use_case[bash_command_import] | use_cases:use_case[wrapping_a_cloud_provider_cli] | 3214 |
+| use_cases:use_case[hello_world] | use_cases:use_case[choices] | 3186 |
+| use_cases:use_case[dynamic_parameters_advanced_use_cases] | use_cases:use_case[dynamic_parameters_and_exposed_class] | 3006 |
+| use_cases:use_case[environment_deployment] | use_cases:use_case[ethereum_local_environment_dev_tool] | 3279 |
+| use_cases:use_case[environment_deployment] | use_cases:use_case[podcast_automation] | 3279 |
+| use_cases:use_case[hello_world] | use_cases:use_case[ethereum_local_environment_dev_tool] | 3186 |
+| use_cases:use_case[scrapping_the_web] | use_cases:use_case[ethereum_local_environment_dev_tool] | 3036 |
+| use_cases:use_case[hello_world] | use_cases:use_case[global_workflow_local_implementation] | 3186 |
+| use_cases:use_case[hello_world] | use_cases:use_case[ipfs_name_publish] | 3186 |
+| use_cases:use_case[hello_world] | use_cases:use_case[multi_environment_deployment_tool] | 3186 |
+| use_cases:use_case[hello_world] | use_cases:use_case[send_sms] | 3186 |
+| use_cases:use_case[hello_world] | use_cases:use_case[wrapping_a_cloud_provider_cli] | 3186 |
+| use_cases:use_case[multi_environment_deployment_tool] | use_cases:use_case[wrapping_a_cloud_provider_cli] | 3281 |
 
 ## High Overlap (≥75%)
 
 | Test A | Test B | A→B % | B→A % | Lines A | Lines B |
 |--------|--------|-------|-------|---------|---------|
 | alias:alias_conserves_parameters | parameter:replacing_parameters | 91.0% | 99.9% | 2986 | 2720 |
-| alias:alias_conserves_parameters | use_cases:use_case[3D_printing_flow] | 99.9% | 74.0% | 2986 | 4029 |
-| alias:alias_conserves_parameters | use_cases:use_case[using_a_project] | 99.9% | 85.2% | 2986 | 3504 |
+| alias:alias_conserves_parameters | use_cases:use_case[3D_printing_flow] | 99.9% | 73.9% | 2986 | 4033 |
+| alias:alias_conserves_parameters | use_cases:use_case[using_a_project] | 99.9% | 85.1% | 2986 | 3508 |
 | alias:alias_conserves_parameters_of_group | command:invoked_commands_still_work_even_though_they_are_no_customizable | 89.5% | 99.9% | 3172 | 2841 |
 | alias:alias_conserves_parameters_of_group_with_exposed_class | command:invoked_commands_still_work_even_though_they_are_no_customizable | 89.2% | 99.9% | 3181 | 2841 |
 | alias:alias_overrides_parameters | command:invoked_commands_still_work_even_though_they_are_no_customizable | 89.0% | 99.9% | 3189 | 2841 |
-| alias:composite_alias | use_cases:use_case[global_workflow_local_implementation] | 99.9% | 79.7% | 2922 | 3664 |
-| alias:composite_alias | use_cases:use_case[using_a_project] | 99.9% | 83.3% | 2922 | 3504 |
-| alias:simple_alias_command | use_cases:use_case[global_workflow_local_implementation] | 99.9% | 79.7% | 2922 | 3664 |
-| alias:simple_alias_command | use_cases:use_case[using_a_project] | 99.9% | 83.3% | 2922 | 3504 |
+| alias:composite_alias | use_cases:use_case[global_workflow_local_implementation] | 99.9% | 79.6% | 2922 | 3668 |
+| alias:composite_alias | use_cases:use_case[using_a_project] | 99.9% | 83.2% | 2922 | 3508 |
+| alias:simple_alias_command | use_cases:use_case[global_workflow_local_implementation] | 99.9% | 79.6% | 2922 | 3668 |
+| alias:simple_alias_command | use_cases:use_case[using_a_project] | 99.9% | 83.2% | 2922 | 3508 |
 | completion:completion_with_saved_parameter | types:default_with_converter | 94.2% | 99.9% | 3126 | 2948 |
 | completion:completion_with_saved_parameter | types:suggestion | 97.1% | 99.9% | 3126 | 3040 |
-| custom:default_help_message_triggers_a_warning | use_cases:use_case[ethereum_local_environment_dev_tool] | 99.9% | 80.4% | 3182 | 3953 |
+| custom:default_help_message_triggers_a_warning | use_cases:use_case[ethereum_local_environment_dev_tool] | 99.9% | 80.3% | 3182 | 3957 |
 | custom:simple_python | types:default_with_converter | 99.5% | 99.9% | 2962 | 2948 |
 | extension:copy_extension | parameter:replacing_parameters | 85.7% | 99.9% | 3171 | 2720 |
 | extension:move_extension | parameter:replacing_parameters | 85.4% | 99.9% | 3183 | 2720 |
@@ -124,38 +129,38 @@ These tests have coverage completely contained within another test:
 | parameter:removing_parameters | parameter:replacing_parameters | 99.2% | 99.9% | 2739 | 2720 |
 | parameter:replacing_parameters | parameter:using_automatic_options | 99.9% | 96.5% | 2720 | 2816 |
 | parameter:replacing_parameters | parameter_eval:use_value_as_parameter | 99.9% | 97.9% | 2720 | 2776 |
-| parameter:replacing_parameters | use_cases:use_case[using_a_project] | 99.9% | 77.5% | 2720 | 3504 |
+| parameter:replacing_parameters | use_cases:use_case[using_a_project] | 99.9% | 77.4% | 2720 | 3508 |
 | parameter:simple_parameter | run:can_edit_parameters | 99.9% | 91.3% | 2717 | 2970 |
-| parameter:simple_parameter | use_cases:use_case[3D_printing_flow] | 99.9% | 67.3% | 2717 | 4029 |
-| parameter:simple_parameter | use_cases:use_case[using_a_project] | 99.9% | 77.5% | 2717 | 3504 |
-| use_cases:use_case[bash_command_built_in_lib] | use_cases:use_case[bash_command_from_alias] | 99.9% | 73.4% | 2960 | 4031 |
-| use_cases:use_case[bash_command_from_alias] | use_cases:use_case[bash_command_import] | 79.6% | 99.9% | 4031 | 3210 |
-| use_cases:use_case[bash_command_import] | use_cases:use_case[hello_world] | 99.1% | 99.9% | 3210 | 3183 |
-| use_cases:use_case[bash_command_use_option] | use_cases:use_case[hello_world] | 92.4% | 99.9% | 3444 | 3183 |
-| ... | *4468 more* | | | | |
+| parameter:simple_parameter | use_cases:use_case[3D_printing_flow] | 99.9% | 67.3% | 2717 | 4033 |
+| parameter:simple_parameter | use_cases:use_case[using_a_project] | 99.9% | 77.4% | 2717 | 3508 |
+| use_cases:use_case[bash_command_built_in_lib] | use_cases:use_case[bash_command_from_alias] | 99.9% | 73.4% | 2963 | 4035 |
+| use_cases:use_case[bash_command_from_alias] | use_cases:use_case[bash_command_import] | 79.6% | 99.9% | 4035 | 3214 |
+| use_cases:use_case[bash_command_import] | use_cases:use_case[hello_world] | 99.1% | 99.9% | 3214 | 3186 |
+| use_cases:use_case[bash_command_use_option] | use_cases:use_case[hello_world] | 92.3% | 99.9% | 3448 | 3186 |
+| ... | *4559 more* | | | | |
 
 ## Test Sizes
 
 | Test | Lines Covered |
 |------|---------------|
-| use_cases:use_case[self_documentation] | 4125 |
-| use_cases:use_case[bash_command_from_alias] | 4031 |
-| use_cases:use_case[3D_printing_flow] | 4029 |
-| use_cases:use_case[creating_extensions] | 3953 |
-| use_cases:use_case[ethereum_local_environment_dev_tool] | 3953 |
-| use_cases:use_case[setting_default_values] | 3797 |
+| use_cases:use_case[backing_up_documents] | 4540 |
+| use_cases:use_case[self_documentation] | 4129 |
+| use_cases:use_case[bash_command_from_alias] | 4035 |
+| use_cases:use_case[3D_printing_flow] | 4033 |
+| use_cases:use_case[creating_extensions] | 3957 |
+| use_cases:use_case[ethereum_local_environment_dev_tool] | 3957 |
+| use_cases:use_case[setting_default_values] | 3801 |
 | command:command | 3712 |
-| use_cases:use_case[global_workflow_local_implementation] | 3664 |
-| use_cases:use_case[wrapping_a_cloud_provider_cli] | 3583 |
+| use_cases:use_case[global_workflow_local_implementation] | 3668 |
+| use_cases:use_case[wrapping_a_cloud_provider_cli] | 3587 |
 | custom:capture_alias | 3557 |
 | help:main_help | 3538 |
-| use_cases:use_case[dynamic_parameters_and_exposed_class] | 3519 |
-| use_cases:use_case[using_a_project] | 3504 |
+| use_cases:use_case[dynamic_parameters_and_exposed_class] | 3523 |
+| use_cases:use_case[using_a_project] | 3508 |
 | custom:cannot_remove_existing_command | 3450 |
-| use_cases:use_case[ipfs_name_publish] | 3446 |
-| use_cases:use_case[bash_command_use_option] | 3444 |
-| use_cases:use_case[choices] | 3432 |
-| use_cases:use_case[podcast_automation] | 3423 |
-| use_cases:use_case[using_a_plugin] | 3411 |
-| use_cases:use_case[dealing_with_secrets] | 3401 |
-| ... | *85 more tests* |
+| use_cases:use_case[ipfs_name_publish] | 3450 |
+| use_cases:use_case[bash_command_use_option] | 3448 |
+| use_cases:use_case[choices] | 3436 |
+| use_cases:use_case[podcast_automation] | 3427 |
+| use_cases:use_case[using_a_plugin] | 3415 |
+| ... | *86 more tests* |
