@@ -76,7 +76,8 @@ def rootdir(request):
     tempdir = Path(tempfile.gettempdir()) / "clk-tests"
     if not tempdir.exists():
         os.makedirs(tempdir)
-    root = tempfile.mkdtemp(dir=tempdir, prefix=request.node.name[len("test_") :] + "_")
+    safe_name = request.node.name[len("test_") :].replace("[", "_").replace("]", "_")
+    root = tempfile.mkdtemp(dir=tempdir, prefix=safe_name + "_")
     prev = os.getcwd()
     os.chdir(root)
     os.environ["CLK_TEST_ROOT"] = str(Path(root))
