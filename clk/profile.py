@@ -328,15 +328,16 @@ class DirectoryProfile(Profile):
         res = sorted(
             [
                 ProfileFactory.create_or_get_by_location(
-                    location,
-                    name=self.name + "/" + Path(location).name,
+                    str(location),
+                    name=self.name + "/" + location.name,
                     app_name=self.app_name,
                     isroot=False,
                     explicit=True,
                 )
-                for location in glob(str(extensions_dir / "*"))
-                if not location.endswith(self.JSON_FILE_EXTENSION)
-                and not location.endswith("_backup")
+                for location in extensions_dir.iterdir()
+                if location.is_dir()
+                and not location.name.endswith(self.JSON_FILE_EXTENSION)
+                and not location.name.endswith("_backup")
             ],
             key=lambda r: r.name,
         )
