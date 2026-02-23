@@ -115,6 +115,11 @@ Here are some use cases that hopefully will have the following properties:
 
   If you want to do that to, you might want to [[file:using_a_project.org][read this]].
 
+  When you have a consistent workflow across projects but each project uses
+  different tools, see [[file:global_workflow_local_implementation.org][global workflow, local implementation]]. This pattern lets
+  you define workflows like ~test-n-push~ once globally, while each project
+  provides its own ~test~ command.
+
 * flow
   :PROPERTIES:
   :CREATED:  [2025-08-05 22:20]
@@ -125,6 +130,17 @@ Here are some use cases that hopefully will have the following properties:
 
   clk does not want to compete with flow tools, like nodered, but it helps
   having a basic flow handling from time to time, like when you have a [[file:3D_printing_flow.org][3D printing flow]].
+
+* real world example: backing up documents
+  :PROPERTIES:
+  :CREATED:  [2026-02-21 12:00]
+  :CUSTOM_ID: backing-up-documents
+  :END:
+
+  The [[file:backing_up_documents.org][backing up documents]] use case shows how to build a complete backup system
+  starting from a simple command. It demonstrates hierarchical commands,
+  auto-created groups, persisted parameters, flow dependencies, aliases, and
+  per-project configuration all working together.
 
 * is it a tool or a library?
   :PROPERTIES:
@@ -144,6 +160,7 @@ Here are some use cases that hopefully will have the following properties:
 * plugins
   :PROPERTIES:
   :CREATED:  [2026-02-11 22:00]
+  :CUSTOM_ID: fbe30b36-5265-4690-abfd-1eb12e333f01
   :END:
 
   In case clk does not fit your use cases totally, and you want to dynamically

@@ -28,8 +28,8 @@ def edit_external_command(command_path):
 class ExternalCommandResolver(CommandResolver):
     name = "external"
 
-    def __init__(self, settings=None):
-        self.settings = settings
+    def __init__(self):
+        self._external_cmds_cache = {}
 
     def add_edition_hint(self, ctx, command, formatter):
         formatter.write_paragraph()
@@ -39,22 +39,26 @@ class ExternalCommandResolver(CommandResolver):
             )
             formatter.write_text(f"Or edit {command.customcommand_path} directly.")
 
-    @property
-    def customcommands(self):
-        return (
-            self.settings.get("customcommands")
-            if self.settings
-            else config.get_settings2("customcommands")
-        )
+    def _get_executable_paths_for_profile(self, profile):
+        """Get executable paths for a profile.
 
-    @property
-    def cmddirs(self):
-        return self.customcommands.get("executablepaths", [])
+        For DirectoryProfiles, use executable_paths directly.
+        For PresetProfiles, look in settings["customcommands"]["executablepaths"].
+        """
+        # First try direct executable_paths (works for DirectoryProfile)
+        if profile.executable_paths:
+            return profile.executable_paths
+        # For PresetProfiles, look in settings
+        customcommands = profile.settings.get("customcommands", {})
+        if isinstance(customcommands, dict):
+            return customcommands.get("executablepaths", [])
+        return []
 
-    def _list_command_paths(self, parent=None):
-        if not hasattr(self, "_external_cmds"):
-            self._external_cmds = []
-            for path in reversed(self.cmddirs):
+    def _list_command_paths(self, parent, profile):
+        profile_name = profile.name
+        if profile_name not in self._external_cmds_cache:
+            cmds = []
+            for path in self._get_executable_paths_for_profile(profile):
                 p = Path(path)
                 if p.is_dir():
                     for file in os.listdir(path):
@@ -66,15 +70,18 @@ class ExternalCommandResolver(CommandResolver):
                                 name = cmd_name + "@" + ext[1:]
                             else:
                                 name = file
-                            self._external_cmds.append(name)
-        return self._external_cmds
+                            cmds.append(name)
+            self._external_cmds_cache[profile_name] = cmds
+        return self._external_cmds_cache[profile_name]
 
-    def _get_command(self, path, parent=None):
+    def _get_command(self, path, parent, profile):
         name = path.replace("@", ".")
         cmdhelp = "external command"
         command_name = name
-        paths = reversed(self.cmddirs)
-        command_path = str(Path(which(command_name, os.pathsep.join(paths))).resolve())
+        exec_paths = self._get_executable_paths_for_profile(profile)
+        command_path = str(
+            Path(which(command_name, os.pathsep.join(exec_paths))).resolve()
+        )
         options = []
         arguments = []
         flags = []
@@ -316,8 +323,7 @@ class ExternalCommandResolver(CommandResolver):
                 )
             )
         external_command.customcommand_path = command_path
-        profile = config.get_profile_that_contains(command_path)
-        if profile is not None and profile.explicit:
+        if profile.explicit:
             if not any(
                 "--update-extension" in param.opts for param in external_command.params
             ):
@@ -329,7 +335,7 @@ class ExternalCommandResolver(CommandResolver):
                         help=(
                             "Update the extension"
                             " that contains this command"
-                            f" ({profile.location})"
+                            f" ({profile.location if hasattr(profile, 'location') else profile.name})"
                         ),
                         callback=build_update_extension_callback(profile),
                     )

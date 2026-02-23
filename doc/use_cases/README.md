@@ -6,9 +6,10 @@
 - [batteries included](#3a184190-e5cb-4e8b-bf5a-177b8ec9ec66)
 - [project](#57153b01-e474-42f0-baa2-26b1b1611ae7)
 - [flow](#8ad4d10e-1ece-45ef-a558-905b5996ddc4)
+- [real world example: backing up documents](#backing-up-documents)
 - [is it a tool or a library?](#f291ada8-c504-4624-baa7-9c7d600d5c53)
 - [publish my code](#875fe27e-ca39-4733-a459-e2a35bcfa124)
-- [plugins](#org5c1a0fd)
+- [plugins](#fbe30b36-5265-4690-abfd-1eb12e333f01)
 
 Here are some use cases that hopefully will have the following properties:
 
@@ -84,6 +85,8 @@ We put a lot of useful logic in clk.lib but did not document much as of now. [Th
 
 Some commands might need to use secret, [here is how](dealing_with_secrets.md) we implement that.
 
+When you have many aliases, parameters, commands, and extensions spread across different profiles, it can be hard to remember what's available. The `clk describe` command helps you [explore and document your configuration](self_documentation.md), showing what features are available in any profile (global, local, or extension).
+
 
 <a id="57153b01-e474-42f0-baa2-26b1b1611ae7"></a>
 
@@ -93,6 +96,8 @@ Sometimes, you want to gather some commands or configuration in a folder. We cal
 
 If you want to do that to, you might want to [read this](using_a_project.md).
 
+When you have a consistent workflow across projects but each project uses different tools, see [global workflow, local implementation](global_workflow_local_implementation.md). This pattern lets you define workflows like `test-n-push` once globally, while each project provides its own `test` command.
+
 
 <a id="8ad4d10e-1ece-45ef-a558-905b5996ddc4"></a>
 
@@ -101,6 +106,13 @@ If you want to do that to, you might want to [read this](using_a_project.md).
 When your commands need to be connected and called in a sequence, we call that a flow.
 
 clk does not want to compete with flow tools, like nodered, but it helps having a basic flow handling from time to time, like when you have a [3D printing flow](3D_printing_flow.md).
+
+
+<a id="backing-up-documents"></a>
+
+# real world example: backing up documents
+
+The [backing up documents](backing_up_documents.md) use case shows how to build a complete backup system starting from a simple command. It demonstrates hierarchical commands, auto-created groups, persisted parameters, flow dependencies, aliases, and per-project configuration all working together.
 
 
 <a id="f291ada8-c504-4624-baa7-9c7d600d5c53"></a>
@@ -117,7 +129,7 @@ If you don't want to use the clk command line tool, you can [roll your own](roll
 In that case, you would like to take a look at [how to create your own extensions](creating_extensions.md).
 
 
-<a id="org5c1a0fd"></a>
+<a id="fbe30b36-5265-4690-abfd-1eb12e333f01"></a>
 
 # plugins
 

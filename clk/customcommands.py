@@ -4,7 +4,6 @@ import click
 from pluginbase import PluginBase
 
 from clk.commandresolver import CommandResolver
-from clk.config import config
 from clk.core import run
 from clk.log import get_logger
 from clk.overloads import AutomaticOption
@@ -41,18 +40,9 @@ class CustomCommandResolver(CommandResolver):
             )
             formatter.write_text(f"Or edit {command.customcommand_path} directly.")
 
-    def __init__(self, settings=None):
+    def __init__(self):
         self._base = None
-        self._source = None
-        self.settings = settings
-
-    @property
-    def customcommands(self):
-        return (
-            self.settings.get("customcommands")
-            if self.settings
-            else config.get_settings2("customcommands")
-        )
+        self._source_cache = {}
 
     @property
     def base(self):
@@ -60,20 +50,38 @@ class CustomCommandResolver(CommandResolver):
             self._base = PluginBase(package="clk.customcommands")
         return self._base
 
-    @property
-    def source(self):
-        if self._source is None:
-            self._source = self.base.make_plugin_source(
-                searchpath=list(reversed(self.customcommands.get("pythonpaths", []))),
+    def _get_python_paths_for_profile(self, profile):
+        """Get python paths for a profile.
+
+        For DirectoryProfiles, use python_paths directly.
+        For PresetProfiles, look in settings["customcommands"]["pythonpaths"].
+        """
+        # First try direct python_paths (works for DirectoryProfile)
+        if profile.python_paths:
+            return profile.python_paths
+        # For PresetProfiles, look in settings
+        customcommands = profile.settings.get("customcommands", {})
+        if isinstance(customcommands, dict):
+            return customcommands.get("pythonpaths", [])
+        return []
+
+    def _get_source_for_profile(self, profile):
+        profile_name = profile.name
+        if profile_name not in self._source_cache:
+            python_paths = self._get_python_paths_for_profile(profile)
+            self._source_cache[profile_name] = self.base.make_plugin_source(
+                searchpath=python_paths,
             )
-        return self._source
+        return self._source_cache[profile_name]
 
-    def _list_command_paths(self, parent=None):
-        return [p.replace("_", "-") for p in self.source.list_plugins()]
+    def _list_command_paths(self, parent, profile):
+        source = self._get_source_for_profile(profile)
+        return [p.replace("_", "-") for p in source.list_plugins()]
 
-    def _get_command(self, path, parent=None):
+    def _get_command(self, path, parent, profile):
+        source = self._get_source_for_profile(profile)
         plugin_name = path.replace("-", "_")
-        module = self.source.load_plugin(plugin_name)
+        module = source.load_plugin(plugin_name)
         if plugin_name not in dir(module):
             raise BadCustomCommandError(
                 f"The file {module.__file__} must contain a command or a group named {plugin_name}"
@@ -99,8 +107,7 @@ class CustomCommandResolver(CommandResolver):
                     ),
                 )
             )
-        profile = config.get_profile_that_contains(cmd.customcommand_path)
-        if profile is not None and profile.explicit:
+        if profile.explicit:
             if not any("--update-extension" in param.opts for param in cmd.params):
                 cmd.params.append(
                     AutomaticOption(
@@ -110,7 +117,7 @@ class CustomCommandResolver(CommandResolver):
                         help=(
                             "Update the extension"
                             " that contains this command"
-                            f" ({profile.location})"
+                            f" ({profile.location if hasattr(profile, 'location') else profile.name})"
                         ),
                         callback=build_update_extension_callback(profile),
                     )

@@ -531,6 +531,16 @@ class Config:
             if isinstance(profile, DirectoryProfile)
         ]
 
+    @cached_property
+    def builtin_profile(self):
+        """Profile for built-in core commands from clk.commands package."""
+        return ProfileFactory.create_preset_profile(
+            "builtin",
+            settings={},
+            explicit=False,
+            isroot=True,
+        )
+
     @property
     def all_profiles(self):
         if self._all_profiles_cache is None:
@@ -553,6 +563,7 @@ class Config:
                     res.append(extension)
                 res.append(profile)
 
+            add_profile(self.builtin_profile)
             add_profile(self.distribution_profile)
             add_profile(self.globalpreset_profile)
             add_profile(self.global_profile)

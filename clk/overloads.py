@@ -213,7 +213,10 @@ class CoreCommandResolver(CommandResolver):
         with formatter.indentation():
             formatter.write_text("This is a built-in command.")
 
-    def _list_command_paths(self, parent=None):
+    def _list_command_paths(self, parent, profile):
+        # Core commands only exist in the builtin profile
+        if profile.name != "builtin":
+            return []
         res = []
         for i, commands_package in enumerate(self.commands_packages):
             # last iteration -> core package
@@ -249,7 +252,7 @@ class CoreCommandResolver(CommandResolver):
                     raise
         return res
 
-    def _get_command(self, path, parent=None):
+    def _get_command(self, path, parent, profile):
         name = path.split(".")[-1]
         attrname = name.replace("-", "_")
         for i, package in enumerate(self.commands_packages):
@@ -651,19 +654,19 @@ class Command(
 
 
 def _list_matching_commands_from_resolver(
-    resolver, parent_path, include_subcommands=False
+    resolver, parent_path, profile, include_subcommands=False
 ):
     parent = get_command(parent_path)
     if isinstance(parent, config.main_command.__class__):
         res = {
             command
-            for command in resolver._list_command_paths(parent)
+            for command in resolver._list_command_paths(parent, profile)
             if include_subcommands or "." not in command
         }
     else:
         res = {
             command[len(parent_path) + 1 :]
-            for command in resolver._list_command_paths(parent)
+            for command in resolver._list_command_paths(parent, profile)
             if command.startswith(parent_path + ".")
             and (include_subcommands or "." not in command[len(parent_path) + 1 :])
         }
@@ -673,51 +676,82 @@ def _list_matching_commands_from_resolver(
 def list_commands_with_resolvers(resolvers, parent_path, include_subcommands=False):
     load_plugins()
     res = set()
-    for resolver in resolvers:
-        res |= set(
-            _list_matching_commands_from_resolver(
-                resolver, parent_path, include_subcommands=include_subcommands
+    # Iterate through all profiles to collect all commands
+    for profile in config.all_enabled_profiles:
+        for resolver in resolvers:
+            res |= set(
+                _list_matching_commands_from_resolver(
+                    resolver,
+                    parent_path,
+                    profile,
+                    include_subcommands=include_subcommands,
+                )
             )
-        )
     return sorted(res)
 
 
 def get_command_with_resolvers(resolvers, parent_path, name):
     load_plugins()
-    cmd = None
     if parent_path == config.main_command.path:
         parent = config.main_command
         cmd_path = name
     else:
         parent = get_command(parent_path)
         cmd_path = parent_path + "." + name
-    for resolver in resolvers:
-        if name in _list_matching_commands_from_resolver(resolver, parent_path):
-            try:
-                cmd = resolver._get_command(cmd_path, parent)
-            except Exception:
-                LOGGER.error(
-                    f"Found the command {cmd_path} in the resolver {resolver.name}"
-                    " but could not load it."
-                )
-                raise
-            break
-    else:
-        resolver = None
-    return cmd, resolver
+
+    # Separate resolvers: real commands first, then deferred resolvers (ephemeral groups)
+    # This ensures real commands in ANY profile take priority over ephemeral groups
+    deferred_resolvers = [r for r in resolvers if r.deferred]
+    immediate_resolvers = [r for r in resolvers if not r.deferred]
+
+    # First pass: check all profiles for real commands
+    for profile in reversed(list(config.all_enabled_profiles)):
+        for resolver in immediate_resolvers:
+            if name in _list_matching_commands_from_resolver(
+                resolver, parent_path, profile
+            ):
+                try:
+                    cmd = resolver._get_command(cmd_path, parent, profile)
+                    return cmd, resolver
+                except Exception:
+                    LOGGER.error(
+                        f"Found the command {cmd_path} in the resolver {resolver.name}"
+                        " but could not load it."
+                    )
+                    raise
+
+    # Second pass: check all profiles for deferred resolvers (e.g., ephemeral groups)
+    for profile in reversed(list(config.all_enabled_profiles)):
+        for resolver in deferred_resolvers:
+            if name in _list_matching_commands_from_resolver(
+                resolver, parent_path, profile
+            ):
+                try:
+                    cmd = resolver._get_command(cmd_path, parent, profile)
+                    return cmd, resolver
+                except Exception:
+                    LOGGER.error(
+                        f"Found the command {cmd_path} in the resolver {resolver.name}"
+                        " but could not load it."
+                    )
+                    raise
+
+    return None, None
 
 
 class GroupCommandResolver(CommandResolver):
     name = "group"
 
-    def _list_command_paths(self, parent):
+    def _list_command_paths(self, parent, profile):
+        # Group subcommands are defined in code, so they exist in any profile
+        # that contains the parent command. We check all profiles.
         ctx = click_get_current_context_safe()
         res = {
             parent.path + "." + cmd for cmd in click.Group.list_commands(parent, ctx)
         }
         return res
 
-    def _get_command(self, path, parent):
+    def _get_command(self, path, parent, profile):
         path = path.split(".")
         cmd_name = path[-1]
         ctx = click_get_current_context_safe()
@@ -734,7 +768,8 @@ class GroupCommandResolver(CommandResolver):
 class MainGroupCommandResolver(GroupCommandResolver):
     name = "maingroup"
 
-    def _list_command_paths(self, parent):
+    def _list_command_paths(self, parent, profile):
+        # Main group subcommands are defined in code
         ctx = click_get_current_context_safe()
         res = click.Group.list_commands(parent, ctx)
         return res

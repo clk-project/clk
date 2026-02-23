@@ -92,21 +92,32 @@ class CustomCommandPathType(DynamicChoiceType):
 
 
 class CustomCommandNameType(DynamicChoiceType):
-    def __init__(self, settings=None):
+    def __init__(self, profile=None):
+        self.profile = profile
         self.resolvers = [
-            ExternalCommandResolver(settings),
-            CustomCommandResolver(settings),
+            ExternalCommandResolver(),
+            CustomCommandResolver(),
         ]
 
+    def _get_profiles(self):
+        if self.profile is not None:
+            return [self.profile]
+        return list(config.all_enabled_profiles)
+
     def choices(self):
-        return sum([resolver._list_command_paths() for resolver in self.resolvers], [])
+        result = []
+        for profile in self._get_profiles():
+            for resolver in self.resolvers:
+                result.extend(resolver._list_command_paths(None, profile))
+        return list(set(result))
 
 
 class CustomCommandType(CustomCommandNameType):
     def converter(self, path):
-        for resolver in self.resolvers:
-            if path in resolver._list_command_paths():
-                return resolver._get_command(path)
+        for profile in reversed(self._get_profiles()):
+            for resolver in self.resolvers:
+                if path in resolver._list_command_paths(None, profile):
+                    return resolver._get_command(path, None, profile)
         raise Exception(f"Could not find a resolver matching {path}")
 
 
@@ -628,12 +639,12 @@ def _copy(customcommand, profile, force, name):
 @command.command()
 def _list():
     """List the path of all custom commands."""
-    settings = (
+    profile = (
         None
         if config.customcommands.readprofile == "context"
-        else {"customcommands": config.customcommands.profile.custom_command_paths}
+        else config.customcommands.profile
     )
-    type = CustomCommandType(settings)
+    type = CustomCommandType(profile)
 
     @cache_disk(expire=600)
     def customcommand_path(command_path):

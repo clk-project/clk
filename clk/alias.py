@@ -73,7 +73,7 @@ def edit_alias_command(path):
 class AliasToGroupCommandResolver(CommandResolver):
     name = "alias to group"
 
-    def _list_command_paths(self, parent):
+    def _list_command_paths(self, parent, profile):
         try:
             original_command = parent.original_command
         except AttributeError:
@@ -83,7 +83,7 @@ class AliasToGroupCommandResolver(CommandResolver):
             for cmd_name in list_commands(original_command.path)
         ]
 
-    def _get_command(self, path, parent):
+    def _get_command(self, path, parent, profile):
         cmd_name = path.split(".")[-1]
         parent = parent.original_command
         original_path = f"{parent.path}.{cmd_name}"
@@ -123,13 +123,14 @@ class AliasCommandResolver(CommandResolver):
                 f" {format_commands(config.get_settings('alias')[command.path]['commands'])}`"
             )
 
-    def _list_command_paths(self, parent):
+    def _list_command_paths(self, parent, profile):
+        aliases = profile.settings.get("alias", {})
         if isinstance(parent, config.main_command.__class__):
-            return list(config.get_settings("alias").keys())
+            return list(aliases.keys())
         else:
             return [
                 a
-                for a in config.get_settings("alias").keys()
+                for a in aliases.keys()
                 if a.startswith(parent.path + ".") and a[len(parent.path) + 1 :] != 0
             ]
 
@@ -292,9 +293,9 @@ class AliasCommandResolver(CommandResolver):
             if param.required and was_given(param):
                 param.required = False
 
-    def _get_command(self, path, parent=None):
+    def _get_command(self, path, parent, profile):
         name = path.split(".")[-1]
-        alias_settings = config.get_settings("alias")[path]
+        alias_settings = profile.settings["alias"][path]
         commands_to_run = alias_settings["commands"]
         cmdhelp = alias_settings["documentation"]
         cmdhelp = cmdhelp or f"Alias for: {format_commands(commands_to_run)}"

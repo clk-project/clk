@@ -1,0 +1,174 @@
+:PROPERTIES:
+:ID:       a1b2c3d4-5678-90ab-cdef-123456789abc
+:END:
+#+language: en
+#+EXPORT_FILE_NAME: ./global_workflow_local_implementation.md
+
+#+CALL: ../../lp.org:check-result()
+
+#+name: init
+#+BEGIN_SRC bash :results none :exports none :session a1b2c3d4-5678-90ab-cdef-123456789abc
+  . ./sandboxing.sh
+#+END_SRC
+
+You have the same workflow across all your projects: test, then push. But each
+project has its own way of running tests. One uses pytest, another npm test, a
+third make test. With clk, you define the workflow once globally, and let each
+project fill in the details.
+
+* defining your workflow globally
+
+Start with a ~test~ placeholder - a command that does nothing by default.
+
+#+NAME: create-global-test
+#+BEGIN_SRC bash :results verbatim :exports both :session a1b2c3d4-5678-90ab-cdef-123456789abc :cache yes
+clk alias set test echo "No tests configured" , exec false
+#+END_SRC
+
+#+RESULTS[e8e13237352c6310ac79661671acde2602c3dd30]: create-global-test
+: New global alias for test: echo 'No tests configured' , exec false
+
+Then create your workflow alias.
+
+#+NAME: create-test-n-push
+#+BEGIN_SRC bash :results verbatim :exports both :session a1b2c3d4-5678-90ab-cdef-123456789abc :cache yes
+clk alias set test-n-push test , echo "git push"
+#+END_SRC
+
+#+RESULTS[7c94bb5a963cd132f0b42151ae2d3aa9696d27d6]: create-test-n-push
+: New global alias for test-n-push: test , echo 'git push'
+
+This workflow works everywhere, even where tests aren't configured yet.
+
+#+NAME: run-test-n-push-global
+#+BEGIN_SRC bash :results verbatim :exports both :session a1b2c3d4-5678-90ab-cdef-123456789abc :cache yes
+clk test-n-push
+#+END_SRC
+
+#+RESULTS[5d202ebdd52120d67d73480b2941a6ed307e0a82]: run-test-n-push-global
+: No tests configured
+
+* filling in the details for a specific project
+
+Now you enter a project that uses pytest. You create a local ~test~ command that
+knows how to run this project's tests.
+
+#+NAME: create-project
+#+BEGIN_SRC bash :results none :exports code :session a1b2c3d4-5678-90ab-cdef-123456789abc
+mkdir myproject && cd myproject && mkdir .clk
+#+END_SRC
+
+#+NAME: create-local-test
+#+BEGIN_SRC bash :results none :exports code :session a1b2c3d4-5678-90ab-cdef-123456789abc
+clk command create bash test --description "Run the project tests" --body '
+echo "Running pytest..."
+echo "All 42 tests passed!"
+'
+#+END_SRC
+
+Your workflow alias immediately picks it up.
+
+#+NAME: run-test-n-push-local
+#+BEGIN_SRC bash :results verbatim :exports both :session a1b2c3d4-5678-90ab-cdef-123456789abc :cache yes
+clk test-n-push
+#+END_SRC
+
+#+RESULTS[5d202ebdd52120d67d73480b2941a6ed307e0a82]: run-test-n-push-local
+: Running pytest...
+: All 42 tests passed!
+: git push
+
+You didn't touch ~test-n-push~. The workflow stays the same; only the
+implementation changed.
+
+* the workflow adapts to context
+
+Leave the project, and everything goes back to defaults.
+
+#+NAME: leave-project
+#+BEGIN_SRC bash :results verbatim :exports both :session a1b2c3d4-5678-90ab-cdef-123456789abc :cache yes
+cd ..
+clk test-n-push
+#+END_SRC
+
+#+RESULTS[7171fa3ae11404a97a1215358acc79547e6f1dc6]: leave-project
+: No tests configured
+
+Enter another project with npm, define a local ~test~ there, and ~test-n-push~
+will run npm. The pattern scales to as many projects as you have.
+
+* going further: project-specific workflows
+
+Sometimes a project needs an entirely different workflow. You can also define
+local aliases.
+
+#+NAME: back-to-project
+#+BEGIN_SRC bash :results none :exports code :session a1b2c3d4-5678-90ab-cdef-123456789abc
+cd myproject
+#+END_SRC
+
+#+NAME: create-local-alias
+#+BEGIN_SRC bash :results verbatim :exports both :session a1b2c3d4-5678-90ab-cdef-123456789abc :cache yes
+clk alias set deploy echo "Deploying to production..."
+#+END_SRC
+
+#+RESULTS[f2f248a65fad2c8cf772007f1284a003134df374]: create-local-alias
+: New local alias for deploy: echo 'Deploying to production...'
+
+This ~deploy~ command only exists inside this project.
+
+#+NAME: run-deploy
+#+BEGIN_SRC bash :results verbatim :exports both :session a1b2c3d4-5678-90ab-cdef-123456789abc :cache yes
+clk deploy
+#+END_SRC
+
+#+RESULTS[ea78c03639b21433b7e144a90985b817e4b9a358]: run-deploy
+: Deploying to production...
+
+#+NAME: deploy-outside
+#+BEGIN_SRC bash :results verbatim :exports both :session a1b2c3d4-5678-90ab-cdef-123456789abc :cache yes
+cd ..
+clk deploy
+#+END_SRC
+
+#+RESULTS[e532f6860d0aa6d91f6d559988b83a2aaee13c9a]: deploy-outside
+: warning: Failed to get the command deploy: Command deploy not found
+: Usage: clk [OPTIONS] COMMAND [ARGS]...
+: error: No such command 'deploy'.
+
+* summary
+
+This pattern - global workflow, local implementation - is useful whenever you
+have:
+
+- A consistent way of working (~test-n-push~, ~lint-n-commit~, ~build-n-deploy~)
+- Projects with different tools or configurations
+
+Define your workflow once. Let each project provide the specific commands. clk
+handles the rest.
+
+#+BEGIN_SRC bash :exports none :tangle ../../tests/use_cases/global_workflow_local_implementation.sh :noweb yes :shebang "#!/bin/bash -eu"
+<<init>>
+
+check-result(create-global-test)
+
+check-result(create-test-n-push)
+
+check-result(run-test-n-push-global)
+
+<<create-project>>
+
+<<create-local-test>>
+
+check-result(run-test-n-push-local)
+
+check-result(leave-project)
+
+<<back-to-project>>
+
+check-result(create-local-alias)
+
+check-result(run-deploy)
+
+check-result(deploy-outside)
+#+END_SRC
