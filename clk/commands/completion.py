@@ -59,6 +59,33 @@ def show(shell):
     click.echo(config.completion.content(shell))
 
 
+def _resolve_file_completion(prefix, dirs_only=False):
+    """Resolve a file/dir completion prefix into matching filesystem entries."""
+    from clk.completion import startswith
+
+    if prefix.endswith("/"):
+        parent, name_prefix = prefix, ""
+    elif "/" in prefix:
+        idx = prefix.rfind("/")
+        parent, name_prefix = prefix[: idx + 1], prefix[idx + 1 :]
+    else:
+        parent, name_prefix = "./", prefix
+
+    parent_path = Path(parent)
+    if not parent_path.exists():
+        return []
+
+    results = []
+    for entry in sorted(parent_path.iterdir()):
+        if startswith(entry.name, name_prefix):
+            path = parent + entry.name
+            if entry.is_dir():
+                results.append(path + "/")
+            elif not dirs_only:
+                results.append(path)
+    return results
+
+
 @completion.command(handle_dry_run=True, ignore_unknown_options=True)
 @option("--description/--no-description", help="Display the argument description")
 @option("--last/--after", help="Complete the last argument")
@@ -104,9 +131,16 @@ def _try(remove_bash_formatting, description, last, command, args, call):
         if call:
             if remove_bash_formatting:
                 result = check_my_output()
-                result = "\n".join(
-                    [",".join(line.split(",")[1:]) for line in result.splitlines()]
-                )
+                lines = []
+                for line in result.splitlines():
+                    type_, _, value = line.partition(",")
+                    if type_ in ("file", "dir"):
+                        lines.extend(
+                            _resolve_file_completion(value, dirs_only=(type_ == "dir"))
+                        )
+                    else:
+                        lines.append(value)
+                result = "\n".join(lines)
                 click.echo(result)
             else:
                 call_me()

@@ -4,6 +4,8 @@
 #+language: en
 #+EXPORT_FILE_NAME: ./bash_command_use_option.md
 
+#+CALL: ../../lp.org:check-result()
+
 #+name: init
 #+BEGIN_SRC bash :results none :exports none :session 100aa89b-f320-46ee-9d5d-2193ef48d4eb
 . ./sandboxing.sh
@@ -73,22 +75,99 @@ clk animal --help | grep -- '--shout'
 
 #+RESULTS: see
 : KIND_OF_ANIMAL [duck|whale|cat|dog]
-: --sound-of-animal TEXT  The sound the animal makes
-: --shout                 Print the message of the animal in capital case  [default:
-
-#+name: compulsory
-#+BEGIN_SRC bash :results verbatim :exports both :session 100aa89b-f320-46ee-9d5d-2193ef48d4eb
-clk animal 2>&1 > /dev/null | grep "Missing argument 'KIND_OF_ANIMAL'"
-#+END_SRC
-
-#+RESULTS: compulsory
+: --sound-of-animal TEXT  The sound the animal makes  [default: None]
+: --shout                 Print the message of the animal in capital case  [default: False]
 
 #+name: check
-#+BEGIN_SRC bash :results none :exports both :session 100aa89b-f320-46ee-9d5d-2193ef48d4eb
+#+BEGIN_SRC bash :results none :exports none :session 100aa89b-f320-46ee-9d5d-2193ef48d4eb
 test "$(clk animal duck --sound-of-animal couac)" = "duck does couac"
 test "$(clk animal --sound-of-animal couac)" = "duck does couac"
 test "$(clk animal whale --shout)" = "I DON'T KNOW WHAT SOUND WHALE MAKES"
 #+END_SRC
+
+* completing against files
+  :PROPERTIES:
+  :CUSTOM_ID: dddf6c5e-3fce-4203-b75c-e918bcf3240f
+  :END:
+
+Sometimes, your command takes a file as input. For instance, let's say you want a
+command that counts the words in a document.
+
+You want pressing ~<TAB>~ on the argument to suggest files from the current
+directory, just like ~cat~ or ~ls~ would. To get this, use the ~file~ type.
+
+#+name: wordcount-def
+#+BEGIN_SRC bash :results none :exports code
+A:document:file:The document to count words in
+#+END_SRC
+
+#+name: wordcount-create
+#+BEGIN_SRC bash :results none :export code :session 100aa89b-f320-46ee-9d5d-2193ef48d4eb :noweb yes
+clk command create bash wordcount
+cat <<"EOH" > "$(clk command which wordcount)"
+#!/bin/bash -eu
+
+source "_clk.sh"
+
+clk_usage () {
+    cat<<EOF
+$0
+
+Count the words in a document
+--
+<<wordcount-def>>
+EOF
+}
+
+clk_help_handler "$@"
+
+wc -w < "$(clk_value document)"
+
+EOH
+#+END_SRC
+
+#+name: wordcount-help
+#+BEGIN_SRC bash :results verbatim :exports both :session 100aa89b-f320-46ee-9d5d-2193ef48d4eb :cache yes
+clk wordcount --help | grep DOCUMENT
+#+END_SRC
+
+#+RESULTS[7ff9b2d2b71608f785395b36de92de9d0a0d629a]: wordcount-help
+: Usage: clk wordcount [OPTIONS] [DOCUMENT]
+:   DOCUMENT  The document to count words in  [default: None]
+
+Let's try it.
+
+#+name: wordcount-setup
+#+BEGIN_SRC bash :results none :exports code :session 100aa89b-f320-46ee-9d5d-2193ef48d4eb
+echo "one two three four five" > testfile.txt
+#+END_SRC
+
+#+name: wordcount-run
+#+BEGIN_SRC bash :results verbatim :exports both :session 100aa89b-f320-46ee-9d5d-2193ef48d4eb :cache yes
+clk wordcount testfile.txt
+#+END_SRC
+
+#+RESULTS[a22d82c6bf9ec4c678e3f0a470ce79388ed5e762]: wordcount-run
+: 5
+
+And completion suggests files from the current directory.
+
+#+NAME: wordcount-completion-shown
+#+BEGIN_SRC bash :results none :exports code
+clk wordcount te<TAB>
+#+END_SRC
+
+#+NAME: wordcount-completion
+#+BEGIN_SRC bash :results verbatim :exports results :session 100aa89b-f320-46ee-9d5d-2193ef48d4eb :cache yes
+clk completion try --last wordcount ./te
+#+END_SRC
+
+#+RESULTS[07e0b9b8befa7c6653c2984bf30170e80796184f]: wordcount-completion
+: ./testfile.txt
+
+The ~file~ type works the same way for options. For instance, if you had written
+~O:--document:file:The document to count words in~ instead, pressing ~<TAB>~
+after ~--document~ would also suggest files.
 
 #+BEGIN_SRC bash :exports none :tangle ../../tests/use_cases/bash_command_use_option.sh :noweb yes :shebang "#!/bin/bash -eu"
 <<init>>
@@ -98,4 +177,14 @@ test "$(clk animal whale --shout)" = "I DON'T KNOW WHAT SOUND WHALE MAKES"
 <<see>>
 
 <<check>>
+
+<<wordcount-create>>
+
+check-result(wordcount-help)
+
+<<wordcount-setup>>
+
+check-result(wordcount-run)
+
+check-result(wordcount-completion)
 #+END_SRC

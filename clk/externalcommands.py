@@ -231,7 +231,8 @@ class ExternalCommandResolver(CommandResolver):
             "str": str,
             "string": str,
             "date": Date(),
-            "file": lambda s: Path(s).expanduser().absolute(),
+            "file": click.Path(resolve_path=True),
+            "path": click.Path(resolve_path=True),
         }
 
         def get_type(t):

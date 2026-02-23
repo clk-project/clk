@@ -125,8 +125,8 @@ echo OK
 """)
     somebinary.chmod(0o755)
     os.environ["PATH"] = os.environ["PATH"] + os.pathsep + str(somebindir)
-    result = set(lib.cmd("completion try --last exec somebin").split("\n"))
-    assert result == {"plain,./somebindir/", "plain,somebinary"}
+    result = set(lib.cmd("completion try --call --last exec somebin").split("\n"))
+    assert result == {"./somebindir/", "somebinary"}
 
 
 def test_completion_with_saved_parameter(lib):

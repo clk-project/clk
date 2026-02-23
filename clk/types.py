@@ -138,34 +138,15 @@ class ExecutableType(Parameter):
     def shell_complete(self, ctx, param, incomplete):
         completion = set()
 
-        # Parse incomplete path
-        if incomplete.endswith("/"):
-            parent, prefix = incomplete, ""
-        elif "/" in incomplete:
-            idx = incomplete.rfind("/")
-            parent, prefix = incomplete[: idx + 1], incomplete[idx + 1 :]
-        else:
-            parent, prefix = "./", incomplete
-
-        # Complete files and directories from the target directory
-        parent_path = Path(parent)
-        if parent_path.exists():
-            for entry in parent_path.iterdir():
-                if startswith(entry.name, prefix):
-                    path = parent + entry.name
-                    if entry.is_dir():
-                        completion.add(
-                            click.shell_completion.CompletionItem(path + "/")
-                        )
-                    elif os.access(entry, os.X_OK):
-                        completion.add(click.shell_completion.CompletionItem(path))
-
         # Include executables from PATH (only when not typing a path)
         if "/" not in incomplete:
             for p in self.path(ctx):
                 for f in os.listdir(p):
                     if startswith(f, incomplete):
                         completion.add(click.shell_completion.CompletionItem(f))
+
+        # Delegate local file/dir listing to the shell via the file completion type
+        completion.add(click.shell_completion.CompletionItem(incomplete, type="file"))
         return completion
 
     @cache_disk(expire=600)
