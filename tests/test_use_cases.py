@@ -124,3 +124,7 @@ def test_fetching_and_displaying_json_data(rootdir):
 
 def test_self_documentation(rootdir):
     call_script("self_documentation.sh")
+
+
+def test_global_workflow_local_implementation(rootdir):
+    call_script("global_workflow_local_implementation.sh")
