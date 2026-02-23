@@ -102,7 +102,7 @@ exit 1
 
 
 find-it_code () {
-      clk extension where-is global/k8s | sed "s|$(pwd)|.|"
+      clk extension where-is global/k8s
 }
 
 find-it_expected () {

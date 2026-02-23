@@ -127,7 +127,7 @@ clk k8s run-dev-env --flow
 In case you lost that extension folder and want to find it again, simply run.
 
 ```bash
-clk extension where-is global/k8s | sed "s|$(pwd)|.|"
+clk extension where-is global/k8s
 ```
 
     ./clk-root/extensions/k8s
