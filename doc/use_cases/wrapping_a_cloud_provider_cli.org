@@ -243,6 +243,66 @@ clk aws s3 ls
 This way, I never accidentally run a command against the wrong account just
 because I forgot to switch profiles.
 
+* environment variable parameters
+  :PROPERTIES:
+  :CUSTOM_ID: 30ecf8ae-ebc3-4194-aa85-40df469dde2a
+  :END:
+
+Sometimes you don't want to persist parameters in a configuration file. For
+example, in a CI/CD pipeline or when quickly testing with different settings.
+You can set parameters through environment variables using the ~CLK_P_~ prefix.
+
+The naming convention is simple: ~CLK_P_~ followed by the command name in
+uppercase. Dots in command names become underscores, hyphens become double
+underscores.
+
+Let's go back to the root directory and try it:
+
+#+NAME: go-back
+#+BEGIN_SRC bash :results none :exports none :session 2a1f20f5-2f74-4221-bcab-677a045d3a8f
+cd "${TMP}"
+#+END_SRC
+
+#+NAME: env-parameters
+#+BEGIN_SRC bash :results verbatim :exports both :session 2a1f20f5-2f74-4221-bcab-677a045d3a8f :cache yes
+export CLK_P_AWS="--profile env-prod --region us-west-2"
+clk aws s3 ls s3://env-bucket
+#+END_SRC
+
+#+RESULTS[d9eb2101dcd80cb44bf2194c54ac546a45ab5643]: env-parameters
+: [env-prod/us-west-2] aws s3 ls s3://env-bucket
+
+These parameters are also visible in the command help:
+
+#+NAME: env-help
+#+BEGIN_SRC bash :results verbatim :exports both :session 2a1f20f5-2f74-4221-bcab-677a045d3a8f :cache yes
+clk aws --help 2>&1 | grep "current parameters"
+#+END_SRC
+
+#+RESULTS[7640dbdb917da03401844d2c7ea5157734353fb4]: env-help
+: The current parameters set for this command are: --profile env-prod --region us-west-2
+
+And they show up in ~parameter show~ as well:
+
+#+NAME: env-show
+#+BEGIN_SRC bash :results verbatim :exports both :session 2a1f20f5-2f74-4221-bcab-677a045d3a8f :cache yes
+clk parameter show aws
+#+END_SRC
+
+#+RESULTS[22cbbb2da55bc7bdc50453cae5d1868d09603ae1]: env-show
+: aws --profile env-prod --region us-west-2
+
+When you unset the environment variable, the parameters are gone:
+
+#+NAME: env-unset
+#+BEGIN_SRC bash :results verbatim :exports both :session 2a1f20f5-2f74-4221-bcab-677a045d3a8f :cache yes
+unset CLK_P_AWS
+clk aws s3 ls
+#+END_SRC
+
+#+RESULTS[26de01acdd78b0c57725475343c6fc5e61d3b0f6]: env-unset
+: [default/us-east-1] aws s3 ls
+
 #+BEGIN_SRC bash :exports none :tangle ../../tests/use_cases/wrapping_a_cloud_provider_cli.sh :noweb yes :shebang "#!/bin/bash -eu"
 <<init>>
 
@@ -277,4 +337,14 @@ check-result(set-project-parameters)
 check-result(try-project-parameters)
 
 check-result(leave-project)
+
+<<go-back>>
+
+check-result(env-parameters)
+
+check-result(env-help)
+
+check-result(env-show)
+
+check-result(env-unset)
 #+END_SRC

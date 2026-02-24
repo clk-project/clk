@@ -108,7 +108,9 @@ def use_settings(settings_name, settings_cls, override=True, default_profile="co
             return value
 
         for profile in [
-            profile.name for profile in config.root_profiles if profile.explicit
+            profile.name
+            for profile in config.root_profiles
+            if profile.explicit and not profile.readonly
         ]:
             f = flag(
                 f"--{profile}",

@@ -1,5 +1,5 @@
 #!/bin/bash -eu
-# [[file:../../doc/use_cases/wrapping_a_cloud_provider_cli.org::#per-project][per-project configuration:5]]
+# [[file:../../doc/use_cases/wrapping_a_cloud_provider_cli.org::#30ecf8ae-ebc3-4194-aa85-40df469dde2a][environment variable parameters:6]]
 . ./sandboxing.sh
 
 clk command create python aws --group --description "AWS CLI wrapper"
@@ -263,4 +263,92 @@ diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
 echo "Something went wrong when trying leave-project"
 exit 1
 }
-# per-project configuration:5 ends here
+
+
+cd "${TMP}"
+
+
+env-parameters_code () {
+      export CLK_P_AWS="--profile env-prod --region us-west-2"
+      clk aws s3 ls s3://env-bucket
+}
+
+env-parameters_expected () {
+      cat<<"EOEXPECTED"
+[env-prod/us-west-2] aws s3 ls s3://env-bucket
+EOEXPECTED
+}
+
+echo 'Run env-parameters'
+
+{ env-parameters_code || true ; } > "${TMP}/code.txt" 2>&1
+env-parameters_expected > "${TMP}/expected.txt" 2>&1
+diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+echo "Something went wrong when trying env-parameters"
+exit 1
+}
+
+
+
+env-help_code () {
+      clk aws --help 2>&1 | grep "current parameters"
+}
+
+env-help_expected () {
+      cat<<"EOEXPECTED"
+The current parameters set for this command are: --profile env-prod --region us-west-2
+EOEXPECTED
+}
+
+echo 'Run env-help'
+
+{ env-help_code || true ; } > "${TMP}/code.txt" 2>&1
+env-help_expected > "${TMP}/expected.txt" 2>&1
+diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+echo "Something went wrong when trying env-help"
+exit 1
+}
+
+
+
+env-show_code () {
+      clk parameter show aws
+}
+
+env-show_expected () {
+      cat<<"EOEXPECTED"
+aws --profile env-prod --region us-west-2
+EOEXPECTED
+}
+
+echo 'Run env-show'
+
+{ env-show_code || true ; } > "${TMP}/code.txt" 2>&1
+env-show_expected > "${TMP}/expected.txt" 2>&1
+diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+echo "Something went wrong when trying env-show"
+exit 1
+}
+
+
+
+env-unset_code () {
+      unset CLK_P_AWS
+      clk aws s3 ls
+}
+
+env-unset_expected () {
+      cat<<"EOEXPECTED"
+[default/us-east-1] aws s3 ls
+EOEXPECTED
+}
+
+echo 'Run env-unset'
+
+{ env-unset_code || true ; } > "${TMP}/code.txt" 2>&1
+env-unset_expected > "${TMP}/expected.txt" 2>&1
+diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+echo "Something went wrong when trying env-unset"
+exit 1
+}
+# environment variable parameters:6 ends here

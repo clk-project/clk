@@ -93,6 +93,7 @@ class ProfileFactory:
         activation_level=ActivationLevel.global_,
         default_color=None,
         isextension=False,
+        readonly=False,
     ):
         return klass.preset_profile_cls(
             name,
@@ -102,6 +103,7 @@ class ProfileFactory:
             activation_level=activation_level,
             default_color=default_color,
             isextension=isextension,
+            readonly=readonly,
         )
 
 
@@ -812,6 +814,7 @@ class PresetProfile(Profile):
         activation_level=ActivationLevel.global_,
         default_color=None,
         isextension=False,
+        readonly=False,
     ):
         self.name = name
         self.default_color = default_color
@@ -821,6 +824,7 @@ class PresetProfile(Profile):
         self.explicit = explicit
         self.activation_level = activation_level
         self.isextension = isextension
+        self.readonly = readonly
 
     def get_settings(self, section):
         if section not in self.settings and not isinstance(

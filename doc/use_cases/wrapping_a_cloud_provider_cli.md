@@ -2,6 +2,7 @@
 - [setting default parameters](#default-parameters)
 - [managing parameters](#managing-parameters)
 - [per-project configuration](#per-project)
+- [environment variable parameters](#30ecf8ae-ebc3-4194-aa85-40df469dde2a)
 
 I use AWS a lot at work. The AWS CLI is powerful but verbose. Every command needs `--profile` to specify which account I'm targeting, and often `--region` too. I find myself typing things like:
 
@@ -188,3 +189,46 @@ clk aws s3 ls
     [default/us-east-1] aws s3 ls
 
 This way, I never accidentally run a command against the wrong account just because I forgot to switch profiles.
+
+
+<a id="30ecf8ae-ebc3-4194-aa85-40df469dde2a"></a>
+
+# environment variable parameters
+
+Sometimes you don't want to persist parameters in a configuration file. For example, in a CI/CD pipeline or when quickly testing with different settings. You can set parameters through environment variables using the `CLK_P_` prefix.
+
+The naming convention is simple: `CLK_P_` followed by the command name in uppercase. Dots in command names become underscores, hyphens become double underscores.
+
+Let's go back to the root directory and try it:
+
+```bash
+export CLK_P_AWS="--profile env-prod --region us-west-2"
+clk aws s3 ls s3://env-bucket
+```
+
+    [env-prod/us-west-2] aws s3 ls s3://env-bucket
+
+These parameters are also visible in the command help:
+
+```bash
+clk aws --help 2>&1 | grep "current parameters"
+```
+
+    The current parameters set for this command are: --profile env-prod --region us-west-2
+
+And they show up in `parameter show` as well:
+
+```bash
+clk parameter show aws
+```
+
+    aws --profile env-prod --region us-west-2
+
+When you unset the environment variable, the parameters are gone:
+
+```bash
+unset CLK_P_AWS
+clk aws s3 ls
+```
+
+    [default/us-east-1] aws s3 ls

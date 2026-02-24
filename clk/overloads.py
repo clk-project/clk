@@ -294,7 +294,7 @@ class ProfileChoice(click.Choice):
     def choices(self):
         profiles = config.all_profiles
         if self.explicit_only:
-            profiles = [p for p in profiles if p.explicit]
+            profiles = [p for p in profiles if p.explicit and not p.readonly]
         profile_names = [p.name for p in profiles]
         profile_shortnames = [p.short_name for p in profiles]
         res = []
