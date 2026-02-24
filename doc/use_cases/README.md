@@ -50,6 +50,8 @@ If you want to persist command options so you don't have to repeat them, and opt
 
 When parameters become tedious because you need to set the same option on many commands, consider using [values to set semantic defaults](setting_default_values.md) instead. This use case also explains the difference between syntactic (parameters) and semantic (values) configuration, with a comparison to git config.
 
+For a deployment-oriented example that combines auto-detection with explicit overrides, see the [environment deployment](environment_deployment.md) use case. It shows how to use `get_parameter_source` to distinguish between default and explicit values, and how to create shortcut aliases for common targets.
+
 
 <a id="6abcb030-192b-4c73-a62f-4551d1e92a77"></a>
 
@@ -80,6 +82,8 @@ In shell command, the library included by default (called \_clk.sh) provides som
 When you want to provide some choices in command, it might be worthwhile to look at [those examples](choices.md).
 
 To cache some computation to disk, see the [web scrapping](scrapping_the_web.md) use case.
+
+For a complete example of fetching remote JSON data and displaying it with syntax highlighting, see the [fetching and displaying JSON data](fetching_and_displaying_json_data.md) use case, which demonstrates `download` and `echo_json` from `clk.lib`.
 
 We put a lot of useful logic in clk.lib but did not document much as of now. [This](lib.md) is the current state of this documentation.
 
