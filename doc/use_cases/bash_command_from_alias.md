@@ -36,6 +36,14 @@ clk music play MyAlbum
     New global parameters for music.play: --repeat
     Running mpc with: play --random --use-speakers --replaygain --repeat MyAlbum
 
+Of course, `--set-parameter` provides completion for the profile name. Here, only `global` is available since we don't have a project.
+
+```bash
+clk music play --set-parameter g<TAB>
+```
+
+    global
+
 Chances are that, after some time, we realize that this command should be a little more complicated than wrapping a single executable. For instance, we could want to start some music server, then play some music.
 
 We could do this with a more complicated alias.
@@ -66,17 +74,15 @@ Note that showing the help of the command also gives that information.
 clk music play --help|head -10
 ```
 
-```
-Usage: clk music play [OPTIONS] [COMMAND]...
+    Usage: clk music play [OPTIONS] [COMMAND]...
 
-  Alias for: exec mpc start-server , exec mpc play --random --use-speakers --replaygain
+      Alias for: exec mpc start-server , exec mpc play --random --use-speakers --replaygain
 
-  The current parameters set for this command are: --repeat
+      The current parameters set for this command are: --repeat
 
-  Edit this alias by running `clk alias edit music.play`
-  Or adjust this command `clk alias set music.play exec mpc start-server , exec mpc play --random --use-speakers
-  --replaygain`
-```
+      Edit this alias by running `clk alias edit music.play`
+      Or adjust this command `clk alias set music.play exec mpc start-server , exec mpc play --random --use-speakers
+      --replaygain`
 
 Even doing so, you may at some point want more control about what you are doing, like waiting for the music server to be ready, you will have to fall back in a real command. Replacing this alias with a shell command is straightforward:
 

@@ -282,8 +282,9 @@ class CoreCommandResolver(CommandResolver):
 class ProfileChoice(click.Choice):
     name = "profile"
 
-    def __init__(self, extra=None, case_sensitive=True):
+    def __init__(self, extra=None, case_sensitive=True, explicit_only=False):
         self.case_sensitive = case_sensitive
+        self.explicit_only = explicit_only
         if extra is None:
             self.extra = []
         else:
@@ -291,12 +292,17 @@ class ProfileChoice(click.Choice):
 
     @property
     def choices(self):
-        profile_names = [p.name for p in config.all_profiles]
-        profile_shortnames = [p.short_name for p in config.all_profiles]
+        profiles = config.all_profiles
+        if self.explicit_only:
+            profiles = [p for p in profiles if p.explicit]
+        profile_names = [p.name for p in profiles]
+        profile_shortnames = [p.short_name for p in profiles]
         res = []
         res.extend(profile_names)
         uniq_shortnames = [
-            name for name in profile_shortnames if profile_shortnames.count(name) == 1
+            name
+            for name in profile_shortnames
+            if profile_shortnames.count(name) == 1 and name not in profile_names
         ]
         res.extend(uniq_shortnames)
         res.extend(self.extra)
@@ -315,7 +321,7 @@ class ExtraParametersMixin:
                     callback=self._make_parameter_callback(action, include_args=True),
                     group="parameters",
                     help=f"{action.capitalize()} the parameters for this command",
-                    type=ProfileChoice(),
+                    type=ProfileChoice(explicit_only=True),
                 )
             )
         # Parameter options without args (unset, show, edit don't pass raw_args)
@@ -328,7 +334,7 @@ class ExtraParametersMixin:
                     callback=self._make_parameter_callback(action, include_args=False),
                     group="parameters",
                     help=f"{action.capitalize()} the parameters for this command",
-                    type=ProfileChoice(extra=extra) if extra else ProfileChoice(),
+                    type=ProfileChoice(extra=extra, explicit_only=(action == "unset")),
                 )
             )
         # No-parameter flag

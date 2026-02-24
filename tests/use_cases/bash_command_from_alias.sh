@@ -1,5 +1,5 @@
 #!/bin/bash -eu
-# [[id:e6078fc8-4b12-44ad-b008-20f0b7311069::+BEGIN_SRC bash :exports none :tangle ../../tests/use_cases/bash_command_from_alias.sh :noweb yes :shebang "#!/bin/bash -eu"][No heading:14]]
+# [[file:../../doc/use_cases/tests/use_cases/bash_command_from_alias.sh :noweb yes :shebang "#!/bin/bash -eu"][No heading:17]]
 . ./sandboxing.sh
 cat <<"EOF" > "${TMP}/bin/mpc"
 #!/bin/bash
@@ -69,6 +69,26 @@ exit 1
 }
 
 
+try-completion_code () {
+      clk completion try --last -- music play --set-parameter g
+}
+
+try-completion_expected () {
+      cat<<"EOEXPECTED"
+global
+EOEXPECTED
+}
+
+echo 'Run try-completion'
+
+{ try-completion_code || true ; } > "${TMP}/code.txt" 2>&1
+try-completion_expected > "${TMP}/expected.txt" 2>&1
+diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+echo "Something went wrong when trying try-completion"
+exit 1
+}
+
+
 more_complicated_alias_code () {
       clk alias set music.play exec mpc start-server , exec -- mpc play --random --use-speakers --replaygain
       clk music play MyAlbum
@@ -128,7 +148,6 @@ Usage: clk music play [OPTIONS] [COMMAND]...
   Edit this alias by running `clk alias edit music.play`
   Or adjust this command `clk alias set music.play exec mpc start-server , exec mpc play --random --use-speakers
   --replaygain`
-
 EOEXPECTED
 }
 
@@ -231,4 +250,4 @@ diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
 echo "Something went wrong when trying help"
 exit 1
 }
-# No heading:14 ends here
+# No heading:17 ends here

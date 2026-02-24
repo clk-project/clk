@@ -70,6 +70,27 @@ clk music play MyAlbum
 : New global parameters for music.play: --repeat
 : Running mpc with: play --random --use-speakers --replaygain --repeat MyAlbum
 
+Of course, ~--set-parameter~ provides completion for the profile name. Here,
+only ~global~ is available since we don't have a project.
+
+#+NAME: sequence-to-complete
+#+BEGIN_SRC bash :results none :exports none
+  music play --set-parameter g
+#+END_SRC
+
+#+NAME: ask-for-completion
+#+BEGIN_SRC bash :results none :exports code :noweb yes
+  clk <<sequence-to-complete>><TAB>
+#+END_SRC
+
+#+NAME: try-completion
+#+BEGIN_SRC bash :results verbatim :exports results :noweb yes :cache yes :session e6078fc8-4b12-44ad-b008-20f0b7311069
+  clk completion try --last -- <<sequence-to-complete>>
+#+END_SRC
+
+#+RESULTS[7ac141da6b6844471cc5dec64f6979ba425df20e]: try-completion
+: global
+
 Chances are that, after some time, we realize that this command should be a
 little more complicated than wrapping a single executable. For instance, we
 could want to start some music server, then play some music.
@@ -109,17 +130,15 @@ clk music play --help|head -10
 #+END_SRC
 
 #+RESULTS[da13213a5b95d29790482b257f938028808294d4]: help-alias
-#+begin_example
-Usage: clk music play [OPTIONS] [COMMAND]...
-
-  Alias for: exec mpc start-server , exec mpc play --random --use-speakers --replaygain
-
-  The current parameters set for this command are: --repeat
-
-  Edit this alias by running `clk alias edit music.play`
-  Or adjust this command `clk alias set music.play exec mpc start-server , exec mpc play --random --use-speakers
-  --replaygain`
-#+end_example
+: Usage: clk music play [OPTIONS] [COMMAND]...
+:
+:   Alias for: exec mpc start-server , exec mpc play --random --use-speakers --replaygain
+:
+:   The current parameters set for this command are: --repeat
+:
+:   Edit this alias by running `clk alias edit music.play`
+:   Or adjust this command `clk alias set music.play exec mpc start-server , exec mpc play --random --use-speakers
+:   --replaygain`
 
 
 Even doing so, you may at some point want more control about what you are doing,
@@ -188,6 +207,7 @@ Arguments:
   check-result(create)
   check-result(use_play)
   check-result(use_parameters)
+  check-result(try-completion)
   check-result(more_complicated_alias)
   check-result(show-alias)
   check-result(help-alias)
