@@ -16,6 +16,7 @@ This command shows something
 --
 A:kind-of-animal:$(clk_format_choice duck whale cat dog):A kind of animal:{"default": "duck", "nargs": 1}
 O:--sound-of-animal:str:The sound the animal makes
+O:--repeat:int:How many times to repeat the message:0
 F:--shout:Print the message of the animal in capital case
 EOF
 }
@@ -36,15 +37,25 @@ else
     echo "${msg}"
 fi
 
+for i in $(seq 1 "${CLK___REPEAT}")
+do
+    echo "${msg}"
+done
+
 EOH
 
 clk animal --help | grep -- 'KIND_OF_ANIMAL'
 clk animal --help | grep -- '--sound-of-animal'
+clk animal --help | grep -- '--repeat'
 clk animal --help | grep -- '--shout'
 
 test "$(clk animal duck --sound-of-animal couac)" = "duck does couac"
 test "$(clk animal --sound-of-animal couac)" = "duck does couac"
 test "$(clk animal whale --shout)" = "I DON'T KNOW WHAT SOUND WHALE MAKES"
+test "$(clk animal duck --sound-of-animal couac --repeat 0)" = "duck does couac"
+test "$(clk animal duck --sound-of-animal couac --repeat 2)" = "duck does couac
+duck does couac
+duck does couac"
 
 clk command create bash wordcount
 cat <<"EOH" > "$(clk command which wordcount)"

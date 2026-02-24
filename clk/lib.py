@@ -1434,6 +1434,12 @@ def value_to_string(value):
         return " ".join([value_to_string(element) for element in value])
     elif isinstance(value, datetime.datetime):
         return value.isoformat()
+    elif (
+        not isinstance(value, bool)
+        and isinstance(value, (int, float, complex))
+        and value == 0
+    ):  # numeric zero must not become empty string
+        return str(value)
     elif value:
         return str(value)
     else:

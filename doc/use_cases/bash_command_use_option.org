@@ -19,6 +19,7 @@ give.
 #+BEGIN_SRC bash :results none :exports code
 A:kind-of-animal:$(clk_format_choice duck whale cat dog):A kind of animal:{"default": "duck", "nargs": 1}
 O:--sound-of-animal:str:The sound the animal makes
+O:--repeat:int:How many times to repeat the message:0
 F:--shout:Print the message of the animal in capital case
 #+END_SRC
 
@@ -37,6 +38,11 @@ F:--shout:Print the message of the animal in capital case
   else
       echo "${msg}"
   fi
+
+  for i in $(seq 1 "${CLK___REPEAT}")
+  do
+      echo "${msg}"
+  done
 #+END_SRC
 
 #+name: create
@@ -70,12 +76,14 @@ We can see the help of those parameters in the help of the command.
 #+BEGIN_SRC bash :results verbatim :exports both :session 100aa89b-f320-46ee-9d5d-2193ef48d4eb
 clk animal --help | grep -- 'KIND_OF_ANIMAL'
 clk animal --help | grep -- '--sound-of-animal'
+clk animal --help | grep -- '--repeat'
 clk animal --help | grep -- '--shout'
 #+END_SRC
 
 #+RESULTS: see
 : KIND_OF_ANIMAL [duck|whale|cat|dog]
 : --sound-of-animal TEXT  The sound the animal makes  [default: None]
+: --repeat INTEGER        How many times to repeat the message  [default: 0]
 : --shout                 Print the message of the animal in capital case  [default: False]
 
 #+name: check
@@ -83,6 +91,10 @@ clk animal --help | grep -- '--shout'
 test "$(clk animal duck --sound-of-animal couac)" = "duck does couac"
 test "$(clk animal --sound-of-animal couac)" = "duck does couac"
 test "$(clk animal whale --shout)" = "I DON'T KNOW WHAT SOUND WHALE MAKES"
+test "$(clk animal duck --sound-of-animal couac --repeat 0)" = "duck does couac"
+test "$(clk animal duck --sound-of-animal couac --repeat 2)" = "duck does couac
+duck does couac
+duck does couac"
 #+END_SRC
 
 * completing against files
