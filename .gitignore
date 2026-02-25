@@ -13,3 +13,5 @@ README.html
 **/.claude/settings.local.json
 **/venv
 /output
+/ralph-output
+/plan.md

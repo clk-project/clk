@@ -252,6 +252,44 @@ sanity-check:
     SAVE ARTIFACT /output/coverage-reports AS LOCAL output/coverage-reports
     SAVE ARTIFACT /output/coverage-reports/*.md AS LOCAL coverage-reports/
 
+ralph:
+    # Example: earthly --secret-file CLAUDE_CREDENTIALS=~/.claude/.credentials.json +ralph --ralph_args="run --max-iterations 1 -p 'do something'" --output_dir=results
+    # Start from the test base: debian with python venv, all test tooling, plus npm for ralph
+    FROM e+debian-python-user-venv --extra_packages="git expect direnv faketime jq graphviz procps npm xz-utils" --packages="coverage pytest keyring testiq"
+    RUN echo 'source <(direnv hook bash)' >> "${HOME}/.bashrc"
+    # Install clk (same pattern as test target)
+    ARG from=source
+    ARG use_git=no
+    ARG build_requirements=no
+    ARG pypi_version
+    DO +INSTALL --from="$from" --use_git="$use_git" --build_requirements="${build_requirements}" --pypi_version="${pypi_version}"
+    # Install bash completion for clk
+    RUN mkdir coverage
+    RUN coverage run --source clk -m clk completion --case-insensitive install bash && echo 'source "${HOME}/.bash_completion"' >> "${HOME}/.bashrc"
+    RUN cd coverage && coverage combine --append ../.coverage
+    # Copy test files (tests, doc, contrib)
+    COPY --dir +test-files/app/* /app
+    ENV CLK_ALLOW_INTRUSIVE_TEST=True
+    # Install ralph-orchestrator and claude code cli via npm (user-local prefix since we run as non-root)
+    RUN npm config set prefix "${HOME}/.npm-global" && npm install -g @ralph-orchestrator/ralph-cli @anthropic-ai/claude-code
+    ENV PATH="${HOME}/.npm-global/bin:${PATH}"
+    # Set up git identity and copy the project git repo for ralph to work in
+    RUN git config --global user.email "ralph@localhost" && git config --global user.name "Ralph" && git config --global init.defaultBranch main
+    COPY --dir +git-files/app/.git /tmp/ralph-workdir/.git
+    COPY --dir +sources/app/* +test-files/app/* /tmp/ralph-workdir/
+    RUN cd /tmp/ralph-workdir && git checkout .
+    # Arguments for ralph
+    ARG ralph_args
+    ARG output_dir=ralph-output
+    # Pass claude code OAuth credentials into the container
+    RUN mkdir -p "${HOME}/.claude"
+    COPY --if-exists plan.md /tmp/ralph-workdir/plan.md
+    # Run ralph in the isolated repo (use eval to preserve quoting in ralph_args)
+    # Exit code 2 means max iterations reached, which is expected but recorded
+    RUN --secret CLAUDE_CREDENTIALS cp /run/secrets/CLAUDE_CREDENTIALS "${HOME}/.claude/.credentials.json" && cd /tmp/ralph-workdir && eval "ralph ${ralph_args}"; rc=$?; echo $rc > /tmp/ralph-workdir/.ralph-exit-code; test $rc -eq 0 -o $rc -eq 2
+    # Save the ralph workdir as artifact
+    SAVE ARTIFACT /tmp/ralph-workdir /${output_dir}
+
 deploy:
     FROM e+alpine-python-user-venv --extra_packages=twine
     COPY +sanity-check/output /output

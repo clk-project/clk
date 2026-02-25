@@ -1,0 +1,38 @@
+#!/bin/bash -eu
+
+source "_clk.sh"
+
+clk_usage () {
+    cat<<EOF
+$0
+
+Run a ralph orchestrator loop in an isolated earthly container
+--
+A:prompt:str:The prompt to give to ralph
+O:--max-iterations:int:Maximum number of ralph iterations:5
+O:--output-dir:str:The name of the output directory for the artifact:ralph-output
+O:--credentials:file:Path to the claude code credentials file:${HOME}/.claude/.credentials.json
+F:--interactive,-i:To give to earthly
+EOF
+}
+
+clk_help_handler "$@"
+args=()
+earthly_args=()
+args+=(--ralph_args "run --max-iterations $(clk_value max-iterations) -p '$(clk_value prompt)'")
+if clk_given output-dir
+then
+    args+=(--output_dir "$(clk_value output-dir)")
+fi
+if clk_given interactive
+then
+    earthly_args+=("--interactive")
+fi
+pushd "${CLK__PROJECT}" > /dev/null
+{
+    earthly "${earthly_args[@]}" \
+        --secret-file CLAUDE_CREDENTIALS="$(clk_value credentials)" \
+        --artifact \
+        +ralph/$(clk_value output-dir) "${args[@]}"
+}
+popd > /dev/null
