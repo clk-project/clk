@@ -3,7 +3,7 @@
 ## Summary
 
 - **Total tests:** 106
-- **Total covered lines:** 6453
+- **Total covered lines:** 6463
 - **Hot lines (covered by all tests):** 0
 
 Lines covered by all tests are "hot" - likely core/init code.
