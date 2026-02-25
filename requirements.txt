@@ -10,7 +10,7 @@ asttokens==3.0.1
     # via stack-data
 cached-property==2.0.1
     # via clk (pyproject.toml)
-certifi==2026.1.4
+certifi==2026.2.25
     # via requests
 charset-normalizer==3.4.4
     # via requests
