@@ -174,25 +174,14 @@ class AliasCommandResolver(CommandResolver):
             elif isinstance(c.command, Command):
                 return create_cls(command), "command", c, commands_to_run
             elif isinstance(c.command, config.main_command.__class__):
-                cls = click.group(
-                    cls=config.main_command.__class__,
-                    name=name,
-                    help=cmdhelp,
-                    short_help=short_help,
-                )
-                return cls, config.main_command.path, c, commands_to_run
+                commands_to_run = commands_to_run[:-1] + [commands_to_run[-1][1:]]
+                return create_cls(group), "group", c, commands_to_run
             else:
                 raise NotImplementedError()
         elif commands_to_run[-1][0] == config.main_command.path:
-            cls = click.group(
-                cls=config.main_command.__class__,
-                name=name,
-                help=cmdhelp,
-                short_help=short_help,
-            )
             commands_to_run = commands_to_run[:-1] + [commands_to_run[-1][1:]]
             c = get_ctx(commands_to_run[-1])
-            return cls, config.main_command.path, c, commands_to_run
+            return create_cls(group), "group", c, commands_to_run
         else:
             return create_cls(command), None, c, commands_to_run
 
@@ -215,8 +204,21 @@ class AliasCommandResolver(CommandResolver):
             arguments = clean_flow_arguments(ctx.complete_arguments[:])
             whole_command = commands[-1] + arguments
 
-            # Resolve context chain
+            if not commands[-1]:
+                # Alias targets root with no additional commands - subcommands
+                # are handled by Click's group mechanism via
+                # AliasToGroupCommandResolver
+                return
+
+            # Resolve context chain — side_effects=True so that options
+            # like --project persist in config (no temp_config rollback).
             original_command_ctx = get_ctx(whole_command, side_effects=True)
+            if isinstance(original_command_ctx.command, config.main_command.__class__):
+                # The alias targets root with options (e.g. --project).
+                # get_ctx already applied them as side effects on config,
+                # so subcommand dispatch via AliasToGroupCommandResolver
+                # will see the right project context.
+                return
             cur_ctx = original_command_ctx
             ctxs = []
             # Don't call callbacks of children of original_command
@@ -264,8 +266,9 @@ class AliasCommandResolver(CommandResolver):
 
         alias_command.original_command = c.command
         if kind == "group":
-            if c.command.default_cmd_name is not None:
-                alias_command.set_default_command(c.command.default_cmd_name)
+            default_cmd_name = getattr(c.command, "default_cmd_name", None)
+            if default_cmd_name is not None:
+                alias_command.set_default_command(default_cmd_name)
         elif kind == "command":
             alias_command.handle_dry_run = c.command.handle_dry_run
 

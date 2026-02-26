@@ -1,0 +1,319 @@
+:PROPERTIES:
+:ID:       55ed49b4-065d-440e-903b-658d1dcec014
+:END:
+#+LANGUAGE: en
+#+EXPORT_FILE_NAME: ./alias_to_root.md
+
+#+CALL: ../../lp.org:check-result()
+
+#+name: init
+#+BEGIN_SRC bash :results none :exports none :session 55ed49b4-065d-440e-903b-658d1dcec014
+  . ./sandboxing.sh
+#+END_SRC
+
+When you work on linked but separate projects — say a backend API and a
+frontend app — changes in one often need to be verified in the other. If they
+live in separate directories, you end up constantly ~cd~-ing back and forth,
+losing context along the way.
+
+clk projects scope their commands to directories: aliases, parameters and
+scripts only activate when you're inside the project. That's great for
+isolation, but painful when you need to jump between two or three repos in a
+single workflow.
+
+* The problem
+
+Let's set up two projects to see the problem in action.
+
+#+NAME: create-api
+#+BEGIN_SRC bash :results none :exports code :session 55ed49b4-065d-440e-903b-658d1dcec014
+mkdir -p billing-api/.clk
+cd billing-api
+#+END_SRC
+
+#+NAME: alias-api-build
+#+BEGIN_SRC bash :results verbatim :exports both :session 55ed49b4-065d-440e-903b-658d1dcec014 :cache yes
+clk alias set build echo "Building the API"
+#+END_SRC
+
+#+RESULTS[b7704bdad023fa2f26e94a8f07d08139c676a189]: alias-api-build
+: New local alias for build: echo 'Building the API'
+
+#+NAME: alias-api-test
+#+BEGIN_SRC bash :results verbatim :exports both :session 55ed49b4-065d-440e-903b-658d1dcec014 :cache yes
+clk alias set test echo "Running API tests"
+#+END_SRC
+
+#+RESULTS[76719964e207c3266a6b733e26c05beb6c4dfcbb]: alias-api-test
+: New local alias for test: echo 'Running API tests'
+
+#+NAME: leave-api
+#+BEGIN_SRC bash :results none :exports code :session 55ed49b4-065d-440e-903b-658d1dcec014
+cd ..
+#+END_SRC
+
+#+NAME: create-app
+#+BEGIN_SRC bash :results none :exports code :session 55ed49b4-065d-440e-903b-658d1dcec014
+mkdir -p billing-app/.clk
+cd billing-app
+#+END_SRC
+
+#+NAME: alias-app-build
+#+BEGIN_SRC bash :results verbatim :exports both :session 55ed49b4-065d-440e-903b-658d1dcec014 :cache yes
+clk alias set build echo "Building the frontend"
+#+END_SRC
+
+#+RESULTS[37edf4f9199d034935d80c938efd5b04f5b5558a]: alias-app-build
+: New local alias for build: echo 'Building the frontend'
+
+#+NAME: alias-app-test
+#+BEGIN_SRC bash :results verbatim :exports both :session 55ed49b4-065d-440e-903b-658d1dcec014 :cache yes
+clk alias set test echo "Running frontend tests"
+#+END_SRC
+
+#+RESULTS[46f75df81f435cc0a0296a8a3b896373e061efa4]: alias-app-test
+: New local alias for test: echo 'Running frontend tests'
+
+Each project works fine on its own. But the moment you're inside ~billing-app~
+and want to rebuild the API, the command isn't there.
+
+#+NAME: api-build-from-app
+#+BEGIN_SRC bash :results verbatim :exports both :session 55ed49b4-065d-440e-903b-658d1dcec014 :cache yes
+clk build 2>/dev/null
+#+END_SRC
+
+#+RESULTS[f4b2fae14cdf88561128bcf86c689252a71df2df]: api-build-from-app
+: Building the frontend
+
+You only see the frontend's ~build~. To reach the API, you'd need ~--project~.
+
+#+NAME: verbose-project
+#+BEGIN_SRC bash :results verbatim :exports both :session 55ed49b4-065d-440e-903b-658d1dcec014 :cache yes
+clk --project ../billing-api build 2>/dev/null
+#+END_SRC
+
+#+RESULTS[bdb754453d2d48d4dd67b47c95baa2b62c061b1b]: verbose-project
+: Building the API
+
+That works, but typing ~clk --project ../billing-api~ every time you switch
+context gets old fast — especially when you're going back and forth several
+times in a row.
+
+* Global aliases
+
+This is where an alias to the root command helps. You can create a global alias
+that points to ~clk~ itself, with the ~--project~ option baked in. Do this once
+for each project.
+
+#+NAME: leave-app
+#+BEGIN_SRC bash :results none :exports code :session 55ed49b4-065d-440e-903b-658d1dcec014
+cd ..
+#+END_SRC
+
+#+NAME: create-api-alias
+#+BEGIN_SRC bash :results verbatim :exports both :session 55ed49b4-065d-440e-903b-658d1dcec014 :cache yes
+clk alias set api clk --project ./billing-api
+#+END_SRC
+
+#+RESULTS[790ec28c9431c53e40d2f65fdf420f3d27ff4645]: create-api-alias
+: New global alias for api: clk --project ./billing-api
+
+#+NAME: create-app-alias
+#+BEGIN_SRC bash :results verbatim :exports both :session 55ed49b4-065d-440e-903b-658d1dcec014 :cache yes
+clk alias set app clk --project ./billing-app
+#+END_SRC
+
+#+RESULTS[74872c53ce36d9380c026c3eeb5c0cfc376ef446]: create-app-alias
+: New global alias for app: clk --project ./billing-app
+
+Now every command from both projects is available from anywhere, under ~api~ and
+~app~. No more ~cd~-ing around.
+
+#+NAME: api-build
+#+BEGIN_SRC bash :results verbatim :exports both :session 55ed49b4-065d-440e-903b-658d1dcec014 :cache yes
+clk api build 2>/dev/null
+#+END_SRC
+
+#+RESULTS[d14b0794ff5af4bb4b692bc4d170f64c91ede99f]: api-build
+: Building the API
+
+#+NAME: app-build
+#+BEGIN_SRC bash :results verbatim :exports both :session 55ed49b4-065d-440e-903b-658d1dcec014 :cache yes
+clk app build 2>/dev/null
+#+END_SRC
+
+#+RESULTS[450ce0d0ce68ff3c2b052760503339d2acc2b796]: app-build
+: Building the frontend
+
+#+NAME: api-test
+#+BEGIN_SRC bash :results verbatim :exports both :session 55ed49b4-065d-440e-903b-658d1dcec014 :cache yes
+clk api test 2>/dev/null
+#+END_SRC
+
+#+RESULTS[519d13c68bf6808e79662e7631087265da52cbba]: api-test
+: Running API tests
+
+#+NAME: app-test
+#+BEGIN_SRC bash :results verbatim :exports both :session 55ed49b4-065d-440e-903b-658d1dcec014 :cache yes
+clk app test 2>/dev/null
+#+END_SRC
+
+#+RESULTS[33e0f5e5e2e99370f89834eedde9d6ba89d479da]: app-test
+: Running frontend tests
+
+You changed an endpoint in the API? Rebuild it, then run the frontend tests —
+all without leaving your terminal.
+
+Subgroups and introspection commands work too. You can inspect either project's
+aliases at any time.
+
+#+NAME: show-api-alias
+#+BEGIN_SRC bash :results verbatim :exports both :session 55ed49b4-065d-440e-903b-658d1dcec014 :cache yes
+clk api alias show build 2>/dev/null
+#+END_SRC
+
+#+RESULTS[3caae149055f81a8f7c1824809a99e1fc9aa22f6]: show-api-alias
+: build echo Building the API
+
+* Local aliases
+
+The global approach is convenient but pollutes your top-level namespace. If you
+only need cross-project shortcuts when you're actually working inside one of the
+projects, local aliases are a cleaner fit. Each project declares its own
+shortcut to the sibling, and nothing leaks outside.
+
+First, let's remove the global aliases.
+
+#+NAME: remove-global-api-alias
+#+BEGIN_SRC bash :results verbatim :exports both :session 55ed49b4-065d-440e-903b-658d1dcec014 :cache yes
+clk alias unset api
+#+END_SRC
+
+#+RESULTS[148d12a3901956002b23843b18861630d4fa00a6]: remove-global-api-alias
+: Erasing api alias from global settings
+
+#+NAME: remove-global-app-alias
+#+BEGIN_SRC bash :results verbatim :exports both :session 55ed49b4-065d-440e-903b-658d1dcec014 :cache yes
+clk alias unset app
+#+END_SRC
+
+#+RESULTS[586426e2c7d48fe1eae63aa5cbaa8beadc984fa9]: remove-global-app-alias
+: Erasing app alias from global settings
+
+Now, inside ~billing-api~, create a local alias that points to the frontend.
+
+#+NAME: enter-api-for-local
+#+BEGIN_SRC bash :results none :exports code :session 55ed49b4-065d-440e-903b-658d1dcec014
+cd billing-api
+#+END_SRC
+
+#+NAME: local-api-app-alias
+#+BEGIN_SRC bash :results verbatim :exports both :session 55ed49b4-065d-440e-903b-658d1dcec014 :cache yes
+clk alias set app clk --project ../billing-app
+#+END_SRC
+
+#+RESULTS[74c1ecba8058eeb2c267ef61f727316d7d126dee]: local-api-app-alias
+: New local alias for app: clk --project ../billing-app
+
+#+NAME: leave-api-for-local
+#+BEGIN_SRC bash :results none :exports code :session 55ed49b4-065d-440e-903b-658d1dcec014
+cd ..
+#+END_SRC
+
+And inside ~billing-app~, create the reverse shortcut.
+
+#+NAME: enter-app-for-local
+#+BEGIN_SRC bash :results none :exports code :session 55ed49b4-065d-440e-903b-658d1dcec014
+cd billing-app
+#+END_SRC
+
+#+NAME: local-app-api-alias
+#+BEGIN_SRC bash :results verbatim :exports both :session 55ed49b4-065d-440e-903b-658d1dcec014 :cache yes
+clk alias set api clk --project ../billing-api
+#+END_SRC
+
+#+RESULTS[fb045ae602d1be8f7d226038bcd36b35169519d8]: local-app-api-alias
+: New local alias for api: clk --project ../billing-api
+
+From inside ~billing-app~, you can now reach the API the same way as before.
+
+#+NAME: local-api-build
+#+BEGIN_SRC bash :results verbatim :exports both :session 55ed49b4-065d-440e-903b-658d1dcec014 :cache yes
+clk api build 2>/dev/null
+#+END_SRC
+
+#+RESULTS[d14b0794ff5af4bb4b692bc4d170f64c91ede99f]: local-api-build
+: Building the API
+
+#+NAME: local-api-test
+#+BEGIN_SRC bash :results verbatim :exports both :session 55ed49b4-065d-440e-903b-658d1dcec014 :cache yes
+clk api test 2>/dev/null
+#+END_SRC
+
+#+RESULTS[519d13c68bf6808e79662e7631087265da52cbba]: local-api-test
+: Running API tests
+
+#+NAME: leave-app-for-local
+#+BEGIN_SRC bash :results none :exports code :session 55ed49b4-065d-440e-903b-658d1dcec014
+cd ..
+#+END_SRC
+
+And from inside ~billing-api~, you reach the frontend.
+
+#+NAME: enter-api-for-local-test
+#+BEGIN_SRC bash :results none :exports code :session 55ed49b4-065d-440e-903b-658d1dcec014
+cd billing-api
+#+END_SRC
+
+#+NAME: local-app-build
+#+BEGIN_SRC bash :results verbatim :exports both :session 55ed49b4-065d-440e-903b-658d1dcec014 :cache yes
+clk app build 2>/dev/null
+#+END_SRC
+
+#+RESULTS[450ce0d0ce68ff3c2b052760503339d2acc2b796]: local-app-build
+: Building the frontend
+
+#+NAME: local-app-test
+#+BEGIN_SRC bash :results verbatim :exports both :session 55ed49b4-065d-440e-903b-658d1dcec014 :cache yes
+clk app test 2>/dev/null
+#+END_SRC
+
+#+RESULTS[33e0f5e5e2e99370f89834eedde9d6ba89d479da]: local-app-test
+: Running frontend tests
+
+The aliases only exist inside their respective projects, so they won't clutter
+your global namespace or show up in unrelated directories.
+
+#+BEGIN_SRC bash :exports none :tangle ../../tests/use_cases/alias_to_root.sh :noweb yes :shebang "#!/bin/bash -eu"
+  <<init>>
+  <<create-api>>
+  check-result(alias-api-build)
+  check-result(alias-api-test)
+  <<leave-api>>
+  <<create-app>>
+  check-result(alias-app-build)
+  check-result(alias-app-test)
+  check-result(api-build-from-app)
+  check-result(verbose-project)
+  <<leave-app>>
+  check-result(create-api-alias)
+  check-result(create-app-alias)
+  check-result(api-build)
+  check-result(app-build)
+  check-result(api-test)
+  check-result(app-test)
+  check-result(show-api-alias)
+  check-result(remove-global-api-alias)
+  check-result(remove-global-app-alias)
+  <<enter-api-for-local>>
+  check-result(local-api-app-alias)
+  <<leave-api-for-local>>
+  <<enter-app-for-local>>
+  check-result(local-app-api-alias)
+  check-result(local-api-build)
+  check-result(local-api-test)
+  <<leave-app-for-local>>
+  <<enter-api-for-local-test>>
+  check-result(local-app-build)
+  check-result(local-app-test)
+#+END_SRC

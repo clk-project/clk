@@ -8,6 +8,7 @@
 | File | Description | Auto-detected keywords |
 |------|-------------|----------------------|
 | [3D_printing_flow.md](3D_printing_flow.md) | Chaining commands into a workflow sequence using flows |  |
+| [alias_to_root.md](alias_to_root.md) |  |  |
 | [backing_up_documents.md](backing_up_documents.md) | Building a backup system with hierarchical commands, flows, parameters, and per-project configuration | CLK___DB,CLK___FILENAME,CLK___QUALITY,CLK___SOURCE |
 | [bash_command.md](bash_command.md) | Creating bash commands, clk_usage, clk_help_handler, source _clk.sh, exit codes, traps |  |
 | [bash_command_built_in_lib.md](bash_command_built_in_lib.md) | Built-in bash helpers: clk_drop_duplicate and other utilities in _clk.sh |  |

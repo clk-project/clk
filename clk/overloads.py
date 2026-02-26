@@ -95,12 +95,7 @@ def get_command2(path):
         parent_path = ".".join(pathsplit[:-1])
         parent, _ = get_command2(parent_path)
         if isinstance(parent, config.main_command.__class__):
-            LOGGER.error(
-                f"The command {path} was asked for. "
-                "Because it starts with an alias to the root command,"
-                " I deliberately chose to ignore it."
-            )
-            raise CommandNotFound(cmd_name, parent)
+            parent = config.main_command
         elif not hasattr(parent, "commandresolvers"):
             raise NotAGroupException(parent_path, f"while trying to load {path}")
     else:
