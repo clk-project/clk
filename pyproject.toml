@@ -33,6 +33,12 @@ dependencies = [
 license = "MIT"
 dynamic = ["version"]
 
+[project.optional-dependencies]
+test = [
+    "pytest",
+    "coverage",
+]
+
 [project.scripts]
 clk = "clk.main:main"
 

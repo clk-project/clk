@@ -283,12 +283,24 @@ ralph:
     ARG output_dir=ralph-output
     # Pass claude code OAuth credentials into the container
     RUN mkdir -p "${HOME}/.claude"
+    COPY --if-exists ralph.yml /tmp/ralph-workdir/ralph.yml
     COPY --if-exists plan.md /tmp/ralph-workdir/plan.md
-    # Run ralph in the isolated repo (use eval to preserve quoting in ralph_args)
+    COPY --if-exists todo.org /tmp/ralph-workdir/todo.org
+    # Record the base commit before ralph starts, then run ralph
     # Exit code 2 means max iterations reached, which is expected but recorded
-    RUN --secret CLAUDE_CREDENTIALS cp /run/secrets/CLAUDE_CREDENTIALS "${HOME}/.claude/.credentials.json" && cd /tmp/ralph-workdir && eval "ralph ${ralph_args}"; rc=$?; echo $rc > /tmp/ralph-workdir/.ralph-exit-code; test $rc -eq 0 -o $rc -eq 2
-    # Save the ralph workdir as artifact
-    SAVE ARTIFACT /tmp/ralph-workdir /${output_dir}
+    RUN --secret CLAUDE_CREDENTIALS cp /run/secrets/CLAUDE_CREDENTIALS "${HOME}/.claude/.credentials.json" && \
+        cd /tmp/ralph-workdir && \
+        git rev-parse HEAD > /tmp/ralph-base-commit && \
+        eval "ralph ${ralph_args}"; rc=$?; echo $rc > /tmp/ralph-workdir/.ralph-exit-code; test $rc -eq 0 -o $rc -eq 2
+    # Generate format-patch files for ralph's new commits
+    RUN cd /tmp/ralph-workdir && \
+        mkdir -p patches && \
+        base=$(cat /tmp/ralph-base-commit) && \
+        if [ "$(git rev-parse HEAD)" != "$base" ]; then \
+            git format-patch "$base"..HEAD -o patches; \
+        fi
+    # Save the ralph workdir (including patches/) as a single artifact
+    SAVE ARTIFACT /tmp/ralph-workdir /${output_dir} AS LOCAL ${output_dir}/
 
 deploy:
     FROM e+alpine-python-user-venv --extra_packages=twine

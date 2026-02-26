@@ -1,0 +1,76 @@
+event_loop:
+  starting_event: "work.start"
+  completion_promise: "LOOP_COMPLETE"
+  max_iterations: 50
+  max_runtime_seconds: 14400
+  checkpoint_interval: 3
+
+cli:
+  backend: "claude-code"
+  prompt_mode: "arg"
+
+core:
+  guardrails:
+    - "Run pytest after every code change to verify nothing is broken"
+    - "Commit after each completed task with a meaningful message"
+    - "Never skip a task without adding a note in todo.org explaining why"
+
+hats:
+  picker:
+    name: "Task Picker"
+    description: "Reads todo.org and picks the next eligible task to implement"
+    triggers: ["work.start", "work.done"]
+    publishes: ["work.picked", "LOOP_COMPLETE"]
+    instructions: |
+      You are the task picker. Read todo.org and find the next task to work on.
+
+      ## Rules
+      1. Read the full todo.org file
+      2. Skip tasks that are:
+         - Already DONE (have CLOSED or DONE state)
+         - Tagged :structure: (these are section headers)
+         - Subtasks (level 3+ headings under a skipped parent)
+         - Requiring external infrastructure not available in this container (k8s clusters, external services, specific hardware)
+         - Requiring human interaction or decisions that cannot be automated
+      3. Among eligible tasks, pick the next one that has NOT been attempted yet
+      4. If you find an eligible task, emit work.picked with the task heading and file location as payload
+      5. If ALL eligible tasks have been processed (done or skipped with a note), emit LOOP_COMPLETE with a summary of what was accomplished
+
+      ## Important
+      - Check for notes added by the builder indicating a task was attempted
+      - A task with a note saying "Attempted by ralph" or "Skipped by ralph" counts as processed
+      - Do NOT emit LOOP_COMPLETE if there are still unprocessed eligible tasks
+      - When emitting LOOP_COMPLETE, include a count of tasks done, skipped, and remaining
+
+  builder:
+    name: "Builder"
+    description: "Implements the picked task, runs tests, commits, and updates todo.org"
+    triggers: ["work.picked"]
+    publishes: ["work.done"]
+    instructions: |
+      You are the builder. Implement the task described in the event payload.
+
+      ## Workflow
+      1. Read the AGENTS.md file for project conventions
+      2. Understand the task from the event payload
+      3. Implement the change
+      4. Create a fresh venv and install clk into it before running tests:
+         ```
+         rm -rf /tmp/ralph-test-venv && python -m venv /tmp/ralph-test-venv && /tmp/ralph-test-venv/bin/pip install -e '/tmp/ralph-workdir[test]' && cd /tmp/ralph-workdir && /tmp/ralph-test-venv/bin/pytest
+         ```
+         This catches breakage from pyproject.toml changes (bad deps, missing packages, etc.)
+      5. If tests pass, commit with a meaningful message
+      6. Update todo.org: mark the task DONE with a note describing what was done
+      7. If the task cannot be implemented (missing context, external deps, too complex), add a note in todo.org explaining why and mark it as skipped
+      8. Emit work.done
+
+      ## Use case org tests
+      - When changing code, check if an existing use case org file in doc/use_cases/ covers the change
+      - If not, create or update a use case .org file following the conventions in AGENTS.md
+      - Only write the .org file — never edit the tangled .sh or exported .md files, they are generated
+
+      ## Rules
+      - Always run pytest before committing
+      - Keep changes focused on the single task
+      - Do not modify unrelated code
+      - If a task is ambiguous, implement the most reasonable interpretation and note what you assumed

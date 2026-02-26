@@ -8,7 +8,7 @@ $0
 
 Run a ralph orchestrator loop in an isolated earthly container
 --
-A:prompt:str:The prompt to give to ralph
+O:--prompt:str:The prompt to give to ralph (optional in hat-based mode)
 O:--max-iterations:int:Maximum number of ralph iterations:5
 O:--output-dir:str:The name of the output directory for the artifact:ralph-output
 O:--credentials:file:Path to the claude code credentials file:${HOME}/.claude/.credentials.json
@@ -19,7 +19,14 @@ EOF
 clk_help_handler "$@"
 args=()
 earthly_args=()
-args+=(--ralph_args "run --max-iterations $(clk_value max-iterations) -p '$(clk_value prompt)'")
+ralph_args="run --max-iterations $(clk_value max-iterations)"
+if clk_given prompt
+then
+    ralph_args+=" -p '$(clk_value prompt)'"
+else
+    ralph_args+=" -p 'Follow the instructions in ralph.yml hats'"
+fi
+args+=(--ralph_args "${ralph_args}")
 if clk_given output-dir
 then
     args+=(--output_dir "$(clk_value output-dir)")
