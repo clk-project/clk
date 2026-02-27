@@ -3,6 +3,7 @@
 :END:
 #+language: en
 #+EXPORT_FILE_NAME: ./controlling_a_server_using_an_environment_variable.md
+#+SUBTITLE: Managing server addresses via environment variables and parameters
 
 #+CALL: ../../lp.org:check-result()
 

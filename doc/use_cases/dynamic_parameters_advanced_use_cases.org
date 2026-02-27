@@ -3,6 +3,7 @@
 :END:
 #+language: en
 #+EXPORT_FILE_NAME: ./dynamic_parameters_advanced_use_cases.md
+#+SUBTITLE: Advanced dynamic parameters patterns and troubleshooting
 
 #+CALL: ../../lp.org:check-result()
 

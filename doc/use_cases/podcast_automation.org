@@ -3,6 +3,7 @@
 :END:
 #+language: en
 #+EXPORT_FILE_NAME: ./podcast_automation.md
+#+SUBTITLE: Aliases with templated environment variables for flexible workflows (podcast download example)
 
 #+CALL: ../../lp.org:check-result()
 

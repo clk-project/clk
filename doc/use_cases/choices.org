@@ -3,6 +3,7 @@
 :END:
 #+language: en
 #+EXPORT_FILE_NAME: ./choices.md
+#+SUBTITLE: Restricting user input to predefined values using Choice types
 
 #+CALL: ../../lp.org:check-result()
 

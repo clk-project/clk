@@ -3,6 +3,7 @@
 :END:
 #+language: en
 #+EXPORT_FILE_NAME: ./ethereum_local_environment_dev_tool.md
+#+SUBTITLE: Using clk commands as parameters in other commands (Ethereum dev tool example)
 
 #+CALL: ../../lp.org:check-result()
 

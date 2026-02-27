@@ -3,6 +3,7 @@
 :END:
 #+language: en
 #+EXPORT_FILE_NAME: ./python_command.md
+#+SUBTITLE: Creating Python commands with clk command create python, click decorators
 
 #+CALL: ../../lp.org:check-result()
 

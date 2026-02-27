@@ -3,6 +3,7 @@
 :END:
 #+language: en
 #+EXPORT_FILE_NAME: ./send_sms.md
+#+SUBTITLE: Advanced bash parameter parsing and wrapping termux for SMS sending
 
 #+CALL: ../../lp.org:check-result()
 

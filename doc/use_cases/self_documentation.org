@@ -3,6 +3,7 @@
 :END:
 #+language: en
 #+EXPORT_FILE_NAME: ./self_documentation.md
+#+SUBTITLE: Using clk describe to explore aliases, parameters, commands, and extensions across profiles
 
 #+CALL: ../../lp.org:check-result()
 

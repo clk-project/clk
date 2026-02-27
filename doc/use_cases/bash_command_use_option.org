@@ -3,6 +3,7 @@
 :END:
 #+language: en
 #+EXPORT_FILE_NAME: ./bash_command_use_option.md
+#+SUBTITLE: Arguments (A:), options (O:), flags (F:), file completion, clk_value, clk_given, clk_true, clk_format_choice
 
 #+CALL: ../../lp.org:check-result()
 

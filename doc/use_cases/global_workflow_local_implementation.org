@@ -3,6 +3,7 @@
 :END:
 #+language: en
 #+EXPORT_FILE_NAME: ./global_workflow_local_implementation.md
+#+SUBTITLE: Defining workflows globally while letting each project supply its own implementation
 
 #+CALL: ../../lp.org:check-result()
 

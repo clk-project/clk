@@ -3,6 +3,7 @@
 :END:
 #+language: en
 #+EXPORT_FILE_NAME: ./rolling_your_own.md
+#+SUBTITLE: Building your own standalone CLI tool on top of clk as a library
 
 #+CALL: ../../lp.org:check-result()
 

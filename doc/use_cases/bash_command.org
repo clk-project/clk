@@ -3,6 +3,7 @@
 :END:
 #+LANGUAGE: en
 #+EXPORT_FILE_NAME: ./bash_command.md
+#+SUBTITLE: Creating bash commands, clk_usage, clk_help_handler, source _clk.sh, exit codes, traps
 
 #+CALL: ../../lp.org:check-result()
 

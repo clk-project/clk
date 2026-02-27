@@ -3,6 +3,7 @@
 :END:
 #+language: en
 #+EXPORT_FILE_NAME: ./fetching_and_displaying_json_data.md
+#+SUBTITLE: Fetching JSON from APIs and displaying with syntax highlighting, download, echo_json
 
 #+CALL: ../../lp.org:check-result()
 

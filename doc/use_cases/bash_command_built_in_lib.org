@@ -3,6 +3,7 @@
 :END:
 #+LANGUAGE: en
 #+EXPORT_FILE_NAME: ./bash_command_built_in_lib.md
+#+SUBTITLE: Built-in bash helpers: clk_drop_duplicate and other utilities in _clk.sh
 
 #+CALL: ../../lp.org:check-result()
 

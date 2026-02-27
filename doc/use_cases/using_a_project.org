@@ -3,6 +3,7 @@
 :END:
 #+language: en
 #+EXPORT_FILE_NAME: ./using_a_project.md
+#+SUBTITLE: Using .clk directories for project-scoped commands and configuration
 
 #+CALL: ../../lp.org:check-result()
 

@@ -3,6 +3,7 @@
 :END:
 #+language: en
 #+EXPORT_FILE_NAME: ./multi_environment_deployment_tool.md
+#+SUBTITLE: Sharing configuration between Python groups and bash subcommands via environment variables
 
 #+CALL: ../../lp.org:check-result()
 

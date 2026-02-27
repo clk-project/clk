@@ -3,6 +3,7 @@
 :END:
 #+language: en
 #+EXPORT_FILE_NAME: ./using_a_plugin.md
+#+SUBTITLE: Monkey-patching clk internals with the plugin mechanism
 
 #+CALL: ../../lp.org:check-result()
 

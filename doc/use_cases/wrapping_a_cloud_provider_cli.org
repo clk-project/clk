@@ -3,6 +3,7 @@
 :END:
 #+language: en
 #+EXPORT_FILE_NAME: ./wrapping_a_cloud_provider_cli.md
+#+SUBTITLE: Persisting command options (--profile, --region) with clk parameters to avoid repetition
 
 #+CALL: ../../lp.org:check-result()
 

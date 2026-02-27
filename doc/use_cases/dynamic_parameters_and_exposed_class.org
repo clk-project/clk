@@ -3,6 +3,7 @@
 :END:
 #+language: en
 #+EXPORT_FILE_NAME: ./dynamic_parameters_and_exposed_class.md
+#+SUBTITLE: Splitting commands into subcommands with shared config via dynamic parameters and exposed classes
 
 #+CALL: ../../lp.org:check-result()
 

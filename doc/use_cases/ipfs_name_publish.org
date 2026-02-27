@@ -3,6 +3,7 @@
 :END:
 #+language: en
 #+EXPORT_FILE_NAME: ./ipfs_name_publish.md
+#+SUBTITLE: Using bash commands to create completion for other commands (IPFS example)
 
 #+CALL: ../../lp.org:check-result()
 
