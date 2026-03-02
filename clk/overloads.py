@@ -1083,9 +1083,8 @@ class ParameterMixin(click.Parameter):
         # processing it or it won't fit its type
         # I don't want to get rid of the noeval because I will be evaluated
         # again just after processing
-        if value is UNSET:
-            value = None
-        value = eval_arg(value, keepnoeval=True)
+        if value is not UNSET:
+            value = eval_arg(value, keepnoeval=True)
         try:
             value = super().process_value(ctx, value)
         except MissingParameter:
@@ -1130,8 +1129,6 @@ class ParameterMixin(click.Parameter):
         else:
             LOGGER.develop(f"Getting default value {self.get_path(ctx)}={value}")
             value = self.type_cast_value(ctx, value)
-        if value is UNSET:
-            value = None
         return value
 
     def get_help_record(self, ctx):

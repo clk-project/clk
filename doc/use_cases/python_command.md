@@ -1,4 +1,5 @@
 - [adding options and arguments](#adding-options-and-arguments)
+- [required arguments](#required-arguments)
 - [possible mistake: forgetting the decorator](#forgetting-the-decorator)
 
 To create a python command, you can simply call the following command.
@@ -171,6 +172,44 @@ clk mycommand --name clk Goodbye
 
     warning: The parameter 'greeting' in the command 'mycommand' has no documentation
     Goodbye, clk!
+
+
+<a id="required-arguments"></a>
+
+# required arguments
+
+In the previous example, the argument had a `default` value, making it optional. Without a default, the argument is required — the command fails if you don't provide it.
+
+```python
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+
+from clk.decorators import command, argument
+
+
+@command()
+@argument("name", help="Your name")
+def mycommand(name):
+    "A command that requires a name"
+    print(f"Hello, {name}!")
+```
+
+Calling the command without the argument produces an error.
+
+```bash
+clk mycommand 2>&1
+```
+
+    Usage: clk mycommand [OPTIONS] NAME
+    error: Missing argument 'NAME'.
+
+Providing the argument works as expected.
+
+```bash
+clk mycommand World
+```
+
+    Hello, World!
 
 
 <a id="forgetting-the-decorator"></a>

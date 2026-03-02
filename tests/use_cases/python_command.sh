@@ -246,6 +246,63 @@ exit 1
 }
 
 
+cat<<'EOF' > "$(clk command which mycommand)"
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+
+from clk.decorators import command, argument
+
+
+@command()
+@argument("name", help="Your name")
+def mycommand(name):
+    "A command that requires a name"
+    print(f"Hello, {name}!")
+EOF
+
+
+required_arg_error_code () {
+      clk mycommand 2>&1
+}
+
+required_arg_error_expected () {
+      cat<<"EOEXPECTED"
+Usage: clk mycommand [OPTIONS] NAME
+error: Missing argument 'NAME'.
+EOEXPECTED
+}
+
+echo 'Run required_arg_error'
+
+{ required_arg_error_code || true ; } > "${TMP}/code.txt" 2>&1
+required_arg_error_expected > "${TMP}/expected.txt" 2>&1
+diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+echo "Something went wrong when trying required_arg_error"
+exit 1
+}
+
+
+
+required_arg_ok_code () {
+      clk mycommand World
+}
+
+required_arg_ok_expected () {
+      cat<<"EOEXPECTED"
+Hello, World!
+EOEXPECTED
+}
+
+echo 'Run required_arg_ok'
+
+{ required_arg_ok_code || true ; } > "${TMP}/code.txt" 2>&1
+required_arg_ok_expected > "${TMP}/expected.txt" 2>&1
+diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+echo "Something went wrong when trying required_arg_ok"
+exit 1
+}
+
+
 cat <<'EOF' > "${CLKCONFIGDIR}/python/myenv.py"
 def myenv():
     """My environment command"""
