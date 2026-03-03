@@ -182,6 +182,61 @@ The ~file~ type works the same way for options. For instance, if you had written
 ~O:--document:file:The document to count words in~ instead, pressing ~<TAB>~
 after ~--document~ would also suggest files.
 
+* passing a URL to a file argument
+  :PROPERTIES:
+  :CUSTOM_ID: 6a1b2c3d-4e5f-6789-abcd-ef0123456789
+  :END:
+
+Sometimes, a command argument declared with the ~file~ type may also accept a
+URL. For instance, a command that installs a package might accept either a local
+file path or a URL to download from.
+
+#+name: urlarg-def
+#+BEGIN_SRC bash :results none :exports code
+A:package:file:Package to install
+#+END_SRC
+
+#+name: urlarg-use
+#+BEGIN_SRC bash :results none :exports code
+echo "$(clk_value package)"
+#+END_SRC
+
+#+name: urlarg-create
+#+BEGIN_SRC bash :results none :exports none :session 100aa89b-f320-46ee-9d5d-2193ef48d4eb :noweb yes
+clk command create bash showpackage
+cat <<"EOH" > "$(clk command which showpackage)"
+#!/bin/bash -eu
+
+source "_clk.sh"
+
+clk_usage () {
+    cat<<EOF
+$0
+
+Show the package location
+--
+<<urlarg-def>>
+EOF
+}
+
+clk_help_handler "$@"
+
+<<urlarg-use>>
+
+EOH
+#+END_SRC
+
+When passing a URL, the value should be preserved as-is, without being resolved
+as a file path.
+
+#+name: urlarg-run
+#+BEGIN_SRC bash :results verbatim :exports both :session 100aa89b-f320-46ee-9d5d-2193ef48d4eb :cache yes
+clk showpackage https://example.com/path/to/package.apk
+#+END_SRC
+
+#+RESULTS[c24d1c0e01f964073512a0eadfe311775d7145b4]: urlarg-run
+: https://example.com/path/to/package.apk
+
 #+BEGIN_SRC bash :exports none :tangle ../../tests/use_cases/bash_command_use_option.sh :noweb yes :shebang "#!/bin/bash -eu"
 <<init>>
 
@@ -200,4 +255,8 @@ check-result(wordcount-help)
 check-result(wordcount-run)
 
 check-result(wordcount-completion)
+
+<<urlarg-create>>
+
+check-result(urlarg-run)
 #+END_SRC

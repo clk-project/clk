@@ -1,4 +1,5 @@
 - [completing against files](#dddf6c5e-3fce-4203-b75c-e918bcf3240f)
+- [passing a URL to a file argument](#6a1b2c3d-4e5f-6789-abcd-ef0123456789)
 
 An option is an optional parameter that is given a value. A flag is an optional parameter that is a boolean. An argument is a positional parameter that you must give.
 
@@ -153,3 +154,26 @@ clk wordcount te<TAB>
     ./testfile.txt
 
 The `file` type works the same way for options. For instance, if you had written `O:--document:file:The document to count words in` instead, pressing `<TAB>` after `--document` would also suggest files.
+
+
+<a id="6a1b2c3d-4e5f-6789-abcd-ef0123456789"></a>
+
+# passing a URL to a file argument
+
+Sometimes, a command argument declared with the `file` type may also accept a URL. For instance, a command that installs a package might accept either a local file path or a URL to download from.
+
+```bash
+A:package:file:Package to install
+```
+
+```bash
+echo "$(clk_value package)"
+```
+
+When passing a URL, the value should be preserved as-is, without being resolved as a file path.
+
+```bash
+clk showpackage https://example.com/path/to/package.apk
+```
+
+    https://example.com/path/to/package.apk

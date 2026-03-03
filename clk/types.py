@@ -2,6 +2,7 @@
 
 
 import os
+import re
 from datetime import datetime
 from itertools import product
 from pathlib import Path
@@ -154,6 +155,18 @@ class ExecutableType(Parameter):
         return [
             path for path in os.environ["PATH"].split(os.pathsep) if Path(path).exists()
         ]
+
+
+class PathOrURL(click.Path):
+    """A Path type that resolves file paths but passes URLs through unchanged."""
+
+    def __init__(self):
+        super().__init__(resolve_path=True)
+
+    def convert(self, value, param, ctx):
+        if isinstance(value, str) and re.match(r"\w+://", value):
+            return value
+        return super().convert(value, param, ctx)
 
 
 class DocumentedChoice(click.Choice):

@@ -1,5 +1,5 @@
 #!/bin/bash -eu
-# [[file:../../doc/use_cases/bash_command_use_option.org::#dddf6c5e-3fce-4203-b75c-e918bcf3240f][completing against files:8]]
+# [[file:../../doc/use_cases/bash_command_use_option.org::#6a1b2c3d-4e5f-6789-abcd-ef0123456789][passing a URL to a file argument:5]]
 . ./sandboxing.sh
 
 clk command create bash animal --no-open
@@ -143,4 +143,47 @@ diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
 echo "Something went wrong when trying wordcount-completion"
 exit 1
 }
-# completing against files:8 ends here
+
+
+clk command create bash showpackage
+cat <<"EOH" > "$(clk command which showpackage)"
+#!/bin/bash -eu
+
+source "_clk.sh"
+
+clk_usage () {
+    cat<<EOF
+$0
+
+Show the package location
+--
+A:package:file:Package to install
+EOF
+}
+
+clk_help_handler "$@"
+
+echo "$(clk_value package)"
+
+EOH
+
+
+urlarg-run_code () {
+      clk showpackage https://example.com/path/to/package.apk
+}
+
+urlarg-run_expected () {
+      cat<<"EOEXPECTED"
+https://example.com/path/to/package.apk
+EOEXPECTED
+}
+
+echo 'Run urlarg-run'
+
+{ urlarg-run_code || true ; } > "${TMP}/code.txt" 2>&1
+urlarg-run_expected > "${TMP}/expected.txt" 2>&1
+diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+echo "Something went wrong when trying urlarg-run"
+exit 1
+}
+# passing a URL to a file argument:5 ends here
