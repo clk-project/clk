@@ -1,4 +1,5 @@
-#!/bin/bash -eu
+#!/usr/bin/env bash
+set -eu
 # [[file:dynamic_parameters_advanced_use_cases.org::all][all]]
 . ./sandboxing.sh
 

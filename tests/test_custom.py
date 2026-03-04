@@ -13,7 +13,8 @@ create_b_command = "command create bash b --no-open"
 def test_capture_flow_option(lib):
     lib.create_bash_command(
         "a",
-        """#!/bin/bash -eu
+        """#!/usr/bin/env bash
+set -eu
 
 source "_clk.sh"
 
@@ -42,7 +43,8 @@ fi
     )
     lib.create_bash_command(
         "b",
-        """#!/bin/bash -eu
+        """#!/usr/bin/env bash
+set -eu
 
 source "_clk.sh"
 

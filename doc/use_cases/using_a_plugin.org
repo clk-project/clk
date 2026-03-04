@@ -234,7 +234,8 @@ clk trigger show pre --name-only
 : cmd1
 : cmd2
 
-#+BEGIN_SRC bash :exports none :tangle ../../tests/use_cases/using_a_plugin.sh :noweb yes :shebang "#!/bin/bash -eu"
+#+BEGIN_SRC bash :exports none :tangle ../../tests/use_cases/using_a_plugin.sh :noweb yes :shebang "#!/usr/bin/env bash"
+set -eu
 <<init>>
 
 <<install_plugin>>

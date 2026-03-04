@@ -467,7 +467,8 @@ clk printer send --flow myprinter
 Beware that this means that you have to check that this command it actually defined.
 
 #+NAME: script
-#+BEGIN_SRC bash :results none :exports none :tangle ../../tests/use_cases/3D_printing_flow.sh :noweb yes :shebang "#!/bin/bash -eu"
+#+BEGIN_SRC bash :results none :exports none :tangle ../../tests/use_cases/3D_printing_flow.sh :noweb yes :shebang "#!/usr/bin/env bash"
+set -eu
   <<init>>
 
   <<create-group>>

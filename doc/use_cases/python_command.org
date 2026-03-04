@@ -341,7 +341,8 @@ clk myenv
 #+RESULTS[e073a22027d65d24304cb4d9e3633779c9593da4]: try-fixed-command
 : hello
 
-#+BEGIN_SRC bash :exports none :tangle ../../tests/use_cases/python_command.sh :noweb yes :shebang "#!/bin/bash -eu"
+#+BEGIN_SRC bash :exports none :tangle ../../tests/use_cases/python_command.sh :noweb yes :shebang "#!/usr/bin/env bash"
+set -eu
 <<init>>
 
 <<create>>

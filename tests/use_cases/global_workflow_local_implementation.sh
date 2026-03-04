@@ -1,4 +1,5 @@
-#!/bin/bash -eu
+#!/usr/bin/env bash
+set -eu
 # [[file:../../doc/use_cases/global_workflow_local_implementation.org::*summary][summary:1]]
 . ./sandboxing.sh
 

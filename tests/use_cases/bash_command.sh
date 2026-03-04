@@ -1,5 +1,6 @@
-#!/bin/bash -eu
-# [[file:../../doc/use_cases/tests/use_cases/bash_command.sh :noweb yes :shebang "#!/bin/bash -eu"][No heading:17]]
+#!/usr/bin/env bash
+set -eu
+# [[file:../../doc/use_cases/tests/use_cases/bash_command.sh :noweb yes :shebang "#!/usr/bin/env bash"][No heading:17]]
 . ./sandboxing.sh
 
 clk command create bash mycommand
@@ -49,7 +50,8 @@ show_it_code () {
 
 show_it_expected () {
       cat<<"EOEXPECTED"
-#!/bin/bash -eu
+#!/usr/bin/env bash
+set -eu
 
 source "_clk.sh"
 
@@ -100,7 +102,8 @@ exit 1
 
 
 cat<<'EOF' > myeditor
-#!/bin/bash -eu
+#!/usr/bin/env bash
+set -eu
 sed -i 's/Description/Command that says something/g' "${1}"
 EOF
 chmod +x myeditor
@@ -195,7 +198,7 @@ sleep 3600
   " --description "Simply wait but clean before exiting" clean-test
 
 cat<<EOF > pass.exp
-#!/usr/bin/expect -f
+#!/usr/bin/env -S expect -f
 
 set timeout -1
 spawn clk clean-test

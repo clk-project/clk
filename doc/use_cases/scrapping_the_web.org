@@ -218,7 +218,8 @@ The title is clk project
 #+end_example
 
 #+NAME: run
-#+BEGIN_SRC bash :results none :exports none :tangle ../../tests/use_cases/scrapping_the_web.sh :noweb yes :shebang "#!/bin/bash -eu"
+#+BEGIN_SRC bash :results none :exports none :tangle ../../tests/use_cases/scrapping_the_web.sh :noweb yes :shebang "#!/usr/bin/env bash"
+set -eu
 <<init>>
 <<install_command>>
 check-result(running_the_test)

@@ -26,7 +26,8 @@ Then you can simply import this code in your code, using clk\_import.
 ```bash
 clk command create bash somecommand --no-open
 cat <<"EOH" > "$(clk command which somecommand)"
-#!/bin/bash -eu
+#!/usr/bin/env bash
+set -eu
 
 source "_clk.sh"
 

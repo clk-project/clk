@@ -73,7 +73,7 @@ clk mycommand
 #+RESULTS[]: run-command
 : output here
 
-#+BEGIN_SRC bash :exports none :tangle ../../tests/use_cases/your_use_case.sh :noweb yes :shebang "#!/bin/bash -eu"
+#+BEGIN_SRC bash :exports none :tangle ../../tests/use_cases/your_use_case.sh :noweb yes :shebang "#!/usr/bin/env bash"
 <<init>>
 
 <<create-command>>

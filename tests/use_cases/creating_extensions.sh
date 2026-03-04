@@ -1,4 +1,5 @@
-#!/bin/bash -eu
+#!/usr/bin/env bash
+set -eu
 # [[file:../../doc/use_cases/creating_extensions.org::all][all]]
 . ./sandboxing.sh
 

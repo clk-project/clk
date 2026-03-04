@@ -233,7 +233,8 @@ clk's configuration, whether you're exploring your own setup after some time
 away, or understanding a configuration shared by a colleague.
 
 #+NAME: run
-#+BEGIN_SRC bash :results none :exports none :tangle ../../tests/use_cases/self_documentation.sh :noweb yes :shebang "#!/bin/bash -eu"
+#+BEGIN_SRC bash :results none :exports none :tangle ../../tests/use_cases/self_documentation.sh :noweb yes :shebang "#!/usr/bin/env bash"
+set -eu
 <<init>>
 
 check-result(setup-global)

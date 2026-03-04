@@ -92,7 +92,7 @@ Let's create a simple build script in our project.
 ```bash
 mkdir -p scripts
 cat <<'EOF' > scripts/build.sh
-#!/bin/bash
+#!/usr/bin/env bash
 echo "Building project at: ${CLK__PROJECT}"
 echo "App: ${CLK_APPNAME}"
 EOF
@@ -136,7 +136,7 @@ Since `clk exec` is a regular clk command, you can use it in flows, aliases or a
 
 ```bash
 cat <<'EOF' > scripts/deploy.sh
-#!/bin/bash
+#!/usr/bin/env bash
 echo "Deploying from ${CLK__PROJECT}"
 EOF
 chmod +x scripts/deploy.sh

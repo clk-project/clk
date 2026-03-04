@@ -150,7 +150,7 @@ Let's create a simple build script in our project.
 #+BEGIN_SRC bash :results none :exports code :session 6de55de4-c0b3-41d6-952a-25e0fe06c881
 mkdir -p scripts
 cat <<'EOF' > scripts/build.sh
-#!/bin/bash
+#!/usr/bin/env bash
 echo "Building project at: ${CLK__PROJECT}"
 echo "App: ${CLK_APPNAME}"
 EOF
@@ -234,7 +234,7 @@ script before deploying:
 #+NAME: create_deploy_script
 #+BEGIN_SRC bash :results none :exports code :session 6de55de4-c0b3-41d6-952a-25e0fe06c881
 cat <<'EOF' > scripts/deploy.sh
-#!/bin/bash
+#!/usr/bin/env bash
 echo "Deploying from ${CLK__PROJECT}"
 EOF
 chmod +x scripts/deploy.sh
@@ -263,7 +263,8 @@ clk deploy
 
 
 #+NAME: run
-#+BEGIN_SRC bash :results none :exports none :tangle ../../tests/use_cases/using_a_project.sh :noweb yes :shebang "#!/bin/bash -eu"
+#+BEGIN_SRC bash :results none :exports none :tangle ../../tests/use_cases/using_a_project.sh :noweb yes :shebang "#!/usr/bin/env bash"
+set -eu
 <<init>>
 
 <<createproject>>

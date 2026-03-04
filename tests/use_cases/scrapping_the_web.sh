@@ -1,4 +1,5 @@
-#!/bin/bash -eu
+#!/usr/bin/env bash
+set -eu
 # [[file:../../doc/use_cases/choices.org::run][run]]
 . ./sandboxing.sh
 clk command create python --force --group --body '

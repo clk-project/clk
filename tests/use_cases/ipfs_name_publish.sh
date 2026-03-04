@@ -1,4 +1,5 @@
-#!/bin/bash -eu
+#!/usr/bin/env bash
+set -eu
 # [[id:344b2d46-b85a-40ea-a50b-ad95ddc177f4::run][run]]
 . ./sandboxing.sh
 
@@ -85,7 +86,8 @@ exit 1
 
 clk command create bash ipfs.name.publish --no-open
 cat <<"EOH" > "$(clk command which ipfs.name.publish)"
-#!/bin/bash -eu
+#!/usr/bin/env bash
+set -eu
 
 source "_clk.sh"
 

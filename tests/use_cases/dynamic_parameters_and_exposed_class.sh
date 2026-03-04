@@ -1,4 +1,5 @@
-#!/bin/bash -eu
+#!/usr/bin/env bash
+set -eu
 # [[id:e451aef8-b5f8-4529-972b-4b341833c797::final][final]]
 . ./sandboxing.sh
 

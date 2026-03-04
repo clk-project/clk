@@ -1,5 +1,6 @@
 # [[id:0a89868c-4cbb-4f83-874a-21ce32b4508f::+BEGIN_SRC bash :tangle ../../tests/use_cases/bash_command_import.sh :exports none :noweb yes][No heading:6]]
-#!/bin/bash -eu
+#!/usr/bin/env bash
+set -eu
 
 set -e
 set -u
@@ -15,7 +16,8 @@ EOF
 
 clk command create bash somecommand --no-open
 cat <<"EOH" > "$(clk command which somecommand)"
-#!/bin/bash -eu
+#!/usr/bin/env bash
+set -eu
 
 source "_clk.sh"
 

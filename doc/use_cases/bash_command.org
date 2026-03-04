@@ -61,7 +61,8 @@ cat $(clk command which mycommand)
 
 #+RESULTS[7d3b87635527e2c71dba61b28983f897eb7a8a9f]: show_it
 #+begin_example
-#!/bin/bash -eu
+#!/usr/bin/env bash
+set -eu
 
 source "_clk.sh"
 
@@ -116,7 +117,8 @@ automatically makes the change.
 #+name: set_description
 #+BEGIN_SRC bash :results none :exports both :session 85c8e385-7f24-48ac-9a85-30cfc354aebf
 cat<<'EOF' > myeditor
-#!/bin/bash -eu
+#!/usr/bin/env bash
+set -eu
 sed -i 's/Description/Command that says something/g' "${1}"
 EOF
 chmod +x myeditor
@@ -204,7 +206,7 @@ sleep 3600
   #+NAME: generate_expect_clean_test
   #+BEGIN_SRC bash :results none :exports none :noweb yes :session 85c8e385-7f24-48ac-9a85-30cfc354aebf
 cat<<EOF > pass.exp
-#!/usr/bin/expect -f
+#!/usr/bin/env -S expect -f
 
 set timeout -1
 spawn clk clean-test
@@ -235,7 +237,8 @@ EOF
   : Aborted!
 
 
-#+BEGIN_SRC bash :exports none :tangle ../../tests/use_cases/bash_command.sh :noweb yes :shebang "#!/bin/bash -eu"
+#+BEGIN_SRC bash :exports none :tangle ../../tests/use_cases/bash_command.sh :noweb yes :shebang "#!/usr/bin/env bash"
+set -eu
 <<init>>
 
 <<create>>

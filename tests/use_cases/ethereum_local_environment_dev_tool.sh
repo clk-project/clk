@@ -1,4 +1,5 @@
-#!/bin/bash -eu
+#!/usr/bin/env bash
+set -eu
 # [[file:../../doc/use_cases/ethereum_local_environment_dev_tool.org::test][test]]
 . ./sandboxing.sh
 

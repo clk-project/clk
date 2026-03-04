@@ -58,7 +58,7 @@ might write even more [[./doc][documentation]].
 
   Install with
 
-  #+BEGIN_SRC bash :tangle installer.sh :shebang "#!/bin/bash"
+  #+BEGIN_SRC bash :tangle installer.sh :shebang "#!/usr/bin/env bash"
     curl -sSL https://clk-project.org/install.sh | bash
   #+END_SRC
 
@@ -105,7 +105,8 @@ might write even more [[./doc][documentation]].
   : Hello world
 
   #+NAME: hello-world
-  #+BEGIN_SRC bash :results none :exports none :tangle ./tests/use_cases/hello_world.sh :shebang "#!/bin/bash -eu" :noweb yes
+  #+BEGIN_SRC bash :results none :exports none :tangle ./tests/use_cases/hello_world.sh :shebang "#!/usr/bin/env bash" :noweb yes
+    set -eu
     <<init>>
 
     <<command>>

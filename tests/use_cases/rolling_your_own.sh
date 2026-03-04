@@ -1,5 +1,6 @@
-#!/bin/bash -eu
-# [[file:../../doc/use_cases/tests/use_cases/rolling_your_own.sh :exports none :noweb yes :shebang "#!/bin/bash -eu"][No heading:10]]
+#!/usr/bin/env bash
+set -eu
+# [[file:../../doc/use_cases/tests/use_cases/rolling_your_own.sh :exports none :noweb yes :shebang "#!/usr/bin/env bash"][No heading:10]]
 . ./sandboxing.sh
 
 clk fork mytool

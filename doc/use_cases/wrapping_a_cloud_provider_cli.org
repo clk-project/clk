@@ -304,7 +304,8 @@ clk aws s3 ls
 #+RESULTS[26de01acdd78b0c57725475343c6fc5e61d3b0f6]: env-unset
 : [default/us-east-1] aws s3 ls
 
-#+BEGIN_SRC bash :exports none :tangle ../../tests/use_cases/wrapping_a_cloud_provider_cli.sh :noweb yes :shebang "#!/bin/bash -eu"
+#+BEGIN_SRC bash :exports none :tangle ../../tests/use_cases/wrapping_a_cloud_provider_cli.sh :noweb yes :shebang "#!/usr/bin/env bash"
+set -eu
 <<init>>
 
 <<create-aws-cmd>>

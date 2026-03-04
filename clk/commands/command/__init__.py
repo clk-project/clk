@@ -453,7 +453,8 @@ args=()"""
         remaining_str = f"{remaining_str}M:I\n"
 
     script_content = (
-        f"""#!/bin/bash -eu
+        f"""#!/usr/bin/env bash
+set -eu
 
 source "_clk.sh"
 

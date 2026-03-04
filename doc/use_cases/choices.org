@@ -258,7 +258,8 @@ use of the click built-in ~Choice~ types.
   time. Pull requests are more than welcome here!
 
   #+NAME: run
-  #+BEGIN_SRC bash :results none :exports none :tangle ../../tests/use_cases/choices.sh :noweb yes :shebang "#!/bin/bash -eu"
+  #+BEGIN_SRC bash :results none :exports none :tangle ../../tests/use_cases/choices.sh :noweb yes :shebang "#!/usr/bin/env bash"
+set -eu
     <<init>>
     <<export-with-choice>>
     <<batterie-status-command>>

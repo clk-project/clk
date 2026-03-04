@@ -50,7 +50,8 @@ F:--shout:Print the message of the animal in capital case
 #+BEGIN_SRC bash :results none :session 100aa89b-f320-46ee-9d5d-2193ef48d4eb :noweb yes
 clk command create bash animal --no-open
 cat <<"EOH" > "$(clk command which animal)"
-#!/bin/bash -eu
+#!/usr/bin/env bash
+set -eu
 
 source "_clk.sh"
 
@@ -118,7 +119,8 @@ A:document:file:The document to count words in
 #+BEGIN_SRC bash :results none :export code :session 100aa89b-f320-46ee-9d5d-2193ef48d4eb :noweb yes
 clk command create bash wordcount
 cat <<"EOH" > "$(clk command which wordcount)"
-#!/bin/bash -eu
+#!/usr/bin/env bash
+set -eu
 
 source "_clk.sh"
 
@@ -205,7 +207,8 @@ echo "$(clk_value package)"
 #+BEGIN_SRC bash :results none :exports none :session 100aa89b-f320-46ee-9d5d-2193ef48d4eb :noweb yes
 clk command create bash showpackage
 cat <<"EOH" > "$(clk command which showpackage)"
-#!/bin/bash -eu
+#!/usr/bin/env bash
+set -eu
 
 source "_clk.sh"
 
@@ -237,7 +240,8 @@ clk showpackage https://example.com/path/to/package.apk
 #+RESULTS[c24d1c0e01f964073512a0eadfe311775d7145b4]: urlarg-run
 : https://example.com/path/to/package.apk
 
-#+BEGIN_SRC bash :exports none :tangle ../../tests/use_cases/bash_command_use_option.sh :noweb yes :shebang "#!/bin/bash -eu"
+#+BEGIN_SRC bash :exports none :tangle ../../tests/use_cases/bash_command_use_option.sh :noweb yes :shebang "#!/usr/bin/env bash"
+set -eu
 <<init>>
 
 <<create>>

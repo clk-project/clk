@@ -298,7 +298,8 @@ with is dynamically updated.
 test.
 
 #+NAME: test
-#+BEGIN_SRC bash :results none :exports none :noweb yes :shebang "#!/bin/bash -eu" :tangle ../../tests/use_cases/ethereum_local_environment_dev_tool.sh
+#+BEGIN_SRC bash :results none :exports none :noweb yes :shebang "#!/usr/bin/env bash" :tangle ../../tests/use_cases/ethereum_local_environment_dev_tool.sh
+set -eu
     <<init>>
 
     <<install_eth>>

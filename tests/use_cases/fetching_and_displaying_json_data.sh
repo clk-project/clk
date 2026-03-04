@@ -1,4 +1,5 @@
-#!/bin/bash -eu
+#!/usr/bin/env bash
+set -eu
 # [[file:../../doc/use_cases/fetching_and_displaying_json_data.org::script][script]]
 . ./sandboxing.sh
 

@@ -49,7 +49,8 @@ say_now () {
     echo "now: ${CLK_FAKED_TIME}"
 }
 cat<<EOF > "${TMP}/bin/clk"
-#!/bin/bash -eu
+#!/usr/bin/env bash
+set -eu
 
     if test -n "\${CLK_FAKED_TIME-}"
     then

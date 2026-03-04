@@ -518,7 +518,8 @@ This use case demonstrates several clk patterns working together:
 Starting from a single backup command, we built a complete backup system that's
 easy to use, easy to extend, and self-documenting through ~--help~.
 
-#+BEGIN_SRC bash :exports none :tangle ../../tests/use_cases/backing_up_documents.sh :noweb yes :shebang "#!/bin/bash -eu"
+#+BEGIN_SRC bash :exports none :tangle ../../tests/use_cases/backing_up_documents.sh :noweb yes :shebang "#!/usr/bin/env bash"
+set -eu
 <<init>>
 
 <<create-backup-group>>

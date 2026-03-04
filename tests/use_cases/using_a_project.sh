@@ -1,4 +1,5 @@
-#!/bin/bash -eu
+#!/usr/bin/env bash
+set -eu
 # [[file:../../doc/use_cases/using_a_project.org::run][run]]
 . ./sandboxing.sh
 
@@ -146,7 +147,7 @@ exit 1
 
 mkdir -p scripts
 cat <<'EOF' > scripts/build.sh
-#!/bin/bash
+#!/usr/bin/env bash
 echo "Building project at: ${CLK__PROJECT}"
 echo "App: ${CLK_APPNAME}"
 EOF
@@ -242,7 +243,7 @@ exit 1
 
 
 cat <<'EOF' > scripts/deploy.sh
-#!/bin/bash
+#!/usr/bin/env bash
 echo "Deploying from ${CLK__PROJECT}"
 EOF
 chmod +x scripts/deploy.sh

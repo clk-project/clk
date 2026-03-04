@@ -39,7 +39,8 @@ cat $(clk command which mycommand)
 ```
 
 ```
-#!/bin/bash -eu
+#!/usr/bin/env bash
+set -eu
 
 source "_clk.sh"
 
@@ -82,7 +83,8 @@ For the sake of this tutorial, we will provide a custom `EDITOR` that automatica
 
 ```bash
 cat<<'EOF' > myeditor
-#!/bin/bash -eu
+#!/usr/bin/env bash
+set -eu
 sed -i 's/Description/Command that says something/g' "${1}"
 EOF
 chmod +x myeditor

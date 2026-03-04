@@ -108,7 +108,8 @@ This way, ~clk app deploy~ auto-detects while ~clk app deploy-prod~ always
 targets production.
 
 #+NAME: run
-#+BEGIN_SRC bash :results none :exports none :tangle ../../tests/use_cases/environment_deployment.sh :noweb yes :shebang "#!/bin/bash -eu"
+#+BEGIN_SRC bash :results none :exports none :tangle ../../tests/use_cases/environment_deployment.sh :noweb yes :shebang "#!/usr/bin/env bash"
+set -eu
 <<init>>
 
 <<deploy>>

@@ -1,4 +1,5 @@
-#!/bin/bash -eu
+#!/usr/bin/env bash
+set -eu
 # [[file:../../doc/use_cases/python_command.org::#forgetting-the-decorator][possible mistake: forgetting the decorator:7]]
 . ./sandboxing.sh
 

@@ -1,4 +1,5 @@
-#!/bin/bash -eu
+#!/usr/bin/env bash
+set -eu
 # [[file:../../README.org::hello-world][hello-world]]
 . ./sandboxing.sh
 

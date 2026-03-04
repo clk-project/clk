@@ -37,7 +37,8 @@ def test_using_automatic_options(lib):
 def test_editing_parameters(lib):
     lib.create_bash_command(
         "editor",
-        """#!/bin/bash -eu
+        """#!/usr/bin/env bash
+set -eu
 
 source "_clk.sh"
 

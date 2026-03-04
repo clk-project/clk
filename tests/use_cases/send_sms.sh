@@ -1,4 +1,5 @@
-#!/bin/bash -eu
+#!/usr/bin/env bash
+set -eu
 # [[id:3781d830-096f-4fb6-9e77-d18586507997::run][run]]
 . ./sandboxing.sh
   mkdir -p "${CLKCONFIGDIR}/bin/lib"
@@ -37,7 +38,8 @@ termux-contact-number () {
 EOF
 clk command create bash termux.sms.send --no-open
 cat <<"EOC" > "$(clk command which termux.sms.send)"
-#!/bin/bash -eu
+#!/usr/bin/env bash
+set -eu
 
 source "_clk.sh"
 
@@ -74,7 +76,8 @@ exit 1
 }
 
 cat<<"EOC" > "$(clk command which termux.sms.send)"
-#!/bin/bash -eu
+#!/usr/bin/env bash
+set -eu
 
 source "_clk.sh"
 
@@ -113,7 +116,8 @@ exit 1
 }
 
 cat<<"EOC" > "$(clk command which termux.sms.send)"
-#!/bin/bash -eu
+#!/usr/bin/env bash
+set -eu
 
 source "_clk.sh"
 

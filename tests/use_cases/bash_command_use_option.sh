@@ -1,10 +1,12 @@
-#!/bin/bash -eu
+#!/usr/bin/env bash
+set -eu
 # [[file:../../doc/use_cases/bash_command_use_option.org::#6a1b2c3d-4e5f-6789-abcd-ef0123456789][passing a URL to a file argument:5]]
 . ./sandboxing.sh
 
 clk command create bash animal --no-open
 cat <<"EOH" > "$(clk command which animal)"
-#!/bin/bash -eu
+#!/usr/bin/env bash
+set -eu
 
 source "_clk.sh"
 
@@ -59,7 +61,8 @@ duck does couac"
 
 clk command create bash wordcount
 cat <<"EOH" > "$(clk command which wordcount)"
-#!/bin/bash -eu
+#!/usr/bin/env bash
+set -eu
 
 source "_clk.sh"
 
@@ -147,7 +150,8 @@ exit 1
 
 clk command create bash showpackage
 cat <<"EOH" > "$(clk command which showpackage)"
-#!/bin/bash -eu
+#!/usr/bin/env bash
+set -eu
 
 source "_clk.sh"
 

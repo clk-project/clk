@@ -148,7 +148,8 @@ have:
 Define your workflow once. Let each project provide the specific commands. clk
 handles the rest.
 
-#+BEGIN_SRC bash :exports none :tangle ../../tests/use_cases/global_workflow_local_implementation.sh :noweb yes :shebang "#!/bin/bash -eu"
+#+BEGIN_SRC bash :exports none :tangle ../../tests/use_cases/global_workflow_local_implementation.sh :noweb yes :shebang "#!/usr/bin/env bash"
+set -eu
 <<init>>
 
 check-result(create-global-test)

@@ -1,4 +1,5 @@
-#!/bin/bash -eu
+#!/usr/bin/env bash
+set -eu
 # [[file:../../doc/use_cases/using_a_plugin.org::#listing-triggers-name-only][listing triggers with --name-only:3]]
 . ./sandboxing.sh
 

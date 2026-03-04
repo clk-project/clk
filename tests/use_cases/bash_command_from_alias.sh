@@ -1,8 +1,9 @@
-#!/bin/bash -eu
-# [[file:../../doc/use_cases/tests/use_cases/bash_command_from_alias.sh :noweb yes :shebang "#!/bin/bash -eu"][No heading:17]]
+#!/usr/bin/env bash
+set -eu
+# [[file:../../doc/use_cases/tests/use_cases/bash_command_from_alias.sh :noweb yes :shebang "#!/usr/bin/env bash"][No heading:17]]
 . ./sandboxing.sh
 cat <<"EOF" > "${TMP}/bin/mpc"
-#!/bin/bash
+#!/usr/bin/env bash
 echo "Running mpc with: $*"
 EOF
 chmod +x "${TMP}/bin/mpc"

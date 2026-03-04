@@ -1,4 +1,5 @@
-#!/bin/bash -eu
+#!/usr/bin/env bash
+set -eu
 # [[file:../../doc/use_cases/3D_printing_flow.org::script][script]]
 . ./sandboxing.sh
 

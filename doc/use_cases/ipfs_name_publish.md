@@ -65,7 +65,8 @@ Commands:
 Now, I want to have a command that uses this content as possible values for a key argument. Therefore, I create another command at the path ipfs.name.publish with the following content.
 
 ```bash
-#!/bin/bash -eu
+#!/usr/bin/env bash
+set -eu
 
 source "_clk.sh"
 

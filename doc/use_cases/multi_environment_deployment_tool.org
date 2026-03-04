@@ -125,7 +125,8 @@ This pattern is particularly useful when:
 - You want to validate options once at the group level rather than in each subcommand
 
 
-#+BEGIN_SRC bash :exports none :tangle ../../tests/use_cases/multi_environment_deployment_tool.sh :noweb yes :shebang "#!/bin/bash -eu"
+#+BEGIN_SRC bash :exports none :tangle ../../tests/use_cases/multi_environment_deployment_tool.sh :noweb yes :shebang "#!/usr/bin/env bash"
+set -eu
 <<init>>
 
 <<create-ext-cmd>>

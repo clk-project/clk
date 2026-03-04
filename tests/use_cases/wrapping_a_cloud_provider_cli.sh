@@ -1,4 +1,5 @@
-#!/bin/bash -eu
+#!/usr/bin/env bash
+set -eu
 # [[file:../../doc/use_cases/wrapping_a_cloud_provider_cli.org::#30ecf8ae-ebc3-4194-aa85-40df469dde2a][environment variable parameters:6]]
 . ./sandboxing.sh
 

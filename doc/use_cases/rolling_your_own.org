@@ -192,7 +192,8 @@ Commands:
 
 
 
-#+BEGIN_SRC bash :tangle ../../tests/use_cases/rolling_your_own.sh :exports none :noweb yes :shebang "#!/bin/bash -eu"
+#+BEGIN_SRC bash :tangle ../../tests/use_cases/rolling_your_own.sh :exports none :noweb yes :shebang "#!/usr/bin/env bash"
+set -eu
 <<init>>
 
 <<fork>>

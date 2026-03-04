@@ -96,7 +96,8 @@ def b(someday):
 def test_custom_types_in_command(lib):
     lib.create_bash_command(
         "a",
-        """#!/bin/bash -eu
+        """#!/usr/bin/env bash
+set -eu
 
 source "_clk.sh"
 

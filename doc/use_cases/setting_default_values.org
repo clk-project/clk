@@ -321,7 +321,8 @@ The key insight is that good CLI tools need both:
 
 clk gives you both, so you can choose the right tool for each situation.
 
-#+BEGIN_SRC bash :exports none :tangle ../../tests/use_cases/setting_default_values.sh :noweb yes :shebang "#!/bin/bash -eu"
+#+BEGIN_SRC bash :exports none :tangle ../../tests/use_cases/setting_default_values.sh :noweb yes :shebang "#!/usr/bin/env bash"
+set -eu
 <<init>>
 
 check-result(set-parameters-verbose)

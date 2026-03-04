@@ -1,4 +1,5 @@
-#!/bin/bash -eu
+#!/usr/bin/env bash
+set -eu
 # [[file:../../doc/use_cases/backing_up_documents.org::*summary][summary:1]]
 . ./sandboxing.sh
 

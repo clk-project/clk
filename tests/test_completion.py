@@ -120,7 +120,7 @@ def test_exec(rootdir, lib):
     somebindir = Path(rootdir) / "somebindir"
     os.makedirs(somebindir)
     somebinary = somebindir / "somebinary"
-    somebinary.write_text("""#!/bin/bash'
+    somebinary.write_text("""#!/usr/bin/env bash
 echo OK
 """)
     somebinary.chmod(0o755)

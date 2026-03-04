@@ -43,7 +43,8 @@ Now, let's use that library to have a nice completion of contacts
 The beginning of the script looks like this<sup><a id="fnr.1" class="footref" href="#fn.1" role="doc-backlink">1</a></sup>:
 
 ```bash
-#!/bin/bash -eu
+#!/usr/bin/env bash
+set -eu
 
 source "_clk.sh"
 
