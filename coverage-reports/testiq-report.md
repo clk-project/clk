@@ -118,7 +118,7 @@ Found 70 tests that are subsets of others (showing top 20 by coverage ratio):
 
 ## Similar Tests (≥30% overlap)
 
-Found 4657 test pairs with ≥30% similarity (showing top 20):
+Found 4754 test pairs with ≥30% similarity (showing top 20):
 
 
   - `command:dynamic_default_value_callback_that_depends_on_another_param` ↔ `command:dynamic_option`: 100.0% similar
@@ -201,12 +201,12 @@ Found 4657 test pairs with ≥30% similarity (showing top 20):
     **Action**: Review for potential merge or refactoring
 
 
-  ... and 4637 more similar test pairs
+  ... and 4734 more similar test pairs
 
 
 ## Summary
 
-- Total tests analyzed: 106
+- Total tests analyzed: 107
 - Exact duplicates: 3 tests can be removed
 - Subset duplicates: 70 tests may be redundant
-- Similar tests: 4657 pairs need review
+- Similar tests: 4754 pairs need review
