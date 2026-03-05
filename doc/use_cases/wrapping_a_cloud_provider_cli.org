@@ -304,6 +304,87 @@ clk aws s3 ls
 #+RESULTS[26de01acdd78b0c57725475343c6fc5e61d3b0f6]: env-unset
 : [default/us-east-1] aws s3 ls
 
+* preserving environment variables when no option is given
+  :PROPERTIES:
+  :CUSTOM_ID: preserving-env
+  :ID:       865ad4fb-d2c8-41b5-a6de-438cce601beb
+  :END:
+
+In some setups, ~AWS_PROFILE~ and ~AWS_REGION~ are already set in the
+environment (e.g. by a CI pipeline or a ~.envrc~ file). I want my wrapper to
+use those values when I don't pass the corresponding options, instead of
+overwriting them with defaults.
+
+To do this, I simply remove the defaults from both options:
+
+#+NAME: aws-code-no-default
+#+BEGIN_SRC python :results none :exports code
+from clk.config import config
+from clk.decorators import group, option
+
+
+class AwsProfile:
+    pass
+
+
+@group()
+@option("--profile", "-p", expose_class=AwsProfile, help="The AWS profile to use")
+@option("--region", "-r", help="The AWS region")
+def aws(region):
+    "AWS CLI wrapper with persistent configuration"
+    config.override_env["AWS_PROFILE"] = config.awsprofile.profile
+    config.override_env["AWS_REGION"] = region
+    config.init()
+
+
+@aws.group()
+def s3():
+    "S3 operations"
+#+END_SRC
+
+#+NAME: create-aws-no-default
+#+BEGIN_SRC bash :results none :exports none :session 2a1f20f5-2f74-4221-bcab-677a045d3a8f :noweb yes
+cat <<'EOF' > "$(clk command which aws)"
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+
+<<aws-code-no-default>>
+EOF
+#+END_SRC
+
+Notice that the code still unconditionally assigns both
+~config.override_env["AWS_PROFILE"]~ and ~config.override_env["AWS_REGION"]~.
+Yet when those options are not provided, clk knows the values were not given and
+won't set the corresponding environment variables. This means the code stays
+simple — no need for guards — and the existing environment is preserved:
+
+#+NAME: no-default-env-preserved
+#+BEGIN_SRC bash :results verbatim :exports both :session 2a1f20f5-2f74-4221-bcab-677a045d3a8f :cache yes
+export AWS_PROFILE=from-ci
+export AWS_REGION=eu-west-1
+clk aws s3 ls
+#+END_SRC
+
+#+RESULTS[d38cdf32d2950c7b722a6c1b40046e3e22a67f85]: no-default-env-preserved
+: [from-ci/eu-west-1] aws s3 ls
+
+When the options are explicitly passed, they override the environment as
+expected:
+
+#+NAME: no-default-explicit
+#+BEGIN_SRC bash :results verbatim :exports both :session 2a1f20f5-2f74-4221-bcab-677a045d3a8f :cache yes
+clk aws --profile company-prod --region ap-southeast-1 s3 ls
+#+END_SRC
+
+#+RESULTS[f98d302aeb4d10fbd43cdac3ff5bd56b512b8814]: no-default-explicit
+: [company-prod/ap-southeast-1] aws s3 ls
+
+#+NAME: no-default-cleanup
+#+BEGIN_SRC bash :results none :exports none :session 2a1f20f5-2f74-4221-bcab-677a045d3a8f
+unset AWS_PROFILE
+unset AWS_REGION
+#+END_SRC
+
 #+BEGIN_SRC bash :exports none :tangle ../../tests/use_cases/wrapping_a_cloud_provider_cli.sh :noweb yes :shebang "#!/usr/bin/env bash"
 set -eu
 <<init>>
@@ -349,4 +430,12 @@ check-result(env-help)
 check-result(env-show)
 
 check-result(env-unset)
+
+<<create-aws-no-default>>
+
+check-result(no-default-env-preserved)
+
+check-result(no-default-explicit)
+
+<<no-default-cleanup>>
 #+END_SRC

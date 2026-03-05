@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
+# [[file:../../doc/use_cases/wrapping_a_cloud_provider_cli.org::#preserving-env][preserving environment variables when no option is given:6]]
 set -eu
-# [[file:../../doc/use_cases/wrapping_a_cloud_provider_cli.org::#30ecf8ae-ebc3-4194-aa85-40df469dde2a][environment variable parameters:6]]
 . ./sandboxing.sh
 
 clk command create python aws --group --description "AWS CLI wrapper"
@@ -352,4 +352,79 @@ diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
 echo "Something went wrong when trying env-unset"
 exit 1
 }
-# environment variable parameters:6 ends here
+
+
+cat <<'EOF' > "$(clk command which aws)"
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+
+from clk.config import config
+from clk.decorators import group, option
+
+
+class AwsProfile:
+    pass
+
+
+@group()
+@option("--profile", "-p", expose_class=AwsProfile, help="The AWS profile to use")
+@option("--region", "-r", help="The AWS region")
+def aws(region):
+    "AWS CLI wrapper with persistent configuration"
+    config.override_env["AWS_PROFILE"] = config.awsprofile.profile
+    config.override_env["AWS_REGION"] = region
+    config.init()
+
+
+@aws.group()
+def s3():
+    "S3 operations"
+EOF
+
+
+no-default-env-preserved_code () {
+      export AWS_PROFILE=from-ci
+      export AWS_REGION=eu-west-1
+      clk aws s3 ls
+}
+
+no-default-env-preserved_expected () {
+      cat<<"EOEXPECTED"
+[from-ci/eu-west-1] aws s3 ls
+EOEXPECTED
+}
+
+echo 'Run no-default-env-preserved'
+
+{ no-default-env-preserved_code || true ; } > "${TMP}/code.txt" 2>&1
+no-default-env-preserved_expected > "${TMP}/expected.txt" 2>&1
+diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+echo "Something went wrong when trying no-default-env-preserved"
+exit 1
+}
+
+
+
+no-default-explicit_code () {
+      clk aws --profile company-prod --region ap-southeast-1 s3 ls
+}
+
+no-default-explicit_expected () {
+      cat<<"EOEXPECTED"
+[company-prod/ap-southeast-1] aws s3 ls
+EOEXPECTED
+}
+
+echo 'Run no-default-explicit'
+
+{ no-default-explicit_code || true ; } > "${TMP}/code.txt" 2>&1
+no-default-explicit_expected > "${TMP}/expected.txt" 2>&1
+diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+echo "Something went wrong when trying no-default-explicit"
+exit 1
+}
+
+
+unset AWS_PROFILE
+unset AWS_REGION
+# preserving environment variables when no option is given:6 ends here

@@ -3,6 +3,7 @@
 - [managing parameters](#managing-parameters)
 - [per-project configuration](#per-project)
 - [environment variable parameters](#30ecf8ae-ebc3-4194-aa85-40df469dde2a)
+- [preserving environment variables when no option is given](#preserving-env)
 
 I use AWS a lot at work. The AWS CLI is powerful but verbose. Every command needs `--profile` to specify which account I'm targeting, and often `--region` too. I find myself typing things like:
 
@@ -232,3 +233,54 @@ clk aws s3 ls
 ```
 
     [default/us-east-1] aws s3 ls
+
+
+<a id="preserving-env"></a>
+
+# preserving environment variables when no option is given
+
+In some setups, `AWS_PROFILE` and `AWS_REGION` are already set in the environment (e.g. by a CI pipeline or a `.envrc` file). I want my wrapper to use those values when I don't pass the corresponding options, instead of overwriting them with defaults.
+
+To do this, I simply remove the defaults from both options:
+
+```python
+from clk.config import config
+from clk.decorators import group, option
+
+
+class AwsProfile:
+    pass
+
+
+@group()
+@option("--profile", "-p", expose_class=AwsProfile, help="The AWS profile to use")
+@option("--region", "-r", help="The AWS region")
+def aws(region):
+    "AWS CLI wrapper with persistent configuration"
+    config.override_env["AWS_PROFILE"] = config.awsprofile.profile
+    config.override_env["AWS_REGION"] = region
+    config.init()
+
+
+@aws.group()
+def s3():
+    "S3 operations"
+```
+
+Notice that the code still unconditionally assigns both `config.override_env["AWS_PROFILE"]` and `config.override_env["AWS_REGION"]`. Yet when those options are not provided, clk knows the values were not given and won't set the corresponding environment variables. This means the code stays simple — no need for guards — and the existing environment is preserved:
+
+```bash
+export AWS_PROFILE=from-ci
+export AWS_REGION=eu-west-1
+clk aws s3 ls
+```
+
+    [from-ci/eu-west-1] aws s3 ls
+
+When the options are explicitly passed, they override the environment as expected:
+
+```bash
+clk aws --profile company-prod --region ap-southeast-1 s3 ls
+```
+
+    [company-prod/ap-southeast-1] aws s3 ls
