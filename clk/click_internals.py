@@ -42,23 +42,23 @@ def get_unparsed_args(ctx):
     Abstracts ctx.protected_args which is deprecated in Click 8.2.
     In Click 9.0, this will need to use ctx.args instead.
     """
-    return ctx.protected_args + ctx.args
+    return ctx._protected_args + ctx.args
 
 
 def has_unparsed_args(ctx):
     """Check if there are unparsed arguments for subcommands.
 
-    Abstracts ctx.protected_args which is deprecated in Click 8.2.
+    Uses the private attribute to avoid the deprecation warning in Click 8.2+.
     """
-    return bool(ctx.protected_args or ctx.args)
+    return bool(ctx._protected_args or ctx.args)
 
 
 def get_protected_args(ctx):
     """Get the protected args from a context.
 
-    Abstracts ctx.protected_args access (deprecated in Click 8.2).
+    Uses the private attribute to avoid the deprecation warning in Click 8.2+.
     """
-    return ctx.protected_args
+    return ctx._protected_args
 
 
 def set_protected_args(ctx, args):

@@ -152,7 +152,7 @@ def get_command_safe(path):
     try:
         return get_command(path)
     except Exception as e:
-        LOGGER.warn(f"Failed to get the command {path}: {e}")
+        LOGGER.warning(f"Failed to get the command {path}: {e}")
         on_command_loading_error()
         return None
 
@@ -578,10 +578,10 @@ class MissingDocumentationMixin:
     def invoke(self, ctx):
         if not ctx.resilient_parsing:
             if not self.help or self.help.strip() == "Description":
-                LOGGER.warn(f"The command '{self.path}' has no documentation")
+                LOGGER.warning(f"The command '{self.path}' has no documentation")
             for param in self.params:
                 if not param.help:
-                    LOGGER.warn(
+                    LOGGER.warning(
                         f"The parameter '{param.name}' in the command '{self.path}' has no documentation"
                     )
         super().invoke(ctx)
@@ -1117,10 +1117,7 @@ class ParameterMixin(click.Parameter):
         except NoPathAvailable:
             value = None
         if value is None:
-            if click.__version__.startswith("7"):
-                value = super().get_default(ctx)
-            else:
-                value = super().get_default(ctx, call=True)
+            value = super().get_default(ctx, call=True)
         else:
             LOGGER.develop(f"Getting default value {self.get_path(ctx)}={value}")
             value = self.type_cast_value(ctx, value)
@@ -1529,17 +1526,17 @@ class MainCommand(
         old_extra_args = []
         if "--no-parameter" in args:
             new_extra_args = self.get_extra_args(implicit_only=True)
-            res = click.MultiCommand.parse_args(self, ctx, new_extra_args + args)
+            res = click.Group.parse_args(self, ctx, new_extra_args + args)
             ctx.complete_arguments = list(args)
         else:
             new_extra_args = self.get_extra_args()
             if new_extra_args == old_extra_args:
-                res = click.MultiCommand.parse_args(self, ctx, new_extra_args + args)
+                res = click.Group.parse_args(self, ctx, new_extra_args + args)
                 new_extra_args = self.get_extra_args()
             while new_extra_args != old_extra_args:
                 old_extra_args = new_extra_args[:]
                 config.reset_env()
-                res = click.MultiCommand.parse_args(self, ctx, new_extra_args + args)
+                res = click.Group.parse_args(self, ctx, new_extra_args + args)
                 new_extra_args = self.get_extra_args()
             LOGGER.develop(
                 f"In the {self.__class__.__name__} '{ctx.command.path}', parsing args {new_extra_args} (initial args: {args})",
