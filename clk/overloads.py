@@ -1121,8 +1121,6 @@ class ParameterMixin(click.Parameter):
                 value = super().get_default(ctx)
             else:
                 value = super().get_default(ctx, call=True)
-            if value is UNSET:
-                value = None
         else:
             LOGGER.develop(f"Getting default value {self.get_path(ctx)}={value}")
             value = self.type_cast_value(ctx, value)
@@ -1183,6 +1181,12 @@ class Option(ParameterMixin, click.Option):
         self.group = kwargs.pop("group", None)
         kwargs.setdefault("show_default", True)
         super().__init__(*args, **kwargs)
+
+    def get_default(self, ctx, call=False):
+        value = super().get_default(ctx, call=call)
+        if value is UNSET:
+            value = None
+        return value
 
 
 class AutomaticOption(Option):
