@@ -11,7 +11,6 @@ from pathlib import Path
 
 import click
 from cached_property import cached_property
-from click.core import UNSET
 
 from clk.click_helpers import click_get_current_context_safe
 from clk.lib import quote, updated_env, value_to_string
@@ -304,7 +303,7 @@ class Config:
     def setup_environ(self):
         """Put the values of self.env and self.override_env into environment variables"""
         for k, v in self.override_env.items():
-            if v is None or v is UNSET:
+            if v is None:
                 continue
             os.environ[k] = v
         self.env = {
