@@ -1,5 +1,9 @@
-# [[file:sandboxing.org::+BEGIN_SRC bash :exports none :tangle ./sandboxing.sh :noweb yes][No heading:2]]
+# [[id:8e7e1dba-e84b-4569-9701-be3a1e073505::+BEGIN_SRC bash :exports none :tangle ./sandboxing.sh :noweb yes][No heading:2]]
 export TQDM_NCOLS=60
+# Clear bash hooks that may trigger X11 calls (notifications, xdotool, etc.)
+preexec_functions=()
+precmd_functions=()
+unset DISPLAY
 SRCDIR="$(pwd)"
 CLK_COV="$(readlink -f "$(dirname "$BASH_SOURCE")/../clk_coverage.sh")"
 if ! test -e "${CLK_COV}"
@@ -21,8 +25,8 @@ clean_cache( ){
 mkdir -p "${TMP}/clk-root"
 mkdir "${TMP}/bin"
 export CLK_BIN="$(readlink -f "$(which clk)")"
-export SLEEP_BIN="$(readlink -f "$(which sleep)")"
-export DATE_BIN="$(readlink -f "$(which date)")"
+export SLEEP_BIN="$(which sleep)"
+export DATE_BIN="$(which date)"
 init_faked_time () {
     export CLK_FAKED_TIME="2024-02-15T00:00:00+01:00"
 }

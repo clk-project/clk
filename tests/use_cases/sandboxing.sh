@@ -1,5 +1,9 @@
-# [[file:../../doc/use_cases/sandboxing.org::sandboxing][sandboxing]]
+# [[id:8e7e1dba-e84b-4569-9701-be3a1e073505::sandboxing][sandboxing]]
 export TQDM_NCOLS=60
+# Clear bash hooks that may trigger X11 calls (notifications, xdotool, etc.)
+preexec_functions=()
+precmd_functions=()
+unset DISPLAY
 SRCDIR="$(pwd)"
 CLK_COV="$(readlink -f "$(dirname "$BASH_SOURCE")/../clk_coverage.sh")"
 if ! test -e "${CLK_COV}"
@@ -21,8 +25,8 @@ clean_cache( ){
 mkdir -p "${TMP}/clk-root"
 mkdir "${TMP}/bin"
 export CLK_BIN="$(readlink -f "$(which clk)")"
-export SLEEP_BIN="$(readlink -f "$(which sleep)")"
-export DATE_BIN="$(readlink -f "$(which date)")"
+export SLEEP_BIN="$(which sleep)"
+export DATE_BIN="$(which date)"
 init_faked_time () {
     export CLK_FAKED_TIME="2024-02-15T00:00:00+01:00"
 }
@@ -99,7 +103,6 @@ export CLK_NETRC_LOCATION="${TMP}/netrc"
 export CLK_BIN="${CLK_BIN}"
 export PATH="${TMP}/bin:${PATH}"
 export CLK_COVERAGE_TEST_ID="${CLK_COVERAGE_TEST_ID-}"
-export CLK_COVERAGE_CONTEXT="${CLK_COVERAGE_CONTEXT-}"
 EOF
 # source the env file to use it in automatic test
 source "${TMP}/.envrc"
