@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
+# [[id:9d61364d-7246-4218-bcd8-b4b08d91ece3][summary:1]]
 set -eu
-# [[file:../../doc/use_cases/backing_up_documents.org::*summary][summary:1]]
 . ./sandboxing.sh
 
 clk command create python backup --group --description "Backup operations"
@@ -538,7 +538,7 @@ run-with-hostname_code () {
 
 run-with-hostname_expected () {
       cat<<"EOEXPECTED"
-Backing up documents from ~/docs to /media/external/documents
+Backing up documents from ~/docs to /mnt/my-nas/documents
 EOEXPECTED
 }
 
@@ -575,15 +575,17 @@ exit 1
 }
 
 
+cd ..
+
 
 try-disable-hostname_code () {
       clk extension disable "$(hostname)"
-      clk extension show | grep myhostname
+      clk backup docs do
 }
 
 try-disable-hostname_expected () {
       cat<<"EOEXPECTED"
-myhostname        local            global
+Backing up documents from ~/docs to /mnt/my-nas/documents
 EOEXPECTED
 }
 
@@ -597,7 +599,6 @@ exit 1
 }
 
 
-cd ..
 clk extension remove "$(hostname)"
 
 

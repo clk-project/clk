@@ -18,6 +18,9 @@ shows how to build a document backup system with clk, starting simple and
 growing as needs evolve.
 
 * starting with a backup group
+  :PROPERTIES:
+  :CUSTOM_ID: 1dc62bf4-f072-4d41-8332-8e36c935986d
+  :END:
 
 First, I need a group to hold all backup-related commands. I create a Python
 group called ~backup~ that sets a ~BACKUP_DESTINATION~ environment variable. All
@@ -109,6 +112,9 @@ Commands:
 #+end_example
 
 * persisting the destination
+  :PROPERTIES:
+  :CUSTOM_ID: f1a96546-e591-481b-a425-bc7a39e56dd6
+  :END:
 
 I always backup to the same external drive. Rather than typing ~--dest~ every
 time, I persist it as a parameter on the ~backup~ group. Since ~BACKUP_DESTINATION~
@@ -143,6 +149,9 @@ clk backup --dest /tmp/quick-backup docs do
 : Backing up documents from ~/docs to /tmp/quick-backup
 
 * adding more backup targets
+  :PROPERTIES:
+  :CUSTOM_ID: 32c0cfd1-07ab-4f3c-854b-e6a1b13ccbe5
+  :END:
 
 My backup needs grow. I want to back up my database and photos too. I create
 sibling commands under the ~backup~ group. They all use the same
@@ -208,6 +217,9 @@ persisted on the ~backup~ group. I didn't have to configure it on each command
 separately.
 
 * organizing with nested groups
+  :PROPERTIES:
+  :CUSTOM_ID: 14488552-499b-4212-be23-e07c7df5e68b
+  :END:
 
 As my backup system grows, I need sub-operations for documents. I want commands
 to verify backups and retrieve files. I simply create commands with dots in
@@ -280,6 +292,9 @@ clk backup docs retrieve important-notes.txt
 : Retrieving important-notes.txt from /media/external/documents
 
 * chaining backups with flows
+  :PROPERTIES:
+  :CUSTOM_ID: fe027a54-20dd-4d85-aa1f-7b6aa4d083c4
+  :END:
 
 My documents reference database entries, so I want to ensure the database is
 backed up before backing up documents. I use flow dependencies.
@@ -304,6 +319,9 @@ clk backup docs do --flow
 : Backing up documents from ~/docs to /media/external/documents
 
 * creating a full backup alias
+  :PROPERTIES:
+  :CUSTOM_ID: 50e4a5e1-c60f-448f-bf30-e0cc255fa96b
+  :END:
 
 I want a single command to back up everything. I create an alias that chains all
 backup commands.
@@ -327,6 +345,9 @@ clk backup full
 : Backing up photos with high quality to /media/external/documents
 
 * shortcut aliases for common scenarios
+  :PROPERTIES:
+  :CUSTOM_ID: acc52577-dff0-47ee-a0be-0b82beeffb82
+  :END:
 
 I create aliases for frequent backup patterns.
 
@@ -351,6 +372,9 @@ clk backup work
 : Backing up documents from ~/work/documents to /media/external/documents
 
 * per-project backup configuration
+  :PROPERTIES:
+  :CUSTOM_ID: 65537dcf-015c-4dbd-9479-faa5282f1864
+  :END:
 
 Different projects have different backup needs. I use project-local parameters
 so backup commands do the right thing depending on where I am.
@@ -394,6 +418,9 @@ clk backup docs do
 : Backing up documents from ~/docs to /media/external/documents
 
 * personal preferences with a hostname extension
+  :PROPERTIES:
+  :CUSTOM_ID: 41dfc4f9-e04b-4e10-a6e7-0fa7bf0ffb26
+  :END:
 
 I want my personal backup to go to my own NAS, regardless of any project I'm
 in. The solution is to create an extension named after my hostname and put my
@@ -423,7 +450,7 @@ clk backup docs do
 #+END_SRC
 
 #+RESULTS[6ac099e1f8d9a7a71fa425bb837d0c80f99fe4ca]: run-with-hostname
-: Backing up documents from ~/docs to /media/external/documents
+: Backing up documents from ~/docs to /mnt/my-nas/documents
 
 Inside a project that defines its own ~--dest~, the project-local parameters
 take precedence. This is useful when a shared project needs a specific backup
@@ -443,28 +470,37 @@ clk backup docs do
 : Backing up documents from ./documentation to /mnt/backup/project-a
 
 Note that clk will always enable the extension matching your hostname, even if
-you explicitly disable it in a project. Let's try it.
+you explicitly disable it. Let's try it.
+
+#+NAME: back-to-home
+#+BEGIN_SRC bash :results verbatim :exports both :session f8a2b3c4-d5e6-7890-abcd-ef1234567891 :cache yes
+cd ..
+#+END_SRC
+
+#+RESULTS[9330526704ca04fc08dac2f7b44e0e8f0545c0b4]: back-to-home
 
 #+NAME: try-disable-hostname
 #+BEGIN_SRC bash :results verbatim :exports both :session f8a2b3c4-d5e6-7890-abcd-ef1234567891 :cache yes
 clk extension disable "$(hostname)"
-clk extension show | grep myhostname
+clk backup docs do
 #+END_SRC
 
-#+RESULTS[165d082fabc4b59d1a0567e58771270d9086058b]: try-disable-hostname
-: myhostname        local            global
+#+RESULTS[c2de72eb8e0154d3db842611d2ee221e7f6b3636]: try-disable-hostname
+: Backing up documents from ~/docs to /mnt/my-nas/documents
 
-Even after disabling, the hostname extension remains active. This is practical
-to put personal preferences that apply everywhere, while still respecting
-project-specific overrides when they exist.
+Even after disabling, the hostname extension remains active and its parameters
+are still applied. This is practical to put personal preferences that apply
+everywhere, while still respecting project-specific overrides when they exist.
 
 #+NAME: leave-project-a-hostname
 #+BEGIN_SRC bash :results none :exports code :session f8a2b3c4-d5e6-7890-abcd-ef1234567891
-cd ..
 clk extension remove "$(hostname)"
 #+END_SRC
 
 * seeing everything at a glance
+  :PROPERTIES:
+  :CUSTOM_ID: 1b9ca160-b8ea-4a5e-9455-01225e26c058
+  :END:
 
 As the backup system grows, I can see all available commands with ~--help~.
 
@@ -503,6 +539,10 @@ This gives me a complete overview: the core commands (~database~, ~docs~,
 down into any group for more details.
 
 * summary
+  :PROPERTIES:
+  :ID:       9d61364d-7246-4218-bcd8-b4b08d91ece3
+  :CUSTOM_ID: 69f8a2f5-ba36-41fc-9d2c-6235b839bd9b
+  :END:
 
 This use case demonstrates several clk patterns working together:
 
@@ -585,6 +625,8 @@ check-result(run-with-hostname)
 <<enter-project-a-hostname>>
 
 check-result(run-in-project-a-hostname)
+
+<<back-to-home>>
 
 check-result(try-disable-hostname)
 

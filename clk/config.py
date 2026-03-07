@@ -4,6 +4,7 @@ import contextvars
 import json
 import os
 import shlex
+import socket
 from collections import defaultdict
 from contextlib import contextmanager
 from copy import deepcopy
@@ -549,22 +550,33 @@ class Config:
         if self._all_profiles_cache is None:
             res = []
 
+            hostname = socket.gethostname()
+
+            def append_extension(extension):
+                res.append(
+                    ProfileFactory.create_preset_profile(
+                        f"{extension.name}preset",
+                        settings={"customcommands": extension.custom_command_paths},
+                        explicit=False,
+                        isroot=False,
+                        isextension=True,
+                        activation_level=ActivationLevel.global_,
+                    )
+                )
+                res.append(extension)
+
             def add_profile(profile, explicit=True):
                 if profile is None:
                     return
+                hostname_extension = None
                 for extension in self.sorted_extensions(profile.extensions):
-                    res.append(
-                        ProfileFactory.create_preset_profile(
-                            f"{extension.name}preset",
-                            settings={"customcommands": extension.custom_command_paths},
-                            explicit=False,
-                            isroot=False,
-                            isextension=True,
-                            activation_level=ActivationLevel.global_,
-                        )
-                    )
-                    res.append(extension)
+                    if extension.short_name == hostname:
+                        hostname_extension = extension
+                    else:
+                        append_extension(extension)
                 res.append(profile)
+                if hostname_extension is not None:
+                    append_extension(hostname_extension)
 
             add_profile(self.builtin_profile)
             add_profile(self.distribution_profile)
@@ -642,6 +654,8 @@ class Config:
             # the preset profile associated to a extension must have the same
             # enabling than the extension itself
             shortname = shortname[: -len("preset")]
+        if shortname == socket.gethostname():
+            return True
         return (
             (self.settings2 or {})
             .get("recipe", {})

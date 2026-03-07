@@ -1,19 +1,19 @@
-- [starting with a backup group](#org1b09af2)
-- [persisting the destination](#org8d69ac8)
-- [adding more backup targets](#orgda14215)
-- [organizing with nested groups](#org8bac0ba)
-- [chaining backups with flows](#org925c995)
-- [creating a full backup alias](#org8098521)
-- [shortcut aliases for common scenarios](#orgecc405e)
-- [per-project backup configuration](#orgb73bc95)
-- [personal preferences with a hostname extension](#org9e9eb34)
-- [seeing everything at a glance](#orgbe45cf5)
-- [summary](#org2582d36)
+- [starting with a backup group](#1dc62bf4-f072-4d41-8332-8e36c935986d)
+- [persisting the destination](#f1a96546-e591-481b-a425-bc7a39e56dd6)
+- [adding more backup targets](#32c0cfd1-07ab-4f3c-854b-e6a1b13ccbe5)
+- [organizing with nested groups](#14488552-499b-4212-be23-e07c7df5e68b)
+- [chaining backups with flows](#fe027a54-20dd-4d85-aa1f-7b6aa4d083c4)
+- [creating a full backup alias](#50e4a5e1-c60f-448f-bf30-e0cc255fa96b)
+- [shortcut aliases for common scenarios](#acc52577-dff0-47ee-a0be-0b82beeffb82)
+- [per-project backup configuration](#65537dcf-015c-4dbd-9479-faa5282f1864)
+- [personal preferences with a hostname extension](#41dfc4f9-e04b-4e10-a6e7-0fa7bf0ffb26)
+- [seeing everything at a glance](#1b9ca160-b8ea-4a5e-9455-01225e26c058)
+- [summary](#69f8a2f5-ba36-41fc-9d2c-6235b839bd9b)
 
 I have years of personal documents - notes, scanned papers, receipts, photos of whiteboards. I want a command line tool to back them up reliably. This use case shows how to build a document backup system with clk, starting simple and growing as needs evolve.
 
 
-<a id="org1b09af2"></a>
+<a id="1dc62bf4-f072-4d41-8332-8e36c935986d"></a>
 
 # starting with a backup group
 
@@ -83,7 +83,7 @@ Commands:
 ```
 
 
-<a id="org8d69ac8"></a>
+<a id="f1a96546-e591-481b-a425-bc7a39e56dd6"></a>
 
 # persisting the destination
 
@@ -112,7 +112,7 @@ clk backup --dest /tmp/quick-backup docs do
     Backing up documents from ~/docs to /tmp/quick-backup
 
 
-<a id="orgda14215"></a>
+<a id="32c0cfd1-07ab-4f3c-854b-e6a1b13ccbe5"></a>
 
 # adding more backup targets
 
@@ -170,7 +170,7 @@ clk backup photos
 Notice how both commands use `/media/external/documents` - the destination I persisted on the `backup` group. I didn't have to configure it on each command separately.
 
 
-<a id="org8bac0ba"></a>
+<a id="14488552-499b-4212-be23-e07c7df5e68b"></a>
 
 # organizing with nested groups
 
@@ -233,7 +233,7 @@ clk backup docs retrieve important-notes.txt
     Retrieving important-notes.txt from /media/external/documents
 
 
-<a id="org925c995"></a>
+<a id="fe027a54-20dd-4d85-aa1f-7b6aa4d083c4"></a>
 
 # chaining backups with flows
 
@@ -255,7 +255,7 @@ clk backup docs do --flow
     Backing up documents from ~/docs to /media/external/documents
 
 
-<a id="org8098521"></a>
+<a id="50e4a5e1-c60f-448f-bf30-e0cc255fa96b"></a>
 
 # creating a full backup alias
 
@@ -276,7 +276,7 @@ clk backup full
     Backing up photos with high quality to /media/external/documents
 
 
-<a id="orgecc405e"></a>
+<a id="acc52577-dff0-47ee-a0be-0b82beeffb82"></a>
 
 # shortcut aliases for common scenarios
 
@@ -299,7 +299,7 @@ clk backup work
     Backing up documents from ~/work/documents to /media/external/documents
 
 
-<a id="orgb73bc95"></a>
+<a id="65537dcf-015c-4dbd-9479-faa5282f1864"></a>
 
 # per-project backup configuration
 
@@ -335,7 +335,7 @@ clk backup docs do
     Backing up documents from ~/docs to /media/external/documents
 
 
-<a id="org9e9eb34"></a>
+<a id="41dfc4f9-e04b-4e10-a6e7-0fa7bf0ffb26"></a>
 
 # personal preferences with a hostname extension
 
@@ -359,7 +359,7 @@ Outside any project, the extension's destination is used.
 clk backup docs do
 ```
 
-    Backing up documents from ~/docs to /media/external/documents
+    Backing up documents from ~/docs to /mnt/my-nas/documents
 
 Inside a project that defines its own `--dest`, the project-local parameters take precedence. This is useful when a shared project needs a specific backup destination that everyone on the team should use.
 
@@ -373,24 +373,27 @@ clk backup docs do
 
     Backing up documents from ./documentation to /mnt/backup/project-a
 
-Note that clk will always enable the extension matching your hostname, even if you explicitly disable it in a project. Let's try it.
-
-```bash
-clk extension disable "$(hostname)"
-clk extension show | grep myhostname
-```
-
-    myhostname        local            global
-
-Even after disabling, the hostname extension remains active. This is practical to put personal preferences that apply everywhere, while still respecting project-specific overrides when they exist.
+Note that clk will always enable the extension matching your hostname, even if you explicitly disable it. Let's try it.
 
 ```bash
 cd ..
+```
+
+```bash
+clk extension disable "$(hostname)"
+clk backup docs do
+```
+
+    Backing up documents from ~/docs to /mnt/my-nas/documents
+
+Even after disabling, the hostname extension remains active and its parameters are still applied. This is practical to put personal preferences that apply everywhere, while still respecting project-specific overrides when they exist.
+
+```bash
 clk extension remove "$(hostname)"
 ```
 
 
-<a id="orgbe45cf5"></a>
+<a id="1b9ca160-b8ea-4a5e-9455-01225e26c058"></a>
 
 # seeing everything at a glance
 
@@ -427,7 +430,7 @@ Commands:
 This gives me a complete overview: the core commands (`database`, `docs`, `photos`), the convenience aliases (`full`, `quick`, `work`), and I can drill down into any group for more details.
 
 
-<a id="org2582d36"></a>
+<a id="69f8a2f5-ba36-41fc-9d2c-6235b839bd9b"></a>
 
 # summary
 
