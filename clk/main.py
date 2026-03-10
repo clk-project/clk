@@ -33,6 +33,8 @@ def clk(**kwargs):
     If you are new to clk, I warmly suggest you first try `clk learn` so that you
     can learn the concepts and the tooling around them.
 
+    The full documentation is also available online at https://clk-project.org/.
+
     """
 
 
