@@ -1,6 +1,7 @@
 - [adding options and arguments](#adding-options-and-arguments)
-- [required arguments](#required-arguments)
+- [adding a default value](#adding-a-default-value)
 - [possible mistake: forgetting the decorator](#forgetting-the-decorator)
+- [possible mistake: using periods in python command names](#periods-in-python-command-names)
 
 To create a python command, you can simply call the following command.
 
@@ -148,6 +149,44 @@ You can add options and arguments to your command using click decorators. clk pr
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
+from clk.decorators import command, argument
+
+
+@command()
+@argument("name", help="Your name")
+def mycommand(name):
+    "A command that requires a name"
+    print(f"Hello, {name}!")
+```
+
+An argument is required by default. Calling the command without it produces an error.
+
+```bash
+clk mycommand 2>&1
+```
+
+    Usage: clk mycommand [OPTIONS] NAME
+    error: Missing argument 'NAME'.
+
+Providing the argument works as expected.
+
+```bash
+clk mycommand World
+```
+
+    Hello, World!
+
+
+<a id="adding-a-default-value"></a>
+
+# adding a default value
+
+You can make an argument optional by providing a `default` value. You can also add options and flags.
+
+```python
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+
 from clk.decorators import command, option, argument
 
 
@@ -172,44 +211,6 @@ clk mycommand --name clk Goodbye
 
     warning: The parameter 'greeting' in the command 'mycommand' has no documentation
     Goodbye, clk!
-
-
-<a id="required-arguments"></a>
-
-# required arguments
-
-In the previous example, the argument had a `default` value, making it optional. Without a default, the argument is required — the command fails if you don't provide it.
-
-```python
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-
-from clk.decorators import command, argument
-
-
-@command()
-@argument("name", help="Your name")
-def mycommand(name):
-    "A command that requires a name"
-    print(f"Hello, {name}!")
-```
-
-Calling the command without the argument produces an error.
-
-```bash
-clk mycommand 2>&1
-```
-
-    Usage: clk mycommand [OPTIONS] NAME
-    error: Missing argument 'NAME'.
-
-Providing the argument works as expected.
-
-```bash
-clk mycommand World
-```
-
-    Hello, World!
 
 
 <a id="forgetting-the-decorator"></a>
@@ -254,3 +255,49 @@ clk myenv
 ```
 
     hello
+
+
+<a id="periods-in-python-command-names"></a>
+
+# possible mistake: using periods in python command names
+
+Unlike bash commands, where the period character can be used to put a command inside a group (e.g. `somegroup.somecommand`), python command names cannot contain periods. The name is used as a Python identifier, so periods would produce invalid code.
+
+```bash
+clk command create python something.with.periods 2>&1
+```
+
+    Usage: clk command create python [OPTIONS] NAME
+    error: 'something.with.periods' is not a valid Python command name (it contains periods). Python command names must be valid Python identifiers. If you want to create a command inside a group, first create the group with 'clk command create python --group mygroup', then add the command inside it.
+
+To create a command inside a group, first create the group as a python command with `--group`, then edit it to add the child command inside.
+
+```bash
+clk command create python --group mygroup
+```
+
+Then edit the group file to add the child command.
+
+```python
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+
+from clk.decorators import group, command
+
+
+@group()
+def mygroup():
+    "My group of commands"
+
+
+@mygroup.command()
+def child():
+    "A command inside mygroup"
+    print("hello from mygroup child")
+```
+
+```bash
+clk mygroup child
+```
+
+    hello from mygroup child

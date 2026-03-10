@@ -341,6 +341,70 @@ clk myenv
 #+RESULTS[e073a22027d65d24304cb4d9e3633779c9593da4]: try-fixed-command
 : hello
 
+* possible mistake: using periods in python command names
+  :PROPERTIES:
+  :CUSTOM_ID: periods-in-python-command-names
+  :ID:       d9ba5b67-bc5d-4a07-b1c9-cac12a0414ee
+  :END:
+
+Unlike bash commands, where the period character can be used to put a command
+inside a group (e.g. ~somegroup.somecommand~), python command names cannot
+contain periods. The name is used as a Python identifier, so periods would
+produce invalid code.
+
+#+NAME: create-periods
+#+BEGIN_SRC bash :results verbatim :exports both :session b115ee6f-3575-46e0-a64c-880cfa22d4e3 :cache yes
+clk command create python something.with.periods 2>&1
+#+END_SRC
+
+#+RESULTS[8538e1d58ed9f1109a1f7a7b65c661502a419577]: create-periods
+: Usage: clk command create python [OPTIONS] NAME
+: error: 'something.with.periods' is not a valid Python command name (it contains periods). Python command names must be valid Python identifiers. If you want to create a command inside a group, first create the group with 'clk command create python --group mygroup', then add the command inside it.
+
+To create a command inside a group, first create the group as a python command
+with ~--group~, then edit it to add the child command inside.
+
+#+NAME: create-mygroup
+#+BEGIN_SRC bash :results none :exports code :session b115ee6f-3575-46e0-a64c-880cfa22d4e3
+clk command create python --group mygroup
+#+END_SRC
+
+Then edit the group file to add the child command.
+
+#+NAME: mygroup-with-child-code
+#+BEGIN_SRC python :exports code
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+
+from clk.decorators import group, command
+
+
+@group()
+def mygroup():
+    "My group of commands"
+
+
+@mygroup.command()
+def child():
+    "A command inside mygroup"
+    print("hello from mygroup child")
+#+END_SRC
+
+#+NAME: mygroup-with-child
+#+BEGIN_SRC bash :results none :exports none :session b115ee6f-3575-46e0-a64c-880cfa22d4e3 :noweb yes
+cat <<'EOF' > "$(clk command which mygroup)"
+<<mygroup-with-child-code>>
+EOF
+#+END_SRC
+
+#+NAME: try-mygroup-child
+#+BEGIN_SRC bash :results verbatim :exports both :session b115ee6f-3575-46e0-a64c-880cfa22d4e3 :cache yes
+clk mygroup child
+#+END_SRC
+
+#+RESULTS[e243f68a2d1e37992ff663d9518a348041fa2f8c]: try-mygroup-child
+: hello from mygroup child
+
 #+BEGIN_SRC bash :exports none :tangle ../../tests/use_cases/python_command.sh :noweb yes :shebang "#!/usr/bin/env bash"
 set -eu
 <<init>>
@@ -380,4 +444,12 @@ check-result(try-bad-command)
 <<fix-command>>
 
 check-result(try-fixed-command)
+
+check-result(create-periods)
+
+<<create-mygroup>>
+
+<<mygroup-with-child>>
+
+check-result(try-mygroup-child)
 #+END_SRC

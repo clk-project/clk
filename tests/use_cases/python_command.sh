@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
+# [[id:d9ba5b67-bc5d-4a07-b1c9-cac12a0414ee][possible mistake: using periods in python command names:6]]
 set -eu
-# [[file:../../doc/use_cases/python_command.org::#forgetting-the-decorator][possible mistake: forgetting the decorator:7]]
 . ./sandboxing.sh
 
 clk command create python mycommand
@@ -192,6 +192,63 @@ cat<<'EOF' > "$(clk command which mycommand)"
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
+from clk.decorators import command, argument
+
+
+@command()
+@argument("name", help="Your name")
+def mycommand(name):
+    "A command that requires a name"
+    print(f"Hello, {name}!")
+EOF
+
+
+required_arg_error_code () {
+      clk mycommand 2>&1
+}
+
+required_arg_error_expected () {
+      cat<<"EOEXPECTED"
+Usage: clk mycommand [OPTIONS] NAME
+error: Missing argument 'NAME'.
+EOEXPECTED
+}
+
+echo 'Run required_arg_error'
+
+{ required_arg_error_code || true ; } > "${TMP}/code.txt" 2>&1
+required_arg_error_expected > "${TMP}/expected.txt" 2>&1
+diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+echo "Something went wrong when trying required_arg_error"
+exit 1
+}
+
+
+
+required_arg_ok_code () {
+      clk mycommand World
+}
+
+required_arg_ok_expected () {
+      cat<<"EOEXPECTED"
+Hello, World!
+EOEXPECTED
+}
+
+echo 'Run required_arg_ok'
+
+{ required_arg_ok_code || true ; } > "${TMP}/code.txt" 2>&1
+required_arg_ok_expected > "${TMP}/expected.txt" 2>&1
+diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+echo "Something went wrong when trying required_arg_ok"
+exit 1
+}
+
+
+cat<<'EOF' > "$(clk command which mycommand)"
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+
 from clk.decorators import command, option, argument
 
 
@@ -243,63 +300,6 @@ echo 'Run use_with_options2'
 use_with_options2_expected > "${TMP}/expected.txt" 2>&1
 diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
 echo "Something went wrong when trying use_with_options2"
-exit 1
-}
-
-
-cat<<'EOF' > "$(clk command which mycommand)"
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-
-from clk.decorators import command, argument
-
-
-@command()
-@argument("name", help="Your name")
-def mycommand(name):
-    "A command that requires a name"
-    print(f"Hello, {name}!")
-EOF
-
-
-required_arg_error_code () {
-      clk mycommand 2>&1
-}
-
-required_arg_error_expected () {
-      cat<<"EOEXPECTED"
-Usage: clk mycommand [OPTIONS] NAME
-error: Missing argument 'NAME'.
-EOEXPECTED
-}
-
-echo 'Run required_arg_error'
-
-{ required_arg_error_code || true ; } > "${TMP}/code.txt" 2>&1
-required_arg_error_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying required_arg_error"
-exit 1
-}
-
-
-
-required_arg_ok_code () {
-      clk mycommand World
-}
-
-required_arg_ok_expected () {
-      cat<<"EOEXPECTED"
-Hello, World!
-EOEXPECTED
-}
-
-echo 'Run required_arg_ok'
-
-{ required_arg_ok_code || true ; } > "${TMP}/code.txt" 2>&1
-required_arg_ok_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying required_arg_ok"
 exit 1
 }
 
@@ -361,4 +361,67 @@ diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
 echo "Something went wrong when trying try-fixed-command"
 exit 1
 }
-# possible mistake: forgetting the decorator:7 ends here
+
+
+
+create-periods_code () {
+      clk command create python something.with.periods 2>&1
+}
+
+create-periods_expected () {
+      cat<<"EOEXPECTED"
+Usage: clk command create python [OPTIONS] NAME
+error: 'something.with.periods' is not a valid Python command name (it contains periods). Python command names must be valid Python identifiers. If you want to create a command inside a group, first create the group with 'clk command create python --group mygroup', then add the command inside it.
+EOEXPECTED
+}
+
+echo 'Run create-periods'
+
+{ create-periods_code || true ; } > "${TMP}/code.txt" 2>&1
+create-periods_expected > "${TMP}/expected.txt" 2>&1
+diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+echo "Something went wrong when trying create-periods"
+exit 1
+}
+
+
+clk command create python --group mygroup
+
+cat <<'EOF' > "$(clk command which mygroup)"
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+
+from clk.decorators import group, command
+
+
+@group()
+def mygroup():
+    "My group of commands"
+
+
+@mygroup.command()
+def child():
+    "A command inside mygroup"
+    print("hello from mygroup child")
+EOF
+
+
+try-mygroup-child_code () {
+      clk mygroup child
+}
+
+try-mygroup-child_expected () {
+      cat<<"EOEXPECTED"
+hello from mygroup child
+EOEXPECTED
+}
+
+echo 'Run try-mygroup-child'
+
+{ try-mygroup-child_code || true ; } > "${TMP}/code.txt" 2>&1
+try-mygroup-child_expected > "${TMP}/expected.txt" 2>&1
+diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+echo "Something went wrong when trying try-mygroup-child"
+exit 1
+}
+# possible mistake: using periods in python command names:6 ends here

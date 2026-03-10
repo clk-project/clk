@@ -510,6 +510,14 @@ clk_help_handler "$@"
 @option("--from-file", help="Copy this file instead of using the template")
 def python(name, open, force, description, body, with_data, from_file, group):
     """Create a bash custom command"""
+    if "." in name.removesuffix(".py"):
+        raise click.UsageError(
+            f"'{name}' is not a valid Python command name (it contains periods)."
+            " Python command names must be valid Python identifiers."
+            " If you want to create a command inside a group,"
+            " first create the group with 'clk command create python --group mygroup',"
+            " then add the command inside it."
+        )
     name = name.replace("-", "_")
     script_path = Path(config.customcommands.profile.location) / "python"
     if with_data:
