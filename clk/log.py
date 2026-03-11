@@ -11,11 +11,14 @@ import click_log
 class DevelopColorFormatter(click_log.core.ColorFormatter):
     """A click log formatter with augmented output, to be used in debug mode"""
 
+    show_timestamp = False
+
     def format(self, record):
         if not record.exc_info:
             level = record.levelname.lower()
+            ts = f"{self.formatTime(record)} " if self.show_timestamp else ""
             prefix = click.style(
-                f"{record.name}({record.lineno}): {level}: ",
+                f"{ts}{record.name}({record.lineno}): {level}: ",
                 **self.colors.get(level, {}),
             )
             record.msg = "\n".join(prefix + x for x in str(record.msg).splitlines())

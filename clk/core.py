@@ -533,6 +533,13 @@ def main_command_decoration(f, cls, **kwargs):
         default=None,
     )(f)
     f = main_command_option(
+        "--timestamp/--no-timestamp",
+        help="Show timestamps in develop log lines",
+        callback=timestamp_callback,
+        is_eager=True,
+        default=None,
+    )(f)
+    f = main_command_option(
         "--post-mortem/--no-post-mortem",
         help="Run a post-mortem debugger in case of exception",
         callback=post_mortem_callback,
@@ -696,6 +703,13 @@ def develop_callback(ctx, attr, value):
     if value:
         config.log_level = "develop"
         log.default_handler.formatter = log.DevelopColorFormatter()
+    return value
+
+
+@main_command_options_callback
+def timestamp_callback(ctx, attr, value):
+    if value:
+        log.DevelopColorFormatter.show_timestamp = True
     return value
 
 
