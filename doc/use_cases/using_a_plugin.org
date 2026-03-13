@@ -208,9 +208,11 @@ clk mycommand
 
 #+RESULTS[c97bcfd900ba0638189e393062547b297fc09aae]: run_after_unset
 : main command
+
 ** listing triggers with --name-only
    :PROPERTIES:
    :CUSTOM_ID: listing-triggers-name-only
+   :ID:       653ccf6d-e530-4d30-9469-704a941c607f
    :END:
 
 When you have many triggers, you can list just the command names that have

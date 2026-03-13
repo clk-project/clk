@@ -71,6 +71,37 @@ def list_commands(parent_path):
 
 commands_cache = {}
 get_command_handlers = {}
+_invoke_hooks = []
+
+
+def invoke_hook(fn):
+    """Register an invoke hook middleware.
+
+    Usage::
+
+        from clk import invoke_hook
+
+        @invoke_hook
+        def my_hook(command, ctx, next_fn):
+            # ... before ...
+            result = next_fn()
+            # ... after ...
+            return result
+
+    Each hook wraps the next one in the chain.  The innermost call is the
+    original command invoke.  A hook *must* call ``next_fn()`` to let the
+    chain continue (or deliberately skip it).
+    """
+    _invoke_hooks.append(fn)
+    return fn
+
+
+def _invoke_with_hooks(command, ctx, invoke_fn):
+    chain = invoke_fn
+    for hook in reversed(_invoke_hooks):
+        prev = chain
+        chain = (lambda h, p: lambda: h(command, ctx, p))(hook, prev)
+    return chain()
 
 
 def get_command(path, with_resolver=False):
@@ -637,7 +668,7 @@ class Command(
                 f"'{ctx.command_path}' does not support dry-run mode: I won't call it"
             )
             raise SystemExit()
-        return super().invoke(ctx, *args, **kwargs)
+        return _invoke_with_hooks(self, ctx, lambda: super(Command, self).invoke(ctx, *args, **kwargs))
 
     def flow_option(self, *args, **kwargs):
         return flow_option(*args, target_command=self, **kwargs)
@@ -836,7 +867,7 @@ class Group(
 
     def invoke(self, ctx, *args, **kwargs):
         super().invoke_handle_deprecated(ctx, *args, **kwargs)
-        return super().invoke(ctx, *args, **kwargs)
+        return _invoke_with_hooks(self, ctx, lambda: super(Group, self).invoke(ctx, *args, **kwargs))
 
     def _extract_help_option(self, args):
         """Extract --help or --help-all from args, returning (help_option, filtered_args)."""
@@ -1519,7 +1550,7 @@ class MainCommand(
 
     def invoke(self, ctx, *args, **kwargs):
         super().invoke_handle_deprecated(ctx, *args, **kwargs)
-        return super().invoke(ctx, *args, **kwargs)
+        return _invoke_with_hooks(self, ctx, lambda: super(MainCommand, self).invoke(ctx, *args, **kwargs))
 
     def _parse_args_stabilize(self, ctx, args):
         """Inject extra args and parse them till the args become stable"""

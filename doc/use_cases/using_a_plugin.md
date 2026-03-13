@@ -5,7 +5,7 @@
   - [pre-trigger execution](#pre-trigger-execution)
   - [success triggers](#success-triggers)
   - [unsetting a trigger](#unsetting-a-trigger)
-  - [listing triggers with &#x2013;name-only](#listing-triggers-name-only)
+  - [listing triggers with &ndash;name-only](#listing-triggers-name-only)
 
 In the past, clk contained a command used to add hooks before and after other commands. This was highly advanced stuff and eventually was barely used. It was removed from clk. But, with the plugin mechanism, you actually can put this feature back into clk.
 
@@ -51,7 +51,7 @@ wget -O ~/.config/clk/plugins/trigger.py \
   https://raw.githubusercontent.com/clk-project/clk/main/contrib/plugin/trigger.py
 ```
 
-Once copied in the plugin directory, you should be able to see it listed in the list of plugins&#x2026;
+Once copied in the plugin directory, you should be able to see it listed in the list of plugins&hellip;
 
 ```bash
 clk plugin show
@@ -59,7 +59,7 @@ clk plugin show
 
     trigger Trigger plugin - run commands before/after other commands.
 
-&#x2026;and use the injected command like any other.
+&hellip;and use the injected command like any other.
 
 ```bash
 clk trigger --help | head -15
@@ -171,7 +171,7 @@ clk mycommand
 
 <a id="listing-triggers-name-only"></a>
 
-## listing triggers with &#x2013;name-only
+## listing triggers with &ndash;name-only
 
 When you have many triggers, you can list just the command names that have triggers:
 

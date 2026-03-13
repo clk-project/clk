@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
+# [[id:653ccf6d-e530-4d30-9469-704a941c607f][listing triggers with --name-only:3]]
 set -eu
-# [[file:../../doc/use_cases/using_a_plugin.org::#listing-triggers-name-only][listing triggers with --name-only:3]]
 . ./sandboxing.sh
 
 mkdir -p "${CLKCONFIGDIR}/plugins"

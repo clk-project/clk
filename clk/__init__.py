@@ -31,6 +31,7 @@ from clk.lib import (  # NOQA: F401
     rm,
 )
 from clk.log import get_logger  # NOQA: F401
+from clk.overloads import invoke_hook  # NOQA: F401
 
 LOGGER = log.get_logger(__name__)
 log.basic_config(LOGGER)

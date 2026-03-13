@@ -34,11 +34,8 @@ from clk.decorators import argument, flag, group, use_settings
 from clk.lib import echo_key_value, quote
 from clk.log import get_logger
 from clk.overloads import (
-    Command,
     CommandSettingsKeyType,
     CommandType,
-    Group,
-    MainCommand,
 )
 
 LOGGER = get_logger(__name__)
@@ -60,27 +57,19 @@ def run_triggers(name, path, commands):
             run(command)
 
 
-def trigger_invoke_wrapper(original_invoke):
-    """Create a wrapped invoke method that runs triggers around the original."""
-
-    def invoke_with_triggers(self, *args, **kwargs):
-        trigger = config.settings2.get("triggers", {}).get(self.path, {})
-        pre = trigger.get("pre", [])
-        post = trigger.get("post", [])
-        success = trigger.get("success", [])
-        error = trigger.get("error", [])
-        run_triggers("pre", self.path, pre)
-        try:
-            res = original_invoke(self, *args, **kwargs)
-        except:  # NOQA: E722
-            run_triggers("error", self.path, error)
-            run_triggers("post", self.path, post)
-            raise
-        run_triggers("success", self.path, success)
-        run_triggers("post", self.path, post)
-        return res
-
-    return invoke_with_triggers
+def trigger_invoke_hook(command, ctx, next_fn):
+    """Invoke hook middleware that runs triggers around command execution."""
+    trigger = config.settings2.get("triggers", {}).get(command.path, {})
+    run_triggers("pre", command.path, trigger.get("pre", []))
+    try:
+        result = next_fn()
+    except:  # NOQA: E722
+        run_triggers("error", command.path, trigger.get("error", []))
+        run_triggers("post", command.path, trigger.get("post", []))
+        raise
+    run_triggers("success", command.path, trigger.get("success", []))
+    run_triggers("post", command.path, trigger.get("post", []))
+    return result
 
 
 # ---------------------------------------------------------------------------
@@ -227,14 +216,11 @@ def load_plugin():
     """Initialize the trigger plugin.
 
     This function is called by clk when the plugin is loaded.
-    It monkey-patches the Command, Group, and MainCommand classes
-    to inject trigger execution around command invocation.
+    It registers an invoke hook to run triggers around command execution.
     """
-    # Wrap the invoke methods of Command, Group, and MainCommand
-    # to add trigger execution
-    Command.invoke = trigger_invoke_wrapper(Command.invoke)
-    Group.invoke = trigger_invoke_wrapper(Group.invoke)
-    MainCommand.invoke = trigger_invoke_wrapper(MainCommand.invoke)
+    from clk import invoke_hook
+
+    invoke_hook(trigger_invoke_hook)
 
     # Register the trigger command group with the main command
     config.main_command.add_command(trigger)
