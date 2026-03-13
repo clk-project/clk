@@ -105,6 +105,10 @@ Here are some use cases that hopefully will have the following properties:
 
   Some commands might need to use secret, [[file:dealing_with_secrets.org][here is how]] we implement that.
 
+  When a command feels slow and you want to find the bottleneck, the
+  [[file:spotting_slow_code.org][spotting slow code]] use case shows how to use ~--develop --timestamp~ to
+  pinpoint where time is spent.
+
   When you have many aliases, parameters, commands, and extensions spread across
   different profiles, it can be hard to remember what's available. The ~clk
   describe~ command helps you [[file:self_documentation.org][explore and document your configuration]], showing

@@ -534,7 +534,7 @@ def main_command_decoration(f, cls, **kwargs):
     )(f)
     f = main_command_option(
         "--timestamp/--no-timestamp",
-        help="Show timestamps in develop log lines",
+        help="Show timestamps in log lines",
         callback=timestamp_callback,
         is_eager=True,
         default=None,
@@ -710,6 +710,7 @@ def develop_callback(ctx, attr, value):
 def timestamp_callback(ctx, attr, value):
     if value:
         log.DevelopColorFormatter.show_timestamp = True
+        log.default_handler.show_timestamp = True
     return value
 
 
@@ -870,6 +871,32 @@ def reproducible_output_callback(ctx, attr, value):
         config.reproducible_output = True
         sys.stdout = RedactMessages(sys.stdout)
         sys.stderr = RedactMessages(sys.stderr)
+        from clk.log import DevelopColorFormatter
+
+        import click_log
+
+        _fake_clock = [1700000000]
+
+        def _fake_time():
+            return _fake_clock[0]
+
+        def _fake_sleep(seconds):
+            _fake_clock[0] += seconds
+
+        time.time = _fake_time
+        time.sleep = _fake_sleep
+
+        _original_format_time = DevelopColorFormatter.formatTime
+
+        def _reproducible_format_time(self, record, datefmt=None):
+            record.created = _fake_clock[0]
+            record.msecs = 0
+            return _original_format_time(self, record, datefmt)
+
+        DevelopColorFormatter.converter = time.gmtime
+        DevelopColorFormatter.formatTime = _reproducible_format_time
+        click_log.ColorFormatter.converter = time.gmtime
+        click_log.ColorFormatter.formatTime = _reproducible_format_time
     return value
 
 

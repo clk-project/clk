@@ -31,6 +31,8 @@ class Handler(logging.Handler):
     It puts everything in the error output. Also, it allow to exit abruptly when
     a log of some level is issued"""
 
+    show_timestamp = False
+
     def emit(self, record):
         from clk import completion
 
@@ -38,6 +40,11 @@ class Handler(logging.Handler):
             return
         try:
             msg = self.format(record)
+            if self.show_timestamp and not isinstance(
+                self.formatter, DevelopColorFormatter
+            ):
+                ts = self.formatter.formatTime(record)
+                msg = "\n".join(f"{ts} {line}" for line in msg.splitlines())
             if os.environ.get("TERM") == "dumb":
                 msg = click.unstyle(msg)
             click.echo(msg, err=True)
