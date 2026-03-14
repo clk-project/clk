@@ -875,7 +875,7 @@ def reproducible_output_callback(ctx, attr, value):
 
         from clk.log import DevelopColorFormatter
 
-        _fake_clock = [1700000000]
+        _fake_clock = [time.time()]
 
         def _fake_time():
             return _fake_clock[0]
