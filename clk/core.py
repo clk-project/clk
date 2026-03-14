@@ -871,9 +871,9 @@ def reproducible_output_callback(ctx, attr, value):
         config.reproducible_output = True
         sys.stdout = RedactMessages(sys.stdout)
         sys.stderr = RedactMessages(sys.stderr)
-        from clk.log import DevelopColorFormatter
-
         import click_log
+
+        from clk.log import DevelopColorFormatter
 
         _fake_clock = [1700000000]
 

@@ -83,7 +83,8 @@ if __name__ == "__main__":
     createfile(package / "__init__.py", """#!/usr/bin/env python3""")
     commands = package / "commands"
     makedirs(commands)
-    (
+    createfile(commands / "__init__.py", """#!/usr/bin/env python3""")
+    createfile(
         commands / "somecommand.py",
         """#!/usr/bin/env python3
 # -*- coding:utf-8 -*-

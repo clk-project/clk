@@ -11,7 +11,7 @@ clk get http://url/something
 clk post http://url/something bodyoftherequest
 ```
 
-Then, you will most likely want to make the word `http` more explicit, either by [rolling your own command](rolling_your_own.md)
+Then, you will most likely want to make the word `http` more explicit, either by [rolling your own command](chaotic_simulator_manager.md)
 
 ```bash
 http get http://url/something

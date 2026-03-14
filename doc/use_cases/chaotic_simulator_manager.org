@@ -1,0 +1,423 @@
+:PROPERTIES:
+:ID:       807c02cd-a6cf-432f-b982-530fc81dbbf4
+:END:
+#+language: en
+#+EXPORT_FILE_NAME: ./chaotic_simulator_manager.md
+#+SUBTITLE: Building your own standalone CLI tool on top of clk as a library
+
+#+CALL: ../../lp.org:check-result()
+
+#+name: init
+#+BEGIN_SRC bash :results none :exports none :session 807c02cd-a6cf-432f-b982-530fc81dbbf4
+. ./sandboxing.sh
+#+END_SRC
+
+When installed, clk comes with an executable that may be used for all your
+workflows.
+
+But you may want to run your own project without prefixing stuffs with ~clk...~.
+
+But first, two things:
+1. we assume you want to create a tool that contains subcommands, like *git*,
+   not a single command, like *find*. This is because we will automatically
+   create some subcommands to deal with aliases, parameters etc.
+2. we assume you don't mind creating a full python project and not a single
+   ".py" file.
+
+Let's say you are working on an embedded project. The development cycle looks
+like this: generate some code from a model, configure the build system, build,
+then run the simulator. Each step is its own command, and most of the time
+you chain them together. Let's build a standalone tool called ~csm~ (a Chaotic
+Simulator Manager) to manage that workflow.
+
+* bootstrapping csm
+
+clk provides out of the box a command to bootstrap your own tool.
+
+#+name: csm-fork
+#+BEGIN_SRC bash :results verbatim :exports both :session 807c02cd-a6cf-432f-b982-530fc81dbbf4
+clk fork csm
+#+END_SRC
+
+#+RESULTS: csm-fork
+: Now, install csm with either `pipx install ./csm` or `python3 -m venv venv && ./venv/bin/pip install ./csm` followed by `export PATH="$(pwd)/venv/bin/:${PATH}"`. Then, enable its completion with `csm completion install` and don't forget to have fun
+
+Now, simply install this tool, like suggested.
+
+#+NAME: csm-remember-current-clk
+#+BEGIN_SRC bash :results none :exports none :session 807c02cd-a6cf-432f-b982-530fc81dbbf4
+CURRENT_CLK="$(clk python -c 'from pathlib import Path; import clk ; print(Path(clk.__path__[0]).parent)')"
+#+END_SRC
+
+#+NAME: csm-install
+#+BEGIN_SRC bash :results none :exports code :session 807c02cd-a6cf-432f-b982-530fc81dbbf4
+python3 -m venv venv
+./venv/bin/pip install ./csm
+echo "export PATH=$(pwd)/venv/bin/:${PATH}" >> "${TMP}/.envrc" && direnv allow
+source "${TMP}/.envrc"
+#+END_SRC
+
+#+NAME: csm-install-current-clk
+#+BEGIN_SRC bash :results none :exports none :session 807c02cd-a6cf-432f-b982-530fc81dbbf4
+# this reproduces the logic in the INSTALLER function in the root Earthfile. It
+# might be good to refactor this in the future.
+from=${from-}
+if test "$from" = "pypi"
+then
+    if test -n "${pypi_version}"
+    then
+        ./venv/bin/pip install --force-reinstall clk${pypi_version}
+    else
+        echo "No reinstalling clk. It should be brought in as dependency of csm"
+    fi
+elif test "$from" = "build"
+then
+    ./venv/bin/pip install --force-reinstall /dist/*
+else
+    # fallback in assuming that I run this from my machine, where clk is
+    # installed in editable mode
+    ./venv/bin/pip install --force-reinstall --editable "${CURRENT_CLK}"
+fi
+#+END_SRC
+
+#+NAME: csm-sandbox
+#+BEGIN_SRC bash :results none :exports none :session 807c02cd-a6cf-432f-b982-530fc81dbbf4
+mkdir -p "${TMP}/csm-root"
+cat <<EOF > "${TMP}/csm-root/csm.json"
+{
+    "parameters": {
+        "csm": [
+            "--forced-width",
+            "--reproducible-output"
+        ]
+    }
+}
+EOF
+echo "export CSMCONFIGDIR=${TMP}/csm-root" >> "${TMP}/.envrc" && direnv allow
+source "${TMP}/.envrc"
+#+END_SRC
+
+* creating the simulator commands
+
+The development cycle is generate, configure, build, simulate. Each step is
+a command. We write them as internal commands in the csm project — any ~.py~
+file placed in ~csm/csm/commands/~ is auto-discovered as a command.
+
+Each command declares which step it depends on using ~flowdepends~ (see
+[[file:3D_printing_flow.org][flows]]). This way, ~csm simulate --flow~ chains the whole pipeline
+automatically.
+
+#+NAME: csm-generate
+#+BEGIN_SRC python :results none :exports code
+from clk.decorators import command
+
+@command()
+def generate():
+    """Generate source code from the model."""
+    print("Generating code from model.xml")
+#+END_SRC
+
+#+NAME: csm-configure
+#+BEGIN_SRC python :results none :exports code
+from clk.decorators import command
+
+@command(flowdepends=["generate"])
+def configure():
+    """Configure the build system (e.g. cmake)."""
+    print("Configuring build system")
+#+END_SRC
+
+#+NAME: csm-build
+#+BEGIN_SRC python :results none :exports code
+from clk.decorators import command
+
+@command(flowdepends=["configure"])
+def build_():
+    """Build the simulator binary."""
+    print("Building simulator")
+#+END_SRC
+
+#+NAME: csm-simulate
+#+BEGIN_SRC python :results none :exports code
+from clk.decorators import command
+
+@command(flowdepends=["build"])
+def simulate():
+    """Run the simulator."""
+    print("Running ./build/simulator")
+#+END_SRC
+
+#+NAME: csm-install-commands
+#+BEGIN_SRC bash :results none :exports none :noweb yes :session 807c02cd-a6cf-432f-b982-530fc81dbbf4
+cat<<'EOF' > csm/csm/commands/generate.py
+<<csm-generate>>
+EOF
+cat<<'EOF' > csm/csm/commands/configure.py
+<<csm-configure>>
+EOF
+cat<<'EOF' > csm/csm/commands/build.py
+<<csm-build>>
+EOF
+cat<<'EOF' > csm/csm/commands/simulate.py
+<<csm-simulate>>
+EOF
+rm csm/csm/commands/somecommand.py
+./venv/bin/pip install ./csm
+#+END_SRC
+
+Running the full pipeline is a single command.
+
+#+NAME: csm-run-flow
+#+BEGIN_SRC bash :results verbatim :exports both :session 807c02cd-a6cf-432f-b982-530fc81dbbf4 :cache yes
+csm simulate --flow
+#+END_SRC
+
+#+RESULTS[ccb850fbad8aaca0ff892ee9a193c0e3eca30cbf]: csm-run-flow
+: Generating code from model.xml
+: Configuring build system
+: Building simulator
+: Running ./build/simulator
+
+Without ~--flow~, only the simulate step runs.
+
+#+NAME: csm-run-no-flow
+#+BEGIN_SRC bash :results verbatim :exports both :session 807c02cd-a6cf-432f-b982-530fc81dbbf4 :cache yes
+csm simulate
+#+END_SRC
+
+#+RESULTS[00cc22cb2e8662092f02881f3014167f198aaf27]: csm-run-no-flow
+: Running ./build/simulator
+
+* the simulator crashes — time to debug
+
+The simulator crashes on a corner case. You want to run it under gdb to
+inspect the state. Without any tooling, you would type something like:
+
+#+BEGIN_SRC bash :results none :exports code
+gdb --quiet --args ./build/simulator
+#+END_SRC
+
+That works, but it is tedious. You need to remember the exact flags every
+time, and it does not compose with the rest of the workflow. What if you also
+want to profile with perf, or check for memory leaks with valgrind? Each
+tool has its own incantation and you end up copy-pasting long commands.
+
+* adding launcher support
+
+A launcher is a tool that runs other tools: a debugger, a profiler, an
+environment wrapper. Since csm is our own project, we can add launcher
+support as an internal part of it rather than relying on an external plugin.
+
+First, the library module that defines the available launchers and provides
+a decorator and a resolver.
+
+#+NAME: csm-launcher-lib
+#+BEGIN_SRC python :results none :exports code
+import click
+from clk.overloads import option
+
+LAUNCHERS = {
+    "gdb": ["gdb", "--quiet", "--args"],
+    "lldb": ["lldb", "--"],
+    "memcheck": ["valgrind", "--tool=memcheck", "--leak-check=full"],
+    "perf-record": [
+        "perf", "record", "-e", "cpu-clock",
+        "--call-graph", "dwarf", "-F", "99",
+    ],
+    "heaptrack": ["heaptrack"],
+}
+
+
+def resolve_launcher(launcher_name=None):
+    """Return the command prefix for a launcher, or an empty list."""
+    if launcher_name:
+        if launcher_name not in LAUNCHERS:
+            raise click.ClickException(f"Unknown launcher: {launcher_name}")
+        return list(LAUNCHERS[launcher_name])
+    return []
+
+
+def launcher_options(func):
+    """Add a --launcher option to a command."""
+    return option(
+        "-l", "--launcher",
+        type=click.Choice(sorted(LAUNCHERS)),
+        help="Wrap the command with this launcher (e.g. gdb, perf-record).",
+    )(func)
+#+END_SRC
+
+Then, the CLI command that lets you inspect the available launchers.
+
+#+NAME: csm-launcher-cmd
+#+BEGIN_SRC python :results none :exports code
+import click
+from clk.decorators import command, argument, group, flag
+from csm.launcher import LAUNCHERS
+
+@group(default_command="show")
+def launcher():
+    """Inspect available launchers."""
+
+@launcher.command()
+@flag("--name-only/--no-name-only", help="Only display the launcher names")
+@argument("launchers", nargs=-1, required=False, help="Launchers to show")
+def show(name_only, launchers):
+    """Show the launchers."""
+    names = launchers or sorted(LAUNCHERS)
+    for name in names:
+        if name_only:
+            click.echo(name)
+        else:
+            cmd = " ".join(LAUNCHERS.get(name, []))
+            if cmd:
+                click.echo(f"{name} {cmd}")
+#+END_SRC
+
+#+NAME: csm-install-launcher
+#+BEGIN_SRC bash :results none :exports none :noweb yes :session 807c02cd-a6cf-432f-b982-530fc81dbbf4
+cat<<'EOF' > csm/csm/launcher.py
+<<csm-launcher-lib>>
+EOF
+cat<<'EOF' > csm/csm/commands/launcher.py
+<<csm-launcher-cmd>>
+EOF
+./venv/bin/pip install ./csm
+#+END_SRC
+
+Several launchers are available out of the box.
+
+#+NAME: csm-show-launchers
+#+BEGIN_SRC bash :results verbatim :exports both :session 807c02cd-a6cf-432f-b982-530fc81dbbf4 :cache yes
+csm launcher show --name-only
+#+END_SRC
+
+#+RESULTS[51dc9b74559bfb0d7f714c043a84c9598be9d00d]: csm-show-launchers
+: gdb
+: heaptrack
+: lldb
+: memcheck
+: perf-record
+
+You can inspect what a launcher expands to.
+
+#+NAME: csm-show-gdb
+#+BEGIN_SRC bash :results verbatim :exports both :session 807c02cd-a6cf-432f-b982-530fc81dbbf4 :cache yes
+csm launcher show gdb
+#+END_SRC
+
+#+RESULTS[4f356a55e82fbc62fc788bd9b5ac09c6ba574001]: csm-show-gdb
+: gdb gdb --quiet --args
+
+* using a launcher in the simulate command
+  :PROPERTIES:
+  :ID:       c777ac1b-8ed6-4cb0-909e-92ce2ce96a03
+  :END:
+
+To make the simulate command support ~--launcher~, we use the
+~launcher_options~ decorator and resolve the launcher before calling the
+external program.
+
+#+NAME: csm-simulate-with-launcher
+#+BEGIN_SRC python :results none :exports code
+from clk.decorators import command
+from csm.launcher import launcher_options, resolve_launcher
+
+@command(flowdepends=["build"])
+@launcher_options
+def simulate(launcher):
+    """Run the simulator."""
+    prefix = resolve_launcher(launcher)
+    cmd = prefix + ["./build/simulator"]
+    print("Running " + " ".join(cmd))
+#+END_SRC
+
+#+NAME: csm-install-simulate-with-launcher
+#+BEGIN_SRC bash :results none :exports none :noweb yes :session 807c02cd-a6cf-432f-b982-530fc81dbbf4
+cat<<'EOF' > csm/csm/commands/simulate.py
+<<csm-simulate-with-launcher>>
+EOF
+./venv/bin/pip install ./csm
+#+END_SRC
+
+Now the simulate command accepts ~--launcher~.
+
+#+NAME: csm-simulate-with-gdb
+#+BEGIN_SRC bash :results verbatim :exports both :session 807c02cd-a6cf-432f-b982-530fc81dbbf4 :cache yes
+csm simulate --launcher gdb
+#+END_SRC
+
+#+RESULTS[8c60f9fe6c60fab4cc750abaaa8301bcfa586fe1]: csm-simulate-with-gdb
+: Running gdb --quiet --args ./build/simulator
+
+Switching to another tool is just changing the launcher name.
+
+#+NAME: csm-simulate-with-perf
+#+BEGIN_SRC bash :results verbatim :exports both :session 807c02cd-a6cf-432f-b982-530fc81dbbf4 :cache yes
+csm simulate --launcher perf-record
+#+END_SRC
+
+#+RESULTS[6885f25c5af6a32ea2a1e032c999b537e73b4336]: csm-simulate-with-perf
+: Running perf record -e cpu-clock --call-graph dwarf -F 99 ./build/simulator
+
+And without ~--launcher~, the command runs the simulator directly.
+
+#+NAME: csm-simulate-without-launcher
+#+BEGIN_SRC bash :results verbatim :exports both :session 807c02cd-a6cf-432f-b982-530fc81dbbf4 :cache yes
+csm simulate
+#+END_SRC
+
+#+RESULTS[00cc22cb2e8662092f02881f3014167f198aaf27]: csm-simulate-without-launcher
+: Running ./build/simulator
+
+Since we kept the ~flowdepends~ from earlier, ~--flow~ and ~--launcher~
+compose naturally: the full pipeline runs, with the launcher wrapping
+only the final simulate step.
+
+#+NAME: csm-flow-with-launcher
+#+BEGIN_SRC bash :results verbatim :exports both :session 807c02cd-a6cf-432f-b982-530fc81dbbf4 :cache yes
+csm simulate --flow --launcher gdb
+#+END_SRC
+
+#+RESULTS[9724a6d3492eb02d772f1a04e5a6865936348579]: csm-flow-with-launcher
+: Generating code from model.xml
+: Configuring build system
+: Building simulator
+: Running gdb --quiet --args ./build/simulator
+
+#+BEGIN_SRC bash :tangle ../../tests/use_cases/chaotic_simulator_manager.sh :exports none :noweb yes :shebang "#!/usr/bin/env bash"
+set -eu
+<<init>>
+
+<<csm-fork>>
+
+<<csm-remember-current-clk>>
+
+<<csm-install>>
+
+<<csm-install-current-clk>>
+
+<<csm-sandbox>>
+
+<<csm-install-commands>>
+
+check-result(csm-run-flow)
+
+check-result(csm-run-no-flow)
+
+<<csm-install-launcher>>
+
+check-result(csm-show-launchers)
+
+check-result(csm-show-gdb)
+
+<<csm-install-simulate-with-launcher>>
+
+check-result(csm-simulate-with-gdb)
+
+check-result(csm-simulate-with-perf)
+
+check-result(csm-simulate-without-launcher)
+
+check-result(csm-flow-with-launcher)
+
+#+END_SRC

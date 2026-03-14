@@ -28,7 +28,7 @@ clk get http://url/something
 clk post http://url/something bodyoftherequest
 #+END_SRC
 
-Then, you will most likely want to make the word ~http~ more explicit, either by [[file:rolling_your_own.org][rolling your own command]]
+Then, you will most likely want to make the word ~http~ more explicit, either by [[file:chaotic_simulator_manager.org][rolling your own command]]
 
 #+BEGIN_SRC bash :results none :exports code
 http get http://url/something

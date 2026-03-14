@@ -124,7 +124,7 @@ The [backing up documents](backing_up_documents.md) use case shows how to build 
 
 # is it a tool or a library?
 
-If you don't want to use the clk command line tool, you can [roll your own](rolling_your_own.md).
+If you don't want to use the clk command line tool, you can [roll your own](chaotic_simulator_manager.md).
 
 
 <a id="875fe27e-ca39-4733-a459-e2a35bcfa124"></a>

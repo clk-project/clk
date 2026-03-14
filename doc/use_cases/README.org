@@ -159,7 +159,7 @@ Here are some use cases that hopefully will have the following properties:
   :CUSTOM_ID: f291ada8-c504-4624-baa7-9c7d600d5c53
   :END:
 
-  If you don't want to use the clk command line tool, you can [[file:rolling_your_own.org][roll your own]].
+  If you don't want to use the clk command line tool, you can [[file:chaotic_simulator_manager.org][roll your own]].
 
 * publish my code
   :PROPERTIES:

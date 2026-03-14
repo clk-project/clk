@@ -668,7 +668,9 @@ class Command(
                 f"'{ctx.command_path}' does not support dry-run mode: I won't call it"
             )
             raise SystemExit()
-        return _invoke_with_hooks(self, ctx, lambda: super(Command, self).invoke(ctx, *args, **kwargs))
+        return _invoke_with_hooks(
+            self, ctx, lambda: super(Command, self).invoke(ctx, *args, **kwargs)
+        )
 
     def flow_option(self, *args, **kwargs):
         return flow_option(*args, target_command=self, **kwargs)
@@ -867,7 +869,9 @@ class Group(
 
     def invoke(self, ctx, *args, **kwargs):
         super().invoke_handle_deprecated(ctx, *args, **kwargs)
-        return _invoke_with_hooks(self, ctx, lambda: super(Group, self).invoke(ctx, *args, **kwargs))
+        return _invoke_with_hooks(
+            self, ctx, lambda: super(Group, self).invoke(ctx, *args, **kwargs)
+        )
 
     def _extract_help_option(self, args):
         """Extract --help or --help-all from args, returning (help_option, filtered_args)."""
@@ -1550,7 +1554,9 @@ class MainCommand(
 
     def invoke(self, ctx, *args, **kwargs):
         super().invoke_handle_deprecated(ctx, *args, **kwargs)
-        return _invoke_with_hooks(self, ctx, lambda: super(MainCommand, self).invoke(ctx, *args, **kwargs))
+        return _invoke_with_hooks(
+            self, ctx, lambda: super(MainCommand, self).invoke(ctx, *args, **kwargs)
+        )
 
     def _parse_args_stabilize(self, ctx, args):
         """Inject extra args and parse them till the args become stable"""
