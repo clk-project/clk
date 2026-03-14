@@ -7,7 +7,7 @@ For the scope of this article, I will mock the scrapping part<sup><a id="fnr.1" 
 ```python
 def code_that_fetches_the_content_of(url):
   LOGGER.info(f"Getting the content of {url}")
-  return {"title": "clk project", "h1": "./ clk"}
+  return {"title": "clk project", "h1": "clk is awesome"}
 ```
 
 Each time we see the message `Getting the content of X`, we can assume there would have been an HTTP request in real life.
@@ -29,7 +29,7 @@ def title():
 @scrap.command()
 def topic():
     "Show the topic of the site"
-    click.echo("The topic is " + config.soup.get("h1"))
+    click.echo(f"""The topic is "{config.soup.get("h1")}".""")
 ```
 
 Those are valid commands and can be run easily.
@@ -42,7 +42,7 @@ clk scrap --url "http://clk-project.org" topic
     Getting the content of http://clk-project.org
     The title is clk project
     Getting the content of http://clk-project.org
-    The topic is ./ clk
+    The topic is "clk is awesome".
 
 This does the job, but it fetches the page every time the command is run. If the page is not expected to change often, and the command is supposed to be run a lot, it would be polite to cache the HTML content.
 
@@ -58,7 +58,7 @@ That you use on top of the function you want to cache.
 @cache_disk(expire=3600)
 def code_that_fetches_the_content_of(url):
   LOGGER.info(f"Getting the content of {url}")
-  return {"title": "clk project", "h1": "./ clk"}
+  return {"title": "clk project", "h1": "clk is awesome"}
 ```
 
 Using that decorator, that keeps the content for 1 hour, you get
@@ -83,7 +83,11 @@ clk scrap --url "http://clk-project.org" title
     Getting the content of http://clk-project.org
     The title is clk project
 
-It gets the HTML content only once and then use the cached version. One hour later, it gets the content again.
+The first call fetches the page and puts its result in the cache. A proof of this is that we can see the log "Getting the content of&hellip;".
+
+3500s (less than one hour) later, the cache has not yet expired and we get the content without fetching again. Indeed, we see the result but not the associated log.
+
+Then, 200s later, hence after 3700s (more than one hour), the cache is invalid and we get back the content. That is shown by the log appearing once again.
 
 Now, a pattern that I use sometimes is that I renew the cache everytime I get it. That way when I run several commands in a short period, the cache is kept. But I wait a bit, the cache is cleaned. That allows me to have shorter expiration while still be able to keep the cache a long time when I heavily use it (like in a flow).
 
@@ -93,7 +97,7 @@ This can be done with this change of code.
 @cache_disk(expire=65, renew=True)
 def code_that_fetches_the_content_of(url):
   LOGGER.info(f"Getting the content of {url}")
-  return {"title": "clk project", "h1": "./ clk"}
+  return {"title": "clk project", "h1": "clk is awesome"}
 ```
 
 ```bash

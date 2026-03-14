@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
+# [[id:d5f418b6-4f78-477d-a52b-a69b57d4edee::run][run]]
 set -eu
-# [[file:../../doc/use_cases/choices.org::run][run]]
 . ./sandboxing.sh
 clk command create python --force --group --body '
 def code_that_fetches_the_content_of(url):
   LOGGER.info(f"Getting the content of {url}")
-  return {"title": "clk project", "h1": "./ clk"}
+  return {"title": "clk project", "h1": "clk is awesome"}
 
 @group()
 @option("--url", required=True, help="The site to scrap")
@@ -21,7 +21,7 @@ def title():
 @scrap.command()
 def topic():
     "Show the topic of the site"
-    click.echo("The topic is " + config.soup.get("h1"))
+    click.echo(f"""The topic is "{config.soup.get("h1")}".""")
 ' scrap
 
 running_the_test_code () {
@@ -34,11 +34,15 @@ running_the_test_expected () {
 Getting the content of http://clk-project.org
 The title is clk project
 Getting the content of http://clk-project.org
-The topic is ./ clk
+The topic is "clk is awesome".
 EOEXPECTED
 }
 
-diff -uBw <(running_the_test_code 2>&1) <(running_the_test_expected) || {
+echo 'Run running_the_test'
+
+{ running_the_test_code || true ; } > "${TMP}/code.txt" 2>&1
+running_the_test_expected > "${TMP}/expected.txt" 2>&1
+diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
 echo "Something went wrong when trying running_the_test"
 exit 1
 }
@@ -49,7 +53,7 @@ from clk.core import cache_disk
 @cache_disk(expire=3600)
 def code_that_fetches_the_content_of(url):
   LOGGER.info(f"Getting the content of {url}")
-  return {"title": "clk project", "h1": "./ clk"}
+  return {"title": "clk project", "h1": "clk is awesome"}
 
 @group()
 @option("--url", required=True, help="The site to scrap")
@@ -65,7 +69,7 @@ def title():
 @scrap.command()
 def topic():
     "Show the topic of the site"
-    click.echo("The topic is " + config.soup.get("h1"))
+    click.echo(f"""The topic is "{config.soup.get("h1")}".""")
 ' scrap
 
 running_the_test_with_cache_code () {
@@ -97,7 +101,11 @@ The title is clk project
 EOEXPECTED
 }
 
-diff -uBw <(running_the_test_with_cache_code 2>&1) <(running_the_test_with_cache_expected) || {
+echo 'Run running_the_test_with_cache'
+
+{ running_the_test_with_cache_code || true ; } > "${TMP}/code.txt" 2>&1
+running_the_test_with_cache_expected > "${TMP}/expected.txt" 2>&1
+diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
 echo "Something went wrong when trying running_the_test_with_cache"
 exit 1
 }
@@ -108,7 +116,7 @@ from clk.core import cache_disk
 @cache_disk(expire=65, renew=True)
 def code_that_fetches_the_content_of(url):
   LOGGER.info(f"Getting the content of {url}")
-  return {"title": "clk project", "h1": "./ clk"}
+  return {"title": "clk project", "h1": "clk is awesome"}
 
 @group()
 @option("--url", required=True, help="The site to scrap")
@@ -124,7 +132,7 @@ def title():
 @scrap.command()
 def topic():
     "Show the topic of the site"
-    click.echo("The topic is " + config.soup.get("h1"))
+    click.echo(f"""The topic is "{config.soup.get("h1")}".""")
 ' scrap
 
 running_the_test_with_cache_with_renew_code () {
@@ -164,7 +172,11 @@ The title is clk project
 EOEXPECTED
 }
 
-diff -uBw <(running_the_test_with_cache_with_renew_code 2>&1) <(running_the_test_with_cache_with_renew_expected) || {
+echo 'Run running_the_test_with_cache_with_renew'
+
+{ running_the_test_with_cache_with_renew_code || true ; } > "${TMP}/code.txt" 2>&1
+running_the_test_with_cache_with_renew_expected > "${TMP}/expected.txt" 2>&1
+diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
 echo "Something went wrong when trying running_the_test_with_cache_with_renew"
 exit 1
 }

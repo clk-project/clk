@@ -27,7 +27,7 @@ code.
 #+BEGIN_SRC python :results none :exports code
   def code_that_fetches_the_content_of(url):
     LOGGER.info(f"Getting the content of {url}")
-    return {"title": "clk project", "h1": "./ clk"}
+    return {"title": "clk project", "h1": "clk is awesome"}
 #+END_SRC
 
 Each time we see the message ~Getting the content of X~, we can assume there
@@ -52,7 +52,7 @@ the data and print it when needed.
   @scrap.command()
   def topic():
       "Show the topic of the site"
-      click.echo("The topic is " + config.soup.get("h1"))
+      click.echo(f"""The topic is "{config.soup.get("h1")}".""")
 #+END_SRC
 
 #+NAME: install_command
@@ -82,7 +82,7 @@ Those are valid commands and can be run easily.
 : Getting the content of http://clk-project.org
 : The title is clk project
 : Getting the content of http://clk-project.org
-: The topic is ./ clk
+: The topic is "clk is awesome".
 
 This does the job, but it fetches the page every time the command is run. If the
 page is not expected to change often, and the command is supposed to be run a
@@ -148,8 +148,15 @@ stop_faked_time
 : Getting the content of http://clk-project.org
 : The title is clk project
 
-It gets the HTML content only once and then use the cached version. One hour
-later, it gets the content again.
+The first call fetches the page and puts its result in the cache. A proof of
+this is that we can see the log "Getting the content of...".
+
+3500s (less than one hour) later, the cache has not yet expired and we get the
+content without fetching again. Indeed, we see the result but not the associated
+log.
+
+Then, 200s later, hence after 3700s (more than one hour), the cache is invalid
+and we get back the content. That is shown by the log appearing once again.
 
 Now, a pattern that I use sometimes is that I renew the cache everytime I get
 it. That way when I run several commands in a short period, the cache is
