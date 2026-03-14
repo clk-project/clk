@@ -882,6 +882,10 @@ def reproducible_output_callback(ctx, attr, value):
 
         def _fake_sleep(seconds):
             _fake_clock[0] += seconds
+            from datetime import datetime, timezone
+
+            dt = datetime.fromtimestamp(_fake_clock[0], tz=timezone.utc)
+            Path(os.environ["CLK_FAKED_TIME_FILE"]).write_text(dt.isoformat())
 
         time.time = _fake_time
         time.sleep = _fake_sleep

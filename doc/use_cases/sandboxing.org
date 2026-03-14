@@ -63,7 +63,13 @@
 
       if test -n "\${CLK_FAKED_TIME-}"
       then
+          export CLK_FAKED_TIME_FILE="${TMP}/clk_faked_time"
           faketime "\${CLK_FAKED_TIME}" "${CLK_COV}" "\$@"
+          _ret=\$?
+          if test -s "\${CLK_FAKED_TIME_FILE}"; then
+              CLK_FAKED_TIME=\$(cat "\${CLK_FAKED_TIME_FILE}")
+          fi
+          exit \$_ret
       else
           "${CLK_COV}" "\$@"
       fi
