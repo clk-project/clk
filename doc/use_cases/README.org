@@ -3,75 +3,54 @@
 
 #+INCLUDE: "index-fragment.org"
 
-Here are some use cases that hopefully will have the following properties:
-- provide a better idea of what clk is capable of than a simple description,
-- show some common pattern that emerged when using clk,
-- give examples of real life uses of clk, giving hints about when it might be useful,
-* bash commands
+These use cases illustrate clk features through concrete examples. They show
+common patterns that emerged from real usage and give hints about when clk
+might be useful.
+
+There are organised by feature though so you can find easily what you are
+looking for.
+
+* creating commands
   :PROPERTIES:
-  :CREATED:  [2025-08-05 22:11]
-  :ID:       0d6935af-52d4-43f6-97c7-39dfd773d4f0
-  :CUSTOM_ID: 932f47a6-803b-40df-ba30-ac437aac92e2
+  :CUSTOM_ID: creating-commands
   :END:
+** bash commands
+   :PROPERTIES:
+   :CUSTOM_ID: bash-commands
+   :END:
 
-  The basics are covered [[file:bash_command.org][here]]. To get more into how to provide parameters to
-  your command, read [[file:bash_command_use_option.org][that one]]. If your parameters are too complicated to be
-  simply parsed, follow the idea of this [[file:send_sms.org][use case]].
+   The basics are covered [[file:bash_command.org][here]]. To get more into how to provide parameters to
+   your command, read [[file:bash_command_use_option.org][that one]]. If your parameters are too complicated to be
+   simply parsed, follow the idea of this [[file:send_sms.org][use case]].
 
-  If you find out that your bash command starts to become quite big, read [[file:bash_command_import.org][this]]
-  to find out how to split your code.
+   If you find out that your bash command starts to become quite big, read [[file:bash_command_import.org][this]]
+   to find out how to split your code.
 
-  Most of my bash commands start with simple aliases. You can read more about
-  this way of thinking in [[file:bash_command_from_alias.org][here]].
+   Most of my bash commands start with simple aliases (see [[*aliases][aliases]]). You can
+   read more about this way of thinking in [[file:bash_command_from_alias.org][here]]. The [[*standard library][standard library]] section
+   covers the built-in helpers available in bash commands.
 
-* python commands
-  :PROPERTIES:
-  :CUSTOM_ID: python-commands
-  :END:
+** python commands
+   :PROPERTIES:
+   :CUSTOM_ID: python-commands
+   :END:
 
-  The basics of creating python commands are covered [[file:python_command.org][here]]. For more advanced
-  patterns involving dynamic parameters and exposed classes, see the section on
-  [[*how to structure your commands][how to structure your commands]].
+   The basics of creating python commands are covered [[file:python_command.org][here]]. For more advanced
+   patterns involving dynamic parameters and exposed classes, see [[*dynamic parameters and exposed classes][dynamic
+   parameters and exposed classes]].
 
-* parameters, alias etc
-  :PROPERTIES:
-  :CREATED:  [2025-08-05 22:16]
-  :CUSTOM_ID: fa3df212-fc5f-4c3e-9e3e-3f71e897c9b1
-  :ID:       7ae07d9d-d665-48cb-980b-53552c73b7a7
-  :END:
-  Sometimes, you might want to have some control about how the arguments of the
-  command lines are evaluated, take a look at [[file:controlling_a_server_using_an_environment_variable.org][this use case]] to know more about them.
+** dynamic parameters and exposed classes
+   :PROPERTIES:
+   :CUSTOM_ID: dynamic-parameters
+   :END:
 
-  If you want to share configuration between a Python group and its bash
-  subcommands through environment variables, see the [[file:multi_environment_deployment_tool.org][multi-environment deployment tool]] example.
-
-  For an example of using aliases with templated environment variables to create
-  flexible workflows, see the [[file:podcast_automation.org][podcast automation]] example.
-
-  If you want to persist command options so you don't have to repeat them, and
-  optionally override them per-project, see the [[file:wrapping_a_cloud_provider_cli.org][cloud provider CLI wrapper]] example.
-
-  If you want to organize all of clk's commands under a custom namespace by
-  creating an alias to the root command, see [[file:alias_to_root.org][alias to root]].
-
-  When parameters become tedious because you need to set the same option on many
-  commands, consider using [[file:setting_default_values.org][values to set semantic defaults]] instead. This use
-  case also explains the difference between syntactic (parameters) and semantic
-  (values) configuration, with a comparison to git config.
-
-* how to structure your commands
-  :PROPERTIES:
-  :CREATED:  [2025-08-05 22:16]
-  :CUSTOM_ID: 6abcb030-192b-4c73-a62f-4551d1e92a77
-  :END:
-  To create powerful, dynamic command line tools that provide the best
-  completion possible, see [[file:dynamic_parameters_and_exposed_class.org][this pattern]] for writing your commands. In case you
-  have some issues, you might want to look at the [[file:dynamic_parameters_advanced_use_cases.org][advanced use cases]].
+   To create powerful, dynamic command line tools that provide the best
+   completion possible, see [[file:dynamic_parameters_and_exposed_class.org][this pattern]] for writing your commands. In case you
+   have some issues, you might want to look at the [[file:dynamic_parameters_advanced_use_cases.org][advanced use cases]].
 
 ** commands as first order objects
    :PROPERTIES:
-   :CREATED:  [2025-08-05 22:24]
-   :CUSTOM_ID: d82b6533-b098-43e7-b4b8-30e283419b9b
+   :CUSTOM_ID: commands-as-objects
    :END:
 
    Sometimes, you create commands not only to be called directly, but to be used
@@ -83,102 +62,181 @@ Here are some use cases that hopefully will have the following properties:
    [[file:ipfs_name_publish.org][ipfs name publish]] shows how to use clk bash commands to create the completion
    for other commands.
 
-* batteries included
+* aliases
   :PROPERTIES:
-  :CREATED:  [2025-08-05 22:17]
-  :CUSTOM_ID: 3a184190-e5cb-4e8b-bf5a-177b8ec9ec66
-  :END:
-  Like python, clk try hard to provide most of the things you want in a generic
-  command line tool.
-
-  In shell command, the library included by default (called _clk.sh) provides
-  some useful [[file:bash_command_built_in_lib.org][helpers]] to help you create a nice and friendly command, despite,
-  well... bash.
-
-  When you want to provide some choices in command, it might be worthwhile to look
-  at [[file:choices.org][those examples]].
-
-  To cache some computation to disk, see the [[file:scrapping_the_web.org][web scrapping]] use case.
-
-  We put a lot of useful logic in clk.lib but did not document much as of
-  now. [[file:lib.org][This]] is the current state of this documentation.
-
-  Some commands might need to use secret, [[file:dealing_with_secrets.org][here is how]] we implement that.
-
-  When a command feels slow and you want to find the bottleneck, the
-  [[file:spotting_slow_code.org][spotting slow code]] use case shows how to use ~--develop --timestamp~ to
-  pinpoint where time is spent.
-
-  When you have many aliases, parameters, commands, and extensions spread across
-  different profiles, it can be hard to remember what's available. The ~clk
-  describe~ command helps you [[file:self_documentation.org][explore and document your configuration]], showing
-  what features are available in any profile (global, local, or extension).
-
-* project
-  :PROPERTIES:
-  :CREATED:  [2025-08-05 22:19]
-  :CUSTOM_ID: 57153b01-e474-42f0-baa2-26b1b1611ae7
-  :END:
-  Sometimes, you want to gather some commands or configuration in a folder. We
-  call that folder a project.
-
-  If you want to do that to, you might want to [[file:using_a_project.org][read this]].
-
-  When you have a consistent workflow across projects but each project uses
-  different tools, see [[file:global_workflow_local_implementation.org][global workflow, local implementation]]. This pattern lets
-  you define workflows like ~test-n-push~ once globally, while each project
-  provides its own ~test~ command.
-
-* flow
-  :PROPERTIES:
-  :CREATED:  [2025-08-05 22:20]
-  :CUSTOM_ID: 8ad4d10e-1ece-45ef-a558-905b5996ddc4
-  :END:
-  When your commands need to be connected and called in a sequence, we call that
-  a flow.
-
-  clk does not want to compete with flow tools, like nodered, but it helps
-  having a basic flow handling from time to time, like when you have a [[file:3D_printing_flow.org][3D printing flow]].
-
-* real world example: backing up documents
-  :PROPERTIES:
-  :CREATED:  [2026-02-21 12:00]
-  :CUSTOM_ID: backing-up-documents
+  :CUSTOM_ID: aliases
   :END:
 
-  The [[file:backing_up_documents.org][backing up documents]] use case shows how to build a complete backup system
-  starting from a Python group that shares a ~BACKUP_DESTINATION~ environment
-  variable with all its bash subcommands. It demonstrates shared environment
-  variables, hierarchical commands, auto-created groups, persisted parameters,
-  flow dependencies, aliases, per-project configuration, and hostname extensions
-  all working together.
+  Aliases let you create shortcuts, compose commands, and inject environment
+  variables.
 
-* is it a tool or a library?
+  For an example of using aliases with templated environment variables to create
+  flexible workflows, see the [[file:podcast_automation.org][podcast automation]] example.
+
+  For shortcut aliases that target specific deployment environments, see the
+  [[file:environment_deployment.org][environment deployment]] use case. It also shows how to use
+  ~get_parameter_source~ to distinguish between default and explicit values.
+
+  When a global alias and a local command share the same name, the local command
+  wins -- see [[*resolution priority][resolution priority]]. You can also create aliases that [[file:alias_to_root.org][point to
+  another project's root command]] for [[*cross-project access][cross-project access]].
+
+* parameters and configuration
   :PROPERTIES:
-  :CREATED:  [2025-08-05 22:23]
-  :CUSTOM_ID: f291ada8-c504-4624-baa7-9c7d600d5c53
+  :CUSTOM_ID: parameters-and-configuration
+  :END:
+** persisting options
+   :PROPERTIES:
+   :CUSTOM_ID: persisting-options
+   :END:
+
+   You can persist command options so you don't have to repeat them. The [[file:wrapping_a_cloud_provider_cli.org][cloud
+   provider CLI wrapper]] shows how to set defaults globally and override them
+   per-project (see also [[*resolution priority][resolution priority]]).
+
+** environment variables
+   :PROPERTIES:
+   :CUSTOM_ID: environment-variables
+   :END:
+
+   To control how arguments are evaluated through environment variables, see
+   [[file:controlling_a_server_using_an_environment_variable.org][this use case]].
+
+   To share configuration between a Python group and its bash subcommands
+   through environment variables, see the [[file:multi_environment_deployment_tool.org][multi-environment deployment tool]].
+   Aliases can also use environment variables through templates -- see
+   [[*aliases][aliases]].
+
+** values (semantic defaults)
+   :PROPERTIES:
+   :CUSTOM_ID: values
+   :END:
+
+   When you need to set the same option on many commands, consider using [[file:setting_default_values.org][values
+   to set semantic defaults]]. This explains the difference between syntactic
+   (parameters) and semantic (values) configuration, with a comparison to git
+   config.
+
+** resolution priority
+   :PROPERTIES:
+   :CUSTOM_ID: resolution-priority
+   :END:
+
+   clk resolves names by looking at the local profile first, then the global
+   profile, then aliases and other resolvers. A local custom command always wins
+   over a global alias with the same name, and a global command always wins over
+   an alias.
+
+   Several use cases show this in action from different angles:
+
+   - [[file:global_workflow_local_implementation.org][global workflow, local implementation]] -- a global ~test~ alias exists, but
+     when you enter a project that defines a local ~test~ bash command, the
+     local command wins. The global ~test-n-push~ workflow automatically picks
+     up the local implementation.
+   - [[file:wrapping_a_cloud_provider_cli.org][cloud provider CLI wrapper]] -- global parameters set a default AWS profile,
+     but local parameters in a project directory override them. When you leave
+     the project, the global defaults take over again.
+   - [[file:alias_to_root.org][alias to root]] -- local aliases can be scoped to a project, so they only
+     shadow global names when you are inside that directory.
+
+* projects
+  :PROPERTIES:
+  :CUSTOM_ID: projects
+  :END:
+
+  A project is a directory with a ~.clk~ folder. Commands, aliases, and
+  parameters defined inside are scoped to that directory.
+
+  The [[file:using_a_project.org][basics]] of setting up and using a project. See [[*resolution priority][resolution priority]] for how
+  local project configuration takes precedence over global settings.
+
+** cross-project access
+   :PROPERTIES:
+   :CUSTOM_ID: cross-project-access
+   :END:
+
+   When you work on linked but separate projects and get tired of ~cd~-ing
+   between them, you can create [[file:alias_to_root.org][aliases that point to the root command]] of another
+   project. This lets you reach any command from a sibling project without
+   leaving your current directory, using either global or local aliases
+   depending on how much namespace isolation you want.
+
+* flows
+  :PROPERTIES:
+  :CUSTOM_ID: flows
+  :END:
+
+  Flows let you chain commands in a sequence with declared dependencies.
+
+  clk does not want to compete with dedicated flow tools like nodered, but it
+  helps having basic flow handling, like when you have a [[file:3D_printing_flow.org][3D printing flow]]. The
+  [[*end-to-end example][end-to-end example]] combines flows with [[*parameters and configuration][parameters]], [[*aliases][aliases]], and [[*projects][projects]].
+
+* standard library
+  :PROPERTIES:
+  :CUSTOM_ID: standard-library
+  :END:
+
+  clk tries hard to provide most of what you need in a generic command line
+  tool.
+
+  The bash library (_clk.sh) provides [[file:bash_command_built_in_lib.org][helpers]] for creating friendly shell
+  commands.
+
+  [[file:choices.org][Choices]] for providing selection in commands. [[file:scrapping_the_web.org][Caching]] computation results to
+  disk. [[file:fetching_and_displaying_json_data.org][Fetching and displaying JSON data]] with ~download~ and ~echo_json~.
+  Handling [[file:dealing_with_secrets.org][secrets]] in commands.
+
+  The [[file:lib.org][clk.lib reference]] covers what has been documented so far.
+
+* introspection and debugging
+  :PROPERTIES:
+  :CUSTOM_ID: introspection-and-debugging
+  :END:
+
+  The ~clk describe~ command helps you [[file:self_documentation.org][explore and document your configuration]],
+  showing what [[*aliases][aliases]], [[*parameters and configuration][parameters]], commands, and [[*extensions][extensions]] are available
+  in any profile (global, local, or extension). This is especially useful when
+  [[*resolution priority][resolution priority]] makes it unclear which level a setting comes from.
+
+  When a command feels slow, use [[file:spotting_slow_code.org][~--timestamp~, ~--debug~, and ~--profiling~]]
+  to progressively narrow down the bottleneck, from high-level timing down to
+  function-level detail.
+
+* extensions
+  :PROPERTIES:
+  :CUSTOM_ID: extensions
+  :END:
+
+  To distribute your commands as installable packages, see [[file:creating_extensions.org][how to create your
+  own extensions]]. Extensions can be shared across [[*projects][projects]] and follow the
+  same [[*resolution priority][resolution priority]] rules. For deeper customisation, see [[*plugins][plugins]].
+
+* plugins
+  :PROPERTIES:
+  :CUSTOM_ID: plugins
+  :END:
+
+  Plugins let you dynamically monkey-patch clk internals (at your own risk).
+
+  We [[file:using_a_plugin.org][describe here]] how a command can be added along with modifications to clk's
+  invoke system. This is almost dark magic, so we don't actually expect you to
+  need this, but it has been useful in a few very specific situations. For most
+  sharing needs, [[*extensions][extensions]] are a better fit.
+
+* using clk as a library
+  :PROPERTIES:
+  :CUSTOM_ID: using-clk-as-a-library
   :END:
 
   If you don't want to use the clk command line tool, you can [[file:chaotic_simulator_manager.org][roll your own]].
 
-* publish my code
+* end-to-end example
   :PROPERTIES:
-  :CREATED:  [2025-12-30 17:32]
-  :CUSTOM_ID: 875fe27e-ca39-4733-a459-e2a35bcfa124
+  :CUSTOM_ID: end-to-end-example
   :END:
 
-  In that case, you would like to take a look at [[file:creating_extensions.org][how to create your own extensions]].
-* plugins
-  :PROPERTIES:
-  :CREATED:  [2026-02-11 22:00]
-  :CUSTOM_ID: fbe30b36-5265-4690-abfd-1eb12e333f01
-  :END:
-
-  In case clk does not fit your use cases totally, and you want to dynamically
-  monkey-patch its internal (at your own risks), you can use the plugin
-  mechanism.
-
-  We [[file:using_a_plugin.org][describe here]] how a command could be added along with some modification of
-  behavior of clk invoke system. This is almost dark magic, so we don't actually
-  expect you to need this, but it has been useful in a few very specific
-  situations.
+  The [[file:backing_up_documents.org][backing up documents]] use case shows how to build a complete backup system
+  starting from a simple command. It ties together many features covered above:
+  [[*creating commands][creating commands]], [[*persisting options][persisted parameters]], [[*flows][flow dependencies]], [[*aliases][aliases]],
+  and [[*projects][per-project configuration]].

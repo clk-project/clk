@@ -27,7 +27,6 @@
 | [fetching_and_displaying_json_data.md](fetching_and_displaying_json_data.md) | Fetching JSON from APIs and displaying with syntax highlighting, download, echo_json |  |
 | [global_workflow_local_implementation.md](global_workflow_local_implementation.md) | Defining workflows globally while letting each project supply its own implementation |  |
 | [ipfs_name_publish.md](ipfs_name_publish.md) | Using bash commands to create completion for other commands (IPFS example) | A:,clk_help_handler,clk_list_to_choice,clk_usage,clk_value |
-| [launcher_for_simulation.md](launcher_for_simulation.md) | Wrapping simulator commands with debuggers and profilers using launchers |  |
 | [lib.md](lib.md) | Reference for clk.lib Python helpers (download, echo_json, etc.) |  |
 | [multi_environment_deployment_tool.md](multi_environment_deployment_tool.md) | Sharing configuration between Python groups and bash subcommands via environment variables |  |
 | [podcast_automation.md](podcast_automation.md) | Aliases with templated environment variables for flexible workflows (podcast download example) |  |
