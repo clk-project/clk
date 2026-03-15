@@ -2,6 +2,7 @@
 - [setting default parameters](#default-parameters)
 - [managing parameters](#managing-parameters)
 - [per-project configuration](#per-project)
+- [switching environments with extensions](#switching-environments)
 - [environment variable parameters](#30ecf8ae-ebc3-4194-aa85-40df469dde2a)
 - [preserving environment variables when no option is given](#preserving-env)
 
@@ -190,6 +191,61 @@ clk aws s3 ls
     [default/us-east-1] aws s3 ls
 
 This way, I never accidentally run a command against the wrong account just because I forgot to switch profiles.
+
+
+<a id="switching-environments"></a>
+
+# switching environments with extensions
+
+Per-project parameters are great when the environment is tied to a directory. But sometimes I want to switch my whole CLI context regardless of where I am — for example, temporarily pointing everything at staging.
+
+Extensions make this easy. I first set my usual production defaults globally:
+
+```bash
+clk parameter set aws --profile company-prod --region eu-west-1
+```
+
+    New global parameters for aws: --profile company-prod --region eu-west-1
+
+Then I create a `staging` extension that overrides just the profile:
+
+```bash
+clk extension create staging
+clk extension enable staging
+```
+
+```bash
+clk parameter --extension staging set aws --profile company-staging
+```
+
+    New global/staging parameters for aws: --profile company-staging
+
+With the extension enabled, the staging profile overrides the global one. The region stays `eu-west-1` because the extension doesn't touch it:
+
+```bash
+clk aws s3 ls s3://staging-bucket
+```
+
+    [company-prod/eu-west-1] aws s3 ls s3://staging-bucket
+
+Command-line flags still win over everything:
+
+```bash
+clk aws --profile company-dev s3 ls s3://dev-bucket
+```
+
+    [company-dev/eu-west-1] aws s3 ls s3://dev-bucket
+
+When I'm done with staging, I disable the extension and the global defaults come back:
+
+```bash
+clk extension disable staging
+clk aws s3 ls s3://prod-bucket
+```
+
+    [company-prod/eu-west-1] aws s3 ls s3://prod-bucket
+
+This makes it trivial to switch contexts: `clk extension enable staging` and `clk extension disable staging` is all it takes.
 
 
 <a id="30ecf8ae-ebc3-4194-aa85-40df469dde2a"></a>

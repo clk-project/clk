@@ -135,7 +135,10 @@ looking for.
      up the local implementation.
    - [[file:wrapping_a_cloud_provider_cli.org][cloud provider CLI wrapper]] -- global parameters set a default AWS profile,
      but local parameters in a project directory override them. When you leave
-     the project, the global defaults take over again.
+     the project, the global defaults take over again. Extensions named
+     ~config-*~ override global settings, so enabling a ~config-staging~
+     extension [[file:wrapping_a_cloud_provider_cli.org::*switching environments with extensions][switches the whole CLI context]] without touching global
+     configuration.
    - [[file:alias_to_root.org][alias to root]] -- local aliases can be scoped to a project, so they only
      shadow global names when you are inside that directory.
 
@@ -210,7 +213,10 @@ looking for.
 
   To distribute your commands as installable packages, see [[file:creating_extensions.org][how to create your
   own extensions]]. Extensions can be shared across [[*projects][projects]] and follow the
-  same [[*resolution priority][resolution priority]] rules. For deeper customisation, see [[*plugins][plugins]].
+  same [[*resolution priority][resolution priority]] rules. They can also be used to
+  [[file:wrapping_a_cloud_provider_cli.org::*switching environments with extensions][override global parameters]], making it easy to toggle between sets of
+  settings (e.g. staging vs production). For deeper customisation, see
+  [[*plugins][plugins]].
 
 * plugins
   :PROPERTIES:

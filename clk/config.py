@@ -569,12 +569,17 @@ class Config:
                 if profile is None:
                     return
                 hostname_extension = None
+                override_extensions = []
                 for extension in self.sorted_extensions(profile.extensions):
                     if extension.short_name == hostname:
                         hostname_extension = extension
+                    elif extension.short_name.startswith("config-"):
+                        override_extensions.append(extension)
                     else:
                         append_extension(extension)
                 res.append(profile)
+                for extension in override_extensions:
+                    append_extension(extension)
                 if hostname_extension is not None:
                     append_extension(hostname_extension)
 

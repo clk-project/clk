@@ -79,6 +79,15 @@ def test_parameter_precedence(lib, project1):
     assert lib.cmd(f"-P {project1} echo") == "ext global local"
 
 
+def test_config_extension_overrides_global(lib):
+    lib.cmd("parameter set echo global")
+    lib.cmd("extension create config-staging")
+    lib.cmd("parameter set --global --extension config-staging echo config")
+    # config- extensions come after global, so their values take precedence
+    # for click options (last value wins)
+    assert lib.cmd("echo") == "global config"
+
+
 def test_simple_parameter(lib):
     lib.cmd("parameter set echo foo")
     assert lib.cmd("echo") == "foo"

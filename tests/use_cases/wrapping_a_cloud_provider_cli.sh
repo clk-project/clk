@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# [[file:../../doc/use_cases/wrapping_a_cloud_provider_cli.org::#preserving-env][preserving environment variables when no option is given:6]]
+# [[id:865ad4fb-d2c8-41b5-a6de-438cce601beb][preserving environment variables when no option is given:6]]
 set -eu
 . ./sandboxing.sh
 
@@ -267,6 +267,118 @@ exit 1
 
 
 cd "${TMP}"
+
+
+set-global-prod_code () {
+      clk parameter set aws --profile company-prod --region eu-west-1
+}
+
+set-global-prod_expected () {
+      cat<<"EOEXPECTED"
+New global parameters for aws: --profile company-prod --region eu-west-1
+EOEXPECTED
+}
+
+echo 'Run set-global-prod'
+
+{ set-global-prod_code || true ; } > "${TMP}/code.txt" 2>&1
+set-global-prod_expected > "${TMP}/expected.txt" 2>&1
+diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+echo "Something went wrong when trying set-global-prod"
+exit 1
+}
+
+
+clk extension create staging
+clk extension enable staging
+
+
+set-staging-params_code () {
+      clk parameter --extension staging set aws --profile company-staging
+}
+
+set-staging-params_expected () {
+      cat<<"EOEXPECTED"
+New global/staging parameters for aws: --profile company-staging
+EOEXPECTED
+}
+
+echo 'Run set-staging-params'
+
+{ set-staging-params_code || true ; } > "${TMP}/code.txt" 2>&1
+set-staging-params_expected > "${TMP}/expected.txt" 2>&1
+diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+echo "Something went wrong when trying set-staging-params"
+exit 1
+}
+
+
+
+try-staging_code () {
+      clk aws s3 ls s3://staging-bucket
+}
+
+try-staging_expected () {
+      cat<<"EOEXPECTED"
+[company-prod/eu-west-1] aws s3 ls s3://staging-bucket
+EOEXPECTED
+}
+
+echo 'Run try-staging'
+
+{ try-staging_code || true ; } > "${TMP}/code.txt" 2>&1
+try-staging_expected > "${TMP}/expected.txt" 2>&1
+diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+echo "Something went wrong when trying try-staging"
+exit 1
+}
+
+
+
+try-staging-override_code () {
+      clk aws --profile company-dev s3 ls s3://dev-bucket
+}
+
+try-staging-override_expected () {
+      cat<<"EOEXPECTED"
+[company-dev/eu-west-1] aws s3 ls s3://dev-bucket
+EOEXPECTED
+}
+
+echo 'Run try-staging-override'
+
+{ try-staging-override_code || true ; } > "${TMP}/code.txt" 2>&1
+try-staging-override_expected > "${TMP}/expected.txt" 2>&1
+diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+echo "Something went wrong when trying try-staging-override"
+exit 1
+}
+
+
+
+disable-staging_code () {
+      clk extension disable staging
+      clk aws s3 ls s3://prod-bucket
+}
+
+disable-staging_expected () {
+      cat<<"EOEXPECTED"
+[company-prod/eu-west-1] aws s3 ls s3://prod-bucket
+EOEXPECTED
+}
+
+echo 'Run disable-staging'
+
+{ disable-staging_code || true ; } > "${TMP}/code.txt" 2>&1
+disable-staging_expected > "${TMP}/expected.txt" 2>&1
+diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+echo "Something went wrong when trying disable-staging"
+exit 1
+}
+
+
+clk extension remove staging <<< y
+clk parameter unset aws
 
 
 env-parameters_code () {
