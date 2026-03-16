@@ -1,8 +1,6 @@
 #+language: en
 #+EXPORT_FILE_NAME: ./README.md
 
-#+INCLUDE: "index-fragment.org"
-
 These use cases illustrate clk features through concrete examples. They show
 common patterns that emerged from real usage and give hints about when clk
 might be useful.
@@ -173,7 +171,9 @@ looking for.
 
   clk does not want to compete with dedicated flow tools like nodered, but it
   helps having basic flow handling, like when you have a [[file:3D_printing_flow.org][3D printing flow]]. The
-  [[*end-to-end example][end-to-end example]] combines flows with [[*parameters and configuration][parameters]], [[*aliases][aliases]], and [[*projects][projects]].
+  [[file:chaotic_simulator_manager.org][chaotic simulator manager]] also uses flows to chain a generate → configure →
+  build → simulate pipeline in a standalone tool. The [[*end-to-end example][end-to-end example]]
+  combines flows with [[*parameters and configuration][parameters]], [[*aliases][aliases]], and [[*projects][projects]].
 
 * standard library
   :PROPERTIES:
@@ -236,6 +236,10 @@ looking for.
   :END:
 
   If you don't want to use the clk command line tool, you can [[file:chaotic_simulator_manager.org][roll your own]].
+  The example builds a standalone ~csm~ tool using ~clk fork~ and shows how
+  to grow it with your own customizations: auto-discovered internal commands,
+  [[*flows][flow]] dependencies to chain them, and a custom launcher mechanism that
+  wraps commands with tools like gdb, valgrind, or perf.
 
 * end-to-end example
   :PROPERTIES:
@@ -246,3 +250,9 @@ looking for.
   starting from a simple command. It ties together many features covered above:
   [[*creating commands][creating commands]], [[*persisting options][persisted parameters]], [[*flows][flow dependencies]], [[*aliases][aliases]],
   and [[*projects][per-project configuration]].
+
+* appendix
+  :PROPERTIES:
+  :CREATED:  [2026-03-16 17:17]
+  :END:
+  #+INCLUDE: "index-fragment.org"
