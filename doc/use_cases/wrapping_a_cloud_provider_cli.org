@@ -281,6 +281,9 @@ clk extension enable config-staging
 clk parameter --extension config-staging set aws --profile company-staging
 #+END_SRC
 
+#+RESULTS[a268cf651c08ceb7859e6b0a06515df4c128dcc7]: set-staging-params
+: New global/config-staging parameters for aws: --profile company-staging
+
 With the extension enabled, the staging profile overrides the global one. The
 region stays ~eu-west-1~ because the extension doesn't touch it:
 
@@ -289,12 +292,18 @@ region stays ~eu-west-1~ because the extension doesn't touch it:
 clk aws s3 ls s3://staging-bucket
 #+END_SRC
 
+#+RESULTS[c645ba8a6ee9ba5429f857d084ef8444a7287f33]: try-staging
+: [company-staging/eu-west-1] aws s3 ls s3://staging-bucket
+
 Command-line flags still win over everything:
 
 #+NAME: try-staging-override
 #+BEGIN_SRC bash :results verbatim :exports both :session 2a1f20f5-2f74-4221-bcab-677a045d3a8f :cache yes
 clk aws --profile company-dev s3 ls s3://dev-bucket
 #+END_SRC
+
+#+RESULTS[641fc59a0b44fb34544fb534217fb55a693578c7]: try-staging-override
+: [company-dev/eu-west-1] aws s3 ls s3://dev-bucket
 
 When I'm done with staging, I disable the extension and the global defaults
 come back:
@@ -304,6 +313,9 @@ come back:
 clk extension disable config-staging
 clk aws s3 ls s3://prod-bucket
 #+END_SRC
+
+#+RESULTS[3a3f5de57c1f2f1ea08560c79492e086b8f76bea]: disable-staging
+: [company-prod/eu-west-1] aws s3 ls s3://prod-bucket
 
 This makes it trivial to switch contexts: ~clk extension enable config-staging~
 and ~clk extension disable config-staging~ is all it takes.

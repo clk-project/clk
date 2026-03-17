@@ -199,7 +199,9 @@ This way, I never accidentally run a command against the wrong account just beca
 
 Per-project parameters are great when the environment is tied to a directory. But sometimes I want to switch my whole CLI context regardless of where I am — for example, temporarily pointing everything at staging.
 
-Extensions make this easy. I first set my usual production defaults globally:
+Extensions whose name starts with `config-` are treated specially: their parameters override the global profile instead of providing defaults. This is similar to how hostname-named extensions work, but you control when they are active.
+
+I first set my usual production defaults globally:
 
 ```bash
 clk parameter set aws --profile company-prod --region eu-west-1
@@ -207,18 +209,18 @@ clk parameter set aws --profile company-prod --region eu-west-1
 
     New global parameters for aws: --profile company-prod --region eu-west-1
 
-Then I create a `staging` extension that overrides just the profile:
+Then I create a `config-staging` extension that overrides just the profile:
 
 ```bash
-clk extension create staging
-clk extension enable staging
+clk extension create config-staging
+clk extension enable config-staging
 ```
 
 ```bash
-clk parameter --extension staging set aws --profile company-staging
+clk parameter --extension config-staging set aws --profile company-staging
 ```
 
-    New global/staging parameters for aws: --profile company-staging
+    New global/config-staging parameters for aws: --profile company-staging
 
 With the extension enabled, the staging profile overrides the global one. The region stays `eu-west-1` because the extension doesn't touch it:
 
@@ -226,7 +228,7 @@ With the extension enabled, the staging profile overrides the global one. The re
 clk aws s3 ls s3://staging-bucket
 ```
 
-    [company-prod/eu-west-1] aws s3 ls s3://staging-bucket
+    [company-staging/eu-west-1] aws s3 ls s3://staging-bucket
 
 Command-line flags still win over everything:
 
@@ -239,13 +241,13 @@ clk aws --profile company-dev s3 ls s3://dev-bucket
 When I'm done with staging, I disable the extension and the global defaults come back:
 
 ```bash
-clk extension disable staging
+clk extension disable config-staging
 clk aws s3 ls s3://prod-bucket
 ```
 
     [company-prod/eu-west-1] aws s3 ls s3://prod-bucket
 
-This makes it trivial to switch contexts: `clk extension enable staging` and `clk extension disable staging` is all it takes.
+This makes it trivial to switch contexts: `clk extension enable config-staging` and `clk extension disable config-staging` is all it takes.
 
 
 <a id="30ecf8ae-ebc3-4194-aa85-40df469dde2a"></a>

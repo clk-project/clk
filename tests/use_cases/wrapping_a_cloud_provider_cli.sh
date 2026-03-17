@@ -289,17 +289,17 @@ exit 1
 }
 
 
-clk extension create staging
-clk extension enable staging
+clk extension create config-staging
+clk extension enable config-staging
 
 
 set-staging-params_code () {
-      clk parameter --extension staging set aws --profile company-staging
+      clk parameter --extension config-staging set aws --profile company-staging
 }
 
 set-staging-params_expected () {
       cat<<"EOEXPECTED"
-New global/staging parameters for aws: --profile company-staging
+New global/config-staging parameters for aws: --profile company-staging
 EOEXPECTED
 }
 
@@ -320,7 +320,7 @@ try-staging_code () {
 
 try-staging_expected () {
       cat<<"EOEXPECTED"
-[company-prod/eu-west-1] aws s3 ls s3://staging-bucket
+[company-staging/eu-west-1] aws s3 ls s3://staging-bucket
 EOEXPECTED
 }
 
@@ -357,7 +357,7 @@ exit 1
 
 
 disable-staging_code () {
-      clk extension disable staging
+      clk extension disable config-staging
       clk aws s3 ls s3://prod-bucket
 }
 
@@ -377,7 +377,7 @@ exit 1
 }
 
 
-clk extension remove staging <<< y
+clk extension remove config-staging <<< y
 clk parameter unset aws
 
 
