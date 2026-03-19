@@ -12,7 +12,7 @@ cached-property==2.0.1
     # via clk (pyproject.toml)
 certifi==2026.2.25
     # via requests
-charset-normalizer==3.4.4
+charset-normalizer==3.4.6
     # via requests
 click==8.3.1
     # via
@@ -39,7 +39,7 @@ idna==3.11
     # via requests
 ipdb==0.13.13
     # via clk (pyproject.toml)
-ipython==9.10.0
+ipython==9.11.0
     # via ipdb
 ipython-pygments-lexers==1.1.1
     # via ipython
