@@ -84,7 +84,7 @@ I have a command that feels slow and I want to find out why.
   #+END_SRC
 
   #+RESULTS[30423697148aeeb86579694152151f1a95a782e5]: run-with-timestamp
-  : 2023-11-14 22:13:23,000 done
+  : 2024-02-14 23:00:06,000 done
 
 * adding --debug for the full picture
   :PROPERTIES:
@@ -102,11 +102,11 @@ I have a command that feels slow and I want to find out why.
   #+END_SRC
 
   #+RESULTS[0cc233f9e37716b9aa1dafb9a5c8b502d6ac4bc6]: run-with-debug-timestamp
-  : 2023-11-14 22:13:20,000 debug: starting step 1: fetch config
-  : 2023-11-14 22:13:20,000 debug: starting step 2: heavy computation
-  : 2023-11-14 22:13:23,000 debug: starting step 3: write results
-  : 2023-11-14 22:13:23,000 done
-  : 2023-11-14 22:13:23,000 debug: command `/home/sam/prog/clk/clk/__main__.py --debug --timestamp slowcmd` run in 0.146 second
+  : 2024-02-14 23:00:06,000 debug: starting step 1: fetch config
+  : 2024-02-14 23:00:06,000 debug: starting step 2: heavy computation
+  : 2024-02-14 23:00:09,000 debug: starting step 3: write results
+  : 2024-02-14 23:00:09,000 done
+  : 2024-02-14 23:00:09,000 debug: command `clk/__main__.py --debug --timestamp slowcmd` run in 3 seconds
 
   The three-second gap between step 2 and step 3 is immediately visible,
   pointing to the heavy computation as the bottleneck.
@@ -127,7 +127,7 @@ I have a command that feels slow and I want to find out why.
   #+END_SRC
 
   #+RESULTS[42b9154a300646b380fd901becaa78a7ce8c7e40]: run-with-profiling
-  : 1    0.000    0.000    0.000    0.000 /home/sam/prog/clk/clk/core.py:883(_fake_sleep)
+  : 1    0.000    0.000    0.000    0.000 clk/core.py:0(_fake_sleep)
 
   Here ~_fake_sleep~ appears because the test environment replaces
   ~time.sleep~ with a fake. In real life, the output would show ~{built-in
@@ -135,8 +135,8 @@ I have a command that feels slow and I want to find out why.
   the bottleneck is.
 
 #+NAME: run
-#+BEGIN_SRC bash :results none :exports none :tangle ../../tests/use_cases/spotting_slow_code.sh :noweb yes :shebang "#!/usr/bin/env bash"
-set -eu
+#+BEGIN_SRC bash :exports none :tangle ../../tests/use_cases/spotting_slow_code.sh :noweb yes :shebang "#!/usr/bin/env bash"
+  set -eu
   <<init>>
   <<export-slow>>
   check-result(run-without-timestamp)
