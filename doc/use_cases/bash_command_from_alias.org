@@ -30,6 +30,8 @@ it 'mpc'.
 
 #+NAME: install_fake_music_program
 #+BEGIN_SRC bash :results none :exports none :session e6078fc8-4b12-44ad-b008-20f0b7311069 :noweb yes
+  mkdir -p "${TMP}/bin"
+  export PATH="${TMP}/bin:${PATH}"
   cat <<"EOF" > "${TMP}/bin/mpc"
   #!/usr/bin/env bash
   <<fake_control_program>>
@@ -203,7 +205,7 @@ Arguments:
 
 
 #+BEGIN_SRC bash :exports none :tangle ../../tests/use_cases/bash_command_from_alias.sh :noweb yes :shebang "#!/usr/bin/env bash"
-set -eu
+  set -eu
   <<init>>
   <<install_fake_music_program>>
   check-result(create)

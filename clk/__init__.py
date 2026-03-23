@@ -2,10 +2,10 @@
 
 # ruff: noqa: E402
 
-from datetime import datetime
+import time
 
 # keep it at the begin in order to get an accurate startup time
-startup_time = datetime.now()
+startup_time = time.time()
 
 from clk import log
 from clk._version import __version__  # NOQA: F401

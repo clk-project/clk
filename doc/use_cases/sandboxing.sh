@@ -23,7 +23,6 @@ clean_cache( ){
     rm -rf "${SANDBOX_CACHE}"
 }
 mkdir -p "${TMP}/clk-root"
-mkdir "${TMP}/bin"
 export CLK_BIN="$(readlink -f "$(which clk)")"
 export SLEEP_BIN="$(which sleep)"
 export DATE_BIN="$(which date)"
@@ -52,18 +51,21 @@ date ( ) {
 say_now () {
     echo "now: ${CLK_FAKED_TIME}"
 }
-cat<<EOF > "${TMP}/bin/clk"
-#!/usr/bin/env bash
-set -eu
-
-    if test -n "\${CLK_FAKED_TIME-}"
+clk () {
+    if test -n "${CLK_FAKED_TIME-}"
     then
-        faketime "\${CLK_FAKED_TIME}" "${CLK_COV}" "\$@"
+        export CLK_FAKED_TIME_FILE="${TMP}/clk_faked_time"
+        # the faketime program is useful to make cache_disk reproducible
+        faketime "${CLK_FAKED_TIME}" "${CLK_COV}" "$@"
+        _ret=$?
+        if test -s "${CLK_FAKED_TIME_FILE}"; then
+            CLK_FAKED_TIME=$(cat "${CLK_FAKED_TIME_FILE}")
+        fi
+        return $_ret
     else
-        "${CLK_COV}" "\$@"
+        "${CLK_COV}" "$@"
     fi
-EOF
-chmod +x "${TMP}/bin/clk"
+}
 cat <<EOF > "${TMP}/clk-root/clk.json"
 {
     "parameters": {
@@ -101,7 +103,6 @@ export CLKCONFIGDIR="${TMP}/clk-root"
 export DUMMYFILEKEYRINGPATH="${TMP}/keyring.json"
 export CLK_NETRC_LOCATION="${TMP}/netrc"
 export CLK_BIN="${CLK_BIN}"
-export PATH="${TMP}/bin:${PATH}"
 export CLK_COVERAGE_TEST_ID="${CLK_COVERAGE_TEST_ID-}"
 EOF
 # source the env file to use it in automatic test

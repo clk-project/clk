@@ -56,7 +56,7 @@ Adding `--timestamp` prefixes each log line with a timestamp. I can confirm it i
 clk --timestamp slowcmd 2>&1
 ```
 
-    2023-11-14 22:13:23,000 done
+    2024-02-14 23:00:06,000 done
 
 
 <a id="with-debug-timestamp"></a>
@@ -69,11 +69,11 @@ Adding `--debug` reveals the debug log lines. Combined with `--timestamp`, I can
 clk --debug --timestamp slowcmd 2>&1
 ```
 
-    2023-11-14 22:13:20,000 debug: starting step 1: fetch config
-    2023-11-14 22:13:20,000 debug: starting step 2: heavy computation
-    2023-11-14 22:13:23,000 debug: starting step 3: write results
-    2023-11-14 22:13:23,000 done
-    2023-11-14 22:13:23,000 debug: command `/home/sam/prog/clk/clk/__main__.py --debug --timestamp slowcmd` run in 0.146 second
+    2024-02-14 23:00:06,000 debug: starting step 1: fetch config
+    2024-02-14 23:00:06,000 debug: starting step 2: heavy computation
+    2024-02-14 23:00:09,000 debug: starting step 3: write results
+    2024-02-14 23:00:09,000 done
+    2024-02-14 23:00:09,000 debug: command `clk/__main__.py --debug --timestamp slowcmd` run in 3 seconds
 
 The three-second gap between step 2 and step 3 is immediately visible, pointing to the heavy computation as the bottleneck.
 
@@ -88,6 +88,6 @@ Now I know that step 2 is the bottleneck. To understand what exactly is happenin
 clk --profiling slowcmd 2>&1 | grep sleep
 ```
 
-    1    0.000    0.000    0.000    0.000 /home/sam/prog/clk/clk/core.py:883(_fake_sleep)
+    1    0.000    0.000    0.000    0.000 clk/core.py:0(_fake_sleep)
 
 Here `_fake_sleep` appears because the test environment replaces `time.sleep` with a fake. In real life, the output would show `{built-in method time.sleep}` with 3 seconds of cumulative time, confirming where the bottleneck is.

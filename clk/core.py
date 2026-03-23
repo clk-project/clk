@@ -11,7 +11,6 @@ import signal
 import subprocess
 import sys
 import time
-from datetime import datetime
 from io import StringIO
 from pathlib import Path
 
@@ -19,7 +18,8 @@ import appdirs
 import click
 from click import formatting
 
-from clk import completion, log, startup_time
+import clk
+from clk import completion, log
 from clk.atexit import trigger
 from clk.click_helpers import click_get_current_context_safe
 from clk.click_internals import (
@@ -845,6 +845,8 @@ class RedactMessages:
         self.hostname = socket.gethostname()
 
     def write(self, message):
+        import re
+
         message = message.replace(
             config.global_profile.location,
             make_relative(config.global_profile.location),
@@ -855,7 +857,19 @@ class RedactMessages:
             if relative_project.endswith("/"):
                 message = message.replace(config.project + "/", relative_project)
             message = message.replace(config.project, relative_project.rstrip("/"))
+        install_location = config.override_env.get("CLK_INSTALL_LOCATION", "")
+        if install_location:
+            project_root = str(Path(install_location).parent) + "/"
+            message = message.replace(project_root, "")
         message = message.replace(self.hostname, "myhostname")
+        # Redact line numbers in pstats profiling output (e.g. "core.py:894(_fake_sleep)" -> "core.py:0(_fake_sleep)")
+        message = re.sub(r"(\.py):\d+(\()", r"\g<1>:0\2", message)
+        # Redact timing values in pstats profiling output to avoid non-deterministic results
+        message = re.sub(
+            r"(\d+\s+)\d+\.\d+\s+\d+\.\d+\s+\d+\.\d+\s+\d+\.\d+(\s+\S+\.py:)",
+            r"\g<1>0.000    0.000    0.000    0.000\2",
+            message,
+        )
         self.stream.write(message)
 
     def flush(self):
@@ -875,7 +889,13 @@ def reproducible_output_callback(ctx, attr, value):
 
         from clk.log import DevelopColorFormatter
 
-        _fake_clock = [time.time()]
+        faked_time_env = os.environ.get("CLK_FAKED_TIME")
+        if faked_time_env:
+            from datetime import datetime as _dt
+
+            _fake_clock = [_dt.fromisoformat(faked_time_env).timestamp()]
+        else:
+            _fake_clock = [time.time()]
 
         def _fake_time():
             return _fake_clock[0]
@@ -889,6 +909,10 @@ def reproducible_output_callback(ctx, attr, value):
 
         time.time = _fake_time
         time.sleep = _fake_sleep
+
+        import clk
+
+        clk.startup_time = time.time()
 
         _original_format_time = DevelopColorFormatter.formatTime
 
@@ -1004,13 +1028,14 @@ def main():
             ps.print_stats()
             print(s.getvalue())
         trigger()
-        end_time = datetime.now()
+        end_time = time.time()
         import sys
+        from datetime import timedelta
 
         from clk.lib import quote
 
         LOGGER.debug(
-            f"command `{' '.join(map(quote, sys.argv))}` run in {natural_delta(end_time - startup_time)}"
+            f"command `{' '.join(map(quote, sys.argv))}` run in {natural_delta(timedelta(seconds=end_time - clk.startup_time))}"
         )
     exit(exitcode)
 
