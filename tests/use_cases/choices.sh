@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
+# [[file:../../doc/use_cases/choices.org::run][run]]
 set -eu
-# [[id:61d5abb0-04eb-427a-b59a-65ced0237782::run][run]]
 . ./sandboxing.sh
 clk command create python android --force --group --body "$(cat<<EOF
 import os
@@ -46,7 +46,11 @@ Would call adb shell dumpsys battery|grep level|cut -f2 -d:|trim and would get t
 EOEXPECTED
 }
 
-diff -uBw <(batterie-status-test_code 2>&1) <(batterie-status-test_expected) || {
+echo 'Run batterie-status-test'
+
+{ batterie-status-test_code || true ; } > "${TMP}/code.txt" 2>&1
+batterie-status-test_expected > "${TMP}/expected.txt" 2>&1
+diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
 echo "Something went wrong when trying batterie-status-test"
 exit 1
 }
@@ -63,7 +67,11 @@ error: Invalid value for '--device' / '-d': 'cinkpeax' is not one of 'cink-peax'
 EOEXPECTED
 }
 
-diff -uBw <(try-bad-name-choice_code 2>&1) <(try-bad-name-choice_expected) || {
+echo 'Run try-bad-name-choice'
+
+{ try-bad-name-choice_code || true ; } > "${TMP}/code.txt" 2>&1
+try-bad-name-choice_expected > "${TMP}/expected.txt" 2>&1
+diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
 echo "Something went wrong when trying try-bad-name-choice"
 exit 1
 }
@@ -112,7 +120,11 @@ Would call adb shell dumpsys battery|grep level|cut -f2 -d:|trim and would get t
 EOEXPECTED
 }
 
-diff -uBw <(test-with-suggestion_code 2>&1) <(test-with-suggestion_expected) || {
+echo 'Run test-with-suggestion'
+
+{ test-with-suggestion_code || true ; } > "${TMP}/code.txt" 2>&1
+test-with-suggestion_expected > "${TMP}/expected.txt" 2>&1
+diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
 echo "Something went wrong when trying test-with-suggestion"
 exit 1
 }
@@ -128,7 +140,11 @@ klipad
 EOEXPECTED
 }
 
-diff -uBw <(try-completion_code 2>&1) <(try-completion_expected) || {
+echo 'Run try-completion'
+
+{ try-completion_code || true ; } > "${TMP}/code.txt" 2>&1
+try-completion_expected > "${TMP}/expected.txt" 2>&1
+diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
 echo "Something went wrong when trying try-completion"
 exit 1
 }
@@ -187,7 +203,11 @@ error:   klipad       The photo gallery
 EOEXPECTED
 }
 
-diff -uBw <(test-documented-choices_code 2>&1) <(test-documented-choices_expected) || {
+echo 'Run test-documented-choices'
+
+{ test-documented-choices_code || true ; } > "${TMP}/code.txt" 2>&1
+test-documented-choices_expected > "${TMP}/expected.txt" 2>&1
+diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
 echo "Something went wrong when trying test-documented-choices"
 exit 1
 }
@@ -203,7 +223,11 @@ Would call adb shell dumpsys battery|grep level|cut -f2 -d:|trim and would get t
 EOEXPECTED
 }
 
-diff -uBw <(test-documented-choices2_code 2>&1) <(test-documented-choices2_expected) || {
+echo 'Run test-documented-choices2'
+
+{ test-documented-choices2_code || true ; } > "${TMP}/code.txt" 2>&1
+test-documented-choices2_expected > "${TMP}/expected.txt" 2>&1
+diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
 echo "Something went wrong when trying test-documented-choices2"
 exit 1
 }
@@ -219,7 +243,11 @@ i9300
 EOEXPECTED
 }
 
-diff -uBw <(try-completion2_code 2>&1) <(try-completion2_expected) || {
+echo 'Run try-completion2'
+
+{ try-completion2_code || true ; } > "${TMP}/code.txt" 2>&1
+try-completion2_expected > "${TMP}/expected.txt" 2>&1
+diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
 echo "Something went wrong when trying try-completion2"
 exit 1
 }

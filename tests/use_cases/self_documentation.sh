@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
-set -eu
 # [[file:../../doc/use_cases/self_documentation.org::run][run]]
+set -eu
 . ./sandboxing.sh
 
 

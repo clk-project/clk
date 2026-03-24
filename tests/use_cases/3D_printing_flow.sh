@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
-set -eu
 # [[file:../../doc/use_cases/3D_printing_flow.org::script][script]]
+set -eu
 . ./sandboxing.sh
 
 clk command create python --group printer --description "This is a group of commands to deal with 3D printing."

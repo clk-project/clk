@@ -385,7 +385,7 @@ csm simulate --flow --launcher gdb
 : Running gdb --quiet --args ./build/simulator
 
 #+BEGIN_SRC bash :tangle ../../tests/use_cases/chaotic_simulator_manager.sh :exports none :noweb yes :shebang "#!/usr/bin/env bash"
-set -eu
+  set -eu
 <<init>>
 
 <<csm-fork>>

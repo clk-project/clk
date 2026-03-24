@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
-set -eu
 # [[file:../../doc/use_cases/creating_extensions.org::all][all]]
+set -eu
 . ./sandboxing.sh
 
 clk extension create k8s

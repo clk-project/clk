@@ -35,7 +35,7 @@ done
 clk command create bash animal --no-open
 cat <<"EOH" > "$(clk command which animal)"
 #!/usr/bin/env bash
-set -eu
+  set -eu
 
 source "_clk.sh"
 
@@ -107,7 +107,7 @@ A:document:file:The document to count words in
 clk command create bash wordcount
 cat <<"EOH" > "$(clk command which wordcount)"
 #!/usr/bin/env bash
-set -eu
+  set -eu
 
 source "_clk.sh"
 

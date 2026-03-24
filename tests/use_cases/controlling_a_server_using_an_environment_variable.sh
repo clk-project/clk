@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
+# [[file:../../doc/use_cases/controlling_a_server_using_an_environment_variable.org::run][run]]
 set -eu
-# [[id:3a3f2856-a1c4-4be6-9521-00a39e0f728d::run][run]]
 . ./sandboxing.sh
 
 

@@ -100,7 +100,7 @@ clk openapi post somepath d
 
 #+NAME: all
 #+BEGIN_SRC bash :results none :exports none :tangle ../../tests/use_cases/dynamic_parameters_advanced_use_cases.sh :noweb yes :shebang "#!/usr/bin/env bash"
-set -eu
+  set -eu
 <<init>>
 
 <<create_command>>

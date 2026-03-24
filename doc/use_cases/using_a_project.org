@@ -264,7 +264,7 @@ clk deploy
 
 #+NAME: run
 #+BEGIN_SRC bash :results none :exports none :tangle ../../tests/use_cases/using_a_project.sh :noweb yes :shebang "#!/usr/bin/env bash"
-set -eu
+  set -eu
 <<init>>
 
 <<createproject>>

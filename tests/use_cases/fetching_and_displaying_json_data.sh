@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
-set -eu
 # [[file:../../doc/use_cases/fetching_and_displaying_json_data.org::script][script]]
+set -eu
 . ./sandboxing.sh
 
 clk command create python --group holidays --description "Fetch and display school holidays"

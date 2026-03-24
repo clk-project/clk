@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# [[id:e6078fc8-4b12-44ad-b008-20f0b7311069::+BEGIN_SRC bash :exports none :tangle ../../tests/use_cases/bash_command_from_alias.sh :noweb yes :shebang "#!/usr/bin/env bash"][No heading:17]]
+# [[file:../../doc/use_cases/tests/use_cases/bash_command_from_alias.sh :noweb yes :shebang "#!/usr/bin/env bash"][No heading:17]]
 set -eu
 . ./sandboxing.sh
 mkdir -p "${TMP}/bin"

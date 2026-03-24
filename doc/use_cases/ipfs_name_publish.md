@@ -66,7 +66,7 @@ Now, I want to have a command that uses this content as possible values for a ke
 
 ```bash
 #!/usr/bin/env bash
-set -eu
+  set -eu
 
 source "_clk.sh"
 

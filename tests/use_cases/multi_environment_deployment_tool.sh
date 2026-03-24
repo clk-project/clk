@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
-set -eu
 # [[file:../../doc/use_cases/tests/use_cases/multi_environment_deployment_tool.sh :noweb yes :shebang "#!/usr/bin/env bash"][No heading:10]]
+set -eu
 . ./sandboxing.sh
 
 clk command create python myenv --group --description "Commands that work with a specific environment"

@@ -1,6 +1,6 @@
 - [alternative use case, explicitly defining the flow](#db06b88c-a231-4f46-b8f7-54e98db07e17)
-- [more information about the flow](#orgc601aa4)
-- [dynamically adjusting the flow](#orgf4b6fb5)
+- [more information about the flow](#cda760bc-d2da-49ca-9377-7455feaeedbc)
+- [dynamically adjusting the flow](#35c5a2d9-4a1d-4929-b801-7a023a221741)
 - [when the flow is wrong](#96a6905e-06bd-48d5-a117-7e81ebde9399)
 
 When you get used to create groups of commands, you generally end up having a sequence that comes out quite naturally.
@@ -155,7 +155,7 @@ clk printer send myprinter --flow
 Here, your mileage may vary. Choose the implementation that suits you better.
 
 
-<a id="orgc601aa4"></a>
+<a id="cda760bc-d2da-49ca-9377-7455feaeedbc"></a>
 
 # more information about the flow
 
@@ -225,7 +225,7 @@ clk --flow-progress printer send myprinter --flow
 Of course, using it with `--flow-step` would make things even more messy, so use the right option for the flows you will run, depending on your use cases.
 
 
-<a id="orgf4b6fb5"></a>
+<a id="35c5a2d9-4a1d-4929-b801-7a023a221741"></a>
 
 # dynamically adjusting the flow
 

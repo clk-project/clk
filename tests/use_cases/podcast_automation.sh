@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
-set -eu
 # [[file:../../doc/use_cases/podcast_automation.org::run][run]]
+set -eu
 . ./sandboxing.sh
 
 clk command create python podcast --group --force --description "Dealing with podcasts" --body "

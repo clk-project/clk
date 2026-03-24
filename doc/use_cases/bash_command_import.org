@@ -41,7 +41,7 @@ Then you can simply import this code in your code, using clk_import.
 clk command create bash somecommand --no-open
 cat <<"EOH" > "$(clk command which somecommand)"
 #!/usr/bin/env bash
-set -eu
+  set -eu
 
 source "_clk.sh"
 
@@ -71,7 +71,7 @@ test "$(clk somecommand)" = "SOMETHING"
 
 #+BEGIN_SRC bash :tangle ../../tests/use_cases/bash_command_import.sh :exports none  :noweb yes
 #!/usr/bin/env bash
-set -eu
+  set -eu
 
 set -e
 set -u

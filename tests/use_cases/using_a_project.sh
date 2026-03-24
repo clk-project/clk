@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
-set -eu
 # [[file:../../doc/use_cases/using_a_project.org::run][run]]
+set -eu
 . ./sandboxing.sh
 
 mkdir myprojet && cd myprojet && mkdir .clk

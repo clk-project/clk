@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# [[id:d9ba5b67-bc5d-4a07-b1c9-cac12a0414ee][possible mistake: using periods in python command names:6]]
+# [[file:../../doc/use_cases/python_command.org::#periods-in-python-command-names][possible mistake: using periods in python command names:6]]
 set -eu
 . ./sandboxing.sh
 

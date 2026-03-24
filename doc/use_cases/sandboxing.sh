@@ -1,4 +1,4 @@
-# [[id:8e7e1dba-e84b-4569-9701-be3a1e073505::+BEGIN_SRC bash :exports none :tangle ./sandboxing.sh :noweb yes][No heading:2]]
+# [[file:sandboxing.org::+BEGIN_SRC bash :exports none :tangle ./sandboxing.sh :noweb yes][No heading:2]]
 export TQDM_NCOLS=60
 # Clear bash hooks that may trigger X11 calls (notifications, xdotool, etc.)
 preexec_functions=()

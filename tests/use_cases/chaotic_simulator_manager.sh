@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# [[id:c777ac1b-8ed6-4cb0-909e-92ce2ce96a03][using a launcher in the simulate command:7]]
+# [[file:../../doc/use_cases/chaotic_simulator_manager.org::*using a launcher in the simulate command][using a launcher in the simulate command:7]]
 set -eu
 . ./sandboxing.sh
 

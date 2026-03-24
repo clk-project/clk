@@ -126,7 +126,7 @@ This pattern is particularly useful when:
 
 
 #+BEGIN_SRC bash :exports none :tangle ../../tests/use_cases/multi_environment_deployment_tool.sh :noweb yes :shebang "#!/usr/bin/env bash"
-set -eu
+  set -eu
 <<init>>
 
 <<create-ext-cmd>>

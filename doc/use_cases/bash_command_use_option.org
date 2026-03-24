@@ -51,7 +51,7 @@ F:--shout:Print the message of the animal in capital case
 clk command create bash animal --no-open
 cat <<"EOH" > "$(clk command which animal)"
 #!/usr/bin/env bash
-set -eu
+  set -eu
 
 source "_clk.sh"
 
@@ -120,7 +120,7 @@ A:document:file:The document to count words in
 clk command create bash wordcount
 cat <<"EOH" > "$(clk command which wordcount)"
 #!/usr/bin/env bash
-set -eu
+  set -eu
 
 source "_clk.sh"
 
@@ -208,7 +208,7 @@ echo "$(clk_value package)"
 clk command create bash showpackage
 cat <<"EOH" > "$(clk command which showpackage)"
 #!/usr/bin/env bash
-set -eu
+  set -eu
 
 source "_clk.sh"
 
@@ -241,7 +241,7 @@ clk showpackage https://example.com/path/to/package.apk
 : https://example.com/path/to/package.apk
 
 #+BEGIN_SRC bash :exports none :tangle ../../tests/use_cases/bash_command_use_option.sh :noweb yes :shebang "#!/usr/bin/env bash"
-set -eu
+  set -eu
 <<init>>
 
 <<create>>

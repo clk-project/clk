@@ -217,6 +217,7 @@ Here, your mileage may vary. Choose the implementation that suits you better.
 * more information about the flow
   :PROPERTIES:
   :CREATED:  [2025-12-31 16:00]
+  :CUSTOM_ID: cda760bc-d2da-49ca-9377-7455feaeedbc
   :END:
 
   If you feel lost about what the current flow has become, you have a few ways to dig into it.
@@ -323,6 +324,7 @@ the right option for the flows you will run, depending on your use cases.
 * dynamically adjusting the flow
   :PROPERTIES:
   :CREATED:  [2026-02-15 15:00]
+  :CUSTOM_ID: 35c5a2d9-4a1d-4929-b801-7a023a221741
   :END:
 
 Sometimes you need to adjust the flow without modifying the code. For instance,
@@ -468,7 +470,7 @@ Beware that this means that you have to check that this command it actually defi
 
 #+NAME: script
 #+BEGIN_SRC bash :results none :exports none :tangle ../../tests/use_cases/3D_printing_flow.sh :noweb yes :shebang "#!/usr/bin/env bash"
-set -eu
+  set -eu
   <<init>>
 
   <<create-group>>

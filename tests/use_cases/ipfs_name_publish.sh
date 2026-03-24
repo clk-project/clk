@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
+# [[file:../../doc/use_cases/ipfs_name_publish.org::run][run]]
 set -eu
-# [[id:344b2d46-b85a-40ea-a50b-ad95ddc177f4::run][run]]
 . ./sandboxing.sh
 
 clk command create bash ipfs.key.list --description "List the available keys" --body "
