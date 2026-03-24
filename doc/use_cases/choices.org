@@ -259,7 +259,7 @@ use of the click built-in ~Choice~ types.
 
   #+NAME: run
   #+BEGIN_SRC bash :results none :exports none :tangle ../../tests/use_cases/choices.sh :noweb yes :shebang "#!/usr/bin/env bash"
-set -eu
+    set -eu
     <<init>>
     <<export-with-choice>>
     <<batterie-status-command>>

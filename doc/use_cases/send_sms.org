@@ -73,7 +73,7 @@ The beginning of the script looks like this[fn:1]:
 #+NAME: command
 #+BEGIN_SRC bash :results verbatim :exports code
 #!/usr/bin/env bash
-set -eu
+  set -eu
 
 source "_clk.sh"
 
@@ -202,7 +202,7 @@ clk termux sms send "Wendy Hodges" "Kyle Nguyen"
 
 #+NAME: run
 #+BEGIN_SRC bash :results none :exports none :tangle ../../tests/use_cases/send_sms.sh :noweb yes :shebang "#!/usr/bin/env bash"
-set -eu
+  set -eu
   <<init>>
   <<install-lib>>
   <<create-command>>

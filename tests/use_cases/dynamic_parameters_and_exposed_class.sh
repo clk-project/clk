@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
+# [[file:../../doc/use_cases/dynamic_parameters_and_exposed_class.org::final][final]]
 set -eu
-# [[id:e451aef8-b5f8-4529-972b-4b341833c797::final][final]]
 . ./sandboxing.sh
 
 clk command create python --group http

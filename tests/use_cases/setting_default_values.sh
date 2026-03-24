@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
-set -eu
 # [[file:../../doc/use_cases/setting_default_values.org::#git-comparison][a familiar pattern: git config:3]]
+set -eu
 . ./sandboxing.sh
 
 

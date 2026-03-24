@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
+# [[file:../../doc/use_cases/send_sms.org::run][run]]
 set -eu
-# [[id:3781d830-096f-4fb6-9e77-d18586507997::run][run]]
 . ./sandboxing.sh
   mkdir -p "${CLKCONFIGDIR}/bin/lib"
   cat<<"EOF" > "${CLKCONFIGDIR}/bin/lib/termux"
@@ -39,7 +39,7 @@ EOF
 clk command create bash termux.sms.send --no-open
 cat <<"EOC" > "$(clk command which termux.sms.send)"
 #!/usr/bin/env bash
-set -eu
+  set -eu
 
 source "_clk.sh"
 
@@ -70,14 +70,18 @@ Martha Thomas
 EOEXPECTED
 }
 
-diff -uBw <(command-completion-doit_code 2>&1) <(command-completion-doit_expected) || {
+echo 'Run command-completion-doit'
+
+{ command-completion-doit_code || true ; } > "${TMP}/code.txt" 2>&1
+command-completion-doit_expected > "${TMP}/expected.txt" 2>&1
+diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
 echo "Something went wrong when trying command-completion-doit"
 exit 1
 }
 
 cat<<"EOC" > "$(clk command which termux.sms.send)"
 #!/usr/bin/env bash
-set -eu
+  set -eu
 
 source "_clk.sh"
 
@@ -110,14 +114,18 @@ Wendy Hodges Kyle Nguyen
 EOEXPECTED
 }
 
-diff -uBw <(try-with-clk-value_code 2>&1) <(try-with-clk-value_expected) || {
+echo 'Run try-with-clk-value'
+
+{ try-with-clk-value_code || true ; } > "${TMP}/code.txt" 2>&1
+try-with-clk-value_expected > "${TMP}/expected.txt" 2>&1
+diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
 echo "Something went wrong when trying try-with-clk-value"
 exit 1
 }
 
 cat<<"EOC" > "$(clk command which termux.sms.send)"
 #!/usr/bin/env bash
-set -eu
+  set -eu
 
 source "_clk.sh"
 
@@ -161,7 +169,11 @@ ssh myphone termux-sms-send -n "+987654321,+1122334455" "Hello there!"
 EOEXPECTED
 }
 
-diff -uBw <(try-with-json_code 2>&1) <(try-with-json_expected) || {
+echo 'Run try-with-json'
+
+{ try-with-json_code || true ; } > "${TMP}/code.txt" 2>&1
+try-with-json_expected > "${TMP}/expected.txt" 2>&1
+diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
 echo "Something went wrong when trying try-with-json"
 exit 1
 }

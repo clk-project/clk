@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# [[id:fdbd665d-0fe5-4380-92f6-c32a02633dde::run][run]]
+# [[file:../../doc/use_cases/spotting_slow_code.org::run][run]]
 set -eu
 . ./sandboxing.sh
 init_faked_time

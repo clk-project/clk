@@ -44,7 +44,7 @@ The beginning of the script looks like this<sup><a id="fnr.1" class="footref" hr
 
 ```bash
 #!/usr/bin/env bash
-set -eu
+  set -eu
 
 source "_clk.sh"
 

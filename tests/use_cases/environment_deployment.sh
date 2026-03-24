@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
-set -eu
 # [[file:../../doc/use_cases/environment_deployment.org::run][run]]
+set -eu
 . ./sandboxing.sh
 
 clk command create python app --group --force

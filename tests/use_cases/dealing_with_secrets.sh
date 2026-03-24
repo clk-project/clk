@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
+# [[file:../../doc/use_cases/dealing_with_secrets.org::test][test]]
 set -eu
-# [[id:1ff4115c-af33-4c97-a343-a49148bf2ec8::test][test]]
 . ./sandboxing.sh
 
 clk command create python --group http

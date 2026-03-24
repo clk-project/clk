@@ -468,7 +468,7 @@ unset AWS_REGION
 #+END_SRC
 
 #+BEGIN_SRC bash :exports none :tangle ../../tests/use_cases/wrapping_a_cloud_provider_cli.sh :noweb yes :shebang "#!/usr/bin/env bash"
-set -eu
+  set -eu
 <<init>>
 
 <<create-aws-cmd>>

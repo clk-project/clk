@@ -90,7 +90,7 @@ That's much better!
 
 #+NAME: run
 #+BEGIN_SRC bash :results none :exports none :tangle ../../tests/use_cases/controlling_a_server_using_an_environment_variable.sh :noweb yes :shebang "#!/usr/bin/env bash"
-set -eu
+  set -eu
 <<init>>
 
 check-result(curl)

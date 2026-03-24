@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
-set -eu
 # [[file:../../doc/use_cases/ethereum_local_environment_dev_tool.org::test][test]]
+set -eu
 . ./sandboxing.sh
 
 clk command create python eth --description "Play with ethereum" --group --body "

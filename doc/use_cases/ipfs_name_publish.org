@@ -150,7 +150,7 @@ clk ipfs name publish somecid alice
 
 #+NAME: run
 #+BEGIN_SRC bash :results none :exports none :tangle ../../tests/use_cases/ipfs_name_publish.sh :noweb yes :shebang "#!/usr/bin/env bash"
-set -eu
+  set -eu
   <<init>>
 
   <<list-key>>

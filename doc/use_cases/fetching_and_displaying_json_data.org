@@ -161,7 +161,7 @@ how to use ~cache_disk~ to cache the results.
 
 #+NAME: script
 #+BEGIN_SRC bash :results none :exports none :tangle ../../tests/use_cases/fetching_and_displaying_json_data.sh :noweb yes :shebang "#!/usr/bin/env bash"
-set -eu
+  set -eu
   <<init>>
 
   <<create-group>>

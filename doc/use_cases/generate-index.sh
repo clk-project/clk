@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-set -eu
+  set -eu
 # Generate index-fragment.org from #+SUBTITLE: metadata and code block analysis.
 # README.org includes this file via #+INCLUDE, so it appears in the exported README.md.
 # Called automatically via pre-commit when org files change.

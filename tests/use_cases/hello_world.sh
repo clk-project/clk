@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
-set -eu
 # [[file:../../README.org::hello-world][hello-world]]
+set -eu
 . ./sandboxing.sh
 
 clk command create bash hello-world --description "Some simple hello world command" --body 'echo "Hello world"'

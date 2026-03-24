@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# [[id:d5f418b6-4f78-477d-a52b-a69b57d4edee::run][run]]
+# [[file:../../doc/use_cases/scrapping_the_web.org::run][run]]
 set -eu
 . ./sandboxing.sh
 init_faked_time

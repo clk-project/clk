@@ -406,7 +406,7 @@ clk mygroup child
 : hello from mygroup child
 
 #+BEGIN_SRC bash :exports none :tangle ../../tests/use_cases/python_command.sh :noweb yes :shebang "#!/usr/bin/env bash"
-set -eu
+  set -eu
 <<init>>
 
 <<create>>

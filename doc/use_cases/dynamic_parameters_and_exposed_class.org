@@ -335,7 +335,7 @@ Now, let's try creating an alias to play with somesite, as explained above.
 
 #+NAME: final
 #+BEGIN_SRC bash :results none :exports none :tangle ../../tests/use_cases/dynamic_parameters_and_exposed_class.sh :noweb yes :shebang "#!/usr/bin/env bash"
-set -eu
+  set -eu
 <<init>>
 
 <<create>>

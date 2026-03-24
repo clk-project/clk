@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# [[id:9d61364d-7246-4218-bcd8-b4b08d91ece3][summary:1]]
+# [[file:../../doc/use_cases/backing_up_documents.org::#69f8a2f5-ba36-41fc-9d2c-6235b839bd9b][summary:1]]
 set -eu
 . ./sandboxing.sh
 

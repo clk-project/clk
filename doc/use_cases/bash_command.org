@@ -62,7 +62,7 @@ cat $(clk command which mycommand)
 #+RESULTS[7d3b87635527e2c71dba61b28983f897eb7a8a9f]: show_it
 #+begin_example
 #!/usr/bin/env bash
-set -eu
+  set -eu
 
 source "_clk.sh"
 
@@ -118,7 +118,7 @@ automatically makes the change.
 #+BEGIN_SRC bash :results none :exports both :session 85c8e385-7f24-48ac-9a85-30cfc354aebf
 cat<<'EOF' > myeditor
 #!/usr/bin/env bash
-set -eu
+  set -eu
 sed -i 's/Description/Command that says something/g' "${1}"
 EOF
 chmod +x myeditor
@@ -238,7 +238,7 @@ EOF
 
 
 #+BEGIN_SRC bash :exports none :tangle ../../tests/use_cases/bash_command.sh :noweb yes :shebang "#!/usr/bin/env bash"
-set -eu
+  set -eu
 <<init>>
 
 <<create>>

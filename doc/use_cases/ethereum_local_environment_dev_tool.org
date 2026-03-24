@@ -299,7 +299,7 @@ test.
 
 #+NAME: test
 #+BEGIN_SRC bash :results none :exports none :noweb yes :shebang "#!/usr/bin/env bash" :tangle ../../tests/use_cases/ethereum_local_environment_dev_tool.sh
-set -eu
+    set -eu
     <<init>>
 
     <<install_eth>>

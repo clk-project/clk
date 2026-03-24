@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
-set -eu
 # [[file:../../doc/use_cases/tests/use_cases/bash_command.sh :noweb yes :shebang "#!/usr/bin/env bash"][No heading:17]]
+set -eu
 . ./sandboxing.sh
 
 clk command create bash mycommand
@@ -51,7 +51,7 @@ show_it_code () {
 show_it_expected () {
       cat<<"EOEXPECTED"
 #!/usr/bin/env bash
-set -eu
+  set -eu
 
 source "_clk.sh"
 
@@ -103,7 +103,7 @@ exit 1
 
 cat<<'EOF' > myeditor
 #!/usr/bin/env bash
-set -eu
+  set -eu
 sed -i 's/Description/Command that says something/g' "${1}"
 EOF
 chmod +x myeditor

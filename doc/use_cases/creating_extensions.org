@@ -433,7 +433,7 @@ preference in shared project without disturbing the colleagues.
 
 #+NAME: all
 #+BEGIN_SRC bash :results none :exports none :tangle ../../tests/use_cases/creating_extensions.sh :noweb yes :shebang "#!/usr/bin/env bash"
-set -eu
+  set -eu
 <<init>>
 
 <<create_extension>>

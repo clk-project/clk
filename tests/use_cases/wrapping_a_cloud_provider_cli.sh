@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# [[id:865ad4fb-d2c8-41b5-a6de-438cce601beb][preserving environment variables when no option is given:6]]
+# [[file:../../doc/use_cases/wrapping_a_cloud_provider_cli.org::#preserving-env][preserving environment variables when no option is given:6]]
 set -eu
 . ./sandboxing.sh
 

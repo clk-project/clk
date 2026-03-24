@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
+# [[file:../../doc/use_cases/dynamic_parameters_advanced_use_cases.org::all][all]]
 set -eu
-# [[file:dynamic_parameters_advanced_use_cases.org::all][all]]
 . ./sandboxing.sh
 
 clk command create python --group openapi --force
@@ -58,11 +58,18 @@ use_it_code () {
 }
 
 use_it_expected () {
-      cat<<EOEXPECTED
+      cat<<"EOEXPECTED"
 PUT on somepath with a
 POST on somepath with d
 EOEXPECTED
 }
 
-diff -uw <(use_it_code 2>&1) <(use_it_expected)
+echo 'Run use_it'
+
+{ use_it_code || true ; } > "${TMP}/code.txt" 2>&1
+use_it_expected > "${TMP}/expected.txt" 2>&1
+diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+echo "Something went wrong when trying use_it"
+exit 1
+}
 # all ends here
