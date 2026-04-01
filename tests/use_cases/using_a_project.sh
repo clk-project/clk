@@ -145,6 +145,28 @@ exit 1
 }
 
 
+
+projectprefix_absolute_warning_code () {
+      clk exec cat project:/tmp/somefile.txt
+}
+
+projectprefix_absolute_warning_expected () {
+      cat<<"EOEXPECTED"
+warning: when evaluating project:/tmp/somefile.txt: /tmp/somefile.txt is absolute, prepending project is a noop.
+cat: /tmp/somefile.txt: No such file or directory
+EOEXPECTED
+}
+
+echo 'Run projectprefix_absolute_warning'
+
+{ projectprefix_absolute_warning_code || true ; } > "${TMP}/code.txt" 2>&1
+projectprefix_absolute_warning_expected > "${TMP}/expected.txt" 2>&1
+diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+echo "Something went wrong when trying projectprefix_absolute_warning"
+exit 1
+}
+
+
 mkdir -p scripts
 cat <<'EOF' > scripts/build.sh
 #!/usr/bin/env bash

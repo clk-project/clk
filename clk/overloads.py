@@ -1055,7 +1055,12 @@ def eval_arg(arg, keepnoeval=False):
             )
             exit(1)
     elif str(arg).startswith("project:"):
-        return type_(str(Path(config.project) / arg[len("project:") :]))
+        argpath = Path(arg[len("project:") :])
+        if argpath.is_absolute():
+            LOGGER.warning(
+                f"when evaluating {arg}: {argpath} is absolute, prepending project is a noop."
+            )
+        return type_(str(Path(config.project) / argpath))
     elif str(arg).startswith("tpl:"):
         import os  # noqa: F401
 

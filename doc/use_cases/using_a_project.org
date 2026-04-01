@@ -129,7 +129,18 @@ clk exec cat project:somefile.txt
 #+RESULTS[ede9ec34469ac8de6f94fef707b09be111bece55]: projectprefix
 : somecontent
 
+Be careful not to use an absolute path with the ~project:~ prefix. Since
+~project:~ prepends the project root, an absolute path silently overrides it,
+making the prefix a no-op. clk warns you if this happens.
 
+#+NAME: projectprefix_absolute_warning
+#+BEGIN_SRC bash :results verbatim :exports both :session 6de55de4-c0b3-41d6-952a-25e0fe06c881 :cache yes
+clk exec cat project:/tmp/somefile.txt
+#+END_SRC
+
+#+RESULTS[4b0a4c3d5722d65deff77bbceb51761de2b968fe]: projectprefix_absolute_warning
+: warning: when evaluating project:/tmp/somefile.txt: /tmp/somefile.txt is absolute, prepending project is a noop.
+: cat: /tmp/somefile.txt: No such file or directory
 
 
 * running project scripts
@@ -284,6 +295,8 @@ check-result(createaparameter)
 check-result(callingparameteroutsideofproject)
 
 check-result(projectprefix)
+
+check-result(projectprefix_absolute_warning)
 
 <<create_build_script>>
 

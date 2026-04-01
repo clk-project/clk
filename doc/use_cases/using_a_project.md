@@ -78,6 +78,15 @@ clk exec cat project:somefile.txt
 
     somecontent
 
+Be careful not to use an absolute path with the `project:` prefix. Since `project:` prepends the project root, an absolute path silently overrides it, making the prefix a no-op. clk warns you if this happens.
+
+```bash
+clk exec cat project:/tmp/somefile.txt
+```
+
+    warning: when evaluating project:/tmp/somefile.txt: /tmp/somefile.txt is absolute, prepending project is a noop.
+    cat: /tmp/somefile.txt: No such file or directory
+
 
 <a id="running-project-scripts"></a>
 
