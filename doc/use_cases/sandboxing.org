@@ -9,6 +9,7 @@
   preexec_functions=()
   precmd_functions=()
   unset DISPLAY
+  export TZ=UTC
   SRCDIR="$(pwd)"
   CLK_COV="$(readlink -f "$(dirname "$BASH_SOURCE")/../clk_coverage.sh")"
   if ! test -e "${CLK_COV}"
