@@ -12,7 +12,7 @@ cached-property==2.0.1
     # via clk (pyproject.toml)
 certifi==2026.2.25
     # via requests
-charset-normalizer==3.4.6
+charset-normalizer==3.4.7
     # via requests
 click==8.3.1
     # via
@@ -39,7 +39,7 @@ idna==3.11
     # via requests
 ipdb==0.13.13
     # via clk (pyproject.toml)
-ipython==9.11.0
+ipython==9.12.0
     # via ipdb
 ipython-pygments-lexers==1.1.1
     # via ipython
@@ -65,7 +65,7 @@ pure-eval==0.2.3
     # via stack-data
 pydotplus==2.0.2
     # via clk (pyproject.toml)
-pygments==2.19.2
+pygments==2.20.0
     # via
     #   clk (pyproject.toml)
     #   ipython
@@ -74,7 +74,7 @@ pyparsing==3.3.2
     # via pydotplus
 python-dateutil==2.9.0.post0
     # via clk (pyproject.toml)
-requests==2.33.0
+requests==2.33.1
     # via clk (pyproject.toml)
 six==1.17.0
     # via python-dateutil
