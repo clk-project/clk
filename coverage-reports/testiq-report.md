@@ -30,7 +30,7 @@ Found 3 groups with 3 duplicate tests:
 
 ## Subset Duplicates
 
-Found 70 tests that are subsets of others (showing top 20 by coverage ratio):
+Found 71 tests that are subsets of others (showing top 20 by coverage ratio):
 
 
   - `command:dynamic_default_value_callback_that_depends_on_another_param` is 100.0% covered by `command:dynamic_option`
@@ -73,15 +73,15 @@ Found 70 tests that are subsets of others (showing top 20 by coverage ratio):
     **Action**: Consider removing if no unique edge cases
 
 
-  - `completion:command` is 99.7% covered by `types:suggestion`
-    **Action**: Consider removing if no unique edge cases
-
-
   - `command:dynamic_default_value` is 99.6% covered by `command:dynamic_default_value_callback_that_depends_on_another_param`
     **Action**: Consider removing if no unique edge cases
 
 
   - `command:dynamic_default_value_callback` is 99.6% covered by `command:dynamic_default_value_callback_that_depends_on_another_param`
+    **Action**: Consider removing if no unique edge cases
+
+
+  - `completion:command` is 99.6% covered by `types:suggestion`
     **Action**: Consider removing if no unique edge cases
 
 
@@ -113,12 +113,12 @@ Found 70 tests that are subsets of others (showing top 20 by coverage ratio):
     **Action**: Consider removing if no unique edge cases
 
 
-  ... and 50 more subset duplicates
+  ... and 51 more subset duplicates
 
 
 ## Similar Tests (≥30% overlap)
 
-Found 4754 test pairs with ≥30% similarity (showing top 20):
+Found 4951 test pairs with ≥30% similarity (showing top 20):
 
 
   - `command:dynamic_default_value_callback_that_depends_on_another_param` ↔ `command:dynamic_option`: 100.0% similar
@@ -165,10 +165,6 @@ Found 4754 test pairs with ≥30% similarity (showing top 20):
     **Action**: Review for potential merge or refactoring
 
 
-  - `completion:command` ↔ `types:suggestion`: 99.7% similar
-    **Action**: Review for potential merge or refactoring
-
-
   - `parameter:appending_parameters` ↔ `parameter:replacing_parameters`: 99.7% similar
     **Action**: Review for potential merge or refactoring
 
@@ -178,6 +174,10 @@ Found 4754 test pairs with ≥30% similarity (showing top 20):
 
 
   - `command:dynamic_default_value_callback` ↔ `command:dynamic_default_value_callback_that_depends_on_another_param`: 99.6% similar
+    **Action**: Review for potential merge or refactoring
+
+
+  - `completion:command` ↔ `types:suggestion`: 99.6% similar
     **Action**: Review for potential merge or refactoring
 
 
@@ -201,12 +201,12 @@ Found 4754 test pairs with ≥30% similarity (showing top 20):
     **Action**: Review for potential merge or refactoring
 
 
-  ... and 4734 more similar test pairs
+  ... and 4931 more similar test pairs
 
 
 ## Summary
 
-- Total tests analyzed: 107
+- Total tests analyzed: 109
 - Exact duplicates: 3 tests can be removed
-- Subset duplicates: 70 tests may be redundant
-- Similar tests: 4754 pairs need review
+- Subset duplicates: 71 tests may be redundant
+- Similar tests: 4951 pairs need review
