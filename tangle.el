@@ -9,6 +9,7 @@
 
 ;; Don't prompt for code block evaluation
 (setq org-confirm-babel-evaluate nil)
+(add-to-list 'org-babel-default-header-args:python '(:preserve-indentation . t))
 
 ;; Load pinned org-mode from .tangle-deps BEFORE anything else loads the
 ;; built-in org.  This must happen before (require 'ob-shell) since that

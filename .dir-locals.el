@@ -2,4 +2,5 @@
 ;;; For more information see (info "(emacs) Directory Variables")
 
 ((org-mode . ((ispell-dictionary . "american")
-              (org-id-link-to-org-use-id . nil))))
+              (org-id-link-to-org-use-id . nil)
+              (org-babel-default-header-args:python . ((:preserve-indentation . t))))))
