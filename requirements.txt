@@ -14,7 +14,7 @@ certifi==2026.4.22
     # via requests
 charset-normalizer==3.4.7
     # via requests
-click==8.3.3
+click==8.4.0
     # via
     #   click-didyoumean
     #   click-log
@@ -25,7 +25,7 @@ click-log==0.4.0
     # via clk (pyproject.toml)
 colorama==0.4.6
     # via clk (pyproject.toml)
-decorator==5.2.1
+decorator==5.3.1
     # via
     #   ipdb
     #   ipython
@@ -35,7 +35,7 @@ glob2==0.7
     # via clk (pyproject.toml)
 humanize==4.0.0
     # via clk (pyproject.toml)
-idna==3.14
+idna==3.15
     # via requests
 ipdb==0.13.13
     # via clk (pyproject.toml)
@@ -76,7 +76,7 @@ pyparsing==3.3.2
     # via pydotplus
 python-dateutil==2.9.0.post0
     # via clk (pyproject.toml)
-requests==2.33.1
+requests==2.34.2
     # via clk (pyproject.toml)
 six==1.17.0
     # via python-dateutil
