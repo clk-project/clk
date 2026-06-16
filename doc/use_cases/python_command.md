@@ -192,9 +192,11 @@ from clk.decorators import command, option, argument
 
 @command()
 @option("--name", default="world", help="Name to greet")
+@option("--use-name", default="world", help="Name to greet", deprecated="since forever")
 @argument("greeting", default="Hello")
-def mycommand(name, greeting):
+def mycommand(name, greeting, use_name):
     "A greeting command"
+    name = name or use_name
     print(f"{greeting}, {name}!")
 ```
 
@@ -211,6 +213,14 @@ clk mycommand --name clk Goodbye
 
     warning: The parameter 'greeting' in the command 'mycommand' has no documentation
     Goodbye, clk!
+
+```bash
+clk mycommand --use-name clk Goodbye
+```
+
+    DeprecationWarning: The option 'use_name' is deprecated. since forever
+    warning: The parameter 'greeting' in the command 'mycommand' has no documentation
+    Goodbye, world!
 
 
 <a id="forgetting-the-decorator"></a>

@@ -254,9 +254,11 @@ from clk.decorators import command, option, argument
 
 @command()
 @option("--name", default="world", help="Name to greet")
+@option("--use-name", default="world", help="Name to greet", deprecated="since forever")
 @argument("greeting", default="Hello")
-def mycommand(name, greeting):
+def mycommand(name, greeting, use_name):
     "A greeting command"
+    name = name or use_name
     print(f"{greeting}, {name}!")
 EOF
 
@@ -300,6 +302,29 @@ echo 'Run use_with_options2'
 use_with_options2_expected > "${TMP}/expected.txt" 2>&1
 diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
 echo "Something went wrong when trying use_with_options2"
+exit 1
+}
+
+
+
+use_with_deprecated_options_code () {
+      clk mycommand --use-name clk Goodbye
+}
+
+use_with_deprecated_options_expected () {
+      cat<<"EOEXPECTED"
+DeprecationWarning: The option 'use_name' is deprecated. since forever
+warning: The parameter 'greeting' in the command 'mycommand' has no documentation
+Goodbye, world!
+EOEXPECTED
+}
+
+echo 'Run use_with_deprecated_options'
+
+{ use_with_deprecated_options_code || true ; } > "${TMP}/code.txt" 2>&1
+use_with_deprecated_options_expected > "${TMP}/expected.txt" 2>&1
+diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+echo "Something went wrong when trying use_with_deprecated_options"
 exit 1
 }
 

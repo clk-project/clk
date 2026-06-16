@@ -618,25 +618,8 @@ class MissingDocumentationMixin:
         super().invoke(ctx)
 
 
-class DeprecatedMixin:
-    def init_deprecated(self):
-        self.deprecated = None
-
-    def invoke_handle_deprecated(self, ctx, *args, **kwargs):
-        if self.deprecated:
-            msg = f"'{self.path.replace('.', ' ')}' is deprecated"
-            version = self.deprecated.get("version")
-            message = self.deprecated.get("message")
-            if version:
-                msg += f" since version {version}"
-            if message:
-                msg += ". " + message
-            LOGGER.deprecated(msg)
-
-
 class Command(
     MissingDocumentationMixin,
-    DeprecatedMixin,
     HelpMixin,
     ExtraParametersMixin,
     RememberParametersMixin,
@@ -644,7 +627,6 @@ class Command(
 ):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        super().init_deprecated()
         self.path = None
 
     def parse_args(self, ctx, args):
@@ -662,7 +644,6 @@ class Command(
         self.clear_parameter_source_for_completion(ctx)
 
     def invoke(self, ctx, *args, **kwargs):
-        super().invoke_handle_deprecated(ctx, *args, **kwargs)
         if config.dry_run and not self.handle_dry_run:
             LOGGER.warning(
                 f"'{ctx.command_path}' does not support dry-run mode: I won't call it"
@@ -818,7 +799,6 @@ allow_dotted_commands = False
 class Group(
     click_didyoumean.DYMMixin,
     MissingDocumentationMixin,
-    DeprecatedMixin,
     HelpMixin,
     ExtraParametersMixin,
     RememberParametersMixin,
@@ -836,7 +816,6 @@ class Group(
             self.set_default_command(default_command)
 
         super().__init__(*args, **kwargs)
-        super().init_deprecated()
 
         self.path = None
         if (
@@ -868,7 +847,6 @@ class Group(
         self.default_cmd_name = cmd_name
 
     def invoke(self, ctx, *args, **kwargs):
-        super().invoke_handle_deprecated(ctx, *args, **kwargs)
         return _invoke_with_hooks(
             self, ctx, lambda: super(Group, self).invoke(ctx, *args, **kwargs)
         )
@@ -1097,7 +1075,6 @@ class NoPathAvailable(Exception):
 
 class ParameterMixin(click.Parameter):
     def __init__(self, *args, **kwargs):
-        self.deprecated = kwargs.pop("deprecated", None)
         self.expose_class = kwargs.pop("expose_class", None)
 
         super().__init__(*args, **kwargs)
@@ -1204,11 +1181,6 @@ class ParameterMixin(click.Parameter):
             res = (
                 res[0],
                 res1,
-            )
-        if self.deprecated:
-            res = (
-                res[0],
-                res[1] + f" (deprecated: {self.deprecated})",
             )
         return res
 
@@ -1323,19 +1295,6 @@ def group(*args, **kwargs):
 
 def option(*args, **kwargs):
     """Declare on new option"""
-    deprecated = kwargs.get("deprecated")
-    callback = kwargs.get("callback")
-    if deprecated:
-
-        def new_callback(ctx, attr, value):
-            if was_explicitly_provided(ctx, attr.name):
-                LOGGER.warning(f"{attr.opts[0]} is deprecated: {deprecated}")
-            if callback:
-                return callback(ctx, attr, value)
-            else:
-                return value
-
-        kwargs["callback"] = new_callback
     kwargs.setdefault("cls", Option)
     return click.option(*args, **kwargs)
 
@@ -1348,19 +1307,6 @@ def flag(*args, **kwargs):
 
 def argument(*args, **kwargs):
     """Declare on new argument"""
-    deprecated = kwargs.get("deprecated")
-    callback = kwargs.get("callback")
-    if deprecated:
-
-        def new_callback(ctx, attr, value):
-            if was_explicitly_provided(ctx, attr.name):
-                LOGGER.warning(f"{attr.opts[0]} is deprecated: {deprecated}")
-            if callback:
-                return callback(ctx, attr, value)
-            else:
-                return value
-
-        kwargs["callback"] = new_callback
     kwargs.setdefault("cls", Argument)
     return click.argument(*args, **kwargs)
 
@@ -1524,7 +1470,6 @@ class CommandSettingsKeyType(ParameterType):
 
 class MainCommand(
     click_didyoumean.DYMMixin,
-    DeprecatedMixin,
     HelpMixin,
     ExtraParametersMixin,
     RememberParametersMixin,
@@ -1539,7 +1484,6 @@ class MainCommand(
         context_settings.setdefault("max_content_width", 120)
         kwargs["context_settings"] = context_settings
         super().__init__(*args, **kwargs)
-        super().init_deprecated()
 
     def get_command_short_help(self, ctx, cmd_name):
         @cache_disk
@@ -1558,7 +1502,6 @@ class MainCommand(
         return hidden(ctx.command_path, cmd_name)
 
     def invoke(self, ctx, *args, **kwargs):
-        super().invoke_handle_deprecated(ctx, *args, **kwargs)
         return _invoke_with_hooks(
             self, ctx, lambda: super(MainCommand, self).invoke(ctx, *args, **kwargs)
         )
