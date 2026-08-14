@@ -1,13 +1,13 @@
-- [The problem](#org3b62638)
-- [Global aliases](#orgd589360)
-- [Local aliases](#org501a36c)
+- [The problem](#683fcbea-b776-44ff-8af2-bb7e10a69bb0)
+- [Global aliases](#260d04a3-8c35-4581-8d40-e3479eb874a9)
+- [Local aliases](#450ba117-403e-4bc3-a809-28d8a6f590c0)
 
 When you work on linked but separate projects — say a backend API and a frontend app — changes in one often need to be verified in the other. If they live in separate directories, you end up constantly `cd`-ing back and forth, losing context along the way.
 
 clk projects scope their commands to directories: aliases, parameters and scripts only activate when you're inside the project. That's great for isolation, but painful when you need to jump between two or three repos in a single workflow.
 
 
-<a id="org3b62638"></a>
+<a id="683fcbea-b776-44ff-8af2-bb7e10a69bb0"></a>
 
 # The problem
 
@@ -70,7 +70,7 @@ clk --project ../billing-api build 2>/dev/null
 That works, but typing `clk --project ../billing-api` every time you switch context gets old fast — especially when you're going back and forth several times in a row.
 
 
-<a id="orgd589360"></a>
+<a id="260d04a3-8c35-4581-8d40-e3479eb874a9"></a>
 
 # Global aliases
 
@@ -129,7 +129,7 @@ clk api alias show build 2>/dev/null
     build echo Building the API
 
 
-<a id="org501a36c"></a>
+<a id="450ba117-403e-4bc3-a809-28d8a6f590c0"></a>
 
 # Local aliases
 

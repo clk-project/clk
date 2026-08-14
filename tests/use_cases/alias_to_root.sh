@@ -1,5 +1,5 @@
-#!/bin/bash -eu
-# [[file:../../doc/use_cases/alias_to_root.org::*Local aliases][Local aliases:14]]
+#!/usr/bin/env bash -eu
+# [[file:../../doc/use_cases/alias_to_root.org::#450ba117-403e-4bc3-a809-28d8a6f590c0][Local aliases:14]]
 . ./sandboxing.sh
 mkdir -p billing-api/.clk
 cd billing-api

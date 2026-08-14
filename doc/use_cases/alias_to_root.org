@@ -22,6 +22,9 @@ isolation, but painful when you need to jump between two or three repos in a
 single workflow.
 
 * The problem
+  :PROPERTIES:
+  :CUSTOM_ID: 683fcbea-b776-44ff-8af2-bb7e10a69bb0
+  :END:
 
 Let's set up two projects to see the problem in action.
 
@@ -100,6 +103,9 @@ context gets old fast — especially when you're going back and forth several
 times in a row.
 
 * Global aliases
+  :PROPERTIES:
+  :CUSTOM_ID: 260d04a3-8c35-4581-8d40-e3479eb874a9
+  :END:
 
 This is where an alias to the root command helps. You can create a global alias
 that points to ~clk~ itself, with the ~--project~ option baked in. Do this once
@@ -176,6 +182,9 @@ clk api alias show build 2>/dev/null
 : build echo Building the API
 
 * Local aliases
+  :PROPERTIES:
+  :CUSTOM_ID: 450ba117-403e-4bc3-a809-28d8a6f590c0
+  :END:
 
 The global approach is convenient but pollutes your top-level namespace. If you
 only need cross-project shortcuts when you're actually working inside one of the
@@ -284,7 +293,7 @@ clk app test 2>/dev/null
 The aliases only exist inside their respective projects, so they won't clutter
 your global namespace or show up in unrelated directories.
 
-#+BEGIN_SRC bash :exports none :tangle ../../tests/use_cases/alias_to_root.sh :noweb yes :shebang "#!/bin/bash -eu"
+#+BEGIN_SRC bash :exports none :tangle ../../tests/use_cases/alias_to_root.sh :noweb yes :shebang "#!/usr/bin/env bash -eu"
   <<init>>
   <<create-api>>
   check-result(alias-api-build)
