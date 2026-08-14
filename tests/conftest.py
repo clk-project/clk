@@ -121,7 +121,17 @@ class Lib:
     _first_call_per_test = {}
 
     def __init__(self):
-        pass
+        self._python = None
+
+    @property
+    def python(self):
+        """Provide the python that actually runs clk. Tests need to have access to clk's venv"""
+        if self._python is None:
+            self._python = check_output(
+                ["clk", "python", "-c", "import sys; print(sys.executable)"],
+                encoding="utf-8",
+            ).strip()
+        return self._python
 
     def assert_intrusive(self):
         assert os.environ.get("CLK_ALLOW_INTRUSIVE_TEST") == "True", "Intrusive test"
@@ -144,7 +154,7 @@ class Lib:
         try:
             context_arg = f"--context={context_name}" if context_name else ""
             command = (
-                f"python3 -u -m coverage run --source clk {context_arg} -m clk "
+                f"{self.python} -u -m coverage run --source clk {context_arg} -m clk "
                 + remaining
             )
             res = self.out(command, *args, **kwargs)

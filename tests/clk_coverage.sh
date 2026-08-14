@@ -21,18 +21,6 @@ then
 fi
 
 set +e
-if test -z "${CLK_BIN-}"
-then
-    CLK_BIN="$(readlink -f "$(which clk)")"
-fi
-CLK_BIN_PATH="${CLK_BIN%/*}"
-PYTHON="${CLK_BIN_PATH}/python"
-# if this path exists, clk is most likely installed in a venv, using that
-# version of python to get to the coverage
-if ! test -e "${PYTHON}"
-then
-    PYTHON=python3
-fi
 context_args=""
 if test -n "${CLK_COVERAGE_CONTEXT-}"
 then

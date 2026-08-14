@@ -30,6 +30,7 @@
   }
   mkdir -p "${TMP}/clk-root"
   export CLK_BIN="$(readlink -f "$(which clk)")"
+  export PYTHON="$(${CLK_BIN} python -c 'import sys; print(sys.executable)')"
   export SLEEP_BIN="$(which sleep)"
   export DATE_BIN="$(which date)"
   init_faked_time () {
