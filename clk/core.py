@@ -11,6 +11,7 @@ import signal
 import subprocess
 import sys
 import time
+from functools import cache
 from io import StringIO
 from pathlib import Path
 
@@ -837,31 +838,62 @@ def make_relative(path):
             return str(abs_path)
 
 
+@cache
+def hostname():
+    import socket
+
+    return socket.gethostname()
+
+
+def redact_locations(message):
+    """Replace the machine specific locations of message by reproducible ones."""
+    message = message.replace(
+        config.global_profile.location,
+        make_relative(config.global_profile.location),
+    )
+    if config.project:
+        relative_project = make_relative(config.project)
+        # When the relative path ends with /, also replace project/ to avoid double slashes
+        if relative_project.endswith("/"):
+            message = message.replace(config.project + "/", relative_project)
+        message = message.replace(config.project, relative_project.rstrip("/"))
+    install_location = config.override_env.get("CLK_INSTALL_LOCATION", "")
+    if install_location:
+        project_root = str(Path(install_location).parent) + "/"
+        message = message.replace(project_root, "")
+    return message.replace(hostname(), "myhostname")
+
+
+class RedactingHelpFormatter(formatting.HelpFormatter):
+    """Redact the locations of the help messages before they get wrapped.
+
+    Redacting the streams (see RedactMessages) is not enough for them, because
+    they are wrapped before being written. Their line breaks would then depend
+    on the length of the locations, hence not be reproducible.
+    """
+
+    def write_usage(self, prog, args="", prefix=None):
+        super().write_usage(redact_locations(prog), redact_locations(args), prefix)
+
+    def write_text(self, text):
+        super().write_text(redact_locations(text))
+
+    def write_dl(self, rows, *args, **kwargs):
+        super().write_dl(
+            [tuple(redact_locations(col) for col in row) for row in rows],
+            *args,
+            **kwargs,
+        )
+
+
 class RedactMessages:
     def __init__(self, stream):
         self.stream = stream
-        import socket
-
-        self.hostname = socket.gethostname()
 
     def write(self, message):
         import re
 
-        message = message.replace(
-            config.global_profile.location,
-            make_relative(config.global_profile.location),
-        )
-        if config.project:
-            relative_project = make_relative(config.project)
-            # When the relative path ends with /, also replace project/ to avoid double slashes
-            if relative_project.endswith("/"):
-                message = message.replace(config.project + "/", relative_project)
-            message = message.replace(config.project, relative_project.rstrip("/"))
-        install_location = config.override_env.get("CLK_INSTALL_LOCATION", "")
-        if install_location:
-            project_root = str(Path(install_location).parent) + "/"
-            message = message.replace(project_root, "")
-        message = message.replace(self.hostname, "myhostname")
+        message = redact_locations(message)
         # Redact line numbers in pstats profiling output (e.g. "core.py:894(_fake_sleep)" -> "core.py:0(_fake_sleep)")
         message = re.sub(r"(\.py):\d+(\()", r"\g<1>:0\2", message)
         # Redact timing values in pstats profiling output to avoid non-deterministic results
@@ -885,6 +917,7 @@ def reproducible_output_callback(ctx, attr, value):
         config.reproducible_output = True
         sys.stdout = RedactMessages(sys.stdout)
         sys.stderr = RedactMessages(sys.stderr)
+        click.Context.formatter_class = RedactingHelpFormatter
         import click_log
 
         from clk.log import DevelopColorFormatter
