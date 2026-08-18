@@ -57,7 +57,7 @@ callingthealiasoutsideoftheproject_code () {
 callingthealiasoutsideoftheproject_expected () {
       cat<<"EOEXPECTED"
 warning: Failed to get the command somelocalcommand: Command somelocalcommand not found
-Usage: clk [OPTIONS] COMMAND [ARGS]...
+Usage: clk [OPTIONS] [COMMAND] [ARGS]...
 error: No such command 'somelocalcommand'.
 error:
 error: Did you mean one of these?

@@ -134,7 +134,7 @@ clk deploy
 
 #+RESULTS[e532f6860d0aa6d91f6d559988b83a2aaee13c9a]: deploy-outside
 : warning: Failed to get the command deploy: Command deploy not found
-: Usage: clk [OPTIONS] COMMAND [ARGS]...
+: Usage: clk [OPTIONS] [COMMAND] [ARGS]...
 : error: No such command 'deploy'.
 
 * summary

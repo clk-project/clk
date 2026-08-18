@@ -61,7 +61,7 @@ disable_code () {
 disable_expected () {
       cat<<"EOEXPECTED"
 warning: Failed to get the command k8s: Command k8s not found
-Usage: clk [OPTIONS] COMMAND [ARGS]...
+Usage: clk [OPTIONS] [COMMAND] [ARGS]...
 error: No such command 'k8s'.
 EOEXPECTED
 }
@@ -176,7 +176,7 @@ remove-extension_code () {
 remove-extension_expected () {
       cat<<"EOEXPECTED"
 warning: Failed to get the command hello: Command hello not found
-Usage: clk [OPTIONS] COMMAND [ARGS]...
+Usage: clk [OPTIONS] [COMMAND] [ARGS]...
 error: No such command 'hello'.
 error:
 error: Did you mean one of these?
@@ -394,7 +394,7 @@ hostname-extension-visible_code () {
 
 hostname-extension-visible_expected () {
       cat<<"EOEXPECTED"
-my-host.[example].com    Unset            global
+my-host.[example].com  Unset            global
 EOEXPECTED
 }
 

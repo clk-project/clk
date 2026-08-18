@@ -112,7 +112,7 @@ clk deploy
 ```
 
     warning: Failed to get the command deploy: Command deploy not found
-    Usage: clk [OPTIONS] COMMAND [ARGS]...
+    Usage: clk [OPTIONS] [COMMAND] [ARGS]...
     error: No such command 'deploy'.
 
 

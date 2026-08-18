@@ -105,7 +105,7 @@ clk k8s run-dev-env --flow
 ```
 
     warning: Failed to get the command k8s: Command k8s not found
-    Usage: clk [OPTIONS] COMMAND [ARGS]...
+    Usage: clk [OPTIONS] [COMMAND] [ARGS]...
     error: No such command 'k8s'.
 
 You can enable it again with.
@@ -189,7 +189,7 @@ clk hello
 ```
 
     warning: Failed to get the command hello: Command hello not found
-    Usage: clk [OPTIONS] COMMAND [ARGS]...
+    Usage: clk [OPTIONS] [COMMAND] [ARGS]...
     error: No such command 'hello'.
     error:
     error: Did you mean one of these?
@@ -376,6 +376,6 @@ clk extension create "my-host.[example].com"
 clk extension | grep "my-host.\[example\].com"
 ```
 
-    my-host.[example].com    Unset            global
+    my-host.[example].com  Unset            global
 
 Note that clk will always enable the extension matching your hostname, even if you explicitly disable it in a project. This is practical to put personal preference in shared project without disturbing the colleagues.

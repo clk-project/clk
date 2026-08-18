@@ -102,7 +102,7 @@ clk k8s run-dev-env --flow
 
 #+RESULTS[caa531b03ee6b31d35eed3a0dc93b254d4545bbc]: disable
 : warning: Failed to get the command k8s: Command k8s not found
-: Usage: clk [OPTIONS] COMMAND [ARGS]...
+: Usage: clk [OPTIONS] [COMMAND] [ARGS]...
 : error: No such command 'k8s'.
 
 You can enable it again with.
@@ -203,7 +203,7 @@ clk hello
 
 #+RESULTS[16bb914fcc2d2d14fd1d6f6aa8abf780c09ddedd]: remove-extension
 : warning: Failed to get the command hello: Command hello not found
-: Usage: clk [OPTIONS] COMMAND [ARGS]...
+: Usage: clk [OPTIONS] [COMMAND] [ARGS]...
 : error: No such command 'hello'.
 : error:
 : error: Did you mean one of these?
@@ -425,7 +425,7 @@ clk extension | grep "my-host.\[example\].com"
 #+END_SRC
 
 #+RESULTS[7401030ad5104a118c72e41b09d3d841269ea942]: hostname-extension-visible
-: my-host.[example].com    Unset            global
+: my-host.[example].com  Unset            global
 
 Note that clk will always enable the extension matching your hostname, even if
 you explicitly disable it in a project. This is practical to put personal
