@@ -9,7 +9,7 @@
 
 ;; Don't prompt for code block evaluation
 (setq org-confirm-babel-evaluate nil)
-(add-to-list 'org-babel-default-header-args:python '(:preserve-indentation . t))
+(setq org-src-preserve-indentation t)
 
 ;; Load pinned org-mode from .tangle-deps BEFORE anything else loads the
 ;; built-in org.  This must happen before (require 'ob-shell) since that
@@ -77,13 +77,17 @@ Handles both `: value` and `#+begin_example...#+end_example` formats."
            (lambda (match)
              (let* ((name (match-string 1 match))
                     (result (clk-tangle--get-cached-result name)))
+               (unless result
+                 (error (concat "No cached #+RESULTS[...] for the block %s."
+                                " Run the blocks before tangling")
+                        name))
                (concat
                 "\n" name "_code () {\n"
                 "      <<" name ">>\n"
                 "}\n"
                 "\n" name "_expected () {\n"
                 "      cat<<\"EOEXPECTED\"\n"
-                (or result "") "\n"
+                result "\n"
                 "EOEXPECTED\n"
                 "}\n"
                 "\necho 'Run " name "'\n"
