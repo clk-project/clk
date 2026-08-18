@@ -11,6 +11,16 @@
                 ]
             ],
             "documentation": null
+        },
+        "push": {
+            "commands": [
+                [
+                    "exec",
+                    "git",
+                    "push"
+                ]
+            ],
+            "documentation": null
         }
     }
 }
