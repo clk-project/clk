@@ -26,6 +26,7 @@ from clk.overloads import (
     Argument,
     AutomaticOption,
     CommandType,
+    FlowDependencies,
     Group,
     Option,
     get_command,
@@ -299,7 +300,7 @@ def from_file(file, name, delete, force):
 @option("--body", help="The initial body to put", default="")
 @option("--from-alias", help="The alias to use as base", type=AliasesType())
 @flag("--replace-alias", help="Use an alias of the same name and replace it")
-@option("--flowdeps", help="Add a flowdeps", multiple=True, type=CommandType())
+@option("--flowdeps", help="Add a flowdeps", multiple=True, type=FlowDependencies())
 @option("--description", help="The initial description to put", default="Description")
 @option(
     "--source-bash-helpers/--no-source-bash-helpers",

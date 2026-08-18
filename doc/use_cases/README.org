@@ -120,10 +120,10 @@ looking for.
    :CUSTOM_ID: resolution-priority
    :END:
 
-   clk resolves names by looking at the local profile first, then the global
-   profile, then aliases and other resolvers. A local custom command always wins
-   over a global alias with the same name, and a global command always wins over
-   an alias.
+   clk resolves names by walking the profiles from the most specific to the least
+   specific one. The first profile that provides the name wins, be it with a
+   command, a custom command or an alias. Hence a local alias wins over a global
+   command, and a local custom command over a global alias.
 
    Several use cases show this in action from different angles:
 

@@ -60,6 +60,15 @@ def clean_flow_arguments(arguments):
     return result
 
 
+def overridden_flowdepends(cmd):
+    """The flow dependencies declared in code by the command of the same name"""
+    if "." not in cmd.path:
+        return []
+    parent_path, name = cmd.path.rsplit(".", 1)
+    overridden = getattr(get_command(parent_path), "commands", {}).get(name)
+    return list(getattr(overridden, "clk_flowdepends", None) or [])
+
+
 def get_command_handler(cmd):
     if hasattr(cmd, "clk_flow_already_setup"):
         return cmd
@@ -85,6 +94,12 @@ def get_command_handler(cmd):
                 new_flow[:self_index] + flowdeps[cmd.path] + new_flow[self_index + 1 :]
             )
         flowdeps[cmd.path] = new_flow
+    flow = flowdeps[cmd.path]
+    if "[overridden]" in flow:
+        index = flow.index("[overridden]")
+        flowdeps[cmd.path] = (
+            flow[:index] + overridden_flowdepends(cmd) + flow[index + 1 :]
+        )
     cmd_has_flow = has_flow(cmd.path)
     if cmd_has_flow:
         setup_flow_params(cmd)

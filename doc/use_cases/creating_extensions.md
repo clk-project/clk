@@ -1,5 +1,6 @@
 - [creating our own extension](#578ef2c9-a4d4-448a-9d56-be4afe4ac64a)
 - [enable/disable it](#72f61beb-cd79-4fdd-86a2-2c56ef08292c)
+- [generic programming](#org47c48d8)
 - [publish it](#21d2895b-db01-4a09-b2a2-18e34e2830b6)
 - [get an extension](#b7bcef53-dd68-4660-9c5c-d9aa029d1a72)
 - [using temporary files and directories](#795e915b-29f5-4fbc-a8d9-480a094d3e37)
@@ -14,7 +15,8 @@ For instance, let's suppose you need to bootstrap a development environment to w
 -   install the needed binaries dependencies,
 -   run the cluster,
 -   start some controllers of your choice,
--   run the development environment that would update the cluster automatically.
+-   run the development environment that would update the cluster automatically,
+-   setup some credentials into the dev cluster.
 
 
 <a id="578ef2c9-a4d4-448a-9d56-be4afe4ac64a"></a>
@@ -40,6 +42,11 @@ def start_controllers():
     print("starting controllers")
 
 @k8s.command(flowdepends=["k8s.start-controllers"])
+def setup_credentials():
+    """Placeholder to setup whatever credentials you need."""
+    print("noop, this must be overloaded by a project command")
+
+@k8s.command(flowdepends=["k8s.setup-credentials"])
 def run_dev_env():
     """Run the development environment with automatic cluster updates."""
     print("running development environment")
@@ -72,6 +79,11 @@ def start_controllers():
     print("starting controllers")
 
 @k8s.command(flowdepends=["k8s.start-controllers"])
+def setup_credentials():
+    """Placeholder to setup whatever credentials you need."""
+    print("noop, this must be overloaded by a project command")
+
+@k8s.command(flowdepends=["k8s.setup-credentials"])
 def run_dev_env():
     """Run the development environment with automatic cluster updates."""
     print("running development environment")
@@ -88,6 +100,7 @@ clk k8s run-dev-env --flow
     installing dependencies
     starting k8s cluster
     starting controllers
+    noop, this must be overloaded by a project command
     running development environment
 
 
@@ -118,7 +131,53 @@ clk k8s run-dev-env --flow
     installing dependencies
     starting k8s cluster
     starting controllers
+    noop, this must be overloaded by a project command
     running development environment
+
+
+<a id="org47c48d8"></a>
+
+# generic programming
+
+You have noticed that we created a command named setup-credential. In general, the author of the extension does not know in advance the kind of credentials that must be injected in the stack, but the extension can still provide a "placeholder" command that does nothing and is replaced by a more specific one in the project.
+
+For instance, let's create a local bash script to write some credentials. It needs a project to live in.
+
+```bash
+mkdir myproject && cd myproject && mkdir .clk
+```
+
+In there, the script only has to care about the credentials.
+
+```bash
+echo "injecting the credentials of my project"
+```
+
+Because it is defined in the project, it takes precedence over the placeholder of the extension. The flow dependencies were described by the placeholder though, and our script depends on nothing, so we ask to inherit the ones of the command we hide with `[overridden]`.
+
+```bash
+clk command create bash k8s.setup-credentials --flowdeps '[overridden]' --description "Setup the credentials of this project" --body '
+echo "injecting the credentials of my project"
+'
+```
+
+That way, the step does something useful and the flow still runs whole.
+
+```bash
+clk k8s run-dev-env --flow
+```
+
+    installing dependencies
+    starting k8s cluster
+    starting controllers
+    injecting the credentials of my project
+    running development environment
+
+It is an opt-in, so that you never inherit a flow you did not ask for. Also, `[overridden]` keeps its position, hence you may run something before or after the inherited dependencies.
+
+Leaving the project brings the placeholder back, so that the flow keeps working everywhere.
+
+That way, the extension provides the workflow and each project provides only the parts that are specific to it. An alias would have done as well, would you rather describe the credentials in terms of other clk commands.
 
 
 <a id="21d2895b-db01-4a09-b2a2-18e34e2830b6"></a>

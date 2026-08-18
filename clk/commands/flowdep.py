@@ -26,7 +26,12 @@ from clk.flow import flowdeps as _flowdeps
 from clk.flow import get_flow_commands_to_run
 from clk.lib import TablePrinter, quote, which
 from clk.log import get_logger
-from clk.overloads import CommandSettingsKeyType, CommandType, iter_commands
+from clk.overloads import (
+    CommandSettingsKeyType,
+    CommandType,
+    FlowDependencies,
+    iter_commands,
+)
 
 LOGGER = get_logger(__name__)
 
@@ -60,14 +65,6 @@ def flowdep():
     pass
 
 
-class FlowDependencies(CommandType):
-    def convert(self, value, param, ctx):
-        if value == "[self]":
-            return value
-        else:
-            return super().convert(value, param, ctx)
-
-
 @flowdep.command(handle_dry_run=True)
 @argument(
     "cmd", type=CommandType(), help="The command to which set the flow dependencies"
@@ -77,7 +74,8 @@ class FlowDependencies(CommandType):
     nargs=-1,
     type=FlowDependencies(),
     help=(
-        "The flow dependencies (use [self] to capture the one on the initial command)"
+        "The flow dependencies (use [self] to capture the one on the initial command,"
+        " [overridden] to capture the one of the command of the same name it hides)"
     ),
 )
 def _set(cmd, dependencies):

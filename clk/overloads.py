@@ -718,7 +718,6 @@ def get_command_with_resolvers(resolvers, parent_path, name):
     # This ensures real commands in ANY profile take priority over ephemeral groups
     deferred_resolvers = [r for r in resolvers if r.deferred]
     immediate_resolvers = [r for r in resolvers if not r.deferred]
-
     # First pass: check all profiles for real commands
     for profile in reversed(list(config.all_enabled_profiles)):
         for resolver in immediate_resolvers:
@@ -727,6 +726,8 @@ def get_command_with_resolvers(resolvers, parent_path, name):
             ):
                 try:
                     cmd = resolver._get_command(cmd_path, parent, profile)
+                    cmd.resolution_profile = profile
+                    LOGGER.develop(f"Resolved {cmd_path} in {profile} with {resolver}")
                     return cmd, resolver
                 except Exception:
                     LOGGER.error(
@@ -743,6 +744,7 @@ def get_command_with_resolvers(resolvers, parent_path, name):
             ):
                 try:
                     cmd = resolver._get_command(cmd_path, parent, profile)
+                    cmd.resolution_profile = profile
                     return cmd, resolver
                 except Exception:
                     LOGGER.error(
@@ -758,8 +760,10 @@ class GroupCommandResolver(CommandResolver):
     name = "group"
 
     def _list_command_paths(self, parent, profile):
-        # Group subcommands are defined in code, so they exist in any profile
-        # that contains the parent command. We check all profiles.
+        # the subcommands written in code belong to the profile of the parent group
+        parent_profile = getattr(parent, "resolution_profile", None)
+        if parent_profile is not None and profile.name != parent_profile.name:
+            return set()
         ctx = click_get_current_context_safe()
         res = {
             parent.path + "." + cmd for cmd in click.Group.list_commands(parent, ctx)
@@ -1427,6 +1431,17 @@ class CommandType(ParameterType):
                 )
             return value
         return value
+
+
+# the flow markers are not commands, yet they are valid flow dependencies
+FLOW_MARKERS = ("[self]", "[overridden]")
+
+
+class FlowDependencies(CommandType):
+    def convert(self, value, param, ctx):
+        if value in FLOW_MARKERS:
+            return value
+        return super().convert(value, param, ctx)
 
 
 class CommandSettingsKeyType(ParameterType):

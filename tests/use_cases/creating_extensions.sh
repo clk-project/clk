@@ -22,6 +22,11 @@ def start_controllers():
     print("starting controllers")
 
 @k8s.command(flowdepends=["k8s.start-controllers"])
+def setup_credentials():
+    """Placeholder to setup whatever credentials you need."""
+    print("noop, this must be overloaded by a project command")
+
+@k8s.command(flowdepends=["k8s.setup-credentials"])
 def run_dev_env():
     """Run the development environment with automatic cluster updates."""
     print("running development environment")
@@ -38,6 +43,7 @@ try-it_expected () {
 installing dependencies
 starting k8s cluster
 starting controllers
+noop, this must be overloaded by a project command
 running development environment
 EOEXPECTED
 }
@@ -87,6 +93,7 @@ enable_expected () {
 installing dependencies
 starting k8s cluster
 starting controllers
+noop, this must be overloaded by a project command
 running development environment
 EOEXPECTED
 }
@@ -100,6 +107,39 @@ echo "Something went wrong when trying enable"
 exit 1
 }
 
+
+mkdir myproject && cd myproject && mkdir .clk
+
+clk command create bash k8s.setup-credentials --flowdeps '[overridden]' --description "Setup the credentials of this project" --body '
+echo "injecting the credentials of my project"
+'
+
+
+run-flow-in-project_code () {
+      clk k8s run-dev-env --flow
+}
+
+run-flow-in-project_expected () {
+      cat<<"EOEXPECTED"
+installing dependencies
+starting k8s cluster
+starting controllers
+injecting the credentials of my project
+running development environment
+EOEXPECTED
+}
+
+echo 'Run run-flow-in-project'
+
+{ run-flow-in-project_code || true ; } > "${TMP}/code.txt" 2>&1
+run-flow-in-project_expected > "${TMP}/expected.txt" 2>&1
+diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+echo "Something went wrong when trying run-flow-in-project"
+exit 1
+}
+
+
+cd ..
 
 
 find-it_code () {

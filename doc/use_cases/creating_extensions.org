@@ -19,7 +19,8 @@ work with k8s, you would need to create commands to:
 - install the needed binaries dependencies,
 - run the cluster,
 - start some controllers of your choice,
-- run the development environment that would update the cluster automatically.
+- run the development environment that would update the cluster automatically,
+- setup some credentials into the dev cluster.
 
 * creating our own extension
   :PROPERTIES:
@@ -49,6 +50,11 @@ def start_controllers():
     print("starting controllers")
 
 @k8s.command(flowdepends=["k8s.start-controllers"])
+def setup_credentials():
+    """Placeholder to setup whatever credentials you need."""
+    print("noop, this must be overloaded by a project command")
+
+@k8s.command(flowdepends=["k8s.setup-credentials"])
 def run_dev_env():
     """Run the development environment with automatic cluster updates."""
     print("running development environment")
@@ -82,6 +88,7 @@ clk k8s run-dev-env --flow
 : installing dependencies
 : starting k8s cluster
 : starting controllers
+: noop, this must be overloaded by a project command
 : running development environment
 
 * enable/disable it
@@ -117,7 +124,75 @@ clk k8s run-dev-env --flow
 : installing dependencies
 : starting k8s cluster
 : starting controllers
+: noop, this must be overloaded by a project command
 : running development environment
+
+* generic programming
+  :PROPERTIES:
+  :CREATED:  [2026-08-18 17:52]
+  :END:
+
+  You have noticed that we created a command named setup-credential. In general,
+  the author of the extension does not know in advance the kind of credentials
+  that must be injected in the stack, but the extension can still provide a
+  "placeholder" command that does nothing and is replaced by a more specific one in the project.
+
+  For instance, let's create a local bash script to write some credentials. It
+  needs a project to live in.
+
+  #+NAME: create_credentials_project
+  #+BEGIN_SRC bash :results none :exports code :session f47428c2-56ea-4d91-97d9-4f2ff63ef052
+  mkdir myproject && cd myproject && mkdir .clk
+  #+END_SRC
+
+  In there, the script only has to care about the credentials.
+
+  #+NAME: setup_credentials_body
+  #+BEGIN_SRC bash :results none :exports code
+  echo "injecting the credentials of my project"
+  #+END_SRC
+
+  Because it is defined in the project, it takes precedence over the placeholder
+  of the extension. The flow dependencies were described by the placeholder
+  though, and our script depends on nothing, so we ask to inherit the ones of
+  the command we hide with ~[overridden]~.
+
+  #+NAME: create_local_credentials
+  #+BEGIN_SRC bash :results none :exports code :session f47428c2-56ea-4d91-97d9-4f2ff63ef052 :noweb yes
+  clk command create bash k8s.setup-credentials --flowdeps '[overridden]' --description "Setup the credentials of this project" --body '
+  <<setup_credentials_body>>
+  '
+  #+END_SRC
+
+  That way, the step does something useful and the flow still runs whole.
+
+  #+NAME: run-flow-in-project
+  #+BEGIN_SRC bash :results verbatim :cache yes :exports both :session f47428c2-56ea-4d91-97d9-4f2ff63ef052
+  clk k8s run-dev-env --flow
+  #+END_SRC
+
+  #+RESULTS[dca9e20533f99e1b8bd8894585c93baaa2938506]: run-flow-in-project
+  : installing dependencies
+  : starting k8s cluster
+  : starting controllers
+  : injecting the credentials of my project
+  : running development environment
+
+  It is an opt-in, so that you never inherit a flow you did not ask for. Also,
+  ~[overridden]~ keeps its position, hence you may run something before or after
+  the inherited dependencies.
+
+  Leaving the project brings the placeholder back, so that the flow keeps working
+  everywhere.
+
+  #+NAME: leave_credentials_project
+  #+BEGIN_SRC bash :results none :exports none :session f47428c2-56ea-4d91-97d9-4f2ff63ef052
+  cd ..
+  #+END_SRC
+
+  That way, the extension provides the workflow and each project provides only
+  the parts that are specific to it. An alias would have done as well, would you
+  rather describe the credentials in terms of other clk commands.
 
 * publish it
   :PROPERTIES:
@@ -445,6 +520,14 @@ check-result(try-it)
 check-result(disable)
 
 check-result(enable)
+
+<<create_credentials_project>>
+
+<<create_local_credentials>>
+
+check-result(run-flow-in-project)
+
+<<leave_credentials_project>>
 
 check-result(find-it)
 
