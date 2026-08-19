@@ -4,7 +4,7 @@
 
 ## Exact Duplicates (Identical Coverage)
 
-Found 3 groups with 3 duplicate tests:
+Found 4 groups with 4 duplicate tests:
 
 
 ### Group 1 (2 tests):
@@ -22,6 +22,13 @@ Found 3 groups with 3 duplicate tests:
 
 
 ### Group 3 (2 tests):
+  - command:dynamic_default_value_callback_that_depends_on_another_param
+  - command:dynamic_option
+
+  **Action**: Keep one test, remove 1 duplicates
+
+
+### Group 4 (2 tests):
   - completion:dynamic_command
   - completion:dynamic_group
 
@@ -30,11 +37,7 @@ Found 3 groups with 3 duplicate tests:
 
 ## Subset Duplicates
 
-Found 71 tests that are subsets of others (showing top 20 by coverage ratio):
-
-
-  - `command:dynamic_default_value_callback_that_depends_on_another_param` is 100.0% covered by `command:dynamic_option`
-    **Action**: Consider removing if no unique edge cases
+Found 70 tests that are subsets of others (showing top 20 by coverage ratio):
 
 
   - `custom:group_python` is 99.9% covered by `types:default_with_converter`
@@ -73,14 +76,6 @@ Found 71 tests that are subsets of others (showing top 20 by coverage ratio):
     **Action**: Consider removing if no unique edge cases
 
 
-  - `command:dynamic_default_value` is 99.6% covered by `command:dynamic_default_value_callback_that_depends_on_another_param`
-    **Action**: Consider removing if no unique edge cases
-
-
-  - `command:dynamic_default_value_callback` is 99.6% covered by `command:dynamic_default_value_callback_that_depends_on_another_param`
-    **Action**: Consider removing if no unique edge cases
-
-
   - `completion:command` is 99.6% covered by `types:suggestion`
     **Action**: Consider removing if no unique edge cases
 
@@ -89,7 +84,15 @@ Found 71 tests that are subsets of others (showing top 20 by coverage ratio):
     **Action**: Consider removing if no unique edge cases
 
 
+  - `command:dynamic_default_value` is 99.6% covered by `command:dynamic_default_value_callback_that_depends_on_another_param`
+    **Action**: Consider removing if no unique edge cases
+
+
   - `command:dynamic_default_value` is 99.6% covered by `command:dynamic_option`
+    **Action**: Consider removing if no unique edge cases
+
+
+  - `command:dynamic_default_value_callback` is 99.6% covered by `command:dynamic_default_value_callback_that_depends_on_another_param`
     **Action**: Consider removing if no unique edge cases
 
 
@@ -97,11 +100,11 @@ Found 71 tests that are subsets of others (showing top 20 by coverage ratio):
     **Action**: Consider removing if no unique edge cases
 
 
-  - `alias:alias_conserves_parameters_of_group` is 99.5% covered by `alias:alias_overrides_parameters`
+  - `custom:group_python` is 99.5% covered by `custom:simple_python`
     **Action**: Consider removing if no unique edge cases
 
 
-  - `custom:group_python` is 99.5% covered by `custom:simple_python`
+  - `alias:alias_conserves_parameters_of_group` is 99.5% covered by `alias:alias_overrides_parameters`
     **Action**: Consider removing if no unique edge cases
 
 
@@ -113,16 +116,16 @@ Found 71 tests that are subsets of others (showing top 20 by coverage ratio):
     **Action**: Consider removing if no unique edge cases
 
 
-  ... and 51 more subset duplicates
+  - `completion:command` is 98.5% covered by `completion:group`
+    **Action**: Consider removing if no unique edge cases
+
+
+  ... and 50 more subset duplicates
 
 
 ## Similar Tests (≥30% overlap)
 
-Found 4951 test pairs with ≥30% similarity (showing top 20):
-
-
-  - `command:dynamic_default_value_callback_that_depends_on_another_param` ↔ `command:dynamic_option`: 100.0% similar
-    **Action**: Review for potential merge or refactoring
+Found 4950 test pairs with ≥30% similarity (showing top 20):
 
 
   - `custom:group_python` ↔ `types:default_with_converter`: 99.9% similar
@@ -169,14 +172,6 @@ Found 4951 test pairs with ≥30% similarity (showing top 20):
     **Action**: Review for potential merge or refactoring
 
 
-  - `command:dynamic_default_value` ↔ `command:dynamic_default_value_callback_that_depends_on_another_param`: 99.6% similar
-    **Action**: Review for potential merge or refactoring
-
-
-  - `command:dynamic_default_value_callback` ↔ `command:dynamic_default_value_callback_that_depends_on_another_param`: 99.6% similar
-    **Action**: Review for potential merge or refactoring
-
-
   - `completion:command` ↔ `types:suggestion`: 99.6% similar
     **Action**: Review for potential merge or refactoring
 
@@ -185,7 +180,15 @@ Found 4951 test pairs with ≥30% similarity (showing top 20):
     **Action**: Review for potential merge or refactoring
 
 
+  - `command:dynamic_default_value` ↔ `command:dynamic_default_value_callback_that_depends_on_another_param`: 99.6% similar
+    **Action**: Review for potential merge or refactoring
+
+
   - `command:dynamic_default_value` ↔ `command:dynamic_option`: 99.6% similar
+    **Action**: Review for potential merge or refactoring
+
+
+  - `command:dynamic_default_value_callback` ↔ `command:dynamic_default_value_callback_that_depends_on_another_param`: 99.6% similar
     **Action**: Review for potential merge or refactoring
 
 
@@ -193,20 +196,24 @@ Found 4951 test pairs with ≥30% similarity (showing top 20):
     **Action**: Review for potential merge or refactoring
 
 
-  - `alias:alias_conserves_parameters_of_group` ↔ `alias:alias_overrides_parameters`: 99.5% similar
-    **Action**: Review for potential merge or refactoring
-
-
   - `custom:group_python` ↔ `custom:simple_python`: 99.5% similar
     **Action**: Review for potential merge or refactoring
 
 
-  ... and 4931 more similar test pairs
+  - `alias:alias_conserves_parameters_of_group` ↔ `alias:alias_overrides_parameters`: 99.5% similar
+    **Action**: Review for potential merge or refactoring
+
+
+  - `custom:simple_python` ↔ `types:default_with_converter`: 99.4% similar
+    **Action**: Review for potential merge or refactoring
+
+
+  ... and 4930 more similar test pairs
 
 
 ## Summary
 
 - Total tests analyzed: 109
-- Exact duplicates: 3 tests can be removed
-- Subset duplicates: 71 tests may be redundant
-- Similar tests: 4951 pairs need review
+- Exact duplicates: 4 tests can be removed
+- Subset duplicates: 70 tests may be redundant
+- Similar tests: 4950 pairs need review
