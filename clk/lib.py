@@ -27,7 +27,6 @@ from pathlib import Path
 
 import click
 import colorama
-import glob2
 import requests
 import tqdm
 
@@ -176,14 +175,6 @@ def which(executable, path=None):
                     return str(f)
 
     return None
-
-
-# expose glob
-@functools.wraps(glob2.glob)
-def glob(pathname, *args, **kwargs):
-    if isinstance(pathname, Path):
-        pathname = str(pathname)
-    return glob2.glob(pathname, *args, **kwargs)
 
 
 def main_default(**default_options):

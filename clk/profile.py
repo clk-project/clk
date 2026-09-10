@@ -6,6 +6,7 @@ import re
 import traceback
 from datetime import datetime
 from enum import Enum
+from glob import glob
 from pathlib import Path
 
 import click
@@ -16,7 +17,6 @@ from clk.lib import (
     copy,
     createfile,
     ensure_unicode,
-    glob,
     json_dump_file,
     json_file,
     makedirs,

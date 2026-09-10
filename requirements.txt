@@ -29,8 +29,6 @@ decorator==5.3.1
     # via ipdb
 executing==2.2.1
     # via stack-data
-glob2==0.7
-    # via clk (pyproject.toml)
 humanize==4.0.0
     # via clk (pyproject.toml)
 idna==3.19
