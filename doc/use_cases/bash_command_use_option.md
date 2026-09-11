@@ -79,13 +79,13 @@ EOH
 We can see the help of those parameters in the help of the command.
 
 ```bash
-clk animal --help | grep -- 'KIND_OF_ANIMAL'
+clk animal --help | grep -- 'A kind of animal'
 clk animal --help | grep -- '--sound-of-animal'
 clk animal --help | grep -- '--repeat'
 clk animal --help | grep -- '--shout'
 ```
 
-    KIND_OF_ANIMAL [duck|whale|cat|dog]
+    [duck|whale|cat|dog]  A kind of animal  [default: duck]
     --sound-of-animal TEXT  The sound the animal makes  [default: None]
     --repeat INTEGER        How many times to repeat the message  [default: 0]
     --shout                 Print the message of the animal in capital case  [default: False]
@@ -133,7 +133,7 @@ clk wordcount --help | grep DOCUMENT
 ```
 
     Usage: clk wordcount [OPTIONS] [DOCUMENT]
-      DOCUMENT  The document to count words in  [default: None]
+      [DOCUMENT]  The document to count words in
 
 Let's try it.
 

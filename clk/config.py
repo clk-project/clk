@@ -722,7 +722,10 @@ class Config:
         liblp.dry_run = value
 
     def get_value(self, path, default=None):
-        return self.get_settings("value").get(path, {"value": default})["value"]
+        value = self.get_settings("value").get(path, {"value": default})["value"]
+        if isinstance(default, bool) and isinstance(value, str):
+            value = click.BOOL.convert(value, None, None)
+        return value
 
     def get_parameters(self, path, implicit_only=False, explicit_only=False):
         return [

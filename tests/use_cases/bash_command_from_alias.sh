@@ -240,7 +240,7 @@ Usage: clk music play [OPTIONS] [ARGS]...
   Edit this external command by running `clk command edit music.play`
   Or edit ./clk-root/bin/music.play directly.
 
-Arguments:
+Positional arguments:
 
 EOEXPECTED
 }

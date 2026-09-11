@@ -40,16 +40,15 @@ Usage: clk command create python [OPTIONS] NAME
 
   This is a built-in command.
 
-Arguments:
+Positional arguments:
   NAME  The name of the new command
 
 Options:
-  --open / --no-open   Also open the file after its creation  [default: True]
-  --force              Overwrite a file if it already exists  [default: False]
-  --group / --command  Bootstrap a command or a group of commands  [default: False]
-  --with-data          Create a directory module instead of a single file. So that you can ship data with it  [default:
-                       False]
-  --body TEXT          The initial body to put  [default: ]
+  --open / --no-open   Also open the file after its creation  [default: open]
+  --force              Overwrite a file if it already exists
+  --group / --command  Bootstrap a command or a group of commands  [default: command]
+  --with-data          Create a directory module instead of a single file. So that you can ship data with it
+  --body TEXT          The initial body to put  [default: ""]
   --description TEXT   The initial description to put  [default: Description]
   --from-file TEXT     Copy this file instead of using the template
   --help-all           Show the full help message, automatic options included.

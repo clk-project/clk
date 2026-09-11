@@ -47,7 +47,7 @@ show-help-color_code () {
 
 show-help-color_expected () {
       cat<<"EOEXPECTED"
---color / --no-color            Show profiles in color  [default: false]
+--color / --no-color            Show profiles in color  [default: no-color]
 EOEXPECTED
 }
 
@@ -140,7 +140,7 @@ show-custom-help_code () {
 
 show-custom-help_expected () {
       cat<<"EOEXPECTED"
---color / --no-color  Show output in color  [default: false]
+--color / --no-color  Show output in color  [default: no-color]
 EOEXPECTED
 }
 
@@ -163,8 +163,8 @@ change-value-true_code () {
 
 change-value-true_expected () {
       cat<<"EOEXPECTED"
---color / --no-color  Show output in color  [default: true]
---color / --no-color            Show profiles in color  [default: true]
+--color / --no-color  Show output in color  [default: color]
+--color / --no-color            Show profiles in color  [default: color]
 EOEXPECTED
 }
 

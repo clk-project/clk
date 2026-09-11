@@ -46,7 +46,7 @@ done
 
 EOH
 
-clk animal --help | grep -- 'KIND_OF_ANIMAL'
+clk animal --help | grep -- 'A kind of animal'
 clk animal --help | grep -- '--sound-of-animal'
 clk animal --help | grep -- '--repeat'
 clk animal --help | grep -- '--shout'
@@ -90,7 +90,7 @@ wordcount-help_code () {
 wordcount-help_expected () {
       cat<<"EOEXPECTED"
 Usage: clk wordcount [OPTIONS] [DOCUMENT]
-  DOCUMENT  The document to count words in  [default: None]
+  [DOCUMENT]  The document to count words in
 EOEXPECTED
 }
 

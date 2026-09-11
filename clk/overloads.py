@@ -464,7 +464,6 @@ class HelpMixin:
     def format_options(self, ctx, formatter, include_auto_opts=False):
         """Writes all the options into the formatter if they exist."""
         opts = defaultdict(list)
-        args = []
         for param in self.get_params(ctx):
             if isinstance(param, Option):
                 if (
@@ -479,14 +478,7 @@ class HelpMixin:
                 rv = param.get_help_record(ctx)
                 if rv is not None:
                     opts[None].append(rv)
-            elif isinstance(param, click.Argument):
-                rv = param.get_help_record(ctx)
-                if rv is not None:
-                    args.append(rv)
 
-        if args:
-            with formatter.section("Arguments"):
-                formatter.write_dl(args)
         if opts[None]:
             with formatter.section("Options"):
                 formatter.write_dl(opts[None])
@@ -509,11 +501,13 @@ class HelpMixin:
 
         -   :meth:`format_usage`
         -   :meth:`format_help_text`
+        -   :meth:`format_arguments`
         -   :meth:`format_options`
         -   :meth:`format_epilog`
         """
         self.format_usage(ctx, formatter)
         self.format_help_text(ctx, formatter)
+        self.format_arguments(ctx, formatter)
         self.format_options(ctx, formatter, True)
         self.format_epilog(ctx, formatter)
 
@@ -1144,50 +1138,6 @@ class ParameterMixin(click.Parameter):
             value = self.type_cast_value(ctx, value)
         return value
 
-    def get_help_record(self, ctx):
-        show_default = self.show_default
-        self.show_default = False
-        res = super().get_help_record(ctx)
-        self.show_default = show_default
-        if res is None:
-            metavar = self.type.get_metavar(self, ctx)
-            if metavar:
-                metavar = f"{self.human_readable_name} {metavar}"
-            else:
-                metavar = self.human_readable_name
-            res = (metavar, self.help)
-        default = self._get_default_from_values(ctx)
-        canon_default = self.default
-        if isinstance(canon_default, (list, tuple)):
-            canon_default = ", ".join(str(d) for d in self.default)
-        elif callable(canon_default):
-            canon_default = canon_default()
-        canon_default = str(canon_default)
-
-        if self.default is not UNSET and self.show_default:
-            res1 = res[1]
-            res1 += "  [default: "
-            if default:
-                res1 += default + f" (computed from value.default.{self.get_path(ctx)}"
-                if self.default:
-                    res1 += " and overriding static one: " + canon_default
-                res1 += ")"
-            elif isinstance(canon_default, str) and canon_default.startswith("value:"):
-                res1 += (
-                    config.get_settings("value")
-                    .get(canon_default[len("value:") :], {"value": "None"})
-                    .get("value")
-                )
-                res1 += f" (computed from {canon_default})"
-            else:
-                res1 += canon_default
-            res1 += "]"
-            res = (
-                res[0],
-                res1,
-            )
-        return res
-
 
 class Option(ParameterMixin, click.Option):
     def __init__(self, *args, **kwargs):
@@ -1209,10 +1159,7 @@ class AutomaticOption(Option):
 
 
 class Argument(ParameterMixin, click.Argument):
-    def __init__(self, *args, **kwargs):
-        self.help = kwargs.pop("help", "")
-        self.show_default = kwargs.pop("show_default", True)
-        super().__init__(*args, **kwargs)
+    pass
 
 
 def in_project(command):

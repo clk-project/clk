@@ -68,7 +68,7 @@ Now all show commands respect this setting. We can verify by checking the help t
 clk alias show --help 2>&1 | grep -- "--color"
 ```
 
-    --color / --no-color            Show profiles in color  [default: false]
+    --color / --no-color            Show profiles in color  [default: no-color]
 
 The default is now `false` instead of `True`. This applies to all show commands with a single configuration.
 
@@ -169,7 +169,7 @@ Now this command shares the same color setting as all the built-in show commands
 clk show-items --help 2>&1 | grep -- "--color"
 ```
 
-    --color / --no-color  Show output in color  [default: false]
+    --color / --no-color  Show output in color  [default: no-color]
 
 Because we set `config.show.color` to `false` earlier, this new command also defaults to no color.
 
@@ -181,8 +181,8 @@ clk show-items --help 2>&1 | grep -- "--color"
 clk alias show --help 2>&1 | grep -- "--color"
 ```
 
-    --color / --no-color  Show output in color  [default: true]
-    --color / --no-color            Show profiles in color  [default: true]
+    --color / --no-color  Show output in color  [default: color]
+    --color / --no-color            Show profiles in color  [default: color]
 
 One value controls them all.
 
