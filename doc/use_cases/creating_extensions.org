@@ -130,6 +130,7 @@ clk k8s run-dev-env --flow
 * generic programming
   :PROPERTIES:
   :CREATED:  [2026-08-18 17:52]
+  :CUSTOM_ID: 7e7ae624-ce8a-4470-8bb0-7a44d8c2caea
   :END:
 
   You have noticed that we created a command named setup-credential. In general,
@@ -478,6 +479,56 @@ clk apply-mock-config
 clk extension remove tempdir-demo
 #+END_SRC
 
+* when a program you call fails
+  :PROPERTIES:
+  :CREATED:  [2026-09-11 12:00]
+  :CUSTOM_ID: 5fab2cd5-3e10-4c2c-ac79-038abeec8a41
+  :END:
+
+An extension mostly drives other programs, and those sometimes fail. When that
+happens, you want to know which program gave up, and what it had to say before
+doing so.
+
+Let's create a command asking a program that complains on its error output and
+exits with a non zero status.
+
+#+NAME: create_failing_extension
+#+BEGIN_SRC bash :results none :exports code :session f47428c2-56ea-4d91-97d9-4f2ff63ef052
+clk extension create cluster-demo
+#+END_SRC
+
+#+NAME: create_failing_command
+#+BEGIN_SRC bash :results none :exports code :session f47428c2-56ea-4d91-97d9-4f2ff63ef052
+clk command create --extension cluster-demo python check-cluster --description "Ask a program about the cluster" --body '
+from clk.lib import check_output
+
+@command()
+def check_cluster():
+    """Ask a program about the cluster."""
+    print(check_output(["bash", "-c", "echo cannot reach the cluster >&2 ; exit 4"]))
+'
+#+END_SRC
+
+~check_output~ hands you the output of the program, so you have nothing to
+print yourself when it fails. It still tells you what happened.
+
+#+NAME: run-failing-demo
+#+BEGIN_SRC bash :results verbatim :cache yes :exports both :session f47428c2-56ea-4d91-97d9-4f2ff63ef052
+clk check-cluster 2>&1
+#+END_SRC
+
+#+RESULTS[270262a7eeff58d3e64613cf6724a8c98f4dd4fa]: run-failing-demo
+: error: bash -c 'echo cannot reach the cluster >&2 ; exit 4' exited with 4, saying:
+: error: cannot reach the cluster
+
+clk names the command that failed, the status it exited with, and repeats what
+it said on its error output. That is enough to go and have a look.
+
+#+NAME: cleanup-cluster-demo
+#+BEGIN_SRC bash :results none :exports none :session f47428c2-56ea-4d91-97d9-4f2ff63ef052
+clk extension remove cluster-demo
+#+END_SRC
+
 * extension names with special characters
   :PROPERTIES:
   :CREATED:  [2026-02-23 08:00]
@@ -550,6 +601,14 @@ check-result(run-tempdir-demo)
 check-result(run-tempfile-demo)
 
 <<cleanup-tempdir-demo>>
+
+<<create_failing_extension>>
+
+<<create_failing_command>>
+
+check-result(run-failing-demo)
+
+<<cleanup-cluster-demo>>
 
 <<create_hostname_extension>>
 

@@ -1,11 +1,12 @@
 - [creating our own extension](#578ef2c9-a4d4-448a-9d56-be4afe4ac64a)
 - [enable/disable it](#72f61beb-cd79-4fdd-86a2-2c56ef08292c)
-- [generic programming](#org47c48d8)
+- [generic programming](#7e7ae624-ce8a-4470-8bb0-7a44d8c2caea)
 - [publish it](#21d2895b-db01-4a09-b2a2-18e34e2830b6)
 - [get an extension](#b7bcef53-dd68-4660-9c5c-d9aa029d1a72)
 - [using temporary files and directories](#795e915b-29f5-4fbc-a8d9-480a094d3e37)
   - [tempdir](#60d4bff1-366d-45cb-b0ce-3bb7468734aa)
   - [temporary\_file](#d18237dd-7e05-4225-b9de-bf63f09b6d99)
+- [when a program you call fails](#5fab2cd5-3e10-4c2c-ac79-038abeec8a41)
 - [extension names with special characters](#1a2b3c4d-5678-90ab-cdef-abcdef012345)
 
 Extensions are folders that contain clk configurations and commands. You can create and share those with your colleagues.
@@ -135,7 +136,7 @@ clk k8s run-dev-env --flow
     running development environment
 
 
-<a id="org47c48d8"></a>
+<a id="7e7ae624-ce8a-4470-8bb0-7a44d8c2caea"></a>
 
 # generic programming
 
@@ -419,6 +420,41 @@ clk apply-mock-config
       name: my-config
     data:
       key: value
+
+
+<a id="5fab2cd5-3e10-4c2c-ac79-038abeec8a41"></a>
+
+# when a program you call fails
+
+An extension mostly drives other programs, and those sometimes fail. When that happens, you want to know which program gave up, and what it had to say before doing so.
+
+Let's create a command asking a program that complains on its error output and exits with a non zero status.
+
+```bash
+clk extension create cluster-demo
+```
+
+```bash
+clk command create --extension cluster-demo python check-cluster --description "Ask a program about the cluster" --body '
+from clk.lib import check_output
+
+@command()
+def check_cluster():
+    """Ask a program about the cluster."""
+    print(check_output(["bash", "-c", "echo cannot reach the cluster >&2 ; exit 4"]))
+'
+```
+
+`check_output` hands you the output of the program, so you have nothing to print yourself when it fails. It still tells you what happened.
+
+```bash
+clk check-cluster 2>&1
+```
+
+    error: bash -c 'echo cannot reach the cluster >&2 ; exit 4' exited with 4, saying:
+    error: cannot reach the cluster
+
+clk names the command that failed, the status it exited with, and repeats what it said on its error output. That is enough to go and have a look.
 
 
 <a id="1a2b3c4d-5678-90ab-cdef-abcdef012345"></a>

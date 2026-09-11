@@ -570,21 +570,49 @@ def check_output(cmd, *args, **kwargs):
             kwargs["stderr"] = subprocess.PIPE
             kwargs["stdout"] = subprocess.PIPE
             p = subprocess.Popen(cmd, *args, **kwargs)
+            stderr = []
             while True:
                 line = p.stderr.readline().decode("utf-8")
+                stderr.append(line)
                 if not nostderr:
                     sys.stderr.write(line)
                 if line == "" and p.poll() is not None:
                     break
             p.wait()
             stdout = p.stdout.read().decode("utf-8")
+            stderr = "".join(stderr)
             if p.returncode != 0:
-                raise subprocess.CalledProcessError(p.returncode, args, output=stdout)
+                # when not nostderr, stderr was written as it came, no need to
+                # show it again
+                _explain_failure(message, p.returncode, stderr if nostderr else "")
+                raise subprocess.CalledProcessError(
+                    p.returncode, cmd, output=stdout, stderr=stderr
+                )
             return stdout
         else:
-            if nostderr:
-                kwargs["stderr"] = subprocess.PIPE
-            return subprocess.check_output(cmd, *args, **kwargs).decode("utf-8")
+            # keep stderr for ourselves, so that we can tell what the command
+            # said when it fails
+            kwargs.setdefault("stderr", subprocess.PIPE)
+            p = subprocess.Popen(cmd, *args, stdout=subprocess.PIPE, **kwargs)
+            stdout, stderr = p.communicate()
+            stdout = stdout.decode("utf-8")
+            stderr = stderr.decode("utf-8") if stderr is not None else ""
+            if p.returncode != 0:
+                _explain_failure(message, p.returncode, stderr)
+                raise subprocess.CalledProcessError(
+                    p.returncode, cmd, output=stdout, stderr=stderr
+                )
+            if stderr and not nostderr:
+                sys.stderr.write(stderr)
+            return stdout
+
+
+def _explain_failure(message, returncode, stderr):
+    """Tell what command failed, and what it had to say about it"""
+    explanation = f"{message} exited with {returncode}"
+    if stderr and stderr.strip():
+        explanation += ", saying:\n" + stderr.rstrip("\n")
+    LOGGER.error(explanation)
 
 
 def get_keyring():

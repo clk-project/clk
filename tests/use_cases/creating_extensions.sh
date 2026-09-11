@@ -425,6 +425,41 @@ exit 1
 
 clk extension remove tempdir-demo
 
+clk extension create cluster-demo
+
+clk command create --extension cluster-demo python check-cluster --description "Ask a program about the cluster" --body '
+from clk.lib import check_output
+
+@command()
+def check_cluster():
+    """Ask a program about the cluster."""
+    print(check_output(["bash", "-c", "echo cannot reach the cluster >&2 ; exit 4"]))
+'
+
+
+run-failing-demo_code () {
+      clk check-cluster 2>&1
+}
+
+run-failing-demo_expected () {
+      cat<<"EOEXPECTED"
+error: bash -c 'echo cannot reach the cluster >&2 ; exit 4' exited with 4, saying:
+error: cannot reach the cluster
+EOEXPECTED
+}
+
+echo 'Run run-failing-demo'
+
+{ run-failing-demo_code || true ; } > "${TMP}/code.txt" 2>&1
+run-failing-demo_expected > "${TMP}/expected.txt" 2>&1
+diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+echo "Something went wrong when trying run-failing-demo"
+exit 1
+}
+
+
+clk extension remove cluster-demo
+
 clk extension create "my-host.[example].com"
 
 
