@@ -9,7 +9,7 @@
 
 ;; Don't prompt for code block evaluation
 (setq org-confirm-babel-evaluate nil)
-(setq org-src-preserve-indentation t)
+(setq org-src-preserve-indentation nil)
 
 ;; Load pinned org-mode from .tangle-deps BEFORE anything else loads the
 ;; built-in org.  This must happen before (require 'ob-shell) since that
