@@ -51,6 +51,27 @@ clk animal --help | grep -- '--sound-of-animal'
 clk animal --help | grep -- '--repeat'
 clk animal --help | grep -- '--shout'
 
+
+see-help-all_code () {
+      clk animal --help-all | grep -- '--in-project / --no-in-project'
+}
+
+see-help-all_expected () {
+      cat<<"EOEXPECTED"
+--in-project / --no-in-project  Run the command in the project directory  [default: no-in-project]
+EOEXPECTED
+}
+
+echo 'Run see-help-all'
+
+{ see-help-all_code || true ; } > "${TMP}/code.txt" 2>&1
+see-help-all_expected > "${TMP}/expected.txt" 2>&1
+diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+echo "Something went wrong when trying see-help-all"
+exit 1
+}
+
+
 test "$(clk animal duck --sound-of-animal couac)" = "duck does couac"
 test "$(clk animal --sound-of-animal couac)" = "duck does couac"
 test "$(clk animal whale --shout)" = "I DON'T KNOW WHAT SOUND WHALE MAKES"

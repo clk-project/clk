@@ -85,10 +85,18 @@ clk animal --help | grep -- '--repeat'
 clk animal --help | grep -- '--shout'
 ```
 
-    [duck|whale|cat|dog]  A kind of animal  [default: duck]
-    --sound-of-animal TEXT  The sound the animal makes  [default: None]
+    [duck|whale|cat|dog]  A kind of animal
+    --sound-of-animal TEXT  The sound the animal makes
     --repeat INTEGER        How many times to repeat the message  [default: 0]
-    --shout                 Print the message of the animal in capital case  [default: False]
+    --shout                 Print the message of the animal in capital case
+
+Passing `--help-all` additionally reveals the automatic options every clk command carries, whichever way it was written.
+
+```bash
+clk animal --help-all | grep -- '--in-project / --no-in-project'
+```
+
+    --in-project / --no-in-project  Run the command in the project directory  [default: no-in-project]
 
 
 <a id="dddf6c5e-3fce-4203-b75c-e918bcf3240f"></a>
