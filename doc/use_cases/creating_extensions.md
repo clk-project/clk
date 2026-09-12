@@ -428,33 +428,45 @@ clk apply-mock-config
 
 An extension mostly drives other programs, and those sometimes fail. When that happens, you want to know which program gave up, and what it had to say before doing so.
 
-Let's create a command asking a program that complains on its error output and exits with a non zero status.
+Let's create a command asking a program about the cluster we name. That program complains on its error output, and gives up on every cluster but `main`.
 
 ```bash
 clk extension create cluster-demo
 ```
 
 ```bash
-clk command create --extension cluster-demo python check-cluster --description "Ask a program about the cluster" --body '
+clk command create --extension cluster-demo python check-cluster --description "Ask a program about a cluster" --body '
 from clk.lib import check_output
 
 @command()
-def check_cluster():
-    """Ask a program about the cluster."""
-    print(check_output(["bash", "-c", "echo cannot reach the cluster >&2 ; exit 4"]))
+@argument("cluster", help="The cluster to ask about")
+def check_cluster(cluster):
+    """Ask a program about a cluster."""
+    print(check_output(["bash", "-c", "echo trouble reaching $1 >&2 ; test $1 = main || exit 4 ; echo ok", "--", cluster]).strip())
 '
 ```
 
 `check_output` hands you the output of the program, so you have nothing to print yourself when it fails. It still tells you what happened.
 
 ```bash
-clk check-cluster 2>&1
+clk check-cluster other 2>&1
 ```
 
-    error: bash -c 'echo cannot reach the cluster >&2 ; exit 4' exited with 4, saying:
-    error: cannot reach the cluster
+    error: bash -c 'echo trouble reaching $1 >&2 ; test $1 = main || exit 4 ; echo ok' -- other exited with 4, saying:
+    error: trouble reaching other
 
 clk names the command that failed, the status it exited with, and repeats what it said on its error output. That is enough to go and have a look.
+
+Ask the same program about `main` and it complains just as much, yet gives you an answer.
+
+```bash
+clk check-cluster main 2>&1
+```
+
+    trouble reaching main
+    ok
+
+What it said reaches you as it said it, with nothing added, and the answer is still yours to use.
 
 
 <a id="1a2b3c4d-5678-90ab-cdef-abcdef012345"></a>
