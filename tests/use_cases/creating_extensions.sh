@@ -427,24 +427,25 @@ clk extension remove tempdir-demo
 
 clk extension create cluster-demo
 
-clk command create --extension cluster-demo python check-cluster --description "Ask a program about the cluster" --body '
+clk command create --extension cluster-demo python check-cluster --description "Ask a program about a cluster" --body '
 from clk.lib import check_output
 
 @command()
-def check_cluster():
-    """Ask a program about the cluster."""
-    print(check_output(["bash", "-c", "echo cannot reach the cluster >&2 ; exit 4"]))
+@argument("cluster", help="The cluster to ask about")
+def check_cluster(cluster):
+    """Ask a program about a cluster."""
+    print(check_output(["bash", "-c", "echo trouble reaching $1 >&2 ; test $1 = main || exit 4 ; echo ok", "--", cluster]).strip())
 '
 
 
 run-failing-demo_code () {
-      clk check-cluster 2>&1
+      clk check-cluster other 2>&1
 }
 
 run-failing-demo_expected () {
       cat<<"EOEXPECTED"
-error: bash -c 'echo cannot reach the cluster >&2 ; exit 4' exited with 4, saying:
-error: cannot reach the cluster
+error: bash -c 'echo trouble reaching $1 >&2 ; test $1 = main || exit 4 ; echo ok' -- other exited with 4, saying:
+error: trouble reaching other
 EOEXPECTED
 }
 
@@ -454,6 +455,28 @@ echo 'Run run-failing-demo'
 run-failing-demo_expected > "${TMP}/expected.txt" 2>&1
 diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
 echo "Something went wrong when trying run-failing-demo"
+exit 1
+}
+
+
+
+run-complaining-demo_code () {
+      clk check-cluster main 2>&1
+}
+
+run-complaining-demo_expected () {
+      cat<<"EOEXPECTED"
+trouble reaching main
+ok
+EOEXPECTED
+}
+
+echo 'Run run-complaining-demo'
+
+{ run-complaining-demo_code || true ; } > "${TMP}/code.txt" 2>&1
+run-complaining-demo_expected > "${TMP}/expected.txt" 2>&1
+diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+echo "Something went wrong when trying run-complaining-demo"
 exit 1
 }
 
