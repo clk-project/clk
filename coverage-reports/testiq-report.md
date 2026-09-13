@@ -204,7 +204,7 @@ Found 4950 test pairs with ≥30% similarity (showing top 20):
     **Action**: Review for potential merge or refactoring
 
 
-  - `custom:simple_python` ↔ `types:default_with_converter`: 99.4% similar
+  - `use_cases:use_case[bash_command_import]` ↔ `use_cases:use_case[hello_world]`: 99.4% similar
     **Action**: Review for potential merge or refactoring
 
 
