@@ -11,6 +11,9 @@
 (setq org-confirm-babel-evaluate nil)
 (setq org-src-preserve-indentation nil)
 
+;; An underscore in a command or a variable name is not a subscript
+(setq org-export-with-sub-superscripts nil)
+
 ;; Load pinned org-mode from .tangle-deps BEFORE anything else loads the
 ;; built-in org.  This must happen before (require 'ob-shell) since that
 ;; transitively loads org.
@@ -28,13 +31,19 @@
 ;; Load babel languages needed for tangling
 (require 'ob-shell)
 
-;; Match the project's default header args so tangled output is identical
+;; Match the project's default header args so tangled and exported output is
+;; identical to what the authors get interactively
 (setq org-babel-default-header-args
-      (cons '(:comments . "yes")
-            (cons '(:padline . "yes")
-                  (assq-delete-all :comments
-                    (assq-delete-all :padline
-                      org-babel-default-header-args)))))
+      '((:session . "none")
+        (:results . "replace")
+        (:exports . "both")
+        (:eval . "no-export")
+        (:cache . "no")
+        (:noweb . "no")
+        (:hlines . "no")
+        (:comments . "yes")
+        (:padline . "yes")
+        (:tangle . "no")))
 
 (defun clk-tangle--get-cached-result (name)
   "Extract the #+RESULTS content for block NAME from the current org buffer.
