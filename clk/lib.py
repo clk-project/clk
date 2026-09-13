@@ -288,19 +288,17 @@ def _call(args, kwargs):
         if call_capture_stdout:
             p = subprocess.Popen(args, **kwargs)
             stdout = []
-            while True:
-                line = p.stdout.readline().decode("utf-8")
-                print(line[:-1])
+            for line in p.stdout:
+                line = line.decode("utf-8")
+                sys.stdout.write(line)
                 stdout.append(line)
-                if line == "" and p.poll() is not None:
-                    break
             p.wait()
             if p.returncode != 0:
                 if p.returncode < 0:
                     terminating_signal = -p.returncode
                 else:
                     raise subprocess.CalledProcessError(
-                        p.returncode, args, output=stdout
+                        p.returncode, args, output="".join(stdout)
                     )
         else:
             p = subprocess.Popen(args, **kwargs)
