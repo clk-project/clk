@@ -19,6 +19,9 @@ auto-detect based on context (like the current git branch), but when you
 explicitly choose one, it should respect that choice.
 
 * A smart deployment command
+  :PROPERTIES:
+  :CUSTOM_ID: a-smart-deployment-command
+  :END:
 
 Let's create a deploy command that auto-detects the environment when not
 specified, but uses the explicit value when provided:
@@ -78,6 +81,9 @@ clk app deploy --environment staging
 : Deploying to staging
 
 * Shortcut aliases for common targets
+  :PROPERTIES:
+  :CUSTOM_ID: shortcut-aliases-for-common-targets
+  :END:
 
 To make deployments even more convenient, let's create aliases for the most
 common targets:

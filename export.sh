@@ -15,7 +15,7 @@ export_file() {
     local exported
     exported="$(dirname "$orgfile")/$(sed -n 's/^#+EXPORT_FILE_NAME: *//p' "$orgfile" | head -1)"
     emacs --batch --no-init-file \
-        -l "$SCRIPT_DIR/tangle.el" \
+        -l "$SCRIPT_DIR/org-setup.el" \
         --eval "(progn
                   (push \"$GFM_DIR\" load-path)
                   (require 'ox-gfm)

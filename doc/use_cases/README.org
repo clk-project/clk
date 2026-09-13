@@ -254,5 +254,6 @@ looking for.
 * appendix
   :PROPERTIES:
   :CREATED:  [2026-03-16 17:17]
+  :CUSTOM_ID: appendix
   :END:
   #+INCLUDE: "index-fragment.org"

@@ -51,7 +51,7 @@ might write even more [[./doc][documentation]].
   This is most likely the most useful part of the documentation. Take a look at
   the [[./doc/use_cases][use cases]] to find out how clk could be used in real life situations.
 
-* In a nutshell                                                     :Context:
+* In a nutshell
   :PROPERTIES:
   :CUSTOM_ID: fe60735c-91c2-4f54-8ae2-7e3b307f27a5
   :END:

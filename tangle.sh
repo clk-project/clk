@@ -15,7 +15,7 @@ tangle_file() {
     local tangled_list
     tangled_list=$(mktemp)
     emacs --batch --no-init-file \
-        -l "$SCRIPT_DIR/tangle.el" \
+        -l "$SCRIPT_DIR/org-setup.el" \
         --eval "(progn
                   (require 'org)
                   (find-file \"$orgfile\")

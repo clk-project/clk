@@ -1,4 +1,4 @@
-;;; tangle.el --- Self-contained org-babel tangling for clk -*- lexical-binding: t; -*-
+;;; org-setup.el --- The org clk tangles, exports and names headings with -*- lexical-binding: t; -*-
 
 ;; Provide CL functions used in lp.org's elisp block
 (unless (fboundp 'first) (defalias 'first #'car))
@@ -13,6 +13,9 @@
 
 ;; An underscore in a command or a variable name is not a subscript
 (setq org-export-with-sub-superscripts nil)
+
+;; Write drawers under their heading the way the org files already have them
+(setq org-adapt-indentation t)
 
 ;; Load pinned org-mode from .tangle-deps BEFORE anything else loads the
 ;; built-in org.  This must happen before (require 'ob-shell) since that
@@ -114,4 +117,30 @@ Handles both `: value` and `#+begin_example...#+end_example` formats."
      parent-buffer)))
 (advice-add 'org-babel-expand-noweb-references :around 'konix/org-babel-expand-noweb-references/add-check-result)
 
-;;; tangle.el ends here
+(defun clk-org--slug (heading)
+  "Turn HEADING into something that reads well in a URL."
+  (let ((slug (downcase heading)))
+    (setq slug (replace-regexp-in-string "[^a-z0-9]+" "-" slug))
+    (setq slug (replace-regexp-in-string "\\`-+\\|-+\\'" "" slug))
+    ;; a heading made of punctuation alone leaves nothing to name it with
+    (if (string-empty-p slug) "section" slug)))
+
+(defun clk-add-custom-ids ()
+  "Add a CUSTOM_ID to every heading of the current buffer that has none.
+Without one, org makes up a new anchor on each export, so the exported
+markdown differs every time for no reason."
+  (let ((taken (org-map-entries (lambda () (org-entry-get nil "CUSTOM_ID")))))
+    (setq taken (delq nil taken))
+    (org-map-entries
+     (lambda ()
+       (unless (org-entry-get nil "CUSTOM_ID")
+         (let* ((base (clk-org--slug (org-get-heading t t t t)))
+                (id base)
+                (n 1))
+           (while (member id taken)
+             (setq n (1+ n))
+             (setq id (format "%s-%d" base n)))
+           (push id taken)
+           (org-entry-put nil "CUSTOM_ID" id)))))))
+
+;;; org-setup.el ends here

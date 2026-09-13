@@ -1,13 +1,13 @@
-- [defining your workflow globally](#org96fac25)
-- [filling in the details for a specific project](#orgadc4cea)
-- [the workflow adapts to context](#orgb794cba)
-- [going further: project-specific workflows](#org7f52571)
-- [summary](#org1a8012e)
+- [defining your workflow globally](#defining-your-workflow-globally)
+- [filling in the details for a specific project](#filling-in-the-details-for-a-specific-project)
+- [the workflow adapts to context](#the-workflow-adapts-to-context)
+- [going further: project-specific workflows](#going-further-project-specific-workflows)
+- [summary](#summary)
 
 You have the same workflow across all your projects: test, then push. But each project has its own way of running tests. One uses pytest, another npm test, a third make test. With clk, you define the workflow once globally, and let each project fill in the details.
 
 
-<a id="org96fac25"></a>
+<a id="defining-your-workflow-globally"></a>
 
 # defining your workflow globally
 
@@ -36,7 +36,7 @@ clk test-n-push
     No tests configured
 
 
-<a id="orgadc4cea"></a>
+<a id="filling-in-the-details-for-a-specific-project"></a>
 
 # filling in the details for a specific project
 
@@ -66,7 +66,7 @@ clk test-n-push
 You didn't touch `test-n-push`. The workflow stays the same; only the implementation changed.
 
 
-<a id="orgb794cba"></a>
+<a id="the-workflow-adapts-to-context"></a>
 
 # the workflow adapts to context
 
@@ -82,7 +82,7 @@ clk test-n-push
 Enter another project with npm, define a local `test` there, and `test-n-push` will run npm. The pattern scales to as many projects as you have.
 
 
-<a id="org7f52571"></a>
+<a id="going-further-project-specific-workflows"></a>
 
 # going further: project-specific workflows
 
@@ -116,7 +116,7 @@ clk deploy
     error: No such command 'deploy'.
 
 
-<a id="org1a8012e"></a>
+<a id="summary"></a>
 
 # summary
 

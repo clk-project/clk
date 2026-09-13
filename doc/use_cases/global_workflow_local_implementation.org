@@ -18,6 +18,9 @@ third make test. With clk, you define the workflow once globally, and let each
 project fill in the details.
 
 * defining your workflow globally
+  :PROPERTIES:
+  :CUSTOM_ID: defining-your-workflow-globally
+  :END:
 
 Start with a ~test~ placeholder - a command that does nothing by default.
 
@@ -50,6 +53,9 @@ clk test-n-push
 : No tests configured
 
 * filling in the details for a specific project
+  :PROPERTIES:
+  :CUSTOM_ID: filling-in-the-details-for-a-specific-project
+  :END:
 
 Now you enter a project that uses pytest. You create a local ~test~ command that
 knows how to run this project's tests.
@@ -83,6 +89,9 @@ You didn't touch ~test-n-push~. The workflow stays the same; only the
 implementation changed.
 
 * the workflow adapts to context
+  :PROPERTIES:
+  :CUSTOM_ID: the-workflow-adapts-to-context
+  :END:
 
 Leave the project, and everything goes back to defaults.
 
@@ -99,6 +108,9 @@ Enter another project with npm, define a local ~test~ there, and ~test-n-push~
 will run npm. The pattern scales to as many projects as you have.
 
 * going further: project-specific workflows
+  :PROPERTIES:
+  :CUSTOM_ID: going-further-project-specific-workflows
+  :END:
 
 Sometimes a project needs an entirely different workflow. You can also define
 local aliases.
@@ -138,6 +150,9 @@ clk deploy
 : error: No such command 'deploy'.
 
 * summary
+  :PROPERTIES:
+  :CUSTOM_ID: summary
+  :END:
 
 This pattern - global workflow, local implementation - is useful whenever you
 have:

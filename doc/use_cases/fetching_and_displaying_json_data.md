@@ -1,13 +1,13 @@
-- [Fetching and displaying JSON](#orgfaf6537)
-- [Filtering the data](#org4410e16)
-- [Caching the downloaded data](#org00a4d80)
+- [Fetching and displaying JSON](#fetching-and-displaying-json)
+- [Filtering the data](#filtering-the-data)
+- [Caching the downloaded data](#caching-the-downloaded-data)
 
 A common use case when building CLI tools is fetching data from an API and displaying it to the user. This example shows how to create a command that downloads JSON data and outputs it in a nicely formatted way.
 
 Let's create a tool to fetch and display school holidays data.
 
 
-<a id="orgfaf6537"></a>
+<a id="fetching-and-displaying-json"></a>
 
 # Fetching and displaying JSON
 
@@ -68,7 +68,7 @@ clk holidays cat 2>/dev/null | head -19
 ```
 
 
-<a id="org4410e16"></a>
+<a id="filtering-the-data"></a>
 
 # Filtering the data
 
@@ -115,7 +115,7 @@ clk holidays show "Zone A" 2>/dev/null
 ```
 
 
-<a id="org00a4d80"></a>
+<a id="caching-the-downloaded-data"></a>
 
 # Caching the downloaded data
 

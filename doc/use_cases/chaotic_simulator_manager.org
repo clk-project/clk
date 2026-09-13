@@ -31,6 +31,9 @@ you chain them together. Let's build a standalone tool called ~csm~ (a Chaotic
 Simulator Manager) to manage that workflow.
 
 * bootstrapping csm
+  :PROPERTIES:
+  :CUSTOM_ID: bootstrapping-csm
+  :END:
 
 clk provides out of the box a command to bootstrap your own tool.
 
@@ -98,6 +101,9 @@ source "${TMP}/.envrc"
 #+END_SRC
 
 * creating the simulator commands
+  :PROPERTIES:
+  :CUSTOM_ID: creating-the-simulator-commands
+  :END:
 
 The development cycle is generate, configure, build, simulate. Each step is
 a command. We write them as internal commands in the csm project — any ~.py~
@@ -189,6 +195,9 @@ csm simulate
 : Running ./build/simulator
 
 * the simulator crashes — time to debug
+  :PROPERTIES:
+  :CUSTOM_ID: the-simulator-crashes-time-to-debug
+  :END:
 
 The simulator crashes on a corner case. You want to run it under gdb to
 inspect the state. Without any tooling, you would type something like:
@@ -203,6 +212,9 @@ want to profile with perf, or check for memory leaks with valgrind? Each
 tool has its own incantation and you end up copy-pasting long commands.
 
 * adding launcher support
+  :PROPERTIES:
+  :CUSTOM_ID: adding-launcher-support
+  :END:
 
 A launcher is a tool that runs other tools: a debugger, a profiler, an
 environment wrapper. Since csm is our own project, we can add launcher
@@ -311,6 +323,7 @@ csm launcher show gdb
 * using a launcher in the simulate command
   :PROPERTIES:
   :ID:       c777ac1b-8ed6-4cb0-909e-92ce2ce96a03
+  :CUSTOM_ID: using-a-launcher-in-the-simulate-command
   :END:
 
 To make the simulate command support ~--launcher~, we use the

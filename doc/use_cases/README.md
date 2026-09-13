@@ -18,7 +18,7 @@
 - [plugins](#plugins)
 - [using clk as a library](#using-clk-as-a-library)
 - [end-to-end example](#end-to-end-example)
-- [appendix](#org505ab7b)
+- [appendix](#appendix)
 
 These use cases illustrate clk features through concrete examples. They show common patterns that emerged from real usage and give hints about when clk might be useful.
 
@@ -111,7 +111,7 @@ When you need to set the same option on many commands, consider using [values to
 
 ## resolution priority
 
-clk resolves names by looking at the local profile first, then the global profile, then aliases and other resolvers. A local custom command always wins over a global alias with the same name, and a global command always wins over an alias.
+clk resolves names by walking the profiles from the most specific to the least specific one. The first profile that provides the name wins, be it with a command, a custom command or an alias. Hence a local alias wins over a global command, and a local custom command over a global alias.
 
 Several use cases show this in action from different angles:
 
@@ -197,7 +197,7 @@ If you don't want to use the clk command line tool, you can [roll your own](chao
 The [backing up documents](backing_up_documents.md) use case shows how to build a complete backup system starting from a simple command. It ties together many features covered above: [creating commands](#creating-commands), [persisted parameters](#persisting-options), [flow dependencies](#flows), [aliases](#aliases), and [per-project configuration](#projects).
 
 
-<a id="org505ab7b"></a>
+<a id="appendix"></a>
 
 # appendix
 

@@ -1,5 +1,5 @@
-- [manipulating strings](#orgbfdc959)
-  - [dropping duplicate lines](#org74a8e94)
+- [manipulating strings](#manipulating-strings)
+  - [dropping duplicate lines](#dropping-duplicate-lines)
 
 Now that [you can write a bash command](bash_command.md). you might want to do some complicated stuff with it. If your logic becomes pretty complicated, I definitely recommend that you use a python command instead.
 
@@ -14,14 +14,14 @@ clk command create bash mycommand
 We will use it to illustrate most of the example below.
 
 
-<a id="orgbfdc959"></a>
+<a id="manipulating-strings"></a>
 
 # manipulating strings
 
 When using bash, you don't have powerful string manipulation at hand. So you often need to put data in files and use tools like `cat`, `sed`, `cut` or `sed` (or `awk`) to deal with them.
 
 
-<a id="org74a8e94"></a>
+<a id="dropping-duplicate-lines"></a>
 
 ## dropping duplicate lines
 

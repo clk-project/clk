@@ -23,6 +23,9 @@ This is particularly useful when:
 - you want to understand what configuration exists at different levels (global vs local).
 
 * Describing the global profile
+  :PROPERTIES:
+  :CUSTOM_ID: describing-the-global-profile
+  :END:
 
 The global profile contains your personal configuration that applies everywhere.
 Let's set up some global configuration first.
@@ -71,6 +74,9 @@ clk parameter --global show | grep echo
 : echo --no-newline
 
 * Describing a local project
+  :PROPERTIES:
+  :CUSTOM_ID: describing-a-local-project
+  :END:
 
 When working in a project (a directory with a ~.clk~ folder), the local profile
 holds project-specific configuration. Let's create a project and add some local
@@ -118,6 +124,9 @@ clk alias --local show
 : test echo Running tests
 
 * Describing an extension
+  :PROPERTIES:
+  :CUSTOM_ID: describing-an-extension
+  :END:
 
 Extensions are reusable configurations that can be enabled or disabled. They're
 great for grouping related functionality. Let's create an extension with some
@@ -172,6 +181,9 @@ This is especially useful when you receive an extension from someone else or
 when you want to remember what you put in an extension you created a while ago.
 
 * Comparing profiles
+  :PROPERTIES:
+  :CUSTOM_ID: comparing-profiles
+  :END:
 
 A powerful pattern is to use ~clk describe~ on different profiles to understand
 where configuration comes from. When a command behaves unexpectedly, you can
@@ -186,6 +198,9 @@ This helps you understand the layered configuration: global settings provide
 defaults, while local settings can override them for specific projects.
 
 * Discovering custom commands
+  :PROPERTIES:
+  :CUSTOM_ID: discovering-custom-commands
+  :END:
 
 When you or your team create custom bash or python commands, ~clk describe~ will
 detect them too.
@@ -216,6 +231,9 @@ clk command --local list
 : ./.clk/bin/deploy
 
 * Summary
+  :PROPERTIES:
+  :CUSTOM_ID: summary
+  :END:
 
 The ~clk describe~ command is your entry point for exploring any profile's
 configuration. It provides actionable suggestions for diving deeper into:

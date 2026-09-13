@@ -51,6 +51,7 @@
 * weave                                                            :noexport:
   :PROPERTIES:
   :ID:       919c606c-d455-403e-a201-b5c506420b64
+  :CUSTOM_ID: weave
   :END:
   #+BEGIN_SRC python :results none :exports code :noweb yes :tangle liblp.py :shebang "#!/usr/bin/env python"
 

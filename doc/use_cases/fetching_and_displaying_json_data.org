@@ -19,6 +19,9 @@ downloads JSON data and outputs it in a nicely formatted way.
 Let's create a tool to fetch and display school holidays data.
 
 * Fetching and displaying JSON
+  :PROPERTIES:
+  :CUSTOM_ID: fetching-and-displaying-json
+  :END:
 
 First, let's create the group of commands.
 
@@ -99,6 +102,9 @@ Let's try it out.
 #+end_example
 
 * Filtering the data
+  :PROPERTIES:
+  :CUSTOM_ID: filtering-the-data
+  :END:
 
 Now let's add a command that filters holidays by location.
 
@@ -154,6 +160,9 @@ EOF
 #+end_example
 
 * Caching the downloaded data
+  :PROPERTIES:
+  :CUSTOM_ID: caching-the-downloaded-data
+  :END:
 
 If you're going to call this command frequently, you might want to cache the
 downloaded data to avoid repeated network requests. See [[file:scrapping_the_web.org][scrapping the web]] for

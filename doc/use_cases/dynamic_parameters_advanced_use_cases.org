@@ -16,6 +16,9 @@ After discovering the [[file:dynamic_parameters_and_exposed_class.org][dynamic p
 use cases. Here are a few pattern that I encountered when writing command line
 tools.
 * Adding values in the created class
+  :PROPERTIES:
+  :CUSTOM_ID: adding-values-in-the-created-class
+  :END:
 
 It may happen that you want to add some values to the created class when it is
 created.

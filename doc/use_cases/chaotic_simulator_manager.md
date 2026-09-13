@@ -1,8 +1,8 @@
-- [bootstrapping csm](#org85197ae)
-- [creating the simulator commands](#orgee49b3c)
-- [the simulator crashes — time to debug](#org4de1703)
-- [adding launcher support](#org5004a1c)
-- [using a launcher in the simulate command](#orgff62c46)
+- [bootstrapping csm](#bootstrapping-csm)
+- [creating the simulator commands](#creating-the-simulator-commands)
+- [the simulator crashes — time to debug](#the-simulator-crashes-time-to-debug)
+- [adding launcher support](#adding-launcher-support)
+- [using a launcher in the simulate command](#using-a-launcher-in-the-simulate-command)
 
 When installed, clk comes with an executable that may be used for all your workflows.
 
@@ -13,10 +13,10 @@ But first, two things:
 1.  we assume you want to create a tool that contains subcommands, like **git**, not a single command, like **find**. This is because we will automatically create some subcommands to deal with aliases, parameters etc.
 2.  we assume you don't mind creating a full python project and not a single ".py" file.
 
-Let's say you are working on an embedded project. The development cycle looks like this: generate some code from a model, configure the build system, build, then run the simulator. Each step is its own command, and most of the time you chain them together. Let's build a standalone tool called `csm` to manage that workflow.
+Let's say you are working on an embedded project. The development cycle looks like this: generate some code from a model, configure the build system, build, then run the simulator. Each step is its own command, and most of the time you chain them together. Let's build a standalone tool called `csm` (a Chaotic Simulator Manager) to manage that workflow.
 
 
-<a id="org85197ae"></a>
+<a id="bootstrapping-csm"></a>
 
 # bootstrapping csm
 
@@ -38,7 +38,7 @@ source "${TMP}/.envrc"
 ```
 
 
-<a id="orgee49b3c"></a>
+<a id="creating-the-simulator-commands"></a>
 
 # creating the simulator commands
 
@@ -102,7 +102,7 @@ csm simulate
     Running ./build/simulator
 
 
-<a id="org4de1703"></a>
+<a id="the-simulator-crashes-time-to-debug"></a>
 
 # the simulator crashes — time to debug
 
@@ -115,7 +115,7 @@ gdb --quiet --args ./build/simulator
 That works, but it is tedious. You need to remember the exact flags every time, and it does not compose with the rest of the workflow. What if you also want to profile with perf, or check for memory leaks with valgrind? Each tool has its own incantation and you end up copy-pasting long commands.
 
 
-<a id="org5004a1c"></a>
+<a id="adding-launcher-support"></a>
 
 # adding launcher support
 
@@ -204,7 +204,7 @@ csm launcher show gdb
     gdb gdb --quiet --args
 
 
-<a id="orgff62c46"></a>
+<a id="using-a-launcher-in-the-simulate-command"></a>
 
 # using a launcher in the simulate command
 

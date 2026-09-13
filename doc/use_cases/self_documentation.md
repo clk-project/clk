@@ -1,9 +1,9 @@
-- [Describing the global profile](#org2707ea5)
-- [Describing a local project](#org8cd38a8)
-- [Describing an extension](#org45c7061)
-- [Comparing profiles](#org5f7b294)
-- [Discovering custom commands](#orge37b19f)
-- [Summary](#orga0f2837)
+- [Describing the global profile](#describing-the-global-profile)
+- [Describing a local project](#describing-a-local-project)
+- [Describing an extension](#describing-an-extension)
+- [Comparing profiles](#comparing-profiles)
+- [Discovering custom commands](#discovering-custom-commands)
+- [Summary](#summary)
 
 When you start using clk extensively, you might end up with many [aliases](bash_command_from_alias.md), [parameters](setting_default_values.md), [commands](bash_command.md), and [extensions](creating_extensions.md) spread across different profiles. The `clk describe` command helps you discover what features are available in any profile, making clk a self-documented tool.
 
@@ -14,7 +14,7 @@ This is particularly useful when:
 -   you want to understand what configuration exists at different levels (global vs local).
 
 
-<a id="org2707ea5"></a>
+<a id="describing-the-global-profile"></a>
 
 # Describing the global profile
 
@@ -55,7 +55,7 @@ clk parameter --global show | grep echo
     echo --no-newline
 
 
-<a id="org8cd38a8"></a>
+<a id="describing-a-local-project"></a>
 
 # Describing a local project
 
@@ -96,7 +96,7 @@ clk alias --local show
     test echo Running tests
 
 
-<a id="org45c7061"></a>
+<a id="describing-an-extension"></a>
 
 # Describing an extension
 
@@ -141,7 +141,7 @@ clk --extension mytools command --local --extension mytools list
 This is especially useful when you receive an extension from someone else or when you want to remember what you put in an extension you created a while ago.
 
 
-<a id="org5f7b294"></a>
+<a id="comparing-profiles"></a>
 
 # Comparing profiles
 
@@ -155,7 +155,7 @@ clk describe local
 This helps you understand the layered configuration: global settings provide defaults, while local settings can override them for specific projects.
 
 
-<a id="orge37b19f"></a>
+<a id="discovering-custom-commands"></a>
 
 # Discovering custom commands
 
@@ -182,7 +182,7 @@ clk command --local list
     ./.clk/bin/deploy
 
 
-<a id="orga0f2837"></a>
+<a id="summary"></a>
 
 # Summary
 

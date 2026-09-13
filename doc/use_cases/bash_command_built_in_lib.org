@@ -28,11 +28,17 @@ Let's start by creating a command line.
 
 We will use it to illustrate most of the example below.
 * manipulating strings
+  :PROPERTIES:
+  :CUSTOM_ID: manipulating-strings
+  :END:
   When using bash, you don't have powerful string manipulation at hand. So you
   often need to put data in files and use tools like ~cat~, ~sed~, ~cut~ or
   ~sed~ (or ~awk~) to deal with them.
 
 ** dropping duplicate lines
+   :PROPERTIES:
+   :CUSTOM_ID: dropping-duplicate-lines
+   :END:
 
    Say that you want to deal with a file that contains duplicate entries and
    would like to deduplicate them, without sorting the file.
@@ -81,6 +87,9 @@ We will use it to illustrate most of the example below.
 
 
 * tangle                                                           :noexport:
+  :PROPERTIES:
+  :CUSTOM_ID: tangle
+  :END:
   #+BEGIN_SRC bash :exports none :tangle ../../tests/use_cases/bash_command_built_in_lib.sh :noweb yes :shebang "#!/usr/bin/env bash"
   set -eu
     <<init>>

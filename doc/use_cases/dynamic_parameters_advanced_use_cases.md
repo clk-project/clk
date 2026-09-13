@@ -1,9 +1,9 @@
-- [Adding values in the created class](#org0c385bc)
+- [Adding values in the created class](#adding-values-in-the-created-class)
 
 After discovering the [dynamic parameters](dynamic_parameters_and_exposed_class.md), you may want to use them for plenty of use cases. Here are a few pattern that I encountered when writing command line tools.
 
 
-<a id="org0c385bc"></a>
+<a id="adding-values-in-the-created-class"></a>
 
 # Adding values in the created class
 

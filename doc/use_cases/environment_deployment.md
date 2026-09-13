@@ -1,10 +1,10 @@
-- [A smart deployment command](#orgd989ede)
-- [Shortcut aliases for common targets](#orgf929f7b)
+- [A smart deployment command](#a-smart-deployment-command)
+- [Shortcut aliases for common targets](#shortcut-aliases-for-common-targets)
 
 When deploying applications, you often want to target different environments like staging, production, or development. A good deployment tool should be smart about defaults: when you don't specify an environment, it could auto-detect based on context (like the current git branch), but when you explicitly choose one, it should respect that choice.
 
 
-<a id="orgd989ede"></a>
+<a id="a-smart-deployment-command"></a>
 
 # A smart deployment command
 
@@ -52,7 +52,7 @@ clk app deploy --environment staging
     Deploying to staging
 
 
-<a id="orgf929f7b"></a>
+<a id="shortcut-aliases-for-common-targets"></a>
 
 # Shortcut aliases for common targets
 
