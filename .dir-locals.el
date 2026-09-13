@@ -1,7 +1,8 @@
 ;;; Directory Local Variables            -*- no-byte-compile: t -*-
 ;;; For more information see (info "(emacs) Directory Variables")
 
-((nil . ((konix/agent-shell-tool-whitelist-project . (("^\\./tangle\\.sh" . "")
+((nil . ((konix/agent-shell-tool-whitelist-project . (("^\\./custom-ids\\.sh" . "")
+                                                      ("^\\./tangle-n-export\\.sh" . "")
                                                       ("^clk python -m pytest" . "")))
          (konix/agent-shell-mcp-project-servers . ("konix-emacs-code-review"
                                                    "konix-emacs-workspace"))
