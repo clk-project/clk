@@ -946,6 +946,9 @@ def reproducible_output_callback(ctx, attr, value):
         import clk
 
         clk.startup_time = time.time()
+        # a program we run writes to the real file descriptors, where the
+        # redaction cannot reach it. Bring its output back through us.
+        clk.lib.call_capture_stdout = True
 
         _original_format_time = DevelopColorFormatter.formatTime
 

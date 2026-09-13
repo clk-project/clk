@@ -444,8 +444,8 @@ run-failing-demo_code () {
 
 run-failing-demo_expected () {
       cat<<"EOEXPECTED"
-error: bash -c 'echo trouble reaching $1 >&2 ; test $1 = main || exit 4 ; echo ok' -- other exited with 4, saying:
-error: trouble reaching other
+trouble reaching other
+error: bash -c 'echo trouble reaching $1 >&2 ; test $1 = main || exit 4 ; echo ok' -- other exited with 4
 EOEXPECTED
 }
 

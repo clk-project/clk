@@ -452,10 +452,10 @@ def check_cluster(cluster):
 clk check-cluster other 2>&1
 ```
 
-    error: bash -c 'echo trouble reaching $1 >&2 ; test $1 = main || exit 4 ; echo ok' -- other exited with 4, saying:
-    error: trouble reaching other
+    trouble reaching other
+    error: bash -c 'echo trouble reaching $1 >&2 ; test $1 = main || exit 4 ; echo ok' -- other exited with 4
 
-clk names the command that failed, the status it exited with, and repeats what it said on its error output. That is enough to go and have a look.
+What the program said reaches you as it said it, and clk then names the command that gave up and the status it exited with. That is enough to go and have a look.
 
 Ask the same program about `main` and it complains just as much, yet gives you an answer.
 
