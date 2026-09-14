@@ -468,6 +468,34 @@ clk check-cluster main 2>&1
 
 What it said reaches you as it said it, with nothing added, and the answer is still yours to use.
 
+A program may also do neither: not answer, not give up, simply keep you waiting. Pass `timeout` to `check_output` and it will not wait beyond it. Half a minute is long enough for a cluster, and an option lets you be less patient than that.
+
+```bash
+clk command create --extension cluster-demo python watch-cluster --description "Wait for the cluster to answer" --body '
+import subprocess
+
+from clk.lib import check_output
+
+@command()
+@option("--timeout", type=int, default=30, help="How long to give the cluster to answer")
+def watch_cluster(timeout):
+    """Wait for the cluster to answer, but not for ever."""
+    try:
+        print(check_output(["bash", "-c", "sleep 600"], timeout=timeout))
+    except subprocess.TimeoutExpired:
+        print("giving up, the cluster is not answering")
+'
+```
+
+```bash
+clk watch-cluster --timeout 1 2>&1
+```
+
+    error: bash -c 'sleep 600' did not finish in 1s
+    giving up, the cluster is not answering
+
+clk says which program ran out of patience, and the `TimeoutExpired` is yours to catch, so your command decides what to do about it.
+
 
 <a id="1a2b3c4d-5678-90ab-cdef-abcdef012345"></a>
 

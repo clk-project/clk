@@ -449,6 +449,11 @@ def check_output(cmd, *args, **kwargs):
         safe = kwargs.pop("safe")
     except KeyError:
         safe = False
+    # timeout belongs to communicate, not to Popen, so keep it aside
+    try:
+        timeout = kwargs.pop("timeout")
+    except KeyError:
+        timeout = None
     # deal with backward compatibility
     if "force" in kwargs.keys():
         LOGGER.deprecated(
@@ -466,20 +471,11 @@ def check_output(cmd, *args, **kwargs):
             kwargs["stderr"] = subprocess.PIPE
             kwargs["stdout"] = subprocess.PIPE
             p = subprocess.Popen(cmd, *args, **kwargs)
-            stderr = []
-            while True:
-                line = p.stderr.readline().decode("utf-8")
-                stderr.append(line)
-                if not nostderr:
-                    sys.stderr.write(line)
-                if line == "" and p.poll() is not None:
-                    break
-            p.wait()
-            stdout = p.stdout.read().decode("utf-8")
-            stderr = "".join(stderr)
+            stdout, stderr = _communicate(p, message, timeout)
+            if not nostderr:
+                sys.stderr.write(stderr)
             if p.returncode != 0:
-                # when not nostderr, stderr was written as it came, no need to
-                # show it again
+                # stderr was written just above, no need to show it again
                 _explain_failure(message, p.returncode, stderr if nostderr else "")
                 raise subprocess.CalledProcessError(
                     p.returncode, cmd, output=stdout, stderr=stderr
@@ -490,9 +486,7 @@ def check_output(cmd, *args, **kwargs):
             # said when it fails
             kwargs.setdefault("stderr", subprocess.PIPE)
             p = subprocess.Popen(cmd, *args, stdout=subprocess.PIPE, **kwargs)
-            stdout, stderr = p.communicate()
-            stdout = stdout.decode("utf-8")
-            stderr = stderr.decode("utf-8") if stderr is not None else ""
+            stdout, stderr = _communicate(p, message, timeout)
             if p.returncode != 0:
                 _explain_failure(message, p.returncode, stderr)
                 raise subprocess.CalledProcessError(
@@ -501,6 +495,21 @@ def check_output(cmd, *args, **kwargs):
             if stderr and not nostderr:
                 sys.stderr.write(stderr)
             return stdout
+
+
+def _communicate(p, message, timeout):
+    """Wait for the process, giving up after timeout, and decode what it said"""
+    try:
+        stdout, stderr = p.communicate(timeout=timeout)
+    except subprocess.TimeoutExpired:
+        p.kill()
+        p.communicate()
+        LOGGER.error(f"{message} did not finish in {timeout}s")
+        raise
+    return (
+        stdout.decode("utf-8") if stdout is not None else "",
+        stderr.decode("utf-8") if stderr is not None else "",
+    )
 
 
 def _explain_failure(message, returncode, stderr):

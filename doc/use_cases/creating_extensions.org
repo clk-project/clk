@@ -541,6 +541,40 @@ clk check-cluster main 2>&1
 What it said reaches you as it said it, with nothing added, and the answer is
 still yours to use.
 
+A program may also do neither: not answer, not give up, simply keep you waiting.
+Pass ~timeout~ to ~check_output~ and it will not wait beyond it. Half a minute is
+long enough for a cluster, and an option lets you be less patient than that.
+
+#+NAME: create_waiting_command
+#+BEGIN_SRC bash :results none :exports code :session f47428c2-56ea-4d91-97d9-4f2ff63ef052
+clk command create --extension cluster-demo python watch-cluster --description "Wait for the cluster to answer" --body '
+import subprocess
+
+from clk.lib import check_output
+
+@command()
+@option("--timeout", type=int, default=30, help="How long to give the cluster to answer")
+def watch_cluster(timeout):
+    """Wait for the cluster to answer, but not for ever."""
+    try:
+        print(check_output(["bash", "-c", "sleep 600"], timeout=timeout))
+    except subprocess.TimeoutExpired:
+        print("giving up, the cluster is not answering")
+'
+#+END_SRC
+
+#+NAME: run-waiting-demo
+#+BEGIN_SRC bash :results verbatim :cache yes :exports both :session f47428c2-56ea-4d91-97d9-4f2ff63ef052
+clk watch-cluster --timeout 1 2>&1
+#+END_SRC
+
+#+RESULTS[]: run-waiting-demo
+: error: bash -c 'sleep 600' did not finish in 1s
+: giving up, the cluster is not answering
+
+clk says which program ran out of patience, and the ~TimeoutExpired~ is yours to
+catch, so your command decides what to do about it.
+
 #+NAME: cleanup-cluster-demo
 #+BEGIN_SRC bash :results none :exports none :session f47428c2-56ea-4d91-97d9-4f2ff63ef052
 clk extension remove cluster-demo
@@ -626,6 +660,10 @@ check-result(run-tempfile-demo)
 check-result(run-failing-demo)
 
 check-result(run-complaining-demo)
+
+<<create_waiting_command>>
+
+check-result(run-waiting-demo)
 
 <<cleanup-cluster-demo>>
 

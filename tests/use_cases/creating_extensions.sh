@@ -481,6 +481,43 @@ exit 1
 }
 
 
+clk command create --extension cluster-demo python watch-cluster --description "Wait for the cluster to answer" --body '
+import subprocess
+
+from clk.lib import check_output
+
+@command()
+@option("--timeout", type=int, default=30, help="How long to give the cluster to answer")
+def watch_cluster(timeout):
+    """Wait for the cluster to answer, but not for ever."""
+    try:
+        print(check_output(["bash", "-c", "sleep 600"], timeout=timeout))
+    except subprocess.TimeoutExpired:
+        print("giving up, the cluster is not answering")
+'
+
+
+run-waiting-demo_code () {
+      clk watch-cluster --timeout 1 2>&1
+}
+
+run-waiting-demo_expected () {
+      cat<<"EOEXPECTED"
+error: bash -c 'sleep 600' did not finish in 1s
+giving up, the cluster is not answering
+EOEXPECTED
+}
+
+echo 'Run run-waiting-demo'
+
+{ run-waiting-demo_code || true ; } > "${TMP}/code.txt" 2>&1
+run-waiting-demo_expected > "${TMP}/expected.txt" 2>&1
+diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+echo "Something went wrong when trying run-waiting-demo"
+exit 1
+}
+
+
 clk extension remove cluster-demo
 
 clk extension create "my-host.[example].com"
