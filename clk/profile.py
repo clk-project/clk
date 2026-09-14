@@ -18,9 +18,7 @@ from clk.lib import (
     createfile,
     ensure_unicode,
     json_dump_file,
-    json_file,
     makedirs,
-    move,
     part_of_day,
     rm,
 )
@@ -172,6 +170,7 @@ class DirectoryProfile(Profile):
         " or " + " ".join(extension_extra_chars)
     )
     JSON_FILE_EXTENSION = ".json"
+    oldest_supported_version = 8
 
     def describe(self):
         print(
@@ -384,16 +383,7 @@ class DirectoryProfile(Profile):
         self.activation_level = activation_level
         self.explicit = explicit
         self.isroot = isroot
-        self.migrate_from = [
-            self.alias_has_documentation,
-            self.stack_of_git_records,
-            self.extensions_instead_of_settings_level,
-            self.extensions_instead_of_profiles,
-            self.remove_with_legend,
-            self.hooks_to_trigger,
-            self.customcommand_to_executable,
-            self.recipe_to_extension,
-        ]
+        self.migrate_from = []
         self._version = None
         self.location = location
         self._location_path = Path(location)
@@ -416,6 +406,14 @@ class DirectoryProfile(Profile):
                 f" I can only manage till version {self.max_version}."
                 " It will be ignored."
                 f" Please upgrade {self.app_name} and try again."
+            )
+            self.frozen_during_migration = True
+        if 0 < self.version < self.oldest_supported_version:
+            LOGGER.error(
+                f"The profile at location {self.location} is at version {self.old_version}."
+                f" I can only migrate profiles from version {self.oldest_supported_version} on."
+                " It will be ignored."
+                f" Please run an older {self.app_name} once and try again."
             )
             self.frozen_during_migration = True
         self.computed_location = None
@@ -511,7 +509,7 @@ class DirectoryProfile(Profile):
 
     @property
     def max_version(self):
-        return len(self.migrate_from)
+        return self.oldest_supported_version + len(self.migrate_from)
 
     def compute_settings(self):
         if self.location == self.computed_location:
@@ -529,171 +527,6 @@ class DirectoryProfile(Profile):
     @property
     def isextension(self):
         return self._location_path.parent.name == "extensions"
-
-    def alias_has_documentation(self):
-        for settings_file in glob(self.location + f"/{self.app_name}*json"):
-            with json_file(settings_file) as settings:
-                if "alias" not in settings:
-                    continue
-
-                aliases = settings["alias"]
-                new_aliases = {
-                    alias: {
-                        "commands": commands,
-                        "documentation": None,
-                    }
-                    for alias, commands in aliases.items()
-                }
-                settings["alias"] = new_aliases
-        self.computed_location = None
-        self.compute_settings()
-        return True
-
-    def stack_of_git_records(self):
-        for settings_file in glob(self.location + f"/{self.app_name}*json"):
-            with json_file(settings_file) as settings:
-                if "git_record" not in settings:
-                    continue
-
-                git_records = settings["git_record"]
-                new_git_records = {key: [record] for key, record in git_records.items()}
-                settings["git_record"] = new_git_records
-        self.computed_location = None
-        self.compute_settings()
-        return True
-
-    def extensions_instead_of_profiles(self):
-        if not self.isextension:
-            self._extensions_instead_of_profiles()
-        return True
-
-    def _extensions_instead_of_profiles(self):
-        extensions_dir = self.location + "/extensions/"
-        warn = False
-        for profile in glob(self.location + "/../.csm-*"):
-            profile_name = re.sub("^.+csm-(.+)$", r"\1", profile)
-            extension_location = extensions_dir + "/" + profile_name + "_from_profile"
-            move(profile, extension_location)
-            warn = True
-        if warn:
-            LOGGER.warning(
-                "The profiles were migrated as extensions."
-                " As we could not maintain backward compatibility,"
-                " please see with SLO or GLE to understand how"
-                " to make use of this new setup"
-            )
-
-    def extensions_instead_of_settings_level(self):
-        if not self.isextension:
-            self._extensions_instead_of_settings_level()
-        return True
-
-    def _extensions_instead_of_settings_level(self):
-        extensions_dir = self.location + "/extensions/"
-
-        def migrate_settings_to_extension(settings_level_file, name):
-            if open(settings_level_file, "rb").read().decode("utf-8").strip() == "{}":
-                return False
-            makedirs(extensions_dir + "/" + name)
-            enabled = (
-                not json.load(open(settings_level_file))
-                .get("_self", {})
-                .get("disabled", False)
-            )
-            order = (
-                json.load(open(settings_level_file)).get("_self", {}).get("order", 100)
-            )
-            move(
-                settings_level_file,
-                extensions_dir + "/" + name + f"/{self.app_name}.json",
-            )
-            createfile(
-                extensions_dir + "/" + name + "/version.txt", str(self.version + 1)
-            )
-            createfile(
-                extensions_dir + "/" + name + self.JSON_FILE_EXTENSION,
-                json.dumps(
-                    {
-                        "enabled": enabled,
-                        "order": order,
-                    }
-                ),
-            )
-            return True
-
-        migrate_something = False
-        for settings_level_file in glob(self.location + f"/{self.app_name}-*.json"):
-            name = re.sub(
-                f".+{self.app_name}-([a-zA-Z-]+).json$",
-                r"\1",
-                settings_level_file,
-            )
-            name = name.replace("-", "_")
-            if name == "private":
-                continue
-            migrate_something |= migrate_settings_to_extension(
-                settings_level_file, name + "_from_settings"
-            )
-        private = Path(self.location) / f"{self.app_name}-private.json"
-        local = Path(self.location) / f"{self.app_name}.json"
-        if private.exists():
-            if private.read_text().strip() != "{}":
-                migrate_something = True
-            else:
-                rm(private)
-        if migrate_something is True:
-            name = "migrated_local"
-            if local.exists() and local.read_text().strip() != "{}":
-                migrate_settings_to_extension(str(local), name)
-            if private.exists():
-                move(private, local)
-            with json_file(local) as values:
-                extensions = values.get("recipe", {})
-                local_order = extensions.get(name, {})
-                local_order["order"] = 0
-                extensions[name] = local_order
-                values["recipe"] = extensions
-            self.computed_location = None
-            self.compute_settings()
-
-    def remove_with_legend(self):
-        for settings_file in glob(self.location + f"/{self.app_name}*json"):
-            content = open(settings_file, "rb").read().decode("utf-8")
-            content = content.replace("--with-legend", "--legend")
-            open(settings_file, "wb").write(content.encode("utf-8"))
-        self.computed_location = None
-        self.compute_settings()
-        return True
-
-    def hooks_to_trigger(self):
-        with json_file(self.settings_path) as settings:
-            if "hooks" in settings:
-                settings["triggers"] = settings["hooks"]
-                del settings["hooks"]
-        self.computed_location = None
-        self.compute_settings()
-        return True
-
-    def customcommand_to_executable(self):
-        with json_file(self.settings_path) as settings:
-            if "customcommands" in settings:
-                customcommands = settings["customcommands"]
-                if "externalpaths" in customcommands:
-                    customcommands["executablepaths"] = customcommands["externalpaths"]
-                    del customcommands["externalpaths"]
-        self.computed_location = None
-        self.compute_settings()
-        return True
-
-    def recipe_to_extension(self):
-        recipes_dir = Path(self.location) / "recipes"
-        if recipes_dir.exists():
-            extensions_dir = Path(self.location) / "extensions"
-            move(recipes_dir, extensions_dir)
-            for recipe in glob(f"{extensions_dir}/clk_recipe_*"):
-                extension = re.sub("/clk_recipe_([^/]+)", r"/clk_extension_\1", recipe)
-                move(recipe, extension)
-        return True
 
     def write_settings(self):
         if self.readonly:
@@ -782,7 +615,9 @@ class DirectoryProfile(Profile):
         return res
 
     def _migrate(self, persist):
-        for version, migrator in enumerate(self.migrate_from):
+        for version, migrator in enumerate(
+            self.migrate_from, self.oldest_supported_version
+        ):
             if self.version == version:
                 next_version = version + 1
                 if persist:
@@ -798,6 +633,7 @@ class DirectoryProfile(Profile):
                         f"version {version} to version {next_version}"
                     )
                     return False
+        self._version = self.max_version
         if persist:
             LOGGER.status(f"Migration successful. Have a nice {part_of_day()} :-).")
         return True
