@@ -94,29 +94,6 @@ def edit(cmd):
 @parameter.command(ignore_unknown_options=True, handle_dry_run=True)
 @argument(
     "cmd",
-    type=CommandType(),
-    help="The command to which the parameters will be appended",
-)
-@argument("params", nargs=-1, help="The parameters to append")
-def append(cmd, params):
-    """Add a parameter after the parameters of a command"""
-    old = config.parameters.writable.get(cmd, [])
-    new = old + list(params)
-    if old:
-        LOGGER.info(
-            f"New {Colorer.apply_color_profilename(config.parameters.writeprofilename)} parameters for {cmd}: {format_parameters(old)} (old parameters) + {format_parameters(params)}"
-        )
-    else:
-        LOGGER.info(
-            f"New {Colorer.apply_color_profilename(config.parameters.writeprofilename)} parameters for {cmd}: {format_parameters(params)}"
-        )
-    config.parameters.writable[cmd] = new
-    config.parameters.write()
-
-
-@parameter.command(ignore_unknown_options=True, handle_dry_run=True)
-@argument(
-    "cmd",
     type=CommandSettingsKeyType("parameters"),
     help="The command to which the parameters will be inserted",
 )

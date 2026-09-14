@@ -9,12 +9,6 @@ def test_replacing_parameters(lib):
     assert lib.cmd("echo") == "bar"
 
 
-def test_appending_parameters(lib):
-    lib.cmd("parameter set echo foo")
-    lib.cmd("parameter append echo bar")
-    assert lib.cmd("echo") == "foo bar"
-
-
 def test_removing_parameters(lib):
     lib.cmd("parameter set echo foo bar")
     lib.cmd("parameter remove echo foo")
@@ -24,9 +18,7 @@ def test_removing_parameters(lib):
 
 
 def test_using_automatic_options(lib):
-    lib.cmd("echo --set-parameter global foo")
-    assert lib.cmd("echo") == "foo"
-    lib.cmd("echo --append-parameter global bar")
+    lib.cmd("echo --set-parameter global foo bar")
     assert lib.cmd("echo") == "foo bar"
     lib.cmd("echo --remove-parameter global foo")
     assert lib.cmd("echo") == "bar"

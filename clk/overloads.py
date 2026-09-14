@@ -338,8 +338,8 @@ class ProfileChoice(click.Choice):
 class ExtraParametersMixin:
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        # Parameter options with args (set, append, remove pass raw_args to the command)
-        for action in ("set", "append", "remove"):
+        # Parameter options with args (set and remove pass raw_args to the command)
+        for action in ("set", "remove"):
             self.params.append(
                 AutomaticOption(
                     [f"--{action}-parameter"],

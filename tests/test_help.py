@@ -25,7 +25,7 @@ def test_command_help(lib):
 
 def test_group_help(lib):
     some_part_of_the_help_message = (
-        "append      Add a parameter after the parameters of a command"
+        "insert      Add a parameter before the parameters of a command"
     )
     assert some_part_of_the_help_message in lib.cmd("parameter --help")
     assert some_part_of_the_help_message in lib.cmd("help parameter")
