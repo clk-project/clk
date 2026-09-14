@@ -336,6 +336,95 @@ clk build
 #+RESULTS[]: shadowed-build
 : Building the frontend
 
+* tidying up as the aliases pile up
+  :PROPERTIES:
+  :CUSTOM_ID: tidying-up-as-the-aliases-pile-up
+  :END:
+
+Made in a hurry, aliases pile up and say nothing about themselves. Here is one
+more, still in ~billing-app~, standing on the two you already have.
+
+#+NAME: ship
+#+BEGIN_SRC bash :results verbatim :exports both :session 55ed49b4-065d-440e-903b-658d1dcec014 :cache yes
+clk alias set ship build , test
+#+END_SRC
+
+#+RESULTS[]: ship
+: New local alias for ship: build , test
+
+Asked for its help, it can only repeat itself.
+
+#+NAME: ship-help-before
+#+BEGIN_SRC bash :results verbatim :exports both :session 55ed49b4-065d-440e-903b-658d1dcec014 :cache yes
+clk ship --help | head -3
+#+END_SRC
+
+#+RESULTS[]: ship-help-before
+: Usage: clk ship [OPTIONS] [MESSAGE]...
+:
+:   Alias for: build , test
+
+~clk alias set-documentation~ gives it something better to say.
+
+#+NAME: document-ship
+#+BEGIN_SRC bash :results none :exports code :session 55ed49b4-065d-440e-903b-658d1dcec014
+clk alias set-documentation ship "Build and test the frontend"
+#+END_SRC
+
+#+NAME: ship-help-after
+#+BEGIN_SRC bash :results verbatim :exports both :session 55ed49b4-065d-440e-903b-658d1dcec014 :cache yes
+clk ship --help | head -3
+#+END_SRC
+
+#+RESULTS[]: ship-help-after
+: Usage: clk ship [OPTIONS] [MESSAGE]...
+:
+:   Build and test the frontend
+
+Before a release you want the API in as well. Copying ~ship~ gives you something
+to start from, that you are then free to let drift.
+
+#+NAME: copy-ship
+#+BEGIN_SRC bash :results verbatim :exports both :session 55ed49b4-065d-440e-903b-658d1dcec014 :cache yes
+clk alias copy ship ship-all
+#+END_SRC
+
+#+RESULTS[]: copy-ship
+: Copied alias ship -> ship-all in local
+
+#+NAME: append-ship
+#+BEGIN_SRC bash :results none :exports code :session 55ed49b4-065d-440e-903b-658d1dcec014
+clk alias append ship-all api build , api test
+#+END_SRC
+
+Renaming is not only about the alias itself: the aliases that call it follow.
+
+#+NAME: rename-test
+#+BEGIN_SRC bash :results verbatim :exports both :session 55ed49b4-065d-440e-903b-658d1dcec014 :cache yes
+clk alias rename test test-front
+#+END_SRC
+
+#+RESULTS[]: rename-test
+: Moved alias test -> test-front in local
+
+Both ~ship~ and ~ship-all~ were built on ~test~, and now call ~test-front~
+without your having to say so.
+
+#+NAME: show-after-rename
+#+BEGIN_SRC bash :results verbatim :exports both :session 55ed49b4-065d-440e-903b-658d1dcec014 :cache yes
+clk alias show
+#+END_SRC
+
+#+RESULTS[]: show-after-rename
+: api clk --project ../billing-api
+: build echo Building the frontend
+: ship build, test-front
+: ship-all build, test-front, api build, api test
+: test-front echo Running frontend tests
+
+Had one of them lived in a profile clk cannot write to, it would have warned you
+that the old name is still used there, for you to correct by hand.
+
 #+BEGIN_SRC bash :exports none :tangle ../../tests/use_cases/alias_to_root.sh :noweb yes :shebang "#!/usr/bin/env bash -eu"
   <<init>>
   <<create-api>>
@@ -372,4 +461,12 @@ clk build
   check-result(promoted-build)
   <<enter-app-for-promotion>>
   check-result(shadowed-build)
+  check-result(ship)
+  check-result(ship-help-before)
+  <<document-ship>>
+  check-result(ship-help-after)
+  check-result(copy-ship)
+  <<append-ship>>
+  check-result(rename-test)
+  check-result(show-after-rename)
 #+END_SRC

@@ -1,5 +1,5 @@
 #!/usr/bin/env bash -eu
-# [[file:../../doc/use_cases/alias_to_root.org::#promoting-an-alias-to-the-global-profile][promoting an alias to the global profile:5]]
+# [[file:../../doc/use_cases/alias_to_root.org::#tidying-up-as-the-aliases-pile-up][tidying up as the aliases pile up:9]]
 . ./sandboxing.sh
 mkdir -p billing-api/.clk
 cd billing-api
@@ -492,4 +492,134 @@ diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
 echo "Something went wrong when trying shadowed-build"
 exit 1
 }
-# promoting an alias to the global profile:5 ends here
+
+
+ship_code () {
+      clk alias set ship build , test
+}
+
+ship_expected () {
+      cat<<"EOEXPECTED"
+New local alias for ship: build , test
+EOEXPECTED
+}
+
+echo 'Run ship'
+
+{ ship_code || true ; } > "${TMP}/code.txt" 2>&1
+ship_expected > "${TMP}/expected.txt" 2>&1
+diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+echo "Something went wrong when trying ship"
+exit 1
+}
+
+
+ship-help-before_code () {
+      clk ship --help | head -3
+}
+
+ship-help-before_expected () {
+      cat<<"EOEXPECTED"
+Usage: clk ship [OPTIONS] [MESSAGE]...
+
+  Alias for: build , test
+EOEXPECTED
+}
+
+echo 'Run ship-help-before'
+
+{ ship-help-before_code || true ; } > "${TMP}/code.txt" 2>&1
+ship-help-before_expected > "${TMP}/expected.txt" 2>&1
+diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+echo "Something went wrong when trying ship-help-before"
+exit 1
+}
+
+clk alias set-documentation ship "Build and test the frontend"
+
+ship-help-after_code () {
+      clk ship --help | head -3
+}
+
+ship-help-after_expected () {
+      cat<<"EOEXPECTED"
+Usage: clk ship [OPTIONS] [MESSAGE]...
+
+  Build and test the frontend
+EOEXPECTED
+}
+
+echo 'Run ship-help-after'
+
+{ ship-help-after_code || true ; } > "${TMP}/code.txt" 2>&1
+ship-help-after_expected > "${TMP}/expected.txt" 2>&1
+diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+echo "Something went wrong when trying ship-help-after"
+exit 1
+}
+
+
+copy-ship_code () {
+      clk alias copy ship ship-all
+}
+
+copy-ship_expected () {
+      cat<<"EOEXPECTED"
+Copied alias ship -> ship-all in local
+EOEXPECTED
+}
+
+echo 'Run copy-ship'
+
+{ copy-ship_code || true ; } > "${TMP}/code.txt" 2>&1
+copy-ship_expected > "${TMP}/expected.txt" 2>&1
+diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+echo "Something went wrong when trying copy-ship"
+exit 1
+}
+
+clk alias append ship-all api build , api test
+
+rename-test_code () {
+      clk alias rename test test-front
+}
+
+rename-test_expected () {
+      cat<<"EOEXPECTED"
+Moved alias test -> test-front in local
+EOEXPECTED
+}
+
+echo 'Run rename-test'
+
+{ rename-test_code || true ; } > "${TMP}/code.txt" 2>&1
+rename-test_expected > "${TMP}/expected.txt" 2>&1
+diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+echo "Something went wrong when trying rename-test"
+exit 1
+}
+
+
+show-after-rename_code () {
+      clk alias show
+}
+
+show-after-rename_expected () {
+      cat<<"EOEXPECTED"
+api clk --project ../billing-api
+build echo Building the frontend
+ship build, test-front
+ship-all build, test-front, api build, api test
+test-front echo Running frontend tests
+EOEXPECTED
+}
+
+echo 'Run show-after-rename'
+
+{ show-after-rename_code || true ; } > "${TMP}/code.txt" 2>&1
+show-after-rename_expected > "${TMP}/expected.txt" 2>&1
+diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+echo "Something went wrong when trying show-after-rename"
+exit 1
+}
+# tidying up as the aliases pile up:9 ends here

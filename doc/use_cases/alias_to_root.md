@@ -2,6 +2,7 @@
 - [Global aliases](#260d04a3-8c35-4581-8d40-e3479eb874a9)
 - [Local aliases](#450ba117-403e-4bc3-a809-28d8a6f590c0)
 - [promoting an alias to the global profile](#promoting-an-alias-to-the-global-profile)
+- [tidying up as the aliases pile up](#tidying-up-as-the-aliases-pile-up)
 
 When you work on linked but separate projects — say a backend API and a frontend app — changes in one often need to be verified in the other. If they live in separate directories, you end up constantly `cd`-ing back and forth, losing context along the way.
 
@@ -248,3 +249,74 @@ clk build
 ```
 
     Building the frontend
+
+
+<a id="tidying-up-as-the-aliases-pile-up"></a>
+
+# tidying up as the aliases pile up
+
+Made in a hurry, aliases pile up and say nothing about themselves. Here is one more, still in `billing-app`, standing on the two you already have.
+
+```bash
+clk alias set ship build , test
+```
+
+    New local alias for ship: build , test
+
+Asked for its help, it can only repeat itself.
+
+```bash
+clk ship --help | head -3
+```
+
+    Usage: clk ship [OPTIONS] [MESSAGE]...
+
+      Alias for: build , test
+
+`clk alias set-documentation` gives it something better to say.
+
+```bash
+clk alias set-documentation ship "Build and test the frontend"
+```
+
+```bash
+clk ship --help | head -3
+```
+
+    Usage: clk ship [OPTIONS] [MESSAGE]...
+
+      Build and test the frontend
+
+Before a release you want the API in as well. Copying `ship` gives you something to start from, that you are then free to let drift.
+
+```bash
+clk alias copy ship ship-all
+```
+
+    Copied alias ship -> ship-all in local
+
+```bash
+clk alias append ship-all api build , api test
+```
+
+Renaming is not only about the alias itself: the aliases that call it follow.
+
+```bash
+clk alias rename test test-front
+```
+
+    Moved alias test -> test-front in local
+
+Both `ship` and `ship-all` were built on `test`, and now call `test-front` without your having to say so.
+
+```bash
+clk alias show
+```
+
+    api clk --project ../billing-api
+    build echo Building the frontend
+    ship build, test-front
+    ship-all build, test-front, api build, api test
+    test-front echo Running frontend tests
+
+Had one of them lived in a profile clk cannot write to, it would have warned you that the old name is still used there, for you to correct by hand.
