@@ -199,6 +199,7 @@ That folder is only code, so git can carry it. A fresh repository wants to know 
 git init --bare "${TMP}/k8s.git"
 cd "$(clk extension where-is global/k8s)"
 git init
+echo "__pycache__/" > .gitignore
 git add .
 git -c user.email=you@example.com -c user.name=You commit -m "the k8s extension"
 git remote add origin "${TMP}/k8s.git"
@@ -244,6 +245,43 @@ clk extension install "${TMP}/someone-else.git" k8s 2>&1 | sed "s|$(pwd)|.|" | t
 ```
 
     error: Extension k8s already exists and is not using the same URL: ./k8s.git
+
+Meanwhile a colleague of yours writes the command that stops the cluster, and pushes it to that same repository.
+
+```bash
+git clone "${TMP}/k8s.git" "${TMP}/their-k8s"
+cd "${TMP}/their-k8s"
+mkdir -p bin
+cat <<'EOF' > bin/stop-cluster
+#!/usr/bin/env bash
+echo "stopping k8s cluster"
+EOF
+chmod +x bin/stop-cluster
+git add .
+git -c user.email=them@example.com -c user.name=Them commit -m "stop the cluster too"
+git push origin HEAD
+cd "${TMP}"
+```
+
+You do not have it yet.
+
+```bash
+clk stop-cluster 2>&1 | tail -1
+```
+
+    error: No such command 'stop-cluster'.
+
+`clk extension update` pulls the clone, and what they wrote is yours.
+
+```bash
+clk extension update k8s
+```
+
+```bash
+clk stop-cluster 2>/dev/null
+```
+
+    stopping k8s cluster
 
 
 <a id="b7bcef53-dd68-4660-9c5c-d9aa029d1a72"></a>

@@ -165,6 +165,7 @@ exit 1
 git init --bare "${TMP}/k8s.git"
 cd "$(clk extension where-is global/k8s)"
 git init
+echo "__pycache__/" > .gitignore
 git add .
 git -c user.email=you@example.com -c user.name=You commit -m "the k8s extension"
 git remote add origin "${TMP}/k8s.git"
@@ -239,6 +240,63 @@ echo 'Run refuse-another-k8s'
 refuse-another-k8s_expected > "${TMP}/expected.txt" 2>&1
 diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
 echo "Something went wrong when trying refuse-another-k8s"
+exit 1
+}
+
+
+git clone "${TMP}/k8s.git" "${TMP}/their-k8s"
+cd "${TMP}/their-k8s"
+mkdir -p bin
+cat <<'EOF' > bin/stop-cluster
+#!/usr/bin/env bash
+echo "stopping k8s cluster"
+EOF
+chmod +x bin/stop-cluster
+git add .
+git -c user.email=them@example.com -c user.name=Them commit -m "stop the cluster too"
+git push origin HEAD
+cd "${TMP}"
+
+
+no-stop-cluster_code () {
+      clk stop-cluster 2>&1 | tail -1
+}
+
+no-stop-cluster_expected () {
+      cat<<"EOEXPECTED"
+error: No such command 'stop-cluster'.
+EOEXPECTED
+}
+
+echo 'Run no-stop-cluster'
+
+{ no-stop-cluster_code || true ; } > "${TMP}/code.txt" 2>&1
+no-stop-cluster_expected > "${TMP}/expected.txt" 2>&1
+diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+echo "Something went wrong when trying no-stop-cluster"
+exit 1
+}
+
+
+clk extension update k8s
+
+
+stop-cluster_code () {
+      clk stop-cluster 2>/dev/null
+}
+
+stop-cluster_expected () {
+      cat<<"EOEXPECTED"
+stopping k8s cluster
+EOEXPECTED
+}
+
+echo 'Run stop-cluster'
+
+{ stop-cluster_code || true ; } > "${TMP}/code.txt" 2>&1
+stop-cluster_expected > "${TMP}/expected.txt" 2>&1
+diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+echo "Something went wrong when trying stop-cluster"
 exit 1
 }
 

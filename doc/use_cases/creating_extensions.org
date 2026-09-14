@@ -219,6 +219,7 @@ who you are, and then it is a push like any other.
 git init --bare "${TMP}/k8s.git"
 cd "$(clk extension where-is global/k8s)"
 git init
+echo "__pycache__/" > .gitignore
 git add .
 git -c user.email=you@example.com -c user.name=You commit -m "the k8s extension"
 git remote add origin "${TMP}/k8s.git"
@@ -274,6 +275,50 @@ clk extension install "${TMP}/someone-else.git" k8s 2>&1 | sed "s|$(pwd)|.|" | t
 
 #+RESULTS[]: refuse-another-k8s
 : error: Extension k8s already exists and is not using the same URL: ./k8s.git
+
+Meanwhile a colleague of yours writes the command that stops the cluster, and
+pushes it to that same repository.
+
+#+NAME: colleague-adds
+#+BEGIN_SRC bash :results none :exports code :session f47428c2-56ea-4d91-97d9-4f2ff63ef052
+git clone "${TMP}/k8s.git" "${TMP}/their-k8s"
+cd "${TMP}/their-k8s"
+mkdir -p bin
+cat <<'EOF' > bin/stop-cluster
+#!/usr/bin/env bash
+echo "stopping k8s cluster"
+EOF
+chmod +x bin/stop-cluster
+git add .
+git -c user.email=them@example.com -c user.name=Them commit -m "stop the cluster too"
+git push origin HEAD
+cd "${TMP}"
+#+END_SRC
+
+You do not have it yet.
+
+#+NAME: no-stop-cluster
+#+BEGIN_SRC bash :results verbatim :cache yes :exports both :session f47428c2-56ea-4d91-97d9-4f2ff63ef052
+clk stop-cluster 2>&1 | tail -1
+#+END_SRC
+
+#+RESULTS[]: no-stop-cluster
+: error: No such command 'stop-cluster'.
+
+~clk extension update~ pulls the clone, and what they wrote is yours.
+
+#+NAME: update-k8s
+#+BEGIN_SRC bash :results none :exports code :session f47428c2-56ea-4d91-97d9-4f2ff63ef052
+clk extension update k8s
+#+END_SRC
+
+#+NAME: stop-cluster
+#+BEGIN_SRC bash :results verbatim :cache yes :exports both :session f47428c2-56ea-4d91-97d9-4f2ff63ef052
+clk stop-cluster 2>/dev/null
+#+END_SRC
+
+#+RESULTS[]: stop-cluster
+: stopping k8s cluster
 
 * get an extension
   :PROPERTIES:
@@ -705,6 +750,14 @@ check-result(k8s-is-back)
 <<another-k8s>>
 
 check-result(refuse-another-k8s)
+
+<<colleague-adds>>
+
+check-result(no-stop-cluster)
+
+<<update-k8s>>
+
+check-result(stop-cluster)
 
 check-result(install-extension)
 
