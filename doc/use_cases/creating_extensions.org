@@ -211,8 +211,53 @@ clk extension where-is global/k8s
 #+RESULTS[5ee58c93da49807a24b9fab6e6bb97026578103e]: find-it
 : ./clk-root/extensions/k8s
 
-You can git init that code and push it to some remote repository. Your
-colleagues then can get it with ~clk extension install yourextensionurl~.
+That folder is only code, so git can carry it. A fresh repository wants to know
+who you are, and then it is a push like any other.
+
+#+NAME: publish-k8s
+#+BEGIN_SRC bash :results none :exports code :session f47428c2-56ea-4d91-97d9-4f2ff63ef052
+git init --bare "${TMP}/k8s.git"
+cd "$(clk extension where-is global/k8s)"
+git init
+git add .
+git -c user.email=you@example.com -c user.name=You commit -m "the k8s extension"
+git remote add origin "${TMP}/k8s.git"
+git push origin HEAD
+cd "${TMP}"
+#+END_SRC
+
+Now lose it, the way your colleagues have never had it.
+
+#+NAME: lose-k8s
+#+BEGIN_SRC bash :results verbatim :cache yes :exports both :session f47428c2-56ea-4d91-97d9-4f2ff63ef052
+clk extension remove k8s
+clk k8s run-dev-env --flow 2>&1 | tail -1
+#+END_SRC
+
+#+RESULTS[]: lose-k8s
+: error: No such command 'k8s'.
+
+~clk extension install~ takes that url. It would guess the name from the url, so
+say the one you want.
+
+#+NAME: install-k8s
+#+BEGIN_SRC bash :results none :exports code :session f47428c2-56ea-4d91-97d9-4f2ff63ef052
+clk extension install "${TMP}/k8s.git" k8s
+#+END_SRC
+
+And the whole flow answers again.
+
+#+NAME: k8s-is-back
+#+BEGIN_SRC bash :results verbatim :cache yes :exports both :session f47428c2-56ea-4d91-97d9-4f2ff63ef052
+clk k8s run-dev-env --flow
+#+END_SRC
+
+#+RESULTS[]: k8s-is-back
+: installing dependencies
+: starting k8s cluster
+: starting controllers
+: noop, this must be overloaded by a project command
+: running development environment
 
 * get an extension
   :PROPERTIES:
@@ -632,6 +677,14 @@ check-result(run-flow-in-project)
 <<leave_credentials_project>>
 
 check-result(find-it)
+
+<<publish-k8s>>
+
+check-result(lose-k8s)
+
+<<install-k8s>>
+
+check-result(k8s-is-back)
 
 check-result(install-extension)
 

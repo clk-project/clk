@@ -193,7 +193,45 @@ clk extension where-is global/k8s
 
     ./clk-root/extensions/k8s
 
-You can git init that code and push it to some remote repository. Your colleagues then can get it with `clk extension install yourextensionurl`.
+That folder is only code, so git can carry it. A fresh repository wants to know who you are, and then it is a push like any other.
+
+```bash
+git init --bare "${TMP}/k8s.git"
+cd "$(clk extension where-is global/k8s)"
+git init
+git add .
+git -c user.email=you@example.com -c user.name=You commit -m "the k8s extension"
+git remote add origin "${TMP}/k8s.git"
+git push origin HEAD
+cd "${TMP}"
+```
+
+Now lose it, the way your colleagues have never had it.
+
+```bash
+clk extension remove k8s
+clk k8s run-dev-env --flow 2>&1 | tail -1
+```
+
+    error: No such command 'k8s'.
+
+`clk extension install` takes that url. It would guess the name from the url, so say the one you want.
+
+```bash
+clk extension install "${TMP}/k8s.git" k8s
+```
+
+And the whole flow answers again.
+
+```bash
+clk k8s run-dev-env --flow
+```
+
+    installing dependencies
+    starting k8s cluster
+    starting controllers
+    noop, this must be overloaded by a project command
+    running development environment
 
 
 <a id="b7bcef53-dd68-4660-9c5c-d9aa029d1a72"></a>

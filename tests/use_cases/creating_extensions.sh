@@ -162,6 +162,64 @@ exit 1
 }
 
 
+git init --bare "${TMP}/k8s.git"
+cd "$(clk extension where-is global/k8s)"
+git init
+git add .
+git -c user.email=you@example.com -c user.name=You commit -m "the k8s extension"
+git remote add origin "${TMP}/k8s.git"
+git push origin HEAD
+cd "${TMP}"
+
+
+lose-k8s_code () {
+      clk extension remove k8s
+      clk k8s run-dev-env --flow 2>&1 | tail -1
+}
+
+lose-k8s_expected () {
+      cat<<"EOEXPECTED"
+error: No such command 'k8s'.
+EOEXPECTED
+}
+
+echo 'Run lose-k8s'
+
+{ lose-k8s_code || true ; } > "${TMP}/code.txt" 2>&1
+lose-k8s_expected > "${TMP}/expected.txt" 2>&1
+diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+echo "Something went wrong when trying lose-k8s"
+exit 1
+}
+
+
+clk extension install "${TMP}/k8s.git" k8s
+
+
+k8s-is-back_code () {
+      clk k8s run-dev-env --flow
+}
+
+k8s-is-back_expected () {
+      cat<<"EOEXPECTED"
+installing dependencies
+starting k8s cluster
+starting controllers
+noop, this must be overloaded by a project command
+running development environment
+EOEXPECTED
+}
+
+echo 'Run k8s-is-back'
+
+{ k8s-is-back_code || true ; } > "${TMP}/code.txt" 2>&1
+k8s-is-back_expected > "${TMP}/expected.txt" 2>&1
+diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+echo "Something went wrong when trying k8s-is-back"
+exit 1
+}
+
+
 
 install-extension_code () {
       clk extension install https://github.com/clk-project/clk_extension_hello > /dev/null 2>&1
