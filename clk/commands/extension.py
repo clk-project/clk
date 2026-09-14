@@ -29,7 +29,6 @@ from clk.lib import (
     cd,
     check_output,
     copy,
-    get_option_choices,
     move,
     rm,
 )
@@ -213,14 +212,7 @@ def remove(extension, force):
 
 
 @extension.command(handle_dry_run=True)
-@table_fields(
-    choices=["extension", "configuration", "installation", "order"],
-    default=[
-        "extension",
-        "configuration",
-        "installation",
-    ],
-)
+@table_fields(choices=["extension", "configuration", "installation"])
 @table_format(default="simple")
 @Colorer.color_options
 @flag("--enabled-only/--not-enabled-only", help="Show only the enabled extensions")
@@ -228,22 +220,16 @@ def remove(extension, force):
     "--disabled-only/--not-disabled-only",
     help="Show only the disabled extensions",
 )
-@option("--order/--no-order", help="Display the priority of the extension")
 @argument(
     "extensions",
     type=ExtensionNameType(shortonly=True),
     nargs=-1,
     help="The names of the extensions to show",
 )
-def show(fields, format, order, extensions, enabled_only, disabled_only, **kwargs):
+def show(fields, format, extensions, enabled_only, disabled_only, **kwargs):
     """List the extensions and some info about them"""
     config_extensions = set(config.recipe.readonly.keys())
     avail_extensions = {r.short_name for r in config.all_extensions}
-    if not fields:
-        fields = list(get_option_choices("fields"))
-        if not order:
-            fields.remove("order")
-
     if not extensions:
         extensions = config_extensions | avail_extensions
     if not extensions:
@@ -274,7 +260,6 @@ def show(fields, format, order, extensions, enabled_only, disabled_only, **kwarg
                     ),
                     (profile and click.style(profile, **profile_style)) or "Unset",
                     profiles or "Undefined",
-                    config.get_extension_order(extension_name),
                 )
 
 
@@ -384,29 +369,6 @@ def switch(ctx, extension):
                 and other_extension.alternative_groups == extension.alternative_groups
             ):
                 ctx.invoke(_disable, extension=[other_extension.short_name])
-
-
-@extension.command(handle_dry_run=True)
-@argument(
-    "extension",
-    type=ExtensionNameType(shortonly=True),
-    nargs=-1,
-    help="The names of the extensions to which the order will be set",
-)
-@argument("order", type=int, help="The order to be set on the extensions")
-def set_order(extension, order):
-    """Set the order of the extensions"""
-    if not extension:
-        extension = config.all_extensions
-    for cmd in extension:
-        if cmd in config.recipe.writable:
-            config.recipe.writable[cmd]["order"] = order
-        else:
-            config.recipe.writable[cmd] = {"order": order}
-        LOGGER.status(
-            f"Set order of {cmd} to {order} in profile {Colorer.apply_color_profilename(config.recipe.writeprofilename)}"
-        )
-    config.recipe.write()
 
 
 @extension.command()

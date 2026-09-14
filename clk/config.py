@@ -570,7 +570,7 @@ class Config:
                     return
                 hostname_extension = None
                 override_extensions = []
-                for extension in self.sorted_extensions(profile.extensions):
+                for extension in profile.extensions:
                     if extension.short_name == hostname:
                         hostname_extension = extension
                     elif extension.short_name.startswith("config-"):
@@ -611,7 +611,7 @@ class Config:
     @property
     def all_extensions(self):
         for profile in self.root_profiles:
-            yield from self.sorted_extensions(profile.extensions)
+            yield from profile.extensions
 
     def get_enabled_extensions_by_short_name(self, short_name):
         return (
@@ -631,14 +631,6 @@ class Config:
     @property
     def all_enabled_extensions(self):
         return self.filter_enabled_profiles(self.all_extensions)
-
-    def sorted_extensions(self, extensions):
-        return sorted(extensions, key=lambda r: self.get_extension_order(r.short_name))
-
-    def get_extension_order(self, extension):
-        if self.settings is None:
-            return 0
-        return self.settings.get("recipe", {}).get(extension, {}).get("order", 1000)
 
     def get_profile_containing_extension(self, name):
         profile_name = name.split("/")[0]
