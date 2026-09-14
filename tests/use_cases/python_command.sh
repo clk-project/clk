@@ -357,6 +357,26 @@ exit 1
 }
 
 
+try-bad-command-develop_code () {
+      clk --develop myenv 2>&1 | grep -o 'raise BadCustomCommandError('
+}
+
+try-bad-command-develop_expected () {
+      cat<<"EOEXPECTED"
+raise BadCustomCommandError(
+EOEXPECTED
+}
+
+echo 'Run try-bad-command-develop'
+
+{ try-bad-command-develop_code || true ; } > "${TMP}/code.txt" 2>&1
+try-bad-command-develop_expected > "${TMP}/expected.txt" 2>&1
+diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+echo "Something went wrong when trying try-bad-command-develop"
+exit 1
+}
+
+
 cat <<'EOF' > "${CLKCONFIGDIR}/python/myenv.py"
 from clk.decorators import command
 

@@ -246,6 +246,14 @@ clk myenv 2>&1|sed "s|$(pwd)|.|"
     warning: Failed to get the command myenv: The file ./clk-root/python/myenv.py must contain a click command or group named myenv, but found a function instead. Did you forget the @command or @group decorator?
     error: clk.myenv could not be loaded. Re run with clk --develop to see the stacktrace or clk --debug-on-command-load-error to debug the load error
 
+That last line promises a stacktrace, and `clk --develop` keeps the promise. It is long, so let's only keep the line clk gave up on.
+
+```bash
+clk --develop myenv 2>&1 | grep -o 'raise BadCustomCommandError('
+```
+
+    raise BadCustomCommandError(
+
 To fix this, simply add the `@command()` decorator from clk.
 
 ```python
