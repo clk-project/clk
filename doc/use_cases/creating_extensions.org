@@ -259,6 +259,22 @@ clk k8s run-dev-env --flow
 : noop, this must be overloaded by a project command
 : running development environment
 
+Should someone hand you another repository under that same name, clk would rather
+say no than pull a stranger over what you have.
+
+#+NAME: another-k8s
+#+BEGIN_SRC bash :results none :exports code :session f47428c2-56ea-4d91-97d9-4f2ff63ef052
+git init --bare "${TMP}/someone-else.git"
+#+END_SRC
+
+#+NAME: refuse-another-k8s
+#+BEGIN_SRC bash :results verbatim :cache yes :exports both :session f47428c2-56ea-4d91-97d9-4f2ff63ef052
+clk extension install "${TMP}/someone-else.git" k8s 2>&1 | sed "s|$(pwd)|.|" | tail -1
+#+END_SRC
+
+#+RESULTS[]: refuse-another-k8s
+: error: Extension k8s already exists and is not using the same URL: ./k8s.git
+
 * get an extension
   :PROPERTIES:
   :CREATED:  [2025-12-30 17:37]
@@ -685,6 +701,10 @@ check-result(lose-k8s)
 <<install-k8s>>
 
 check-result(k8s-is-back)
+
+<<another-k8s>>
+
+check-result(refuse-another-k8s)
 
 check-result(install-extension)
 

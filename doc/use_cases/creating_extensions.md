@@ -233,6 +233,18 @@ clk k8s run-dev-env --flow
     noop, this must be overloaded by a project command
     running development environment
 
+Should someone hand you another repository under that same name, clk would rather say no than pull a stranger over what you have.
+
+```bash
+git init --bare "${TMP}/someone-else.git"
+```
+
+```bash
+clk extension install "${TMP}/someone-else.git" k8s 2>&1 | sed "s|$(pwd)|.|" | tail -1
+```
+
+    error: Extension k8s already exists and is not using the same URL: ./k8s.git
+
 
 <a id="b7bcef53-dd68-4660-9c5c-d9aa029d1a72"></a>
 

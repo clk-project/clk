@@ -220,6 +220,29 @@ exit 1
 }
 
 
+git init --bare "${TMP}/someone-else.git"
+
+
+refuse-another-k8s_code () {
+      clk extension install "${TMP}/someone-else.git" k8s 2>&1 | sed "s|$(pwd)|.|" | tail -1
+}
+
+refuse-another-k8s_expected () {
+      cat<<"EOEXPECTED"
+error: Extension k8s already exists and is not using the same URL: ./k8s.git
+EOEXPECTED
+}
+
+echo 'Run refuse-another-k8s'
+
+{ refuse-another-k8s_code || true ; } > "${TMP}/code.txt" 2>&1
+refuse-another-k8s_expected > "${TMP}/expected.txt" 2>&1
+diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+echo "Something went wrong when trying refuse-another-k8s"
+exit 1
+}
+
+
 
 install-extension_code () {
       clk extension install https://github.com/clk-project/clk_extension_hello > /dev/null 2>&1
