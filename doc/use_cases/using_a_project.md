@@ -1,4 +1,5 @@
 - [running project scripts](#running-project-scripts)
+- [a command that outgrew the project](#a-command-that-outgrew-the-project)
 
 When working in project, it is useful to have a way to tell where the root of the project is.
 
@@ -164,3 +165,35 @@ clk deploy
     Building project at: ./
     App: clk
     Deploying from ./
+
+
+<a id="a-command-that-outgrew-the-project"></a>
+
+# a command that outgrew the project
+
+Some commands start in a project and turn out to be useful everywhere. Here is one, written for this project only.
+
+```bash
+clk command create bash release-notes --description "Write the release notes" --body 'echo "gathering the commits since the last tag"'
+```
+
+It lives in the project, and only answers there.
+
+```bash
+clk command which release-notes
+cd .. && clk release-notes 2>&1 | tail -1 ; cd myprojet
+```
+
+    ./.clk/bin/release-notes
+    error: No such command 'release-notes'.
+
+`clk command move` carries it to the profile you name.
+
+```bash
+clk command move release-notes global
+clk command which release-notes | sed "s|${TMP}|.|"
+cd .. && clk release-notes ; cd myprojet
+```
+
+    ./clk-root/bin/release-notes
+    gathering the commits since the last tag

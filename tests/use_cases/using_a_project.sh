@@ -312,4 +312,53 @@ diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
 echo "Something went wrong when trying run_flow"
 exit 1
 }
+
+
+clk command create bash release-notes --description "Write the release notes" --body 'echo "gathering the commits since the last tag"'
+
+
+where_release_notes_code () {
+      clk command which release-notes
+      cd .. && clk release-notes 2>&1 | tail -1 ; cd myprojet
+}
+
+where_release_notes_expected () {
+      cat<<"EOEXPECTED"
+./.clk/bin/release-notes
+error: No such command 'release-notes'.
+EOEXPECTED
+}
+
+echo 'Run where_release_notes'
+
+{ where_release_notes_code || true ; } > "${TMP}/code.txt" 2>&1
+where_release_notes_expected > "${TMP}/expected.txt" 2>&1
+diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+echo "Something went wrong when trying where_release_notes"
+exit 1
+}
+
+
+
+move_release_notes_code () {
+      clk command move release-notes global
+      clk command which release-notes | sed "s|${TMP}|.|"
+      cd .. && clk release-notes ; cd myprojet
+}
+
+move_release_notes_expected () {
+      cat<<"EOEXPECTED"
+./clk-root/bin/release-notes
+gathering the commits since the last tag
+EOEXPECTED
+}
+
+echo 'Run move_release_notes'
+
+{ move_release_notes_code || true ; } > "${TMP}/code.txt" 2>&1
+move_release_notes_expected > "${TMP}/expected.txt" 2>&1
+diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+echo "Something went wrong when trying move_release_notes"
+exit 1
+}
 # run ends here

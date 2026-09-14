@@ -273,6 +273,44 @@ clk deploy
 
 
 
+* a command that outgrew the project
+  :PROPERTIES:
+  :CUSTOM_ID: a-command-that-outgrew-the-project
+  :END:
+
+Some commands start in a project and turn out to be useful everywhere. Here is
+one, written for this project only.
+
+#+NAME: create_release_notes
+#+BEGIN_SRC bash :results none :exports code :session 6de55de4-c0b3-41d6-952a-25e0fe06c881
+clk command create bash release-notes --description "Write the release notes" --body 'echo "gathering the commits since the last tag"'
+#+END_SRC
+
+It lives in the project, and only answers there.
+
+#+NAME: where_release_notes
+#+BEGIN_SRC bash :results verbatim :exports both :session 6de55de4-c0b3-41d6-952a-25e0fe06c881 :cache yes
+clk command which release-notes
+cd .. && clk release-notes 2>&1 | tail -1 ; cd myprojet
+#+END_SRC
+
+#+RESULTS[]: where_release_notes
+: ./.clk/bin/release-notes
+: error: No such command 'release-notes'.
+
+~clk command move~ carries it to the profile you name.
+
+#+NAME: move_release_notes
+#+BEGIN_SRC bash :results verbatim :exports both :session 6de55de4-c0b3-41d6-952a-25e0fe06c881 :cache yes
+clk command move release-notes global
+clk command which release-notes | sed "s|${TMP}|.|"
+cd .. && clk release-notes ; cd myprojet
+#+END_SRC
+
+#+RESULTS[]: move_release_notes
+: ./clk-root/bin/release-notes
+: gathering the commits since the last tag
+
 #+NAME: run
 #+BEGIN_SRC bash :results none :exports none :tangle ../../tests/use_cases/using_a_project.sh :noweb yes :shebang "#!/usr/bin/env bash"
   set -eu
@@ -313,4 +351,10 @@ check-result(completion_exec_deep)
 check-result(create_flow_alias)
 
 check-result(run_flow)
+
+<<create_release_notes>>
+
+check-result(where_release_notes)
+
+check-result(move_release_notes)
 #+END_SRC
