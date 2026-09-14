@@ -2,12 +2,9 @@
 """General purpose functions, not directly linked to clk"""
 
 import datetime
-import difflib
 import functools
 import hashlib
-import heapq
 import io
-import itertools
 import json
 import os
 import platform
@@ -18,8 +15,6 @@ import signal
 import subprocess
 import sys
 import tempfile
-import threading
-import time
 import traceback
 from contextlib import contextmanager
 from copy import deepcopy
@@ -403,103 +398,6 @@ def updated_env(**kwargs):
     os.environ.update(oldenv)
 
 
-@contextmanager
-def env(**kwargs):
-    """Temporarily override the environment. To be used in a with statement"""
-    oldenv = dict(os.environ)
-    os.environ.clear()
-    os.environ.update(kwargs)
-    yield
-    os.environ.clear()
-    os.environ.update(oldenv)
-
-
-def format_opt(opt):
-    return f"--{opt.replace('_', '-')}"
-
-
-def format_options(options, glue=False):
-    """Transform the dictionary in a list of options usable in call"""
-    cmd = []
-    for opt, value in options.items():
-        if value is True:
-            cmd.append(format_opt(opt))
-        elif isinstance(value, list) or isinstance(value, tuple):
-            # this is a multi value option
-            for v in value:
-                if glue:
-                    cmd.append(f"{format_opt(opt)}={v}")
-                else:
-                    cmd.extend([format_opt(opt), v])
-        elif value:
-            if glue:
-                cmd.append(f"{format_opt(opt)}={value}")
-            else:
-                cmd.extend([format_opt(opt), value])
-    return cmd
-
-
-component_re = re.compile(r"(\d+ | [a-z]+ | \.| -)", re.VERBOSE)
-replace = {"pre": "c", "preview": "c", "-": "final-", "rc": "c", "dev": "@"}.get
-
-
-def _parse_version_parts(s):
-    for part in component_re.split(s):
-        part = replace(part, part)
-        if not part or part == ".":
-            continue
-        if part[:1] in "0123456789":
-            yield part.zfill(8)  # pad for numeric comparison
-        else:
-            yield "*" + part
-
-    yield "*final"  # ensure that alpha/beta/candidate are before final
-
-
-def parse_version(s):
-    """Convert a version string to a chronologically-sortable key
-
-    This is a rough cross between distutils' StrictVersion and LooseVersion;
-    if you give it versions that would work with StrictVersion, then it behaves
-    the same; otherwise it acts like a slightly-smarter LooseVersion. It is
-    *possible* to create pathological version coding schemes that will fool
-    this parser, but they should be very rare in practice.
-
-    The returned value will be a tuple of strings.  Numeric portions of the
-    version are padded to 8 digits so they will compare numerically, but
-    without relying on how numbers compare relative to strings.  Dots are
-    dropped, but dashes are retained.  Trailing zeros between alpha segments
-    or dashes are suppressed, so that e.g. "2.4.0" is considered the same as
-    "2.4". Alphanumeric parts are lower-cased.
-
-    The algorithm assumes that strings like "-" and any alpha string that
-    alphabetically follows "final"  represents a "patch level".  So, "2.4-1"
-    is assumed to be a branch or patch of "2.4", and therefore "2.4.1" is
-    considered newer than "2.4-1", which in turn is newer than "2.4".
-
-    Strings like "a", "b", "c", "alpha", "beta", "candidate" and so on (that
-    come before "final" alphabetically) are assumed to be pre-release versions,
-    so that the version "2.4" is considered newer than "2.4a1".
-
-    Finally, to handle miscellaneous cases, the strings "pre", "preview", and
-    "rc" are treated as if they were "c", i.e. as though they were release
-    candidates, and therefore are not as new as a version string that does not
-    contain them, and "dev" is replaced with an '@' so that it sorts lower than
-    than any other pre-release tag.
-    """
-    parts = []
-    for part in _parse_version_parts(s.lower()):
-        if part.startswith("*"):
-            if part < "*final":  # remove '-' before a prerelease tag
-                while parts and parts[-1] == "*final-":
-                    parts.pop()
-            # remove trailing zeros from each series of numeric parts
-            while parts and parts[-1] == "00000000":
-                parts.pop()
-        parts.append(part)
-    return tuple(parts)
-
-
 def safe_check_output(*args, **kwargs):
     """Return the process output or an empty string when the process fail and never raise"""
     if "stdout" in kwargs:
@@ -797,14 +695,7 @@ def git_sync(
     use_shallow=False,
 ):
     """Retrieve and/or update a git repository"""
-    version = re.search(
-        "git version (.+)", safe_check_output(["git", "--version"], internal=True)
-    ).group(1)
-    use_shallow = (
-        use_shallow
-        and parse_version(version) >= parse_version("2.1.4")
-        and not last_tag
-    )
+    use_shallow = use_shallow and not last_tag
     directory = Path(directory or re.split("[:/]", url)[-1]).resolve()
     git_dir = directory / ".git"
     ref_file = git_dir / "clk-git-sync-reference"
@@ -920,60 +811,6 @@ def get_key_values_formats():
     return get_tabulate_formats()
 
 
-def get_close_matches(words, possibilities, n=3, cutoff=0.6):
-    """Use SequenceMatcher to return list of the best "good enough" matches.
-
-    word is a sequence for which close matches are desired (typically a
-    string).
-
-    possibilities is a list of sequences against which to match word
-    (typically a list of strings).
-
-    Optional arg n (default 3) is the maximum number of close matches to
-    return.  n must be > 0.
-
-    Optional arg cutoff (default 0.6) is a float in [0, 1].  Possibilities
-    that don't score at least that similar to word are ignored.
-
-    The best (no more than n) matches among the possibilities are returned
-    in a list, sorted by similarity score, most similar first.
-
-    >>> get_close_matches("appel", ["ape", "apple", "peach", "puppy"])
-    ['apple', 'ape']
-    >>> import keyword as _keyword
-    >>> get_close_matches("wheel", _keyword.kwlist)
-    ['while']
-    >>> get_close_matches("apple", _keyword.kwlist)
-    []
-    >>> get_close_matches("accept", _keyword.kwlist)
-    ['except']
-    """
-
-    if not n > 0:
-        raise ValueError(f"n must be > 0: {n!r}")
-    if not 0.0 <= cutoff <= 1.0:
-        raise ValueError(f"cutoff must be in [0.0, 1.0]: {cutoff!r}")
-    if not isinstance(words, list):
-        words = [words]
-    result = []
-    s = difflib.SequenceMatcher()
-    for word in words:
-        s.set_seq2(word)
-        for x in possibilities:
-            s.set_seq1(x)
-            if (
-                s.real_quick_ratio() >= cutoff
-                and s.quick_ratio() >= cutoff
-                and s.ratio() >= cutoff
-            ):
-                result.append((s.ratio(), x))
-
-    # Move the best scorers to head of list
-    result = heapq.nlargest(n, result)
-    # Strip scores for the best n matches
-    return [x for score, x in result]
-
-
 def json_dump_file(path, content, internal=False):
     """Dump a python object to a file using a nicely formated json format"""
     createfile(path, json_dumps(content), internal=internal)
@@ -1001,76 +838,6 @@ def grep(
     )
     xargs.communicate(input="\0".join(file_list).encode("utf-8"))
     xargs.wait()
-
-
-class NullContext:
-    def __enter__(self):
-        pass
-
-    def __exit__(self, exc_type, exc_val, exc_tb):
-        pass
-
-    def update(self, foo):
-        """Fake update method to mimic the progress bar API"""
-        pass
-
-
-null_context = NullContext()
-
-
-class Spinner:
-    spinner_cycle = itertools.cycle(["-", "\\", "|", "/"])
-
-    def __init__(self, message=""):
-        self.stop_running = None
-        self.spin_thread = None
-        self.message = message
-
-    def start(self):
-        if sys.stderr.isatty():
-            if self.message:
-                sys.stderr.write(self.message + " ")
-            self.stop_running = threading.Event()
-            self.spin_thread = threading.Thread(target=self.init_spin)
-            self.spin_thread.start()
-        elif self.message:
-            LOGGER.status(self.message)
-
-    def stop(self):
-        if self.spin_thread:
-            self.stop_running.set()
-            self.spin_thread.join()
-            if self.message:
-                sys.stderr.write("\b" * (len(self.message) + 1))
-                sys.stderr.write(" " * (len(self.message) + 2))
-                sys.stderr.write("\b" * (len(self.message) + 2))
-                sys.stderr.flush()
-
-    def init_spin(self):
-        while not self.stop_running.is_set():
-            sys.stderr.write(next(self.spinner_cycle))
-            sys.stderr.flush()
-            time.sleep(0.25)
-            sys.stderr.write("\b")
-            sys.stderr.flush()
-
-    def __enter__(self):
-        self.start()
-        return self
-
-    def __exit__(self, exc_type, exc_val, exc_tb):
-        self.stop()
-        return False
-
-    def update(self, foo):
-        """Fake update method to mimic the progress bar API"""
-        pass
-
-
-def spinner(disabled=False, message=""):
-    if disabled:
-        return null_context
-    return Spinner(message)
 
 
 def read(f):
