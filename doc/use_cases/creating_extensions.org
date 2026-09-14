@@ -375,6 +375,21 @@ _____
                                                                        /.-~
 #+end_example
 
+An extension you did not write yourself leaves you wondering what is in it.
+~clk extension describe~ answers that.
+
+#+NAME: describe-hello
+#+BEGIN_SRC bash :results verbatim :cache yes :exports both :session f47428c2-56ea-4d91-97d9-4f2ff63ef052
+clk extension describe global/hello
+#+END_SRC
+
+#+RESULTS[]: describe-hello
+: The extension global/hello is located at ./clk-root/extensions/hello . Let's try to see what it has to offer.
+: ##########
+: I found some alias, try running `clk --extension hello alias --global --extension hello show` to know more.
+: I found some parameter, try running `clk --extension hello parameter --global --extension hello show` to know more.
+: I found some executable commands, try running `clk --extension hello command --global --extension hello list` to know more.
+
 Remove the extension with
 
 #+NAME: remove-extension
@@ -822,6 +837,8 @@ check-result(no-stop-cluster)
 check-result(stop-cluster)
 
 check-result(install-extension)
+
+check-result(describe-hello)
 
 check-result(remove-extension)
 

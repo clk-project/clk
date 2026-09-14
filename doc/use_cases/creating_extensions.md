@@ -330,6 +330,18 @@ _____
                                                                        /.-~
 ```
 
+An extension you did not write yourself leaves you wondering what is in it. `clk extension describe` answers that.
+
+```bash
+clk extension describe global/hello
+```
+
+    The extension global/hello is located at ./clk-root/extensions/hello . Let's try to see what it has to offer.
+    ##########
+    I found some alias, try running `clk --extension hello alias --global --extension hello show` to know more.
+    I found some parameter, try running `clk --extension hello parameter --global --extension hello show` to know more.
+    I found some executable commands, try running `clk --extension hello command --global --extension hello list` to know more.
+
 Remove the extension with
 
 ```bash

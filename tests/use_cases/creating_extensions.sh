@@ -347,6 +347,31 @@ exit 1
 
 
 
+describe-hello_code () {
+      clk extension describe global/hello
+}
+
+describe-hello_expected () {
+      cat<<"EOEXPECTED"
+The extension global/hello is located at ./clk-root/extensions/hello . Let's try to see what it has to offer.
+##########
+I found some alias, try running `clk --extension hello alias --global --extension hello show` to know more.
+I found some parameter, try running `clk --extension hello parameter --global --extension hello show` to know more.
+I found some executable commands, try running `clk --extension hello command --global --extension hello list` to know more.
+EOEXPECTED
+}
+
+echo 'Run describe-hello'
+
+{ describe-hello_code || true ; } > "${TMP}/code.txt" 2>&1
+describe-hello_expected > "${TMP}/expected.txt" 2>&1
+diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+echo "Something went wrong when trying describe-hello"
+exit 1
+}
+
+
+
 remove-extension_code () {
       clk extension remove hello
       clk hello
