@@ -23,8 +23,6 @@ Usage: clk command create python [OPTIONS] NAME
 
   Create a bash custom command
 
-  The current parameters set for this command are: --no-open --force
-
   This is a built-in command.
 
 Positional arguments:

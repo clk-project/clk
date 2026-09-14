@@ -144,7 +144,7 @@ class Config:
         self.env = None
         self.override_env = {"CLK_INSTALL_LOCATION": str(Path(__file__).parent)}
         self.old_env = os.environ.copy()
-        self.distribution_profile_location = None
+        self.distribution_profile_location = os.environ.get("CLK_DISTRIBUTION_PROFILE")
         self._all_profiles_cache = None
         self.value = Value()
         self.groups = {"clk"}

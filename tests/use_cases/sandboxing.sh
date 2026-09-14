@@ -68,7 +68,10 @@ clk () {
         "${CLK_COV}" "$@"
     fi
 }
-cat <<EOF > "${TMP}/clk-root/clk.json"
+# what the sandbox needs to behave, kept out of the profiles the reader sees
+mkdir -p "${TMP}/clk-distribution"
+echo 8 > "${TMP}/clk-distribution/version.txt"
+cat <<EOF > "${TMP}/clk-distribution/clk.json"
 {
     "parameters": {
         "clk": [
@@ -102,6 +105,7 @@ cd "${TMP}"
 eval "$(direnv hook bash)"
 cat<<EOF > "${TMP}/.envrc" && direnv allow
 export CLKCONFIGDIR="${TMP}/clk-root"
+export CLK_DISTRIBUTION_PROFILE="${TMP}/clk-distribution"
 export DUMMYFILEKEYRINGPATH="${TMP}/keyring.json"
 export CLK_NETRC_LOCATION="${TMP}/netrc"
 export CLK_BIN="${CLK_BIN}"

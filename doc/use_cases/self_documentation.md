@@ -36,11 +36,12 @@ clk describe global
 
     The extension global is located at ./clk-root . Let's try to see what it has to offer.
     ##########
-    I found some alias, try running `clk alias --global show` to know more.
-    I found some parameter, try running `clk parameter --global show` to know more.
-    I found some value, try running `clk value --global show` to know more.
+    I found some alias:
+      hello: echo Hello
+    I found some parameter:
+      echo: --no-newline
 
-The `clk describe` command tells you exactly what commands to run to explore further. Let's follow its suggestions.
+It says what it found, and the usual show commands remain there when you want them on their own.
 
 ```bash
 clk alias --global show
@@ -83,8 +84,11 @@ clk describe local
 
     The extension local is located at ./.clk . Let's try to see what it has to offer.
     ##########
-    I found some alias, try running `clk alias --local show` to know more.
-    I found some parameter, try running `clk parameter --local show` to know more.
+    I found some alias:
+      build: echo Building the project
+      test: echo Running tests
+    I found some parameter:
+      build: --verbose
 
 This helps you quickly understand what's configured specifically for this project.
 
@@ -121,10 +125,12 @@ clk describe local/mytools
 
     The extension local/mytools is located at ./.clk/extensions/mytools . Let's try to see what it has to offer.
     ##########
-    I found some alias, try running `clk --extension mytools alias --local --extension mytools show` to know more.
-    I found some executable commands, try running `clk --extension mytools command --local --extension mytools list` to know more.
+    I found some alias:
+      greet: echo Greetings
+    I found some commands:
+      now
 
-Let's follow these suggestions.
+Which is the answer you wanted. The show commands are still there for the detail.
 
 ```bash
 clk --extension mytools alias --local --extension mytools show
@@ -171,9 +177,13 @@ clk describe local
 
     The extension local is located at ./.clk . Let's try to see what it has to offer.
     ##########
-    I found some alias, try running `clk alias --local show` to know more.
-    I found some parameter, try running `clk parameter --local show` to know more.
-    I found some executable commands, try running `clk command --local list` to know more.
+    I found some alias:
+      build: echo Building the project
+      test: echo Running tests
+    I found some parameter:
+      build: --verbose
+    I found some commands:
+      deploy
 
 ```bash
 clk command --local list

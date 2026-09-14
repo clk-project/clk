@@ -25,7 +25,6 @@ from clk.log import get_logger
 from clk.overloads import (
     Argument,
     AutomaticOption,
-    CommandType,
     FlowDependencies,
     Group,
     Option,
@@ -73,14 +72,6 @@ def cmd_format(name, cmd_help, indent):
     end = len(indent) + len(name)
     spacer = " " * max(20 - end, 1)
     return indent + name + spacer + cmd_help
-
-
-@command.command()
-@argument("path", type=CommandType(), help="The command to resolve")
-def resolve(path):
-    """Resolve a command to help understanding where a command comes from"""
-    cmd, resolver = get_command(path, True)
-    click.echo(f"The command {path} is resolved by the resolver {resolver.name}")
 
 
 class CustomCommandPathType(DynamicChoiceType):

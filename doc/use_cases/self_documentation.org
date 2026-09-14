@@ -47,15 +47,16 @@ Now let's describe the global profile to see what it contains.
 clk describe global
 #+END_SRC
 
-#+RESULTS[aec1c31b5a441e23a5dcd19a986e4f0424b0007a]: describe-global
+#+RESULTS[]: describe-global
 : The extension global is located at ./clk-root . Let's try to see what it has to offer.
 : ##########
-: I found some alias, try running `clk alias --global show` to know more.
-: I found some parameter, try running `clk parameter --global show` to know more.
-: I found some value, try running `clk value --global show` to know more.
+: I found some alias:
+:   hello: echo Hello
+: I found some parameter:
+:   echo: --no-newline
 
-The ~clk describe~ command tells you exactly what commands to run to explore
-further. Let's follow its suggestions.
+It says what it found, and the usual show commands remain there when you want
+them on their own.
 
 #+NAME: show-global-alias
 #+BEGIN_SRC bash :results verbatim :exports both :session a1b2c3d4-e5f6-7890-abcd-ef1234567890 :cache yes
@@ -106,11 +107,14 @@ Now let's describe the local profile.
 clk describe local
 #+END_SRC
 
-#+RESULTS[63ae89e7cfb792ba4954bbd848af4549a05e6f75]: describe-local
+#+RESULTS[]: describe-local
 : The extension local is located at ./.clk . Let's try to see what it has to offer.
 : ##########
-: I found some alias, try running `clk alias --local show` to know more.
-: I found some parameter, try running `clk parameter --local show` to know more.
+: I found some alias:
+:   build: echo Building the project
+:   test: echo Running tests
+: I found some parameter:
+:   build: --verbose
 
 This helps you quickly understand what's configured specifically for this project.
 
@@ -153,13 +157,15 @@ Now let's describe this extension to see what it provides.
 clk describe local/mytools
 #+END_SRC
 
-#+RESULTS[0e277d71a159bfb01701f0236600f7539e9d7976]: describe-extension
+#+RESULTS[]: describe-extension
 : The extension local/mytools is located at ./.clk/extensions/mytools . Let's try to see what it has to offer.
 : ##########
-: I found some alias, try running `clk --extension mytools alias --local --extension mytools show` to know more.
-: I found some executable commands, try running `clk --extension mytools command --local --extension mytools list` to know more.
+: I found some alias:
+:   greet: echo Greetings
+: I found some commands:
+:   now
 
-Let's follow these suggestions.
+Which is the answer you wanted. The show commands are still there for the detail.
 
 #+NAME: show-extension-alias
 #+BEGIN_SRC bash :results verbatim :exports both :session a1b2c3d4-e5f6-7890-abcd-ef1234567890 :cache yes
@@ -215,12 +221,16 @@ clk command create bash --description "Deploy the application" --body 'echo Depl
 clk describe local
 #+END_SRC
 
-#+RESULTS[63ae89e7cfb792ba4954bbd848af4549a05e6f75]: describe-with-commands
+#+RESULTS[]: describe-with-commands
 : The extension local is located at ./.clk . Let's try to see what it has to offer.
 : ##########
-: I found some alias, try running `clk alias --local show` to know more.
-: I found some parameter, try running `clk parameter --local show` to know more.
-: I found some executable commands, try running `clk command --local list` to know more.
+: I found some alias:
+:   build: echo Building the project
+:   test: echo Running tests
+: I found some parameter:
+:   build: --verbose
+: I found some commands:
+:   deploy
 
 #+NAME: list-commands
 #+BEGIN_SRC bash :results verbatim :exports both :session a1b2c3d4-e5f6-7890-abcd-ef1234567890 :cache yes

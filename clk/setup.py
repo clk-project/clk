@@ -52,7 +52,8 @@ def classic_setup(
         IntermediateEphemeralGroupResolver(),
         MainGroupCommandResolver(),
     ]
-    config.distribution_profile_location = distribution_profile_location
+    if distribution_profile_location is not None:
+        config.distribution_profile_location = distribution_profile_location
 
     def decorator(command):
         config_cls.main_command = command

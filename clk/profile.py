@@ -2,6 +2,7 @@
 
 import collections
 import json
+import os
 import re
 import traceback
 from datetime import datetime
@@ -161,6 +162,24 @@ class Profile:
 plugin_sources = {}
 
 
+def describe_setting(value):
+    """Say in one line what a settings entry holds"""
+    if isinstance(value, str):
+        return value
+    if isinstance(value, list):
+        return " ".join(
+            " ".join(item) if isinstance(item, list) else str(item) for item in value
+        )
+    if isinstance(value, dict):
+        if "commands" in value:
+            return ", ".join(" ".join(command) for command in value["commands"])
+        if "value" in value:
+            return str(value["value"])
+        if "enabled" in value:
+            return "enabled" if value["enabled"] else "disabled"
+    return ""
+
+
 @ProfileFactory.register_directory_profile
 class DirectoryProfile(Profile):
     extension_extra_chars = ".@[]:><"
@@ -179,7 +198,6 @@ class DirectoryProfile(Profile):
             " Let's try to see what it has to offer."
         )
         print("##########")
-        enable_argument = f" --extension {self.short_name}" if self.isextension else ""
         for setting, command in [
             ("alias", "alias"),
             ("parameters", "parameter"),
@@ -189,23 +207,28 @@ class DirectoryProfile(Profile):
             ("recipe", "extension"),
             ("environment", "env"),
         ]:
-            if self.settings.get(setting):
-                print(
-                    f"I found some {command}, try running"
-                    f" `clk{enable_argument} {command} {' '.join(profile_name_to_commandline(self.name))} show`"
-                    " to know more."
-                )
-        if any(
-            [
-                next(Path(path).iterdir())
-                for path in (self.executable_paths + self.python_paths)
-            ]
-        ):
-            print(
-                f"I found some executable commands, try running"
-                f" `clk{enable_argument} command {' '.join(profile_name_to_commandline(self.name))} list`"
-                " to know more."
+            entries = self.settings.get(setting)
+            if entries:
+                print(f"I found some {command}:")
+                for key, value in sorted(entries.items()):
+                    said = describe_setting(value)
+                    print(f"  {key}{': ' + said if said else ''}")
+        commands = [
+            entry.stem if entry.suffix == ".py" else entry.name
+            for path in (self.executable_paths + self.python_paths)
+            if Path(path).exists()
+            for entry in sorted(Path(path).iterdir())
+            if not entry.name.startswith(".")
+            and (
+                (entry / "__init__.py").exists()
+                if entry.is_dir()
+                else entry.suffix == ".py" or os.access(entry, os.X_OK)
             )
+        ]
+        if commands:
+            print("I found some commands:")
+            for name in commands:
+                print(f"  {name}")
         if plugins := self.plugin_source.list_plugins():
             print(f"I found some plugins called {', '.join(plugins)}")
         if remaining_config := set(self.settings.keys()) - {

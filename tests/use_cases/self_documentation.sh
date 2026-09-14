@@ -35,9 +35,10 @@ describe-global_expected () {
       cat<<"EOEXPECTED"
 The extension global is located at ./clk-root . Let's try to see what it has to offer.
 ##########
-I found some alias, try running `clk alias --global show` to know more.
-I found some parameter, try running `clk parameter --global show` to know more.
-I found some value, try running `clk value --global show` to know more.
+I found some alias:
+  hello: echo Hello
+I found some parameter:
+  echo: --no-newline
 EOEXPECTED
 }
 
@@ -129,8 +130,11 @@ describe-local_expected () {
       cat<<"EOEXPECTED"
 The extension local is located at ./.clk . Let's try to see what it has to offer.
 ##########
-I found some alias, try running `clk alias --local show` to know more.
-I found some parameter, try running `clk parameter --local show` to know more.
+I found some alias:
+  build: echo Building the project
+  test: echo Running tests
+I found some parameter:
+  build: --verbose
 EOEXPECTED
 }
 
@@ -199,8 +203,10 @@ describe-extension_expected () {
       cat<<"EOEXPECTED"
 The extension local/mytools is located at ./.clk/extensions/mytools . Let's try to see what it has to offer.
 ##########
-I found some alias, try running `clk --extension mytools alias --local --extension mytools show` to know more.
-I found some executable commands, try running `clk --extension mytools command --local --extension mytools list` to know more.
+I found some alias:
+  greet: echo Greetings
+I found some commands:
+  now
 EOEXPECTED
 }
 
@@ -225,9 +231,13 @@ describe-with-commands_expected () {
       cat<<"EOEXPECTED"
 The extension local is located at ./.clk . Let's try to see what it has to offer.
 ##########
-I found some alias, try running `clk alias --local show` to know more.
-I found some parameter, try running `clk parameter --local show` to know more.
-I found some executable commands, try running `clk command --local list` to know more.
+I found some alias:
+  build: echo Building the project
+  test: echo Running tests
+I found some parameter:
+  build: --verbose
+I found some commands:
+  deploy
 EOEXPECTED
 }
 
