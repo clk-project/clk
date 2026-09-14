@@ -1,5 +1,5 @@
 #!/usr/bin/env bash -eu
-# [[file:../../doc/use_cases/alias_to_root.org::#450ba117-403e-4bc3-a809-28d8a6f590c0][Local aliases:14]]
+# [[file:../../doc/use_cases/alias_to_root.org::#promoting-an-alias-to-the-global-profile][promoting an alias to the global profile:5]]
 . ./sandboxing.sh
 mkdir -p billing-api/.clk
 cd billing-api
@@ -431,4 +431,65 @@ diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
 echo "Something went wrong when trying local-app-test"
 exit 1
 }
-# Local aliases:14 ends here
+
+
+promote-build_code () {
+      clk alias move build global
+}
+
+promote-build_expected () {
+      cat<<"EOEXPECTED"
+Moved alias build, local -> global
+EOEXPECTED
+}
+
+echo 'Run promote-build'
+
+{ promote-build_code || true ; } > "${TMP}/code.txt" 2>&1
+promote-build_expected > "${TMP}/expected.txt" 2>&1
+diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+echo "Something went wrong when trying promote-build"
+exit 1
+}
+
+
+promoted-build_code () {
+      clk build
+}
+
+promoted-build_expected () {
+      cat<<"EOEXPECTED"
+Building the API
+EOEXPECTED
+}
+
+echo 'Run promoted-build'
+
+{ promoted-build_code || true ; } > "${TMP}/code.txt" 2>&1
+promoted-build_expected > "${TMP}/expected.txt" 2>&1
+diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+echo "Something went wrong when trying promoted-build"
+exit 1
+}
+
+cd ../billing-app
+
+shadowed-build_code () {
+      clk build
+}
+
+shadowed-build_expected () {
+      cat<<"EOEXPECTED"
+Building the frontend
+EOEXPECTED
+}
+
+echo 'Run shadowed-build'
+
+{ shadowed-build_code || true ; } > "${TMP}/code.txt" 2>&1
+shadowed-build_expected > "${TMP}/expected.txt" 2>&1
+diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+echo "Something went wrong when trying shadowed-build"
+exit 1
+}
+# promoting an alias to the global profile:5 ends here

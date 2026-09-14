@@ -293,6 +293,49 @@ clk app test 2>/dev/null
 The aliases only exist inside their respective projects, so they won't clutter
 your global namespace or show up in unrelated directories.
 
+* promoting an alias to the global profile
+  :PROPERTIES:
+  :CUSTOM_ID: promoting-an-alias-to-the-global-profile
+  :END:
+
+An alias you end up wanting everywhere need not be typed again elsewhere. From
+~billing-api~, ~clk alias move~ carries ~build~ to the global profile as it
+stands.
+
+#+NAME: promote-build
+#+BEGIN_SRC bash :results verbatim :exports both :session 55ed49b4-065d-440e-903b-658d1dcec014 :cache yes
+clk alias move build global
+#+END_SRC
+
+#+RESULTS[]: promote-build
+: Moved alias build, local -> global
+
+It still answers here, now from the global profile rather than the local one.
+
+#+NAME: promoted-build
+#+BEGIN_SRC bash :results verbatim :exports both :session 55ed49b4-065d-440e-903b-658d1dcec014 :cache yes
+clk build
+#+END_SRC
+
+#+RESULTS[]: promoted-build
+: Building the API
+
+And ~billing-app~ keeps the ~build~ of its own, which still wins over the one
+we just made global.
+
+#+NAME: enter-app-for-promotion
+#+BEGIN_SRC bash :results none :exports code :session 55ed49b4-065d-440e-903b-658d1dcec014
+cd ../billing-app
+#+END_SRC
+
+#+NAME: shadowed-build
+#+BEGIN_SRC bash :results verbatim :exports both :session 55ed49b4-065d-440e-903b-658d1dcec014 :cache yes
+clk build
+#+END_SRC
+
+#+RESULTS[]: shadowed-build
+: Building the frontend
+
 #+BEGIN_SRC bash :exports none :tangle ../../tests/use_cases/alias_to_root.sh :noweb yes :shebang "#!/usr/bin/env bash -eu"
   <<init>>
   <<create-api>>
@@ -325,4 +368,8 @@ your global namespace or show up in unrelated directories.
   <<enter-api-for-local-test>>
   check-result(local-app-build)
   check-result(local-app-test)
+  check-result(promote-build)
+  check-result(promoted-build)
+  <<enter-app-for-promotion>>
+  check-result(shadowed-build)
 #+END_SRC

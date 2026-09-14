@@ -1,6 +1,7 @@
 - [The problem](#683fcbea-b776-44ff-8af2-bb7e10a69bb0)
 - [Global aliases](#260d04a3-8c35-4581-8d40-e3479eb874a9)
 - [Local aliases](#450ba117-403e-4bc3-a809-28d8a6f590c0)
+- [promoting an alias to the global profile](#promoting-an-alias-to-the-global-profile)
 
 When you work on linked but separate projects — say a backend API and a frontend app — changes in one often need to be verified in the other. If they live in separate directories, you end up constantly `cd`-ing back and forth, losing context along the way.
 
@@ -214,3 +215,36 @@ clk app test 2>/dev/null
     Running frontend tests
 
 The aliases only exist inside their respective projects, so they won't clutter your global namespace or show up in unrelated directories.
+
+
+<a id="promoting-an-alias-to-the-global-profile"></a>
+
+# promoting an alias to the global profile
+
+An alias you end up wanting everywhere need not be typed again elsewhere. From `billing-api`, `clk alias move` carries `build` to the global profile as it stands.
+
+```bash
+clk alias move build global
+```
+
+    Moved alias build, local -> global
+
+It still answers here, now from the global profile rather than the local one.
+
+```bash
+clk build
+```
+
+    Building the API
+
+And `billing-app` keeps the `build` of its own, which still wins over the one we just made global.
+
+```bash
+cd ../billing-app
+```
+
+```bash
+clk build
+```
+
+    Building the frontend
