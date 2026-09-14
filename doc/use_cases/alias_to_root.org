@@ -397,7 +397,31 @@ clk alias copy ship ship-all
 clk alias append ship-all api build , api test
 #+END_SRC
 
-Renaming is not only about the alias itself: the aliases that call it follow.
+Renaming is not only about the alias itself: the aliases that call it follow. It
+reaches further than you asked for, so you may want to watch it happen before it
+does. ~--dry-run~ says what it would do and writes nothing.
+
+#+NAME: dry-run-rename
+#+BEGIN_SRC bash :results verbatim :exports both :session 55ed49b4-065d-440e-903b-658d1dcec014 :cache yes
+clk --dry-run alias rename test test-front
+#+END_SRC
+
+#+RESULTS[]: dry-run-rename
+: Would have moved alias test -> test-front in local
+
+#+NAME: show-before-rename
+#+BEGIN_SRC bash :results verbatim :exports both :session 55ed49b4-065d-440e-903b-658d1dcec014 :cache yes
+clk alias show
+#+END_SRC
+
+#+RESULTS[]: show-before-rename
+: api clk --project ../billing-api
+: build echo Building the frontend
+: ship build, test
+: ship-all build, test, api build, api test
+: test echo Running frontend tests
+
+Nothing moved, so now do it for real.
 
 #+NAME: rename-test
 #+BEGIN_SRC bash :results verbatim :exports both :session 55ed49b4-065d-440e-903b-658d1dcec014 :cache yes
@@ -467,6 +491,8 @@ that the old name is still used there, for you to correct by hand.
   check-result(ship-help-after)
   check-result(copy-ship)
   <<append-ship>>
+  check-result(dry-run-rename)
+  check-result(show-before-rename)
   check-result(rename-test)
   check-result(show-after-rename)
 #+END_SRC

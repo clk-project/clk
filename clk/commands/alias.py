@@ -271,7 +271,8 @@ def rename(source, destination):
                     f"{source} is still used in {a} at another configuration profile."
                     " You may want to correct this manually."
                 )
-    LOGGER.info(f"Moved alias {source} -> {destination} in {profile.name}")
+    moved = "Would have moved" if config.dry_run else "Moved"
+    LOGGER.info(f"{moved} alias {source} -> {destination} in {profile.name}")
     profile.write_settings()
 
 

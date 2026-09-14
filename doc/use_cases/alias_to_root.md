@@ -299,7 +299,25 @@ clk alias copy ship ship-all
 clk alias append ship-all api build , api test
 ```
 
-Renaming is not only about the alias itself: the aliases that call it follow.
+Renaming is not only about the alias itself: the aliases that call it follow. It reaches further than you asked for, so you may want to watch it happen before it does. `--dry-run` says what it would do and writes nothing.
+
+```bash
+clk --dry-run alias rename test test-front
+```
+
+    Would have moved alias test -> test-front in local
+
+```bash
+clk alias show
+```
+
+    api clk --project ../billing-api
+    build echo Building the frontend
+    ship build, test
+    ship-all build, test, api build, api test
+    test echo Running frontend tests
+
+Nothing moved, so now do it for real.
 
 ```bash
 clk alias rename test test-front

@@ -1,5 +1,5 @@
 #!/usr/bin/env bash -eu
-# [[file:../../doc/use_cases/alias_to_root.org::#tidying-up-as-the-aliases-pile-up][tidying up as the aliases pile up:9]]
+# [[file:../../doc/use_cases/alias_to_root.org::#tidying-up-as-the-aliases-pile-up][tidying up as the aliases pile up:11]]
 . ./sandboxing.sh
 mkdir -p billing-api/.clk
 cd billing-api
@@ -580,6 +580,50 @@ exit 1
 
 clk alias append ship-all api build , api test
 
+dry-run-rename_code () {
+      clk --dry-run alias rename test test-front
+}
+
+dry-run-rename_expected () {
+      cat<<"EOEXPECTED"
+Would have moved alias test -> test-front in local
+EOEXPECTED
+}
+
+echo 'Run dry-run-rename'
+
+{ dry-run-rename_code || true ; } > "${TMP}/code.txt" 2>&1
+dry-run-rename_expected > "${TMP}/expected.txt" 2>&1
+diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+echo "Something went wrong when trying dry-run-rename"
+exit 1
+}
+
+
+show-before-rename_code () {
+      clk alias show
+}
+
+show-before-rename_expected () {
+      cat<<"EOEXPECTED"
+api clk --project ../billing-api
+build echo Building the frontend
+ship build, test
+ship-all build, test, api build, api test
+test echo Running frontend tests
+EOEXPECTED
+}
+
+echo 'Run show-before-rename'
+
+{ show-before-rename_code || true ; } > "${TMP}/code.txt" 2>&1
+show-before-rename_expected > "${TMP}/expected.txt" 2>&1
+diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+echo "Something went wrong when trying show-before-rename"
+exit 1
+}
+
+
 rename-test_code () {
       clk alias rename test test-front
 }
@@ -622,4 +666,4 @@ diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
 echo "Something went wrong when trying show-after-rename"
 exit 1
 }
-# tidying up as the aliases pile up:9 ends here
+# tidying up as the aliases pile up:11 ends here
