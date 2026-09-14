@@ -254,36 +254,6 @@ def create():
 
 
 @create.command()
-@argument("file", help="Install this file as customcommand")
-@option("--name", help="Name of the customcommand (default to the name of the file)")
-@flag("--delete", help="Delete the source file when done")
-@flag("--force", help="Overwrite a file if it already exists")
-def from_file(file, name, delete, force):
-    """Install the given file as a customcommand, infering its type.
-
-    It works only for python scripts or bash scripts.
-    """
-    import mimetypes
-
-    type = mimetypes.guess_type(file)[0]
-    name = name or Path(file).name
-    if type == "text/x-python":
-        command = python
-    elif type == "text/x-sh":
-        command = "bash"
-    else:
-        raise click.UsageError(
-            "I can only install a python script or a bash script."
-            f" This is a script of type {type}."
-            " I don't know what to do with it."
-        )
-    ctx = click.get_current_context()
-    ctx.invoke(command, name=name, from_file=file, force=force)
-    if delete:
-        rm(file)
-
-
-@create.command()
 @argument(
     "name",
     help=(

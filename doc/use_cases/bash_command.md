@@ -27,9 +27,8 @@ Options:
   --help                 Show this message and exit.
 
 Commands:
-  bash       Create a bash custom command
-  from-file  Install the given file as a customcommand, infering its type.
-  python     Create a bash custom command
+  bash    Create a bash custom command
+  python  Create a bash custom command
 ```
 
 Let's look at this file together.
