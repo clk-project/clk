@@ -30,7 +30,6 @@ from clk.lib import (
     check_output,
     copy,
     get_option_choices,
-    ln,
     move,
     rm,
 )
@@ -443,7 +442,6 @@ def process_url(name, url):
     if re.match("^[a-zA-Z0-9]+$", url):
         urls.append(f"git@github.com:clk-project/clk_extension_{url}")
         urls.append(f"https://github.com/clk-project/clk_extension_{url}")
-        install_type = "git"
         if name is None:
             name = url
     elif match := re.match(
@@ -456,7 +454,6 @@ def process_url(name, url):
             urls.append(f"https://{host}/{author}/clk_extension_{extension}")
             urls.append(f"git@{host}:{author}/{extension}")
             urls.append(f"https://{host}/{author}/{extension}")
-        install_type = "git"
         if name is None:
             name = extension
     elif match := re.match(
@@ -470,27 +467,9 @@ def process_url(name, url):
         urls.append(f"https://{host}/{path}/clk_extension_{extension}")
         urls.append(f"git@{host}:{path}/{extension}")
         urls.append(f"https://{host}/{path}/{extension}")
-        install_type = "git"
         if name is None:
             name = extension
-    elif url.startswith("file:"):
-        url_path = Path(url[len("file:") :]).absolute()
-        url = str(url_path)
-        install_type = "file"
-        name = name or url_path.name
-        urls.append(str(url_path))
-    elif re.match(
-        r"(\w+://)(.+@)*([\w\d\.]+)(:[\d]+)?/*(.*)|(.+@)*([\w\d\.]+):(.*)", url
-    ):
-        install_type = "git"
-        urls.append(url)
-    elif Path(url).exists():
-        install_type = "file"
-        url_path = Path(url).absolute()
-        name = name or url_path.name
-        urls.append(str(url_path))
     else:
-        install_type = "git"
         urls.append(url)
     if name is None and "/" in url:
         name = url.split("/")[-1]
@@ -500,7 +479,7 @@ def process_url(name, url):
         )
     if name.startswith("clk_extension_"):
         name = name.replace("clk_extension_", "")
-    return name, urls, install_type
+    return name, urls
 
 
 predefined_hosts = [
@@ -527,9 +506,7 @@ predefined_hosts = [
         " Can also be gitlab.com/{author}/{extension},"
         " github.com/{author}/{extension},"
         " git@...,"
-        " http://...,"
-        " a path to a local directory"
-        " (not that in that case, using --editable makes sense)."
+        " http://..."
     ),
 )
 @argument("name", help="The name of the extension", required=False)
@@ -539,19 +516,12 @@ predefined_hosts = [
     default=True,
 )
 @flag("--force/--no-force", help="Overwrite the existing extension if need be.")
-@flag(
-    "-e",
-    "--editable",
-    help="(only for local path) Create a symbolic link rather than copying the content",
-)
 @flag("--break-system-packages", help="Use this flag of pip")
 @pass_context
-def install(
-    ctx, profile, url, name, install_deps, editable, force, break_system_packages
-):
+def install(ctx, profile, url, name, install_deps, force, break_system_packages):
     """Install an extension from outside"""
     profile = profile or config.global_profile
-    name, urls, install_type = process_url(name, url)
+    name, urls = process_url(name, url)
     if name is None:
         raise click.UsageError(
             "I cannot infer a name for your extension. Please provide one explicitly."
@@ -560,20 +530,6 @@ def install(
     if not re.match(f"^{DirectoryProfile.extension_name_re}$", name):
         raise click.UsageError(
             f"Invalid extension name '{name}'. {DirectoryProfile.extension_name_hint}"
-        )
-
-    if editable is True and install_type != "file":
-        LOGGER.warning(
-            "Ignoring --editable for we guessed that"
-            " you did not provide a url that actually"
-            " points to a local file"
-        )
-
-    if install_type is None:
-        raise click.UsageError(
-            "I cannot infer how to install the extension"
-            " Please tell us what you wanted to do"
-            " so that we can fix the code and the doc."
         )
 
     extension_path = (Path(profile.location) / "extensions").resolve() / name
@@ -587,45 +543,34 @@ def install(
                     f"An extension already exists at location {extension_path}"
                     " Use --force to override it."
                 )
-    if install_type == "git":
-        # check if we already have that extension locally
-        if git_dir.exists():
-            with cd(extension_path):
-                url = check_output(["git", "remote", "get-url", "origin"]).strip()
-                if url not in urls:
-                    LOGGER.debug(f"urls: {urls}")
-                    raise click.UsageError(
-                        f"Extension {name} already exists and is not using the same URL: {url}"
-                    )
-                call(["git", "pull"])
-        else:
-            ok = False
-            for tryurl in urls:
-                try:
-                    call(["git", "clone", tryurl, str(extension_path)])
-                except subprocess.CalledProcessError:
-                    # this one did not work, go on to the next one
-                    continue
-                else:
-                    # found one that works, stop trying
-                    ok = True
-                    break
-            if ok is False:
+    # check if we already have that extension locally
+    if git_dir.exists():
+        with cd(extension_path):
+            url = check_output(["git", "remote", "get-url", "origin"]).strip()
+            if url not in urls:
+                LOGGER.debug(f"urls: {urls}")
                 raise click.UsageError(
-                    "Tried git cloning the following urls, without success:"
-                    f" {', '.join(urls)}. Please take a look at the documentation"
-                    " to see how you can pass urls"
+                    f"Extension {name} already exists and is not using the same URL: {url}"
                 )
-    elif install_type == "file":
-        if editable:
-            ln(Path(url).resolve(), extension_path)
-        else:
-            copy(url, extension_path)
-            (extension_path / "url").write_text(url)
+            call(["git", "pull"])
     else:
-        raise NotImplementedError(
-            f"Unknown install type '{install_type}'. Supported types are: 'git', 'file'."
-        )
+        ok = False
+        for tryurl in urls:
+            try:
+                call(["git", "clone", tryurl, str(extension_path)])
+            except subprocess.CalledProcessError:
+                # this one did not work, go on to the next one
+                continue
+            else:
+                # found one that works, stop trying
+                ok = True
+                break
+        if ok is False:
+            raise click.UsageError(
+                "Tried git cloning the following urls, without success:"
+                f" {', '.join(urls)}. Please take a look at the documentation"
+                " to see how you can pass urls"
+            )
 
     extension = profile.get_extension(name)
 
