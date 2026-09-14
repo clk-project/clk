@@ -245,7 +245,7 @@ def show(name_only, aliases, under, fields, format, **kwargs):
 @argument("source", type=CommandSettingsKeyType("alias"), help="The alias to rename")
 @argument("destination", help="The new name of the alias")
 def rename(source, destination):
-    """Move an alias, put the new alias in the profile indicated in the command"""
+    """Rename an alias, and make the aliases that call it use the new name"""
     for profile in reversed(list(config.all_enabled_profiles)):
         if source in profile.settings.get("alias", {}):
             break
