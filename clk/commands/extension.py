@@ -279,18 +279,14 @@ def show(fields, format, order, extensions, enabled_only, disabled_only, **kwarg
 
 
 @extension.command(handle_dry_run=True)
-@flag("--all", help="On all extensions")
 @argument(
     "extension",
     type=ExtensionNameType(enabled=True, shortonly=True),
     nargs=-1,
     help="The names of the extensions to disable",
 )
-@pass_context
-def _disable(ctx, extension, all):
+def _disable(extension):
     """Don't use this extension"""
-    if all:
-        extension = ExtensionNameType(disabled=True, shortonly=True).getchoice(ctx)
     for cmd in extension:
         if cmd in config.recipe.writable:
             config.recipe.writable[cmd]["enabled"] = False
@@ -303,18 +299,14 @@ def _disable(ctx, extension, all):
 
 
 @extension.command(handle_dry_run=True)
-@flag("--all", help="On all extensions")
 @argument(
     "extension",
     type=CommandSettingsKeyType("recipe"),
     nargs=-1,
     help="The name of the extension to unset",
 )
-@pass_context
-def unset(ctx, extension, all):
+def unset(extension):
     """Don't say whether to use or not this extension (let the upper profiles decide)"""
-    if all:
-        extension = list(config.recipe.profile.settings["recipe"].keys())
     for cmd in extension:
         if cmd not in config.recipe.writable:
             raise click.UsageError(
@@ -329,7 +321,6 @@ def unset(ctx, extension, all):
 
 
 @extension.command(handle_dry_run=True)
-@flag("--all", help="On all extensions")
 @option(
     "--only",
     help="Use only the provided extension, and disable the others",
@@ -342,14 +333,12 @@ def unset(ctx, extension, all):
     help="The names of the extensions to enable",
 )
 @pass_context
-def __enable(ctx, extension, all, only):
+def __enable(ctx, extension, only):
     """Use this extension"""
     if only and extension:
         raise click.UsageError(
             "You can only provide one of --only extension or simply extension"
         )
-    if all:
-        extension = ExtensionNameType(disabled=True, shortonly=True).getchoice(ctx)
     if only:
         extension = [only]
         for cmd in set(ExtensionNameType(shortonly=True).getchoice(ctx)) - set(
