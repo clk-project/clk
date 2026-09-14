@@ -23,3 +23,30 @@ assert f.read_text() == "hello from some zip file\n"
 ```
 
 If you wish to simply download the file, just call download. See [fetching and displaying JSON data](fetching_and_displaying_json_data.md) for a complete example of using `download`.
+
+When you know what the file should be, say so with `sha256`.
+
+```python
+from clk.lib import download
+
+archive = download(
+    "https://github.com/clk-project/clk/raw/main/tests/zipfile.zip",
+    sha256="702bb46372dfad9632c8dc3d8b5bbe945f9efd2f5575723bf66a0128486b7fb5",
+)
+assert archive.exists()
+```
+
+Should the server hand you anything else, nothing is written at all.
+
+```python
+import click
+import pytest
+
+archive.unlink()
+with pytest.raises(click.ClickException):
+    download(
+        "https://github.com/clk-project/clk/raw/main/tests/zipfile.zip",
+        sha256="0" * 64,
+    )
+assert not archive.exists()
+```

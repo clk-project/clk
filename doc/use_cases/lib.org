@@ -37,6 +37,35 @@ that, given a url, would download and extract its content would be very useful.
 If you wish to simply download the file, just call download. See
 [[file:fetching_and_displaying_json_data.org][fetching and displaying JSON data]] for a complete example of using ~download~.
 
+When you know what the file should be, say so with ~sha256~.
+
+#+name:download
+#+BEGIN_SRC python :results verbatim :exports both :session
+    from clk.lib import download
+
+    archive = download(
+        "https://github.com/clk-project/clk/raw/main/tests/zipfile.zip",
+        sha256="702bb46372dfad9632c8dc3d8b5bbe945f9efd2f5575723bf66a0128486b7fb5",
+    )
+    assert archive.exists()
+#+END_SRC
+
+Should the server hand you anything else, nothing is written at all.
+
+#+name:download-corrupted
+#+BEGIN_SRC python :results verbatim :exports both :session
+    import click
+    import pytest
+
+    archive.unlink()
+    with pytest.raises(click.ClickException):
+        download(
+            "https://github.com/clk-project/clk/raw/main/tests/zipfile.zip",
+            sha256="0" * 64,
+        )
+    assert not archive.exists()
+#+END_SRC
+
 * Tangling                                                         :noexport:
   :PROPERTIES:
   :CUSTOM_ID: 4deb6976-5708-4527-8ed8-c2ab9de8cc38
@@ -48,6 +77,11 @@ If you wish to simply download the file, just call download. See
 
 def test_extract():
     <<extract>>
+
+
+def test_download():
+    <<download>>
+    <<download-corrupted>>
 
 
 
