@@ -427,6 +427,60 @@ clk mygroup child
 #+RESULTS[e243f68a2d1e37992ff663d9518a348041fa2f8c]: try-mygroup-child
 : hello from mygroup child
 
+* shipping data along with the command
+  :PROPERTIES:
+  :CUSTOM_ID: shipping-data-along-with-the-command
+  :END:
+
+A command sometimes needs files of its own: a template, a key, a picture. With
+~--with-data~, it becomes a folder instead of a single file, and those files live
+in it.
+
+#+NAME: greet-code
+#+BEGIN_SRC python :results none :exports code
+from pathlib import Path
+
+from clk.decorators import command
+
+
+@command()
+def greet():
+    """Greet the way this machine greets"""
+    print((Path(__file__).parent / "greeting.txt").read_text().strip())
+#+END_SRC
+
+#+NAME: create-greet
+#+BEGIN_SRC bash :results none :exports code :session b115ee6f-3575-46e0-a64c-880cfa22d4e3 :noweb yes
+clk command create python greet --with-data --description "Greet someone" --body '
+<<greet-code>>
+'
+#+END_SRC
+
+It is a package now, so the command is its ~__init__.py~.
+
+#+NAME: where-greet
+#+BEGIN_SRC bash :results verbatim :exports both :session b115ee6f-3575-46e0-a64c-880cfa22d4e3 :cache yes
+clk command which greet | sed "s|$(pwd)|.|"
+#+END_SRC
+
+#+RESULTS[]: where-greet
+: ./clk-root/python/greet/__init__.py
+
+Put the file it wants next to it.
+
+#+NAME: add-greeting
+#+BEGIN_SRC bash :results none :exports code :session b115ee6f-3575-46e0-a64c-880cfa22d4e3
+echo "Hello, and welcome aboard" > "$(dirname "$(clk command which greet)")/greeting.txt"
+#+END_SRC
+
+#+NAME: try-greet
+#+BEGIN_SRC bash :results verbatim :exports both :session b115ee6f-3575-46e0-a64c-880cfa22d4e3 :cache yes
+clk greet
+#+END_SRC
+
+#+RESULTS[]: try-greet
+: Hello, and welcome aboard
+
 #+BEGIN_SRC bash :exports none :tangle ../../tests/use_cases/python_command.sh :noweb yes :shebang "#!/usr/bin/env bash"
   set -eu
 <<init>>
@@ -477,4 +531,12 @@ check-result(create-periods)
 <<mygroup-with-child>>
 
 check-result(try-mygroup-child)
+
+<<create-greet>>
+
+check-result(where-greet)
+
+<<add-greeting>>
+
+check-result(try-greet)
 #+END_SRC

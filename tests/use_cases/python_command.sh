@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# [[file:../../doc/use_cases/python_command.org::#periods-in-python-command-names][possible mistake: using periods in python command names:6]]
+# [[file:../../doc/use_cases/python_command.org::#shipping-data-along-with-the-command][shipping data along with the command:6]]
 set -eu
 . ./sandboxing.sh
 
@@ -468,4 +468,60 @@ diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
 echo "Something went wrong when trying try-mygroup-child"
 exit 1
 }
-# possible mistake: using periods in python command names:6 ends here
+
+
+clk command create python greet --with-data --description "Greet someone" --body '
+from pathlib import Path
+
+from clk.decorators import command
+
+
+@command()
+def greet():
+    """Greet the way this machine greets"""
+    print((Path(__file__).parent / "greeting.txt").read_text().strip())
+'
+
+
+where-greet_code () {
+      clk command which greet | sed "s|$(pwd)|.|"
+}
+
+where-greet_expected () {
+      cat<<"EOEXPECTED"
+./clk-root/python/greet/__init__.py
+EOEXPECTED
+}
+
+echo 'Run where-greet'
+
+{ where-greet_code || true ; } > "${TMP}/code.txt" 2>&1
+where-greet_expected > "${TMP}/expected.txt" 2>&1
+diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+echo "Something went wrong when trying where-greet"
+exit 1
+}
+
+
+echo "Hello, and welcome aboard" > "$(dirname "$(clk command which greet)")/greeting.txt"
+
+
+try-greet_code () {
+      clk greet
+}
+
+try-greet_expected () {
+      cat<<"EOEXPECTED"
+Hello, and welcome aboard
+EOEXPECTED
+}
+
+echo 'Run try-greet'
+
+{ try-greet_code || true ; } > "${TMP}/code.txt" 2>&1
+try-greet_expected > "${TMP}/expected.txt" 2>&1
+diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+echo "Something went wrong when trying try-greet"
+exit 1
+}
+# shipping data along with the command:6 ends here

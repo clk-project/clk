@@ -2,6 +2,7 @@
 - [adding a default value](#adding-a-default-value)
 - [possible mistake: forgetting the decorator](#forgetting-the-decorator)
 - [possible mistake: using periods in python command names](#periods-in-python-command-names)
+- [shipping data along with the command](#shipping-data-along-with-the-command)
 
 To create a python command, you can simply call the following command.
 
@@ -318,3 +319,56 @@ clk mygroup child
 ```
 
     hello from mygroup child
+
+
+<a id="shipping-data-along-with-the-command"></a>
+
+# shipping data along with the command
+
+A command sometimes needs files of its own: a template, a key, a picture. With `--with-data`, it becomes a folder instead of a single file, and those files live in it.
+
+```python
+from pathlib import Path
+
+from clk.decorators import command
+
+
+@command()
+def greet():
+    """Greet the way this machine greets"""
+    print((Path(__file__).parent / "greeting.txt").read_text().strip())
+```
+
+```bash
+clk command create python greet --with-data --description "Greet someone" --body '
+from pathlib import Path
+
+from clk.decorators import command
+
+
+@command()
+def greet():
+    """Greet the way this machine greets"""
+    print((Path(__file__).parent / "greeting.txt").read_text().strip())
+'
+```
+
+It is a package now, so the command is its `__init__.py`.
+
+```bash
+clk command which greet | sed "s|$(pwd)|.|"
+```
+
+    ./clk-root/python/greet/__init__.py
+
+Put the file it wants next to it.
+
+```bash
+echo "Hello, and welcome aboard" > "$(dirname "$(clk command which greet)")/greeting.txt"
+```
+
+```bash
+clk greet
+```
+
+    Hello, and welcome aboard
