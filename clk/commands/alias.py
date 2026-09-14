@@ -30,6 +30,11 @@ class AliasConfig:
     pass
 
 
+def what_happened(done, would_have):
+    """Say what was done, or what would have been when running dry"""
+    return would_have if config.dry_run else done
+
+
 @group(default_command="show")
 @use_settings("alias", AliasConfig)
 def alias():
@@ -60,14 +65,16 @@ def _set(alias, command, documentation, params, flowdep):
     old = config.alias.writable.get(alias)
     if old is not None:
         LOGGER.info(
-            "Removing {} alias of {}: {}".format(
+            "{} {} alias of {}: {}".format(
+                what_happened("Removing", "Would have removed the"),
                 Colorer.apply_color_profilename(config.alias.writeprofilename),
                 alias,
                 format_commands(old["commands"]),
             )
         )
     LOGGER.info(
-        "New {} alias for {}: {}".format(
+        "{} {} alias for {}: {}".format(
+            what_happened("New", "Would have made a new"),
             Colorer.apply_color_profilename(config.alias.writeprofilename),
             alias,
             format_commands(data["commands"]),
@@ -133,7 +140,8 @@ def unset(aliases):
             )
     for cmd in aliases:
         LOGGER.info(
-            f"Erasing {cmd} alias from {Colorer.apply_color_profilename(config.alias.writeprofilename)} settings"
+            f"{what_happened('Erasing', 'Would have erased')} {cmd} alias"
+            f" from {Colorer.apply_color_profilename(config.alias.writeprofilename)} settings"
         )
         del config.alias.writable[cmd]
     config.alias.write()
@@ -166,7 +174,8 @@ def unset_documentation(aliases):
             )
     for cmd in aliases:
         LOGGER.info(
-            f"Erasing the documentation of {cmd} alias from {Colorer.apply_color_profilename(config.alias.writeprofilename)} settings"
+            f"{what_happened('Erasing', 'Would have erased')} the documentation of {cmd} alias"
+            f" from {Colorer.apply_color_profilename(config.alias.writeprofilename)} settings"
         )
         config.alias.writable[cmd]["documentation"] = None
     config.alias.write()
@@ -271,8 +280,10 @@ def rename(source, destination):
                     f"{source} is still used in {a} at another configuration profile."
                     " You may want to correct this manually."
                 )
-    moved = "Would have moved" if config.dry_run else "Moved"
-    LOGGER.info(f"{moved} alias {source} -> {destination} in {profile.name}")
+    LOGGER.info(
+        f"{what_happened('Moved', 'Would have moved')} alias {source} -> {destination}"
+        f" in {profile.name}"
+    )
     profile.write_settings()
 
 
@@ -295,7 +306,8 @@ def move(source, destination):
     destination.settings["alias"] = destination_store
     del profile.settings["alias"][source]
     LOGGER.info(
-        f"Moved alias {source}, {Colorer.apply_color_profilename(profile.name)} -> {Colorer.apply_color_profilename(destination.name)}"
+        f"{what_happened('Moved', 'Would have moved')} alias {source},"
+        f" {Colorer.apply_color_profilename(profile.name)} -> {Colorer.apply_color_profilename(destination.name)}"
     )
     destination.write_settings()
     profile.write_settings()
@@ -313,7 +325,10 @@ def copy(source, destination):
         raise click.UsageError(f"{source} not found")
     profile.settings["alias"][destination] = profile.settings["alias"][source]
     profile.write_settings()
-    LOGGER.info(f"Copied alias {source} -> {destination} in {profile.name}")
+    LOGGER.info(
+        f"{what_happened('Copied', 'Would have copied')} alias {source} -> {destination}"
+        f" in {profile.name}"
+    )
 
 
 @alias.command(ignore_unknown_options=True, handle_dry_run=True)
