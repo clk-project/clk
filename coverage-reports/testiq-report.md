@@ -213,7 +213,7 @@ Found 4950 test pairs with ≥30% similarity (showing top 20):
 
 ## Summary
 
-- Total tests analyzed: 109
+- Total tests analyzed: 110
 - Exact duplicates: 4 tests can be removed
 - Subset duplicates: 70 tests may be redundant
 - Similar tests: 4950 pairs need review
