@@ -46,10 +46,32 @@ done
 
 EOH
 
-clk animal --help | grep -- 'A kind of animal'
-clk animal --help | grep -- '--sound-of-animal'
-clk animal --help | grep -- '--repeat'
-clk animal --help | grep -- '--shout'
+
+see_code () {
+      clk animal --help | grep -- 'A kind of animal'
+      clk animal --help | grep -- '--sound-of-animal'
+      clk animal --help | grep -- '--repeat'
+      clk animal --help | grep -- '--shout'
+}
+
+see_expected () {
+      cat<<"EOEXPECTED"
+  [duck|whale|cat|dog]  A kind of animal  [default: duck]
+  --sound-of-animal TEXT  The sound the animal makes
+  --repeat INTEGER        How many times to repeat the message  [default: 0]
+  --shout                 Print the message of the animal in capital case
+EOEXPECTED
+}
+
+echo 'Run see'
+
+{ see_code || true ; } > "${TMP}/code.txt" 2>&1
+see_expected > "${TMP}/expected.txt" 2>&1
+diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+echo "Something went wrong when trying see"
+exit 1
+}
+
 
 
 see-help-all_code () {

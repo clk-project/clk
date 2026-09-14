@@ -1159,7 +1159,14 @@ class AutomaticOption(Option):
 
 
 class Argument(ParameterMixin, click.Argument):
-    pass
+    def get_help_record(self, ctx):
+        res = super().get_help_record(ctx)
+        if res is None:
+            return None
+        default = self.get_default(ctx, call=False)
+        if default is None or default is UNSET:
+            return res
+        return res[0], f"{res[1]}  [default: {default}]"
 
 
 def in_project(command):

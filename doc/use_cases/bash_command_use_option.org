@@ -82,11 +82,11 @@ clk animal --help | grep -- '--repeat'
 clk animal --help | grep -- '--shout'
 #+END_SRC
 
-#+RESULTS: see
-: [duck|whale|cat|dog]  A kind of animal
-: --sound-of-animal TEXT  The sound the animal makes
-: --repeat INTEGER        How many times to repeat the message  [default: 0]
-: --shout                 Print the message of the animal in capital case
+#+RESULTS[]: see
+:   [duck|whale|cat|dog]  A kind of animal  [default: duck]
+:   --sound-of-animal TEXT  The sound the animal makes
+:   --repeat INTEGER        How many times to repeat the message  [default: 0]
+:   --shout                 Print the message of the animal in capital case
 
 Passing ~--help-all~ additionally reveals the automatic options every clk
 command carries, whichever way it was written.
@@ -257,7 +257,7 @@ clk showpackage https://example.com/path/to/package.apk
 
 <<create>>
 
-<<see>>
+check-result(see)
 
 check-result(see-help-all)
 

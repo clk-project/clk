@@ -85,7 +85,7 @@ clk animal --help | grep -- '--repeat'
 clk animal --help | grep -- '--shout'
 ```
 
-    [duck|whale|cat|dog]  A kind of animal
+    [duck|whale|cat|dog]  A kind of animal  [default: duck]
     --sound-of-animal TEXT  The sound the animal makes
     --repeat INTEGER        How many times to repeat the message  [default: 0]
     --shout                 Print the message of the animal in capital case
