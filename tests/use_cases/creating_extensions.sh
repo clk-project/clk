@@ -683,4 +683,101 @@ exit 1
 
 
 clk extension remove "my-host.[example].com"
+
+mkdir -p tidyproject/.clk
+cd tidyproject
+clk extension create --local kube
+clk command create --extension kube bash run-cluster --description "Run the cluster" --body 'echo "starting the cluster"'
+
+
+kube-is-local_code () {
+      clk extension show kube
+}
+
+kube-is-local_expected () {
+      cat<<"EOEXPECTED"
+extension    configuration    installation
+-----------  ---------------  --------------
+kube         Unset            local
+EOEXPECTED
+}
+
+echo 'Run kube-is-local'
+
+{ kube-is-local_code || true ; } > "${TMP}/code.txt" 2>&1
+kube-is-local_expected > "${TMP}/expected.txt" 2>&1
+diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+echo "Something went wrong when trying kube-is-local"
+exit 1
+}
+
+
+
+rename-kube_code () {
+      clk extension rename kube kubernetes
+      clk extension show kubernetes
+}
+
+rename-kube_expected () {
+      cat<<"EOEXPECTED"
+extension    configuration    installation
+-----------  ---------------  --------------
+kubernetes   Unset            local
+EOEXPECTED
+}
+
+echo 'Run rename-kube'
+
+{ rename-kube_code || true ; } > "${TMP}/code.txt" 2>&1
+rename-kube_expected > "${TMP}/expected.txt" 2>&1
+diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+echo "Something went wrong when trying rename-kube"
+exit 1
+}
+
+
+
+move-kube_code () {
+      clk extension move kubernetes global
+      clk extension show kubernetes
+}
+
+move-kube_expected () {
+      cat<<"EOEXPECTED"
+extension    configuration    installation
+-----------  ---------------  --------------
+kubernetes   Unset            global
+EOEXPECTED
+}
+
+echo 'Run move-kube'
+
+{ move-kube_code || true ; } > "${TMP}/code.txt" 2>&1
+move-kube_expected > "${TMP}/expected.txt" 2>&1
+diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+echo "Something went wrong when trying move-kube"
+exit 1
+}
+
+
+
+leave-tidyproject_code () {
+      cd ..
+      clk run-cluster
+}
+
+leave-tidyproject_expected () {
+      cat<<"EOEXPECTED"
+starting the cluster
+EOEXPECTED
+}
+
+echo 'Run leave-tidyproject'
+
+{ leave-tidyproject_code || true ; } > "${TMP}/code.txt" 2>&1
+leave-tidyproject_expected > "${TMP}/expected.txt" 2>&1
+diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+echo "Something went wrong when trying leave-tidyproject"
+exit 1
+}
 # all ends here

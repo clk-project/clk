@@ -8,6 +8,7 @@
   - [temporary\_file](#d18237dd-7e05-4225-b9de-bf63f09b6d99)
 - [when a program you call fails](#5fab2cd5-3e10-4c2c-ac79-038abeec8a41)
 - [extension names with special characters](#1a2b3c4d-5678-90ab-cdef-abcdef012345)
+- [an extension that outgrew the project](#an-extension-that-outgrew-the-project)
 
 Extensions are folders that contain clk configurations and commands. You can create and share those with your colleagues.
 
@@ -602,3 +603,54 @@ clk extension | grep "my-host.\[example\].com"
     my-host.[example].com  Unset            global
 
 Note that clk will always enable the extension matching your hostname, even if you explicitly disable it in a project. This is practical to put personal preference in shared project without disturbing the colleagues.
+
+
+<a id="an-extension-that-outgrew-the-project"></a>
+
+# an extension that outgrew the project
+
+Extensions are cheap too, so one often starts inside a project, under whatever name came to mind.
+
+```bash
+mkdir -p tidyproject/.clk
+cd tidyproject
+clk extension create --local kube
+clk command create --extension kube bash run-cluster --description "Run the cluster" --body 'echo "starting the cluster"'
+```
+
+```bash
+clk extension show kube
+```
+
+    extension    configuration    installation
+    -----------  ---------------  --------------
+    kube         Unset            local
+
+`clk extension rename` gives it the name you would have chosen with more time.
+
+```bash
+clk extension rename kube kubernetes
+clk extension show kubernetes
+```
+
+    extension    configuration    installation
+    -----------  ---------------  --------------
+    kubernetes   Unset            local
+
+And `clk extension move` carries it out of the project, so that it answers everywhere.
+
+```bash
+clk extension move kubernetes global
+clk extension show kubernetes
+```
+
+    extension    configuration    installation
+    -----------  ---------------  --------------
+    kubernetes   Unset            global
+
+```bash
+cd ..
+clk run-cluster
+```
+
+    starting the cluster

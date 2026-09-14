@@ -714,6 +714,68 @@ Note that clk will always enable the extension matching your hostname, even if
 you explicitly disable it in a project. This is practical to put personal
 preference in shared project without disturbing the colleagues.
 
+* an extension that outgrew the project
+  :PROPERTIES:
+  :CUSTOM_ID: an-extension-that-outgrew-the-project
+  :END:
+
+Extensions are cheap too, so one often starts inside a project, under whatever
+name came to mind.
+
+#+NAME: create-kube
+#+BEGIN_SRC bash :results none :exports code :session f47428c2-56ea-4d91-97d9-4f2ff63ef052
+mkdir -p tidyproject/.clk
+cd tidyproject
+clk extension create --local kube
+clk command create --extension kube bash run-cluster --description "Run the cluster" --body 'echo "starting the cluster"'
+#+END_SRC
+
+#+NAME: kube-is-local
+#+BEGIN_SRC bash :results verbatim :cache yes :exports both :session f47428c2-56ea-4d91-97d9-4f2ff63ef052
+clk extension show kube
+#+END_SRC
+
+#+RESULTS[]: kube-is-local
+: extension    configuration    installation
+: -----------  ---------------  --------------
+: kube         Unset            local
+
+~clk extension rename~ gives it the name you would have chosen with more time.
+
+#+NAME: rename-kube
+#+BEGIN_SRC bash :results verbatim :cache yes :exports both :session f47428c2-56ea-4d91-97d9-4f2ff63ef052
+clk extension rename kube kubernetes
+clk extension show kubernetes
+#+END_SRC
+
+#+RESULTS[]: rename-kube
+: extension    configuration    installation
+: -----------  ---------------  --------------
+: kubernetes   Unset            local
+
+And ~clk extension move~ carries it out of the project, so that it answers
+everywhere.
+
+#+NAME: move-kube
+#+BEGIN_SRC bash :results verbatim :cache yes :exports both :session f47428c2-56ea-4d91-97d9-4f2ff63ef052
+clk extension move kubernetes global
+clk extension show kubernetes
+#+END_SRC
+
+#+RESULTS[]: move-kube
+: extension    configuration    installation
+: -----------  ---------------  --------------
+: kubernetes   Unset            global
+
+#+NAME: leave-tidyproject
+#+BEGIN_SRC bash :results verbatim :cache yes :exports both :session f47428c2-56ea-4d91-97d9-4f2ff63ef052
+cd ..
+clk run-cluster
+#+END_SRC
+
+#+RESULTS[]: leave-tidyproject
+: starting the cluster
+
 #+NAME: all
 #+BEGIN_SRC bash :results none :exports none :tangle ../../tests/use_cases/creating_extensions.sh :noweb yes :shebang "#!/usr/bin/env bash"
   set -eu
@@ -798,4 +860,14 @@ check-result(run-waiting-demo)
 check-result(hostname-extension-visible)
 
 clk extension remove "my-host.[example].com"
+
+<<create-kube>>
+
+check-result(kube-is-local)
+
+check-result(rename-kube)
+
+check-result(move-kube)
+
+check-result(leave-tidyproject)
 #+END_SRC
