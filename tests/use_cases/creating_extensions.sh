@@ -332,6 +332,31 @@ exit 1
 }
 
 
+
+install-from-nowhere_code () {
+      clk extension install "${TMP}/nowhere.git" nowhere 2>&1 | sed "s|$(pwd)|.|" | tail -1
+}
+
+install-from-nowhere_expected () {
+      local expected
+      expected="$(cat<<"EOEXPECTED"
+error: Tried git cloning the following urls, without success: ./nowhere.git. Please take a look at the documentation to see how you can pass urls
+EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
+}
+
+echo 'Run install-from-nowhere'
+
+{ install-from-nowhere_code || true ; } > "${TMP}/code.txt" 2>&1
+install-from-nowhere_expected > "${TMP}/expected.txt" 2>&1
+diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+echo "Something went wrong when trying install-from-nowhere"
+exit 1
+}
+
+
 git clone "${TMP}/k8s.git" "${TMP}/their-k8s"
 cd "${TMP}/their-k8s"
 mkdir -p bin

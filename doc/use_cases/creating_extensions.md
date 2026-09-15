@@ -269,6 +269,14 @@ clk extension install "${TMP}/someone-else.git" k8s 2>&1 | sed "s|$(pwd)|.|" | t
 
     error: Extension k8s already exists and is not using the same URL: ./k8s.git
 
+A url that leads nowhere says so, and names what it tried.
+
+```bash
+clk extension install "${TMP}/nowhere.git" nowhere 2>&1 | sed "s|$(pwd)|.|" | tail -1
+```
+
+    error: Tried git cloning the following urls, without success: ./nowhere.git. Please take a look at the documentation to see how you can pass urls
+
 Meanwhile a colleague of yours writes the command that stops the cluster, and pushes it to that same repository.
 
 ```bash
