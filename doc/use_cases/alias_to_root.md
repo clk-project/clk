@@ -272,6 +272,15 @@ clk alias set ship build , test
 
     New local alias for ship: build , test
 
+Were you setting things up from a script, you would rather it kept quiet. It still does the work, it just stops saying so.
+
+```bash
+clk --quiet alias set ship-nightly build , test
+clk alias show ship-nightly
+```
+
+    ship-nightly build, test
+
 Asked for its help, it can only repeat itself.
 
 ```bash
@@ -324,6 +333,7 @@ clk alias show
     build echo Building the frontend
     ship build, test
     ship-all build, test, api build, api test
+    ship-nightly build, test
     test echo Running frontend tests
 
 Nothing moved, so now do it for real.
@@ -344,6 +354,7 @@ clk alias show
     build echo Building the frontend
     ship build, test-front
     ship-all build, test-front, api build, api test
+    ship-nightly build, test-front
     test-front echo Running frontend tests
 
 Had one of them lived in a profile clk cannot write to, it would have warned you that the old name is still used there, for you to correct by hand.

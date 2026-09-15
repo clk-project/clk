@@ -1,5 +1,5 @@
 #!/usr/bin/env bash -eu
-# [[file:../../doc/use_cases/alias_to_root.org::#tidying-up-as-the-aliases-pile-up][tidying up as the aliases pile up:11]]
+# [[file:../../doc/use_cases/alias_to_root.org::#tidying-up-as-the-aliases-pile-up][tidying up as the aliases pile up:12]]
 . ./sandboxing.sh
 mkdir -p billing-api/.clk
 cd billing-api
@@ -536,6 +536,27 @@ exit 1
 }
 
 
+quiet-ship_code () {
+      clk --quiet alias set ship-nightly build , test
+      clk alias show ship-nightly
+}
+
+quiet-ship_expected () {
+      cat<<"EOEXPECTED"
+ship-nightly build, test
+EOEXPECTED
+}
+
+echo 'Run quiet-ship'
+
+{ quiet-ship_code || true ; } > "${TMP}/code.txt" 2>&1
+quiet-ship_expected > "${TMP}/expected.txt" 2>&1
+diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+echo "Something went wrong when trying quiet-ship"
+exit 1
+}
+
+
 ship-help-before_code () {
       clk ship --help | head -3
 }
@@ -632,6 +653,7 @@ api clk --project ../billing-api
 build echo Building the frontend
 ship build, test
 ship-all build, test, api build, api test
+ship-nightly build, test
 test echo Running frontend tests
 EOEXPECTED
 }
@@ -676,6 +698,7 @@ api clk --project ../billing-api
 build echo Building the frontend
 ship build, test-front
 ship-all build, test-front, api build, api test
+ship-nightly build, test-front
 test-front echo Running frontend tests
 EOEXPECTED
 }
@@ -688,4 +711,4 @@ diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
 echo "Something went wrong when trying show-after-rename"
 exit 1
 }
-# tidying up as the aliases pile up:11 ends here
+# tidying up as the aliases pile up:12 ends here

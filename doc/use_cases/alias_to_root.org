@@ -364,6 +364,18 @@ clk alias set ship build , test
 #+RESULTS[]: ship
 : New local alias for ship: build , test
 
+Were you setting things up from a script, you would rather it kept quiet. It
+still does the work, it just stops saying so.
+
+#+NAME: quiet-ship
+#+BEGIN_SRC bash :results verbatim :exports both :session 55ed49b4-065d-440e-903b-658d1dcec014 :cache yes
+clk --quiet alias set ship-nightly build , test
+clk alias show ship-nightly
+#+END_SRC
+
+#+RESULTS[]: quiet-ship
+: ship-nightly build, test
+
 Asked for its help, it can only repeat itself.
 
 #+NAME: ship-help-before
@@ -431,6 +443,7 @@ clk alias show
 : build echo Building the frontend
 : ship build, test
 : ship-all build, test, api build, api test
+: ship-nightly build, test
 : test echo Running frontend tests
 
 Nothing moved, so now do it for real.
@@ -456,6 +469,7 @@ clk alias show
 : build echo Building the frontend
 : ship build, test-front
 : ship-all build, test-front, api build, api test
+: ship-nightly build, test-front
 : test-front echo Running frontend tests
 
 Had one of them lived in a profile clk cannot write to, it would have warned you
@@ -500,6 +514,7 @@ that the old name is still used there, for you to correct by hand.
   <<enter-app-for-promotion>>
   check-result(shadowed-build)
   check-result(ship)
+  check-result(quiet-ship)
   check-result(ship-help-before)
   <<document-ship>>
   check-result(ship-help-after)
