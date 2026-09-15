@@ -270,4 +270,59 @@ diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
 echo "Something went wrong when trying list-commands"
 exit 1
 }
+
+
+
+setup-value_code () {
+      clk value set deploy-target staging
+      clk extension disable mytools
+}
+
+setup-value_expected () {
+      cat<<"EOEXPECTED"
+
+EOEXPECTED
+}
+
+echo 'Run setup-value'
+
+{ setup-value_code || true ; } > "${TMP}/code.txt" 2>&1
+setup-value_expected > "${TMP}/expected.txt" 2>&1
+diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+echo "Something went wrong when trying setup-value"
+exit 1
+}
+
+
+
+describe-values_code () {
+      clk describe local
+}
+
+describe-values_expected () {
+      cat<<"EOEXPECTED"
+The extension local is located at ./.clk . Let's try to see what it has to offer.
+##########
+I found some alias:
+  build: echo Building the project
+  test: echo Running tests
+I found some parameter:
+  build: --verbose
+I found some value:
+  deploy-target: staging
+I found some extension:
+  mytools: disabled
+I found some commands:
+  deploy
+EOEXPECTED
+}
+
+echo 'Run describe-values'
+
+{ describe-values_code || true ; } > "${TMP}/code.txt" 2>&1
+describe-values_expected > "${TMP}/expected.txt" 2>&1
+diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+echo "Something went wrong when trying describe-values"
+exit 1
+}
 # run ends here

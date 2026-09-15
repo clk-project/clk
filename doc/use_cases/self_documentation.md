@@ -3,6 +3,7 @@
 - [Describing an extension](#describing-an-extension)
 - [Comparing profiles](#comparing-profiles)
 - [Discovering custom commands](#discovering-custom-commands)
+- [Coming back to a project you forgot](#coming-back-to-a-project-you-forgot)
 - [Summary](#summary)
 
 When you start using clk extensively, you might end up with many [aliases](bash_command_from_alias.md), [parameters](setting_default_values.md), [commands](bash_command.md), and [extensions](creating_extensions.md) spread across different profiles. The `clk describe` command helps you discover what features are available in any profile, making clk a self-documented tool.
@@ -190,6 +191,40 @@ clk command --local list
 ```
 
     ./.clk/bin/deploy
+
+
+<a id="coming-back-to-a-project-you-forgot"></a>
+
+# Coming back to a project you forgot
+
+A project is never only aliases and commands. Over the weeks you also set a [value](setting_default_values.md) your commands read at run time, and you switched off an extension you had had enough of.
+
+```bash
+clk value set deploy-target staging
+clk extension disable mytools
+```
+
+Come back to the project months later, having forgotten all of it, and one describe hands you the lot.
+
+```bash
+clk describe local
+```
+
+    The extension local is located at ./.clk . Let's try to see what it has to offer.
+    ##########
+    I found some alias:
+      build: echo Building the project
+      test: echo Running tests
+    I found some parameter:
+      build: --verbose
+    I found some value:
+      deploy-target: staging
+    I found some extension:
+      mytools: disabled
+    I found some commands:
+      deploy
+
+Read it from the top and the project comes back to you: `build` and `test` are the shortcuts you wrote, `build` always runs verbose because you got tired of adding the option, `deploy-target` is what your deploy reads to know it goes to staging, and `deploy` is a script living in the project. As for `mytools`, it is still there and merely not loaded, which is the answer the day you go looking for a command that seems to have gone missing.
 
 
 <a id="summary"></a>
