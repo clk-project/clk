@@ -230,25 +230,33 @@ When creating python custom commands manually, you need to use the `@command()` 
 Let's create a python file that defines a function but forgets to decorate it.
 
 ```python
-def myenv():
+def pyenv():
     """My environment command"""
     print("hello")
 ```
 
-When trying to run this command, clk will tell you that it found a function instead of a click command.
+Now try reaching it.
 
 ```bash
-clk myenv 2>&1|sed "s|$(pwd)|.|"
+clk py<TAB>
 ```
 
-    error: Found the command myenv in the resolver customcommand but could not load it.
-    warning: Failed to get the command myenv: The file ./clk-root/python/myenv.py must contain a click command or group named myenv, but found a function instead. Did you forget the @command or @group decorator?
-    error: clk.myenv could not be loaded. Re run with clk --develop to see the stacktrace or clk --debug-on-command-load-error to debug the load error
+    python
+
+It does not come up. That is the hint that something is wrong with it, and running it says what.
+
+```bash
+clk pyenv 2>&1|sed "s|$(pwd)|.|"
+```
+
+    error: Found the command pyenv in the resolver customcommand but could not load it.
+    warning: Failed to get the command pyenv: The file ./clk-root/python/pyenv.py must contain a click command or group named pyenv, but found a function instead. Did you forget the @command or @group decorator?
+    error: clk.pyenv could not be loaded. Re run with clk --develop to see the stacktrace or clk --debug-on-command-load-error to debug the load error
 
 That last line promises a stacktrace, and `clk --develop` keeps the promise. It is long, so let's only keep the line clk gave up on.
 
 ```bash
-clk --develop myenv 2>&1 | grep -o 'raise BadCustomCommandError('
+clk --develop pyenv 2>&1 | grep -o 'raise BadCustomCommandError('
 ```
 
     raise BadCustomCommandError(
@@ -259,7 +267,7 @@ To fix this, simply add the `@command()` decorator from clk.
 from clk.decorators import command
 
 @command()
-def myenv():
+def pyenv():
     """My environment command"""
     print("hello")
 ```
@@ -267,7 +275,7 @@ def myenv():
 Now the command works as expected.
 
 ```bash
-clk myenv
+clk pyenv
 ```
 
     hello

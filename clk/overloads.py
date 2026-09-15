@@ -1545,6 +1545,8 @@ class MainCommand(
             )
         cmd = get_command_safe(name)
         if cmd is None and name in self.list_commands(ctx):
+            if ctx.resilient_parsing or clk.completion.IN_COMPLETION:
+                return None
             raise click.ClickException(
                 f"{self.path}.{name} could not be loaded."
                 f" Re run with {config.main_command.path} --develop"

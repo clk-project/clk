@@ -326,22 +326,43 @@ exit 1
 }
 
 
-cat <<'EOF' > "${CLKCONFIGDIR}/python/myenv.py"
-def myenv():
+cat <<'EOF' > "${CLKCONFIGDIR}/python/pyenv.py"
+def pyenv():
     """My environment command"""
     print("hello")
 EOF
 
 
+try-completion-bad-command_code () {
+      clk completion try --last clk py
+}
+
+try-completion-bad-command_expected () {
+      cat<<"EOEXPECTED"
+python
+EOEXPECTED
+}
+
+echo 'Run try-completion-bad-command'
+
+{ try-completion-bad-command_code || true ; } > "${TMP}/code.txt" 2>&1
+try-completion-bad-command_expected > "${TMP}/expected.txt" 2>&1
+diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+echo "Something went wrong when trying try-completion-bad-command"
+exit 1
+}
+
+
+
 try-bad-command_code () {
-      clk myenv 2>&1|sed "s|$(pwd)|.|"
+      clk pyenv 2>&1|sed "s|$(pwd)|.|"
 }
 
 try-bad-command_expected () {
       cat<<"EOEXPECTED"
-error: Found the command myenv in the resolver customcommand but could not load it.
-warning: Failed to get the command myenv: The file ./clk-root/python/myenv.py must contain a click command or group named myenv, but found a function instead. Did you forget the @command or @group decorator?
-error: clk.myenv could not be loaded. Re run with clk --develop to see the stacktrace or clk --debug-on-command-load-error to debug the load error
+error: Found the command pyenv in the resolver customcommand but could not load it.
+warning: Failed to get the command pyenv: The file ./clk-root/python/pyenv.py must contain a click command or group named pyenv, but found a function instead. Did you forget the @command or @group decorator?
+error: clk.pyenv could not be loaded. Re run with clk --develop to see the stacktrace or clk --debug-on-command-load-error to debug the load error
 EOEXPECTED
 }
 
@@ -356,7 +377,7 @@ exit 1
 
 
 try-bad-command-develop_code () {
-      clk --develop myenv 2>&1 | grep -o 'raise BadCustomCommandError('
+      clk --develop pyenv 2>&1 | grep -o 'raise BadCustomCommandError('
 }
 
 try-bad-command-develop_expected () {
@@ -375,18 +396,18 @@ exit 1
 }
 
 
-cat <<'EOF' > "${CLKCONFIGDIR}/python/myenv.py"
+cat <<'EOF' > "${CLKCONFIGDIR}/python/pyenv.py"
 from clk.decorators import command
 
 @command()
-def myenv():
+def pyenv():
     """My environment command"""
     print("hello")
 EOF
 
 
 try-fixed-command_code () {
-      clk myenv
+      clk pyenv
 }
 
 try-fixed-command_expected () {

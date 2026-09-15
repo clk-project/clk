@@ -296,37 +296,52 @@ Let's create a python file that defines a function but forgets to decorate it.
 
 #+NAME: bad-command-code
 #+BEGIN_SRC python :exports code
-def myenv():
+def pyenv():
     """My environment command"""
     print("hello")
 #+END_SRC
 
 #+NAME: create-bad-command
 #+BEGIN_SRC bash :results none :exports none :session b115ee6f-3575-46e0-a64c-880cfa22d4e3 :noweb yes
-cat <<'EOF' > "${CLKCONFIGDIR}/python/myenv.py"
+cat <<'EOF' > "${CLKCONFIGDIR}/python/pyenv.py"
 <<bad-command-code>>
 EOF
 #+END_SRC
 
-When trying to run this command, clk will tell you that it found a function
-instead of a click command.
+Now try reaching it.
+
+#+NAME: ask-for-completion-bad-command
+#+BEGIN_SRC bash :results none :exports code
+clk py<TAB>
+#+END_SRC
+
+#+NAME: try-completion-bad-command
+#+BEGIN_SRC bash :results verbatim :exports results :session b115ee6f-3575-46e0-a64c-880cfa22d4e3 :cache yes
+clk completion try --last clk py
+#+END_SRC
+
+#+RESULTS[]: try-completion-bad-command
+: python
+
+It does not come up. That is the hint that something is wrong with it, and
+running it says what.
 
 #+NAME: try-bad-command
 #+BEGIN_SRC bash :results verbatim :exports both :session b115ee6f-3575-46e0-a64c-880cfa22d4e3 :cache yes
-clk myenv 2>&1|sed "s|$(pwd)|.|"
+clk pyenv 2>&1|sed "s|$(pwd)|.|"
 #+END_SRC
 
 #+RESULTS[9f593cff8587c3153dd9920cd184ca552f4d1d67]: try-bad-command
-: error: Found the command myenv in the resolver customcommand but could not load it.
-: warning: Failed to get the command myenv: The file ./clk-root/python/myenv.py must contain a click command or group named myenv, but found a function instead. Did you forget the @command or @group decorator?
-: error: clk.myenv could not be loaded. Re run with clk --develop to see the stacktrace or clk --debug-on-command-load-error to debug the load error
+: error: Found the command pyenv in the resolver customcommand but could not load it.
+: warning: Failed to get the command pyenv: The file ./clk-root/python/pyenv.py must contain a click command or group named pyenv, but found a function instead. Did you forget the @command or @group decorator?
+: error: clk.pyenv could not be loaded. Re run with clk --develop to see the stacktrace or clk --debug-on-command-load-error to debug the load error
 
 That last line promises a stacktrace, and ~clk --develop~ keeps the promise. It
 is long, so let's only keep the line clk gave up on.
 
 #+NAME: try-bad-command-develop
 #+BEGIN_SRC bash :results verbatim :exports both :session b115ee6f-3575-46e0-a64c-880cfa22d4e3 :cache yes
-clk --develop myenv 2>&1 | grep -o 'raise BadCustomCommandError('
+clk --develop pyenv 2>&1 | grep -o 'raise BadCustomCommandError('
 #+END_SRC
 
 #+RESULTS[]: try-bad-command-develop
@@ -339,14 +354,14 @@ To fix this, simply add the ~@command()~ decorator from clk.
 from clk.decorators import command
 
 @command()
-def myenv():
+def pyenv():
     """My environment command"""
     print("hello")
 #+END_SRC
 
 #+NAME: fix-command
 #+BEGIN_SRC bash :results none :exports none :session b115ee6f-3575-46e0-a64c-880cfa22d4e3 :noweb yes
-cat <<'EOF' > "${CLKCONFIGDIR}/python/myenv.py"
+cat <<'EOF' > "${CLKCONFIGDIR}/python/pyenv.py"
 <<fix-command-code>>
 EOF
 #+END_SRC
@@ -355,7 +370,7 @@ Now the command works as expected.
 
 #+NAME: try-fixed-command
 #+BEGIN_SRC bash :results verbatim :exports both :session b115ee6f-3575-46e0-a64c-880cfa22d4e3 :cache yes
-clk myenv
+clk pyenv
 #+END_SRC
 
 #+RESULTS[e073a22027d65d24304cb4d9e3633779c9593da4]: try-fixed-command
@@ -514,6 +529,8 @@ check-result(use_with_options2)
 check-result(use_with_deprecated_options)
 
 <<create-bad-command>>
+
+check-result(try-completion-bad-command)
 
 check-result(try-bad-command)
 check-result(try-bad-command-develop)
