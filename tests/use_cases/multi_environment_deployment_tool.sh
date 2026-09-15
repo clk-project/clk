@@ -38,12 +38,16 @@ test-status-dev_code () {
 }
 
 test-status-dev_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 Environment: dev
 URL: https://dev.example.com
 Checking status...
 Status: OK
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run test-status-dev'
@@ -62,12 +66,16 @@ test-status-prod_code () {
 }
 
 test-status-prod_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 Environment: prod
 URL: https://prod.example.com
 Checking status...
 Status: OK
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run test-status-prod'
@@ -92,10 +100,14 @@ test-deploy-staging_code () {
 }
 
 test-deploy-staging_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 Deploying to staging at https://staging.example.com...
 Deployment complete!
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run test-deploy-staging'

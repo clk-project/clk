@@ -45,13 +45,17 @@ run_flow_code () {
 }
 
 run_flow_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 Running some stuff for the printer to be ready to go
 Slicing somemodel, someothermodel to model.gcode
 Printing model.gcode using myprinter
 Driiiiiiing!
 The flow is done
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run run_flow'
@@ -97,7 +101,8 @@ running-the-explicit-flow_code () {
 }
 
 running-the-explicit-flow_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 # Running the send command, without the flow
 Printing model.gcode using myprinter
 # Running the send command, asking for its flow
@@ -105,6 +110,9 @@ Running some stuff for the printer to be ready to go
 Slicing model.stl to model.gcode
 Printing model.gcode using myprinter
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run running-the-explicit-flow'
@@ -124,12 +132,16 @@ running-the-explicit-flow-with-model_code () {
 }
 
 running-the-explicit-flow-with-model_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 New global parameters for printer.slice: --model someothermodel
 Running some stuff for the printer to be ready to go
 Slicing someothermodel to model.gcode
 Printing model.gcode using myprinter
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run running-the-explicit-flow-with-model'
@@ -148,9 +160,13 @@ flowdep-show_code () {
 }
 
 flowdep-show_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 printer.send printer.calibrate printer.slice
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run flowdep-show'
@@ -175,13 +191,17 @@ flow-verbose_code () {
 }
 
 flow-verbose_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 1/2 Running step 'printer calibrate'
 Running some stuff for the printer to be ready to go
 2/2 Running step 'printer slice'
 Slicing someothermodel to model.gcode
 Printing model.gcode using myprinter
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run flow-verbose'
@@ -200,7 +220,8 @@ flow-step_code () {
 }
 
 flow-step_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 1/2 About to run step 'printer calibrate'
 Press Enter to start this step: Here we go!
 Running some stuff for the printer to be ready to go
@@ -209,6 +230,9 @@ Press Enter to start this step: Here we go!
 Slicing someothermodel to model.gcode
 Printing model.gcode using myprinter
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run flow-step'
@@ -236,7 +260,8 @@ flow-progress_code () {
 }
 
 flow-progress_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 has_executing_flow_steps
 has_printer_calibrate
 has_printer_slice
@@ -245,6 +270,9 @@ has_calibrate_output
 has_slice_output
 has_send_output
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run flow-progress'
@@ -266,13 +294,17 @@ flowdep-set-clean_code () {
 }
 
 flowdep-set-clean_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 New global flowdep for printer.calibrate: printer.clean
 Cleaning the printer bed
 Running some stuff for the printer to be ready to go
 Slicing someothermodel to model.gcode
 Printing model.gcode using myprinter
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run flowdep-set-clean'
@@ -294,13 +326,17 @@ flowdep-append_code () {
 }
 
 flowdep-append_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 Cleaning the printer bed
 Preheating the nozzle
 Running some stuff for the printer to be ready to go
 Slicing someothermodel to model.gcode
 Printing model.gcode using myprinter
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run flowdep-append'
@@ -322,7 +358,8 @@ flowdep-insert_code () {
 }
 
 flowdep-insert_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 Checking filament level
 Cleaning the printer bed
 Preheating the nozzle
@@ -330,6 +367,9 @@ Running some stuff for the printer to be ready to go
 Slicing someothermodel to model.gcode
 Printing model.gcode using myprinter
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run flowdep-insert'
@@ -349,13 +389,17 @@ flowdep-remove_code () {
 }
 
 flowdep-remove_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 Checking filament level
 Cleaning the printer bed
 Running some stuff for the printer to be ready to go
 Slicing someothermodel to model.gcode
 Printing model.gcode using myprinter
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run flowdep-remove'
@@ -375,12 +419,16 @@ flowdep-unset_code () {
 }
 
 flowdep-unset_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 Erasing printer.calibrate flow dependencies from global settings
 Running some stuff for the printer to be ready to go
 Slicing someothermodel to model.gcode
 Printing model.gcode using myprinter
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run flowdep-unset'
@@ -425,9 +473,13 @@ run-with-failing-step_code () {
 }
 
 run-with-failing-step_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 error: the printer does not answer
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run run-with-failing-step'
@@ -470,12 +522,16 @@ run-with-wrong-flow-deps_code () {
 }
 
 run-with-wrong-flow-deps_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 error: Could not load the flow of printer.slice with the error: Command printer.calib not found
 error: Could not load the flow of printer.send with the error: Command printer.calib not found
 warning: Failed to get the command printer.send: Command printer.calib not found
 error: printer.send could not be loaded. Re run with clk --develop to see the stacktrace or clk --debug-on-command-load-error to debug the load error
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run run-with-wrong-flow-deps'

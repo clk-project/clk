@@ -54,7 +54,8 @@ help_code () {
 }
 
 help_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 Usage: clk http [OPTIONS] COMMAND [ARGS]...
 
   Commands to make http requests
@@ -67,6 +68,9 @@ Options:
   --help-all       Show the full help message, automatic options included.
 
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run help'
@@ -85,9 +89,13 @@ which_code () {
 }
 
 which_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 ./clk-root/python/http.py
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run which'
@@ -106,11 +114,15 @@ simpleget_code () {
 }
 
 simpleget_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 GET http://url//path
 Would run the get code
 res = None
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run simpleget'
@@ -129,11 +141,15 @@ simplepost_code () {
 }
 
 simplepost_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 POST http://url//path with body somebody
 Would run the post code
 res = None
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run simplepost'
@@ -152,11 +168,15 @@ completion1_code () {
 }
 
 completion1_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 /a
 /b
 /c
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run completion1'
@@ -175,11 +195,15 @@ completion2_code () {
 }
 
 completion2_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 /d
 /e
 /f
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run completion2'
@@ -200,7 +224,8 @@ try-somesite_code () {
 }
 
 try-somesite_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 New global alias for somesite: http --base-url http://url
 GET http://url/something
 Would run the get code
@@ -209,6 +234,9 @@ POST http://url/something with body bodyoftherequest
 Would run the post code
 res = None
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run try-somesite'

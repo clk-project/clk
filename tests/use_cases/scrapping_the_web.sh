@@ -31,12 +31,16 @@ running_the_test_code () {
 }
 
 running_the_test_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 Getting the content of http://clk-project.org
 The title is clk project
 Getting the content of http://clk-project.org
 The topic is "clk is awesome".
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run running_the_test'
@@ -91,7 +95,8 @@ running_the_test_with_cache_code () {
 }
 
 running_the_test_with_cache_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 Wed Feb 14 23:00:00 UTC 2024
 Getting the content of http://clk-project.org
 The title is clk project
@@ -104,6 +109,9 @@ Getting the content of http://clk-project.org
 The title is clk project
 
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run running_the_test_with_cache'
@@ -158,7 +166,8 @@ running_the_test_with_cache_with_renew_code () {
 }
 
 running_the_test_with_cache_with_renew_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 At Thu Feb 15 00:01:40 UTC 2024, running the commands for the first time -> the page is fetched and its content is cached
 Getting the content of http://clk-project.org
 The title is clk project
@@ -172,6 +181,9 @@ Getting the content of http://clk-project.org
 The title is clk project
 
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run running_the_test_with_cache_with_renew'

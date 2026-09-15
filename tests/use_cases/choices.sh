@@ -41,9 +41,13 @@ batterie-status-test_code () {
 }
 
 batterie-status-test_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 Would call adb shell dumpsys battery|grep level|cut -f2 -d:|trim and would get the result for cink-peax available at 192.168.1.10:5555
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run batterie-status-test'
@@ -61,10 +65,14 @@ try-bad-name-choice_code () {
 }
 
 try-bad-name-choice_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 Usage: clk android [OPTIONS] COMMAND [ARGS]...
 error: Invalid value for '--device' / '-d': 'cinkpeax' is not one of 'cink-peax', 'i9300', 'klipad'.
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run try-bad-name-choice'
@@ -115,9 +123,13 @@ test-with-suggestion_code () {
 }
 
 test-with-suggestion_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 Would call adb shell dumpsys battery|grep level|cut -f2 -d:|trim and would get the result for 192.168.1.14:5555 available at 192.168.1.14:5555
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run test-with-suggestion'
@@ -135,9 +147,13 @@ try-completion_code () {
 }
 
 try-completion_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 klipad
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run try-completion'
@@ -193,7 +209,8 @@ test-documented-choices_code () {
 }
 
 test-documented-choices_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 Usage: clk android [OPTIONS] COMMAND [ARGS]...
 error: Invalid value for '--device' / '-d': 'cinkpeax'.
 error: Choose from:
@@ -201,6 +218,9 @@ error:   cink-peax    My pomodoro
 error:   i9300        My vacuum automator
 error:   klipad       The photo gallery
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run test-documented-choices'
@@ -218,9 +238,13 @@ test-documented-choices2_code () {
 }
 
 test-documented-choices2_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 Would call adb shell dumpsys battery|grep level|cut -f2 -d:|trim and would get the result for cink-peax available at 192.168.1.10:5555
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run test-documented-choices2'
@@ -238,9 +262,13 @@ try-completion2_code () {
 }
 
 try-completion2_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 i9300
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run try-completion2'
@@ -258,12 +286,16 @@ try-style_code () {
 }
 
 try-style_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 black
 red
 green
 yellow
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run try-style'
@@ -281,11 +313,15 @@ try-foreground_code () {
 }
 
 try-foreground_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 fg-black
 fg-red
 fg-green
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run try-foreground'

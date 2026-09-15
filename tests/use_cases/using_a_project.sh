@@ -11,9 +11,13 @@ usingaliases_code () {
 }
 
 usingaliases_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 New local alias for somelocalcommand: echo hello
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run usingaliases'
@@ -32,9 +36,13 @@ callingthealias_code () {
 }
 
 callingthealias_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 hello
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run callingthealias'
@@ -55,7 +63,8 @@ callingthealiasoutsideoftheproject_code () {
 }
 
 callingthealiasoutsideoftheproject_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 warning: Failed to get the command somelocalcommand: Command somelocalcommand not found
 Usage: clk [OPTIONS] [COMMAND] [ARGS]...
 error: No such command 'somelocalcommand'.
@@ -63,6 +72,9 @@ error:
 error: Did you mean one of these?
 error:     command
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run callingthealiasoutsideoftheproject'
@@ -84,10 +96,14 @@ createaparameter_code () {
 }
 
 createaparameter_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 New local parameters for echo: hello
 hello world
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run createaparameter'
@@ -107,10 +123,14 @@ callingparameteroutsideofproject_code () {
 }
 
 callingparameteroutsideofproject_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 world
 hello world
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run callingparameteroutsideofproject'
@@ -130,9 +150,13 @@ projectprefix_code () {
 }
 
 projectprefix_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 somecontent
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run projectprefix'
@@ -151,10 +175,14 @@ projectprefix_absolute_warning_code () {
 }
 
 projectprefix_absolute_warning_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 warning: when evaluating project:/tmp/somefile.txt: /tmp/somefile.txt is absolute, prepending project is a noop.
 cat: /tmp/somefile.txt: No such file or directory
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run projectprefix_absolute_warning'
@@ -181,10 +209,14 @@ run_build_script_code () {
 }
 
 run_build_script_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 Building project at: ./
 App: clk
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run run_build_script'
@@ -206,10 +238,14 @@ run_from_subdir_code () {
 }
 
 run_from_subdir_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 Building project at: ../../../
 App: clk
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run run_from_subdir'
@@ -228,9 +264,13 @@ completion_exec_code () {
 }
 
 completion_exec_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 ./scripts/
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run completion_exec'
@@ -249,9 +289,13 @@ completion_exec_deep_code () {
 }
 
 completion_exec_deep_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 ./scripts/build.sh
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run completion_exec_deep'
@@ -276,9 +320,13 @@ create_flow_alias_code () {
 }
 
 create_flow_alias_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 New local alias for deploy: exec ./scripts/build.sh , exec ./scripts/deploy.sh
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run create_flow_alias'
@@ -297,11 +345,15 @@ run_flow_code () {
 }
 
 run_flow_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 Building project at: ./
 App: clk
 Deploying from ./
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run run_flow'
@@ -323,10 +375,14 @@ where_release_notes_code () {
 }
 
 where_release_notes_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 ./.clk/bin/release-notes
 error: No such command 'release-notes'.
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run where_release_notes'
@@ -347,10 +403,14 @@ move_release_notes_code () {
 }
 
 move_release_notes_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 ./clk-root/bin/release-notes
 gathering the commits since the last tag
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run move_release_notes'

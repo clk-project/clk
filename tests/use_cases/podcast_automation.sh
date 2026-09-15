@@ -17,9 +17,13 @@ tryit_code () {
 }
 
 tryit_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 Downloading 10 episodes
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run tryit'
@@ -38,9 +42,13 @@ makeitalias_code () {
 }
 
 makeitalias_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 New global alias for podcast.dwim: echo 'Would do something before' , podcast download --number 'tpl:{NUMBER_TO_DOWNLOAD}' , echo 'would do something after'
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run makeitalias'
@@ -60,11 +68,15 @@ callit_code () {
 }
 
 callit_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 Would do something before
 Downloading 100 episodes
 would do something after
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run callit'
@@ -98,10 +110,14 @@ download_filtered_code () {
 }
 
 download_filtered_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 Filtering to directories: music
 Downloading 10 episodes
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run download_filtered'
@@ -120,9 +136,13 @@ music_alias_code () {
 }
 
 music_alias_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 New global alias for podcast.music: podcast --directory music download
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run music_alias'
@@ -141,10 +161,14 @@ use_music_alias_code () {
 }
 
 use_music_alias_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 Filtering to directories: music
 Downloading 10 episodes
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run use_music_alias'
@@ -163,9 +187,13 @@ audio_alias_code () {
 }
 
 audio_alias_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 New global alias for podcast.audio: podcast --directory music --directory song download
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run audio_alias'
@@ -184,10 +212,14 @@ use_audio_alias_code () {
 }
 
 use_audio_alias_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 Filtering to directories: music, song
 Downloading 10 episodes
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run use_audio_alias'
@@ -206,7 +238,8 @@ group_help_with_alias_code () {
 }
 
 group_help_with_alias_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 Usage: clk podcast [OPTIONS] COMMAND [ARGS]...
 
   Dealing with podcasts
@@ -226,6 +259,9 @@ Commands:
   music     Alias for: podcast --directory music download
 
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run group_help_with_alias'

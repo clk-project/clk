@@ -29,9 +29,13 @@ setsecretinparameter_code () {
 }
 
 setsecretinparameter_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 New global parameters for http: --bearer mytoken
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run setsecretinparameter'
@@ -50,9 +54,13 @@ usesecretinparameter_code () {
 }
 
 usesecretinparameter_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 Calling someurl/someendpoint with bearer token mytoken
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run usesecretinparameter'
@@ -71,10 +79,14 @@ usethebearefromsecret_code () {
 }
 
 usethebearefromsecret_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 Removing global parameters of http: --bearer mytoken
 New global parameters for http: --bearer secret:http_bearer
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run usethebearefromsecret'
@@ -93,9 +105,13 @@ httpwithsecretfail_code () {
 }
 
 httpwithsecretfail_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 error: Could not find the secret for http_bearer
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run httpwithsecretfail'
@@ -174,12 +190,16 @@ call_ask_for_real_code () {
 }
 
 call_ask_for_real_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 warning: Could not find the secret for http_bearer
 Please provide the secret http_bearer:
 Repeat for confirmation:
 Calling someurl/someendpoint with bearer token test
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run call_ask_for_real'
@@ -259,13 +279,17 @@ call_ask_for_real_error_code () {
 }
 
 call_ask_for_real_error_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 warning: Could not find the secret for http_bearer
 Please provide the secret http_bearer:
 Repeat for confirmation:
 Error: The two entered values do not match.
 Please provide the secret http_bearer:
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run call_ask_for_real_error'
@@ -284,9 +308,13 @@ try-completion_code () {
 }
 
 try-completion_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 --base-url
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run try-completion'
@@ -305,9 +333,13 @@ try-completion-without-ask-secret_code () {
 }
 
 try-completion-without-ask-secret_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 --base-url
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run try-completion-without-ask-secret'
@@ -330,9 +362,13 @@ showsecret_code () {
 }
 
 showsecret_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 http_bearer *****
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run showsecret'
@@ -351,9 +387,13 @@ reallyshowsecret_code () {
 }
 
 reallyshowsecret_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 http_bearer mytoken
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run reallyshowsecret'
@@ -372,9 +412,13 @@ reallyshowonlysecret_code () {
 }
 
 reallyshowonlysecret_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 mytoken
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run reallyshowonlysecret'
@@ -393,9 +437,13 @@ httpwithsecret_code () {
 }
 
 httpwithsecret_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 Calling someurl/someendpoint with bearer token mytoken
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run httpwithsecret'
@@ -424,9 +472,13 @@ showgetsecret_code () {
 }
 
 showgetsecret_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 mytoken
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run showgetsecret'
@@ -449,9 +501,13 @@ checkthatthesecretisgone_code () {
 }
 
 checkthatthesecretisgone_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 warning: No secret set
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run checkthatthesecretisgone'
@@ -475,9 +531,13 @@ using_netrc_code () {
 }
 
 using_netrc_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 http_bearer thevalue
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run using_netrc'

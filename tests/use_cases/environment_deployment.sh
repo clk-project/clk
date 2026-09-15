@@ -32,11 +32,15 @@ deploy_default_code () {
 }
 
 deploy_default_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 No environment specified, auto-detecting...
 Detected: production (from git branch)
 Deploying to production
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run deploy_default'
@@ -55,10 +59,14 @@ deploy_explicit_code () {
 }
 
 deploy_explicit_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 Environment explicitly set to: staging
 Deploying to staging
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run deploy_explicit'
@@ -78,10 +86,14 @@ create_aliases_code () {
 }
 
 create_aliases_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 New global alias for app.deploy-prod: app deploy --environment production
 New global alias for app.deploy-staging: app deploy --environment staging
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run create_aliases'
@@ -100,10 +112,14 @@ deploy_via_alias_code () {
 }
 
 deploy_via_alias_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 Environment explicitly set to: production
 Deploying to production
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run deploy_via_alias'

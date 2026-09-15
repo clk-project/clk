@@ -10,10 +10,14 @@ setup-global_code () {
 }
 
 setup-global_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 New global alias for hello: echo Hello
 New global parameters for echo: --no-newline
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run setup-global'
@@ -32,7 +36,8 @@ describe-global_code () {
 }
 
 describe-global_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 The extension global is located at ./clk-root . Let's try to see what it has to offer.
 ##########
 I found some alias:
@@ -40,6 +45,9 @@ I found some alias:
 I found some parameter:
   echo: --no-newline
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run describe-global'
@@ -58,9 +66,13 @@ show-global-alias_code () {
 }
 
 show-global-alias_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 hello echo Hello
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run show-global-alias'
@@ -79,9 +91,13 @@ show-global-params_code () {
 }
 
 show-global-params_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 echo --no-newline
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run show-global-params'
@@ -104,11 +120,15 @@ setup-local_code () {
 }
 
 setup-local_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 New local alias for build: echo Building the project
 New local alias for test: echo Running tests
 New local parameters for build: --verbose
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run setup-local'
@@ -127,7 +147,8 @@ describe-local_code () {
 }
 
 describe-local_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 The extension local is located at ./.clk . Let's try to see what it has to offer.
 ##########
 I found some alias:
@@ -136,6 +157,9 @@ I found some alias:
 I found some parameter:
   build: --verbose
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run describe-local'
@@ -154,10 +178,14 @@ show-local-alias_code () {
 }
 
 show-local-alias_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 build echo Building the project
 test echo Running tests
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run show-local-alias'
@@ -177,9 +205,13 @@ create-extension_code () {
 }
 
 create-extension_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 New local/mytools alias for greet: echo Greetings
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run create-extension'
@@ -200,7 +232,8 @@ describe-extension_code () {
 }
 
 describe-extension_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 The extension local/mytools is located at ./.clk/extensions/mytools . Let's try to see what it has to offer.
 ##########
 I found some alias:
@@ -208,6 +241,9 @@ I found some alias:
 I found some commands:
   now
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run describe-extension'
@@ -228,7 +264,8 @@ describe-with-commands_code () {
 }
 
 describe-with-commands_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 The extension local is located at ./.clk . Let's try to see what it has to offer.
 ##########
 I found some alias:
@@ -239,6 +276,9 @@ I found some parameter:
 I found some commands:
   deploy
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run describe-with-commands'
@@ -257,9 +297,13 @@ list-commands_code () {
 }
 
 list-commands_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 ./.clk/bin/deploy
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run list-commands'
@@ -279,9 +323,13 @@ setup-value_code () {
 }
 
 setup-value_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run setup-value'
@@ -300,7 +348,8 @@ describe-values_code () {
 }
 
 describe-values_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 The extension local is located at ./.clk . Let's try to see what it has to offer.
 ##########
 I found some alias:
@@ -315,6 +364,9 @@ I found some extension:
 I found some commands:
   deploy
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run describe-values'

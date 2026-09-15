@@ -29,7 +29,8 @@ run_cat_code () {
 }
 
 run_cat_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 [
     {
         "description": "Vacances de No\u00ebl",
@@ -51,6 +52,9 @@ run_cat_expected () {
         "location": "Zone A",
 
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run run_cat'
@@ -80,7 +84,8 @@ run_filter_code () {
 }
 
 run_filter_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 [
     {
         "description": "Vacances de No\u00ebl",
@@ -106,6 +111,9 @@ run_filter_expected () {
 ]
 
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run run_filter'

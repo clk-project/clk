@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# [[file:../../doc/use_cases/global_workflow_local_implementation.org::*summary][summary:1]]
+# [[file:../../doc/use_cases/global_workflow_local_implementation.org::#summary][summary:1]]
 set -eu
 . ./sandboxing.sh
 
@@ -9,9 +9,13 @@ create-global-test_code () {
 }
 
 create-global-test_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 New global alias for test: echo 'No tests configured' , exec false
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run create-global-test'
@@ -30,9 +34,13 @@ create-test-n-push_code () {
 }
 
 create-test-n-push_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 New global alias for test-n-push: test , echo 'git push'
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run create-test-n-push'
@@ -51,9 +59,13 @@ run-test-n-push-global_code () {
 }
 
 run-test-n-push-global_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 No tests configured
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run run-test-n-push-global'
@@ -79,11 +91,15 @@ run-test-n-push-local_code () {
 }
 
 run-test-n-push-local_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 Running pytest...
 All 42 tests passed!
 git push
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run run-test-n-push-local'
@@ -103,9 +119,13 @@ leave-project_code () {
 }
 
 leave-project_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 No tests configured
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run leave-project'
@@ -126,9 +146,13 @@ create-local-alias_code () {
 }
 
 create-local-alias_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 New local alias for deploy: echo 'Deploying to production...'
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run create-local-alias'
@@ -147,9 +171,13 @@ run-deploy_code () {
 }
 
 run-deploy_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 Deploying to production...
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run run-deploy'
@@ -169,11 +197,15 @@ deploy-outside_code () {
 }
 
 deploy-outside_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 warning: Failed to get the command deploy: Command deploy not found
 Usage: clk [OPTIONS] [COMMAND] [ARGS]...
 error: No such command 'deploy'.
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run deploy-outside'

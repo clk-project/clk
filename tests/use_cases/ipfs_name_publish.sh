@@ -17,11 +17,15 @@ call-ipfs-key-list_code () {
 }
 
 call-ipfs-key-list_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 alice
 bob
 charly
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run call-ipfs-key-list'
@@ -41,7 +45,8 @@ call-ipfs_code () {
 }
 
 call-ipfs_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 Usage: clk ipfs [OPTIONS] COMMAND [ARGS]...
 
   Automatically created group to organize subcommands
@@ -72,6 +77,9 @@ Commands:
   list  List the available keys
 
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run call-ipfs'
@@ -113,9 +121,13 @@ try-completion_code () {
 }
 
 try-completion_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 alice
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run try-completion'
@@ -134,9 +146,13 @@ call-publish_code () {
 }
 
 call-publish_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 ipfs name publish --key=alice somecid
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run call-publish'

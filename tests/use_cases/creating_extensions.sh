@@ -39,13 +39,17 @@ try-it_code () {
 }
 
 try-it_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 installing dependencies
 starting k8s cluster
 starting controllers
 noop, this must be overloaded by a project command
 running development environment
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run try-it'
@@ -65,11 +69,15 @@ disable_code () {
 }
 
 disable_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 warning: Failed to get the command k8s: Command k8s not found
 Usage: clk [OPTIONS] [COMMAND] [ARGS]...
 error: No such command 'k8s'.
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run disable'
@@ -88,13 +96,17 @@ enable-for-one-run_code () {
 }
 
 enable-for-one-run_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 installing dependencies
 starting k8s cluster
 starting controllers
 noop, this must be overloaded by a project command
 running development environment
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run enable-for-one-run'
@@ -114,13 +126,17 @@ enable_code () {
 }
 
 enable_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 installing dependencies
 starting k8s cluster
 starting controllers
 noop, this must be overloaded by a project command
 running development environment
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run enable'
@@ -139,11 +155,15 @@ disable-for-one-run_code () {
 }
 
 disable-for-one-run_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 warning: Failed to get the command k8s: Command k8s not found
 Usage: clk [OPTIONS] [COMMAND] [ARGS]...
 error: No such command 'k8s'.
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run disable-for-one-run'
@@ -168,13 +188,17 @@ run-flow-in-project_code () {
 }
 
 run-flow-in-project_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 installing dependencies
 starting k8s cluster
 starting controllers
 injecting the credentials of my project
 running development environment
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run run-flow-in-project'
@@ -195,9 +219,13 @@ find-it_code () {
 }
 
 find-it_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 ./clk-root/extensions/k8s
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run find-it'
@@ -227,9 +255,13 @@ lose-k8s_code () {
 }
 
 lose-k8s_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 error: No such command 'k8s'.
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run lose-k8s'
@@ -250,13 +282,17 @@ k8s-is-back_code () {
 }
 
 k8s-is-back_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 installing dependencies
 starting k8s cluster
 starting controllers
 noop, this must be overloaded by a project command
 running development environment
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run k8s-is-back'
@@ -277,9 +313,13 @@ refuse-another-k8s_code () {
 }
 
 refuse-another-k8s_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 error: Extension k8s already exists and is not using the same URL: ./k8s.git
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run refuse-another-k8s'
@@ -311,9 +351,13 @@ no-stop-cluster_code () {
 }
 
 no-stop-cluster_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 error: No such command 'stop-cluster'.
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run no-stop-cluster'
@@ -334,9 +378,13 @@ stop-cluster_code () {
 }
 
 stop-cluster_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 stopping k8s cluster
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run stop-cluster'
@@ -356,7 +404,8 @@ install-extension_code () {
 }
 
 install-extension_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 _____
 | hello |
   =====
@@ -382,6 +431,9 @@ _____
                                                                        /.-~
 
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run install-extension'
@@ -400,7 +452,8 @@ describe-hello_code () {
 }
 
 describe-hello_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 The extension global/hello is located at ./clk-root/extensions/hello . Let's try to see what it has to offer.
 ##########
 I found some alias:
@@ -410,6 +463,9 @@ I found some parameter:
 I found some commands:
   say
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run describe-hello'
@@ -429,7 +485,8 @@ remove-extension_code () {
 }
 
 remove-extension_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 warning: Failed to get the command hello: Command hello not found
 Usage: clk [OPTIONS] [COMMAND] [ARGS]...
 error: No such command 'hello'.
@@ -438,6 +495,9 @@ error: Did you mean one of these?
 error:     help
 error:     log
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run remove-extension'
@@ -457,7 +517,8 @@ install-extension-github_code () {
 }
 
 install-extension-github_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 _____
 | hello |
   =====
@@ -483,6 +544,9 @@ _____
                                                                        /.-~
 
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run install-extension-github'
@@ -503,7 +567,8 @@ install-extension-name_code () {
 }
 
 install-extension-name_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 _____
 | hello |
   =====
@@ -529,6 +594,9 @@ _____
                                                                        /.-~
 
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run install-extension-name'
@@ -573,10 +641,14 @@ run-tempdir-demo_code () {
 }
 
 run-tempdir-demo_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 Installed: #!/bin/sh
 echo tool v1.0.0
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run run-tempdir-demo'
@@ -617,7 +689,8 @@ run-tempfile-demo_code () {
 }
 
 run-tempfile-demo_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 Applied config:
 apiVersion: v1
 kind: ConfigMap
@@ -626,6 +699,9 @@ metadata:
 data:
   key: value
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run run-tempfile-demo'
@@ -659,10 +735,14 @@ run-complaining-demo_code () {
 }
 
 run-complaining-demo_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 trouble reaching main
 ok
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run run-complaining-demo'
@@ -681,9 +761,13 @@ run-quiet-demo_code () {
 }
 
 run-quiet-demo_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 ok
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run run-quiet-demo'
@@ -702,10 +786,14 @@ run-failing-demo_code () {
 }
 
 run-failing-demo_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 trouble reaching other
 error: bash -c 'echo trouble reaching $1 >&2 ; test $1 = main || exit 4 ; echo ok' -- other exited with 4
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run run-failing-demo'
@@ -724,10 +812,14 @@ run-quiet-failing-demo_code () {
 }
 
 run-quiet-failing-demo_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 error: bash -c 'echo trouble reaching $1 >&2 ; test $1 = main || exit 4 ; echo ok' -- other exited with 4, saying:
 error: trouble reaching other
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run run-quiet-failing-demo'
@@ -761,10 +853,14 @@ run-waiting-demo_code () {
 }
 
 run-waiting-demo_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 error: bash -c 'sleep 600' did not finish in 1s
 giving up, the cluster is not answering
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run run-waiting-demo'
@@ -787,9 +883,13 @@ hostname-extension-visible_code () {
 }
 
 hostname-extension-visible_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 my-host.[example].com  Unset            global
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run hostname-extension-visible'
@@ -815,11 +915,15 @@ kube-is-local_code () {
 }
 
 kube-is-local_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 extension    configuration    installation
 -----------  ---------------  --------------
 kube         Unset            local
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run kube-is-local'
@@ -839,11 +943,15 @@ rename-kube_code () {
 }
 
 rename-kube_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 extension    configuration    installation
 -----------  ---------------  --------------
 kubernetes   Unset            local
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run rename-kube'
@@ -863,11 +971,15 @@ move-kube_code () {
 }
 
 move-kube_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 extension    configuration    installation
 -----------  ---------------  --------------
 kubernetes   Unset            global
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run move-kube'
@@ -887,9 +999,13 @@ leave-tidyproject_code () {
 }
 
 leave-tidyproject_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 starting the cluster
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run leave-tidyproject'

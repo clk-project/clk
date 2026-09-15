@@ -11,7 +11,8 @@ help-create_code () {
 }
 
 help-create_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 Usage: clk command create [OPTIONS] COMMAND [ARGS]...
 
   Create custom commands directly from the command line.
@@ -30,6 +31,9 @@ Commands:
   python  Create a bash custom command
 
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run help-create'
@@ -48,7 +52,8 @@ show_it_code () {
 }
 
 show_it_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 #!/usr/bin/env bash
   set -eu
 
@@ -67,6 +72,9 @@ EOF
 clk_help_handler "$@"
 
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run show_it'
@@ -85,9 +93,13 @@ try_code () {
 }
 
 try_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 warning: The command 'mycommand' has no documentation
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run try'
@@ -114,7 +126,8 @@ help_code () {
 }
 
 help_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 Usage: clk mycommand [OPTIONS]
 
   Command that says something
@@ -127,6 +140,9 @@ Options:
   --help      Show this message and exit.
 
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run help'
@@ -149,9 +165,13 @@ use_it_code () {
 }
 
 use_it_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 something
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run use_it'
@@ -172,9 +192,13 @@ exit-5_code () {
 }
 
 exit-5_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 5
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run exit-5'
@@ -219,12 +243,16 @@ clean-test-expect_code () {
 }
 
 clean-test-expect_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 starting
 ^Ccleaning
 
 Aborted!
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run clean-test-expect'

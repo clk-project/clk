@@ -55,12 +55,16 @@ see_code () {
 }
 
 see_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
   [duck|whale|cat|dog]  A kind of animal  [default: duck]
   --sound-of-animal TEXT  The sound the animal makes
   --repeat INTEGER        How many times to repeat the message  [default: 0]
   --shout                 Print the message of the animal in capital case
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run see'
@@ -79,9 +83,13 @@ see-help-all_code () {
 }
 
 see-help-all_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 --in-project / --no-in-project  Run the command in the project directory  [default: no-in-project]
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run see-help-all'
@@ -131,10 +139,14 @@ wordcount-help_code () {
 }
 
 wordcount-help_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 Usage: clk wordcount [OPTIONS] [DOCUMENT]
   [DOCUMENT]  The document to count words in
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run wordcount-help'
@@ -155,9 +167,13 @@ wordcount-run_code () {
 }
 
 wordcount-run_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 5
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run wordcount-run'
@@ -176,9 +192,13 @@ wordcount-completion_code () {
 }
 
 wordcount-completion_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 ./testfile.txt
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run wordcount-completion'
@@ -220,9 +240,13 @@ urlarg-run_code () {
 }
 
 urlarg-run_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 https://example.com/path/to/package.apk
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run urlarg-run'

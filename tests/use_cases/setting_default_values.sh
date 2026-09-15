@@ -12,12 +12,16 @@ set-parameters-verbose_code () {
 }
 
 set-parameters-verbose_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 New global parameters for alias.show: --no-color
 New global parameters for parameter.show: --no-color
 New global parameters for value.show: --no-color
 New global parameters for extension.show: --no-color
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run set-parameters-verbose'
@@ -46,9 +50,13 @@ show-help-color_code () {
 }
 
 show-help-color_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 --color / --no-color            Show profiles in color  [default: no-color]
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run show-help-color'
@@ -68,10 +76,14 @@ set-other-values_code () {
 }
 
 set-other-values_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 config.show.color false
 config.show.legend false
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run set-other-values'
@@ -91,9 +103,13 @@ set-default-option_code () {
 }
 
 set-default-option_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 default: plain
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run set-default-option'
@@ -139,9 +155,13 @@ show-custom-help_code () {
 }
 
 show-custom-help_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 --color / --no-color  Show output in color  [default: no-color]
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run show-custom-help'
@@ -162,10 +182,14 @@ change-value-true_code () {
 }
 
 change-value-true_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 --color / --no-color  Show output in color  [default: color]
 --color / --no-color            Show profiles in color  [default: color]
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run change-value-true'
@@ -189,9 +213,13 @@ rename-value_code () {
 }
 
 rename-value_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 myapp.color true
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run rename-value'
@@ -211,9 +239,13 @@ unset-value_code () {
 }
 
 unset-value_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 myapp.color is gone
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run unset-value'

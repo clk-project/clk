@@ -32,9 +32,13 @@ try-backup-docs-do_code () {
 }
 
 try-backup-docs-do_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 Backing up documents from ~/docs to /mnt/backup
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run try-backup-docs-do'
@@ -53,7 +57,8 @@ show-backup-help_code () {
 }
 
 show-backup-help_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 Usage: clk backup [OPTIONS] COMMAND [ARGS]...
 
   Backup operations
@@ -70,6 +75,9 @@ Commands:
   docs  Automatically created group to organize subcommands
 
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run show-backup-help'
@@ -88,9 +96,13 @@ set-dest-param_code () {
 }
 
 set-dest-param_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 New global parameters for backup: --dest /media/external/documents
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run set-dest-param'
@@ -109,9 +121,13 @@ try-with-param_code () {
 }
 
 try-with-param_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 Backing up documents from ~/docs to /media/external/documents
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run try-with-param'
@@ -130,9 +146,13 @@ override-param_code () {
 }
 
 override-param_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 Backing up documents from ~/docs to /tmp/quick-backup
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run override-param'
@@ -161,7 +181,8 @@ show-backup-commands_code () {
 }
 
 show-backup-commands_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 Usage: clk backup [OPTIONS] COMMAND [ARGS]...
 
   Backup operations
@@ -182,6 +203,9 @@ Commands:
   photos    Backup photos
 
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run show-backup-commands'
@@ -201,10 +225,14 @@ try-all-backups_code () {
 }
 
 try-all-backups_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 Dumping database main.db to /media/external/documents
 Backing up photos with high quality to /media/external/documents
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run try-all-backups'
@@ -232,7 +260,8 @@ show-docs-group_code () {
 }
 
 show-docs-group_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 Usage: clk backup docs [OPTIONS] COMMAND [ARGS]...
 
   Automatically created group to organize subcommands
@@ -251,6 +280,9 @@ Commands:
   verify    Verify backup integrity
 
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run show-docs-group'
@@ -269,9 +301,13 @@ call-docs-do_code () {
 }
 
 call-docs-do_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 Backing up documents from ~/docs to /media/external/documents
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run call-docs-do'
@@ -291,10 +327,14 @@ call-docs-subcommands_code () {
 }
 
 call-docs-subcommands_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 Verifying backup integrity at /media/external/documents...
 Retrieving important-notes.txt from /media/external/documents
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run call-docs-subcommands'
@@ -313,9 +353,13 @@ set-flowdep_code () {
 }
 
 set-flowdep_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 New global flowdep for backup.docs.do: backup.database
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run set-flowdep'
@@ -334,10 +378,14 @@ run-with-flow_code () {
 }
 
 run-with-flow_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 Dumping database main.db to /media/external/documents
 Backing up documents from ~/docs to /media/external/documents
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run run-with-flow'
@@ -356,9 +404,13 @@ create-full-alias_code () {
 }
 
 create-full-alias_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 New global alias for backup.full: backup database , backup docs do , backup photos
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run create-full-alias'
@@ -377,11 +429,15 @@ run-full-backup_code () {
 }
 
 run-full-backup_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 Dumping database main.db to /media/external/documents
 Backing up documents from ~/docs to /media/external/documents
 Backing up photos with high quality to /media/external/documents
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run run-full-backup'
@@ -401,10 +457,14 @@ create-shortcuts_code () {
 }
 
 create-shortcuts_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 New global alias for backup.quick: backup docs do --source '~/notes'
 New global alias for backup.work: backup docs do --source '~/work/documents'
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run create-shortcuts'
@@ -424,10 +484,14 @@ try-shortcuts_code () {
 }
 
 try-shortcuts_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 Backing up documents from ~/notes to /media/external/documents
 Backing up documents from ~/work/documents to /media/external/documents
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run try-shortcuts'
@@ -449,10 +513,14 @@ set-project-a-params_code () {
 }
 
 set-project-a-params_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 New local parameters for backup.docs.do: --source ./documentation
 New local parameters for backup: --dest /mnt/backup/project-a
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run set-project-a-params'
@@ -471,9 +539,13 @@ run-in-project-a_code () {
 }
 
 run-in-project-a_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 Backing up documents from ./documentation to /mnt/backup/project-a
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run run-in-project-a'
@@ -493,9 +565,13 @@ leave-project_code () {
 }
 
 leave-project_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 Backing up documents from ~/docs to /media/external/documents
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run leave-project'
@@ -516,9 +592,13 @@ set-hostname-params_code () {
 }
 
 set-hostname-params_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 New global/myhostname parameters for backup: --dest /mnt/my-nas/documents
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run set-hostname-params'
@@ -537,9 +617,13 @@ run-with-hostname_code () {
 }
 
 run-with-hostname_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 Backing up documents from ~/docs to /mnt/my-nas/documents
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run run-with-hostname'
@@ -560,9 +644,13 @@ run-in-project-a-hostname_code () {
 }
 
 run-in-project-a-hostname_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 Backing up documents from ./documentation to /mnt/backup/project-a
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run run-in-project-a-hostname'
@@ -584,9 +672,13 @@ try-disable-hostname_code () {
 }
 
 try-disable-hostname_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 Backing up documents from ~/docs to /mnt/my-nas/documents
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run try-disable-hostname'
@@ -607,7 +699,8 @@ final-help_code () {
 }
 
 final-help_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 Usage: clk backup [OPTIONS] COMMAND [ARGS]...
 
   Backup operations
@@ -631,6 +724,9 @@ Commands:
   work      Alias for: backup docs do --source '~/work/documents'
 
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run final-help'

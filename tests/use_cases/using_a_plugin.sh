@@ -12,9 +12,13 @@ show-plugin_code () {
 }
 
 show-plugin_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 trigger Trigger plugin - run commands before/after other commands.
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run show-plugin'
@@ -33,7 +37,8 @@ verify_plugin_code () {
 }
 
 verify_plugin_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 Usage: clk trigger [OPTIONS] COMMAND [ARGS]...
 
   Manipulate command triggers.
@@ -50,6 +55,9 @@ Usage: clk trigger [OPTIONS] COMMAND [ARGS]...
       clk trigger set success A B
 
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run verify_plugin'
@@ -72,9 +80,13 @@ show_trigger_code () {
 }
 
 show_trigger_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 mycommand echo hello
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run show_trigger'
@@ -93,10 +105,14 @@ run_with_pre_trigger_code () {
 }
 
 run_with_pre_trigger_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 hello
 main command
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run run_with_pre_trigger'
@@ -118,10 +134,14 @@ run_with_success_trigger_code () {
 }
 
 run_with_success_trigger_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 build complete
 after success
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run run_with_success_trigger'
@@ -142,9 +162,13 @@ run_after_unset_code () {
 }
 
 run_after_unset_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 main command
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run run_after_unset'
@@ -168,11 +192,15 @@ show_name_only_code () {
 }
 
 show_name_only_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 buildcmd
 cmd1
 cmd2
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run show_name_only'

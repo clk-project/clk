@@ -47,9 +47,13 @@ try-explicit_code () {
 }
 
 try-explicit_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 [company-prod/eu-west-1] aws s3 ls s3://prod-bucket
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run try-explicit'
@@ -68,9 +72,13 @@ set-parameters_code () {
 }
 
 set-parameters_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 New global parameters for aws: --profile company-prod --region eu-west-1
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run set-parameters'
@@ -91,11 +99,15 @@ try-with-defaults_code () {
 }
 
 try-with-defaults_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 [company-prod/eu-west-1] aws s3 ls s3://prod-bucket
 [company-prod/eu-west-1] aws s3 cp backup.sql s3://prod-bucket/backups/
 [company-prod/eu-west-1] aws ec2 describe-instances
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run try-with-defaults'
@@ -114,9 +126,13 @@ try-override_code () {
 }
 
 try-override_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 [company-staging/eu-west-1] aws s3 ls s3://staging-bucket
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run try-override'
@@ -135,9 +151,13 @@ show-parameters_code () {
 }
 
 show-parameters_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 aws --profile company-prod --region eu-west-1
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run show-parameters'
@@ -157,10 +177,14 @@ unset-region_code () {
 }
 
 unset-region_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 Erasing aws parameters --region eu-west-1 from global settings
 aws --profile company-prod
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run unset-region'
@@ -180,10 +204,14 @@ unset-all_code () {
 }
 
 unset-all_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 Erasing global parameters of aws (was: --profile company-prod)
 [default/us-east-1] aws s3 ls
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run unset-all'
@@ -207,10 +235,14 @@ set-project-parameters_code () {
 }
 
 set-project-parameters_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 New local parameters for aws: --profile webapp-prod --region ap-southeast-1
 aws --profile webapp-prod --region ap-southeast-1
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run set-project-parameters'
@@ -229,9 +261,13 @@ try-project-parameters_code () {
 }
 
 try-project-parameters_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 [webapp-prod/ap-southeast-1] aws s3 ls s3://webapp-assets
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run try-project-parameters'
@@ -251,9 +287,13 @@ leave-project_code () {
 }
 
 leave-project_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 [default/us-east-1] aws s3 ls
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run leave-project'
@@ -274,9 +314,13 @@ set-global-prod_code () {
 }
 
 set-global-prod_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 New global parameters for aws: --profile company-prod --region eu-west-1
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run set-global-prod'
@@ -298,9 +342,13 @@ set-staging-params_code () {
 }
 
 set-staging-params_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 New global/config-staging parameters for aws: --profile company-staging
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run set-staging-params'
@@ -319,9 +367,13 @@ try-staging_code () {
 }
 
 try-staging_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 [company-staging/eu-west-1] aws s3 ls s3://staging-bucket
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run try-staging'
@@ -340,9 +392,13 @@ try-staging-override_code () {
 }
 
 try-staging-override_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 [company-dev/eu-west-1] aws s3 ls s3://dev-bucket
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run try-staging-override'
@@ -362,9 +418,13 @@ disable-staging_code () {
 }
 
 disable-staging_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 [company-prod/eu-west-1] aws s3 ls s3://prod-bucket
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run disable-staging'
@@ -387,9 +447,13 @@ env-parameters_code () {
 }
 
 env-parameters_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 [env-prod/us-west-2] aws s3 ls s3://env-bucket
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run env-parameters'
@@ -408,9 +472,13 @@ env-help_code () {
 }
 
 env-help_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 The current parameters set for this command are: --profile env-prod --region us-west-2
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run env-help'
@@ -429,9 +497,13 @@ env-show_code () {
 }
 
 env-show_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 aws --profile env-prod --region us-west-2
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run env-show'
@@ -451,9 +523,13 @@ env-unset_code () {
 }
 
 env-unset_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 [default/us-east-1] aws s3 ls
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run env-unset'
@@ -501,9 +577,13 @@ no-default-env-preserved_code () {
 }
 
 no-default-env-preserved_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 [from-ci/eu-west-1] aws s3 ls
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run no-default-env-preserved'
@@ -522,9 +602,13 @@ no-default-explicit_code () {
 }
 
 no-default-explicit_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 [company-prod/ap-southeast-1] aws s3 ls
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run no-default-explicit'

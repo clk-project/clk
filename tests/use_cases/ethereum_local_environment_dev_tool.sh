@@ -24,10 +24,14 @@ call_some_code () {
 }
 
 call_some_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 I would discuss with the contract whose address is 0xdeadbeef and abi path is some.json
 I would call the function dosomething
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run call_some'
@@ -48,10 +52,14 @@ call_alias_code () {
 }
 
 call_alias_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 I would discuss with the contract whose address is 0xdeadbeef and abi path is some.json
 I would call the function dosomething
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run call_alias'
@@ -70,10 +78,14 @@ try_completion_code () {
 }
 
 try_completion_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 dosomething
 dosomethingelse
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run try_completion'
@@ -110,10 +122,14 @@ try_deploy_code () {
 }
 
 try_deploy_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 Contract deployed at address: 68b329da9893e34099c7d8ad5cb9c940
 Contract deployed at address: 223632c428784fecaaa3e2a6aaaf6d8e
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run try_deploy'
@@ -133,10 +149,14 @@ get-address_code () {
 }
 
 get-address_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 New global alias for eth.get-address: exec cat contract-address.txt
 223632c428784fecaaa3e2a6aaaf6d8e
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run get-address'
@@ -159,13 +179,17 @@ try-command-with-eval_code () {
 }
 
 try-command-with-eval_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 I would discuss with the contract whose address is 223632c428784fecaaa3e2a6aaaf6d8e and abi path is some.json
 I would call the function dosomething
 Contract deployed at address: 47156ddb404b893cbbe9c85509710f64
 I would discuss with the contract whose address is 47156ddb404b893cbbe9c85509710f64 and abi path is some.json
 I would call the function dosomething
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run try-command-with-eval'
@@ -187,7 +211,8 @@ issue-using-with-cache_code () {
 }
 
 issue-using-with-cache_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 Removing global alias of eth.mycontract: eth contract --abi-path some.json --address 'eval:clk eth get-address'
 New global alias for eth.mycontract: eth contract --abi-path some.json --address 'eval(60):clk eth get-address'
 I would discuss with the contract whose address is 47156ddb404b893cbbe9c85509710f64 and abi path is some.json
@@ -196,6 +221,9 @@ Contract deployed at address: ed5b4c043e36c30f31a158e8bda16e2b
 I would discuss with the contract whose address is 47156ddb404b893cbbe9c85509710f64 and abi path is some.json
 I would call the function dosomething
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run issue-using-with-cache'
@@ -216,13 +244,17 @@ dropping-the-cache-when-deploying_code () {
 }
 
 dropping-the-cache-when-deploying_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 I would discuss with the contract whose address is 47156ddb404b893cbbe9c85509710f64 and abi path is some.json
 I would call the function dosomething
 Contract deployed at address: 53303a8fa63a943a2591b8de2b026da6
 I would discuss with the contract whose address is 53303a8fa63a943a2591b8de2b026da6 and abi path is some.json
 I would call the function dosomething
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run dropping-the-cache-when-deploying'
@@ -244,9 +276,13 @@ alias-with-project_code () {
 }
 
 alias-with-project_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 New local alias for eth.mycontract: eth contract --abi-path project:some.json --address 'eval:clk eth get-address'
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run alias-with-project'
@@ -266,10 +302,14 @@ deploy-again_code () {
 }
 
 deploy-again_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 Contract deployed at address: 68b329da9893e34099c7d8ad5cb9c940
 68b329da9893e34099c7d8ad5cb9c940
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run deploy-again'
@@ -288,10 +328,14 @@ run-with-project-abi_code () {
 }
 
 run-with-project-abi_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 I would discuss with the contract whose address is 68b329da9893e34099c7d8ad5cb9c940 and abi path is ./some.json
 I would call the function dosomething
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run run-with-project-abi'

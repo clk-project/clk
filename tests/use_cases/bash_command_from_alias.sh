@@ -15,9 +15,13 @@ create_code () {
 }
 
 create_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 New global alias for music.play: exec mpc play --random --use-speakers --replaygain
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run create'
@@ -35,9 +39,13 @@ use_play_code () {
 }
 
 use_play_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 Running mpc with: play --random --use-speakers --replaygain MyAlbum
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run use_play'
@@ -56,10 +64,14 @@ use_parameters_code () {
 }
 
 use_parameters_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 New global parameters for music.play: --repeat
 Running mpc with: play --random --use-speakers --replaygain --repeat MyAlbum
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run use_parameters'
@@ -77,9 +89,13 @@ try-completion_code () {
 }
 
 try-completion_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 global
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run try-completion'
@@ -98,12 +114,16 @@ more_complicated_alias_code () {
 }
 
 more_complicated_alias_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 Removing global alias of music.play: exec mpc play --random --use-speakers --replaygain
 New global alias for music.play: exec mpc start-server , exec mpc play --random --use-speakers --replaygain
 Running mpc with: start-server
 Running mpc with: play --random --use-speakers --replaygain --repeat MyAlbum
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run more_complicated_alias'
@@ -121,9 +141,13 @@ show-alias_code () {
 }
 
 show-alias_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 music.play exec mpc start-server, exec mpc play --random --use-speakers --replaygain
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run show-alias'
@@ -141,7 +165,8 @@ help-alias_code () {
 }
 
 help-alias_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 Usage: clk music play [OPTIONS] [COMMAND]...
 
   Alias for: exec mpc start-server , exec mpc play --random --use-speakers --replaygain
@@ -152,6 +177,9 @@ Usage: clk music play [OPTIONS] [COMMAND]...
   Or adjust this command `clk alias set music.play exec mpc start-server , exec mpc play --random --use-speakers
   --replaygain`
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run help-alias'
@@ -178,11 +206,15 @@ run-edited-alias_code () {
 }
 
 run-edited-alias_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 Running mpc with: start-server
 Running mpc with: wait-for-server
 Running mpc with: play --random --use-speakers --replaygain --repeat MyAlbum
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run run-edited-alias'
@@ -200,9 +232,13 @@ bootstrap_code () {
 }
 
 bootstrap_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 Erasing music.play alias from global settings
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run bootstrap'
@@ -220,11 +256,15 @@ try_command_code () {
 }
 
 try_command_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 Running mpc with: start-server
 Running mpc with: wait-for-server
 Running mpc with: play --random --use-speakers --replaygain --repeat MyAlbum
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run try_command'
@@ -242,9 +282,13 @@ which_code () {
 }
 
 which_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 ./clk-root/bin/music.play
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run which'
@@ -262,7 +306,8 @@ help_code () {
 }
 
 help_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 Usage: clk music play [OPTIONS] [ARGS]...
 
   Description Converted from the alias music.play
@@ -275,6 +320,9 @@ Usage: clk music play [OPTIONS] [ARGS]...
 Positional arguments:
 
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run help'

@@ -111,12 +111,16 @@ csm-run-flow_code () {
 }
 
 csm-run-flow_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 Generating code from model.xml
 Configuring build system
 Building simulator
 Running ./build/simulator
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run csm-run-flow'
@@ -135,9 +139,13 @@ csm-configure-options_code () {
 }
 
 csm-configure-options_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 Configuring build system with --unity --build-type Debug --analysis coverage
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run csm-configure-options'
@@ -156,9 +164,13 @@ csm-configure-defines_code () {
 }
 
 csm-configure-defines_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 Configuring build system with --define WITH_MPI=ON --define CHAOS_SEED=42
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run csm-configure-defines'
@@ -177,9 +189,13 @@ csm-run-no-flow_code () {
 }
 
 csm-run-no-flow_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 Running ./build/simulator
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run csm-run-no-flow'
@@ -256,13 +272,17 @@ csm-show-launchers_code () {
 }
 
 csm-show-launchers_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 gdb
 heaptrack
 lldb
 memcheck
 perf-record
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run csm-show-launchers'
@@ -281,9 +301,13 @@ csm-show-gdb_code () {
 }
 
 csm-show-gdb_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 gdb gdb --quiet --args
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run csm-show-gdb'
@@ -316,9 +340,13 @@ csm-simulate-with-gdb_code () {
 }
 
 csm-simulate-with-gdb_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 Running gdb --quiet --args ./build/simulator
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run csm-simulate-with-gdb'
@@ -337,9 +365,13 @@ csm-simulate-with-perf_code () {
 }
 
 csm-simulate-with-perf_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 Running perf record -e cpu-clock --call-graph dwarf -F 99 ./build/simulator
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run csm-simulate-with-perf'
@@ -358,9 +390,13 @@ csm-simulate-without-launcher_code () {
 }
 
 csm-simulate-without-launcher_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 Running ./build/simulator
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run csm-simulate-without-launcher'
@@ -379,12 +415,16 @@ csm-flow-with-launcher_code () {
 }
 
 csm-flow-with-launcher_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 Generating code from model.xml
 Configuring build system
 Building simulator
 Running gdb --quiet --args ./build/simulator
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run csm-flow-with-launcher'

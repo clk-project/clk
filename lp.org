@@ -13,9 +13,13 @@
 }
 
 \\1_expected () {
-      cat<<\"EOEXPECTED\"
+      local expected
+      expected=\"$(cat<<\"EOEXPECTED\"
 <<\\1()>>
 EOEXPECTED
+)\"
+      # org says nil where the block said nothing
+      test \"${expected}\" = nil || echo \"${expected}\"
 }
 
 echo 'Run \\1'

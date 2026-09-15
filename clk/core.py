@@ -915,6 +915,9 @@ class RedactMessages:
 def reproducible_output_callback(ctx, attr, value):
     if value:
         config.reproducible_output = True
+        # a terminal would get colors and a pipe would not, and that is not
+        # reproducible
+        ctx.color = False
         sys.stdout = RedactMessages(sys.stdout)
         sys.stderr = RedactMessages(sys.stderr)
         click.Context.formatter_class = RedactingHelpFormatter

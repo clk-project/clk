@@ -10,10 +10,14 @@ curl_code () {
 }
 
 curl_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 New global alias for myserver: echo curl http://myserverip/somecommand
 curl http://myserverip/somecommand
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run curl'
@@ -35,11 +39,15 @@ withpyeval_code () {
 }
 
 withpyeval_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 Removing global alias of myserver: echo curl http://myserverip/somecommand
 New global alias for myserver: echo curl 'pyeval:"http://{MYSERVER}/sommecommand".format(**os.environ)'
 curl http://myserverip/sommecommand
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run withpyeval'
@@ -59,11 +67,15 @@ witheval_code () {
 }
 
 witheval_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 Removing global alias of myserver: echo curl 'pyeval:"http://{MYSERVER}/sommecommand".format(**os.environ)'
 New global alias for myserver: echo curl 'eval:sh -c "echo http://${MYSERVER}/sommecommand"'
 curl http://myserverip/sommecommand
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run witheval'
@@ -83,11 +95,15 @@ withtpl_code () {
 }
 
 withtpl_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 Removing global alias of myserver: echo curl 'eval:sh -c "echo http://${MYSERVER}/sommecommand"'
 New global alias for myserver: echo curl 'tpl:http://{MYSERVER}/sommecommand'
 curl http://myserverip/sommecommand
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run withtpl'

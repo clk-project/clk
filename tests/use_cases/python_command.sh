@@ -11,7 +11,8 @@ help-create_code () {
 }
 
 help-create_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 Usage: clk command create python [OPTIONS] NAME
 
   Create a bash custom command
@@ -33,6 +34,9 @@ Options:
   --help               Show this message and exit.
 
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run help-create'
@@ -51,7 +55,8 @@ show_it_code () {
 }
 
 show_it_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 #!/usr/bin/env python3
 # -*- coding:utf-8 -*-
 
@@ -85,6 +90,9 @@ def mycommand():
     "Description"
 
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run show_it'
@@ -103,9 +111,13 @@ try_code () {
 }
 
 try_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 warning: The command 'mycommand' has no documentation
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run try'
@@ -126,7 +138,8 @@ help_code () {
 }
 
 help_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 Usage: clk mycommand [OPTIONS]
 
   Command that says something
@@ -139,6 +152,9 @@ Options:
   --help      Show this message and exit.
 
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run help'
@@ -170,9 +186,13 @@ use_it_code () {
 }
 
 use_it_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 something
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run use_it'
@@ -205,10 +225,14 @@ required_arg_error_code () {
 }
 
 required_arg_error_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 Usage: clk mycommand [OPTIONS] NAME
 error: Missing argument 'NAME'.
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run required_arg_error'
@@ -227,9 +251,13 @@ required_arg_ok_code () {
 }
 
 required_arg_ok_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 Hello, World!
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run required_arg_ok'
@@ -265,10 +293,14 @@ use_with_options_code () {
 }
 
 use_with_options_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 warning: The parameter 'greeting' in the command 'mycommand' has no documentation
 Hello, world!
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run use_with_options'
@@ -287,10 +319,14 @@ use_with_options2_code () {
 }
 
 use_with_options2_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 warning: The parameter 'greeting' in the command 'mycommand' has no documentation
 Goodbye, clk!
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run use_with_options2'
@@ -309,11 +345,15 @@ use_with_deprecated_options_code () {
 }
 
 use_with_deprecated_options_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 DeprecationWarning: The option 'use_name' is deprecated. since forever
 warning: The parameter 'greeting' in the command 'mycommand' has no documentation
 Goodbye, world!
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run use_with_deprecated_options'
@@ -338,9 +378,13 @@ try-completion-bad-command_code () {
 }
 
 try-completion-bad-command_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 python
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run try-completion-bad-command'
@@ -359,11 +403,15 @@ try-bad-command_code () {
 }
 
 try-bad-command_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 error: Found the command pyenv in the resolver customcommand but could not load it.
 warning: Failed to get the command pyenv: The file ./clk-root/python/pyenv.py must contain a click command or group named pyenv, but found a function instead. Did you forget the @command or @group decorator?
 error: clk.pyenv could not be loaded. Re run with clk --develop to see the stacktrace or clk --debug-on-command-load-error to debug the load error
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run try-bad-command'
@@ -381,9 +429,13 @@ try-bad-command-develop_code () {
 }
 
 try-bad-command-develop_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 raise BadCustomCommandError(
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run try-bad-command-develop'
@@ -402,9 +454,13 @@ try-completion-bad-command-options_code () {
 }
 
 try-completion-bad-command-options_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run try-completion-bad-command-options'
@@ -432,9 +488,13 @@ try-fixed-command_code () {
 }
 
 try-fixed-command_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 hello
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run try-fixed-command'
@@ -453,10 +513,14 @@ create-periods_code () {
 }
 
 create-periods_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 Usage: clk command create python [OPTIONS] NAME
 error: 'something.with.periods' is not a valid Python command name (it contains periods). Python command names must be valid Python identifiers. If you want to create a command inside a group, first create the group with 'clk command create python --group mygroup', then add the command inside it.
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run create-periods'
@@ -495,9 +559,13 @@ try-mygroup-child_code () {
 }
 
 try-mygroup-child_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 hello from mygroup child
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run try-mygroup-child'
@@ -528,9 +596,13 @@ where-greet_code () {
 }
 
 where-greet_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 ./clk-root/python/greet/__init__.py
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run where-greet'
@@ -551,9 +623,13 @@ try-greet_code () {
 }
 
 try-greet_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 Hello, and welcome aboard
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run try-greet'

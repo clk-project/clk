@@ -28,9 +28,13 @@ run-without-timestamp_code () {
 }
 
 run-without-timestamp_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 done
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run run-without-timestamp'
@@ -48,9 +52,13 @@ run-with-timestamp_code () {
 }
 
 run-with-timestamp_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 2024-02-14 23:00:06,000 done
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run run-with-timestamp'
@@ -68,13 +76,17 @@ run-with-debug-timestamp_code () {
 }
 
 run-with-debug-timestamp_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 2024-02-14 23:00:06,000 debug: starting step 1: fetch config
 2024-02-14 23:00:06,000 debug: starting step 2: heavy computation
 2024-02-14 23:00:09,000 debug: starting step 3: write results
 2024-02-14 23:00:09,000 done
 2024-02-14 23:00:09,000 debug: command `clk/__main__.py --debug --timestamp slowcmd` run in 3 seconds
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run run-with-debug-timestamp'
@@ -92,9 +104,13 @@ run-with-profiling_code () {
 }
 
 run-with-profiling_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 1    0.000    0.000    0.000    0.000 clk/core.py:0(_fake_sleep)
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run run-with-profiling'

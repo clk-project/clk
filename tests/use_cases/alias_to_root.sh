@@ -9,9 +9,13 @@ alias-api-build_code () {
 }
 
 alias-api-build_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 New local alias for build: echo 'Building the API'
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run alias-api-build'
@@ -29,9 +33,13 @@ alias-api-test_code () {
 }
 
 alias-api-test_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 New local alias for test: echo 'Running API tests'
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run alias-api-test'
@@ -52,9 +60,13 @@ alias-app-build_code () {
 }
 
 alias-app-build_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 New local alias for build: echo 'Building the frontend'
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run alias-app-build'
@@ -72,9 +84,13 @@ alias-app-test_code () {
 }
 
 alias-app-test_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 New local alias for test: echo 'Running frontend tests'
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run alias-app-test'
@@ -92,9 +108,13 @@ api-build-from-app_code () {
 }
 
 api-build-from-app_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 Building the frontend
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run api-build-from-app'
@@ -112,9 +132,13 @@ verbose-project_code () {
 }
 
 verbose-project_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 Building the API
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run verbose-project'
@@ -133,9 +157,13 @@ create-api-alias_code () {
 }
 
 create-api-alias_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 New global alias for api: clk --project ./billing-api
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run create-api-alias'
@@ -153,9 +181,13 @@ create-app-alias_code () {
 }
 
 create-app-alias_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 New global alias for app: clk --project ./billing-app
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run create-app-alias'
@@ -173,9 +205,13 @@ api-build_code () {
 }
 
 api-build_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 Building the API
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run api-build'
@@ -193,9 +229,13 @@ app-build_code () {
 }
 
 app-build_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 Building the frontend
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run app-build'
@@ -213,9 +253,13 @@ api-test_code () {
 }
 
 api-test_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 Running API tests
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run api-test'
@@ -233,9 +277,13 @@ app-test_code () {
 }
 
 app-test_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 Running frontend tests
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run app-test'
@@ -253,9 +301,13 @@ show-api-alias_code () {
 }
 
 show-api-alias_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 build echo Building the API
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run show-api-alias'
@@ -274,10 +326,14 @@ help-through-the-alias_code () {
 }
 
 help-through-the-alias_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
   This is a sub command of 'api' that is an alias towards 'clk'. To edit it, try getting help from both of them or from
   the subcommand of the original group (something like `clk build --help`)
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run help-through-the-alias'
@@ -295,9 +351,13 @@ remove-global-api-alias_code () {
 }
 
 remove-global-api-alias_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 Erasing api alias from global settings
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run remove-global-api-alias'
@@ -315,9 +375,13 @@ remove-global-app-alias_code () {
 }
 
 remove-global-app-alias_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 Erasing app alias from global settings
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run remove-global-app-alias'
@@ -336,9 +400,13 @@ local-api-app-alias_code () {
 }
 
 local-api-app-alias_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 New local alias for app: clk --project ../billing-app
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run local-api-app-alias'
@@ -358,9 +426,13 @@ local-app-api-alias_code () {
 }
 
 local-app-api-alias_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 New local alias for api: clk --project ../billing-api
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run local-app-api-alias'
@@ -378,9 +450,13 @@ local-api-build_code () {
 }
 
 local-api-build_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 Building the API
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run local-api-build'
@@ -398,9 +474,13 @@ local-api-test_code () {
 }
 
 local-api-test_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 Running API tests
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run local-api-test'
@@ -420,9 +500,13 @@ local-app-build_code () {
 }
 
 local-app-build_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 Building the frontend
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run local-app-build'
@@ -440,9 +524,13 @@ local-app-test_code () {
 }
 
 local-app-test_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 Running frontend tests
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run local-app-test'
@@ -460,9 +548,13 @@ promote-build_code () {
 }
 
 promote-build_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 Moved alias build, local -> global
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run promote-build'
@@ -480,9 +572,13 @@ promoted-build_code () {
 }
 
 promoted-build_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 Building the API
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run promoted-build'
@@ -501,9 +597,13 @@ shadowed-build_code () {
 }
 
 shadowed-build_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 Building the frontend
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run shadowed-build'
@@ -521,9 +621,13 @@ ship_code () {
 }
 
 ship_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 New local alias for ship: build , test
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run ship'
@@ -542,9 +646,13 @@ quiet-ship_code () {
 }
 
 quiet-ship_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 ship-nightly build, test
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run quiet-ship'
@@ -562,11 +670,15 @@ ship-help-before_code () {
 }
 
 ship-help-before_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 Usage: clk ship [OPTIONS] [MESSAGE]...
 
   Alias for: build , test
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run ship-help-before'
@@ -585,11 +697,15 @@ ship-help-after_code () {
 }
 
 ship-help-after_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 Usage: clk ship [OPTIONS] [MESSAGE]...
 
   Build and test the frontend
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run ship-help-after'
@@ -607,9 +723,13 @@ copy-ship_code () {
 }
 
 copy-ship_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 Copied alias ship -> ship-all in local
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run copy-ship'
@@ -628,9 +748,13 @@ dry-run-rename_code () {
 }
 
 dry-run-rename_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 Would have moved alias test -> test-front in local
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run dry-run-rename'
@@ -648,7 +772,8 @@ show-before-rename_code () {
 }
 
 show-before-rename_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 api clk --project ../billing-api
 build echo Building the frontend
 ship build, test
@@ -656,6 +781,9 @@ ship-all build, test, api build, api test
 ship-nightly build, test
 test echo Running frontend tests
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run show-before-rename'
@@ -673,9 +801,13 @@ rename-test_code () {
 }
 
 rename-test_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 Moved alias test -> test-front in local
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run rename-test'
@@ -693,7 +825,8 @@ show-after-rename_code () {
 }
 
 show-after-rename_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 api clk --project ../billing-api
 build echo Building the frontend
 ship build, test-front
@@ -701,6 +834,9 @@ ship-all build, test-front, api build, api test
 ship-nightly build, test-front
 test-front echo Running frontend tests
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run show-after-rename'

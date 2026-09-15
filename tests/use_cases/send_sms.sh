@@ -65,9 +65,13 @@ command-completion-doit_code () {
 }
 
 command-completion-doit_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 Martha Thomas
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run command-completion-doit'
@@ -109,9 +113,13 @@ try-with-clk-value_code () {
 }
 
 try-with-clk-value_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 Wendy Hodges Kyle Nguyen
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run try-with-clk-value'
@@ -164,9 +172,13 @@ try-with-json_code () {
 }
 
 try-with-json_expected () {
-      cat<<"EOEXPECTED"
+      local expected
+      expected="$(cat<<"EOEXPECTED"
 ssh myphone termux-sms-send -n "+987654321,+1122334455" "Hello there!"
 EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
 }
 
 echo 'Run try-with-json'
