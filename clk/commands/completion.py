@@ -152,17 +152,13 @@ def _try(remove_bash_formatting, description, last, command, args, call):
 
 
 @completion.command(handle_dry_run=True)
-@option(
-    "--append/--overwrite", help="Append the completion code to the file", default=None
-)
 @argument(
     "shell",
     default="bash",
     type=click.Choice(["bash"]),
     help="The shell that will be used (for now, only bash supported)",
 )
-@argument("path", required=False, help="Where to install the completion")
-def install(append, shell, path):
+def install(shell):
     """Install the completion"""
     if not config.dry_run:
         comp_file = Path("~/.bash_completion").expanduser()
