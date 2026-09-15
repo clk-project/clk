@@ -68,10 +68,6 @@ Found 70 tests that are subsets of others (showing top 20 by coverage ratio):
     **Action**: Consider removing if no unique edge cases
 
 
-  - `parameter:simple_parameter` is 99.7% covered by `parameter:appending_parameters`
-    **Action**: Consider removing if no unique edge cases
-
-
   - `types:default_with_converter` is 99.7% covered by `types:date`
     **Action**: Consider removing if no unique edge cases
 
@@ -120,12 +116,16 @@ Found 70 tests that are subsets of others (showing top 20 by coverage ratio):
     **Action**: Consider removing if no unique edge cases
 
 
+  - `completion:command` is 98.2% covered by `completion:dynamic_command`
+    **Action**: Consider removing if no unique edge cases
+
+
   ... and 50 more subset duplicates
 
 
 ## Similar Tests (≥30% overlap)
 
-Found 4950 test pairs with ≥30% similarity (showing top 20):
+Found 4851 test pairs with ≥30% similarity (showing top 20):
 
 
   - `custom:group_python` ↔ `types:default_with_converter`: 99.9% similar
@@ -156,19 +156,11 @@ Found 4950 test pairs with ≥30% similarity (showing top 20):
     **Action**: Review for potential merge or refactoring
 
 
-  - `parameter:appending_parameters` ↔ `parameter:simple_parameter`: 99.7% similar
-    **Action**: Review for potential merge or refactoring
-
-
   - `types:date` ↔ `types:default_with_converter`: 99.7% similar
     **Action**: Review for potential merge or refactoring
 
 
   - `alias:alias_conserves_parameters_of_group_with_exposed_class` ↔ `alias:alias_overrides_parameters`: 99.7% similar
-    **Action**: Review for potential merge or refactoring
-
-
-  - `parameter:appending_parameters` ↔ `parameter:replacing_parameters`: 99.7% similar
     **Action**: Review for potential merge or refactoring
 
 
@@ -204,16 +196,24 @@ Found 4950 test pairs with ≥30% similarity (showing top 20):
     **Action**: Review for potential merge or refactoring
 
 
+  - `custom:simple_python` ↔ `types:default_with_converter`: 99.4% similar
+    **Action**: Review for potential merge or refactoring
+
+
   - `use_cases:use_case[bash_command_import]` ↔ `use_cases:use_case[hello_world]`: 99.4% similar
     **Action**: Review for potential merge or refactoring
 
 
-  ... and 4930 more similar test pairs
+  - `alias:capture_flow_command` ↔ `alias:capture_partial_flow`: 99.3% similar
+    **Action**: Review for potential merge or refactoring
+
+
+  ... and 4831 more similar test pairs
 
 
 ## Summary
 
-- Total tests analyzed: 110
+- Total tests analyzed: 109
 - Exact duplicates: 4 tests can be removed
 - Subset duplicates: 70 tests may be redundant
-- Similar tests: 4950 pairs need review
+- Similar tests: 4851 pairs need review
