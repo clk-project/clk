@@ -62,6 +62,7 @@ from clk.lib import format_options
 @command(flowdepends=["generate"])
 @flag("--coverage", help="Measure how much of the code the tests run")
 @option("--build-type", help="The kind of build to configure")
+@option("--define", multiple=True, help="A variable to hand over to the build system")
 @flag("--python/--no-python", default=None, help="Activate the python wrappers")
 @flag("--unity/--no-unity", default=None, help="Activate the unity build")
 @flag("--doxygen/--no-doxygen", default=None, help="Build the documentation")
@@ -109,6 +110,14 @@ csm configure --unity --build-type Debug --coverage
 ```
 
     Configuring build system with --unity --build-type Debug --analysis coverage
+
+You can provide the option several times.
+
+```bash
+csm configure --define WITH_MPI=ON --define CHAOS_SEED=42
+```
+
+    Configuring build system with --define WITH_MPI=ON --define CHAOS_SEED=42
 
 Without `--flow`, only the simulate step runs.
 

@@ -75,6 +75,7 @@ from clk.lib import format_options
 @command(flowdepends=["generate"])
 @flag("--coverage", help="Measure how much of the code the tests run")
 @option("--build-type", help="The kind of build to configure")
+@option("--define", multiple=True, help="A variable to hand over to the build system")
 @flag("--python/--no-python", default=None, help="Activate the python wrappers")
 @flag("--unity/--no-unity", default=None, help="Activate the unity build")
 @flag("--doxygen/--no-doxygen", default=None, help="Build the documentation")
@@ -145,6 +146,27 @@ echo 'Run csm-configure-options'
 csm-configure-options_expected > "${TMP}/expected.txt" 2>&1
 diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
 echo "Something went wrong when trying csm-configure-options"
+exit 1
+}
+
+
+
+csm-configure-defines_code () {
+      csm configure --define WITH_MPI=ON --define CHAOS_SEED=42
+}
+
+csm-configure-defines_expected () {
+      cat<<"EOEXPECTED"
+Configuring build system with --define WITH_MPI=ON --define CHAOS_SEED=42
+EOEXPECTED
+}
+
+echo 'Run csm-configure-defines'
+
+{ csm-configure-defines_code || true ; } > "${TMP}/code.txt" 2>&1
+csm-configure-defines_expected > "${TMP}/expected.txt" 2>&1
+diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+echo "Something went wrong when trying csm-configure-defines"
 exit 1
 }
 
