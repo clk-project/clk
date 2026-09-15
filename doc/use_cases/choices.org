@@ -257,6 +257,53 @@ use of the click built-in ~Choice~ types.
   perhaps merged with ~Suggestion~ to allow providing both feature at the same
   time. Pull requests are more than welcome here!
 
+* when the value is made of several parts
+  :PROPERTIES:
+  :CUSTOM_ID: when-the-value-is-made-of-several-parts
+  :END:
+
+  A value is not always a single word. The style of ~clk echo~ is a colour, or a
+  colour on a background, or a colour in bold. Completion follows you through it,
+  a part at a time.
+
+  #+NAME: style-to-complete
+  #+BEGIN_SRC bash :results none :exports none
+    echo --style
+  #+END_SRC
+
+  #+NAME: ask-for-style
+  #+BEGIN_SRC bash :results none :exports code :noweb yes
+    clk <<style-to-complete>> <TAB>
+  #+END_SRC
+
+  #+NAME: try-style
+  #+BEGIN_SRC bash :results verbatim :exports results :noweb yes :cache yes :session a7b996e6-a3e6-410e-a91b-311640c4ada8
+    clk completion try --last <<style-to-complete>> "" | head -4
+  #+END_SRC
+
+  #+RESULTS[]: try-style
+  : black
+  : red
+  : green
+  : yellow
+
+  Ask for a foreground and it offers the colours again, this time spelled out.
+
+  #+NAME: ask-for-foreground
+  #+BEGIN_SRC bash :results none :exports code :noweb yes
+    clk <<style-to-complete>> fg-<TAB>
+  #+END_SRC
+
+  #+NAME: try-foreground
+  #+BEGIN_SRC bash :results verbatim :exports results :noweb yes :cache yes :session a7b996e6-a3e6-410e-a91b-311640c4ada8
+    clk completion try --last <<style-to-complete>> "fg-" | head -3
+  #+END_SRC
+
+  #+RESULTS[]: try-foreground
+  : fg-black
+  : fg-red
+  : fg-green
+
   #+NAME: run
   #+BEGIN_SRC bash :results none :exports none :tangle ../../tests/use_cases/choices.sh :noweb yes :shebang "#!/usr/bin/env bash"
     set -eu
@@ -272,4 +319,6 @@ use of the click built-in ~Choice~ types.
     check-result(test-documented-choices)
     check-result(test-documented-choices2)
     check-result(try-completion2)
+    check-result(try-style)
+    check-result(try-foreground)
   #+END_SRC

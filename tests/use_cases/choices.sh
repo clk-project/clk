@@ -251,4 +251,49 @@ diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
 echo "Something went wrong when trying try-completion2"
 exit 1
 }
+
+
+try-style_code () {
+      clk completion try --last echo --style "" | head -4
+}
+
+try-style_expected () {
+      cat<<"EOEXPECTED"
+black
+red
+green
+yellow
+EOEXPECTED
+}
+
+echo 'Run try-style'
+
+{ try-style_code || true ; } > "${TMP}/code.txt" 2>&1
+try-style_expected > "${TMP}/expected.txt" 2>&1
+diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+echo "Something went wrong when trying try-style"
+exit 1
+}
+
+
+try-foreground_code () {
+      clk completion try --last echo --style "fg-" | head -3
+}
+
+try-foreground_expected () {
+      cat<<"EOEXPECTED"
+fg-black
+fg-red
+fg-green
+EOEXPECTED
+}
+
+echo 'Run try-foreground'
+
+{ try-foreground_code || true ; } > "${TMP}/code.txt" 2>&1
+try-foreground_expected > "${TMP}/expected.txt" 2>&1
+diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+echo "Something went wrong when trying try-foreground"
+exit 1
+}
 # run ends here

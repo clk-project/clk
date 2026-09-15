@@ -1,6 +1,7 @@
 - [a simple example to illustrate click.Choice](#3041aa9c-8e50-4ce4-8e92-255d4f153c8d)
 - [showing the usage of Suggestion](#63e4db36-5877-424f-a31f-a8889a07a933)
 - [showing the usage of DocumentedChoice](#917d3f0f-e794-4403-88fb-c02734364082)
+- [when the value is made of several parts](#when-the-value-is-made-of-several-parts)
 
 When you want to give some choice to the user of your application, you can make use of the click built-in `Choice` types.
 
@@ -205,3 +206,29 @@ clk android -d i<TAB>
     i9300
 
 Note that we simply copied `DocumentedChoice` from the dying project [click-completion](https://github.com/click-contrib/click-completion). It will probably evolve to be more feature complete, or perhaps merged with `Suggestion` to allow providing both feature at the same time. Pull requests are more than welcome here!
+
+
+<a id="when-the-value-is-made-of-several-parts"></a>
+
+# when the value is made of several parts
+
+A value is not always a single word. The style of `clk echo` is a colour, or a colour on a background, or a colour in bold. Completion follows you through it, a part at a time.
+
+```bash
+clk echo --style <TAB>
+```
+
+    black
+    red
+    green
+    yellow
+
+Ask for a foreground and it offers the colours again, this time spelled out.
+
+```bash
+clk echo --style fg-<TAB>
+```
+
+    fg-black
+    fg-red
+    fg-green
