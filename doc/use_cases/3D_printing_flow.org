@@ -426,6 +426,52 @@ clk printer send myprinter --flow
 : Slicing someothermodel to model.gcode
 : Printing model.gcode using myprinter
 
+* when the printer does not answer
+  :PROPERTIES:
+  :CUSTOM_ID: when-the-printer-does-not-answer
+  :END:
+
+  Some days the printer is simply not there. Let's have calibrate say so.
+
+#+NAME: calibrate-failing
+#+BEGIN_SRC python :exports code
+  import click
+
+  @printer.command()
+  def calibrate():
+      """Run everything that is needed to have the printer ready to print"""
+      raise click.ClickException("the printer does not answer")
+#+END_SRC
+
+#+NAME: with_failing_calibrate
+#+BEGIN_SRC python :results none :exports none :noweb yes
+  <<calibrate-failing>>
+
+  @printer.command(flowdepends=["printer.calibrate"])
+  <<slice_base>>
+
+  @printer.command(flowdepends=["printer.slice"])
+  <<send_base>>
+#+END_SRC
+
+#+name: install-failing-calibrate
+#+BEGIN_SRC bash :results none :exports none :session 73f5d57e-d16a-490a-b4e1-0254d6296590 :noweb yes
+  clk command create python --group printer --description "This is a group of commands to deal with 3D printing." --body '
+<<with_failing_calibrate>>
+'
+#+END_SRC
+
+Nothing gets sliced and nothing gets printed: the flow stops on the step that
+failed.
+
+#+NAME: run-with-failing-step
+#+BEGIN_SRC bash :results verbatim :exports both :session 73f5d57e-d16a-490a-b4e1-0254d6296590 :cache yes
+clk printer send myprinter --flow
+#+END_SRC
+
+#+RESULTS[]: run-with-failing-step
+: error: the printer does not answer
+
 * when the flow is wrong
   :PROPERTIES:
   :CREATED:  [2024-02-16 17:20]
@@ -512,6 +558,10 @@ Beware that this means that you have to check that this command it actually defi
   check-result(flowdep-remove)
 
   check-result(flowdep-unset)
+
+  <<install-failing-calibrate>>
+
+  check-result(run-with-failing-step)
 
   <<install-with-wrong-flow-deps>>
 

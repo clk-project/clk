@@ -394,6 +394,53 @@ exit 1
 
 
   clk command create python --group printer --description "This is a group of commands to deal with 3D printing." --body '
+import click
+
+@printer.command()
+def calibrate():
+    """Run everything that is needed to have the printer ready to print"""
+    raise click.ClickException("the printer does not answer")
+
+@printer.command(flowdepends=["printer.calibrate"])
+@option("--model", default=["model.stl"], help="The model to slice", multiple=True)
+@option("--output", default="model.gcode", help="The file getting the final gcode")
+def slice(model, output):
+    """Slice a model"""
+    print("Slicing " + ", ".join(model) + f" to {output}")
+
+@printer.command(flowdepends=["printer.slice"])
+@option("--gcode", help="The gcode file", default="model.gcode")
+@flag("--warn-when-done", help="Trigger a notification when done")
+@argument("printer", help="The ip of the printer to send the gcode to")
+def send(gcode, warn_when_done, printer):
+    """Send some gcode to your printer"""
+    print(f"Printing {gcode} using {printer}")
+    if warn_when_done:
+        print("Driiiiiiing!")
+'
+
+
+run-with-failing-step_code () {
+      clk printer send myprinter --flow
+}
+
+run-with-failing-step_expected () {
+      cat<<"EOEXPECTED"
+error: the printer does not answer
+EOEXPECTED
+}
+
+echo 'Run run-with-failing-step'
+
+{ run-with-failing-step_code || true ; } > "${TMP}/code.txt" 2>&1
+run-with-failing-step_expected > "${TMP}/expected.txt" 2>&1
+diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+echo "Something went wrong when trying run-with-failing-step"
+exit 1
+}
+
+
+  clk command create python --group printer --description "This is a group of commands to deal with 3D printing." --body '
 @printer.command()
 def calibrate():
     """Run everything that is needed to have the printer ready to print"""

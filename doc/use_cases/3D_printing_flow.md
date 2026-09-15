@@ -1,6 +1,7 @@
 - [alternative use case, explicitly defining the flow](#db06b88c-a231-4f46-b8f7-54e98db07e17)
 - [more information about the flow](#cda760bc-d2da-49ca-9377-7455feaeedbc)
 - [dynamically adjusting the flow](#35c5a2d9-4a1d-4929-b801-7a023a221741)
+- [when the printer does not answer](#when-the-printer-does-not-answer)
 - [when the flow is wrong](#96a6905e-06bd-48d5-a117-7e81ebde9399)
 
 When you get used to create groups of commands, you generally end up having a sequence that comes out quite naturally.
@@ -309,6 +310,30 @@ clk printer send myprinter --flow
     Running some stuff for the printer to be ready to go
     Slicing someothermodel to model.gcode
     Printing model.gcode using myprinter
+
+
+<a id="when-the-printer-does-not-answer"></a>
+
+# when the printer does not answer
+
+Some days the printer is simply not there. Let's have calibrate say so.
+
+```python
+import click
+
+@printer.command()
+def calibrate():
+    """Run everything that is needed to have the printer ready to print"""
+    raise click.ClickException("the printer does not answer")
+```
+
+Nothing gets sliced and nothing gets printed: the flow stops on the step that failed.
+
+```bash
+clk printer send myprinter --flow
+```
+
+    error: the printer does not answer
 
 
 <a id="96a6905e-06bd-48d5-a117-7e81ebde9399"></a>
