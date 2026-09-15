@@ -45,6 +45,20 @@ cat <<EOF > "${TMP}/csm-root/csm.json"
 EOF
 echo "export CSMCONFIGDIR=${TMP}/csm-root" >> "${TMP}/.envrc" && direnv allow
 source "${TMP}/.envrc"
+# csm lives in its own venv, out of reach of the wrapper the sandbox uses for
+# clk. Lend it alone to the python that measures clk, so that the lines it runs
+# are the very ones the other tests count.
+CSM_COV_DIR="$(dirname "${CLK_COV}")"
+mkdir -p "${TMP}/csm-import"
+ln -sfn "$("${TMP}/venv/bin/python" -c 'import csm, pathlib; print(pathlib.Path(csm.__file__).parent)')" "${TMP}/csm-import/csm"
+CSM_COV_COUNT=0
+csm () {
+    CSM_COV_COUNT=$((CSM_COV_COUNT + 1))
+    COVERAGE_FILE="${CSM_COV_DIR}/.coverage.csm.${CLK_COVERAGE_TEST_ID-}.${CSM_COV_COUNT}" \
+        PYTHONPATH="${TMP}/csm-import" "${PYTHON}" -u -m coverage run --source clk \
+        ${CLK_COVERAGE_CONTEXT:+--context="${CLK_COVERAGE_CONTEXT}"} \
+        "${TMP}/venv/bin/csm" "$@"
+}
 
 cat<<'EOF' > csm/csm/commands/generate.py
 from clk.decorators import command
