@@ -654,28 +654,6 @@ def check_cluster(cluster, quiet):
 '
 
 
-run-failing-demo_code () {
-      clk check-cluster other 2>&1
-}
-
-run-failing-demo_expected () {
-      cat<<"EOEXPECTED"
-trouble reaching other
-error: bash -c 'echo trouble reaching $1 >&2 ; test $1 = main || exit 4 ; echo ok' -- other exited with 4
-EOEXPECTED
-}
-
-echo 'Run run-failing-demo'
-
-{ run-failing-demo_code || true ; } > "${TMP}/code.txt" 2>&1
-run-failing-demo_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying run-failing-demo"
-exit 1
-}
-
-
-
 run-complaining-demo_code () {
       clk check-cluster main 2>&1
 }
@@ -714,6 +692,28 @@ echo 'Run run-quiet-demo'
 run-quiet-demo_expected > "${TMP}/expected.txt" 2>&1
 diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
 echo "Something went wrong when trying run-quiet-demo"
+exit 1
+}
+
+
+
+run-failing-demo_code () {
+      clk check-cluster other 2>&1
+}
+
+run-failing-demo_expected () {
+      cat<<"EOEXPECTED"
+trouble reaching other
+error: bash -c 'echo trouble reaching $1 >&2 ; test $1 = main || exit 4 ; echo ok' -- other exited with 4
+EOEXPECTED
+}
+
+echo 'Run run-failing-demo'
+
+{ run-failing-demo_code || true ; } > "${TMP}/code.txt" 2>&1
+run-failing-demo_expected > "${TMP}/expected.txt" 2>&1
+diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+echo "Something went wrong when trying run-failing-demo"
 exit 1
 }
 

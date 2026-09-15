@@ -3,10 +3,10 @@
 - [generic programming](#7e7ae624-ce8a-4470-8bb0-7a44d8c2caea)
 - [publish it](#21d2895b-db01-4a09-b2a2-18e34e2830b6)
 - [get an extension](#b7bcef53-dd68-4660-9c5c-d9aa029d1a72)
-- [using temporary files and directories](#795e915b-29f5-4fbc-a8d9-480a094d3e37)
+- [leaning on the helpers of clk.lib](#795e915b-29f5-4fbc-a8d9-480a094d3e37)
   - [tempdir](#60d4bff1-366d-45cb-b0ce-3bb7468734aa)
   - [temporary\_file](#d18237dd-7e05-4225-b9de-bf63f09b6d99)
-- [when a program you call fails](#5fab2cd5-3e10-4c2c-ac79-038abeec8a41)
+  - [check\_output](#5fab2cd5-3e10-4c2c-ac79-038abeec8a41)
 - [extension names with special characters](#1a2b3c4d-5678-90ab-cdef-abcdef012345)
 - [an extension that outgrew the project](#an-extension-that-outgrew-the-project)
 
@@ -452,9 +452,7 @@ _____
 
 <a id="795e915b-29f5-4fbc-a8d9-480a094d3e37"></a>
 
-# using temporary files and directories
-
-When writing extensions, you often need to work with temporary files or directories. clk provides two helpers in `clk.lib`: `tempdir` and `temporary_file`. They are context managers that automatically clean up after themselves.
+# leaning on the helpers of clk.lib
 
 
 <a id="60d4bff1-366d-45cb-b0ce-3bb7468734aa"></a>
@@ -550,9 +548,9 @@ clk apply-mock-config
 
 <a id="5fab2cd5-3e10-4c2c-ac79-038abeec8a41"></a>
 
-# when a program you call fails
+## check\_output
 
-An extension mostly drives other programs, and those sometimes fail. When that happens, you want to know which program gave up, and what it had to say before doing so.
+You know `check_output` from the standard library. The one in `clk.lib` wraps it with what a command needs.
 
 Let's create a command asking a program about the cluster we name. That program complains on its error output, and gives up on every cluster but `main`.
 
@@ -573,18 +571,7 @@ def check_cluster(cluster, quiet):
 '
 ```
 
-`check_output` hands you the output of the program, so you have nothing to print yourself when it fails. It still tells you what happened.
-
-```bash
-clk check-cluster other 2>&1
-```
-
-    trouble reaching other
-    error: bash -c 'echo trouble reaching $1 >&2 ; test $1 = main || exit 4 ; echo ok' -- other exited with 4
-
-What the program said reaches you as it said it, and clk then names the command that gave up and the status it exited with. That is enough to go and have a look.
-
-Ask the same program about `main` now.
+Ask it about `main`.
 
 ```bash
 clk check-cluster main 2>&1
@@ -601,7 +588,16 @@ clk check-cluster --quiet main 2>&1
 
     ok
 
-The day it does fail, though, what the program said is suddenly worth reading, and clk quotes it back to you rather than losing it, quiet or not.
+Now ask about a cluster the program cannot reach.
+
+```bash
+clk check-cluster other 2>&1
+```
+
+    trouble reaching other
+    error: bash -c 'echo trouble reaching $1 >&2 ; test $1 = main || exit 4 ; echo ok' -- other exited with 4
+
+Ask quietly and it fails just the same.
 
 ```bash
 clk check-cluster --quiet other 2>&1

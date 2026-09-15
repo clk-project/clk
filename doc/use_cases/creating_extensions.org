@@ -508,17 +508,12 @@ _____
                                                                        /.-~
 #+end_example
 
-* using temporary files and directories
+* leaning on the helpers of clk.lib
   :PROPERTIES:
   :CREATED:  [2025-12-30 17:38]
   :ID:       a1b2c3d4-5678-90ab-cdef-1234567890ab
   :CUSTOM_ID: 795e915b-29f5-4fbc-a8d9-480a094d3e37
   :END:
-
-When writing extensions, you often need to work with temporary files or
-directories. clk provides two helpers in ~clk.lib~: ~tempdir~ and
-~temporary_file~. They are context managers that automatically clean up after
-themselves.
 
 ** tempdir
    :PROPERTIES:
@@ -630,15 +625,14 @@ clk apply-mock-config
 clk extension remove tempdir-demo
 #+END_SRC
 
-* when a program you call fails
-  :PROPERTIES:
-  :CREATED:  [2026-09-11 12:00]
-  :CUSTOM_ID: 5fab2cd5-3e10-4c2c-ac79-038abeec8a41
-  :END:
+** check_output
+   :PROPERTIES:
+   :CREATED:  [2026-09-11 12:00]
+   :CUSTOM_ID: 5fab2cd5-3e10-4c2c-ac79-038abeec8a41
+   :END:
 
-An extension mostly drives other programs, and those sometimes fail. When that
-happens, you want to know which program gave up, and what it had to say before
-doing so.
+You know ~check_output~ from the standard library. The one in ~clk.lib~ wraps it
+with what a command needs.
 
 Let's create a command asking a program about the cluster we name. That program
 complains on its error output, and gives up on every cluster but ~main~.
@@ -662,23 +656,7 @@ def check_cluster(cluster, quiet):
 '
 #+END_SRC
 
-~check_output~ hands you the output of the program, so you have nothing to
-print yourself when it fails. It still tells you what happened.
-
-#+NAME: run-failing-demo
-#+BEGIN_SRC bash :results verbatim :cache yes :exports both :session f47428c2-56ea-4d91-97d9-4f2ff63ef052
-clk check-cluster other 2>&1
-#+END_SRC
-
-#+RESULTS[49b6057dd637b77fa5716a9a2bc288f5525c3ab4]: run-failing-demo
-: trouble reaching other
-: error: bash -c 'echo trouble reaching $1 >&2 ; test $1 = main || exit 4 ; echo ok' -- other exited with 4
-
-What the program said reaches you as it said it, and clk then names the command
-that gave up and the status it exited with. That is enough to go and have a
-look.
-
-Ask the same program about ~main~ now.
+Ask it about ~main~.
 
 #+NAME: run-complaining-demo
 #+BEGIN_SRC bash :results verbatim :cache yes :exports both :session f47428c2-56ea-4d91-97d9-4f2ff63ef052
@@ -699,8 +677,18 @@ clk check-cluster --quiet main 2>&1
 #+RESULTS[9729072330be063ffdc004dd63dd21a8f0aeb3d4]: run-quiet-demo
 : ok
 
-The day it does fail, though, what the program said is suddenly worth reading,
-and clk quotes it back to you rather than losing it, quiet or not.
+Now ask about a cluster the program cannot reach.
+
+#+NAME: run-failing-demo
+#+BEGIN_SRC bash :results verbatim :cache yes :exports both :session f47428c2-56ea-4d91-97d9-4f2ff63ef052
+clk check-cluster other 2>&1
+#+END_SRC
+
+#+RESULTS[49b6057dd637b77fa5716a9a2bc288f5525c3ab4]: run-failing-demo
+: trouble reaching other
+: error: bash -c 'echo trouble reaching $1 >&2 ; test $1 = main || exit 4 ; echo ok' -- other exited with 4
+
+Ask quietly and it fails just the same.
 
 #+NAME: run-quiet-failing-demo
 #+BEGIN_SRC bash :results verbatim :cache yes :exports both :session f47428c2-56ea-4d91-97d9-4f2ff63ef052
@@ -910,11 +898,11 @@ check-result(run-tempfile-demo)
 
 <<create_failing_command>>
 
-check-result(run-failing-demo)
-
 check-result(run-complaining-demo)
 
 check-result(run-quiet-demo)
+
+check-result(run-failing-demo)
 
 check-result(run-quiet-failing-demo)
 
