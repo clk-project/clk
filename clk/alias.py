@@ -100,12 +100,15 @@ class AliasToGroupCommandResolver(CommandResolver):
 
         original_command = re.sub(
             "^" + group_.path + r"\.", original.path + ".", command.path
+        )
+        original_command = re.sub(
+            "^" + config.main_command.path + r"\.", "", original_command
         ).replace(".", " ")
         with formatter.indentation():
             formatter.write_text(
-                f"This is a sub command of '{group_.path}' that is an alias towards '{original_path}'"
+                f"This is a sub command of '{group_.path}' that is an alias towards '{original_path}'."
                 " To edit it, try getting help from both of them or from the subcommand"
-                f" of the original group (something like `clk {original_command}` --help)"
+                f" of the original group (something like `{config.main_command.path} {original_command} --help`)"
             )
 
 

@@ -130,6 +130,15 @@ clk api alias show build 2>/dev/null
 
     build echo Building the API
 
+Ask one of them for help and clk says where it really comes from, so you know which of the two to go and edit.
+
+```bash
+clk api build --help 2>/dev/null | grep -A1 "This is a sub command"
+```
+
+    This is a sub command of 'api' that is an alias towards 'clk'. To edit it, try getting help from both of them or from
+    the subcommand of the original group (something like `clk build --help`)
+
 
 <a id="450ba117-403e-4bc3-a809-28d8a6f590c0"></a>
 

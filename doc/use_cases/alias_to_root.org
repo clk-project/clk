@@ -181,6 +181,18 @@ clk api alias show build 2>/dev/null
 #+RESULTS[3caae149055f81a8f7c1824809a99e1fc9aa22f6]: show-api-alias
 : build echo Building the API
 
+Ask one of them for help and clk says where it really comes from, so you know
+which of the two to go and edit.
+
+#+NAME: help-through-the-alias
+#+BEGIN_SRC bash :results verbatim :exports both :session 55ed49b4-065d-440e-903b-658d1dcec014 :cache yes
+clk api build --help 2>/dev/null | grep -A1 "This is a sub command"
+#+END_SRC
+
+#+RESULTS[]: help-through-the-alias
+:   This is a sub command of 'api' that is an alias towards 'clk'. To edit it, try getting help from both of them or from
+:   the subcommand of the original group (something like `clk build --help`)
+
 * Local aliases
   :PROPERTIES:
   :CUSTOM_ID: 450ba117-403e-4bc3-a809-28d8a6f590c0
@@ -468,6 +480,8 @@ that the old name is still used there, for you to correct by hand.
   check-result(api-test)
   check-result(app-test)
   check-result(show-api-alias)
+
+  check-result(help-through-the-alias)
   check-result(remove-global-api-alias)
   check-result(remove-global-app-alias)
   <<enter-api-for-local>>

@@ -268,6 +268,28 @@ exit 1
 }
 
 
+
+help-through-the-alias_code () {
+      clk api build --help 2>/dev/null | grep -A1 "This is a sub command"
+}
+
+help-through-the-alias_expected () {
+      cat<<"EOEXPECTED"
+  This is a sub command of 'api' that is an alias towards 'clk'. To edit it, try getting help from both of them or from
+  the subcommand of the original group (something like `clk build --help`)
+EOEXPECTED
+}
+
+echo 'Run help-through-the-alias'
+
+{ help-through-the-alias_code || true ; } > "${TMP}/code.txt" 2>&1
+help-through-the-alias_expected > "${TMP}/expected.txt" 2>&1
+diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+echo "Something went wrong when trying help-through-the-alias"
+exit 1
+}
+
+
 remove-global-api-alias_code () {
       clk alias unset api
 }
