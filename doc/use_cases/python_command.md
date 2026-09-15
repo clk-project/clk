@@ -253,13 +253,19 @@ clk pyenv 2>&1|sed "s|$(pwd)|.|"
     warning: Failed to get the command pyenv: The file ./clk-root/python/pyenv.py must contain a click command or group named pyenv, but found a function instead. Did you forget the @command or @group decorator?
     error: clk.pyenv could not be loaded. Re run with clk --develop to see the stacktrace or clk --debug-on-command-load-error to debug the load error
 
-That last line promises a stacktrace, and `clk --develop` keeps the promise. It is long, so let's only keep the line clk gave up on.
+Let's take a look at the stack trace with `--develop`.
 
 ```bash
 clk --develop pyenv 2>&1 | grep -o 'raise BadCustomCommandError('
 ```
 
     raise BadCustomCommandError(
+
+Of course, you won't be able to complete on that command.
+
+```bash
+clk pyenv --<TAB>
+```
 
 To fix this, simply add the `@command()` decorator from clk.
 

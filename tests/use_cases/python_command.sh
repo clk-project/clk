@@ -396,6 +396,27 @@ exit 1
 }
 
 
+
+try-completion-bad-command-options_code () {
+      clk completion try --last clk pyenv --
+}
+
+try-completion-bad-command-options_expected () {
+      cat<<"EOEXPECTED"
+
+EOEXPECTED
+}
+
+echo 'Run try-completion-bad-command-options'
+
+{ try-completion-bad-command-options_code || true ; } > "${TMP}/code.txt" 2>&1
+try-completion-bad-command-options_expected > "${TMP}/expected.txt" 2>&1
+diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+echo "Something went wrong when trying try-completion-bad-command-options"
+exit 1
+}
+
+
 cat <<'EOF' > "${CLKCONFIGDIR}/python/pyenv.py"
 from clk.decorators import command
 

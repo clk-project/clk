@@ -320,7 +320,7 @@ clk py<TAB>
 clk completion try --last clk py
 #+END_SRC
 
-#+RESULTS[]: try-completion-bad-command
+#+RESULTS[476b7858565aa8754ee455b037c20f1ed00f1762]: try-completion-bad-command
 : python
 
 It does not come up. That is the hint that something is wrong with it, and
@@ -331,21 +331,34 @@ running it says what.
 clk pyenv 2>&1|sed "s|$(pwd)|.|"
 #+END_SRC
 
-#+RESULTS[9f593cff8587c3153dd9920cd184ca552f4d1d67]: try-bad-command
+#+RESULTS[d3af7307b4a90513093c8fec7eb41ccf188e9537]: try-bad-command
 : error: Found the command pyenv in the resolver customcommand but could not load it.
 : warning: Failed to get the command pyenv: The file ./clk-root/python/pyenv.py must contain a click command or group named pyenv, but found a function instead. Did you forget the @command or @group decorator?
 : error: clk.pyenv could not be loaded. Re run with clk --develop to see the stacktrace or clk --debug-on-command-load-error to debug the load error
 
-That last line promises a stacktrace, and ~clk --develop~ keeps the promise. It
-is long, so let's only keep the line clk gave up on.
+Let's take a look at the stack trace with ~--develop~.
 
 #+NAME: try-bad-command-develop
 #+BEGIN_SRC bash :results verbatim :exports both :session b115ee6f-3575-46e0-a64c-880cfa22d4e3 :cache yes
 clk --develop pyenv 2>&1 | grep -o 'raise BadCustomCommandError('
 #+END_SRC
 
-#+RESULTS[]: try-bad-command-develop
+#+RESULTS[7e88fa48af92c11daab9f1cb04ae89d613d0d31f]: try-bad-command-develop
 : raise BadCustomCommandError(
+
+Of course, you won't be able to complete on that command.
+
+#+NAME: ask-for-completion-bad-command-options
+#+BEGIN_SRC bash :results none :exports code
+clk pyenv --<TAB>
+#+END_SRC
+
+#+NAME: try-completion-bad-command-options
+#+BEGIN_SRC bash :results verbatim :exports results :session b115ee6f-3575-46e0-a64c-880cfa22d4e3 :cache yes
+clk completion try --last clk pyenv --
+#+END_SRC
+
+#+RESULTS[1bb9117ee25cce8c33abcf2739080c6cc24f6c9e]: try-completion-bad-command-options
 
 To fix this, simply add the ~@command()~ decorator from clk.
 
@@ -373,7 +386,7 @@ Now the command works as expected.
 clk pyenv
 #+END_SRC
 
-#+RESULTS[e073a22027d65d24304cb4d9e3633779c9593da4]: try-fixed-command
+#+RESULTS[053668cb456edd0a9d8737397024c568fa0f313e]: try-fixed-command
 : hello
 
 * possible mistake: using periods in python command names
@@ -476,7 +489,7 @@ It is a package now, so the command is its ~__init__.py~.
 clk command which greet | sed "s|$(pwd)|.|"
 #+END_SRC
 
-#+RESULTS[]: where-greet
+#+RESULTS[8352199446e5a733e3da87c58ee088be97fcd861]: where-greet
 : ./clk-root/python/greet/__init__.py
 
 Put the file it wants next to it.
@@ -491,7 +504,7 @@ echo "Hello, and welcome aboard" > "$(dirname "$(clk command which greet)")/gree
 clk greet
 #+END_SRC
 
-#+RESULTS[]: try-greet
+#+RESULTS[39ff500940a446a3cba6bd99d26b7fa06a37b964]: try-greet
 : Hello, and welcome aboard
 
 #+BEGIN_SRC bash :exports none :tangle ../../tests/use_cases/python_command.sh :noweb yes :shebang "#!/usr/bin/env bash"
@@ -534,6 +547,8 @@ check-result(try-completion-bad-command)
 
 check-result(try-bad-command)
 check-result(try-bad-command-develop)
+
+check-result(try-completion-bad-command-options)
 
 <<fix-command>>
 

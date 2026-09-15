@@ -123,6 +123,20 @@ export CLK_COVERAGE_TEST_ID="${CLK_COVERAGE_TEST_ID-}"
 EOF
 # source the env file to use it in automatic test
 source "${TMP}/.envrc"
+if test -n "${CLK_COVERAGE_TEST_ID-}"
+then
+    cat <<EOF > "${TMP}/coveragerc"
+[run]
+source = clk
+parallel = true
+data_file = $(dirname "${CLK_COV}")/.coverage.sub
+EOF
+    export PYTHONUSERBASE="${TMP}/pyuser"
+    SUBCOV_SITE="$("${PYTHON}" -c 'import site; print(site.getusersitepackages())')"
+    mkdir -p "${SUBCOV_SITE}"
+    echo 'import coverage; coverage.process_startup()' > "${SUBCOV_SITE}/subcoverage.pth"
+    export COVERAGE_PROCESS_START="${TMP}/coveragerc"
+fi
 export TERM=dumb # to avoid possible issues with colors
 echo "${TMP}"
 # No heading:2 ends here
