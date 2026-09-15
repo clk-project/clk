@@ -3,12 +3,18 @@
 
 ((nil . ((konix/agent-shell-tool-blacklist-project . (("^\\./tangle\\.sh" . "./tangle-n-export.sh")
                                                       ("^./doc/use_cases/generate-index.sh$" . "this is done in a pre-commit hook")
-                                                      ("^Edit tests/use_cases/" . "Never touch that file. It is tangled from ./doc/use_cases/")))
+                                                      ("^Edit tests/use_cases/" . "Never touch that file. It is tangled from ./doc/use_cases/")
+                                                      ("^\\./export\\.sh" . "./tangle-n-export.sh")
+                                                      ))
          (konix/agent-shell-tool-whitelist-project . (("^\\./custom-ids\\.sh" . "")
                                                       ("^\\./tangle-n-export\\.sh" . "")
-                                                      ("^clk python -m pytest" . "")))
+                                                      ("^clk python -m pytest" . "")
+                                                      ("^rm -f tests/\\.coverage\\.\\*" . "")
+                                                      ))
          (konix/agent-shell-mcp-project-servers . ("konix-emacs-code-review"
-                                                   "konix-emacs-workspace"))))
+                                                   "konix-emacs-workspace"
+                                                   ))))
  (org-mode . ((ispell-dictionary . "american")
               (org-id-link-to-org-use-id . nil)
-              (org-babel-default-header-args:python . ((:preserve-indentation . t))))))
+              (org-babel-default-header-args:python . ((:preserve-indentation . t)
+                                                       )))))
