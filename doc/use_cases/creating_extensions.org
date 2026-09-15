@@ -112,6 +112,21 @@ clk k8s run-dev-env --flow
 : Usage: clk [OPTIONS] [COMMAND] [ARGS]...
 : error: No such command 'k8s'.
 
+While it is disabled, you can still call it for one command line, without
+changing your mind about it.
+
+#+NAME: enable-for-one-run
+#+BEGIN_SRC bash :results verbatim :cache yes :exports both :session f47428c2-56ea-4d91-97d9-4f2ff63ef052
+clk --extension k8s k8s run-dev-env --flow
+#+END_SRC
+
+#+RESULTS[]: enable-for-one-run
+: installing dependencies
+: starting k8s cluster
+: starting controllers
+: noop, this must be overloaded by a project command
+: running development environment
+
 You can enable it again with.
 
 #+NAME: enable
@@ -126,6 +141,18 @@ clk k8s run-dev-env --flow
 : starting controllers
 : noop, this must be overloaded by a project command
 : running development environment
+
+The other way round works too, to leave it out of a single command line.
+
+#+NAME: disable-for-one-run
+#+BEGIN_SRC bash :results verbatim :cache yes :exports both :session f47428c2-56ea-4d91-97d9-4f2ff63ef052
+clk --without-extension k8s k8s run-dev-env --flow
+#+END_SRC
+
+#+RESULTS[]: disable-for-one-run
+: warning: Failed to get the command k8s: Command k8s not found
+: Usage: clk [OPTIONS] [COMMAND] [ARGS]...
+: error: No such command 'k8s'.
 
 * generic programming
   :PROPERTIES:
@@ -807,7 +834,11 @@ check-result(try-it)
 
 check-result(disable)
 
+check-result(enable-for-one-run)
+
 check-result(enable)
+
+check-result(disable-for-one-run)
 
 <<create_credentials_project>>
 

@@ -123,6 +123,18 @@ clk k8s run-dev-env --flow
     Usage: clk [OPTIONS] [COMMAND] [ARGS]...
     error: No such command 'k8s'.
 
+While it is disabled, you can still call it for one command line, without changing your mind about it.
+
+```bash
+clk --extension k8s k8s run-dev-env --flow
+```
+
+    installing dependencies
+    starting k8s cluster
+    starting controllers
+    noop, this must be overloaded by a project command
+    running development environment
+
 You can enable it again with.
 
 ```bash
@@ -135,6 +147,16 @@ clk k8s run-dev-env --flow
     starting controllers
     noop, this must be overloaded by a project command
     running development environment
+
+The other way round works too, to leave it out of a single command line.
+
+```bash
+clk --without-extension k8s k8s run-dev-env --flow
+```
+
+    warning: Failed to get the command k8s: Command k8s not found
+    Usage: clk [OPTIONS] [COMMAND] [ARGS]...
+    error: No such command 'k8s'.
 
 
 <a id="7e7ae624-ce8a-4470-8bb0-7a44d8c2caea"></a>

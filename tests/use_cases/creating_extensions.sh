@@ -83,6 +83,31 @@ exit 1
 
 
 
+enable-for-one-run_code () {
+      clk --extension k8s k8s run-dev-env --flow
+}
+
+enable-for-one-run_expected () {
+      cat<<"EOEXPECTED"
+installing dependencies
+starting k8s cluster
+starting controllers
+noop, this must be overloaded by a project command
+running development environment
+EOEXPECTED
+}
+
+echo 'Run enable-for-one-run'
+
+{ enable-for-one-run_code || true ; } > "${TMP}/code.txt" 2>&1
+enable-for-one-run_expected > "${TMP}/expected.txt" 2>&1
+diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+echo "Something went wrong when trying enable-for-one-run"
+exit 1
+}
+
+
+
 enable_code () {
       clk extension enable k8s
       clk k8s run-dev-env --flow
@@ -104,6 +129,29 @@ echo 'Run enable'
 enable_expected > "${TMP}/expected.txt" 2>&1
 diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
 echo "Something went wrong when trying enable"
+exit 1
+}
+
+
+
+disable-for-one-run_code () {
+      clk --without-extension k8s k8s run-dev-env --flow
+}
+
+disable-for-one-run_expected () {
+      cat<<"EOEXPECTED"
+warning: Failed to get the command k8s: Command k8s not found
+Usage: clk [OPTIONS] [COMMAND] [ARGS]...
+error: No such command 'k8s'.
+EOEXPECTED
+}
+
+echo 'Run disable-for-one-run'
+
+{ disable-for-one-run_code || true ; } > "${TMP}/code.txt" 2>&1
+disable-for-one-run_expected > "${TMP}/expected.txt" 2>&1
+diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+echo "Something went wrong when trying disable-for-one-run"
 exit 1
 }
 
