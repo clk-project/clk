@@ -125,12 +125,21 @@ def generate():
 
 #+NAME: csm-configure
 #+BEGIN_SRC python :results none :exports code
-from clk.decorators import command
+from clk.decorators import command, flag, option
+from clk.lib import format_options
 
 @command(flowdepends=["generate"])
-def configure():
+@flag("--coverage", help="Measure how much of the code the tests run")
+@option("--build-type", help="The kind of build to configure")
+@flag("--python/--no-python", default=None, help="Activate the python wrappers")
+@flag("--unity/--no-unity", default=None, help="Activate the unity build")
+@flag("--doxygen/--no-doxygen", default=None, help="Build the documentation")
+def configure(coverage, **cmake_opts):
     """Configure the build system (e.g. cmake)."""
-    print("Configuring build system")
+    if coverage:
+        cmake_opts["analysis"] = "coverage"
+    flags = format_options(cmake_opts)
+    print("Configuring build system" + (" with " + " ".join(flags) if flags else ""))
 #+END_SRC
 
 #+NAME: csm-build
@@ -183,6 +192,20 @@ csm simulate --flow
 : Configuring build system
 : Building simulator
 : Running ./build/simulator
+
+Now we can ask for a debug build with the unity trick on, and measure the
+coverage while we are at it. Note that we never taught the command what unity
+means: we only wrote it down, and that is enough for the help, the completion and
+the parameters to know about it. Coverage is another matter, that is our word for
+it, and we translate it.
+
+#+NAME: csm-configure-options
+#+BEGIN_SRC bash :results verbatim :exports both :session 807c02cd-a6cf-432f-b982-530fc81dbbf4 :cache yes
+csm configure --unity --build-type Debug --coverage
+#+END_SRC
+
+#+RESULTS[]: csm-configure-options
+: Configuring build system with --unity --build-type Debug --analysis coverage
 
 Without ~--flow~, only the simulate step runs.
 
@@ -414,6 +437,8 @@ csm simulate --flow --launcher gdb
 <<csm-install-commands>>
 
 check-result(csm-run-flow)
+
+check-result(csm-configure-options)
 
 check-result(csm-run-no-flow)
 

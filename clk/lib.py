@@ -26,7 +26,7 @@ import requests
 import tqdm
 
 from clk.click_helpers import click_get_current_context_safe
-from clk.liblp import rm
+from clk.liblp import format_opt, format_options, rm  # noqa: F401
 from clk.log import get_logger
 
 LOGGER = get_logger(__name__)

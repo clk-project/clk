@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# [[file:../../doc/use_cases/chaotic_simulator_manager.org::*using a launcher in the simulate command][using a launcher in the simulate command:7]]
+# [[file:../../doc/use_cases/chaotic_simulator_manager.org::#using-a-launcher-in-the-simulate-command][using a launcher in the simulate command:7]]
 set -eu
 . ./sandboxing.sh
 
@@ -55,12 +55,21 @@ def generate():
     print("Generating code from model.xml")
 EOF
 cat<<'EOF' > csm/csm/commands/configure.py
-from clk.decorators import command
+from clk.decorators import command, flag, option
+from clk.lib import format_options
 
 @command(flowdepends=["generate"])
-def configure():
+@flag("--coverage", help="Measure how much of the code the tests run")
+@option("--build-type", help="The kind of build to configure")
+@flag("--python/--no-python", default=None, help="Activate the python wrappers")
+@flag("--unity/--no-unity", default=None, help="Activate the unity build")
+@flag("--doxygen/--no-doxygen", default=None, help="Build the documentation")
+def configure(coverage, **cmake_opts):
     """Configure the build system (e.g. cmake)."""
-    print("Configuring build system")
+    if coverage:
+        cmake_opts["analysis"] = "coverage"
+    flags = format_options(cmake_opts)
+    print("Configuring build system" + (" with " + " ".join(flags) if flags else ""))
 EOF
 cat<<'EOF' > csm/csm/commands/build.py
 from clk.decorators import command
@@ -101,6 +110,27 @@ echo 'Run csm-run-flow'
 csm-run-flow_expected > "${TMP}/expected.txt" 2>&1
 diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
 echo "Something went wrong when trying csm-run-flow"
+exit 1
+}
+
+
+
+csm-configure-options_code () {
+      csm configure --unity --build-type Debug --coverage
+}
+
+csm-configure-options_expected () {
+      cat<<"EOEXPECTED"
+Configuring build system with --unity --build-type Debug --analysis coverage
+EOEXPECTED
+}
+
+echo 'Run csm-configure-options'
+
+{ csm-configure-options_code || true ; } > "${TMP}/code.txt" 2>&1
+csm-configure-options_expected > "${TMP}/expected.txt" 2>&1
+diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+echo "Something went wrong when trying csm-configure-options"
 exit 1
 }
 

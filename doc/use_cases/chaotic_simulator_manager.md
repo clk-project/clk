@@ -56,12 +56,21 @@ def generate():
 ```
 
 ```python
-from clk.decorators import command
+from clk.decorators import command, flag, option
+from clk.lib import format_options
 
 @command(flowdepends=["generate"])
-def configure():
+@flag("--coverage", help="Measure how much of the code the tests run")
+@option("--build-type", help="The kind of build to configure")
+@flag("--python/--no-python", default=None, help="Activate the python wrappers")
+@flag("--unity/--no-unity", default=None, help="Activate the unity build")
+@flag("--doxygen/--no-doxygen", default=None, help="Build the documentation")
+def configure(coverage, **cmake_opts):
     """Configure the build system (e.g. cmake)."""
-    print("Configuring build system")
+    if coverage:
+        cmake_opts["analysis"] = "coverage"
+    flags = format_options(cmake_opts)
+    print("Configuring build system" + (" with " + " ".join(flags) if flags else ""))
 ```
 
 ```python
@@ -92,6 +101,14 @@ csm simulate --flow
     Configuring build system
     Building simulator
     Running ./build/simulator
+
+Now we can ask for a debug build with the unity trick on, and measure the coverage while we are at it. Note that we never taught the command what unity means: we only wrote it down, and that is enough for the help, the completion and the parameters to know about it. Coverage is another matter, that is our word for it, and we translate it.
+
+```bash
+csm configure --unity --build-type Debug --coverage
+```
+
+    Configuring build system with --unity --build-type Debug --analysis coverage
 
 Without `--flow`, only the simulate step runs.
 

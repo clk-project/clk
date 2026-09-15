@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-# [[file:lib.org::*weave][weave:1]]
+# [[file:lib.org::#weave][weave:1]]
 # GENERATED USING lib.org, DO NOT EDIT
 
 import shutil
@@ -30,6 +30,31 @@ def rm(*file_or_tree):
             shutil.rmtree(f)
         else:
             p.unlink()
+
+
+def format_opt(opt):
+    """Give the option the name it has on the command line"""
+    return f"--{opt.replace('_', '-')}"
+
+
+def format_options(options, glue=False):
+    """Turn a dictionary of options into the list of arguments call expects"""
+    cmd = []
+    for opt, value in options.items():
+        if value is True:
+            cmd.append(format_opt(opt))
+        elif isinstance(value, (list, tuple)):
+            for item in value:
+                if glue:
+                    cmd.append(f"{format_opt(opt)}={item}")
+                else:
+                    cmd.extend([format_opt(opt), item])
+        elif value:
+            if glue:
+                cmd.append(f"{format_opt(opt)}={value}")
+            else:
+                cmd.extend([format_opt(opt), value])
+    return cmd
 
 
 # end
