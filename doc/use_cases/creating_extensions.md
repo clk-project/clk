@@ -566,9 +566,10 @@ from clk.lib import check_output
 
 @command()
 @argument("cluster", help="The cluster to ask about")
-def check_cluster(cluster):
+@flag("--quiet", help="Do not pass on what the program says on its error output")
+def check_cluster(cluster, quiet):
     """Ask a program about a cluster."""
-    print(check_output(["bash", "-c", "echo trouble reaching $1 >&2 ; test $1 = main || exit 4 ; echo ok", "--", cluster]).strip())
+    print(check_output(["bash", "-c", "echo trouble reaching $1 >&2 ; test $1 = main || exit 4 ; echo ok", "--", cluster], nostderr=quiet).strip())
 '
 ```
 
@@ -583,7 +584,7 @@ clk check-cluster other 2>&1
 
 What the program said reaches you as it said it, and clk then names the command that gave up and the status it exited with. That is enough to go and have a look.
 
-Ask the same program about `main` and it complains just as much, yet gives you an answer.
+Ask the same program about `main` now.
 
 ```bash
 clk check-cluster main 2>&1
@@ -592,9 +593,24 @@ clk check-cluster main 2>&1
     trouble reaching main
     ok
 
-What it said reaches you as it said it, with nothing added, and the answer is still yours to use.
+And if you want to get rid of the warning.
 
-A program may also do neither: not answer, not give up, simply keep you waiting. Pass `timeout` to `check_output` and it will not wait beyond it. Half a minute is long enough for a cluster, and an option lets you be less patient than that.
+```bash
+clk check-cluster --quiet main 2>&1
+```
+
+    ok
+
+The day it does fail, though, what the program said is suddenly worth reading, and clk quotes it back to you rather than losing it, quiet or not.
+
+```bash
+clk check-cluster --quiet other 2>&1
+```
+
+    error: bash -c 'echo trouble reaching $1 >&2 ; test $1 = main || exit 4 ; echo ok' -- other exited with 4, saying:
+    error: trouble reaching other
+
+Of course, you can use `--timeout` as well.
 
 ```bash
 clk command create --extension cluster-demo python watch-cluster --description "Wait for the cluster to answer" --body '
@@ -619,8 +635,6 @@ clk watch-cluster --timeout 1 2>&1
 
     error: bash -c 'sleep 600' did not finish in 1s
     giving up, the cluster is not answering
-
-clk says which program ran out of patience, and the `TimeoutExpired` is yours to catch, so your command decides what to do about it.
 
 
 <a id="1a2b3c4d-5678-90ab-cdef-abcdef012345"></a>

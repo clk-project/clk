@@ -647,9 +647,10 @@ from clk.lib import check_output
 
 @command()
 @argument("cluster", help="The cluster to ask about")
-def check_cluster(cluster):
+@flag("--quiet", help="Do not pass on what the program says on its error output")
+def check_cluster(cluster, quiet):
     """Ask a program about a cluster."""
-    print(check_output(["bash", "-c", "echo trouble reaching $1 >&2 ; test $1 = main || exit 4 ; echo ok", "--", cluster]).strip())
+    print(check_output(["bash", "-c", "echo trouble reaching $1 >&2 ; test $1 = main || exit 4 ; echo ok", "--", cluster], nostderr=quiet).strip())
 '
 
 
@@ -692,6 +693,49 @@ echo 'Run run-complaining-demo'
 run-complaining-demo_expected > "${TMP}/expected.txt" 2>&1
 diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
 echo "Something went wrong when trying run-complaining-demo"
+exit 1
+}
+
+
+
+run-quiet-demo_code () {
+      clk check-cluster --quiet main 2>&1
+}
+
+run-quiet-demo_expected () {
+      cat<<"EOEXPECTED"
+ok
+EOEXPECTED
+}
+
+echo 'Run run-quiet-demo'
+
+{ run-quiet-demo_code || true ; } > "${TMP}/code.txt" 2>&1
+run-quiet-demo_expected > "${TMP}/expected.txt" 2>&1
+diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+echo "Something went wrong when trying run-quiet-demo"
+exit 1
+}
+
+
+
+run-quiet-failing-demo_code () {
+      clk check-cluster --quiet other 2>&1
+}
+
+run-quiet-failing-demo_expected () {
+      cat<<"EOEXPECTED"
+error: bash -c 'echo trouble reaching $1 >&2 ; test $1 = main || exit 4 ; echo ok' -- other exited with 4, saying:
+error: trouble reaching other
+EOEXPECTED
+}
+
+echo 'Run run-quiet-failing-demo'
+
+{ run-quiet-failing-demo_code || true ; } > "${TMP}/code.txt" 2>&1
+run-quiet-failing-demo_expected > "${TMP}/expected.txt" 2>&1
+diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+echo "Something went wrong when trying run-quiet-failing-demo"
 exit 1
 }
 
