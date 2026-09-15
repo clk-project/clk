@@ -84,7 +84,29 @@ clk music play --help|head -10
       Or adjust this command `clk alias set music.play exec mpc start-server , exec mpc play --random --use-speakers
       --replaygain`
 
-Even doing so, you may at some point want more control about what you are doing, like waiting for the music server to be ready, you will have to fall back in a real command. Replacing this alias with a shell command is straightforward:
+Let's take that first advice and add the step that waits for the server.
+
+```bash
+clk alias edit music.play
+```
+
+Your editor opens on the commands, one per line. Leave this in it.
+
+```bash
+exec mpc start-server
+exec mpc wait-for-server
+exec mpc play --random --use-speakers --replaygain
+```
+
+```bash
+clk music play MyAlbum
+```
+
+    Running mpc with: start-server
+    Running mpc with: wait-for-server
+    Running mpc with: play --random --use-speakers --replaygain --repeat MyAlbum
+
+Even doing so, you may at some point want more control about what you are doing, like really waiting for the music server rather than asking it to, and you will have to fall back in a real command. Replacing this alias with a shell command is straightforward:
 
 ```bash
 clk command create bash --replace-alias music.play
@@ -99,6 +121,7 @@ clk music play MyAlbum
 ```
 
     Running mpc with: start-server
+    Running mpc with: wait-for-server
     Running mpc with: play --random --use-speakers --replaygain --repeat MyAlbum
 
 Now, we can change its content to do whatever complicated flow we like.

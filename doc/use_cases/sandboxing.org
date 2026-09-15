@@ -58,6 +58,16 @@
   say_now () {
       echo "now: ${CLK_FAKED_TIME}"
   }
+  editor_writes () {
+      cat > "${TMP}/editor-content"
+      cat > "${TMP}/editor" <<EOS
+  #!/usr/bin/env bash
+  cat "${TMP}/editor-content" > "\$1"
+  EOS
+      chmod +x "${TMP}/editor"
+      export EDITOR="${TMP}/editor"
+      export VISUAL="${TMP}/editor"
+  }
   clk () {
       if test -n "${CLK_FAKED_TIME-}"
       then

@@ -144,9 +144,43 @@ clk music play --help|head -10
 :   --replaygain`
 
 
+Let's take that first advice and add the step that waits for the server.
+
+#+NAME: edit-alias
+#+BEGIN_SRC bash :results none :exports code :session e6078fc8-4b12-44ad-b008-20f0b7311069
+clk alias edit music.play
+#+END_SRC
+
+Your editor opens on the commands, one per line. Leave this in it.
+
+#+NAME: editor-content
+#+BEGIN_SRC bash :results none :exports code
+exec mpc start-server
+exec mpc wait-for-server
+exec mpc play --random --use-speakers --replaygain
+#+END_SRC
+
+#+NAME: prepare-editor
+#+BEGIN_SRC bash :results none :exports none :session e6078fc8-4b12-44ad-b008-20f0b7311069 :noweb yes
+editor_writes <<'EOF'
+<<editor-content>>
+EOF
+#+END_SRC
+
+#+NAME: run-edited-alias
+#+BEGIN_SRC bash :results verbatim :exports both :session e6078fc8-4b12-44ad-b008-20f0b7311069 :cache yes
+clk music play MyAlbum
+#+END_SRC
+
+#+RESULTS[]: run-edited-alias
+: Running mpc with: start-server
+: Running mpc with: wait-for-server
+: Running mpc with: play --random --use-speakers --replaygain --repeat MyAlbum
+
 Even doing so, you may at some point want more control about what you are doing,
-like waiting for the music server to be ready, you will have to fall back in a
-real command. Replacing this alias with a shell command is straightforward:
+like really waiting for the music server rather than asking it to, and you will
+have to fall back in a real command. Replacing this alias with a shell command is
+straightforward:
 
 #+NAME: bootstrap
 #+BEGIN_SRC bash :results verbatim :exports both :session e6078fc8-4b12-44ad-b008-20f0b7311069 :cache yes
@@ -163,8 +197,9 @@ This command tries hard to have the same behavior as its original alias.
 clk music play MyAlbum
 #+END_SRC
 
-#+RESULTS[528d993ebba0114a75f77f47b1b7e61de533e885]: try_command
+#+RESULTS[]: try_command
 : Running mpc with: start-server
+: Running mpc with: wait-for-server
 : Running mpc with: play --random --use-speakers --replaygain --repeat MyAlbum
 
 Now, we can change its content to do whatever complicated flow we like.
@@ -215,6 +250,12 @@ Positional arguments:
   check-result(more_complicated_alias)
   check-result(show-alias)
   check-result(help-alias)
+
+  <<prepare-editor>>
+
+  <<edit-alias>>
+
+  check-result(run-edited-alias)
   check-result(bootstrap)
   check-result(try_command)
   check-result(which)

@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# [[file:../../doc/use_cases/tests/use_cases/bash_command_from_alias.sh :noweb yes :shebang "#!/usr/bin/env bash"][No heading:17]]
+# [[file:../../doc/use_cases/tests/use_cases/bash_command_from_alias.sh :noweb yes :shebang "#!/usr/bin/env bash"][No heading:21]]
 set -eu
 . ./sandboxing.sh
 mkdir -p "${TMP}/bin"
@@ -164,6 +164,37 @@ exit 1
 }
 
 
+editor_writes <<'EOF'
+exec mpc start-server
+exec mpc wait-for-server
+exec mpc play --random --use-speakers --replaygain
+EOF
+
+clk alias edit music.play
+
+
+run-edited-alias_code () {
+      clk music play MyAlbum
+}
+
+run-edited-alias_expected () {
+      cat<<"EOEXPECTED"
+Running mpc with: start-server
+Running mpc with: wait-for-server
+Running mpc with: play --random --use-speakers --replaygain --repeat MyAlbum
+EOEXPECTED
+}
+
+echo 'Run run-edited-alias'
+
+{ run-edited-alias_code || true ; } > "${TMP}/code.txt" 2>&1
+run-edited-alias_expected > "${TMP}/expected.txt" 2>&1
+diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+echo "Something went wrong when trying run-edited-alias"
+exit 1
+}
+
+
 bootstrap_code () {
       clk command create bash --replace-alias music.play
 }
@@ -191,6 +222,7 @@ try_command_code () {
 try_command_expected () {
       cat<<"EOEXPECTED"
 Running mpc with: start-server
+Running mpc with: wait-for-server
 Running mpc with: play --random --use-speakers --replaygain --repeat MyAlbum
 EOEXPECTED
 }
@@ -253,4 +285,4 @@ diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
 echo "Something went wrong when trying help"
 exit 1
 }
-# No heading:17 ends here
+# No heading:21 ends here
