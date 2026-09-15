@@ -203,7 +203,6 @@ def call(args, **kwargs):
         internal = kwargs["force"]
         del kwargs["force"]
     args = [str(arg) for arg in args]
-    args = [str(arg) for arg in args]
     message = " ".join(quote(arg) for arg in args)
     action_message = f"run: {message}"
     cwd = kwargs.get("cwd")
