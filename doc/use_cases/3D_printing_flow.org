@@ -235,14 +235,17 @@ clk flowdep show printer.send --all
 
 Then, you can show the graph
 
-#+BEGIN_SRC bash :results none :exports code
+#+NAME: flowdep-graph
+#+BEGIN_SRC bash :results none :exports code :session 73f5d57e-d16a-490a-b4e1-0254d6296590
 clk flowdep graph printer.send --format png --output flow.png
 #+END_SRC
 
-#+NAME: flowdep-graph
-#+BEGIN_SRC bash :results none :exports both :session 73f5d57e-d16a-490a-b4e1-0254d6296590
+Ask for the ~dot~ format instead and you get the text graphviz reads, to keep or
+to feed to something of your own.
+
+#+NAME: flowdep-graph-dot
+#+BEGIN_SRC bash :results none :exports code :session 73f5d57e-d16a-490a-b4e1-0254d6296590
 clk flowdep graph printer.send --format dot --output flow.dot
-dot -Tpng flow.dot > flow.png
 #+END_SRC
 
 #+NAME: make-sure-flow-is-ok
@@ -534,6 +537,8 @@ Beware that this means that you have to check that this command it actually defi
   check-result(flowdep-show)
 
   <<flowdep-graph>>
+
+  <<flowdep-graph-dot>>
 
   <<make-sure-flow-is-ok>>
 

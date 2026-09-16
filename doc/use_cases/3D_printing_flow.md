@@ -176,9 +176,10 @@ Then, you can show the graph
 clk flowdep graph printer.send --format png --output flow.png
 ```
 
+Ask for the `dot` format instead and you get the text graphviz reads, to keep or to feed to something of your own.
+
 ```bash
 clk flowdep graph printer.send --format dot --output flow.dot
-dot -Tpng flow.dot > flow.png
 ```
 
 ![img](flow.png)

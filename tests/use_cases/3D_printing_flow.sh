@@ -179,8 +179,9 @@ exit 1
 }
 
 
+clk flowdep graph printer.send --format png --output flow.png
+
 clk flowdep graph printer.send --format dot --output flow.dot
-dot -Tpng flow.dot > flow.png
 
 echo "Checking the resulting flow.png file"
 test "$(sha256sum flow.dot|cut -f1 -d' ')" = "$(sha256sum ${SRCDIR}/../../doc/use_cases/flow.dot|cut -f1 -d' ')"
