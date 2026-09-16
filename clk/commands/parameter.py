@@ -95,20 +95,6 @@ def edit(cmd):
 @argument(
     "cmd",
     type=CommandSettingsKeyType("parameters"),
-    help="The command to which the parameters will be inserted",
-)
-@argument("params", nargs=-1, help="The parameters to insert")
-def insert(cmd, params):
-    """Add a parameter before the parameters of a command"""
-    params = list(params) + config.parameters.readonly.get(cmd, [])
-    config.parameters.writable[cmd] = params
-    config.parameters.write()
-
-
-@parameter.command(ignore_unknown_options=True, handle_dry_run=True)
-@argument(
-    "cmd",
-    type=CommandSettingsKeyType("parameters"),
     help="The command to which the parameters will be removed",
 )
 @argument("params", nargs=-1, help="The parameters to remove")
