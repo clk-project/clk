@@ -165,8 +165,6 @@ plugin_sources = {}
 
 def describe_setting(value):
     """Say in one line what a settings entry holds"""
-    if isinstance(value, str):
-        return value
     if isinstance(value, list):
         return " ".join(
             " ".join(item) if isinstance(item, list) else str(item) for item in value
@@ -178,7 +176,6 @@ def describe_setting(value):
             return str(value["value"])
         if "enabled" in value:
             return "enabled" if value["enabled"] else "disabled"
-    return ""
 
 
 @ProfileFactory.register_directory_profile
@@ -203,10 +200,8 @@ class DirectoryProfile(Profile):
             ("alias", "alias"),
             ("parameters", "parameter"),
             ("flowdeps", "flowdep"),
-            ("triggers", "trigger"),
             ("value", "value"),
             ("recipe", "extension"),
-            ("environment", "env"),
         ]:
             entries = self.settings.get(setting)
             if entries:
@@ -236,11 +231,9 @@ class DirectoryProfile(Profile):
             "alias",
             "parameters",
             "flowdeps",
-            "triggers",
             "value",
             "recipe",
             "plugins",
-            "environment",
             "customcommands",
         }:
             print(
