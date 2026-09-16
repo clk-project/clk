@@ -224,6 +224,83 @@ exit 1
 }
 
 
+
+shoot-myself-in-the-foot_code () {
+      clk parameter set parameter set
+}
+
+shoot-myself-in-the-foot_expected () {
+      local expected
+      expected="$(cat<<"EOEXPECTED"
+New global parameters for parameter: set
+EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
+}
+
+echo 'Run shoot-myself-in-the-foot'
+
+{ shoot-myself-in-the-foot_code || true ; } > "${TMP}/code.txt" 2>&1
+shoot-myself-in-the-foot_expected > "${TMP}/expected.txt" 2>&1
+diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+echo "Something went wrong when trying shoot-myself-in-the-foot"
+exit 1
+}
+
+
+
+cannot-unset_code () {
+      clk parameter unset parameter 2>&1
+}
+
+cannot-unset_expected () {
+      local expected
+      expected="$(cat<<"EOEXPECTED"
+warning: Failed to get the command unset: Command unset not found
+Usage: clk parameter set [OPTIONS] CMD [PARAMS]...
+error: Invalid value for 'CMD': invalid choice: unset. (choose from alias, aws, command, completion, describe, echo, exec, extension, flowdep, fork, help, log, parameter, pip, plugin, python, secret, update, value)
+EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
+}
+
+echo 'Run cannot-unset'
+
+{ cannot-unset_code || true ; } > "${TMP}/code.txt" 2>&1
+cannot-unset_expected > "${TMP}/expected.txt" 2>&1
+diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+echo "Something went wrong when trying cannot-unset"
+exit 1
+}
+
+
+
+no-parameter-to-the-rescue_code () {
+      clk --no-parameter parameter unset parameter
+}
+
+no-parameter-to-the-rescue_expected () {
+      local expected
+      expected="$(cat<<"EOEXPECTED"
+Erasing global parameters of parameter (was: set)
+EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
+}
+
+echo 'Run no-parameter-to-the-rescue'
+
+{ no-parameter-to-the-rescue_code || true ; } > "${TMP}/code.txt" 2>&1
+no-parameter-to-the-rescue_expected > "${TMP}/expected.txt" 2>&1
+diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+echo "Something went wrong when trying no-parameter-to-the-rescue"
+exit 1
+}
+
+
 mkdir -p webapp-project
 cd webapp-project
 mkdir .clk

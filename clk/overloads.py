@@ -377,7 +377,9 @@ class ExtraParametersMixin:
 
     def get_extra_args(self, implicit_only=False, explicit_only=False):
         return config.get_parameters(
-            self.path, implicit_only=implicit_only, explicit_only=explicit_only
+            self.path,
+            implicit_only=implicit_only or config.no_parameter,
+            explicit_only=explicit_only,
         )
 
     def format_help_text(self, ctx, formatter):
@@ -1478,7 +1480,8 @@ class MainCommand(
     def _parse_args_stabilize(self, ctx, args):
         """Inject extra args and parse them till the args become stable"""
         old_extra_args = []
-        if "--no-parameter" in args:
+        config.no_parameter = "--no-parameter" in args
+        if config.no_parameter:
             new_extra_args = self.get_extra_args(implicit_only=True)
             res = click.Group.parse_args(self, ctx, new_extra_args + args)
             ctx.complete_arguments = list(args)

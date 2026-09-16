@@ -195,6 +195,41 @@ clk aws s3 ls
 : Erasing global parameters of aws (was: --profile company-prod)
 : [default/us-east-1] aws s3 ls
 
+Parameters work for all the commands, ~parameter~ itself included, so I can shoot
+myself in the foot.
+
+#+NAME: shoot-myself-in-the-foot
+#+BEGIN_SRC bash :results verbatim :exports both :session 2a1f20f5-2f74-4221-bcab-677a045d3a8f :cache yes
+clk parameter set parameter set
+#+END_SRC
+
+#+RESULTS[]: shoot-myself-in-the-foot
+: New global parameters for parameter: set
+
+Every command under ~parameter~ has become ~parameter set~, ~unset~ the first of
+them, so I cannot take it back.
+
+#+NAME: cannot-unset
+#+BEGIN_SRC bash :results verbatim :exports both :session 2a1f20f5-2f74-4221-bcab-677a045d3a8f :cache yes
+clk parameter unset parameter 2>&1
+#+END_SRC
+
+#+RESULTS[]: cannot-unset
+: warning: Failed to get the command unset: Command unset not found
+: Usage: clk parameter set [OPTIONS] CMD [PARAMS]...
+: error: Invalid value for 'CMD': invalid choice: unset. (choose from alias, aws, command, completion, describe, echo, exec, extension, flowdep, fork, help, log, parameter, pip, plugin, python, secret, update, value)
+
+~--no-parameter~ runs the command I ask for with none of my parameters, those of
+~parameter~ included.
+
+#+NAME: no-parameter-to-the-rescue
+#+BEGIN_SRC bash :results verbatim :exports both :session 2a1f20f5-2f74-4221-bcab-677a045d3a8f :cache yes
+clk --no-parameter parameter unset parameter
+#+END_SRC
+
+#+RESULTS[]: no-parameter-to-the-rescue
+: Erasing global parameters of parameter (was: set)
+
 * per-project configuration
   :PROPERTIES:
   :CUSTOM_ID: per-project
@@ -494,6 +529,12 @@ check-result(show-parameters)
 check-result(unset-region)
 
 check-result(unset-all)
+
+check-result(shoot-myself-in-the-foot)
+
+check-result(cannot-unset)
+
+check-result(no-parameter-to-the-rescue)
 
 <<setup-project>>
 

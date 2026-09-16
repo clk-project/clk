@@ -152,6 +152,32 @@ clk aws s3 ls
     Erasing global parameters of aws (was: --profile company-prod)
     [default/us-east-1] aws s3 ls
 
+Parameters work for all the commands, `parameter` itself included, so I can shoot myself in the foot.
+
+```bash
+clk parameter set parameter set
+```
+
+    New global parameters for parameter: set
+
+Every command under `parameter` has become `parameter set`, `unset` the first of them, so I cannot take it back.
+
+```bash
+clk parameter unset parameter 2>&1
+```
+
+    warning: Failed to get the command unset: Command unset not found
+    Usage: clk parameter set [OPTIONS] CMD [PARAMS]...
+    error: Invalid value for 'CMD': invalid choice: unset. (choose from alias, aws, command, completion, describe, echo, exec, extension, flowdep, fork, help, log, parameter, pip, plugin, python, secret, update, value)
+
+`--no-parameter` runs the command I ask for with none of my parameters, those of `parameter` included.
+
+```bash
+clk --no-parameter parameter unset parameter
+```
+
+    Erasing global parameters of parameter (was: set)
+
 
 <a id="per-project"></a>
 
