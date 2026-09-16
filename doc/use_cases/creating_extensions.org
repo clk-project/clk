@@ -287,6 +287,17 @@ clk k8s run-dev-env --flow
 : noop, this must be overloaded by a project command
 : running development environment
 
+Run that same line again, as one does when following a README, and clk pulls
+rather than complains.
+
+#+NAME: install-k8s-again
+#+BEGIN_SRC bash :results verbatim :cache yes :exports both :session f47428c2-56ea-4d91-97d9-4f2ff63ef052
+clk extension install "${TMP}/k8s.git" k8s 2>&1 | tail -1
+#+END_SRC
+
+#+RESULTS[]: install-k8s-again
+: Nothing to be done for global/k8s
+
 Should someone hand you another repository under that same name, clk would rather
 say no than pull a stranger over what you have.
 
@@ -869,6 +880,8 @@ check-result(lose-k8s)
 <<install-k8s>>
 
 check-result(k8s-is-back)
+
+check-result(install-k8s-again)
 
 <<another-k8s>>
 

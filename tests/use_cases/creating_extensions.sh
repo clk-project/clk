@@ -305,6 +305,31 @@ exit 1
 }
 
 
+
+install-k8s-again_code () {
+      clk extension install "${TMP}/k8s.git" k8s 2>&1 | tail -1
+}
+
+install-k8s-again_expected () {
+      local expected
+      expected="$(cat<<"EOEXPECTED"
+Nothing to be done for global/k8s
+EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
+}
+
+echo 'Run install-k8s-again'
+
+{ install-k8s-again_code || true ; } > "${TMP}/code.txt" 2>&1
+install-k8s-again_expected > "${TMP}/expected.txt" 2>&1
+diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+echo "Something went wrong when trying install-k8s-again"
+exit 1
+}
+
+
 git init --bare "${TMP}/someone-else.git"
 
 
