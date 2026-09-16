@@ -237,6 +237,68 @@ exit 1
 }
 
 
+mkdir -p csm/csm/settings
+cat<<'EOF' > csm/csm/settings/csm.json
+{
+    "alias": {
+        "go": {
+            "documentation": "Build and run the simulator",
+            "commands": [["simulate", "--flow"]]
+        }
+    }
+}
+EOF
+./venv/bin/python -c 'from clk.profile import DirectoryProfile; print(DirectoryProfile.oldest_supported_version)' > csm/csm/settings/version.txt
+cat<<'EOF' > csm/csm/main.py
+from pathlib import Path
+
+from clk.setup import basic_entry_point, main
+
+
+@basic_entry_point(
+    __name__,
+    extra_command_packages=["csm.commands"],
+    distribution_profile_location=Path(__file__).parent / "settings",
+    exclude_core_commands=[],
+)
+def csm(**kwargs):
+    pass
+
+
+if __name__ == "__main__":
+    main()
+EOF
+sed -i "s|zip_safe=False,|zip_safe=False,\n    package_data={'csm': ['settings/*']},|" csm/setup.py
+./venv/bin/pip install ./csm
+
+
+csm-run-shipped-alias_code () {
+      csm go
+}
+
+csm-run-shipped-alias_expected () {
+      local expected
+      expected="$(cat<<"EOEXPECTED"
+Generating code from model.xml
+Configuring build system
+Building simulator
+Running ./build/simulator
+EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
+}
+
+echo 'Run csm-run-shipped-alias'
+
+{ csm-run-shipped-alias_code || true ; } > "${TMP}/code.txt" 2>&1
+csm-run-shipped-alias_expected > "${TMP}/expected.txt" 2>&1
+diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+echo "Something went wrong when trying csm-run-shipped-alias"
+exit 1
+}
+
+
 cat<<'EOF' > csm/csm/launcher.py
 import click
 from clk.overloads import option

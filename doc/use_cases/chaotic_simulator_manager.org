@@ -254,6 +254,90 @@ csm simulate
 #+RESULTS[00cc22cb2e8662092f02881f3014167f198aaf27]: csm-run-no-flow
 : Running ./build/simulator
 
+* shipping the settings of your tool
+  :PROPERTIES:
+  :CUSTOM_ID: shipping-the-settings-of-your-tool
+  :END:
+
+The distribution can come with aliases of its own, when writing a command would
+be too much. Put them in ~csm/settings/csm.json~.
+
+#+NAME: csm-distribution-settings
+#+BEGIN_SRC json :exports code
+{
+    "alias": {
+        "go": {
+            "documentation": "Build and run the simulator",
+            "commands": [["simulate", "--flow"]]
+        }
+    }
+}
+#+END_SRC
+
+Like any other profile, it needs a version and may become obsolete. This
+one-liner says the version clk is at, and don't forget to run it again when clk
+moves on.
+
+#+NAME: csm-settings-version
+#+BEGIN_SRC bash :exports code
+python -c 'from clk.profile import DirectoryProfile; print(DirectoryProfile.oldest_supported_version)' > csm/settings/version.txt
+#+END_SRC
+
+Tell csm where to read them with ~distribution_profile_location~.
+
+#+NAME: csm-main
+#+BEGIN_SRC python :exports code
+from pathlib import Path
+
+from clk.setup import basic_entry_point, main
+
+
+@basic_entry_point(
+    __name__,
+    extra_command_packages=["csm.commands"],
+    distribution_profile_location=Path(__file__).parent / "settings",
+    exclude_core_commands=[],
+)
+def csm(**kwargs):
+    pass
+
+
+if __name__ == "__main__":
+    main()
+#+END_SRC
+
+Don't forget to ship them, in ~setup.py~.
+
+#+NAME: csm-setup-data
+#+BEGIN_SRC python :exports code
+package_data={'csm': ['settings/*']},
+#+END_SRC
+
+#+NAME: csm-ship-settings
+#+BEGIN_SRC bash :results none :exports none :noweb yes :session 807c02cd-a6cf-432f-b982-530fc81dbbf4
+mkdir -p csm/csm/settings
+cat<<'EOF' > csm/csm/settings/csm.json
+<<csm-distribution-settings>>
+EOF
+./venv/bin/python -c 'from clk.profile import DirectoryProfile; print(DirectoryProfile.oldest_supported_version)' > csm/csm/settings/version.txt
+cat<<'EOF' > csm/csm/main.py
+<<csm-main>>
+EOF
+sed -i "s|zip_safe=False,|zip_safe=False,\n    package_data={'csm': ['settings/*']},|" csm/setup.py
+./venv/bin/pip install ./csm
+#+END_SRC
+
+#+NAME: csm-run-shipped-alias
+#+BEGIN_SRC bash :results verbatim :exports both :session 807c02cd-a6cf-432f-b982-530fc81dbbf4 :cache yes
+csm go
+#+END_SRC
+
+#+RESULTS[]: csm-run-shipped-alias
+: Generating code from model.xml
+: Configuring build system
+: Building simulator
+: Running ./build/simulator
+
 * the simulator crashes — time to debug
   :PROPERTIES:
   :CUSTOM_ID: the-simulator-crashes-time-to-debug
@@ -482,6 +566,10 @@ check-result(csm-configure-defines)
 check-result(csm-build-options)
 
 check-result(csm-run-no-flow)
+
+<<csm-ship-settings>>
+
+check-result(csm-run-shipped-alias)
 
 <<csm-install-launcher>>
 

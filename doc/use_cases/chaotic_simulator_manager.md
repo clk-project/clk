@@ -1,5 +1,6 @@
 - [bootstrapping csm](#bootstrapping-csm)
 - [creating the simulator commands](#creating-the-simulator-commands)
+- [shipping the settings of your tool](#shipping-the-settings-of-your-tool)
 - [the simulator crashes — time to debug](#the-simulator-crashes-time-to-debug)
 - [adding launcher support](#adding-launcher-support)
 - [using a launcher in the simulate command](#using-a-launcher-in-the-simulate-command)
@@ -135,6 +136,67 @@ Without `--flow`, only the simulate step runs.
 csm simulate
 ```
 
+    Running ./build/simulator
+
+
+<a id="shipping-the-settings-of-your-tool"></a>
+
+# shipping the settings of your tool
+
+The distribution can come with aliases of its own, when writing a command would be too much. Put them in `csm/settings/csm.json`.
+
+```json
+{
+    "alias": {
+        "go": {
+            "documentation": "Build and run the simulator",
+            "commands": [["simulate", "--flow"]]
+        }
+    }
+}
+```
+
+Like any other profile, it needs a version and may become obsolete. This one-liner says the version clk is at, and don't forget to run it again when clk moves on.
+
+```bash
+python -c 'from clk.profile import DirectoryProfile; print(DirectoryProfile.oldest_supported_version)' > csm/settings/version.txt
+```
+
+Tell csm where to read them with `distribution_profile_location`.
+
+```python
+from pathlib import Path
+
+from clk.setup import basic_entry_point, main
+
+
+@basic_entry_point(
+    __name__,
+    extra_command_packages=["csm.commands"],
+    distribution_profile_location=Path(__file__).parent / "settings",
+    exclude_core_commands=[],
+)
+def csm(**kwargs):
+    pass
+
+
+if __name__ == "__main__":
+    main()
+```
+
+Don't forget to ship them, in `setup.py`.
+
+```python
+package_data={'csm': ['settings/*']},
+```
+
+```bash
+csm go
+```
+
+    Generating code from model.xml
+    Configuring build system
+    Building simulator
     Running ./build/simulator
 
 

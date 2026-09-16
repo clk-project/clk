@@ -503,7 +503,7 @@ class Config:
     def distribution_profile(self):
         if self.distribution_profile_location is not None:
             return ProfileFactory.create_or_get_by_location(
-                self.distribution_profile_location,
+                str(self.distribution_profile_location),
                 name="distribution",
                 app_name=self.app_name,
                 explicit=False,
