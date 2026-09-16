@@ -1,4 +1,5 @@
 - [Getting files](#780a9f7a-801f-4f4b-83ef-7bfffdf71372)
+- [Running programs](#4416a8cc-4d3a-4162-a590-a67be3f9033a)
 
 There are several stuff that you will always need to have at hand when developing command line commands.
 
@@ -49,4 +50,35 @@ with pytest.raises(click.ClickException):
         sha256="0" * 64,
     )
 assert not archive.exists()
+```
+
+
+<a id="4416a8cc-4d3a-4162-a590-a67be3f9033a"></a>
+
+# Running programs
+
+`check_output` hands you what the program wrote. When it fails, it tells what the program said on its error output before raising, so you don't have to.
+
+```python
+import subprocess
+
+import pytest
+
+from clk.lib import check_output
+
+with pytest.raises(subprocess.CalledProcessError) as failure:
+    check_output(["bash", "-c", "echo 'model.cpp:42: chaos is not defined' >&2 ; exit 2"])
+
+assert failure.value.returncode == 2
+assert failure.value.stderr == "model.cpp:42: chaos is not defined\n"
+```
+
+A program that wins while complaining keeps its complaint, which goes to your error output, and you get its answer.
+
+```python
+from clk.lib import check_output
+
+assert check_output(
+    ["bash", "-c", "echo 'linking takes a while' >&2 ; echo ./build/simulator"]
+) == "./build/simulator\n"
 ```

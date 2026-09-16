@@ -36,4 +36,31 @@ def test_download():
     assert not archive.exists()
 
 
+def test_check_output_failing():
+    import subprocess
+
+    import pytest
+
+    from clk.lib import check_output
+
+    with pytest.raises(subprocess.CalledProcessError) as failure:
+        check_output(
+            ["bash", "-c", "echo 'model.cpp:42: chaos is not defined' >&2 ; exit 2"]
+        )
+
+    assert failure.value.returncode == 2
+    assert failure.value.stderr == "model.cpp:42: chaos is not defined\n"
+
+
+def test_check_output_noisy():
+    from clk.lib import check_output
+
+    assert (
+        check_output(
+            ["bash", "-c", "echo 'linking takes a while' >&2 ; echo ./build/simulator"]
+        )
+        == "./build/simulator\n"
+    )
+
+
 # Tangling:1 ends here

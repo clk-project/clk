@@ -66,6 +66,41 @@ Should the server hand you anything else, nothing is written at all.
     assert not archive.exists()
 #+END_SRC
 
+* Running programs
+  :PROPERTIES:
+  :CUSTOM_ID: 4416a8cc-4d3a-4162-a590-a67be3f9033a
+  :END:
+
+~check_output~ hands you what the program wrote. When it fails, it tells what
+the program said on its error output before raising, so you don't have to.
+
+#+name:check-output-failing
+#+BEGIN_SRC python :results verbatim :exports both :session
+    import subprocess
+
+    import pytest
+
+    from clk.lib import check_output
+
+    with pytest.raises(subprocess.CalledProcessError) as failure:
+        check_output(["bash", "-c", "echo 'model.cpp:42: chaos is not defined' >&2 ; exit 2"])
+
+    assert failure.value.returncode == 2
+    assert failure.value.stderr == "model.cpp:42: chaos is not defined\n"
+#+END_SRC
+
+A program that wins while complaining keeps its complaint, which goes to your
+error output, and you get its answer.
+
+#+name:check-output-noisy
+#+BEGIN_SRC python :results verbatim :exports both :session
+    from clk.lib import check_output
+
+    assert check_output(
+        ["bash", "-c", "echo 'linking takes a while' >&2 ; echo ./build/simulator"]
+    ) == "./build/simulator\n"
+#+END_SRC
+
 * Tangling                                                         :noexport:
   :PROPERTIES:
   :CUSTOM_ID: 4deb6976-5708-4527-8ed8-c2ab9de8cc38
@@ -82,6 +117,14 @@ def test_extract():
 def test_download():
     <<download>>
     <<download-corrupted>>
+
+
+def test_check_output_failing():
+    <<check-output-failing>>
+
+
+def test_check_output_noisy():
+    <<check-output-noisy>>
 
 
 
