@@ -220,6 +220,42 @@ clk mycommand --use-name clk Goodbye
     warning: The parameter 'greeting' in the command 'mycommand' has no documentation
     Goodbye, world!
 
+That warning about `greeting` shows in the help as well.
+
+```bash
+clk mycommand --help 2>/dev/null
+```
+
+```
+Usage: clk mycommand [OPTIONS] [GREETING]
+
+  A greeting command
+
+  Edit this custom command by running `clk command edit mycommand`
+  Or edit ./clk-root/python/mycommand.py directly.
+
+Options:
+  --name TEXT      Name to greet  [default: world]
+  --use-name TEXT  Name to greet (DEPRECATED: since forever)  [default: world]
+  --help-all       Show the full help message, automatic options included.
+  --help           Show this message and exit.
+```
+
+Give it a help of its own.
+
+```python
+@argument("greeting", default="Hello", help="What to say")
+```
+
+```bash
+clk mycommand Goodbye
+clk mycommand --help | grep -A1 "Positional arguments:"
+```
+
+    Goodbye, world!
+    Positional arguments:
+      [GREETING]  What to say  [default: Hello]
+
 
 <a id="forgetting-the-decorator"></a>
 

@@ -366,6 +366,73 @@ exit 1
 }
 
 
+
+help_without_doc_code () {
+      clk mycommand --help 2>/dev/null
+}
+
+help_without_doc_expected () {
+      local expected
+      expected="$(cat<<"EOEXPECTED"
+Usage: clk mycommand [OPTIONS] [GREETING]
+
+  A greeting command
+
+  Edit this custom command by running `clk command edit mycommand`
+  Or edit ./clk-root/python/mycommand.py directly.
+
+Options:
+  --name TEXT      Name to greet  [default: world]
+  --use-name TEXT  Name to greet (DEPRECATED: since forever)  [default: world]
+  --help-all       Show the full help message, automatic options included.
+  --help           Show this message and exit.
+
+EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
+}
+
+echo 'Run help_without_doc'
+
+{ help_without_doc_code || true ; } > "${TMP}/code.txt" 2>&1
+help_without_doc_expected > "${TMP}/expected.txt" 2>&1
+diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+echo "Something went wrong when trying help_without_doc"
+exit 1
+}
+
+
+sed -i 's|default="Hello")|default="Hello", help="What to say")|' "$(clk command which mycommand)"
+
+
+help_with_doc_code () {
+      clk mycommand Goodbye
+      clk mycommand --help | grep -A1 "Positional arguments:"
+}
+
+help_with_doc_expected () {
+      local expected
+      expected="$(cat<<"EOEXPECTED"
+Goodbye, world!
+Positional arguments:
+  [GREETING]  What to say  [default: Hello]
+EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
+}
+
+echo 'Run help_with_doc'
+
+{ help_with_doc_code || true ; } > "${TMP}/code.txt" 2>&1
+help_with_doc_expected > "${TMP}/expected.txt" 2>&1
+diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+echo "Something went wrong when trying help_with_doc"
+exit 1
+}
+
+
 cat <<'EOF' > "${CLKCONFIGDIR}/python/pyenv.py"
 def pyenv():
     """My environment command"""
