@@ -87,12 +87,16 @@ def configure(coverage, **cmake_opts):
     print("Configuring build system" + (" with " + " ".join(flags) if flags else ""))
 EOF
 cat<<'EOF' > csm/csm/commands/build.py
-from clk.decorators import command
+from clk.decorators import command, option
+from clk.lib import format_options
 
 @command(flowdepends=["configure"])
-def build_():
+@option("--jobs", help="How many compilations to run at once")
+@option("--target", multiple=True, help="What to build, the whole thing by default")
+def build_(**make_opts):
     """Build the simulator binary."""
-    print("Building simulator")
+    flags = format_options(make_opts, glue=True)
+    print("Building simulator" + (" with " + " ".join(flags) if flags else ""))
 EOF
 cat<<'EOF' > csm/csm/commands/simulate.py
 from clk.decorators import command
@@ -179,6 +183,31 @@ echo 'Run csm-configure-defines'
 csm-configure-defines_expected > "${TMP}/expected.txt" 2>&1
 diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
 echo "Something went wrong when trying csm-configure-defines"
+exit 1
+}
+
+
+
+csm-build-options_code () {
+      csm build --jobs 8 --target simulator --target tests
+}
+
+csm-build-options_expected () {
+      local expected
+      expected="$(cat<<"EOEXPECTED"
+Building simulator with --jobs=8 --target=simulator --target=tests
+EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
+}
+
+echo 'Run csm-build-options'
+
+{ csm-build-options_code || true ; } > "${TMP}/code.txt" 2>&1
+csm-build-options_expected > "${TMP}/expected.txt" 2>&1
+diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+echo "Something went wrong when trying csm-build-options"
 exit 1
 }
 

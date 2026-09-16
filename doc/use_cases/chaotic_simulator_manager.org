@@ -159,12 +159,16 @@ def configure(coverage, **cmake_opts):
 
 #+NAME: csm-build
 #+BEGIN_SRC python :results none :exports code
-from clk.decorators import command
+from clk.decorators import command, option
+from clk.lib import format_options
 
 @command(flowdepends=["configure"])
-def build_():
+@option("--jobs", help="How many compilations to run at once")
+@option("--target", multiple=True, help="What to build, the whole thing by default")
+def build_(**make_opts):
     """Build the simulator binary."""
-    print("Building simulator")
+    flags = format_options(make_opts, glue=True)
+    print("Building simulator" + (" with " + " ".join(flags) if flags else ""))
 #+END_SRC
 
 #+NAME: csm-simulate
@@ -231,6 +235,14 @@ csm configure --define WITH_MPI=ON --define CHAOS_SEED=42
 
 #+RESULTS[]: csm-configure-defines
 : Configuring build system with --define WITH_MPI=ON --define CHAOS_SEED=42
+
+#+NAME: csm-build-options
+#+BEGIN_SRC bash :results verbatim :exports both :session 807c02cd-a6cf-432f-b982-530fc81dbbf4 :cache yes
+csm build --jobs 8 --target simulator --target tests
+#+END_SRC
+
+#+RESULTS[]: csm-build-options
+: Building simulator with --jobs=8 --target=simulator --target=tests
 
 Without ~--flow~, only the simulate step runs.
 
@@ -466,6 +478,8 @@ check-result(csm-run-flow)
 check-result(csm-configure-options)
 
 check-result(csm-configure-defines)
+
+check-result(csm-build-options)
 
 check-result(csm-run-no-flow)
 

@@ -75,12 +75,16 @@ def configure(coverage, **cmake_opts):
 ```
 
 ```python
-from clk.decorators import command
+from clk.decorators import command, option
+from clk.lib import format_options
 
 @command(flowdepends=["configure"])
-def build_():
+@option("--jobs", help="How many compilations to run at once")
+@option("--target", multiple=True, help="What to build, the whole thing by default")
+def build_(**make_opts):
     """Build the simulator binary."""
-    print("Building simulator")
+    flags = format_options(make_opts, glue=True)
+    print("Building simulator" + (" with " + " ".join(flags) if flags else ""))
 ```
 
 ```python
@@ -118,6 +122,12 @@ csm configure --define WITH_MPI=ON --define CHAOS_SEED=42
 ```
 
     Configuring build system with --define WITH_MPI=ON --define CHAOS_SEED=42
+
+```bash
+csm build --jobs 8 --target simulator --target tests
+```
+
+    Building simulator with --jobs=8 --target=simulator --target=tests
 
 Without `--flow`, only the simulate step runs.
 
