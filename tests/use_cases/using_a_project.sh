@@ -421,4 +421,60 @@ diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
 echo "Something went wrong when trying move_release_notes"
 exit 1
 }
+
+
+echo 99 > .clk/version.txt
+
+
+run_from_the_future_code () {
+      clk alias show 2>&1 | head -2
+}
+
+run_from_the_future_expected () {
+      local expected
+      expected="$(cat<<"EOEXPECTED"
+Usage: clk [OPTIONS] [COMMAND] [ARGS]...
+error: The profile at location ./.clk is at version 99. I can only manage till version 8. Please upgrade clk and try again.
+EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
+}
+
+echo 'Run run_from_the_future'
+
+{ run_from_the_future_code || true ; } > "${TMP}/code.txt" 2>&1
+run_from_the_future_expected > "${TMP}/expected.txt" 2>&1
+diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+echo "Something went wrong when trying run_from_the_future"
+exit 1
+}
+
+
+echo 1 > .clk/version.txt
+
+
+run_from_the_past_code () {
+      clk alias show 2>&1 | head -2
+}
+
+run_from_the_past_expected () {
+      local expected
+      expected="$(cat<<"EOEXPECTED"
+Usage: clk [OPTIONS] [COMMAND] [ARGS]...
+error: The profile at location ./.clk is at version 1. I can only migrate profiles from version 8 on. Migrate it manually, or ask for help on https://github.com/clk-project/clk/issues/new .
+EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
+}
+
+echo 'Run run_from_the_past'
+
+{ run_from_the_past_code || true ; } > "${TMP}/code.txt" 2>&1
+run_from_the_past_expected > "${TMP}/expected.txt" 2>&1
+diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+echo "Something went wrong when trying run_from_the_past"
+exit 1
+}
 # run ends here

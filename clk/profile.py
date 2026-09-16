@@ -15,6 +15,7 @@ from pluginbase import PluginBase
 
 from clk.click_helpers import click_get_current_context_safe
 from clk.lib import (
+    NEW_ISSUE_URL,
     copy,
     createfile,
     ensure_unicode,
@@ -424,21 +425,18 @@ class DirectoryProfile(Profile):
         self.plugin_cache = set()
         self.old_version = self.version
         if self.version > self.max_version:
-            LOGGER.error(
+            raise click.UsageError(
                 f"The profile at location {self.location} is at version {self.old_version}."
                 f" I can only manage till version {self.max_version}."
-                " It will be ignored."
                 f" Please upgrade {self.app_name} and try again."
             )
-            self.frozen_during_migration = True
         if 0 < self.version < self.oldest_supported_version:
-            LOGGER.error(
+            raise click.UsageError(
                 f"The profile at location {self.location} is at version {self.old_version}."
                 f" I can only migrate profiles from version {self.oldest_supported_version} on."
-                " It will be ignored."
-                f" Please run an older {self.app_name} once and try again."
+                " Migrate it manually, or ask for help on"
+                f" {NEW_ISSUE_URL} ."
             )
-            self.frozen_during_migration = True
         self.computed_location = None
         self.compute_settings()
         self.backup_location = self.location + "_backup"

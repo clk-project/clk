@@ -311,6 +311,44 @@ cd .. && clk release-notes ; cd myprojet
 : ./clk-root/bin/release-notes
 : gathering the commits since the last tag
 
+* a project written by a newer clk
+  :PROPERTIES:
+  :CUSTOM_ID: a-project-written-by-a-newer-clk
+  :END:
+
+A colleague on a newer clk commits the project. Yours reads the version they
+left in it.
+
+#+NAME: project_from_the_future
+#+BEGIN_SRC bash :results none :exports code :session 6de55de4-c0b3-41d6-952a-25e0fe06c881
+echo 99 > .clk/version.txt
+#+END_SRC
+
+#+NAME: run_from_the_future
+#+BEGIN_SRC bash :results verbatim :exports both :session 6de55de4-c0b3-41d6-952a-25e0fe06c881 :cache yes
+clk alias show 2>&1 | head -2
+#+END_SRC
+
+#+RESULTS[]: run_from_the_future
+: Usage: clk [OPTIONS] [COMMAND] [ARGS]...
+: error: The profile at location ./.clk is at version 99. I can only manage till version 8. Please upgrade clk and try again.
+
+Version 8 is old enough that anything before it is no longer supported.
+
+#+NAME: project_from_the_past
+#+BEGIN_SRC bash :results none :exports code :session 6de55de4-c0b3-41d6-952a-25e0fe06c881
+echo 1 > .clk/version.txt
+#+END_SRC
+
+#+NAME: run_from_the_past
+#+BEGIN_SRC bash :results verbatim :exports both :session 6de55de4-c0b3-41d6-952a-25e0fe06c881 :cache yes
+clk alias show 2>&1 | head -2
+#+END_SRC
+
+#+RESULTS[]: run_from_the_past
+: Usage: clk [OPTIONS] [COMMAND] [ARGS]...
+: error: The profile at location ./.clk is at version 1. I can only migrate profiles from version 8 on. Migrate it manually, or ask for help on https://github.com/clk-project/clk/issues/new .
+
 #+NAME: run
 #+BEGIN_SRC bash :results none :exports none :tangle ../../tests/use_cases/using_a_project.sh :noweb yes :shebang "#!/usr/bin/env bash"
   set -eu
@@ -357,4 +395,12 @@ check-result(run_flow)
 check-result(where_release_notes)
 
 check-result(move_release_notes)
+
+<<project_from_the_future>>
+
+check-result(run_from_the_future)
+
+<<project_from_the_past>>
+
+check-result(run_from_the_past)
 #+END_SRC

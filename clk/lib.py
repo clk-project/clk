@@ -32,6 +32,7 @@ from clk.log import get_logger
 LOGGER = get_logger(__name__)
 dry_run = None
 main_module = None
+NEW_ISSUE_URL = "https://github.com/clk-project/clk/issues/new"
 
 
 def ensure_unicode(value):

@@ -1,5 +1,6 @@
 - [running project scripts](#running-project-scripts)
 - [a command that outgrew the project](#a-command-that-outgrew-the-project)
+- [a project written by a newer clk](#a-project-written-by-a-newer-clk)
 
 When working in project, it is useful to have a way to tell where the root of the project is.
 
@@ -197,3 +198,34 @@ cd .. && clk release-notes ; cd myprojet
 
     ./clk-root/bin/release-notes
     gathering the commits since the last tag
+
+
+<a id="a-project-written-by-a-newer-clk"></a>
+
+# a project written by a newer clk
+
+A colleague on a newer clk commits the project. Yours reads the version they left in it.
+
+```bash
+echo 99 > .clk/version.txt
+```
+
+```bash
+clk alias show 2>&1 | head -2
+```
+
+    Usage: clk [OPTIONS] [COMMAND] [ARGS]...
+    error: The profile at location ./.clk is at version 99. I can only manage till version 8. Please upgrade clk and try again.
+
+Version 8 is old enough that anything before it is no longer supported.
+
+```bash
+echo 1 > .clk/version.txt
+```
+
+```bash
+clk alias show 2>&1 | head -2
+```
+
+    Usage: clk [OPTIONS] [COMMAND] [ARGS]...
+    error: The profile at location ./.clk is at version 1. I can only migrate profiles from version 8 on. Migrate it manually, or ask for help on https://github.com/clk-project/clk/issues/new .

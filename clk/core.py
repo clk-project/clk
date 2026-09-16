@@ -31,7 +31,14 @@ from clk.click_internals import (
 )
 from clk.completion import startswith
 from clk.config import Config, config, migrate_profiles, temp_config
-from clk.lib import ParameterType, main_default, makedirs, natural_delta, rm
+from clk.lib import (
+    NEW_ISSUE_URL,
+    ParameterType,
+    main_default,
+    makedirs,
+    natural_delta,
+    rm,
+)
 from clk.log import LOG_LEVELS, get_logger
 
 LOGGER = get_logger(__name__)
@@ -1036,7 +1043,7 @@ def main():
             "Please help us by either submitting patches or "
             f"sending report files to us. ({config.main_command.path} --report-file .../somefile RESTOFCOMMAND, "
             "then send .../somefile to us on"
-            " https://github.com/clk-project/clk/issues/new)"
+            f" {NEW_ISSUE_URL})"
         )
         LOGGER.error(str(e))
         post_mortem()
@@ -1053,7 +1060,7 @@ def main():
             "Hmm, it looks like we did not properly catch this error."
             " Please help us improve clk by telling us what"
             " caused the error on"
-            " https://github.com/clk-project/clk/issues/new ."
+            f" {NEW_ISSUE_URL} ."
             " If you feel like a pythonista, you can try debugging"
             " the issue yourself, running the command"
             f" with {config.main_command.path} --post-mortem or {config.main_command.path} --develop"
