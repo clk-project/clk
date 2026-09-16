@@ -165,11 +165,43 @@ clk --without-extension k8s k8s run-dev-env --flow
 
 You have noticed that we created a command named setup-credential. In general, the author of the extension does not know in advance the kind of credentials that must be injected in the stack, but the extension can still provide a "placeholder" command that does nothing and is replaced by a more specific one in the project.
 
+Say the extension already knows how to deploy the stack.
+
+```bash
+clk command create --extension k8s bash deploy --description "Deploy the stack" --body 'echo deploying the usual way'
+```
+
 For instance, let's create a local bash script to write some credentials. It needs a project to live in.
 
 ```bash
 mkdir myproject && cd myproject && mkdir .clk
 ```
+
+Here we deploy differently, and we shadow the command with one of our own, keeping the flow of the one we hide.
+
+```bash
+clk command create bash deploy --flowdeps '[overridden]' --description "Deploy the stack our way" --body 'echo deploying our way'
+```
+
+```bash
+clk deploy
+```
+
+    deploying our way
+
+The day the one we hide grows a flow, ours runs it too.
+
+```bash
+clk flowdep --extension k8s set deploy k8s.run-cluster
+```
+
+```bash
+clk deploy --flow
+```
+
+    installing dependencies
+    starting k8s cluster
+    deploying our way
 
 In there, the script only has to care about the credentials.
 
@@ -396,6 +428,7 @@ clk hello
     error:
     error: Did you mean one of these?
     error:     help
+    error:     deploy
     error:     log
 
 Because it is hosted on github, this should do as well to install it.

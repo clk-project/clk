@@ -165,6 +165,13 @@ clk --without-extension k8s k8s run-dev-env --flow
   that must be injected in the stack, but the extension can still provide a
   "placeholder" command that does nothing and is replaced by a more specific one in the project.
 
+  Say the extension already knows how to deploy the stack.
+
+  #+NAME: create_deploy
+  #+BEGIN_SRC bash :results none :exports code :session f47428c2-56ea-4d91-97d9-4f2ff63ef052
+  clk command create --extension k8s bash deploy --description "Deploy the stack" --body 'echo deploying the usual way'
+  #+END_SRC
+
   For instance, let's create a local bash script to write some credentials. It
   needs a project to live in.
 
@@ -172,6 +179,39 @@ clk --without-extension k8s k8s run-dev-env --flow
   #+BEGIN_SRC bash :results none :exports code :session f47428c2-56ea-4d91-97d9-4f2ff63ef052
   mkdir myproject && cd myproject && mkdir .clk
   #+END_SRC
+
+  Here we deploy differently, and we shadow the command with one of our own,
+  keeping the flow of the one we hide.
+
+  #+NAME: create_project_deploy
+  #+BEGIN_SRC bash :results none :exports code :session f47428c2-56ea-4d91-97d9-4f2ff63ef052
+  clk command create bash deploy --flowdeps '[overridden]' --description "Deploy the stack our way" --body 'echo deploying our way'
+  #+END_SRC
+
+  #+NAME: run_project_deploy
+  #+BEGIN_SRC bash :results verbatim :cache yes :exports both :session f47428c2-56ea-4d91-97d9-4f2ff63ef052
+  clk deploy
+  #+END_SRC
+
+  #+RESULTS[]: run_project_deploy
+  : deploying our way
+
+  The day the one we hide grows a flow, ours runs it too.
+
+  #+NAME: set_deploy_flow
+  #+BEGIN_SRC bash :results none :exports code :session f47428c2-56ea-4d91-97d9-4f2ff63ef052
+  clk flowdep --extension k8s set deploy k8s.run-cluster
+  #+END_SRC
+
+  #+NAME: run_project_deploy_again
+  #+BEGIN_SRC bash :results verbatim :cache yes :exports both :session f47428c2-56ea-4d91-97d9-4f2ff63ef052
+  clk deploy --flow
+  #+END_SRC
+
+  #+RESULTS[]: run_project_deploy_again
+  : installing dependencies
+  : starting k8s cluster
+  : deploying our way
 
   In there, the script only has to care about the credentials.
 
@@ -456,6 +496,7 @@ clk hello
 : error:
 : error: Did you mean one of these?
 : error:     help
+: error:     deploy
 : error:     log
 
 Because it is hosted on github, this should do as well to install it.
@@ -863,7 +904,17 @@ check-result(enable)
 
 check-result(disable-for-one-run)
 
+<<create_deploy>>
+
 <<create_credentials_project>>
+
+<<create_project_deploy>>
+
+check-result(run_project_deploy)
+
+<<set_deploy_flow>>
+
+check-result(run_project_deploy_again)
 
 <<create_local_credentials>>
 

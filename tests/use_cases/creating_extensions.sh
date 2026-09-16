@@ -176,7 +176,65 @@ exit 1
 }
 
 
+clk command create --extension k8s bash deploy --description "Deploy the stack" --body 'echo deploying the usual way'
+
 mkdir myproject && cd myproject && mkdir .clk
+
+clk command create bash deploy --flowdeps '[overridden]' --description "Deploy the stack our way" --body 'echo deploying our way'
+
+
+run_project_deploy_code () {
+      clk deploy
+}
+
+run_project_deploy_expected () {
+      local expected
+      expected="$(cat<<"EOEXPECTED"
+deploying our way
+EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
+}
+
+echo 'Run run_project_deploy'
+
+{ run_project_deploy_code || true ; } > "${TMP}/code.txt" 2>&1
+run_project_deploy_expected > "${TMP}/expected.txt" 2>&1
+diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+echo "Something went wrong when trying run_project_deploy"
+exit 1
+}
+
+
+clk flowdep --extension k8s set deploy k8s.run-cluster
+
+
+run_project_deploy_again_code () {
+      clk deploy --flow
+}
+
+run_project_deploy_again_expected () {
+      local expected
+      expected="$(cat<<"EOEXPECTED"
+installing dependencies
+starting k8s cluster
+deploying our way
+EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
+}
+
+echo 'Run run_project_deploy_again'
+
+{ run_project_deploy_again_code || true ; } > "${TMP}/code.txt" 2>&1
+run_project_deploy_again_expected > "${TMP}/expected.txt" 2>&1
+diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+echo "Something went wrong when trying run_project_deploy_again"
+exit 1
+}
+
 
 clk command create bash k8s.setup-credentials --flowdeps '[overridden]' --description "Setup the credentials of this project" --body '
 echo "injecting the credentials of my project"
@@ -543,6 +601,7 @@ error: No such command 'hello'.
 error:
 error: Did you mean one of these?
 error:     help
+error:     deploy
 error:     log
 EOEXPECTED
 )"
