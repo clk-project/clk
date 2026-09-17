@@ -491,6 +491,34 @@ exit 1
 }
 
 
+
+refusingtheremoval_code () {
+      clk secret unset http_bearer <<< n
+      clk secret show http_bearer
+}
+
+refusingtheremoval_expected () {
+      local expected
+      expected="$(cat<<"EOEXPECTED"
+This will definitely remove the secret for http_bearer. Are you sure? [y/N]: warning: Removing anyway!
+...Just kidding! You secret is safe :-)
+http_bearer *****
+EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
+}
+
+echo 'Run refusingtheremoval'
+
+{ refusingtheremoval_code || true ; } > "${TMP}/code.txt" 2>&1
+refusingtheremoval_expected > "${TMP}/expected.txt" 2>&1
+diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+echo "Something went wrong when trying refusingtheremoval"
+exit 1
+}
+
+
 clk parameter set secret.unset --force
 
 clk secret unset http_bearer

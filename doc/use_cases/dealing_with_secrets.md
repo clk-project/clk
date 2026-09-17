@@ -214,6 +214,17 @@ clk dosomething
 
 You can remove this secret now using the unset command. But beware that the command won't work anymore as its parameter explicitly lookup for this secret.
 
+It asks before removing anything, and answering no keeps the secret.
+
+```bash
+clk secret unset http_bearer <<< n
+clk secret show http_bearer
+```
+
+    This will definitely remove the secret for http_bearer. Are you sure? [y/N]: warning: Removing anyway!
+    ...Just kidding! You secret is safe :-)
+    http_bearer *****
+
 ```bash
 clk secret unset http_bearer
 ```
