@@ -176,6 +176,66 @@ exit 1
 }
 
 
+mkdir noisy-project && cd noisy-project && mkdir .clk
+
+
+disable-in-project_code () {
+      clk extension disable k8s
+      clk k8s run-dev-env --flow 2>&1 | tail -1
+}
+
+disable-in-project_expected () {
+      local expected
+      expected="$(cat<<"EOEXPECTED"
+error: No such command 'k8s'.
+EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
+}
+
+echo 'Run disable-in-project'
+
+{ disable-in-project_code || true ; } > "${TMP}/code.txt" 2>&1
+disable-in-project_expected > "${TMP}/expected.txt" 2>&1
+diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+echo "Something went wrong when trying disable-in-project"
+exit 1
+}
+
+
+
+unset-in-project_code () {
+      clk extension unset k8s
+      clk k8s run-dev-env --flow
+}
+
+unset-in-project_expected () {
+      local expected
+      expected="$(cat<<"EOEXPECTED"
+installing dependencies
+starting k8s cluster
+starting controllers
+noop, this must be overloaded by a project command
+running development environment
+EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
+}
+
+echo 'Run unset-in-project'
+
+{ unset-in-project_code || true ; } > "${TMP}/code.txt" 2>&1
+unset-in-project_expected > "${TMP}/expected.txt" 2>&1
+diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+echo "Something went wrong when trying unset-in-project"
+exit 1
+}
+
+
+cd ..
+
 clk command create --extension k8s bash deploy --description "Deploy the stack" --body 'echo deploying the usual way'
 
 mkdir myproject && cd myproject && mkdir .clk

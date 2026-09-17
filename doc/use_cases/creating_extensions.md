@@ -158,6 +158,32 @@ clk --without-extension k8s k8s run-dev-env --flow
     Usage: clk [OPTIONS] [COMMAND] [ARGS]...
     error: No such command 'k8s'.
 
+Each profile decides for itself whether an extension is enabled. Say you work on a project that has nothing to do with kubernetes: you can disable k8s there, and it remains available everywhere else.
+
+```bash
+mkdir noisy-project && cd noisy-project && mkdir .clk
+```
+
+```bash
+clk extension disable k8s
+clk k8s run-dev-env --flow 2>&1 | tail -1
+```
+
+    error: No such command 'k8s'.
+
+Now this project starts using a cluster as well, and you want it to behave like everywhere else. Rather than enabling the extension here, you can remove what this project decided, with `clk extension unset`. The project decides nothing about k8s anymore, so your global choice applies again.
+
+```bash
+clk extension unset k8s
+clk k8s run-dev-env --flow
+```
+
+    installing dependencies
+    starting k8s cluster
+    starting controllers
+    noop, this must be overloaded by a project command
+    running development environment
+
 
 <a id="7e7ae624-ce8a-4470-8bb0-7a44d8c2caea"></a>
 

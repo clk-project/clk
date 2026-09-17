@@ -154,6 +154,47 @@ clk --without-extension k8s k8s run-dev-env --flow
 : Usage: clk [OPTIONS] [COMMAND] [ARGS]...
 : error: No such command 'k8s'.
 
+Each profile decides for itself whether an extension is enabled. Say you work on
+a project that has nothing to do with kubernetes: you can disable k8s there, and
+it remains available everywhere else.
+
+#+NAME: create-noisy-project
+#+BEGIN_SRC bash :results none :exports code :session f47428c2-56ea-4d91-97d9-4f2ff63ef052
+mkdir noisy-project && cd noisy-project && mkdir .clk
+#+END_SRC
+
+#+NAME: disable-in-project
+#+BEGIN_SRC bash :results verbatim :cache yes :exports both :session f47428c2-56ea-4d91-97d9-4f2ff63ef052
+clk extension disable k8s
+clk k8s run-dev-env --flow 2>&1 | tail -1
+#+END_SRC
+
+#+RESULTS[]: disable-in-project
+: error: No such command 'k8s'.
+
+Now this project starts using a cluster as well, and you want it to behave like
+everywhere else. Rather than enabling the extension here, you can remove what
+this project decided, with ~clk extension unset~. The project decides nothing
+about k8s anymore, so your global choice applies again.
+
+#+NAME: unset-in-project
+#+BEGIN_SRC bash :results verbatim :cache yes :exports both :session f47428c2-56ea-4d91-97d9-4f2ff63ef052
+clk extension unset k8s
+clk k8s run-dev-env --flow
+#+END_SRC
+
+#+RESULTS[]: unset-in-project
+: installing dependencies
+: starting k8s cluster
+: starting controllers
+: noop, this must be overloaded by a project command
+: running development environment
+
+#+NAME: leave-noisy-project
+#+BEGIN_SRC bash :results none :exports none :session f47428c2-56ea-4d91-97d9-4f2ff63ef052
+cd ..
+#+END_SRC
+
 * generic programming
   :PROPERTIES:
   :CREATED:  [2026-08-18 17:52]
@@ -903,6 +944,14 @@ check-result(enable-for-one-run)
 check-result(enable)
 
 check-result(disable-for-one-run)
+
+<<create-noisy-project>>
+
+check-result(disable-in-project)
+
+check-result(unset-in-project)
+
+<<leave-noisy-project>>
 
 <<create_deploy>>
 
