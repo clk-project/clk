@@ -4,7 +4,7 @@ import click
 
 from clk.colors import Colorer
 from clk.config import config
-from clk.decorators import argument, flag, table_fields, table_format
+from clk.decorators import argument, table_fields, table_format
 from clk.lib import TablePrinter
 from clk.log import get_logger
 from clk.overloads import CommandSettingsKeyType
@@ -24,36 +24,6 @@ def keyvaluestore_generic_commands(group, settings_name):
         """Set a value"""
         store = get_store()
         store.writable[key] = {"value": value}
-        store.write()
-
-    @group.command(handle_dry_run=True)
-    @argument("src", type=CommandSettingsKeyType(settings_name), help="The current key")
-    @argument("dst", help="The new key")
-    @flag(
-        "--overwrite/--no-overwrite",
-        help="̂Rename even if the destination already exists",
-    )
-    def rename(src, dst, overwrite):
-        """Rename a key"""
-        store = get_store()
-        if src not in store.writable:
-            raise click.ClickException(
-                "The "
-                f"{Colorer.apply_color_profilename(store.writeprofile)}"
-                f" configuration has no '{src}' values registered."
-                "Try using another profile option (like --local or --global)"
-            )
-        if dst in store.writable and not overwrite:
-            LOGGER.error(
-                f"{dst} already exists at profile {Colorer.apply_color_profilename(store.writeprofile)}"
-                " use --overwrite to perform the renaming anyway"
-            )
-            exit(1)
-        store.writable[dst] = store.writable[src]
-        del store.writable[src]
-        LOGGER.status(
-            f"Rename {src} -> {dst} in profile {Colorer.apply_color_profilename(store.writeprofile)}"
-        )
         store.write()
 
     @group.command(handle_dry_run=True)

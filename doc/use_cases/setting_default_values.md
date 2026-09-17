@@ -5,7 +5,7 @@
 - [per-option defaults with default.](#per-option-defaults)
 - [syntax vs semantics: choosing the right tool](#syntax-vs-semantics)
 - [using values in your own commands](#using-values-in-commands)
-- [managing values: rename and unset](#managing-values)
+- [managing values: unset](#managing-values)
 - [a familiar pattern: git config](#git-comparison)
 
 Parameters are a powerful way to persist options for specific commands (see [the cloud provider CLI wrapper example](wrapping_a_cloud_provider_cli.md)). But sometimes, you want to set the same kind of option across many different commands. That's where the `value` command shines.
@@ -189,26 +189,15 @@ One value controls them all.
 
 <a id="managing-values"></a>
 
-# managing values: rename and unset
+# managing values: unset
 
-As your configuration evolves, you may need to rename or remove values. The `value` command provides tools for this.
-
-Let's say you initially set a value with a confusing name:
+As your configuration evolves, some values stop being useful. Say you set one for an application you no longer work on:
 
 ```bash
-clk value set myapp.colr true
+clk value set myapp.color true
 ```
 
-You can rename it to fix the typo:
-
-```bash
-clk value rename myapp.colr myapp.color
-clk value show myapp.color
-```
-
-    myapp.color true
-
-And when you no longer need a value, you can unset it:
+When you no longer need it, you can unset it:
 
 ```bash
 clk value unset myapp.color

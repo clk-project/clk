@@ -204,33 +204,7 @@ exit 1
 
 clk value set config.show.color false
 
-clk value set myapp.colr true
-
-
-rename-value_code () {
-      clk value rename myapp.colr myapp.color
-      clk value show myapp.color
-}
-
-rename-value_expected () {
-      local expected
-      expected="$(cat<<"EOEXPECTED"
-myapp.color true
-EOEXPECTED
-)"
-      # org says nil where the block said nothing
-      test "${expected}" = nil || echo "${expected}"
-}
-
-echo 'Run rename-value'
-
-{ rename-value_code || true ; } > "${TMP}/code.txt" 2>&1
-rename-value_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying rename-value"
-exit 1
-}
-
+clk value set myapp.color true
 
 
 unset-value_code () {
