@@ -576,4 +576,56 @@ diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
 echo "Something went wrong when trying using_netrc"
 exit 1
 }
+
+
+
+netrc_missing_code () {
+      clk --keyring clk.keyrings.NetrcKeyring secret show other_token --secret
+}
+
+netrc_missing_expected () {
+      local expected
+      expected="$(cat<<"EOEXPECTED"
+warning: No secret set
+EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
+}
+
+echo 'Run netrc_missing'
+
+{ netrc_missing_code || true ; } > "${TMP}/code.txt" 2>&1
+netrc_missing_expected > "${TMP}/expected.txt" 2>&1
+diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+echo "Something went wrong when trying netrc_missing"
+exit 1
+}
+
+
+
+netrc_readonly_code () {
+      clk --keyring clk.keyrings.NetrcKeyring secret set other_token --secret something 2>&1
+}
+
+netrc_readonly_expected () {
+      local expected
+      expected="$(cat<<"EOEXPECTED"
+error: Could not save your secret.
+Usage: clk secret set [OPTIONS] KEY
+error: The netrc keyring only reads secrets. Write this one in your netrc file to use it.
+EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
+}
+
+echo 'Run netrc_readonly'
+
+{ netrc_readonly_code || true ; } > "${TMP}/code.txt" 2>&1
+netrc_readonly_expected > "${TMP}/expected.txt" 2>&1
+diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+echo "Something went wrong when trying netrc_readonly"
+exit 1
+}
 # test ends here

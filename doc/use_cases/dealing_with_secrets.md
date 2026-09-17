@@ -265,6 +265,24 @@ clk --keyring clk.keyrings.NetrcKeyring secret show http_bearer --secret
 
     http_bearer thevalue
 
+It only reads. A secret your netrc file does not hold is simply not there.
+
+```bash
+clk --keyring clk.keyrings.NetrcKeyring secret show other_token --secret
+```
+
+    warning: No secret set
+
+And storing one is up to you, in the file itself.
+
+```bash
+clk --keyring clk.keyrings.NetrcKeyring secret set other_token --secret something 2>&1
+```
+
+    error: Could not save your secret.
+    Usage: clk secret set [OPTIONS] KEY
+    error: The netrc keyring only reads secrets. Write this one in your netrc file to use it.
+
 ## Footnotes
 
 <sup><a id="fn.1" class="footnum" href="#fnr.1">1</a></sup> this is so that if you use `clk` in scripts, you will be aware that something went wrong
