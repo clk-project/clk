@@ -306,37 +306,14 @@ def unset(extension):
 
 
 @extension.command(handle_dry_run=True)
-@option(
-    "--only",
-    help="Use only the provided extension, and disable the others",
-    type=ExtensionNameType(shortonly=True),
-)
 @argument(
     "extension",
     type=ExtensionNameType(disabled=True, shortonly=True),
     nargs=-1,
     help="The names of the extensions to enable",
 )
-@pass_context
-def __enable(ctx, extension, only):
+def __enable(extension):
     """Use this extension"""
-    if only and extension:
-        raise click.UsageError(
-            "You can only provide one of --only extension or simply extension"
-        )
-    if only:
-        extension = [only]
-        for cmd in set(ExtensionNameType(shortonly=True).getchoice(ctx)) - set(
-            extension
-        ):
-            if cmd in config.recipe.writable:
-                config.recipe.writable[cmd]["enabled"] = False
-            else:
-                config.recipe.writable[cmd] = {"enabled": False}
-            LOGGER.status(
-                f"Disabling extension {cmd} in profile {Colorer.apply_color_profilename(config.recipe.writeprofilename)}"
-            )
-
     for cmd in extension:
         if cmd in config.recipe.writable:
             config.recipe.writable[cmd]["enabled"] = True
