@@ -211,6 +211,56 @@ exit 1
 }
 
 
+
+wordcount-completion-upper_code () {
+      clk completion try --last wordcount ./TE
+}
+
+wordcount-completion-upper_expected () {
+      local expected
+      expected="$(cat<<"EOEXPECTED"
+
+EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
+}
+
+echo 'Run wordcount-completion-upper'
+
+{ wordcount-completion-upper_code || true ; } > "${TMP}/code.txt" 2>&1
+wordcount-completion-upper_expected > "${TMP}/expected.txt" 2>&1
+diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+echo "Something went wrong when trying wordcount-completion-upper"
+exit 1
+}
+
+
+
+wordcount-completion-insensitive_code () {
+      clk completion --case-insensitive try --last wordcount ./TE
+}
+
+wordcount-completion-insensitive_expected () {
+      local expected
+      expected="$(cat<<"EOEXPECTED"
+./testfile.txt
+EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
+}
+
+echo 'Run wordcount-completion-insensitive'
+
+{ wordcount-completion-insensitive_code || true ; } > "${TMP}/code.txt" 2>&1
+wordcount-completion-insensitive_expected > "${TMP}/expected.txt" 2>&1
+diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+echo "Something went wrong when trying wordcount-completion-insensitive"
+exit 1
+}
+
+
 clk command create bash showpackage
 cat <<"EOH" > "$(clk command which showpackage)"
 #!/usr/bin/env bash

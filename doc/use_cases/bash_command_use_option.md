@@ -165,6 +165,26 @@ clk wordcount te<TAB>
 
 The `file` type works the same way for options. For instance, if you had written `O:--document:file:The document to count words in` instead, pressing `<TAB>` after `--document` would also suggest files.
 
+Type the name in the wrong case though, and nothing comes back.
+
+```bash
+clk wordcount TE<TAB>
+```
+
+Install the completion telling it to ignore the case.
+
+```bash
+clk completion --case-insensitive install
+```
+
+The same key now finds the file.
+
+```bash
+clk wordcount TE<TAB>
+```
+
+    ./testfile.txt
+
 
 <a id="6a1b2c3d-4e5f-6789-abcd-ef0123456789"></a>
 

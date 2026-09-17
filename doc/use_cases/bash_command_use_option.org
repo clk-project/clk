@@ -195,6 +195,42 @@ The ~file~ type works the same way for options. For instance, if you had written
 ~O:--document:file:The document to count words in~ instead, pressing ~<TAB>~
 after ~--document~ would also suggest files.
 
+Type the name in the wrong case though, and nothing comes back.
+
+#+NAME: wordcount-completion-upper-shown
+#+BEGIN_SRC bash :results none :exports code
+clk wordcount TE<TAB>
+#+END_SRC
+
+#+NAME: wordcount-completion-upper
+#+BEGIN_SRC bash :results verbatim :exports results :session 100aa89b-f320-46ee-9d5d-2193ef48d4eb :cache yes
+clk completion try --last wordcount ./TE
+#+END_SRC
+
+#+RESULTS[]: wordcount-completion-upper
+
+Install the completion telling it to ignore the case.
+
+#+NAME: install-case-insensitive
+#+BEGIN_SRC bash :results none :exports code
+clk completion --case-insensitive install
+#+END_SRC
+
+The same key now finds the file.
+
+#+NAME: wordcount-completion-insensitive-shown
+#+BEGIN_SRC bash :results none :exports code
+clk wordcount TE<TAB>
+#+END_SRC
+
+#+NAME: wordcount-completion-insensitive
+#+BEGIN_SRC bash :results verbatim :exports results :session 100aa89b-f320-46ee-9d5d-2193ef48d4eb :cache yes
+clk completion --case-insensitive try --last wordcount ./TE
+#+END_SRC
+
+#+RESULTS[]: wordcount-completion-insensitive
+: ./testfile.txt
+
 * passing a URL to a file argument
   :PROPERTIES:
   :CUSTOM_ID: 6a1b2c3d-4e5f-6789-abcd-ef0123456789
@@ -272,6 +308,10 @@ check-result(wordcount-help)
 check-result(wordcount-run)
 
 check-result(wordcount-completion)
+
+check-result(wordcount-completion-upper)
+
+check-result(wordcount-completion-insensitive)
 
 <<urlarg-create>>
 
