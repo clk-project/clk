@@ -5,22 +5,13 @@ from pathlib import Path
 
 import click
 
-from clk.colors import Colorer
-from clk.config import config, merge_settings
+from clk.config import config
 from clk.core import DynamicChoiceType, cache_disk, get_ctx
 from clk.customcommands import CustomCommandResolver
-from clk.decorators import (
-    argument,
-    flag,
-    group,
-    option,
-    table_fields,
-    table_format,
-    use_settings,
-)
+from clk.decorators import argument, flag, group, option, use_settings
 from clk.externalcommands import ExternalCommandResolver
 from clk.flow import get_flow_commands_to_run
-from clk.lib import TablePrinter, copy, createfile, makedirs, move, quote, rm
+from clk.lib import copy, createfile, makedirs, move, quote, rm
 from clk.log import get_logger
 from clk.overloads import (
     Argument,
@@ -74,15 +65,6 @@ def cmd_format(name, cmd_help, indent):
     return indent + name + spacer + cmd_help
 
 
-class CustomCommandPathType(DynamicChoiceType):
-    def __init__(self, type):
-        self.type = type
-
-    def choices(self):
-        _, settings = merge_settings(config.iter_settings(explicit_only=True))
-        return settings["customcommands"].get(self.type, [])
-
-
 class CustomCommandNameType(DynamicChoiceType):
     def __init__(self, profile=None):
         self.profile = profile
@@ -111,96 +93,6 @@ class CustomCommandType(CustomCommandNameType):
                 if path in resolver._list_command_paths(None, profile):
                     return resolver._get_command(path, None, profile)
         raise Exception(f"Could not find a resolver matching {path}")
-
-
-def format_paths(path):
-    return " ".join(map(quote, path))
-
-
-@command.group(default_command="show")
-def path():
-    """Manipulate paths where to find extra commands"""
-
-
-@path.command()
-@Colorer.color_options
-@table_format(default="key_value")
-@table_fields(choices=["name", "paths"])
-def show(fields, format, **kwargs):
-    """Show all the custom commands paths"""
-    with Colorer(kwargs) as colorer, TablePrinter(fields, format) as tp:
-        values = {
-            profile.name: format_paths(
-                config.customcommands.all_settings.get(profile.name, {}).get(
-                    "pythonpaths", []
-                )
-            )
-            for profile in config.all_enabled_profiles
-        }
-        args = colorer.colorize(values, config.customcommands.readprofile)
-        tp.echo("pythonpaths", " ".join(args))
-        values = {
-            profile.name: format_paths(
-                config.customcommands.all_settings.get(profile.name, {}).get(
-                    "executablepaths", []
-                )
-            )
-            for profile in config.all_enabled_profiles
-        }
-        args = colorer.colorize(values, config.customcommands.readprofile)
-        tp.echo("executablepaths", " ".join(args))
-
-
-def custom_command_type():
-    return option(
-        "--type",
-        help="What kind of object should I find at this locations",
-        type=click.Choice(["executable", "python"]),
-        default="executable",
-    )
-
-
-@path.command()
-@argument("paths", nargs=-1, type=Path, help="The paths to add to load custom commands")
-@custom_command_type()
-def add(paths, type):
-    """Add custom command paths"""
-    paths = [str(d) for d in paths]
-    config.customcommands.writable[f"{type}paths"] = config.customcommands.writable.get(
-        f"{type}paths", []
-    ) + list(paths)
-    config.customcommands.write()
-    LOGGER.info(
-        f"Added {format_paths(paths)} ({type}) to the profile {config.customcommands.writeprofile}"
-    )
-
-
-@path.command()
-@argument(
-    "paths",
-    nargs=-1,
-    type=CustomCommandPathType("pythonpaths"),
-    help="The paths to remove from custom commands",
-)
-@custom_command_type()
-def remove(paths, type):
-    """Remove all the custom commands paths from the profile"""
-    to_remove = set(
-        config.customcommands.writable.get(f"{type}paths", [])
-    ).intersection(paths)
-    if not to_remove:
-        raise click.UsageError(
-            "None of the given path is present. This command would be a no-op."
-        )
-    config.customcommands.writable[f"{type}paths"] = [
-        path
-        for path in config.customcommands.writable.get(f"{type}paths", [])
-        if path not in to_remove
-    ]
-    config.customcommands.write()
-    LOGGER.info(
-        f"Removed {format_paths(to_remove)} ({type}) from the profile {config.customcommands.writeprofile}"
-    )
 
 
 @command.command()
