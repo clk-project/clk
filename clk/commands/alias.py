@@ -156,32 +156,6 @@ config.globalpreset_profile.settings["alias"]["alias.rm"] = {
 
 
 @alias.command(handle_dry_run=True)
-@argument(
-    "aliases",
-    nargs=-1,
-    type=CommandSettingsKeyType("alias"),
-    help="The aliases where the documentation will be removed",
-)
-def unset_documentation(aliases):
-    """Unset the documentation of some aliases"""
-    for cmd in aliases:
-        if cmd not in config.alias.writable:
-            raise click.ClickException(
-                "The profile "
-                f"{Colorer.apply_color_profilename(config.alias.writeprofilename)}"
-                f" configuration has no '{cmd}' alias registered."
-                " Try using another profile option (like --local or --global)"
-            )
-    for cmd in aliases:
-        LOGGER.info(
-            f"{what_happened('Erasing', 'Would have erased')} the documentation of {cmd} alias"
-            f" from {Colorer.apply_color_profilename(config.alias.writeprofilename)} settings"
-        )
-        config.alias.writable[cmd]["documentation"] = None
-    config.alias.write()
-
-
-@alias.command(handle_dry_run=True)
 @flag(
     "--name-only/--no-name-only",
     help="Only display the alias names",
