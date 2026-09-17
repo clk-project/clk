@@ -5,6 +5,59 @@ set -eu
 
 clk fork csm
 
+
+csm-fork-again_code () {
+      clk fork csm
+}
+
+csm-fork-again_expected () {
+      local expected
+      expected="$(cat<<"EOEXPECTED"
+Usage: clk fork [OPTIONS] NAME
+error: csm already exist
+EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
+}
+
+echo 'Run csm-fork-again'
+
+{ csm-fork-again_code || true ; } > "${TMP}/code.txt" 2>&1
+csm-fork-again_expected > "${TMP}/expected.txt" 2>&1
+diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+echo "Something went wrong when trying csm-fork-again"
+exit 1
+}
+
+
+
+csm-fork-force_code () {
+      echo "# my first try" >> csm/csm/main.py
+      clk fork csm --force > /dev/null
+      tail -1 csm/csm/main.py
+}
+
+csm-fork-force_expected () {
+      local expected
+      expected="$(cat<<"EOEXPECTED"
+    main()
+EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
+}
+
+echo 'Run csm-fork-force'
+
+{ csm-fork-force_code || true ; } > "${TMP}/code.txt" 2>&1
+csm-fork-force_expected > "${TMP}/expected.txt" 2>&1
+diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+echo "Something went wrong when trying csm-fork-force"
+exit 1
+}
+
+
 CURRENT_CLK="$(clk python -c 'from pathlib import Path; import clk ; print(Path(clk.__path__[0]).parent)')"
 
 python3 -m venv venv

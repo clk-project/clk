@@ -29,6 +29,25 @@ clk fork csm
 
     Now, install csm with either `pipx install ./csm` or `python3 -m venv venv && ./venv/bin/pip install ./csm` followed by `export PATH="$(pwd)/venv/bin/:${PATH}"`. Then, enable its completion with `csm completion install` and don't forget to have fun
 
+Run that line again, having forgotten you already did, and clk would rather say no than write over the project you started.
+
+```bash
+clk fork csm
+```
+
+    Usage: clk fork [OPTIONS] NAME
+    error: csm already exist
+
+When starting over is what you want, `--force` clears the way, and your first attempt goes with it.
+
+```bash
+echo "# my first try" >> csm/csm/main.py
+clk fork csm --force > /dev/null
+tail -1 csm/csm/main.py
+```
+
+    main()
+
 Now, simply install this tool, like suggested.
 
 ```bash

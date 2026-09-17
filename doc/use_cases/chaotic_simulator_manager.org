@@ -45,6 +45,31 @@ clk fork csm
 #+RESULTS: csm-fork
 : Now, install csm with either `pipx install ./csm` or `python3 -m venv venv && ./venv/bin/pip install ./csm` followed by `export PATH="$(pwd)/venv/bin/:${PATH}"`. Then, enable its completion with `csm completion install` and don't forget to have fun
 
+Run that line again, having forgotten you already did, and clk would rather say no
+than write over the project you started.
+
+#+NAME: csm-fork-again
+#+BEGIN_SRC bash :results verbatim :exports both :session 807c02cd-a6cf-432f-b982-530fc81dbbf4 :cache yes
+clk fork csm
+#+END_SRC
+
+#+RESULTS[]: csm-fork-again
+: Usage: clk fork [OPTIONS] NAME
+: error: csm already exist
+
+When starting over is what you want, ~--force~ clears the way, and your first
+attempt goes with it.
+
+#+NAME: csm-fork-force
+#+BEGIN_SRC bash :results verbatim :exports both :session 807c02cd-a6cf-432f-b982-530fc81dbbf4 :cache yes
+echo "# my first try" >> csm/csm/main.py
+clk fork csm --force > /dev/null
+tail -1 csm/csm/main.py
+#+END_SRC
+
+#+RESULTS[]: csm-fork-force
+:     main()
+
 Now, simply install this tool, like suggested.
 
 #+NAME: csm-remember-current-clk
@@ -546,6 +571,10 @@ csm simulate --flow --launcher gdb
 <<init>>
 
 <<csm-fork>>
+
+check-result(csm-fork-again)
+
+check-result(csm-fork-force)
 
 <<csm-remember-current-clk>>
 
