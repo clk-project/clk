@@ -124,6 +124,25 @@ The region is still `eu-west-1` from my persisted parameters, only the profile c
 
 # managing parameters
 
+I don't have to remember the name of the command I want to configure. The completion offers the ones I have, and ends with a dot those that hold others.
+
+```bash
+clk parameter set aw<TAB>
+```
+
+    aws
+    aws.
+
+Typing that dot shows what is inside, so I can set the parameters of a subcommand as easily as those of the group.
+
+```bash
+clk parameter set aws.<TAB>
+```
+
+    aws.ec2
+    aws.s3
+    aws.s3.
+
 I can check what's currently set:
 
 ```bash

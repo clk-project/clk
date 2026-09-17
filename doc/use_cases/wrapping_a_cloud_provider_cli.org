@@ -161,6 +161,41 @@ changed.
   :CUSTOM_ID: managing-parameters
   :END:
 
+I don't have to remember the name of the command I want to configure. The
+completion offers the ones I have, and ends with a dot those that hold others.
+
+#+NAME: complete-parameter-command-shown
+#+BEGIN_SRC bash :results none :exports code
+clk parameter set aw<TAB>
+#+END_SRC
+
+#+NAME: complete-parameter-command
+#+BEGIN_SRC bash :results verbatim :exports results :session 2a1f20f5-2f74-4221-bcab-677a045d3a8f :cache yes
+clk completion try --remove-bash-formatting --last parameter set aw
+#+END_SRC
+
+#+RESULTS[]: complete-parameter-command
+: aws
+: aws.
+
+Typing that dot shows what is inside, so I can set the parameters of a
+subcommand as easily as those of the group.
+
+#+NAME: complete-parameter-subcommand-shown
+#+BEGIN_SRC bash :results none :exports code
+clk parameter set aws.<TAB>
+#+END_SRC
+
+#+NAME: complete-parameter-subcommand
+#+BEGIN_SRC bash :results verbatim :exports results :session 2a1f20f5-2f74-4221-bcab-677a045d3a8f :cache yes
+clk completion try --remove-bash-formatting --last parameter set aws.
+#+END_SRC
+
+#+RESULTS[]: complete-parameter-subcommand
+: aws.ec2
+: aws.s3
+: aws.s3.
+
 I can check what's currently set:
 
 #+NAME: show-parameters
@@ -523,6 +558,10 @@ check-result(set-parameters)
 check-result(try-with-defaults)
 
 check-result(try-override)
+
+check-result(complete-parameter-command)
+
+check-result(complete-parameter-subcommand)
 
 check-result(show-parameters)
 

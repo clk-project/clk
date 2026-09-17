@@ -146,6 +146,59 @@ exit 1
 
 
 
+complete-parameter-command_code () {
+      clk completion try --remove-bash-formatting --last parameter set aw
+}
+
+complete-parameter-command_expected () {
+      local expected
+      expected="$(cat<<"EOEXPECTED"
+aws
+aws.
+EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
+}
+
+echo 'Run complete-parameter-command'
+
+{ complete-parameter-command_code || true ; } > "${TMP}/code.txt" 2>&1
+complete-parameter-command_expected > "${TMP}/expected.txt" 2>&1
+diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+echo "Something went wrong when trying complete-parameter-command"
+exit 1
+}
+
+
+
+complete-parameter-subcommand_code () {
+      clk completion try --remove-bash-formatting --last parameter set aws.
+}
+
+complete-parameter-subcommand_expected () {
+      local expected
+      expected="$(cat<<"EOEXPECTED"
+aws.ec2
+aws.s3
+aws.s3.
+EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
+}
+
+echo 'Run complete-parameter-subcommand'
+
+{ complete-parameter-subcommand_code || true ; } > "${TMP}/code.txt" 2>&1
+complete-parameter-subcommand_expected > "${TMP}/expected.txt" 2>&1
+diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+echo "Something went wrong when trying complete-parameter-subcommand"
+exit 1
+}
+
+
+
 show-parameters_code () {
       clk parameter show aws
 }
