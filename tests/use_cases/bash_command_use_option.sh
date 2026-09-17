@@ -212,6 +212,36 @@ exit 1
 
 
 
+completion-show_code () {
+      clk completion show | head -6
+}
+
+completion-show_expected () {
+      local expected
+      expected="$(cat<<"EOEXPECTED"
+_clk_completion() {
+    local IFS=$'\n'
+    local response
+
+    response=$(env COMP_WORDS="${COMP_WORDS[*]}" COMP_CWORD=$COMP_CWORD _CLK_COMPLETE=bash_complete $1)
+
+EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
+}
+
+echo 'Run completion-show'
+
+{ completion-show_code || true ; } > "${TMP}/code.txt" 2>&1
+completion-show_expected > "${TMP}/expected.txt" 2>&1
+diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+echo "Something went wrong when trying completion-show"
+exit 1
+}
+
+
+
 wordcount-completion-upper_code () {
       clk completion try --last wordcount ./TE
 }

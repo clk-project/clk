@@ -195,6 +195,30 @@ The ~file~ type works the same way for options. For instance, if you had written
 ~O:--document:file:The document to count words in~ instead, pressing ~<TAB>~
 after ~--document~ would also suggest files.
 
+All of that needs your shell to know about clk. ~clk completion show~ prints the
+code that teaches it.
+
+#+NAME: completion-show
+#+BEGIN_SRC bash :results verbatim :exports both :session 100aa89b-f320-46ee-9d5d-2193ef48d4eb :cache yes
+clk completion show | head -6
+#+END_SRC
+
+#+RESULTS[]: completion-show
+: _clk_completion() {
+:     local IFS=$'\n'
+:     local response
+:
+:     response=$(env COMP_WORDS="${COMP_WORDS[*]}" COMP_CWORD=$COMP_CWORD _CLK_COMPLETE=bash_complete $1)
+:
+
+~clk completion install~ writes it in ~~/.bash_completion~, where your shell
+reads it when it starts.
+
+#+NAME: completion-install
+#+BEGIN_SRC bash :results none :exports code
+clk completion install
+#+END_SRC
+
 Type the name in the wrong case though, and nothing comes back.
 
 #+NAME: wordcount-completion-upper-shown
@@ -308,6 +332,8 @@ check-result(wordcount-help)
 check-result(wordcount-run)
 
 check-result(wordcount-completion)
+
+check-result(completion-show)
 
 check-result(wordcount-completion-upper)
 

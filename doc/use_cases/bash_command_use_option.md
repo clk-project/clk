@@ -165,6 +165,24 @@ clk wordcount te<TAB>
 
 The `file` type works the same way for options. For instance, if you had written `O:--document:file:The document to count words in` instead, pressing `<TAB>` after `--document` would also suggest files.
 
+All of that needs your shell to know about clk. `clk completion show` prints the code that teaches it.
+
+```bash
+clk completion show | head -6
+```
+
+    _clk_completion() {
+        local IFS=$'\n'
+        local response
+
+        response=$(env COMP_WORDS="${COMP_WORDS[*]}" COMP_CWORD=$COMP_CWORD _CLK_COMPLETE=bash_complete $1)
+
+`clk completion install` writes it in `~/.bash_completion`, where your shell reads it when it starts.
+
+```bash
+clk completion install
+```
+
 Type the name in the wrong case though, and nothing comes back.
 
 ```bash
