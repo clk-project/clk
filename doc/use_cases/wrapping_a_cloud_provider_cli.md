@@ -197,6 +197,35 @@ clk --no-parameter parameter unset parameter
 
     Erasing global parameters of parameter (was: set)
 
+I almost always use `ec2` to list the instances, so I set that as its default.
+
+```bash
+clk parameter set aws.ec2 describe-instances
+clk aws ec2
+```
+
+    New global parameters for aws.ec2: describe-instances
+    [default/us-east-1] aws ec2 describe-instances
+
+A few months later, we moved our machines elsewhere and I removed the command. The parameters I had set for it stayed in my profile: they belong to me, not to the command. clk reminds me of them the next time I look.
+
+```bash
+clk command remove aws.ec2 --force
+clk parameter show aws.ec2 2>&1
+```
+
+    warning: Failed to get the command aws.ec2: Command aws.ec2 not found
+    warning: You should know that the command aws.ec2 does not exist
+    aws.ec2 describe-instances
+
+I unset them, and nothing is left of that command.
+
+```bash
+clk parameter unset aws.ec2
+```
+
+    Erasing global parameters of aws.ec2 (was: describe-instances)
+
 
 <a id="per-project"></a>
 

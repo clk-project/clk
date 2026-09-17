@@ -354,6 +354,86 @@ exit 1
 }
 
 
+
+set-ec2-parameter_code () {
+      clk parameter set aws.ec2 describe-instances
+      clk aws ec2
+}
+
+set-ec2-parameter_expected () {
+      local expected
+      expected="$(cat<<"EOEXPECTED"
+New global parameters for aws.ec2: describe-instances
+[default/us-east-1] aws ec2 describe-instances
+EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
+}
+
+echo 'Run set-ec2-parameter'
+
+{ set-ec2-parameter_code || true ; } > "${TMP}/code.txt" 2>&1
+set-ec2-parameter_expected > "${TMP}/expected.txt" 2>&1
+diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+echo "Something went wrong when trying set-ec2-parameter"
+exit 1
+}
+
+
+
+remove-command-with-parameters_code () {
+      clk command remove aws.ec2 --force
+      clk parameter show aws.ec2 2>&1
+}
+
+remove-command-with-parameters_expected () {
+      local expected
+      expected="$(cat<<"EOEXPECTED"
+warning: Failed to get the command aws.ec2: Command aws.ec2 not found
+warning: You should know that the command aws.ec2 does not exist
+aws.ec2 describe-instances
+EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
+}
+
+echo 'Run remove-command-with-parameters'
+
+{ remove-command-with-parameters_code || true ; } > "${TMP}/code.txt" 2>&1
+remove-command-with-parameters_expected > "${TMP}/expected.txt" 2>&1
+diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+echo "Something went wrong when trying remove-command-with-parameters"
+exit 1
+}
+
+
+
+unset-orphan-parameters_code () {
+      clk parameter unset aws.ec2
+}
+
+unset-orphan-parameters_expected () {
+      local expected
+      expected="$(cat<<"EOEXPECTED"
+Erasing global parameters of aws.ec2 (was: describe-instances)
+EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
+}
+
+echo 'Run unset-orphan-parameters'
+
+{ unset-orphan-parameters_code || true ; } > "${TMP}/code.txt" 2>&1
+unset-orphan-parameters_expected > "${TMP}/expected.txt" 2>&1
+diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+echo "Something went wrong when trying unset-orphan-parameters"
+exit 1
+}
+
+
 mkdir -p webapp-project
 cd webapp-project
 mkdir .clk
