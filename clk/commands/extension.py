@@ -348,29 +348,6 @@ def __enable(ctx, extension, only):
     config.recipe.write()
 
 
-@extension.command(handle_dry_run=True)
-@argument(
-    "extension",
-    type=ExtensionType(),
-    help="The name of the extension to enable",
-)
-@pass_context
-def switch(ctx, extension):
-    """Switch to an extension, disabling all the other extensions that are know
-    as alternatives"""
-    ctx.invoke(__enable, extension=[extension.short_name])
-    if extension.alternative_groups:
-        LOGGER.status(
-            f"Part of the group {', '.join(extension.alternative_groups)}, disabling the other ones"
-        )
-        for other_extension in config.all_extensions:
-            if (
-                other_extension != extension
-                and other_extension.alternative_groups == extension.alternative_groups
-            ):
-                ctx.invoke(_disable, extension=[other_extension.short_name])
-
-
 @extension.command()
 @argument("extension", type=ExtensionType(), help="The name of the extension to open")
 @option("--opener", help="Program to call to open the directory", default="xdg-open")
