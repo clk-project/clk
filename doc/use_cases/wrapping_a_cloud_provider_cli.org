@@ -230,6 +230,62 @@ clk aws s3 ls
 : Erasing global parameters of aws (was: --profile company-prod)
 : [default/us-east-1] aws s3 ls
 
+When the line gets long, I would rather open it in my editor than type it all
+again.
+
+#+NAME: setup-editor
+#+BEGIN_SRC bash :results none :exports none :session 2a1f20f5-2f74-4221-bcab-677a045d3a8f
+editor_writes <<'EOF'
+--profile company-prod --region eu-west-1
+EOF
+#+END_SRC
+
+#+NAME: edit-parameters
+#+BEGIN_SRC bash :results verbatim :exports both :session 2a1f20f5-2f74-4221-bcab-677a045d3a8f :cache yes
+clk parameter edit aws
+clk aws s3 ls
+#+END_SRC
+
+#+RESULTS[]: edit-parameters
+: New global parameters for aws: --profile company-prod --region eu-west-1
+: [company-prod/eu-west-1] aws s3 ls
+
+Open it again and quit without touching anything, and clk writes nothing.
+
+#+NAME: setup-idle-editor
+#+BEGIN_SRC bash :results none :exports none :session 2a1f20f5-2f74-4221-bcab-677a045d3a8f
+export EDITOR=true
+export VISUAL=true
+#+END_SRC
+
+#+NAME: edit-parameters-unchanged
+#+BEGIN_SRC bash :results verbatim :exports both :session 2a1f20f5-2f74-4221-bcab-677a045d3a8f :cache yes
+clk parameter edit aws
+#+END_SRC
+
+#+RESULTS[]: edit-parameters-unchanged
+: Nothing changed
+
+Empty the file and it gives up rather than clearing them.
+
+#+NAME: setup-empty-editor
+#+BEGIN_SRC bash :results none :exports none :session 2a1f20f5-2f74-4221-bcab-677a045d3a8f
+editor_writes </dev/null
+#+END_SRC
+
+#+NAME: edit-parameters-emptied
+#+BEGIN_SRC bash :results verbatim :exports both :session 2a1f20f5-2f74-4221-bcab-677a045d3a8f :cache yes
+clk parameter edit aws
+#+END_SRC
+
+#+RESULTS[]: edit-parameters-emptied
+: Aboooooort !!
+
+#+NAME: cleanup-edited-parameters
+#+BEGIN_SRC bash :results none :exports none :session 2a1f20f5-2f74-4221-bcab-677a045d3a8f
+clk parameter unset aws
+#+END_SRC
+
 Parameters work for all the commands, ~parameter~ itself included, so I can shoot
 myself in the foot.
 
@@ -605,6 +661,20 @@ check-result(show-parameters)
 check-result(unset-region)
 
 check-result(unset-all)
+
+<<setup-editor>>
+
+check-result(edit-parameters)
+
+<<setup-idle-editor>>
+
+check-result(edit-parameters-unchanged)
+
+<<setup-empty-editor>>
+
+check-result(edit-parameters-emptied)
+
+<<cleanup-edited-parameters>>
 
 check-result(shoot-myself-in-the-foot)
 

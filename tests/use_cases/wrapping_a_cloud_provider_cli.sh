@@ -277,6 +277,94 @@ exit 1
 }
 
 
+editor_writes <<'EOF'
+--profile company-prod --region eu-west-1
+EOF
+
+
+edit-parameters_code () {
+      clk parameter edit aws
+      clk aws s3 ls
+}
+
+edit-parameters_expected () {
+      local expected
+      expected="$(cat<<"EOEXPECTED"
+New global parameters for aws: --profile company-prod --region eu-west-1
+[company-prod/eu-west-1] aws s3 ls
+EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
+}
+
+echo 'Run edit-parameters'
+
+{ edit-parameters_code || true ; } > "${TMP}/code.txt" 2>&1
+edit-parameters_expected > "${TMP}/expected.txt" 2>&1
+diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+echo "Something went wrong when trying edit-parameters"
+exit 1
+}
+
+
+export EDITOR=true
+export VISUAL=true
+
+
+edit-parameters-unchanged_code () {
+      clk parameter edit aws
+}
+
+edit-parameters-unchanged_expected () {
+      local expected
+      expected="$(cat<<"EOEXPECTED"
+Nothing changed
+EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
+}
+
+echo 'Run edit-parameters-unchanged'
+
+{ edit-parameters-unchanged_code || true ; } > "${TMP}/code.txt" 2>&1
+edit-parameters-unchanged_expected > "${TMP}/expected.txt" 2>&1
+diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+echo "Something went wrong when trying edit-parameters-unchanged"
+exit 1
+}
+
+
+editor_writes </dev/null
+
+
+edit-parameters-emptied_code () {
+      clk parameter edit aws
+}
+
+edit-parameters-emptied_expected () {
+      local expected
+      expected="$(cat<<"EOEXPECTED"
+Aboooooort !!
+EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
+}
+
+echo 'Run edit-parameters-emptied'
+
+{ edit-parameters-emptied_code || true ; } > "${TMP}/code.txt" 2>&1
+edit-parameters-emptied_expected > "${TMP}/expected.txt" 2>&1
+diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+echo "Something went wrong when trying edit-parameters-emptied"
+exit 1
+}
+
+
+clk parameter unset aws
+
 
 shoot-myself-in-the-foot_code () {
       clk parameter set parameter set

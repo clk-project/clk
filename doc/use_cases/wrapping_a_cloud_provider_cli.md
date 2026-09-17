@@ -171,6 +171,32 @@ clk aws s3 ls
     Erasing global parameters of aws (was: --profile company-prod)
     [default/us-east-1] aws s3 ls
 
+When the line gets long, I would rather open it in my editor than type it all again.
+
+```bash
+clk parameter edit aws
+clk aws s3 ls
+```
+
+    New global parameters for aws: --profile company-prod --region eu-west-1
+    [company-prod/eu-west-1] aws s3 ls
+
+Open it again and quit without touching anything, and clk writes nothing.
+
+```bash
+clk parameter edit aws
+```
+
+    Nothing changed
+
+Empty the file and it gives up rather than clearing them.
+
+```bash
+clk parameter edit aws
+```
+
+    Aboooooort !!
+
 Parameters work for all the commands, `parameter` itself included, so I can shoot myself in the foot.
 
 ```bash
