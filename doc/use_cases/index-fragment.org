@@ -18,6 +18,7 @@
 | [chaotic_simulator_manager.md](chaotic_simulator_manager.md) | Building your own standalone CLI tool on top of clk as a library |  |
 | [choices.md](choices.md) | Restricting user input to predefined values using Choice types |  |
 | [controlling_a_server_using_an_environment_variable.md](controlling_a_server_using_an_environment_variable.md) | Managing server addresses via environment variables and parameters |  |
+| [controlling_the_audio.md](controlling_the_audio.md) | Recording what an application plays, and tearing down the plumbing with clk.atexit |  |
 | [creating_extensions.md](creating_extensions.md) | Creating and sharing extensions (folders of commands and configuration) | clk_extension_hello |
 | [dealing_with_secrets.md](dealing_with_secrets.md) | Handling secrets (passwords, tokens) safely in clk commands |  |
 | [dynamic_parameters_advanced_use_cases.md](dynamic_parameters_advanced_use_cases.md) | Advanced dynamic parameters patterns and troubleshooting |  |

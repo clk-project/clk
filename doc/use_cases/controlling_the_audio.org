@@ -1,0 +1,113 @@
+:PROPERTIES:
+:ID:       7ffd3ae1-014c-4992-8902-ed044cb20b75
+:END:
+#+language: en
+#+EXPORT_FILE_NAME: ./controlling_the_audio.md
+#+SUBTITLE: Recording what an application plays, and tearing down the plumbing with clk.atexit
+
+#+CALL: ../../lp.org:check-result()
+
+#+name: init
+#+BEGIN_SRC bash :results none :exports none :session 7ffd3ae1-014c-4992-8902-ed044cb20b75
+  . ./sandboxing.sh
+#+END_SRC
+
+To record what an application plays, I cannot simply read from it. I add a sink
+of my own, move the application into it, and record from there. Whatever happens
+next, that plumbing has to go: leave it behind and the application keeps playing
+into a sink nobody listens to.
+
+I hand the function that tears it down to ~clk.atexit.register~, and clk calls it
+when it leaves, whether the command went well or not.
+
+Here the sound server is a couple of files, so that this page can run.
+
+#+NAME: current-routing
+#+BEGIN_SRC bash :results none :exports code :session 7ffd3ae1-014c-4992-8902-ed044cb20b75
+echo speakers > routing.txt
+#+END_SRC
+
+#+NAME: record-code
+#+BEGIN_SRC python :results none :exports code
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+
+from pathlib import Path
+
+import click
+
+from clk.atexit import register
+from clk.decorators import command, flag
+
+ROUTING = Path("routing.txt")
+PROXY = Path("proxy-sink.txt")
+
+
+def tear_down(sink):
+    ROUTING.write_text(f"{sink}\n")
+    PROXY.unlink()
+
+
+@command()
+@flag("--disk-full", help="Pretend the disk fills up while recording")
+def record(disk_full):
+    "Record what the music player plays"
+    sink = ROUTING.read_text().strip()
+    PROXY.write_text("loaded\n")
+    ROUTING.write_text("proxy\n")
+    register(tear_down, sink)
+    print(f"recording the music from the {ROUTING.read_text().strip()} sink")
+    if disk_full:
+        raise click.ClickException("no space left on device")
+#+END_SRC
+
+#+NAME: create-record
+#+BEGIN_SRC bash :results none :exports none :session 7ffd3ae1-014c-4992-8902-ed044cb20b75 :noweb yes
+clk command create python record --description "Record what the music player plays"
+cat<<'EOF' > "$(clk command which record)"
+<<record-code>>
+EOF
+#+END_SRC
+
+The recording takes the music through the proxy sink. Once the command is over,
+the music plays on the speakers again and the proxy sink is gone.
+
+#+NAME: run-record
+#+BEGIN_SRC bash :results verbatim :exports both :session 7ffd3ae1-014c-4992-8902-ed044cb20b75 :cache yes
+clk record
+cat routing.txt
+ls proxy-sink.txt 2>&1
+#+END_SRC
+
+#+RESULTS[]: run-record
+: recording the music from the proxy sink
+: speakers
+: ls: cannot access 'proxy-sink.txt': No such file or directory
+
+The recording may stop in the middle. The plumbing goes all the same.
+
+#+NAME: run-record-disk-full
+#+BEGIN_SRC bash :results verbatim :exports both :session 7ffd3ae1-014c-4992-8902-ed044cb20b75 :cache yes
+clk record --disk-full 2>&1
+cat routing.txt
+ls proxy-sink.txt 2>&1
+#+END_SRC
+
+#+RESULTS[]: run-record-disk-full
+: recording the music from the proxy sink
+: error: no space left on device
+: speakers
+: ls: cannot access 'proxy-sink.txt': No such file or directory
+
+#+BEGIN_SRC bash :exports none :tangle ../../tests/use_cases/controlling_the_audio.sh :noweb yes :shebang "#!/usr/bin/env bash"
+  set -eu
+<<init>>
+
+<<current-routing>>
+
+<<create-record>>
+
+check-result(run-record)
+
+check-result(run-record-disk-full)
+#+END_SRC

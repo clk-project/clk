@@ -188,7 +188,8 @@ looking for.
 
   [[file:choices.org][Choices]] for providing selection in commands. [[file:scrapping_the_web.org][Caching]] computation results to
   disk. [[file:fetching_and_displaying_json_data.org][Fetching and displaying JSON data]] with ~download~ and ~echo_json~.
-  Handling [[file:dealing_with_secrets.org][secrets]] in commands.
+  Handling [[file:dealing_with_secrets.org][secrets]] in commands. [[file:controlling_the_audio.org][Cleaning up]] what a command set up, with
+  ~clk.atexit~.
 
   The [[file:lib.org][clk.lib reference]] covers what has been documented so far.
 

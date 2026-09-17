@@ -153,7 +153,7 @@ clk tries hard to provide most of what you need in a generic command line tool.
 
 The bash library (\_clk.sh) provides [helpers](bash_command_built_in_lib.md) for creating friendly shell commands.
 
-[Choices](choices.md) for providing selection in commands. [Caching](scrapping_the_web.md) computation results to disk. [Fetching and displaying JSON data](fetching_and_displaying_json_data.md) with `download` and `echo_json`. Handling [secrets](dealing_with_secrets.md) in commands.
+[Choices](choices.md) for providing selection in commands. [Caching](scrapping_the_web.md) computation results to disk. [Fetching and displaying JSON data](fetching_and_displaying_json_data.md) with `download` and `echo_json`. Handling [secrets](dealing_with_secrets.md) in commands. [Cleaning up](controlling_the_audio.md) what a command set up, with `clk.atexit`.
 
 The [clk.lib reference](lib.md) covers what has been documented so far.
 
