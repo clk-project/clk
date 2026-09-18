@@ -287,6 +287,33 @@ staging, and ~deploy~ is a script living in the project. As for ~mytools~, it is
 still there and merely not loaded, which is the answer the day you go looking
 for a command that seems to have gone missing.
 
+* Settings clk does not know
+  :PROPERTIES:
+  :CUSTOM_ID: settings-clk-does-not-know
+  :END:
+
+Something else may have written in that file: a tool of yours, an older clk, a
+hand that slipped.
+
+#+NAME: unknown-setting
+#+BEGIN_SRC bash :results none :exports code :session a1b2c3d4-e5f6-7890-abcd-ef1234567890
+cat<<EOF >> .clk/clk.yaml
+weather:
+  today: rainy
+EOF
+#+END_SRC
+
+describe does not pretend it is not there.
+
+#+NAME: describe-unknown-setting
+#+BEGIN_SRC bash :results verbatim :exports both :session a1b2c3d4-e5f6-7890-abcd-ef1234567890 :cache yes
+clk describe local | tail -2
+#+END_SRC
+
+#+RESULTS[]: describe-unknown-setting
+:   deploy
+: I also found some settings that I cannot explain: weather. They might have been set by other plugins, custom commands or extensions.
+
 * Summary
   :PROPERTIES:
   :CUSTOM_ID: summary
@@ -343,4 +370,8 @@ check-result(list-commands)
 check-result(setup-value)
 
 check-result(describe-values)
+
+<<unknown-setting>>
+
+check-result(describe-unknown-setting)
 #+END_SRC

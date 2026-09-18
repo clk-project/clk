@@ -4,6 +4,7 @@
 - [Comparing profiles](#comparing-profiles)
 - [Discovering custom commands](#discovering-custom-commands)
 - [Coming back to a project you forgot](#coming-back-to-a-project-you-forgot)
+- [Settings clk does not know](#settings-clk-does-not-know)
 - [Summary](#summary)
 
 When you start using clk extensively, you might end up with many [aliases](bash_command_from_alias.md), [parameters](setting_default_values.md), [commands](bash_command.md), and [extensions](creating_extensions.md) spread across different profiles. The `clk describe` command helps you discover what features are available in any profile, making clk a self-documented tool.
@@ -225,6 +226,29 @@ clk describe local
       deploy
 
 Read it from the top and the project comes back to you: `build` and `test` are the shortcuts you wrote, `build` always runs verbose because you got tired of adding the option, `deploy-target` is what your deploy reads to know it goes to staging, and `deploy` is a script living in the project. As for `mytools`, it is still there and merely not loaded, which is the answer the day you go looking for a command that seems to have gone missing.
+
+
+<a id="settings-clk-does-not-know"></a>
+
+# Settings clk does not know
+
+Something else may have written in that file: a tool of yours, an older clk, a hand that slipped.
+
+```bash
+cat<<EOF >> .clk/clk.yaml
+weather:
+  today: rainy
+EOF
+```
+
+describe does not pretend it is not there.
+
+```bash
+clk describe local | tail -2
+```
+
+      deploy
+    I also found some settings that I cannot explain: weather. They might have been set by other plugins, custom commands or extensions.
 
 
 <a id="summary"></a>

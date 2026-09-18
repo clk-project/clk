@@ -442,4 +442,40 @@ else
         exit 1
     }
 fi
+
+
+cat<<EOF >> .clk/clk.yaml
+weather:
+  today: rainy
+EOF
+
+
+describe-unknown-setting_code () {
+      clk describe local | tail -2
+}
+
+describe-unknown-setting_expected () {
+      local expected
+      expected="$(cat<<"EOEXPECTED"
+  deploy
+I also found some settings that I cannot explain: weather. They might have been set by other plugins, custom commands or extensions.
+EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
+}
+
+echo 'Run describe-unknown-setting'
+
+{ describe-unknown-setting_code || true ; } > "${TMP}/code.txt" 2>&1
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/describe-unknown-setting"
+else
+    describe-unknown-setting_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying describe-unknown-setting"
+        exit 1
+    }
+fi
 # run ends here
