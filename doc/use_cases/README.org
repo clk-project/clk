@@ -24,6 +24,9 @@ looking for.
    If you find out that your bash command starts to become quite big, read [[file:bash_command_import.org][this]]
    to find out how to split your code.
 
+   For an argument that is a day, and that you would rather say than spell out,
+   see [[file:finding_recent_documents.org][finding recent documents]].
+
    Most of my bash commands start with simple aliases (see [[*aliases][aliases]]). You can
    read more about this way of thinking in [[file:bash_command_from_alias.org][here]]. The [[*standard library][standard library]] section
    covers the built-in helpers available in bash commands.

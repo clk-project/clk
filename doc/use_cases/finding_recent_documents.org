@@ -1,0 +1,101 @@
+:PROPERTIES:
+:ID:       25f8c49f-c030-4a45-8b6a-18f1cfffe542
+:END:
+#+language: en
+#+EXPORT_FILE_NAME: ./finding_recent_documents.md
+#+SUBTITLE: A bash command with a date argument, read written out or spoken
+
+#+CALL: ../../lp.org:check-result()
+
+#+name: init
+#+BEGIN_SRC bash :results none :exports none :session 25f8c49f-c030-4a45-8b6a-18f1cfffe542
+  . ./sandboxing.sh
+  init_faked_time
+#+END_SRC
+
+Everything you scan, download or write ends up in the same folder, and after a
+while you have no idea what landed there this week.
+
+#+NAME: some-documents
+#+BEGIN_SRC bash :results none :exports code :session 25f8c49f-c030-4a45-8b6a-18f1cfffe542
+mkdir documents && cd documents
+touch -d 2024-02-01 minutes.txt
+touch -d 2024-02-12 invoice.txt
+touch -d 2024-02-14 receipt.txt
+#+END_SRC
+
+A command answering "what is new since when?" needs a day to work from, and
+~date~ is the type for that.
+
+#+NAME: since-argument
+#+BEGIN_SRC bash :results none :exports code
+A:since:date:The day to look back to
+#+END_SRC
+
+clk hands your script the day it understood, in a shape ~date~ will take.
+
+#+NAME: find-body
+#+BEGIN_SRC bash :results none :exports code
+find . -maxdepth 1 -type f -newermt "$(date -d"$(clk_value since)" "+%Y-%m-%d")" -printf "%f\n" | sort
+#+END_SRC
+
+#+NAME: write-command
+#+BEGIN_SRC bash :results none :exports none :session 25f8c49f-c030-4a45-8b6a-18f1cfffe542 :noweb yes
+clk command create bash find-new-documents
+cat <<"EOH" > "$(clk command which find-new-documents)"
+#!/usr/bin/env bash
+  set -eu
+
+source "_clk.sh"
+
+clk_usage () {
+    cat<<EOF
+$0
+
+Find the documents touched since a day
+--
+<<since-argument>>
+EOF
+}
+
+clk_help_handler "$@"
+
+<<find-body>>
+
+EOH
+#+END_SRC
+
+Today is the 15th of February 2024. Here is what came in since the 10th.
+
+#+NAME: since-a-written-day
+#+BEGIN_SRC bash :results verbatim :exports both :session 25f8c49f-c030-4a45-8b6a-18f1cfffe542 :cache yes
+clk find-new-documents 2024-02-10
+#+END_SRC
+
+#+RESULTS[]: since-a-written-day
+: invoice.txt
+: receipt.txt
+
+You seldom think in dates, though. You think "since yesterday", and the type
+reads that too.
+
+#+NAME: since-yesterday
+#+BEGIN_SRC bash :results verbatim :exports both :session 25f8c49f-c030-4a45-8b6a-18f1cfffe542 :cache yes
+clk find-new-documents yesterday
+#+END_SRC
+
+#+RESULTS[]: since-yesterday
+: receipt.txt
+
+#+BEGIN_SRC bash :exports none :tangle ../../tests/use_cases/finding_recent_documents.sh :noweb yes :shebang "#!/usr/bin/env bash"
+  set -eu
+  <<init>>
+
+  <<some-documents>>
+
+  <<write-command>>
+
+  check-result(since-a-written-day)
+
+  check-result(since-yesterday)
+#+END_SRC

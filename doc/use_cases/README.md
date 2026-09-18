@@ -38,6 +38,8 @@ The basics are covered [here](bash_command.md). To get more into how to provide 
 
 If you find out that your bash command starts to become quite big, read [this](bash_command_import.md) to find out how to split your code.
 
+For an argument that is a day, and that you would rather say than spell out, see [finding recent documents](finding_recent_documents.md).
+
 Most of my bash commands start with simple aliases (see [aliases](#aliases)). You can read more about this way of thinking in [here](bash_command_from_alias.md). The [standard library](#standard-library) section covers the built-in helpers available in bash commands.
 
 
@@ -212,7 +214,7 @@ The [backing up documents](backing_up_documents.md) use case shows how to build 
 | [3D_printing_flow.md](3D_printing_flow.md) | Chaining commands into a workflow sequence using flows |  |
 | [alias_to_root.md](alias_to_root.md) |  |  |
 | [backing_up_documents.md](backing_up_documents.md) | Building a backup system with hierarchical commands, flows, parameters, and per-project configuration | CLK___DB,CLK___FILENAME,CLK___QUALITY,CLK___SOURCE |
-| [bash_command.md](bash_command.md) | Creating bash commands, clk_usage, clk_help_handler, source _clk.sh, exit codes, traps |  |
+| [bash_command.md](bash_command.md) | Creating bash commands, clk_usage, clk_help_handler, source _clk.sh, exit codes, traps | A:,CLK___NAME,clk_help_handler,clk_usage |
 | [bash_command_built_in_lib.md](bash_command_built_in_lib.md) | Built-in bash helpers: clk_drop_duplicate and other utilities in _clk.sh |  |
 | [bash_command_from_alias.md](bash_command_from_alias.md) | Wrapping CLI tools with aliases, then graduating to bash commands |  |
 | [bash_command_import.md](bash_command_import.md) | Sharing code between bash commands using clk_import and a lib directory | clk_help_handler,clk_import,clk_usage |
@@ -228,6 +230,7 @@ The [backing up documents](backing_up_documents.md) use case shows how to build 
 | [environment_deployment.md](environment_deployment.md) | Auto-detecting deployment target from context (e.g. git branch) with explicit overrides, get_parameter_source |  |
 | [ethereum_local_environment_dev_tool.md](ethereum_local_environment_dev_tool.md) | Using clk commands as parameters in other commands (Ethereum dev tool example) |  |
 | [fetching_and_displaying_json_data.md](fetching_and_displaying_json_data.md) | Fetching JSON from APIs and displaying with syntax highlighting, download, echo_json |  |
+| [finding_recent_documents.md](finding_recent_documents.md) | A bash command with a date argument, read written out or spoken | A:,clk_help_handler,clk_usage,clk_value |
 | [global_workflow_local_implementation.md](global_workflow_local_implementation.md) | Defining workflows globally while letting each project supply its own implementation |  |
 | [ipfs_name_publish.md](ipfs_name_publish.md) | Using bash commands to create completion for other commands (IPFS example) | A:,clk_help_handler,clk_list_to_choice,clk_usage,clk_value |
 | [lib.md](lib.md) | Reference for clk.lib Python helpers (download, echo_json, etc.) |  |
@@ -245,12 +248,13 @@ The [backing up documents](backing_up_documents.md) use case shows how to build 
 
 ## Keyword index
 
-- `A:` : [bash_command_use_option.md](bash_command_use_option.md), [ipfs_name_publish.md](ipfs_name_publish.md), [send_sms.md](send_sms.md)
+- `A:` : [bash_command.md](bash_command.md), [bash_command_use_option.md](bash_command_use_option.md), [finding_recent_documents.md](finding_recent_documents.md), [ipfs_name_publish.md](ipfs_name_publish.md), [send_sms.md](send_sms.md)
 - `CLK___ARGS` : [wrapping_a_cloud_provider_cli.md](wrapping_a_cloud_provider_cli.md)
 - `CLK___DB` : [backing_up_documents.md](backing_up_documents.md)
 - `CLK___DESTINATION` : [wrapping_a_cloud_provider_cli.md](wrapping_a_cloud_provider_cli.md)
 - `CLK___FILENAME` : [backing_up_documents.md](backing_up_documents.md)
 - `CLK___KIND_OF_ANIMAL` : [bash_command_use_option.md](bash_command_use_option.md)
+- `CLK___NAME` : [bash_command.md](bash_command.md)
 - `CLK___PATH` : [wrapping_a_cloud_provider_cli.md](wrapping_a_cloud_provider_cli.md)
 - `CLK___QUALITY` : [backing_up_documents.md](backing_up_documents.md)
 - `CLK___REPEAT` : [bash_command_use_option.md](bash_command_use_option.md)
@@ -261,9 +265,9 @@ The [backing up documents](backing_up_documents.md) use case shows how to build 
 - `clk_extension_hello` : [creating_extensions.md](creating_extensions.md)
 - `clk_format_choice` : [bash_command_use_option.md](bash_command_use_option.md)
 - `clk_given` : [bash_command_use_option.md](bash_command_use_option.md)
-- `clk_help_handler` : [bash_command_import.md](bash_command_import.md), [bash_command_use_option.md](bash_command_use_option.md), [ipfs_name_publish.md](ipfs_name_publish.md), [podcast_automation.md](podcast_automation.md), [send_sms.md](send_sms.md)
+- `clk_help_handler` : [bash_command.md](bash_command.md), [bash_command_import.md](bash_command_import.md), [bash_command_use_option.md](bash_command_use_option.md), [finding_recent_documents.md](finding_recent_documents.md), [ipfs_name_publish.md](ipfs_name_publish.md), [podcast_automation.md](podcast_automation.md), [send_sms.md](send_sms.md)
 - `clk_import` : [bash_command_import.md](bash_command_import.md), [send_sms.md](send_sms.md)
 - `clk_list_to_choice` : [ipfs_name_publish.md](ipfs_name_publish.md), [send_sms.md](send_sms.md)
 - `clk_true` : [bash_command_use_option.md](bash_command_use_option.md)
-- `clk_usage` : [bash_command_import.md](bash_command_import.md), [bash_command_use_option.md](bash_command_use_option.md), [ipfs_name_publish.md](ipfs_name_publish.md), [podcast_automation.md](podcast_automation.md), [send_sms.md](send_sms.md)
-- `clk_value` : [bash_command_use_option.md](bash_command_use_option.md), [ipfs_name_publish.md](ipfs_name_publish.md), [podcast_automation.md](podcast_automation.md), [send_sms.md](send_sms.md)
+- `clk_usage` : [bash_command.md](bash_command.md), [bash_command_import.md](bash_command_import.md), [bash_command_use_option.md](bash_command_use_option.md), [finding_recent_documents.md](finding_recent_documents.md), [ipfs_name_publish.md](ipfs_name_publish.md), [podcast_automation.md](podcast_automation.md), [send_sms.md](send_sms.md)
+- `clk_value` : [bash_command_use_option.md](bash_command_use_option.md), [finding_recent_documents.md](finding_recent_documents.md), [ipfs_name_publish.md](ipfs_name_publish.md), [podcast_automation.md](podcast_automation.md), [send_sms.md](send_sms.md)

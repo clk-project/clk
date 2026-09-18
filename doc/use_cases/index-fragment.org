@@ -26,6 +26,7 @@
 | [environment_deployment.md](environment_deployment.md) | Auto-detecting deployment target from context (e.g. git branch) with explicit overrides, get_parameter_source |  |
 | [ethereum_local_environment_dev_tool.md](ethereum_local_environment_dev_tool.md) | Using clk commands as parameters in other commands (Ethereum dev tool example) |  |
 | [fetching_and_displaying_json_data.md](fetching_and_displaying_json_data.md) | Fetching JSON from APIs and displaying with syntax highlighting, download, echo_json |  |
+| [finding_recent_documents.md](finding_recent_documents.md) | A bash command with a date argument, read written out or spoken | A:,clk_help_handler,clk_usage,clk_value |
 | [global_workflow_local_implementation.md](global_workflow_local_implementation.md) | Defining workflows globally while letting each project supply its own implementation |  |
 | [ipfs_name_publish.md](ipfs_name_publish.md) | Using bash commands to create completion for other commands (IPFS example) | A:,clk_help_handler,clk_list_to_choice,clk_usage,clk_value |
 | [lib.md](lib.md) | Reference for clk.lib Python helpers (download, echo_json, etc.) |  |
@@ -43,7 +44,7 @@
 
 ## Keyword index
 
-- `A:` : [bash_command.md](bash_command.md), [bash_command_use_option.md](bash_command_use_option.md), [ipfs_name_publish.md](ipfs_name_publish.md), [send_sms.md](send_sms.md)
+- `A:` : [bash_command.md](bash_command.md), [bash_command_use_option.md](bash_command_use_option.md), [finding_recent_documents.md](finding_recent_documents.md), [ipfs_name_publish.md](ipfs_name_publish.md), [send_sms.md](send_sms.md)
 - `CLK___ARGS` : [wrapping_a_cloud_provider_cli.md](wrapping_a_cloud_provider_cli.md)
 - `CLK___DB` : [backing_up_documents.md](backing_up_documents.md)
 - `CLK___DESTINATION` : [wrapping_a_cloud_provider_cli.md](wrapping_a_cloud_provider_cli.md)
@@ -60,10 +61,10 @@
 - `clk_extension_hello` : [creating_extensions.md](creating_extensions.md)
 - `clk_format_choice` : [bash_command_use_option.md](bash_command_use_option.md)
 - `clk_given` : [bash_command_use_option.md](bash_command_use_option.md)
-- `clk_help_handler` : [bash_command.md](bash_command.md), [bash_command_import.md](bash_command_import.md), [bash_command_use_option.md](bash_command_use_option.md), [ipfs_name_publish.md](ipfs_name_publish.md), [podcast_automation.md](podcast_automation.md), [send_sms.md](send_sms.md)
+- `clk_help_handler` : [bash_command.md](bash_command.md), [bash_command_import.md](bash_command_import.md), [bash_command_use_option.md](bash_command_use_option.md), [finding_recent_documents.md](finding_recent_documents.md), [ipfs_name_publish.md](ipfs_name_publish.md), [podcast_automation.md](podcast_automation.md), [send_sms.md](send_sms.md)
 - `clk_import` : [bash_command_import.md](bash_command_import.md), [send_sms.md](send_sms.md)
 - `clk_list_to_choice` : [ipfs_name_publish.md](ipfs_name_publish.md), [send_sms.md](send_sms.md)
 - `clk_true` : [bash_command_use_option.md](bash_command_use_option.md)
-- `clk_usage` : [bash_command.md](bash_command.md), [bash_command_import.md](bash_command_import.md), [bash_command_use_option.md](bash_command_use_option.md), [ipfs_name_publish.md](ipfs_name_publish.md), [podcast_automation.md](podcast_automation.md), [send_sms.md](send_sms.md)
-- `clk_value` : [bash_command_use_option.md](bash_command_use_option.md), [ipfs_name_publish.md](ipfs_name_publish.md), [podcast_automation.md](podcast_automation.md), [send_sms.md](send_sms.md)
+- `clk_usage` : [bash_command.md](bash_command.md), [bash_command_import.md](bash_command_import.md), [bash_command_use_option.md](bash_command_use_option.md), [finding_recent_documents.md](finding_recent_documents.md), [ipfs_name_publish.md](ipfs_name_publish.md), [podcast_automation.md](podcast_automation.md), [send_sms.md](send_sms.md)
+- `clk_value` : [bash_command_use_option.md](bash_command_use_option.md), [finding_recent_documents.md](finding_recent_documents.md), [ipfs_name_publish.md](ipfs_name_publish.md), [podcast_automation.md](podcast_automation.md), [send_sms.md](send_sms.md)
 #+end_export
