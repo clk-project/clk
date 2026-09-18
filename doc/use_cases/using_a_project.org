@@ -342,6 +342,80 @@ cd .. && clk release-notes ; cd myprojet
 : ./clk-root/bin/release-notes
 : gathering the commits since the last tag
 
+Now that it answers everywhere, I want a copy of it back in the project, one I
+can cut about without touching the real one. ~clk command copy~ takes the
+profile to copy into and the name to give it there.
+
+#+NAME: copy_release_notes
+#+BEGIN_SRC bash :results verbatim :exports both :session 6de55de4-c0b3-41d6-952a-25e0fe06c881 :cache yes
+clk command copy release-notes local release-notes-draft
+clk command which release-notes-draft
+#+END_SRC
+
+#+RESULTS[]: copy_release_notes
+: ./.clk/bin/release-notes-draft
+
+Some days later I forget the draft is there and ask for the copy again. clk
+stops me rather than write over the work I have been doing.
+
+#+NAME: copy_release_notes_again
+#+BEGIN_SRC bash :results verbatim :exports both :session 6de55de4-c0b3-41d6-952a-25e0fe06c881 :cache yes
+clk command copy release-notes local release-notes-draft
+#+END_SRC
+
+#+RESULTS[]: copy_release_notes_again
+: Usage: clk command copy [OPTIONS] CUSTOMCOMMAND PROFILE NAME
+: error: I won't overwrite ./.clk/bin/release-notes-draft unless explicitly called with --force
+
+When throwing the draft away is what I want, I say so.
+
+#+NAME: copy_release_notes_forced
+#+BEGIN_SRC bash :results verbatim :exports both :session 6de55de4-c0b3-41d6-952a-25e0fe06c881 :cache yes
+clk command copy release-notes local release-notes-draft --force
+clk release-notes-draft
+#+END_SRC
+
+#+RESULTS[]: copy_release_notes_forced
+: gathering the commits since the last tag
+
+* a project written by an older clk
+  :PROPERTIES:
+  :CUSTOM_ID: a-project-written-by-an-older-clk
+  :END:
+
+Until version 8, clk kept the settings of a profile in json. A project written
+back then is migrated the first time you use it, and its settings become yaml.
+
+#+NAME: old_project
+#+BEGIN_SRC bash :results none :exports code :session 6de55de4-c0b3-41d6-952a-25e0fe06c881
+mkdir -p ../oldproject/.clk
+echo 8 > ../oldproject/.clk/version.txt
+cat<<'EOF' > ../oldproject/.clk/clk.json
+{
+    "alias": {
+        "hello": {
+            "commands": [["echo", "hello"]],
+            "documentation": null
+        }
+    }
+}
+EOF
+#+END_SRC
+
+#+NAME: run_old_project
+#+BEGIN_SRC bash :results verbatim :exports both :session 6de55de4-c0b3-41d6-952a-25e0fe06c881 :cache yes
+cd ../oldproject
+clk alias show 2>&1
+ls .clk
+cd ../myprojet
+#+END_SRC
+
+#+RESULTS[]: run_old_project
+: warning: Profile in ./.clk is obsolete. It has the version 8 and current version is 9. Migration started.
+: hello echo hello
+: clk.yaml
+: version.txt
+
 * a project written by a newer clk
   :PROPERTIES:
   :CUSTOM_ID: a-project-written-by-a-newer-clk
@@ -432,6 +506,16 @@ check-result(run_flow)
 check-result(where_release_notes)
 
 check-result(move_release_notes)
+
+check-result(copy_release_notes)
+
+check-result(copy_release_notes_again)
+
+check-result(copy_release_notes_forced)
+
+<<old_project>>
+
+check-result(run_old_project)
 
 <<project_from_the_future>>
 

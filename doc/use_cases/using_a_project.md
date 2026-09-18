@@ -218,6 +218,33 @@ cd .. && clk release-notes ; cd myprojet
     ./clk-root/bin/release-notes
     gathering the commits since the last tag
 
+Now that it answers everywhere, I want a copy of it back in the project, one I can cut about without touching the real one. `clk command copy` takes the profile to copy into and the name to give it there.
+
+```bash
+clk command copy release-notes local release-notes-draft
+clk command which release-notes-draft
+```
+
+    ./.clk/bin/release-notes-draft
+
+Some days later I forget the draft is there and ask for the copy again. clk stops me rather than write over the work I have been doing.
+
+```bash
+clk command copy release-notes local release-notes-draft
+```
+
+    Usage: clk command copy [OPTIONS] CUSTOMCOMMAND PROFILE NAME
+    error: I won't overwrite ./.clk/bin/release-notes-draft unless explicitly called with --force
+
+When throwing the draft away is what I want, I say so.
+
+```bash
+clk command copy release-notes local release-notes-draft --force
+clk release-notes-draft
+```
+
+    gathering the commits since the last tag
+
 
 <a id="a-project-written-by-a-newer-clk"></a>
 

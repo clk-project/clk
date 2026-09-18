@@ -478,6 +478,128 @@ exit 1
 }
 
 
+
+copy_release_notes_code () {
+      clk command copy release-notes local release-notes-draft
+      clk command which release-notes-draft
+}
+
+copy_release_notes_expected () {
+      local expected
+      expected="$(cat<<"EOEXPECTED"
+./.clk/bin/release-notes-draft
+EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
+}
+
+echo 'Run copy_release_notes'
+
+{ copy_release_notes_code || true ; } > "${TMP}/code.txt" 2>&1
+copy_release_notes_expected > "${TMP}/expected.txt" 2>&1
+diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+echo "Something went wrong when trying copy_release_notes"
+exit 1
+}
+
+
+
+copy_release_notes_again_code () {
+      clk command copy release-notes local release-notes-draft
+}
+
+copy_release_notes_again_expected () {
+      local expected
+      expected="$(cat<<"EOEXPECTED"
+Usage: clk command copy [OPTIONS] CUSTOMCOMMAND PROFILE NAME
+error: I won't overwrite ./.clk/bin/release-notes-draft unless explicitly called with --force
+EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
+}
+
+echo 'Run copy_release_notes_again'
+
+{ copy_release_notes_again_code || true ; } > "${TMP}/code.txt" 2>&1
+copy_release_notes_again_expected > "${TMP}/expected.txt" 2>&1
+diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+echo "Something went wrong when trying copy_release_notes_again"
+exit 1
+}
+
+
+
+copy_release_notes_forced_code () {
+      clk command copy release-notes local release-notes-draft --force
+      clk release-notes-draft
+}
+
+copy_release_notes_forced_expected () {
+      local expected
+      expected="$(cat<<"EOEXPECTED"
+gathering the commits since the last tag
+EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
+}
+
+echo 'Run copy_release_notes_forced'
+
+{ copy_release_notes_forced_code || true ; } > "${TMP}/code.txt" 2>&1
+copy_release_notes_forced_expected > "${TMP}/expected.txt" 2>&1
+diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+echo "Something went wrong when trying copy_release_notes_forced"
+exit 1
+}
+
+
+mkdir -p ../oldproject/.clk
+echo 8 > ../oldproject/.clk/version.txt
+cat<<'EOF' > ../oldproject/.clk/clk.json
+{
+    "alias": {
+        "hello": {
+            "commands": [["echo", "hello"]],
+            "documentation": null
+        }
+    }
+}
+EOF
+
+
+run_old_project_code () {
+      cd ../oldproject
+      clk alias show 2>&1
+      ls .clk
+      cd ../myprojet
+}
+
+run_old_project_expected () {
+      local expected
+      expected="$(cat<<"EOEXPECTED"
+warning: Profile in ./.clk is obsolete. It has the version 8 and current version is 9. Migration started.
+hello echo hello
+clk.yaml
+version.txt
+EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
+}
+
+echo 'Run run_old_project'
+
+{ run_old_project_code || true ; } > "${TMP}/code.txt" 2>&1
+run_old_project_expected > "${TMP}/expected.txt" 2>&1
+diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+echo "Something went wrong when trying run_old_project"
+exit 1
+}
+
+
 echo 99 > .clk/version.txt
 
 
