@@ -769,4 +769,37 @@ else
         exit 1
     }
 fi
+
+
+echo 9 > .clk/version.txt
+echo 'parameters: [oops' > .clk/clk.yaml
+
+
+run_with_broken_settings_code () {
+      clk alias show 2>&1
+}
+
+run_with_broken_settings_expected () {
+      local expected
+      expected="$(cat<<"EOEXPECTED"
+warning: Can't read settings from ./.clk/clk.yaml
+EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
+}
+
+echo 'Run run_with_broken_settings'
+
+{ run_with_broken_settings_code || true ; } > "${TMP}/code.txt" 2>&1
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/run_with_broken_settings"
+else
+    run_with_broken_settings_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying run_with_broken_settings"
+        exit 1
+    }
+fi
 # run ends here

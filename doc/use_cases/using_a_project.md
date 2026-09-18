@@ -1,6 +1,7 @@
 - [running project scripts](#running-project-scripts)
 - [a command that outgrew the project](#a-command-that-outgrew-the-project)
 - [a project written by a newer clk](#a-project-written-by-a-newer-clk)
+- [settings you broke by hand](#settings-you-broke-by-hand)
 
 When working in project, it is useful to have a way to tell where the root of the project is.
 
@@ -275,3 +276,23 @@ clk alias show 2>&1 | head -2
 
     Usage: clk [OPTIONS] [COMMAND] [ARGS]...
     error: The profile at location ./.clk is at version 1. I can only migrate profiles from version 8 on. Migrate it manually, or ask for help on https://github.com/clk-project/clk/issues/new .
+
+
+<a id="settings-you-broke-by-hand"></a>
+
+# settings you broke by hand
+
+Settings are a file like any other, and one day you edit it and leave it in a state no yaml reader can make sense of.
+
+```bash
+echo 9 > .clk/version.txt
+echo 'parameters: [oops' > .clk/clk.yaml
+```
+
+clk says so and carries on with nothing, rather than stopping you in your tracks.
+
+```bash
+clk alias show 2>&1
+```
+
+    warning: Can't read settings from ./.clk/clk.yaml
