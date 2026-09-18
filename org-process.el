@@ -1,4 +1,20 @@
-;;; org-setup.el --- The org clk tangles, exports and names headings with -*- lexical-binding: t; -*-
+;;; org-process.el --- Name, tangle and export the org files of clk -*- lexical-binding: t; -*-
+
+;; org-process.sh loads this file and leaves behind it the org files to work
+;; on.  The whole run happens in this one emacs: every heading gets a
+;; CUSTOM_ID, the blocks are tangled, and the file is exported to markdown.
+
+(defconst clk-org-root
+  (file-name-directory (or load-file-name buffer-file-name))
+  "The clk checkout this file lives in.")
+
+(defconst clk-org-lisp-dir
+  (expand-file-name ".tangle-deps/org/lisp" clk-org-root)
+  "The lisp of the org-mode org-process.sh pinned.")
+
+(defconst clk-org-gfm-dir
+  (expand-file-name ".tangle-deps/ox-gfm" clk-org-root)
+  "The ox-gfm org-process.sh pinned, the markdown the committed files use.")
 
 ;; Provide CL functions used in lp.org's elisp block
 (unless (fboundp 'first) (defalias 'first #'car))
@@ -17,19 +33,27 @@
 ;; Write drawers under their heading the way the org files already have them
 (setq org-adapt-indentation t)
 
-;; Load pinned org-mode from .tangle-deps BEFORE anything else loads the
-;; built-in org.  This must happen before (require 'ob-shell) since that
-;; transitively loads org.
-(let ((org-lisp-dir
-       (expand-file-name ".tangle-deps/org/lisp"
-                         (file-name-directory (or load-file-name buffer-file-name)))))
-  (when (file-directory-p org-lisp-dir)
-    (push org-lisp-dir load-path)
-    (let ((contrib (expand-file-name "../contrib/lisp" org-lisp-dir)))
-      (when (file-directory-p contrib)
-        (push contrib load-path)))
-    ;; Force load of pinned org (unload built-in if already loaded)
-    (require 'org)))
+;; org.el loads org-loaddefs, which the org repository does not keep under
+;; version control: write it the first time the clone is used
+(let ((loaddefs (expand-file-name "org-loaddefs.el" clk-org-lisp-dir)))
+  (when (and (file-directory-p clk-org-lisp-dir)
+             (not (file-exists-p loaddefs)))
+    (message "Writing %s..." loaddefs)
+    (require 'loaddefs-gen nil t)
+    (if (fboundp 'loaddefs-generate)
+        (loaddefs-generate clk-org-lisp-dir loaddefs)
+      (require 'autoload)
+      (let ((generated-autoload-file loaddefs))
+        (update-directory-autoloads clk-org-lisp-dir)))))
+
+;; Load the pinned org-mode BEFORE anything else loads the built-in org.  This
+;; must happen before (require 'ob-shell) since that transitively loads org.
+(when (file-directory-p clk-org-lisp-dir)
+  (push clk-org-lisp-dir load-path)
+  (let ((contrib (expand-file-name "../contrib/lisp" clk-org-lisp-dir)))
+    (when (file-directory-p contrib)
+      (push contrib load-path)))
+  (require 'org))
 
 ;; Load babel languages needed for tangling
 (require 'ob-shell)
@@ -147,4 +171,48 @@ markdown differs every time for no reason."
            (push id taken)
            (org-entry-put nil "CUSTOM_ID" id)))))))
 
-;;; org-setup.el ends here
+(defvar clk-org-written nil
+  "The files this run wrote, tangled and exported alike.")
+
+(defun clk-org--mentions (regexp)
+  "Say whether the current buffer holds REGEXP anywhere."
+  (save-excursion
+    (goto-char (point-min))
+    (re-search-forward regexp nil t)))
+
+(defun clk-org-process-file (file)
+  "Name the headings of FILE, then tangle and export it as it asks for."
+  (message "Processing %s..." file)
+  (with-current-buffer (find-file-noselect file)
+    (clk-add-custom-ids)
+    (when (buffer-modified-p)
+      (save-buffer))
+    (when (clk-org--mentions ":tangle")
+      (let ((tangled (org-babel-tangle)))
+        (unless tangled
+          (error "Tangling %s wrote nothing" file))
+        (setq clk-org-written
+              (append clk-org-written (mapcar #'expand-file-name tangled)))))
+    (when (clk-org--mentions "^[ \t]*#\\+EXPORT_FILE_NAME:")
+      (push clk-org-gfm-dir load-path)
+      (require 'ox-gfm)
+      (let ((exported (org-gfm-export-to-markdown)))
+        (unless (and exported (file-exists-p exported))
+          (error "Exporting %s wrote nothing" file))
+        (setq clk-org-written
+              (append clk-org-written (list (expand-file-name exported))))))
+    (set-buffer-modified-p nil)
+    (kill-buffer)))
+
+;; What org-process.sh left on the command line is the org files to work on
+(let ((files command-line-args-left)
+      (written (getenv "CLK_ORG_WRITTEN")))
+  (setq command-line-args-left nil)
+  (dolist (file files)
+    (clk-org-process-file file))
+  (when written
+    (with-temp-file written
+      (dolist (f clk-org-written)
+        (insert f "\n")))))
+
+;;; org-process.el ends here
