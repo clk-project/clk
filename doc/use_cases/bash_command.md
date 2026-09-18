@@ -1,3 +1,5 @@
+- [when clk cannot read what you wrote](#when-clk-cannot-read-what-you-wrote)
+
 To create a bash command, you can simply call the following command.
 
 ```bash
@@ -162,3 +164,58 @@ When starting this command and then killing it with Ctrl-C, you will get.
     ^Ccleaning
 
     Aborted!
+
+
+<a id="when-clk-cannot-read-what-you-wrote"></a>
+
+# when clk cannot read what you wrote
+
+The lines under the `--` have a shape. Get one wrong and clk says which shape it wanted.
+
+```bash
+clk command create bash greet --description "Greet someone"
+cat<<'EOF' > "$(clk command which greet)"
+#!/usr/bin/env bash
+set -eu
+
+source "_clk.sh"
+
+clk_usage () {
+    cat<<EOS
+$0
+
+Greet someone
+--
+A:name
+EOS
+}
+
+clk_help_handler "$@"
+
+echo "Hello ${CLK___NAME}"
+EOF
+```
+
+```bash
+clk greet World 2>&1 | head -1
+```
+
+    warning: When loading command greet at path ./clk-root/bin/greet: Expected format in greet is A:name:type:help[:{someextrajsondata}], got A:name
+
+A command whose `--help` does not answer at all is not hidden either: it is shown, and said to be broken.
+
+```bash
+clk command create bash broken --body "exit 1" --description "Broken"
+cat<<'EOF' > "$(clk command which broken)"
+#!/usr/bin/env bash
+exit 1
+EOF
+```
+
+```bash
+clk broken --help | head -3
+```
+
+    Usage: clk broken [OPTIONS]
+
+      No help found... (the command is most likely broken)

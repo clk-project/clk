@@ -236,6 +236,69 @@ EOF
   : Aborted!
 
 
+* when clk cannot read what you wrote
+  :PROPERTIES:
+  :CUSTOM_ID: when-clk-cannot-read-what-you-wrote
+  :END:
+
+The lines under the ~--~ have a shape. Get one wrong and clk says which shape it
+wanted.
+
+#+NAME: write-bad-usage
+#+BEGIN_SRC bash :results none :exports code :session 85c8e385-7f24-48ac-9a85-30cfc354aebf
+clk command create bash greet --description "Greet someone"
+cat<<'EOF' > "$(clk command which greet)"
+#!/usr/bin/env bash
+set -eu
+
+source "_clk.sh"
+
+clk_usage () {
+    cat<<EOS
+$0
+
+Greet someone
+--
+A:name
+EOS
+}
+
+clk_help_handler "$@"
+
+echo "Hello ${CLK___NAME}"
+EOF
+#+END_SRC
+
+#+NAME: run-bad-usage
+#+BEGIN_SRC bash :results verbatim :exports both :session 85c8e385-7f24-48ac-9a85-30cfc354aebf :cache yes
+clk greet World 2>&1 | head -1
+#+END_SRC
+
+#+RESULTS[]: run-bad-usage
+: warning: When loading command greet at path ./clk-root/bin/greet: Expected format in greet is A:name:type:help[:{someextrajsondata}], got A:name
+
+A command whose ~--help~ does not answer at all is not hidden either: it is
+shown, and said to be broken.
+
+#+NAME: write-broken-command
+#+BEGIN_SRC bash :results none :exports code :session 85c8e385-7f24-48ac-9a85-30cfc354aebf
+clk command create bash broken --body "exit 1" --description "Broken"
+cat<<'EOF' > "$(clk command which broken)"
+#!/usr/bin/env bash
+exit 1
+EOF
+#+END_SRC
+
+#+NAME: run-broken-command
+#+BEGIN_SRC bash :results verbatim :exports both :session 85c8e385-7f24-48ac-9a85-30cfc354aebf :cache yes
+clk broken --help | head -3
+#+END_SRC
+
+#+RESULTS[]: run-broken-command
+: Usage: clk broken [OPTIONS]
+:
+:   No help found... (the command is most likely broken)
+
 #+BEGIN_SRC bash :exports none :tangle ../../tests/use_cases/bash_command.sh :noweb yes :shebang "#!/usr/bin/env bash"
   set -eu
 <<init>>
@@ -265,4 +328,12 @@ check-result(exit-5)
 <<generate_expect_clean_test>>
 
 check-result(clean-test-expect)
+
+<<write-bad-usage>>
+
+check-result(run-bad-usage)
+
+<<write-broken-command>>
+
+check-result(run-broken-command)
 #+END_SRC

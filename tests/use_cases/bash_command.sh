@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# [[file:../../doc/use_cases/tests/use_cases/bash_command.sh :noweb yes :shebang "#!/usr/bin/env bash"][No heading:17]]
+# [[file:../../doc/use_cases/bash_command.org::#when-clk-cannot-read-what-you-wrote][when clk cannot read what you wrote:5]]
 set -eu
 . ./sandboxing.sh
 
@@ -298,4 +298,94 @@ else
         exit 1
     }
 fi
-# No heading:17 ends here
+
+
+clk command create bash greet --description "Greet someone"
+cat<<'EOF' > "$(clk command which greet)"
+#!/usr/bin/env bash
+set -eu
+
+source "_clk.sh"
+
+clk_usage () {
+    cat<<EOS
+$0
+
+Greet someone
+--
+A:name
+EOS
+}
+
+clk_help_handler "$@"
+
+echo "Hello ${CLK___NAME}"
+EOF
+
+
+run-bad-usage_code () {
+      clk greet World 2>&1 | head -1
+}
+
+run-bad-usage_expected () {
+      local expected
+      expected="$(cat<<"EOEXPECTED"
+warning: When loading command greet at path ./clk-root/bin/greet: Expected format in greet is A:name:type:help[:{someextrajsondata}], got A:name
+EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
+}
+
+echo 'Run run-bad-usage'
+
+{ run-bad-usage_code || true ; } > "${TMP}/code.txt" 2>&1
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/run-bad-usage"
+else
+    run-bad-usage_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying run-bad-usage"
+        exit 1
+    }
+fi
+
+
+clk command create bash broken --body "exit 1" --description "Broken"
+cat<<'EOF' > "$(clk command which broken)"
+#!/usr/bin/env bash
+exit 1
+EOF
+
+
+run-broken-command_code () {
+      clk broken --help | head -3
+}
+
+run-broken-command_expected () {
+      local expected
+      expected="$(cat<<"EOEXPECTED"
+Usage: clk broken [OPTIONS]
+
+  No help found... (the command is most likely broken)
+EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
+}
+
+echo 'Run run-broken-command'
+
+{ run-broken-command_code || true ; } > "${TMP}/code.txt" 2>&1
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/run-broken-command"
+else
+    run-broken-command_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying run-broken-command"
+        exit 1
+    }
+fi
+# when clk cannot read what you wrote:5 ends here
