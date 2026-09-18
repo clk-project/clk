@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# [[file:../../doc/use_cases/using_a_plugin.org::#listing-triggers-name-only][listing triggers with --name-only:3]]
+# [[file:../../doc/use_cases/using_a_plugin.org::#writing-one-of-your-own][writing one of your own:6]]
 set -eu
 . ./sandboxing.sh
 
@@ -246,4 +246,97 @@ else
         exit 1
     }
 fi
-# listing triggers with --name-only:3 ends here
+
+
+clk plugin create global greet --description "Say hello on load"
+
+
+which_plugin_code () {
+      clk plugin which global greet
+}
+
+which_plugin_expected () {
+      local expected
+      expected="$(cat<<"EOEXPECTED"
+./clk-root/plugins/greet.py
+EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
+}
+
+echo 'Run which_plugin'
+
+{ which_plugin_code || true ; } > "${TMP}/code.txt" 2>&1
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/which_plugin"
+else
+    which_plugin_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying which_plugin"
+        exit 1
+    }
+fi
+
+
+
+create_plugin_again_code () {
+      clk plugin create global greet --description "Say hello on load"
+}
+
+create_plugin_again_expected () {
+      local expected
+      expected="$(cat<<"EOEXPECTED"
+Usage: clk plugin create [OPTIONS] PROFILE_SOURCE NEW_NAME
+error: Won't overwrite ./clk-root/plugins/greet.py unless explicitly asked so with --force
+EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
+}
+
+echo 'Run create_plugin_again'
+
+{ create_plugin_again_code || true ; } > "${TMP}/code.txt" 2>&1
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/create_plugin_again"
+else
+    create_plugin_again_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying create_plugin_again"
+        exit 1
+    }
+fi
+
+
+
+try_plugin_completion_code () {
+      clk completion try --last plugin which global g
+}
+
+try_plugin_completion_expected () {
+      local expected
+      expected="$(cat<<"EOEXPECTED"
+greet
+EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
+}
+
+echo 'Run try_plugin_completion'
+
+{ try_plugin_completion_code || true ; } > "${TMP}/code.txt" 2>&1
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/try_plugin_completion"
+else
+    try_plugin_completion_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying try_plugin_completion"
+        exit 1
+    }
+fi
+# writing one of your own:6 ends here

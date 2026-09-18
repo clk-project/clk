@@ -102,6 +102,9 @@ cat <<EOF > "${TMP}/clk-distribution/clk.json"
         "command.create.bash": [
             "--no-open",
             "--force"
+        ],
+        "plugin.create": [
+            "--no-open"
         ]
     },
   "value": {

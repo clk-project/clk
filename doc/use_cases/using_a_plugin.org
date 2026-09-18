@@ -236,6 +236,53 @@ clk trigger show pre --name-only
 : cmd1
 : cmd2
 
+* writing one of your own
+  :PROPERTIES:
+  :CUSTOM_ID: writing-one-of-your-own
+  :END:
+
+Copying a file into the plugins directory works, but clk can lay it out for you,
+in the profile you name.
+
+#+NAME: create_plugin
+#+BEGIN_SRC bash :results none :exports code :session a197f802-e04c-40a2-8bfa-bc96ba703252
+clk plugin create global greet --description "Say hello on load"
+#+END_SRC
+
+#+NAME: which_plugin
+#+BEGIN_SRC bash :results verbatim :exports both :session a197f802-e04c-40a2-8bfa-bc96ba703252 :cache yes
+clk plugin which global greet
+#+END_SRC
+
+#+RESULTS[]: which_plugin
+: ./clk-root/plugins/greet.py
+
+Ask for it again and clk will not write over what you have put in it since.
+
+#+NAME: create_plugin_again
+#+BEGIN_SRC bash :results verbatim :exports both :session a197f802-e04c-40a2-8bfa-bc96ba703252 :cache yes
+clk plugin create global greet --description "Say hello on load"
+#+END_SRC
+
+#+RESULTS[]: create_plugin_again
+: Usage: clk plugin create [OPTIONS] PROFILE_SOURCE NEW_NAME
+: error: Won't overwrite ./clk-root/plugins/greet.py unless explicitly asked so with --force
+
+Their names complete, so you never have to remember them.
+
+#+NAME: ask_plugin_completion
+#+BEGIN_SRC bash :results none :exports code
+clk plugin which global g<TAB>
+#+END_SRC
+
+#+NAME: try_plugin_completion
+#+BEGIN_SRC bash :results verbatim :exports results :session a197f802-e04c-40a2-8bfa-bc96ba703252 :cache yes
+clk completion try --last plugin which global g
+#+END_SRC
+
+#+RESULTS[]: try_plugin_completion
+: greet
+
 #+BEGIN_SRC bash :exports none :tangle ../../tests/use_cases/using_a_plugin.sh :noweb yes :shebang "#!/usr/bin/env bash"
   set -eu
 <<init>>
@@ -265,4 +312,12 @@ check-result(run_after_unset)
 <<setup_name_only>>
 
 check-result(show_name_only)
+
+<<create_plugin>>
+
+check-result(which_plugin)
+
+check-result(create_plugin_again)
+
+check-result(try_plugin_completion)
 #+END_SRC

@@ -6,6 +6,7 @@
   - [success triggers](#success-triggers)
   - [unsetting a trigger](#unsetting-a-trigger)
   - [listing triggers with &ndash;name-only](#listing-triggers-name-only)
+- [writing one of your own](#writing-one-of-your-own)
 
 In the past, clk contained a command used to add hooks before and after other commands. This was highly advanced stuff and eventually was barely used. It was removed from clk. But, with the plugin mechanism, you actually can put this feature back into clk.
 
@@ -189,3 +190,37 @@ clk trigger show pre --name-only
     buildcmd
     cmd1
     cmd2
+
+
+<a id="writing-one-of-your-own"></a>
+
+# writing one of your own
+
+Copying a file into the plugins directory works, but clk can lay it out for you, in the profile you name.
+
+```bash
+clk plugin create global greet --description "Say hello on load"
+```
+
+```bash
+clk plugin which global greet
+```
+
+    ./clk-root/plugins/greet.py
+
+Ask for it again and clk will not write over what you have put in it since.
+
+```bash
+clk plugin create global greet --description "Say hello on load"
+```
+
+    Usage: clk plugin create [OPTIONS] PROFILE_SOURCE NEW_NAME
+    error: Won't overwrite ./clk-root/plugins/greet.py unless explicitly asked so with --force
+
+Their names complete, so you never have to remember them.
+
+```bash
+clk plugin which global g<TAB>
+```
+
+    greet
