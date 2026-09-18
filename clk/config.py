@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 
 import contextvars
-import json
 import os
 import shlex
 import socket
@@ -192,12 +191,6 @@ class Config:
             .lower(): shlex.split(value)
             for key, value in os.environ.items()
             if key.startswith(parameters_prefix)
-        }
-        extensions_prefix = f"{self.app_name}_E_".upper()
-        profile.settings["recipe"] = {
-            key[len(extensions_prefix) :]: {"enabled": json.loads(value)}
-            for key, value in os.environ.items()
-            if key.startswith(extensions_prefix)
         }
         return profile
 
