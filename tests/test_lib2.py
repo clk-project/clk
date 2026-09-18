@@ -36,6 +36,34 @@ def test_download():
     assert not archive.exists()
 
 
+def test_download_progress():
+    import sys
+    from unittest import mock
+
+    from clk.lib import download
+
+    class Terminal:
+        "A stderr that says it is a terminal and remembers what is drawn on it"
+
+        def __init__(self):
+            self.written = ""
+
+        def isatty(self):
+            return True
+
+        def write(self, text):
+            self.written += text
+
+        def flush(self):
+            pass
+
+    terminal = Terminal()
+    with mock.patch.object(sys, "stderr", terminal):
+        download("https://github.com/clk-project/clk/raw/main/tests/zipfile.zip")
+
+    assert "100%" in terminal.written
+
+
 def test_check_output_failing():
     import subprocess
 

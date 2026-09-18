@@ -66,6 +66,39 @@ Should the server hand you anything else, nothing is written at all.
     assert not archive.exists()
 #+END_SRC
 
+When the server says how big the file is and you are looking at a terminal,
+~download~ draws a progress bar as it goes. Here we hand it a terminal that
+keeps what was drawn on it.
+
+#+name:download-progress
+#+BEGIN_SRC python :results verbatim :exports both :session
+    import sys
+    from unittest import mock
+
+    from clk.lib import download
+
+    class Terminal:
+        "A stderr that says it is a terminal and remembers what is drawn on it"
+
+        def __init__(self):
+            self.written = ""
+
+        def isatty(self):
+            return True
+
+        def write(self, text):
+            self.written += text
+
+        def flush(self):
+            pass
+
+    terminal = Terminal()
+    with mock.patch.object(sys, "stderr", terminal):
+        download("https://github.com/clk-project/clk/raw/main/tests/zipfile.zip")
+
+    assert "100%" in terminal.written
+#+END_SRC
+
 * Running programs
   :PROPERTIES:
   :CUSTOM_ID: 4416a8cc-4d3a-4162-a590-a67be3f9033a
@@ -117,6 +150,10 @@ def test_extract():
 def test_download():
     <<download>>
     <<download-corrupted>>
+
+
+def test_download_progress():
+    <<download-progress>>
 
 
 def test_check_output_failing():

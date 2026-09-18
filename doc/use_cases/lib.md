@@ -52,6 +52,36 @@ with pytest.raises(click.ClickException):
 assert not archive.exists()
 ```
 
+When the server says how big the file is and you are looking at a terminal, `download` draws a progress bar as it goes. Here we hand it a terminal that keeps what was drawn on it.
+
+```python
+import sys
+from unittest import mock
+
+from clk.lib import download
+
+class Terminal:
+    "A stderr that says it is a terminal and remembers what is drawn on it"
+
+    def __init__(self):
+        self.written = ""
+
+    def isatty(self):
+        return True
+
+    def write(self, text):
+        self.written += text
+
+    def flush(self):
+        pass
+
+terminal = Terminal()
+with mock.patch.object(sys, "stderr", terminal):
+    download("https://github.com/clk-project/clk/raw/main/tests/zipfile.zip")
+
+assert "100%" in terminal.written
+```
+
 
 <a id="4416a8cc-4d3a-4162-a590-a67be3f9033a"></a>
 
