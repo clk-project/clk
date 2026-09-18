@@ -184,6 +184,8 @@ def configure(coverage, **cmake_opts):
 
 #+NAME: csm-build
 #+BEGIN_SRC python :results none :exports code
+from pathlib import Path
+
 from clk.decorators import command, option
 from clk.lib import format_options
 
@@ -193,6 +195,7 @@ from clk.lib import format_options
 def build_(**make_opts):
     """Build the simulator binary."""
     flags = format_options(make_opts, glue=True)
+    Path("build").mkdir(exist_ok=True)
     print("Building simulator" + (" with " + " ".join(flags) if flags else ""))
 #+END_SRC
 
@@ -204,6 +207,19 @@ from clk.decorators import command
 def simulate():
     """Run the simulator."""
     print("Running ./build/simulator")
+#+END_SRC
+
+#+NAME: csm-clean
+#+BEGIN_SRC python :results none :exports code
+from pathlib import Path
+
+from clk.decorators import command
+from clk.lib import rm
+
+@command(handle_dry_run=True)
+def clean():
+    """Throw away what the build left behind."""
+    rm(Path("build"))
 #+END_SRC
 
 #+NAME: csm-install-commands
@@ -219,6 +235,9 @@ cat<<'EOF' > csm/csm/commands/build.py
 EOF
 cat<<'EOF' > csm/csm/commands/simulate.py
 <<csm-simulate>>
+EOF
+cat<<'EOF' > csm/csm/commands/clean.py
+<<csm-clean>>
 EOF
 rm csm/csm/commands/somecommand.py
 ./venv/bin/pip install ./csm
@@ -278,6 +297,31 @@ csm simulate
 
 #+RESULTS[00cc22cb2e8662092f02881f3014167f198aaf27]: csm-run-no-flow
 : Running ./build/simulator
+
+The build left a directory behind, and ~csm clean~ throws it away. A command
+that says ~handle_dry_run=True~ can be asked what it would do rather than do it,
+and the helpers of ~clk.lib~ hold back on their own.
+
+#+NAME: csm-clean-dry-run
+#+BEGIN_SRC bash :results verbatim :exports both :session 807c02cd-a6cf-432f-b982-530fc81dbbf4 :cache yes
+csm --dry-run clean
+test -d build && echo "build is still there"
+#+END_SRC
+
+#+RESULTS[]: csm-clean-dry-run
+: (dry-run) remove build
+: build is still there
+
+Nothing was removed. Now for real.
+
+#+NAME: csm-clean-for-real
+#+BEGIN_SRC bash :results verbatim :exports both :session 807c02cd-a6cf-432f-b982-530fc81dbbf4 :cache yes
+csm clean
+test -d build || echo "build is gone"
+#+END_SRC
+
+#+RESULTS[]: csm-clean-for-real
+: build is gone
 
 * shipping the settings of your tool
   :PROPERTIES:
@@ -595,6 +639,10 @@ check-result(csm-configure-defines)
 check-result(csm-build-options)
 
 check-result(csm-run-no-flow)
+
+check-result(csm-clean-dry-run)
+
+check-result(csm-clean-for-real)
 
 <<csm-ship-settings>>
 

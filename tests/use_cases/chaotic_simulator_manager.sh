@@ -150,6 +150,8 @@ def configure(coverage, **cmake_opts):
     print("Configuring build system" + (" with " + " ".join(flags) if flags else ""))
 EOF
 cat<<'EOF' > csm/csm/commands/build.py
+from pathlib import Path
+
 from clk.decorators import command, option
 from clk.lib import format_options
 
@@ -159,6 +161,7 @@ from clk.lib import format_options
 def build_(**make_opts):
     """Build the simulator binary."""
     flags = format_options(make_opts, glue=True)
+    Path("build").mkdir(exist_ok=True)
     print("Building simulator" + (" with " + " ".join(flags) if flags else ""))
 EOF
 cat<<'EOF' > csm/csm/commands/simulate.py
@@ -168,6 +171,17 @@ from clk.decorators import command
 def simulate():
     """Run the simulator."""
     print("Running ./build/simulator")
+EOF
+cat<<'EOF' > csm/csm/commands/clean.py
+from pathlib import Path
+
+from clk.decorators import command
+from clk.lib import rm
+
+@command(handle_dry_run=True)
+def clean():
+    """Throw away what the build left behind."""
+    rm(Path("build"))
 EOF
 rm csm/csm/commands/somecommand.py
 ./venv/bin/pip install ./csm
@@ -320,6 +334,69 @@ else
     csm-run-no-flow_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
         echo "Something went wrong when trying csm-run-no-flow"
+        exit 1
+    }
+fi
+
+
+
+csm-clean-dry-run_code () {
+      csm --dry-run clean
+      test -d build && echo "build is still there"
+}
+
+csm-clean-dry-run_expected () {
+      local expected
+      expected="$(cat<<"EOEXPECTED"
+(dry-run) remove build
+build is still there
+EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
+}
+
+echo 'Run csm-clean-dry-run'
+
+{ csm-clean-dry-run_code || true ; } > "${TMP}/code.txt" 2>&1
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/csm-clean-dry-run"
+else
+    csm-clean-dry-run_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying csm-clean-dry-run"
+        exit 1
+    }
+fi
+
+
+
+csm-clean-for-real_code () {
+      csm clean
+      test -d build || echo "build is gone"
+}
+
+csm-clean-for-real_expected () {
+      local expected
+      expected="$(cat<<"EOEXPECTED"
+build is gone
+EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
+}
+
+echo 'Run csm-clean-for-real'
+
+{ csm-clean-for-real_code || true ; } > "${TMP}/code.txt" 2>&1
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/csm-clean-for-real"
+else
+    csm-clean-for-real_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying csm-clean-for-real"
         exit 1
     }
 fi

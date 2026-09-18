@@ -95,6 +95,8 @@ def configure(coverage, **cmake_opts):
 ```
 
 ```python
+from pathlib import Path
+
 from clk.decorators import command, option
 from clk.lib import format_options
 
@@ -104,6 +106,7 @@ from clk.lib import format_options
 def build_(**make_opts):
     """Build the simulator binary."""
     flags = format_options(make_opts, glue=True)
+    Path("build").mkdir(exist_ok=True)
     print("Building simulator" + (" with " + " ".join(flags) if flags else ""))
 ```
 
@@ -114,6 +117,18 @@ from clk.decorators import command
 def simulate():
     """Run the simulator."""
     print("Running ./build/simulator")
+```
+
+```python
+from pathlib import Path
+
+from clk.decorators import command
+from clk.lib import rm
+
+@command(handle_dry_run=True)
+def clean():
+    """Throw away what the build left behind."""
+    rm(Path("build"))
 ```
 
 Running the full pipeline is a single command.
@@ -156,6 +171,25 @@ csm simulate
 ```
 
     Running ./build/simulator
+
+The build left a directory behind, and `csm clean` throws it away. A command that says `handle_dry_run=True` can be asked what it would do rather than do it, and the helpers of `clk.lib` hold back on their own.
+
+```bash
+csm --dry-run clean
+test -d build && echo "build is still there"
+```
+
+    (dry-run) remove build
+    build is still there
+
+Nothing was removed. Now for real.
+
+```bash
+csm clean
+test -d build || echo "build is gone"
+```
+
+    build is gone
 
 
 <a id="shipping-the-settings-of-your-tool"></a>
