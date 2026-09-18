@@ -475,6 +475,28 @@ clk alias show
 Had one of them lived in a profile clk cannot write to, it would have warned you
 that the old name is still used there, for you to correct by hand.
 
+Not every name will do, though. Start one with a dash and your shell would hand
+it to clk as an option, so clk turns it down before you get there.
+
+#+NAME: dash-alias
+#+BEGIN_SRC bash :results verbatim :exports both :session 55ed49b4-065d-440e-903b-658d1dcec014 :cache yes
+clk alias set -ship build
+#+END_SRC
+
+#+RESULTS[]: dash-alias
+: Usage: clk alias set [OPTIONS] ALIAS COMMAND [PARAMS]...
+: error: Aliases must not start with dashes (-)
+
+Begin it with punctuation instead and it tells you what a name may start with.
+
+#+NAME: punctuation-alias
+#+BEGIN_SRC bash :results verbatim :exports both :session 55ed49b4-065d-440e-903b-658d1dcec014 :cache yes
+clk alias set ,ship build
+#+END_SRC
+
+#+RESULTS[]: punctuation-alias
+: error: Invalid alias name: ,ship. An alias must start with a letter, a digit or an underscore
+
 #+BEGIN_SRC bash :exports none :tangle ../../tests/use_cases/alias_to_root.sh :noweb yes :shebang "#!/usr/bin/env bash -eu"
   <<init>>
   <<create-api>>
@@ -524,4 +546,6 @@ that the old name is still used there, for you to correct by hand.
   check-result(show-before-rename)
   check-result(rename-test)
   check-result(show-after-rename)
+  check-result(dash-alias)
+  check-result(punctuation-alias)
 #+END_SRC

@@ -55,7 +55,10 @@ def _set(alias, command, documentation, params, flowdep):
     if alias.startswith("-"):
         raise click.UsageError("Aliases must not start with dashes (-)")
     if re.match(r"^\w", alias) is None:
-        raise click.ClickException("Invalid alias name: " + alias)
+        raise click.ClickException(
+            f"Invalid alias name: {alias}."
+            " An alias must start with a letter, a digit or an underscore"
+        )
     text = [command] + list(params)
     commands = parse(text)
     data = {

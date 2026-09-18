@@ -358,3 +358,20 @@ clk alias show
     test-front echo Running frontend tests
 
 Had one of them lived in a profile clk cannot write to, it would have warned you that the old name is still used there, for you to correct by hand.
+
+Not every name will do, though. Start one with a dash and your shell would hand it to clk as an option, so clk turns it down before you get there.
+
+```bash
+clk alias set -ship build
+```
+
+    Usage: clk alias set [OPTIONS] ALIAS COMMAND [PARAMS]...
+    error: Aliases must not start with dashes (-)
+
+Begin it with punctuation instead and it tells you what a name may start with.
+
+```bash
+clk alias set ,ship build
+```
+
+    error: Invalid alias name: ,ship. An alias must start with a letter, a digit or an underscore

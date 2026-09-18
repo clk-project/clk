@@ -1,5 +1,5 @@
 #!/usr/bin/env bash -eu
-# [[file:../../doc/use_cases/alias_to_root.org::#tidying-up-as-the-aliases-pile-up][tidying up as the aliases pile up:12]]
+# [[file:../../doc/use_cases/alias_to_root.org::#tidying-up-as-the-aliases-pile-up][tidying up as the aliases pile up:14]]
 . ./sandboxing.sh
 mkdir -p billing-api/.clk
 cd billing-api
@@ -847,4 +847,53 @@ diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
 echo "Something went wrong when trying show-after-rename"
 exit 1
 }
-# tidying up as the aliases pile up:12 ends here
+
+
+dash-alias_code () {
+      clk alias set -ship build
+}
+
+dash-alias_expected () {
+      local expected
+      expected="$(cat<<"EOEXPECTED"
+Usage: clk alias set [OPTIONS] ALIAS COMMAND [PARAMS]...
+error: Aliases must not start with dashes (-)
+EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
+}
+
+echo 'Run dash-alias'
+
+{ dash-alias_code || true ; } > "${TMP}/code.txt" 2>&1
+dash-alias_expected > "${TMP}/expected.txt" 2>&1
+diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+echo "Something went wrong when trying dash-alias"
+exit 1
+}
+
+
+punctuation-alias_code () {
+      clk alias set ,ship build
+}
+
+punctuation-alias_expected () {
+      local expected
+      expected="$(cat<<"EOEXPECTED"
+error: Invalid alias name: ,ship. An alias must start with a letter, a digit or an underscore
+EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
+}
+
+echo 'Run punctuation-alias'
+
+{ punctuation-alias_code || true ; } > "${TMP}/code.txt" 2>&1
+punctuation-alias_expected > "${TMP}/expected.txt" 2>&1
+diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+echo "Something went wrong when trying punctuation-alias"
+exit 1
+}
+# tidying up as the aliases pile up:14 ends here
