@@ -202,6 +202,37 @@ cd ../../..
 
 
 
+That walk back up the tree is tedious, and clk spares me it. Every command takes
+~--in-project~, which runs it at the root of the project and leaves my shell
+where it was.
+
+#+NAME: run_in_project
+#+BEGIN_SRC bash :results verbatim :exports both :session 6de55de4-c0b3-41d6-952a-25e0fe06c881 :cache yes
+cd src/deep/nested
+clk exec --in-project ./scripts/build.sh
+#+END_SRC
+
+#+RESULTS[]: run_in_project
+: Building project at: ./
+: App: clk
+
+When I want a particular directory rather than the root, ~--cwd~ names it. Both
+together read it from the root of the project.
+
+#+NAME: run_in_cwd
+#+BEGIN_SRC bash :results verbatim :exports both :session 6de55de4-c0b3-41d6-952a-25e0fe06c881 :cache yes
+clk exec --in-project --cwd scripts ./build.sh
+#+END_SRC
+
+#+RESULTS[]: run_in_cwd
+: Building project at: ../
+: App: clk
+
+#+NAME: back_to_the_root
+#+BEGIN_SRC bash :results none :exports none :session 6de55de4-c0b3-41d6-952a-25e0fe06c881
+cd ../../..
+#+END_SRC
+
 When typing ~clk exec~, completion suggests both programs from your PATH and
 executable scripts in the current directory. If you start typing a path like
 ~./~, it switches to file completion to help you navigate to your scripts.
@@ -379,6 +410,12 @@ check-result(projectprefix_absolute_warning)
 check-result(run_build_script)
 
 check-result(run_from_subdir)
+
+check-result(run_in_project)
+
+check-result(run_in_cwd)
+
+<<back_to_the_root>>
 
 check-result(completion_exec)
 

@@ -259,6 +259,61 @@ exit 1
 
 
 
+run_in_project_code () {
+      cd src/deep/nested
+      clk exec --in-project ./scripts/build.sh
+}
+
+run_in_project_expected () {
+      local expected
+      expected="$(cat<<"EOEXPECTED"
+Building project at: ./
+App: clk
+EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
+}
+
+echo 'Run run_in_project'
+
+{ run_in_project_code || true ; } > "${TMP}/code.txt" 2>&1
+run_in_project_expected > "${TMP}/expected.txt" 2>&1
+diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+echo "Something went wrong when trying run_in_project"
+exit 1
+}
+
+
+
+run_in_cwd_code () {
+      clk exec --in-project --cwd scripts ./build.sh
+}
+
+run_in_cwd_expected () {
+      local expected
+      expected="$(cat<<"EOEXPECTED"
+Building project at: ../
+App: clk
+EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
+}
+
+echo 'Run run_in_cwd'
+
+{ run_in_cwd_code || true ; } > "${TMP}/code.txt" 2>&1
+run_in_cwd_expected > "${TMP}/expected.txt" 2>&1
+diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+echo "Something went wrong when trying run_in_cwd"
+exit 1
+}
+
+
+cd ../../..
+
+
 completion_exec_code () {
       clk completion try --last exec ./ | grep scripts
 }

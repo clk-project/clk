@@ -131,6 +131,25 @@ cd ../../..
     Building project at: ../../../
     App: clk
 
+That walk back up the tree is tedious, and clk spares me it. Every command takes `--in-project`, which runs it at the root of the project and leaves my shell where it was.
+
+```bash
+cd src/deep/nested
+clk exec --in-project ./scripts/build.sh
+```
+
+    Building project at: ./
+    App: clk
+
+When I want a particular directory rather than the root, `--cwd` names it. Both together read it from the root of the project.
+
+```bash
+clk exec --in-project --cwd scripts ./build.sh
+```
+
+    Building project at: ../
+    App: clk
+
 When typing `clk exec`, completion suggests both programs from your PATH and executable scripts in the current directory. If you start typing a path like `./`, it switches to file completion to help you navigate to your scripts.
 
 ```bash
