@@ -155,6 +155,57 @@ exit 1
 
 
 
+running-the-flow-from_code () {
+      clk printer send myprinter --flow-from printer.slice
+}
+
+running-the-flow-from_expected () {
+      local expected
+      expected="$(cat<<"EOEXPECTED"
+Slicing someothermodel to model.gcode
+Printing model.gcode using myprinter
+EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
+}
+
+echo 'Run running-the-flow-from'
+
+{ running-the-flow-from_code || true ; } > "${TMP}/code.txt" 2>&1
+running-the-flow-from_expected > "${TMP}/expected.txt" 2>&1
+diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+echo "Something went wrong when trying running-the-flow-from"
+exit 1
+}
+
+
+
+running-the-flow-after_code () {
+      clk printer send myprinter --flow-after printer.slice
+}
+
+running-the-flow-after_expected () {
+      local expected
+      expected="$(cat<<"EOEXPECTED"
+Printing model.gcode using myprinter
+EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
+}
+
+echo 'Run running-the-flow-after'
+
+{ running-the-flow-after_code || true ; } > "${TMP}/code.txt" 2>&1
+running-the-flow-after_expected > "${TMP}/expected.txt" 2>&1
+diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+echo "Something went wrong when trying running-the-flow-after"
+exit 1
+}
+
+
+
 flowdep-show_code () {
       clk flowdep show printer.send --all
 }

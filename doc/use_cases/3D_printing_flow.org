@@ -212,6 +212,29 @@ clk printer send myprinter --flow
 : Slicing someothermodel to model.gcode
 : Printing model.gcode using myprinter
 
+Sometimes you have already calibrated the printer and you only want the rest of
+the flow. ~--flow-from~ starts it at the step you name.
+
+#+NAME: running-the-flow-from
+#+BEGIN_SRC bash :results verbatim :exports both :session 73f5d57e-d16a-490a-b4e1-0254d6296590 :cache yes
+clk printer send myprinter --flow-from printer.slice
+#+END_SRC
+
+#+RESULTS[]: running-the-flow-from
+: Slicing someothermodel to model.gcode
+: Printing model.gcode using myprinter
+
+And when the slicing is done too, ~--flow-after~ picks up at the step that
+follows the one you name.
+
+#+NAME: running-the-flow-after
+#+BEGIN_SRC bash :results verbatim :exports both :session 73f5d57e-d16a-490a-b4e1-0254d6296590 :cache yes
+clk printer send myprinter --flow-after printer.slice
+#+END_SRC
+
+#+RESULTS[]: running-the-flow-after
+: Printing model.gcode using myprinter
+
 Here, your mileage may vary. Choose the implementation that suits you better.
 
 * more information about the flow
@@ -533,6 +556,10 @@ Beware that this means that you have to check that this command it actually defi
   check-result(running-the-explicit-flow)
 
   check-result(running-the-explicit-flow-with-model)
+
+  check-result(running-the-flow-from)
+
+  check-result(running-the-flow-after)
 
   check-result(flowdep-show)
 

@@ -153,6 +153,23 @@ clk printer send myprinter --flow
     Slicing someothermodel to model.gcode
     Printing model.gcode using myprinter
 
+Sometimes you have already calibrated the printer and you only want the rest of the flow. `--flow-from` starts it at the step you name.
+
+```bash
+clk printer send myprinter --flow-from printer.slice
+```
+
+    Slicing someothermodel to model.gcode
+    Printing model.gcode using myprinter
+
+And when the slicing is done too, `--flow-after` picks up at the step that follows the one you name.
+
+```bash
+clk printer send myprinter --flow-after printer.slice
+```
+
+    Printing model.gcode using myprinter
+
 Here, your mileage may vary. Choose the implementation that suits you better.
 
 
