@@ -2,12 +2,11 @@
 
 from clk.config import config
 from clk.decorators import argument, command, flag, option
-from clk.lib import call, double_quote, updated_env
+from clk.lib import call, updated_env
 from clk.types import ExecutableType
 
 
 @command(ignore_unknown_options=True, handle_dry_run=True)
-@option("--shell/--no-shell", help="Execute the command through the shell")
 @option("--stdout", help="File to which redirecting the standard output")
 @option("--stderr", help="File to which redirecting the standard error")
 @flag(
@@ -22,14 +21,12 @@ from clk.types import ExecutableType
     type=ExecutableType(),
     help="The command to execute",
 )
-def exec_(no_environ, shell, command, stdout, stderr):
+def exec_(no_environ, command, stdout, stderr):
     """Run a program, like good old times.
 
     The situations where using clk exec is advised rather than simply calling
     the program is when you need to embed a command into an alias.
     """
-    if shell:
-        command = [" ".join([command[0]] + [double_quote(arg) for arg in command[1:]])]
     out = open(stdout, "wb") if stdout else None
     err = open(stderr, "wb") if stderr else None
     with updated_env(
@@ -37,7 +34,6 @@ def exec_(no_environ, shell, command, stdout, stderr):
     ):
         call(
             command,
-            shell=shell,
             stdout=out,
             stderr=err,
         )
