@@ -346,6 +346,18 @@ clk printer send myprinter --flow
     Slicing someothermodel to model.gcode
     Printing model.gcode using myprinter
 
+An alias often comes with the step that must run before it. `--flowdep` says both in one line.
+
+```bash
+clk alias set --flowdep printer.calibrate printer.nightly printer send myprinter
+clk printer nightly --flow
+```
+
+    New global alias for printer.nightly: printer send myprinter
+    New global flowdep for printer.nightly: printer.calibrate
+    Running some stuff for the printer to be ready to go
+    Printing model.gcode using myprinter
+
 
 <a id="when-the-printer-does-not-answer"></a>
 

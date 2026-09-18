@@ -576,6 +576,40 @@ else
 fi
 
 
+
+alias-with-flowdep_code () {
+      clk alias set --flowdep printer.calibrate printer.nightly printer send myprinter
+      clk printer nightly --flow
+}
+
+alias-with-flowdep_expected () {
+      local expected
+      expected="$(cat<<"EOEXPECTED"
+New global alias for printer.nightly: printer send myprinter
+New global flowdep for printer.nightly: printer.calibrate
+Running some stuff for the printer to be ready to go
+Printing model.gcode using myprinter
+EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
+}
+
+echo 'Run alias-with-flowdep'
+
+{ alias-with-flowdep_code || true ; } > "${TMP}/code.txt" 2>&1
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/alias-with-flowdep"
+else
+    alias-with-flowdep_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying alias-with-flowdep"
+        exit 1
+    }
+fi
+
+
   clk command create python --group printer --description "This is a group of commands to deal with 3D printing." --body '
 import click
 

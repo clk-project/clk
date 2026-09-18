@@ -487,6 +487,21 @@ clk printer send myprinter --flow
 : Slicing someothermodel to model.gcode
 : Printing model.gcode using myprinter
 
+An alias often comes with the step that must run before it. ~--flowdep~ says
+both in one line.
+
+#+NAME: alias-with-flowdep
+#+BEGIN_SRC bash :results verbatim :exports both :session 73f5d57e-d16a-490a-b4e1-0254d6296590 :cache yes
+clk alias set --flowdep printer.calibrate printer.nightly printer send myprinter
+clk printer nightly --flow
+#+END_SRC
+
+#+RESULTS[]: alias-with-flowdep
+: New global alias for printer.nightly: printer send myprinter
+: New global flowdep for printer.nightly: printer.calibrate
+: Running some stuff for the printer to be ready to go
+: Printing model.gcode using myprinter
+
 * when the printer does not answer
   :PROPERTIES:
   :CUSTOM_ID: when-the-printer-does-not-answer
@@ -633,6 +648,8 @@ Beware that this means that you have to check that this command it actually defi
   check-result(flowdep-remove)
 
   check-result(flowdep-unset)
+
+  check-result(alias-with-flowdep)
 
   <<install-failing-calibrate>>
 
