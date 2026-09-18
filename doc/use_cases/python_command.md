@@ -3,6 +3,7 @@
 - [possible mistake: forgetting the decorator](#forgetting-the-decorator)
 - [possible mistake: using periods in python command names](#periods-in-python-command-names)
 - [shipping data along with the command](#shipping-data-along-with-the-command)
+- [when the command breaks](#when-the-command-breaks)
 
 To create a python command, you can simply call the following command.
 
@@ -420,3 +421,53 @@ clk greet
 ```
 
     Hello, and welcome aboard
+
+
+<a id="when-the-command-breaks"></a>
+
+# when the command breaks
+
+Some days you sketch a command and leave the hard part for later.
+
+```python
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+
+from clk.decorators import command
+
+
+@command()
+def notyet():
+    "Not written yet"
+    raise NotImplementedError("the hard part")
+```
+
+Whoever runs it is told where to send the report.
+
+```bash
+clk notyet
+```
+
+    This command reached a part of the code yet to implement. Please help us by either submitting patches or sending report files to us. (clk --report-file .../somefile RESTOFCOMMAND, then send .../somefile to us on https://github.com/clk-project/clk/issues/new)
+    error: the hard part
+
+Other days it breaks in a way nobody saw coming, and clk says as much rather than pretending.
+
+```python
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+
+from clk.decorators import command
+
+
+@command()
+def boom():
+    "Breaks"
+    raise ValueError("chaos")
+```
+
+```bash
+clk boom 2>&1 | tail -1
+```
+
+    error: Hmm, it looks like we did not properly catch this error. Please help us improve clk by telling us what caused the error on https://github.com/clk-project/clk/issues/new . If you feel like a pythonista, you can try debugging the issue yourself, running the command with clk --post-mortem or clk --develop

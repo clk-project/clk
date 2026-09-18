@@ -553,6 +553,79 @@ clk greet
 #+RESULTS[39ff500940a446a3cba6bd99d26b7fa06a37b964]: try-greet
 : Hello, and welcome aboard
 
+* when the command breaks
+  :PROPERTIES:
+  :CUSTOM_ID: when-the-command-breaks
+  :END:
+
+Some days you sketch a command and leave the hard part for later.
+
+#+NAME: notyet-code
+#+BEGIN_SRC python :results none :exports code
+  #!/usr/bin/env python3
+  # -*- coding: utf-8 -*-
+
+  from clk.decorators import command
+
+
+  @command()
+  def notyet():
+      "Not written yet"
+      raise NotImplementedError("the hard part")
+#+END_SRC
+
+#+NAME: write-notyet
+#+BEGIN_SRC bash :results none :exports none :session b115ee6f-3575-46e0-a64c-880cfa22d4e3 :noweb yes
+clk command create python notyet --description "Not written yet"
+cat<<'EOF' > "$(clk command which notyet)"
+<<notyet-code>>
+EOF
+#+END_SRC
+
+Whoever runs it is told where to send the report.
+
+#+NAME: run-notyet
+#+BEGIN_SRC bash :results verbatim :exports both :session b115ee6f-3575-46e0-a64c-880cfa22d4e3 :cache yes
+clk notyet
+#+END_SRC
+
+#+RESULTS[]: run-notyet
+: This command reached a part of the code yet to implement. Please help us by either submitting patches or sending report files to us. (clk --report-file .../somefile RESTOFCOMMAND, then send .../somefile to us on https://github.com/clk-project/clk/issues/new)
+: error: the hard part
+
+Other days it breaks in a way nobody saw coming, and clk says as much rather
+than pretending.
+
+#+NAME: boom-code
+#+BEGIN_SRC python :results none :exports code
+  #!/usr/bin/env python3
+  # -*- coding: utf-8 -*-
+
+  from clk.decorators import command
+
+
+  @command()
+  def boom():
+      "Breaks"
+      raise ValueError("chaos")
+#+END_SRC
+
+#+NAME: write-boom
+#+BEGIN_SRC bash :results none :exports none :session b115ee6f-3575-46e0-a64c-880cfa22d4e3 :noweb yes
+clk command create python boom --description "Breaks"
+cat<<'EOF' > "$(clk command which boom)"
+<<boom-code>>
+EOF
+#+END_SRC
+
+#+NAME: run-boom
+#+BEGIN_SRC bash :results verbatim :exports both :session b115ee6f-3575-46e0-a64c-880cfa22d4e3 :cache yes
+clk boom 2>&1 | tail -1
+#+END_SRC
+
+#+RESULTS[]: run-boom
+: error: Hmm, it looks like we did not properly catch this error. Please help us improve clk by telling us what caused the error on https://github.com/clk-project/clk/issues/new . If you feel like a pythonista, you can try debugging the issue yourself, running the command with clk --post-mortem or clk --develop
+
 #+BEGIN_SRC bash :exports none :tangle ../../tests/use_cases/python_command.sh :noweb yes :shebang "#!/usr/bin/env bash"
   set -eu
 <<init>>
@@ -621,4 +694,12 @@ check-result(where-greet)
 <<add-greeting>>
 
 check-result(try-greet)
+
+<<write-notyet>>
+
+check-result(run-notyet)
+
+<<write-boom>>
+
+check-result(run-boom)
 #+END_SRC

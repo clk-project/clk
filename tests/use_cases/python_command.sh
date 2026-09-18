@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# [[file:../../doc/use_cases/python_command.org::#shipping-data-along-with-the-command][shipping data along with the command:6]]
+# [[file:../../doc/use_cases/python_command.org::#when-the-command-breaks][when the command breaks:7]]
 set -eu
 . ./sandboxing.sh
 
@@ -812,4 +812,93 @@ else
         exit 1
     }
 fi
-# shipping data along with the command:6 ends here
+
+
+clk command create python notyet --description "Not written yet"
+cat<<'EOF' > "$(clk command which notyet)"
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+
+from clk.decorators import command
+
+
+@command()
+def notyet():
+    "Not written yet"
+    raise NotImplementedError("the hard part")
+EOF
+
+
+run-notyet_code () {
+      clk notyet
+}
+
+run-notyet_expected () {
+      local expected
+      expected="$(cat<<"EOEXPECTED"
+This command reached a part of the code yet to implement. Please help us by either submitting patches or sending report files to us. (clk --report-file .../somefile RESTOFCOMMAND, then send .../somefile to us on https://github.com/clk-project/clk/issues/new)
+error: the hard part
+EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
+}
+
+echo 'Run run-notyet'
+
+{ run-notyet_code || true ; } > "${TMP}/code.txt" 2>&1
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/run-notyet"
+else
+    run-notyet_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying run-notyet"
+        exit 1
+    }
+fi
+
+
+clk command create python boom --description "Breaks"
+cat<<'EOF' > "$(clk command which boom)"
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+
+from clk.decorators import command
+
+
+@command()
+def boom():
+    "Breaks"
+    raise ValueError("chaos")
+EOF
+
+
+run-boom_code () {
+      clk boom 2>&1 | tail -1
+}
+
+run-boom_expected () {
+      local expected
+      expected="$(cat<<"EOEXPECTED"
+error: Hmm, it looks like we did not properly catch this error. Please help us improve clk by telling us what caused the error on https://github.com/clk-project/clk/issues/new . If you feel like a pythonista, you can try debugging the issue yourself, running the command with clk --post-mortem or clk --develop
+EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
+}
+
+echo 'Run run-boom'
+
+{ run-boom_code || true ; } > "${TMP}/code.txt" 2>&1
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/run-boom"
+else
+    run-boom_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying run-boom"
+        exit 1
+    }
+fi
+# when the command breaks:7 ends here
