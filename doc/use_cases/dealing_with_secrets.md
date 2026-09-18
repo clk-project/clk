@@ -283,6 +283,14 @@ clk --keyring clk.keyrings.NetrcKeyring secret set other_token --secret somethin
     Usage: clk secret set [OPTIONS] KEY
     error: The netrc keyring only reads secrets. Write this one in your netrc file to use it.
 
+You need not name it, though. On a machine where keyring finds no backend to work with, clk falls back on netrc by itself.
+
+```bash
+clk --keyring keyring.backends.fail.Keyring secret show http_bearer --secret
+```
+
+    http_bearer thevalue
+
 ## Footnotes
 
 <sup><a id="fn.1" class="footnum" href="#fnr.1">1</a></sup> this is so that if you use `clk` in scripts, you will be aware that something went wrong

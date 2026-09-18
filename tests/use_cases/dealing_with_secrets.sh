@@ -718,4 +718,34 @@ else
         exit 1
     }
 fi
+
+
+
+netrc_fallback_code () {
+      clk --keyring keyring.backends.fail.Keyring secret show http_bearer --secret
+}
+
+netrc_fallback_expected () {
+      local expected
+      expected="$(cat<<"EOEXPECTED"
+http_bearer thevalue
+EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
+}
+
+echo 'Run netrc_fallback'
+
+{ netrc_fallback_code || true ; } > "${TMP}/code.txt" 2>&1
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/netrc_fallback"
+else
+    netrc_fallback_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying netrc_fallback"
+        exit 1
+    }
+fi
 # test ends here
