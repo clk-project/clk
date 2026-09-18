@@ -1,5 +1,5 @@
 #!/usr/bin/env bash -eu
-# [[file:../../doc/use_cases/alias_to_root.org::#tidying-up-as-the-aliases-pile-up][tidying up as the aliases pile up:14]]
+# [[file:../../doc/use_cases/alias_to_root.org::#tidying-up-as-the-aliases-pile-up][tidying up as the aliases pile up:17]]
 . ./sandboxing.sh
 mkdir -p billing-api/.clk
 cd billing-api
@@ -896,4 +896,53 @@ diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
 echo "Something went wrong when trying punctuation-alias"
 exit 1
 }
-# tidying up as the aliases pile up:14 ends here
+
+clk alias --global set deploy-prod echo Deploying to production
+
+document-elsewhere_code () {
+      clk alias set-documentation deploy-prod "Ship to production"
+}
+
+document-elsewhere_expected () {
+      local expected
+      expected="$(cat<<"EOEXPECTED"
+error: The profile local has no 'deploy-prod' alias registered. Try using another profile option (like --local or --global)
+EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
+}
+
+echo 'Run document-elsewhere'
+
+{ document-elsewhere_code || true ; } > "${TMP}/code.txt" 2>&1
+document-elsewhere_expected > "${TMP}/expected.txt" 2>&1
+diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+echo "Something went wrong when trying document-elsewhere"
+exit 1
+}
+
+
+unset-elsewhere_code () {
+      clk alias unset deploy-prod
+}
+
+unset-elsewhere_expected () {
+      local expected
+      expected="$(cat<<"EOEXPECTED"
+error: The profile local has no alias named 'deploy-prod'. Try using another profile option (like --local or --global)
+EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
+}
+
+echo 'Run unset-elsewhere'
+
+{ unset-elsewhere_code || true ; } > "${TMP}/code.txt" 2>&1
+unset-elsewhere_expected > "${TMP}/expected.txt" 2>&1
+diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+echo "Something went wrong when trying unset-elsewhere"
+exit 1
+}
+# tidying up as the aliases pile up:17 ends here

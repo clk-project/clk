@@ -497,6 +497,32 @@ clk alias set ,ship build
 #+RESULTS[]: punctuation-alias
 : error: Invalid alias name: ,ship. An alias must start with a letter, a digit or an underscore
 
+You see every alias from here, but you only write to one profile at a time. Put
+one in the global profile and then forget where it lives.
+
+#+NAME: global-alias
+#+BEGIN_SRC bash :results none :exports code :session 55ed49b4-065d-440e-903b-658d1dcec014
+clk alias --global set deploy-prod echo Deploying to production
+#+END_SRC
+
+#+NAME: document-elsewhere
+#+BEGIN_SRC bash :results verbatim :exports both :session 55ed49b4-065d-440e-903b-658d1dcec014 :cache yes
+clk alias set-documentation deploy-prod "Ship to production"
+#+END_SRC
+
+#+RESULTS[]: document-elsewhere
+: error: The profile local has no 'deploy-prod' alias registered. Try using another profile option (like --local or --global)
+
+Dropping it from here gets the same answer.
+
+#+NAME: unset-elsewhere
+#+BEGIN_SRC bash :results verbatim :exports both :session 55ed49b4-065d-440e-903b-658d1dcec014 :cache yes
+clk alias unset deploy-prod
+#+END_SRC
+
+#+RESULTS[]: unset-elsewhere
+: error: The profile local has no alias named 'deploy-prod'. Try using another profile option (like --local or --global)
+
 #+BEGIN_SRC bash :exports none :tangle ../../tests/use_cases/alias_to_root.sh :noweb yes :shebang "#!/usr/bin/env bash -eu"
   <<init>>
   <<create-api>>
@@ -548,4 +574,7 @@ clk alias set ,ship build
   check-result(show-after-rename)
   check-result(dash-alias)
   check-result(punctuation-alias)
+  <<global-alias>>
+  check-result(document-elsewhere)
+  check-result(unset-elsewhere)
 #+END_SRC

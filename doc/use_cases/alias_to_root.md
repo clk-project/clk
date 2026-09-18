@@ -375,3 +375,23 @@ clk alias set ,ship build
 ```
 
     error: Invalid alias name: ,ship. An alias must start with a letter, a digit or an underscore
+
+You see every alias from here, but you only write to one profile at a time. Put one in the global profile and then forget where it lives.
+
+```bash
+clk alias --global set deploy-prod echo Deploying to production
+```
+
+```bash
+clk alias set-documentation deploy-prod "Ship to production"
+```
+
+    error: The profile local has no 'deploy-prod' alias registered. Try using another profile option (like --local or --global)
+
+Dropping it from here gets the same answer.
+
+```bash
+clk alias unset deploy-prod
+```
+
+    error: The profile local has no alias named 'deploy-prod'. Try using another profile option (like --local or --global)

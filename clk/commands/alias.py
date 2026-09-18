@@ -118,7 +118,7 @@ def set_documentation(alias, documentation):
             "The profile "
             f"{Colorer.apply_color_profilename(config.alias.writeprofilename)}"
             f" has no '{alias}' alias registered."
-            "Try using another profile option (like --local or --global)"
+            " Try using another profile option (like --local or --global)"
         )
     config.alias.writable[alias]["documentation"] = documentation
     config.alias.write()
@@ -139,7 +139,7 @@ def unset(aliases):
                 "The profile "
                 f"{Colorer.apply_color_profilename(config.alias.writeprofilename)}"
                 f" has no alias named '{cmd}'."
-                "Try using another profile option (like --local or --global)"
+                " Try using another profile option (like --local or --global)"
             )
     for cmd in aliases:
         LOGGER.info(
