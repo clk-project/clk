@@ -279,6 +279,41 @@ test "$(sha256sum flow.dot|cut -f1 -d' ')" = "$(sha256sum ${SRCDIR}/../../doc/us
 
 [[file:flow.png]]
 
+The dot is just text, so you can change it before rendering it. Use ~-~ as the
+output to get it on the terminal, then pipe it where you want. Here we give the
+graph a title and call ~dot~ ourselves.
+
+#+NAME: flowdep-graph-titled
+#+BEGIN_SRC bash :results none :exports code :session 73f5d57e-d16a-490a-b4e1-0254d6296590
+clk flowdep graph printer.send --format dot --output - \
+    | sed '1a\  label="How a print gets made";' \
+    > titled-flow.dot
+dot -Tpng titled-flow.dot > titled-flow.png
+#+END_SRC
+
+#+NAME: make-sure-titled-flow-is-ok
+#+BEGIN_SRC bash :results none :exports none :session 73f5d57e-d16a-490a-b4e1-0254d6296590
+echo "Checking the resulting titled-flow.png file"
+test "$(sha256sum titled-flow.dot|cut -f1 -d' ')" = "$(sha256sum ${SRCDIR}/../../doc/use_cases/titled-flow.dot|cut -f1 -d' ')"
+#+END_SRC
+
+[[file:titled-flow.png]]
+
+Without a command name, you get everything clk knows, each group of commands in
+its own box. Here the printer is the only flow around, so it draws the same
+graph as above.
+
+#+NAME: flowdep-graph-everything
+#+BEGIN_SRC bash :results none :exports code :session 73f5d57e-d16a-490a-b4e1-0254d6296590
+clk flowdep graph --format dot --output - > every-flow.dot
+#+END_SRC
+
+#+NAME: make-sure-every-flow-is-ok
+#+BEGIN_SRC bash :results none :exports none :session 73f5d57e-d16a-490a-b4e1-0254d6296590
+echo "Checking the resulting every-flow.dot file"
+test "$(sha256sum every-flow.dot|cut -f1 -d' ')" = "$(sha256sum flow.dot|cut -f1 -d' ')"
+#+END_SRC
+
 To get more insight of when a part of the flow is running, you can try to enable the verbose mode.
 
 #+NAME: flow-verbose
@@ -568,6 +603,14 @@ Beware that this means that you have to check that this command it actually defi
   <<flowdep-graph-dot>>
 
   <<make-sure-flow-is-ok>>
+
+  <<flowdep-graph-titled>>
+
+  <<make-sure-titled-flow-is-ok>>
+
+  <<flowdep-graph-everything>>
+
+  <<make-sure-every-flow-is-ok>>
 
   check-result(flow-verbose)
 

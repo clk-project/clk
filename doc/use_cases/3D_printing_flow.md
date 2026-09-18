@@ -201,6 +201,23 @@ clk flowdep graph printer.send --format dot --output flow.dot
 
 ![img](flow.png)
 
+The dot is just text, so you can change it before rendering it. Use `-` as the output to get it on the terminal, then pipe it where you want. Here we give the graph a title and call `dot` ourselves.
+
+```bash
+clk flowdep graph printer.send --format dot --output - \
+    | sed '1a\  label="How a print gets made";' \
+    > titled-flow.dot
+dot -Tpng titled-flow.dot > titled-flow.png
+```
+
+![img](titled-flow.png)
+
+Without a command name, you get everything clk knows, each group of commands in its own box. Here the printer is the only flow around, so it draws the same graph as above.
+
+```bash
+clk flowdep graph --format dot --output - > every-flow.dot
+```
+
 To get more insight of when a part of the flow is running, you can try to enable the verbose mode.
 
 ```bash

@@ -418,7 +418,7 @@ def graph(
     else:
         out = dot.encode("utf-8")
     if output == "-":
-        click.echo(out)
+        click.echo(out, nl=False)
     elif output:
         open(output, "wb").write(out)
     elif format not in ["x11"]:

@@ -237,6 +237,19 @@ clk flowdep graph printer.send --format dot --output flow.dot
 echo "Checking the resulting flow.png file"
 test "$(sha256sum flow.dot|cut -f1 -d' ')" = "$(sha256sum ${SRCDIR}/../../doc/use_cases/flow.dot|cut -f1 -d' ')"
 
+clk flowdep graph printer.send --format dot --output - \
+    | sed '1a\  label="How a print gets made";' \
+    > titled-flow.dot
+dot -Tpng titled-flow.dot > titled-flow.png
+
+echo "Checking the resulting titled-flow.png file"
+test "$(sha256sum titled-flow.dot|cut -f1 -d' ')" = "$(sha256sum ${SRCDIR}/../../doc/use_cases/titled-flow.dot|cut -f1 -d' ')"
+
+clk flowdep graph --format dot --output - > every-flow.dot
+
+echo "Checking the resulting every-flow.dot file"
+test "$(sha256sum every-flow.dot|cut -f1 -d' ')" = "$(sha256sum flow.dot|cut -f1 -d' ')"
+
 
 flow-verbose_code () {
       clk --flow-verbose printer send myprinter --flow
