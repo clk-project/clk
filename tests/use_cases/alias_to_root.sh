@@ -21,11 +21,16 @@ EOEXPECTED
 echo 'Run alias-api-build'
 
 { alias-api-build_code || true ; } > "${TMP}/code.txt" 2>&1
-alias-api-build_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying alias-api-build"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/alias-api-build"
+else
+    alias-api-build_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying alias-api-build"
+        exit 1
+    }
+fi
 
 
 alias-api-test_code () {
@@ -45,11 +50,16 @@ EOEXPECTED
 echo 'Run alias-api-test'
 
 { alias-api-test_code || true ; } > "${TMP}/code.txt" 2>&1
-alias-api-test_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying alias-api-test"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/alias-api-test"
+else
+    alias-api-test_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying alias-api-test"
+        exit 1
+    }
+fi
 
 cd ..
 mkdir -p billing-app/.clk
@@ -72,11 +82,16 @@ EOEXPECTED
 echo 'Run alias-app-build'
 
 { alias-app-build_code || true ; } > "${TMP}/code.txt" 2>&1
-alias-app-build_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying alias-app-build"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/alias-app-build"
+else
+    alias-app-build_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying alias-app-build"
+        exit 1
+    }
+fi
 
 
 alias-app-test_code () {
@@ -96,11 +111,16 @@ EOEXPECTED
 echo 'Run alias-app-test'
 
 { alias-app-test_code || true ; } > "${TMP}/code.txt" 2>&1
-alias-app-test_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying alias-app-test"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/alias-app-test"
+else
+    alias-app-test_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying alias-app-test"
+        exit 1
+    }
+fi
 
 
 api-build-from-app_code () {
@@ -120,11 +140,16 @@ EOEXPECTED
 echo 'Run api-build-from-app'
 
 { api-build-from-app_code || true ; } > "${TMP}/code.txt" 2>&1
-api-build-from-app_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying api-build-from-app"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/api-build-from-app"
+else
+    api-build-from-app_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying api-build-from-app"
+        exit 1
+    }
+fi
 
 
 verbose-project_code () {
@@ -144,11 +169,16 @@ EOEXPECTED
 echo 'Run verbose-project'
 
 { verbose-project_code || true ; } > "${TMP}/code.txt" 2>&1
-verbose-project_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying verbose-project"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/verbose-project"
+else
+    verbose-project_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying verbose-project"
+        exit 1
+    }
+fi
 
 cd ..
 
@@ -169,11 +199,16 @@ EOEXPECTED
 echo 'Run create-api-alias'
 
 { create-api-alias_code || true ; } > "${TMP}/code.txt" 2>&1
-create-api-alias_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying create-api-alias"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/create-api-alias"
+else
+    create-api-alias_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying create-api-alias"
+        exit 1
+    }
+fi
 
 
 create-app-alias_code () {
@@ -193,11 +228,16 @@ EOEXPECTED
 echo 'Run create-app-alias'
 
 { create-app-alias_code || true ; } > "${TMP}/code.txt" 2>&1
-create-app-alias_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying create-app-alias"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/create-app-alias"
+else
+    create-app-alias_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying create-app-alias"
+        exit 1
+    }
+fi
 
 
 api-build_code () {
@@ -217,11 +257,16 @@ EOEXPECTED
 echo 'Run api-build'
 
 { api-build_code || true ; } > "${TMP}/code.txt" 2>&1
-api-build_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying api-build"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/api-build"
+else
+    api-build_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying api-build"
+        exit 1
+    }
+fi
 
 
 app-build_code () {
@@ -241,11 +286,16 @@ EOEXPECTED
 echo 'Run app-build'
 
 { app-build_code || true ; } > "${TMP}/code.txt" 2>&1
-app-build_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying app-build"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/app-build"
+else
+    app-build_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying app-build"
+        exit 1
+    }
+fi
 
 
 api-test_code () {
@@ -265,11 +315,16 @@ EOEXPECTED
 echo 'Run api-test'
 
 { api-test_code || true ; } > "${TMP}/code.txt" 2>&1
-api-test_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying api-test"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/api-test"
+else
+    api-test_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying api-test"
+        exit 1
+    }
+fi
 
 
 app-test_code () {
@@ -289,11 +344,16 @@ EOEXPECTED
 echo 'Run app-test'
 
 { app-test_code || true ; } > "${TMP}/code.txt" 2>&1
-app-test_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying app-test"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/app-test"
+else
+    app-test_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying app-test"
+        exit 1
+    }
+fi
 
 
 show-api-alias_code () {
@@ -313,11 +373,16 @@ EOEXPECTED
 echo 'Run show-api-alias'
 
 { show-api-alias_code || true ; } > "${TMP}/code.txt" 2>&1
-show-api-alias_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying show-api-alias"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/show-api-alias"
+else
+    show-api-alias_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying show-api-alias"
+        exit 1
+    }
+fi
 
 
 
@@ -339,11 +404,16 @@ EOEXPECTED
 echo 'Run help-through-the-alias'
 
 { help-through-the-alias_code || true ; } > "${TMP}/code.txt" 2>&1
-help-through-the-alias_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying help-through-the-alias"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/help-through-the-alias"
+else
+    help-through-the-alias_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying help-through-the-alias"
+        exit 1
+    }
+fi
 
 
 remove-global-api-alias_code () {
@@ -363,11 +433,16 @@ EOEXPECTED
 echo 'Run remove-global-api-alias'
 
 { remove-global-api-alias_code || true ; } > "${TMP}/code.txt" 2>&1
-remove-global-api-alias_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying remove-global-api-alias"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/remove-global-api-alias"
+else
+    remove-global-api-alias_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying remove-global-api-alias"
+        exit 1
+    }
+fi
 
 
 remove-global-app-alias_code () {
@@ -387,11 +462,16 @@ EOEXPECTED
 echo 'Run remove-global-app-alias'
 
 { remove-global-app-alias_code || true ; } > "${TMP}/code.txt" 2>&1
-remove-global-app-alias_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying remove-global-app-alias"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/remove-global-app-alias"
+else
+    remove-global-app-alias_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying remove-global-app-alias"
+        exit 1
+    }
+fi
 
 cd billing-api
 
@@ -412,11 +492,16 @@ EOEXPECTED
 echo 'Run local-api-app-alias'
 
 { local-api-app-alias_code || true ; } > "${TMP}/code.txt" 2>&1
-local-api-app-alias_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying local-api-app-alias"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/local-api-app-alias"
+else
+    local-api-app-alias_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying local-api-app-alias"
+        exit 1
+    }
+fi
 
 cd ..
 cd billing-app
@@ -438,11 +523,16 @@ EOEXPECTED
 echo 'Run local-app-api-alias'
 
 { local-app-api-alias_code || true ; } > "${TMP}/code.txt" 2>&1
-local-app-api-alias_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying local-app-api-alias"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/local-app-api-alias"
+else
+    local-app-api-alias_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying local-app-api-alias"
+        exit 1
+    }
+fi
 
 
 local-api-build_code () {
@@ -462,11 +552,16 @@ EOEXPECTED
 echo 'Run local-api-build'
 
 { local-api-build_code || true ; } > "${TMP}/code.txt" 2>&1
-local-api-build_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying local-api-build"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/local-api-build"
+else
+    local-api-build_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying local-api-build"
+        exit 1
+    }
+fi
 
 
 local-api-test_code () {
@@ -486,11 +581,16 @@ EOEXPECTED
 echo 'Run local-api-test'
 
 { local-api-test_code || true ; } > "${TMP}/code.txt" 2>&1
-local-api-test_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying local-api-test"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/local-api-test"
+else
+    local-api-test_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying local-api-test"
+        exit 1
+    }
+fi
 
 cd ..
 cd billing-api
@@ -512,11 +612,16 @@ EOEXPECTED
 echo 'Run local-app-build'
 
 { local-app-build_code || true ; } > "${TMP}/code.txt" 2>&1
-local-app-build_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying local-app-build"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/local-app-build"
+else
+    local-app-build_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying local-app-build"
+        exit 1
+    }
+fi
 
 
 local-app-test_code () {
@@ -536,11 +641,16 @@ EOEXPECTED
 echo 'Run local-app-test'
 
 { local-app-test_code || true ; } > "${TMP}/code.txt" 2>&1
-local-app-test_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying local-app-test"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/local-app-test"
+else
+    local-app-test_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying local-app-test"
+        exit 1
+    }
+fi
 
 
 promote-build_code () {
@@ -560,11 +670,16 @@ EOEXPECTED
 echo 'Run promote-build'
 
 { promote-build_code || true ; } > "${TMP}/code.txt" 2>&1
-promote-build_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying promote-build"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/promote-build"
+else
+    promote-build_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying promote-build"
+        exit 1
+    }
+fi
 
 
 promoted-build_code () {
@@ -584,11 +699,16 @@ EOEXPECTED
 echo 'Run promoted-build'
 
 { promoted-build_code || true ; } > "${TMP}/code.txt" 2>&1
-promoted-build_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying promoted-build"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/promoted-build"
+else
+    promoted-build_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying promoted-build"
+        exit 1
+    }
+fi
 
 cd ../billing-app
 
@@ -609,11 +729,16 @@ EOEXPECTED
 echo 'Run shadowed-build'
 
 { shadowed-build_code || true ; } > "${TMP}/code.txt" 2>&1
-shadowed-build_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying shadowed-build"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/shadowed-build"
+else
+    shadowed-build_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying shadowed-build"
+        exit 1
+    }
+fi
 
 
 ship_code () {
@@ -633,11 +758,16 @@ EOEXPECTED
 echo 'Run ship'
 
 { ship_code || true ; } > "${TMP}/code.txt" 2>&1
-ship_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying ship"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/ship"
+else
+    ship_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying ship"
+        exit 1
+    }
+fi
 
 
 quiet-ship_code () {
@@ -658,11 +788,16 @@ EOEXPECTED
 echo 'Run quiet-ship'
 
 { quiet-ship_code || true ; } > "${TMP}/code.txt" 2>&1
-quiet-ship_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying quiet-ship"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/quiet-ship"
+else
+    quiet-ship_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying quiet-ship"
+        exit 1
+    }
+fi
 
 
 ship-help-before_code () {
@@ -684,11 +819,16 @@ EOEXPECTED
 echo 'Run ship-help-before'
 
 { ship-help-before_code || true ; } > "${TMP}/code.txt" 2>&1
-ship-help-before_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying ship-help-before"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/ship-help-before"
+else
+    ship-help-before_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying ship-help-before"
+        exit 1
+    }
+fi
 
 clk alias set-documentation ship "Build and test the frontend"
 
@@ -711,11 +851,16 @@ EOEXPECTED
 echo 'Run ship-help-after'
 
 { ship-help-after_code || true ; } > "${TMP}/code.txt" 2>&1
-ship-help-after_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying ship-help-after"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/ship-help-after"
+else
+    ship-help-after_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying ship-help-after"
+        exit 1
+    }
+fi
 
 
 copy-ship_code () {
@@ -735,11 +880,16 @@ EOEXPECTED
 echo 'Run copy-ship'
 
 { copy-ship_code || true ; } > "${TMP}/code.txt" 2>&1
-copy-ship_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying copy-ship"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/copy-ship"
+else
+    copy-ship_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying copy-ship"
+        exit 1
+    }
+fi
 
 clk alias append ship-all api build , api test
 
@@ -760,11 +910,16 @@ EOEXPECTED
 echo 'Run dry-run-rename'
 
 { dry-run-rename_code || true ; } > "${TMP}/code.txt" 2>&1
-dry-run-rename_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying dry-run-rename"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/dry-run-rename"
+else
+    dry-run-rename_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying dry-run-rename"
+        exit 1
+    }
+fi
 
 
 show-before-rename_code () {
@@ -789,11 +944,16 @@ EOEXPECTED
 echo 'Run show-before-rename'
 
 { show-before-rename_code || true ; } > "${TMP}/code.txt" 2>&1
-show-before-rename_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying show-before-rename"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/show-before-rename"
+else
+    show-before-rename_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying show-before-rename"
+        exit 1
+    }
+fi
 
 
 rename-test_code () {
@@ -813,11 +973,16 @@ EOEXPECTED
 echo 'Run rename-test'
 
 { rename-test_code || true ; } > "${TMP}/code.txt" 2>&1
-rename-test_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying rename-test"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/rename-test"
+else
+    rename-test_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying rename-test"
+        exit 1
+    }
+fi
 
 
 show-after-rename_code () {
@@ -842,11 +1007,16 @@ EOEXPECTED
 echo 'Run show-after-rename'
 
 { show-after-rename_code || true ; } > "${TMP}/code.txt" 2>&1
-show-after-rename_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying show-after-rename"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/show-after-rename"
+else
+    show-after-rename_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying show-after-rename"
+        exit 1
+    }
+fi
 
 
 dash-alias_code () {
@@ -867,11 +1037,16 @@ EOEXPECTED
 echo 'Run dash-alias'
 
 { dash-alias_code || true ; } > "${TMP}/code.txt" 2>&1
-dash-alias_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying dash-alias"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/dash-alias"
+else
+    dash-alias_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying dash-alias"
+        exit 1
+    }
+fi
 
 
 punctuation-alias_code () {
@@ -891,11 +1066,16 @@ EOEXPECTED
 echo 'Run punctuation-alias'
 
 { punctuation-alias_code || true ; } > "${TMP}/code.txt" 2>&1
-punctuation-alias_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying punctuation-alias"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/punctuation-alias"
+else
+    punctuation-alias_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying punctuation-alias"
+        exit 1
+    }
+fi
 
 clk alias --global set deploy-prod echo Deploying to production
 
@@ -916,11 +1096,16 @@ EOEXPECTED
 echo 'Run document-elsewhere'
 
 { document-elsewhere_code || true ; } > "${TMP}/code.txt" 2>&1
-document-elsewhere_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying document-elsewhere"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/document-elsewhere"
+else
+    document-elsewhere_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying document-elsewhere"
+        exit 1
+    }
+fi
 
 
 unset-elsewhere_code () {
@@ -940,9 +1125,14 @@ EOEXPECTED
 echo 'Run unset-elsewhere'
 
 { unset-elsewhere_code || true ; } > "${TMP}/code.txt" 2>&1
-unset-elsewhere_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying unset-elsewhere"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/unset-elsewhere"
+else
+    unset-elsewhere_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying unset-elsewhere"
+        exit 1
+    }
+fi
 # tidying up as the aliases pile up:17 ends here

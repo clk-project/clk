@@ -61,11 +61,16 @@ EOEXPECTED
 echo 'Run run_flow'
 
 { run_flow_code || true ; } > "${TMP}/code.txt" 2>&1
-run_flow_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying run_flow"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/run_flow"
+else
+    run_flow_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying run_flow"
+        exit 1
+    }
+fi
 
 
   clk command create python --group printer --description "This is a group of commands to deal with 3D printing." --body '
@@ -118,11 +123,16 @@ EOEXPECTED
 echo 'Run running-the-explicit-flow'
 
 { running-the-explicit-flow_code || true ; } > "${TMP}/code.txt" 2>&1
-running-the-explicit-flow_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying running-the-explicit-flow"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/running-the-explicit-flow"
+else
+    running-the-explicit-flow_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying running-the-explicit-flow"
+        exit 1
+    }
+fi
 
 
 
@@ -147,11 +157,16 @@ EOEXPECTED
 echo 'Run running-the-explicit-flow-with-model'
 
 { running-the-explicit-flow-with-model_code || true ; } > "${TMP}/code.txt" 2>&1
-running-the-explicit-flow-with-model_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying running-the-explicit-flow-with-model"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/running-the-explicit-flow-with-model"
+else
+    running-the-explicit-flow-with-model_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying running-the-explicit-flow-with-model"
+        exit 1
+    }
+fi
 
 
 
@@ -173,11 +188,16 @@ EOEXPECTED
 echo 'Run running-the-flow-from'
 
 { running-the-flow-from_code || true ; } > "${TMP}/code.txt" 2>&1
-running-the-flow-from_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying running-the-flow-from"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/running-the-flow-from"
+else
+    running-the-flow-from_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying running-the-flow-from"
+        exit 1
+    }
+fi
 
 
 
@@ -198,11 +218,16 @@ EOEXPECTED
 echo 'Run running-the-flow-after'
 
 { running-the-flow-after_code || true ; } > "${TMP}/code.txt" 2>&1
-running-the-flow-after_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying running-the-flow-after"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/running-the-flow-after"
+else
+    running-the-flow-after_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying running-the-flow-after"
+        exit 1
+    }
+fi
 
 
 
@@ -223,11 +248,16 @@ EOEXPECTED
 echo 'Run flowdep-show'
 
 { flowdep-show_code || true ; } > "${TMP}/code.txt" 2>&1
-flowdep-show_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying flowdep-show"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/flowdep-show"
+else
+    flowdep-show_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying flowdep-show"
+        exit 1
+    }
+fi
 
 
 clk flowdep graph printer.send --format png --output flow.png
@@ -272,11 +302,16 @@ EOEXPECTED
 echo 'Run flow-verbose'
 
 { flow-verbose_code || true ; } > "${TMP}/code.txt" 2>&1
-flow-verbose_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying flow-verbose"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/flow-verbose"
+else
+    flow-verbose_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying flow-verbose"
+        exit 1
+    }
+fi
 
 
 
@@ -303,11 +338,16 @@ EOEXPECTED
 echo 'Run flow-step'
 
 { flow-step_code || true ; } > "${TMP}/code.txt" 2>&1
-flow-step_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying flow-step"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/flow-step"
+else
+    flow-step_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying flow-step"
+        exit 1
+    }
+fi
 
 
 
@@ -343,11 +383,16 @@ EOEXPECTED
 echo 'Run flow-progress'
 
 { flow-progress_code || true ; } > "${TMP}/code.txt" 2>&1
-flow-progress_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying flow-progress"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/flow-progress"
+else
+    flow-progress_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying flow-progress"
+        exit 1
+    }
+fi
 
 
 clk alias set printer.clean echo "Cleaning the printer bed"
@@ -375,11 +420,16 @@ EOEXPECTED
 echo 'Run flowdep-set-clean'
 
 { flowdep-set-clean_code || true ; } > "${TMP}/code.txt" 2>&1
-flowdep-set-clean_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying flowdep-set-clean"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/flowdep-set-clean"
+else
+    flowdep-set-clean_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying flowdep-set-clean"
+        exit 1
+    }
+fi
 
 
 clk alias set printer.preheat echo "Preheating the nozzle"
@@ -407,11 +457,16 @@ EOEXPECTED
 echo 'Run flowdep-append'
 
 { flowdep-append_code || true ; } > "${TMP}/code.txt" 2>&1
-flowdep-append_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying flowdep-append"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/flowdep-append"
+else
+    flowdep-append_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying flowdep-append"
+        exit 1
+    }
+fi
 
 
 clk alias set printer.check-filament echo "Checking filament level"
@@ -440,11 +495,16 @@ EOEXPECTED
 echo 'Run flowdep-insert'
 
 { flowdep-insert_code || true ; } > "${TMP}/code.txt" 2>&1
-flowdep-insert_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying flowdep-insert"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/flowdep-insert"
+else
+    flowdep-insert_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying flowdep-insert"
+        exit 1
+    }
+fi
 
 
 
@@ -470,11 +530,16 @@ EOEXPECTED
 echo 'Run flowdep-remove'
 
 { flowdep-remove_code || true ; } > "${TMP}/code.txt" 2>&1
-flowdep-remove_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying flowdep-remove"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/flowdep-remove"
+else
+    flowdep-remove_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying flowdep-remove"
+        exit 1
+    }
+fi
 
 
 
@@ -499,11 +564,16 @@ EOEXPECTED
 echo 'Run flowdep-unset'
 
 { flowdep-unset_code || true ; } > "${TMP}/code.txt" 2>&1
-flowdep-unset_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying flowdep-unset"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/flowdep-unset"
+else
+    flowdep-unset_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying flowdep-unset"
+        exit 1
+    }
+fi
 
 
   clk command create python --group printer --description "This is a group of commands to deal with 3D printing." --body '
@@ -550,11 +620,16 @@ EOEXPECTED
 echo 'Run run-with-failing-step'
 
 { run-with-failing-step_code || true ; } > "${TMP}/code.txt" 2>&1
-run-with-failing-step_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying run-with-failing-step"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/run-with-failing-step"
+else
+    run-with-failing-step_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying run-with-failing-step"
+        exit 1
+    }
+fi
 
 
   clk command create python --group printer --description "This is a group of commands to deal with 3D printing." --body '
@@ -602,9 +677,14 @@ EOEXPECTED
 echo 'Run run-with-wrong-flow-deps'
 
 { run-with-wrong-flow-deps_code || true ; } > "${TMP}/code.txt" 2>&1
-run-with-wrong-flow-deps_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying run-with-wrong-flow-deps"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/run-with-wrong-flow-deps"
+else
+    run-with-wrong-flow-deps_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying run-with-wrong-flow-deps"
+        exit 1
+    }
+fi
 # script ends here

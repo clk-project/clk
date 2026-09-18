@@ -23,11 +23,16 @@ EOEXPECTED
 echo 'Run curl'
 
 { curl_code || true ; } > "${TMP}/code.txt" 2>&1
-curl_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying curl"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/curl"
+else
+    curl_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying curl"
+        exit 1
+    }
+fi
 
 
 export MYSERVER=myserverip
@@ -53,11 +58,16 @@ EOEXPECTED
 echo 'Run withpyeval'
 
 { withpyeval_code || true ; } > "${TMP}/code.txt" 2>&1
-withpyeval_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying withpyeval"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/withpyeval"
+else
+    withpyeval_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying withpyeval"
+        exit 1
+    }
+fi
 
 
 
@@ -81,11 +91,16 @@ EOEXPECTED
 echo 'Run witheval'
 
 { witheval_code || true ; } > "${TMP}/code.txt" 2>&1
-witheval_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying witheval"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/witheval"
+else
+    witheval_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying witheval"
+        exit 1
+    }
+fi
 
 
 
@@ -109,9 +124,14 @@ EOEXPECTED
 echo 'Run withtpl'
 
 { withtpl_code || true ; } > "${TMP}/code.txt" 2>&1
-withtpl_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying withtpl"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/withtpl"
+else
+    withtpl_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying withtpl"
+        exit 1
+    }
+fi
 # run ends here

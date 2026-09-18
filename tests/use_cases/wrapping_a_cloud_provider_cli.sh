@@ -59,11 +59,16 @@ EOEXPECTED
 echo 'Run try-explicit'
 
 { try-explicit_code || true ; } > "${TMP}/code.txt" 2>&1
-try-explicit_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying try-explicit"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/try-explicit"
+else
+    try-explicit_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying try-explicit"
+        exit 1
+    }
+fi
 
 
 
@@ -84,11 +89,16 @@ EOEXPECTED
 echo 'Run set-parameters'
 
 { set-parameters_code || true ; } > "${TMP}/code.txt" 2>&1
-set-parameters_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying set-parameters"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/set-parameters"
+else
+    set-parameters_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying set-parameters"
+        exit 1
+    }
+fi
 
 
 
@@ -113,11 +123,16 @@ EOEXPECTED
 echo 'Run try-with-defaults'
 
 { try-with-defaults_code || true ; } > "${TMP}/code.txt" 2>&1
-try-with-defaults_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying try-with-defaults"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/try-with-defaults"
+else
+    try-with-defaults_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying try-with-defaults"
+        exit 1
+    }
+fi
 
 
 
@@ -138,11 +153,16 @@ EOEXPECTED
 echo 'Run try-override'
 
 { try-override_code || true ; } > "${TMP}/code.txt" 2>&1
-try-override_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying try-override"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/try-override"
+else
+    try-override_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying try-override"
+        exit 1
+    }
+fi
 
 
 
@@ -164,11 +184,16 @@ EOEXPECTED
 echo 'Run complete-parameter-command'
 
 { complete-parameter-command_code || true ; } > "${TMP}/code.txt" 2>&1
-complete-parameter-command_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying complete-parameter-command"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/complete-parameter-command"
+else
+    complete-parameter-command_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying complete-parameter-command"
+        exit 1
+    }
+fi
 
 
 
@@ -191,11 +216,16 @@ EOEXPECTED
 echo 'Run complete-parameter-subcommand'
 
 { complete-parameter-subcommand_code || true ; } > "${TMP}/code.txt" 2>&1
-complete-parameter-subcommand_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying complete-parameter-subcommand"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/complete-parameter-subcommand"
+else
+    complete-parameter-subcommand_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying complete-parameter-subcommand"
+        exit 1
+    }
+fi
 
 
 
@@ -216,11 +246,16 @@ EOEXPECTED
 echo 'Run show-parameters'
 
 { show-parameters_code || true ; } > "${TMP}/code.txt" 2>&1
-show-parameters_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying show-parameters"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/show-parameters"
+else
+    show-parameters_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying show-parameters"
+        exit 1
+    }
+fi
 
 
 
@@ -243,11 +278,16 @@ EOEXPECTED
 echo 'Run unset-region'
 
 { unset-region_code || true ; } > "${TMP}/code.txt" 2>&1
-unset-region_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying unset-region"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/unset-region"
+else
+    unset-region_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying unset-region"
+        exit 1
+    }
+fi
 
 
 
@@ -270,11 +310,16 @@ EOEXPECTED
 echo 'Run unset-all'
 
 { unset-all_code || true ; } > "${TMP}/code.txt" 2>&1
-unset-all_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying unset-all"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/unset-all"
+else
+    unset-all_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying unset-all"
+        exit 1
+    }
+fi
 
 
 editor_writes <<'EOF'
@@ -301,11 +346,16 @@ EOEXPECTED
 echo 'Run edit-parameters'
 
 { edit-parameters_code || true ; } > "${TMP}/code.txt" 2>&1
-edit-parameters_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying edit-parameters"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/edit-parameters"
+else
+    edit-parameters_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying edit-parameters"
+        exit 1
+    }
+fi
 
 
 export EDITOR=true
@@ -329,11 +379,16 @@ EOEXPECTED
 echo 'Run edit-parameters-unchanged'
 
 { edit-parameters-unchanged_code || true ; } > "${TMP}/code.txt" 2>&1
-edit-parameters-unchanged_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying edit-parameters-unchanged"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/edit-parameters-unchanged"
+else
+    edit-parameters-unchanged_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying edit-parameters-unchanged"
+        exit 1
+    }
+fi
 
 
 editor_writes </dev/null
@@ -356,11 +411,16 @@ EOEXPECTED
 echo 'Run edit-parameters-emptied'
 
 { edit-parameters-emptied_code || true ; } > "${TMP}/code.txt" 2>&1
-edit-parameters-emptied_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying edit-parameters-emptied"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/edit-parameters-emptied"
+else
+    edit-parameters-emptied_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying edit-parameters-emptied"
+        exit 1
+    }
+fi
 
 
 clk parameter unset aws
@@ -383,11 +443,16 @@ EOEXPECTED
 echo 'Run shoot-myself-in-the-foot'
 
 { shoot-myself-in-the-foot_code || true ; } > "${TMP}/code.txt" 2>&1
-shoot-myself-in-the-foot_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying shoot-myself-in-the-foot"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/shoot-myself-in-the-foot"
+else
+    shoot-myself-in-the-foot_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying shoot-myself-in-the-foot"
+        exit 1
+    }
+fi
 
 
 
@@ -410,11 +475,16 @@ EOEXPECTED
 echo 'Run cannot-unset'
 
 { cannot-unset_code || true ; } > "${TMP}/code.txt" 2>&1
-cannot-unset_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying cannot-unset"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/cannot-unset"
+else
+    cannot-unset_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying cannot-unset"
+        exit 1
+    }
+fi
 
 
 
@@ -435,11 +505,16 @@ EOEXPECTED
 echo 'Run no-parameter-to-the-rescue'
 
 { no-parameter-to-the-rescue_code || true ; } > "${TMP}/code.txt" 2>&1
-no-parameter-to-the-rescue_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying no-parameter-to-the-rescue"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/no-parameter-to-the-rescue"
+else
+    no-parameter-to-the-rescue_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying no-parameter-to-the-rescue"
+        exit 1
+    }
+fi
 
 
 
@@ -462,11 +537,16 @@ EOEXPECTED
 echo 'Run set-ec2-parameter'
 
 { set-ec2-parameter_code || true ; } > "${TMP}/code.txt" 2>&1
-set-ec2-parameter_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying set-ec2-parameter"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/set-ec2-parameter"
+else
+    set-ec2-parameter_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying set-ec2-parameter"
+        exit 1
+    }
+fi
 
 
 
@@ -490,11 +570,16 @@ EOEXPECTED
 echo 'Run remove-command-with-parameters'
 
 { remove-command-with-parameters_code || true ; } > "${TMP}/code.txt" 2>&1
-remove-command-with-parameters_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying remove-command-with-parameters"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/remove-command-with-parameters"
+else
+    remove-command-with-parameters_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying remove-command-with-parameters"
+        exit 1
+    }
+fi
 
 
 
@@ -515,11 +600,16 @@ EOEXPECTED
 echo 'Run unset-orphan-parameters'
 
 { unset-orphan-parameters_code || true ; } > "${TMP}/code.txt" 2>&1
-unset-orphan-parameters_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying unset-orphan-parameters"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/unset-orphan-parameters"
+else
+    unset-orphan-parameters_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying unset-orphan-parameters"
+        exit 1
+    }
+fi
 
 
 mkdir -p webapp-project
@@ -546,11 +636,16 @@ EOEXPECTED
 echo 'Run set-project-parameters'
 
 { set-project-parameters_code || true ; } > "${TMP}/code.txt" 2>&1
-set-project-parameters_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying set-project-parameters"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/set-project-parameters"
+else
+    set-project-parameters_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying set-project-parameters"
+        exit 1
+    }
+fi
 
 
 
@@ -571,11 +666,16 @@ EOEXPECTED
 echo 'Run try-project-parameters'
 
 { try-project-parameters_code || true ; } > "${TMP}/code.txt" 2>&1
-try-project-parameters_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying try-project-parameters"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/try-project-parameters"
+else
+    try-project-parameters_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying try-project-parameters"
+        exit 1
+    }
+fi
 
 
 
@@ -597,11 +697,16 @@ EOEXPECTED
 echo 'Run leave-project'
 
 { leave-project_code || true ; } > "${TMP}/code.txt" 2>&1
-leave-project_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying leave-project"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/leave-project"
+else
+    leave-project_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying leave-project"
+        exit 1
+    }
+fi
 
 
 cd "${TMP}"
@@ -624,11 +729,16 @@ EOEXPECTED
 echo 'Run set-global-prod'
 
 { set-global-prod_code || true ; } > "${TMP}/code.txt" 2>&1
-set-global-prod_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying set-global-prod"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/set-global-prod"
+else
+    set-global-prod_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying set-global-prod"
+        exit 1
+    }
+fi
 
 
 clk extension create config-staging
@@ -652,11 +762,16 @@ EOEXPECTED
 echo 'Run set-staging-params'
 
 { set-staging-params_code || true ; } > "${TMP}/code.txt" 2>&1
-set-staging-params_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying set-staging-params"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/set-staging-params"
+else
+    set-staging-params_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying set-staging-params"
+        exit 1
+    }
+fi
 
 
 
@@ -677,11 +792,16 @@ EOEXPECTED
 echo 'Run try-staging'
 
 { try-staging_code || true ; } > "${TMP}/code.txt" 2>&1
-try-staging_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying try-staging"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/try-staging"
+else
+    try-staging_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying try-staging"
+        exit 1
+    }
+fi
 
 
 
@@ -702,11 +822,16 @@ EOEXPECTED
 echo 'Run try-staging-override'
 
 { try-staging-override_code || true ; } > "${TMP}/code.txt" 2>&1
-try-staging-override_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying try-staging-override"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/try-staging-override"
+else
+    try-staging-override_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying try-staging-override"
+        exit 1
+    }
+fi
 
 
 
@@ -728,11 +853,16 @@ EOEXPECTED
 echo 'Run disable-staging'
 
 { disable-staging_code || true ; } > "${TMP}/code.txt" 2>&1
-disable-staging_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying disable-staging"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/disable-staging"
+else
+    disable-staging_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying disable-staging"
+        exit 1
+    }
+fi
 
 
 clk extension remove config-staging <<< y
@@ -757,11 +887,16 @@ EOEXPECTED
 echo 'Run env-parameters'
 
 { env-parameters_code || true ; } > "${TMP}/code.txt" 2>&1
-env-parameters_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying env-parameters"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/env-parameters"
+else
+    env-parameters_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying env-parameters"
+        exit 1
+    }
+fi
 
 
 
@@ -782,11 +917,16 @@ EOEXPECTED
 echo 'Run env-help'
 
 { env-help_code || true ; } > "${TMP}/code.txt" 2>&1
-env-help_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying env-help"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/env-help"
+else
+    env-help_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying env-help"
+        exit 1
+    }
+fi
 
 
 
@@ -807,11 +947,16 @@ EOEXPECTED
 echo 'Run env-show'
 
 { env-show_code || true ; } > "${TMP}/code.txt" 2>&1
-env-show_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying env-show"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/env-show"
+else
+    env-show_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying env-show"
+        exit 1
+    }
+fi
 
 
 
@@ -833,11 +978,16 @@ EOEXPECTED
 echo 'Run env-unset'
 
 { env-unset_code || true ; } > "${TMP}/code.txt" 2>&1
-env-unset_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying env-unset"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/env-unset"
+else
+    env-unset_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying env-unset"
+        exit 1
+    }
+fi
 
 
 cat <<'EOF' > "$(clk command which aws)"
@@ -887,11 +1037,16 @@ EOEXPECTED
 echo 'Run no-default-env-preserved'
 
 { no-default-env-preserved_code || true ; } > "${TMP}/code.txt" 2>&1
-no-default-env-preserved_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying no-default-env-preserved"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/no-default-env-preserved"
+else
+    no-default-env-preserved_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying no-default-env-preserved"
+        exit 1
+    }
+fi
 
 
 
@@ -912,11 +1067,16 @@ EOEXPECTED
 echo 'Run no-default-explicit'
 
 { no-default-explicit_code || true ; } > "${TMP}/code.txt" 2>&1
-no-default-explicit_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying no-default-explicit"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/no-default-explicit"
+else
+    no-default-explicit_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying no-default-explicit"
+        exit 1
+    }
+fi
 
 
 unset AWS_PROFILE

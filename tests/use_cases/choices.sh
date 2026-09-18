@@ -53,11 +53,16 @@ EOEXPECTED
 echo 'Run batterie-status-test'
 
 { batterie-status-test_code || true ; } > "${TMP}/code.txt" 2>&1
-batterie-status-test_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying batterie-status-test"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/batterie-status-test"
+else
+    batterie-status-test_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying batterie-status-test"
+        exit 1
+    }
+fi
 
 
 try-bad-name-choice_code () {
@@ -78,11 +83,16 @@ EOEXPECTED
 echo 'Run try-bad-name-choice'
 
 { try-bad-name-choice_code || true ; } > "${TMP}/code.txt" 2>&1
-try-bad-name-choice_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying try-bad-name-choice"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/try-bad-name-choice"
+else
+    try-bad-name-choice_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying try-bad-name-choice"
+        exit 1
+    }
+fi
 
 clk command create python android --force --group --body "$(cat<<EOF
 import os
@@ -135,11 +145,16 @@ EOEXPECTED
 echo 'Run test-with-suggestion'
 
 { test-with-suggestion_code || true ; } > "${TMP}/code.txt" 2>&1
-test-with-suggestion_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying test-with-suggestion"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/test-with-suggestion"
+else
+    test-with-suggestion_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying test-with-suggestion"
+        exit 1
+    }
+fi
 
 
 try-completion_code () {
@@ -159,11 +174,16 @@ EOEXPECTED
 echo 'Run try-completion'
 
 { try-completion_code || true ; } > "${TMP}/code.txt" 2>&1
-try-completion_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying try-completion"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/try-completion"
+else
+    try-completion_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying try-completion"
+        exit 1
+    }
+fi
 
 clk command create python android --force --group --body "$(cat<<EOF
 import os
@@ -226,11 +246,16 @@ EOEXPECTED
 echo 'Run test-documented-choices'
 
 { test-documented-choices_code || true ; } > "${TMP}/code.txt" 2>&1
-test-documented-choices_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying test-documented-choices"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/test-documented-choices"
+else
+    test-documented-choices_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying test-documented-choices"
+        exit 1
+    }
+fi
 
 
 test-documented-choices2_code () {
@@ -250,11 +275,16 @@ EOEXPECTED
 echo 'Run test-documented-choices2'
 
 { test-documented-choices2_code || true ; } > "${TMP}/code.txt" 2>&1
-test-documented-choices2_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying test-documented-choices2"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/test-documented-choices2"
+else
+    test-documented-choices2_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying test-documented-choices2"
+        exit 1
+    }
+fi
 
 
 try-completion2_code () {
@@ -274,11 +304,16 @@ EOEXPECTED
 echo 'Run try-completion2'
 
 { try-completion2_code || true ; } > "${TMP}/code.txt" 2>&1
-try-completion2_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying try-completion2"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/try-completion2"
+else
+    try-completion2_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying try-completion2"
+        exit 1
+    }
+fi
 
 
 try-style_code () {
@@ -301,11 +336,16 @@ EOEXPECTED
 echo 'Run try-style'
 
 { try-style_code || true ; } > "${TMP}/code.txt" 2>&1
-try-style_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying try-style"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/try-style"
+else
+    try-style_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying try-style"
+        exit 1
+    }
+fi
 
 
 try-foreground_code () {
@@ -327,11 +367,16 @@ EOEXPECTED
 echo 'Run try-foreground'
 
 { try-foreground_code || true ; } > "${TMP}/code.txt" 2>&1
-try-foreground_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying try-foreground"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/try-foreground"
+else
+    try-foreground_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying try-foreground"
+        exit 1
+    }
+fi
 
 
 try-unknown-colour_code () {
@@ -352,11 +397,16 @@ EOEXPECTED
 echo 'Run try-unknown-colour'
 
 { try-unknown-colour_code || true ; } > "${TMP}/code.txt" 2>&1
-try-unknown-colour_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying try-unknown-colour"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/try-unknown-colour"
+else
+    try-unknown-colour_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying try-unknown-colour"
+        exit 1
+    }
+fi
 
 
 try-unknown-part_code () {
@@ -377,11 +427,16 @@ EOEXPECTED
 echo 'Run try-unknown-part'
 
 { try-unknown-part_code || true ; } > "${TMP}/code.txt" 2>&1
-try-unknown-part_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying try-unknown-part"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/try-unknown-part"
+else
+    try-unknown-part_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying try-unknown-part"
+        exit 1
+    }
+fi
 
 clk echo --style bold-True,fg-green hello
 
@@ -402,9 +457,14 @@ EOEXPECTED
 echo 'Run echo-with-style'
 
 { echo-with-style_code || true ; } > "${TMP}/code.txt" 2>&1
-echo-with-style_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying echo-with-style"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/echo-with-style"
+else
+    echo-with-style_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying echo-with-style"
+        exit 1
+    }
+fi
 # run ends here

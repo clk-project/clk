@@ -70,11 +70,16 @@ EOEXPECTED
 echo 'Run see'
 
 { see_code || true ; } > "${TMP}/code.txt" 2>&1
-see_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying see"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/see"
+else
+    see_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying see"
+        exit 1
+    }
+fi
 
 
 
@@ -95,11 +100,16 @@ EOEXPECTED
 echo 'Run see-help-all'
 
 { see-help-all_code || true ; } > "${TMP}/code.txt" 2>&1
-see-help-all_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying see-help-all"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/see-help-all"
+else
+    see-help-all_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying see-help-all"
+        exit 1
+    }
+fi
 
 
 test "$(clk animal duck --sound-of-animal couac)" = "duck does couac"
@@ -152,11 +162,16 @@ EOEXPECTED
 echo 'Run wordcount-help'
 
 { wordcount-help_code || true ; } > "${TMP}/code.txt" 2>&1
-wordcount-help_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying wordcount-help"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/wordcount-help"
+else
+    wordcount-help_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying wordcount-help"
+        exit 1
+    }
+fi
 
 
 echo "one two three four five" > testfile.txt
@@ -179,11 +194,16 @@ EOEXPECTED
 echo 'Run wordcount-run'
 
 { wordcount-run_code || true ; } > "${TMP}/code.txt" 2>&1
-wordcount-run_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying wordcount-run"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/wordcount-run"
+else
+    wordcount-run_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying wordcount-run"
+        exit 1
+    }
+fi
 
 
 
@@ -204,11 +224,16 @@ EOEXPECTED
 echo 'Run wordcount-completion'
 
 { wordcount-completion_code || true ; } > "${TMP}/code.txt" 2>&1
-wordcount-completion_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying wordcount-completion"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/wordcount-completion"
+else
+    wordcount-completion_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying wordcount-completion"
+        exit 1
+    }
+fi
 
 
 
@@ -234,11 +259,16 @@ EOEXPECTED
 echo 'Run completion-show'
 
 { completion-show_code || true ; } > "${TMP}/code.txt" 2>&1
-completion-show_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying completion-show"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/completion-show"
+else
+    completion-show_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying completion-show"
+        exit 1
+    }
+fi
 
 
 
@@ -259,11 +289,16 @@ EOEXPECTED
 echo 'Run wordcount-completion-upper'
 
 { wordcount-completion-upper_code || true ; } > "${TMP}/code.txt" 2>&1
-wordcount-completion-upper_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying wordcount-completion-upper"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/wordcount-completion-upper"
+else
+    wordcount-completion-upper_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying wordcount-completion-upper"
+        exit 1
+    }
+fi
 
 
 
@@ -284,11 +319,16 @@ EOEXPECTED
 echo 'Run wordcount-completion-insensitive'
 
 { wordcount-completion-insensitive_code || true ; } > "${TMP}/code.txt" 2>&1
-wordcount-completion-insensitive_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying wordcount-completion-insensitive"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/wordcount-completion-insensitive"
+else
+    wordcount-completion-insensitive_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying wordcount-completion-insensitive"
+        exit 1
+    }
+fi
 
 
 clk command create bash showpackage
@@ -332,9 +372,14 @@ EOEXPECTED
 echo 'Run urlarg-run'
 
 { urlarg-run_code || true ; } > "${TMP}/code.txt" 2>&1
-urlarg-run_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying urlarg-run"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/urlarg-run"
+else
+    urlarg-run_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying urlarg-run"
+        exit 1
+    }
+fi
 # passing a URL to a file argument:5 ends here

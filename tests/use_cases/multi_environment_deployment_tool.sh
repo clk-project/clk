@@ -53,11 +53,16 @@ EOEXPECTED
 echo 'Run test-status-dev'
 
 { test-status-dev_code || true ; } > "${TMP}/code.txt" 2>&1
-test-status-dev_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying test-status-dev"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/test-status-dev"
+else
+    test-status-dev_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying test-status-dev"
+        exit 1
+    }
+fi
 
 
 
@@ -81,11 +86,16 @@ EOEXPECTED
 echo 'Run test-status-prod'
 
 { test-status-prod_code || true ; } > "${TMP}/code.txt" 2>&1
-test-status-prod_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying test-status-prod"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/test-status-prod"
+else
+    test-status-prod_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying test-status-prod"
+        exit 1
+    }
+fi
 
 
 clk command create bash myenv.deploy --description "Deploy to the current environment" --body '
@@ -113,9 +123,14 @@ EOEXPECTED
 echo 'Run test-deploy-staging'
 
 { test-deploy-staging_code || true ; } > "${TMP}/code.txt" 2>&1
-test-deploy-staging_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying test-deploy-staging"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/test-deploy-staging"
+else
+    test-deploy-staging_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying test-deploy-staging"
+        exit 1
+    }
+fi
 # No heading:10 ends here

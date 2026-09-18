@@ -24,11 +24,16 @@ EOEXPECTED
 echo 'Run csm-fork-again'
 
 { csm-fork-again_code || true ; } > "${TMP}/code.txt" 2>&1
-csm-fork-again_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying csm-fork-again"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/csm-fork-again"
+else
+    csm-fork-again_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying csm-fork-again"
+        exit 1
+    }
+fi
 
 
 
@@ -51,11 +56,16 @@ EOEXPECTED
 echo 'Run csm-fork-force'
 
 { csm-fork-force_code || true ; } > "${TMP}/code.txt" 2>&1
-csm-fork-force_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying csm-fork-force"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/csm-fork-force"
+else
+    csm-fork-force_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying csm-fork-force"
+        exit 1
+    }
+fi
 
 
 CURRENT_CLK="$(clk python -c 'from pathlib import Path; import clk ; print(Path(clk.__path__[0]).parent)')"
@@ -183,11 +193,16 @@ EOEXPECTED
 echo 'Run csm-run-flow'
 
 { csm-run-flow_code || true ; } > "${TMP}/code.txt" 2>&1
-csm-run-flow_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying csm-run-flow"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/csm-run-flow"
+else
+    csm-run-flow_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying csm-run-flow"
+        exit 1
+    }
+fi
 
 
 
@@ -208,11 +223,16 @@ EOEXPECTED
 echo 'Run csm-configure-options'
 
 { csm-configure-options_code || true ; } > "${TMP}/code.txt" 2>&1
-csm-configure-options_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying csm-configure-options"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/csm-configure-options"
+else
+    csm-configure-options_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying csm-configure-options"
+        exit 1
+    }
+fi
 
 
 
@@ -233,11 +253,16 @@ EOEXPECTED
 echo 'Run csm-configure-defines'
 
 { csm-configure-defines_code || true ; } > "${TMP}/code.txt" 2>&1
-csm-configure-defines_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying csm-configure-defines"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/csm-configure-defines"
+else
+    csm-configure-defines_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying csm-configure-defines"
+        exit 1
+    }
+fi
 
 
 
@@ -258,11 +283,16 @@ EOEXPECTED
 echo 'Run csm-build-options'
 
 { csm-build-options_code || true ; } > "${TMP}/code.txt" 2>&1
-csm-build-options_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying csm-build-options"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/csm-build-options"
+else
+    csm-build-options_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying csm-build-options"
+        exit 1
+    }
+fi
 
 
 
@@ -283,11 +313,16 @@ EOEXPECTED
 echo 'Run csm-run-no-flow'
 
 { csm-run-no-flow_code || true ; } > "${TMP}/code.txt" 2>&1
-csm-run-no-flow_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying csm-run-no-flow"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/csm-run-no-flow"
+else
+    csm-run-no-flow_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying csm-run-no-flow"
+        exit 1
+    }
+fi
 
 
 mkdir -p csm/csm/settings
@@ -345,11 +380,16 @@ EOEXPECTED
 echo 'Run csm-run-shipped-alias'
 
 { csm-run-shipped-alias_code || true ; } > "${TMP}/code.txt" 2>&1
-csm-run-shipped-alias_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying csm-run-shipped-alias"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/csm-run-shipped-alias"
+else
+    csm-run-shipped-alias_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying csm-run-shipped-alias"
+        exit 1
+    }
+fi
 
 
 cat<<'EOF' > csm/csm/launcher.py
@@ -432,11 +472,16 @@ EOEXPECTED
 echo 'Run csm-show-launchers'
 
 { csm-show-launchers_code || true ; } > "${TMP}/code.txt" 2>&1
-csm-show-launchers_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying csm-show-launchers"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/csm-show-launchers"
+else
+    csm-show-launchers_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying csm-show-launchers"
+        exit 1
+    }
+fi
 
 
 
@@ -457,11 +502,16 @@ EOEXPECTED
 echo 'Run csm-show-gdb'
 
 { csm-show-gdb_code || true ; } > "${TMP}/code.txt" 2>&1
-csm-show-gdb_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying csm-show-gdb"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/csm-show-gdb"
+else
+    csm-show-gdb_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying csm-show-gdb"
+        exit 1
+    }
+fi
 
 
 cat<<'EOF' > csm/csm/commands/simulate.py
@@ -496,11 +546,16 @@ EOEXPECTED
 echo 'Run csm-simulate-with-gdb'
 
 { csm-simulate-with-gdb_code || true ; } > "${TMP}/code.txt" 2>&1
-csm-simulate-with-gdb_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying csm-simulate-with-gdb"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/csm-simulate-with-gdb"
+else
+    csm-simulate-with-gdb_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying csm-simulate-with-gdb"
+        exit 1
+    }
+fi
 
 
 
@@ -521,11 +576,16 @@ EOEXPECTED
 echo 'Run csm-simulate-with-perf'
 
 { csm-simulate-with-perf_code || true ; } > "${TMP}/code.txt" 2>&1
-csm-simulate-with-perf_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying csm-simulate-with-perf"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/csm-simulate-with-perf"
+else
+    csm-simulate-with-perf_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying csm-simulate-with-perf"
+        exit 1
+    }
+fi
 
 
 
@@ -546,11 +606,16 @@ EOEXPECTED
 echo 'Run csm-simulate-without-launcher'
 
 { csm-simulate-without-launcher_code || true ; } > "${TMP}/code.txt" 2>&1
-csm-simulate-without-launcher_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying csm-simulate-without-launcher"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/csm-simulate-without-launcher"
+else
+    csm-simulate-without-launcher_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying csm-simulate-without-launcher"
+        exit 1
+    }
+fi
 
 
 
@@ -574,9 +639,14 @@ EOEXPECTED
 echo 'Run csm-flow-with-launcher'
 
 { csm-flow-with-launcher_code || true ; } > "${TMP}/code.txt" 2>&1
-csm-flow-with-launcher_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying csm-flow-with-launcher"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/csm-flow-with-launcher"
+else
+    csm-flow-with-launcher_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying csm-flow-with-launcher"
+        exit 1
+    }
+fi
 # using a launcher in the simulate command:7 ends here

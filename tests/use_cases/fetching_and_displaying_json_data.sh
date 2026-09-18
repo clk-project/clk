@@ -60,11 +60,16 @@ EOEXPECTED
 echo 'Run run_cat'
 
 { run_cat_code || true ; } > "${TMP}/code.txt" 2>&1
-run_cat_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying run_cat"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/run_cat"
+else
+    run_cat_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying run_cat"
+        exit 1
+    }
+fi
 
 
   cat<<EOF >> "${CLKCONFIGDIR}/python/holidays.py"
@@ -119,9 +124,14 @@ EOEXPECTED
 echo 'Run run_filter'
 
 { run_filter_code || true ; } > "${TMP}/code.txt" 2>&1
-run_filter_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying run_filter"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/run_filter"
+else
+    run_filter_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying run_filter"
+        exit 1
+    }
+fi
 # script ends here

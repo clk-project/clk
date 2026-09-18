@@ -61,11 +61,16 @@ EOEXPECTED
 echo 'Run run-record'
 
 { run-record_code || true ; } > "${TMP}/code.txt" 2>&1
-run-record_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying run-record"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/run-record"
+else
+    run-record_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying run-record"
+        exit 1
+    }
+fi
 
 
 
@@ -91,9 +96,14 @@ EOEXPECTED
 echo 'Run run-record-disk-full'
 
 { run-record-disk-full_code || true ; } > "${TMP}/code.txt" 2>&1
-run-record-disk-full_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying run-record-disk-full"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/run-record-disk-full"
+else
+    run-record-disk-full_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying run-record-disk-full"
+        exit 1
+    }
+fi
 # No heading:7 ends here

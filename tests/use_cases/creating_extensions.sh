@@ -55,11 +55,16 @@ EOEXPECTED
 echo 'Run try-it'
 
 { try-it_code || true ; } > "${TMP}/code.txt" 2>&1
-try-it_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying try-it"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/try-it"
+else
+    try-it_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying try-it"
+        exit 1
+    }
+fi
 
 
 
@@ -83,11 +88,16 @@ EOEXPECTED
 echo 'Run disable'
 
 { disable_code || true ; } > "${TMP}/code.txt" 2>&1
-disable_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying disable"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/disable"
+else
+    disable_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying disable"
+        exit 1
+    }
+fi
 
 
 
@@ -112,11 +122,16 @@ EOEXPECTED
 echo 'Run enable-for-one-run'
 
 { enable-for-one-run_code || true ; } > "${TMP}/code.txt" 2>&1
-enable-for-one-run_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying enable-for-one-run"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/enable-for-one-run"
+else
+    enable-for-one-run_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying enable-for-one-run"
+        exit 1
+    }
+fi
 
 
 
@@ -142,11 +157,16 @@ EOEXPECTED
 echo 'Run enable'
 
 { enable_code || true ; } > "${TMP}/code.txt" 2>&1
-enable_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying enable"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/enable"
+else
+    enable_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying enable"
+        exit 1
+    }
+fi
 
 
 
@@ -169,11 +189,16 @@ EOEXPECTED
 echo 'Run disable-for-one-run'
 
 { disable-for-one-run_code || true ; } > "${TMP}/code.txt" 2>&1
-disable-for-one-run_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying disable-for-one-run"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/disable-for-one-run"
+else
+    disable-for-one-run_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying disable-for-one-run"
+        exit 1
+    }
+fi
 
 
 mkdir noisy-project && cd noisy-project && mkdir .clk
@@ -197,11 +222,16 @@ EOEXPECTED
 echo 'Run disable-in-project'
 
 { disable-in-project_code || true ; } > "${TMP}/code.txt" 2>&1
-disable-in-project_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying disable-in-project"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/disable-in-project"
+else
+    disable-in-project_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying disable-in-project"
+        exit 1
+    }
+fi
 
 
 
@@ -227,11 +257,16 @@ EOEXPECTED
 echo 'Run unset-in-project'
 
 { unset-in-project_code || true ; } > "${TMP}/code.txt" 2>&1
-unset-in-project_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying unset-in-project"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/unset-in-project"
+else
+    unset-in-project_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying unset-in-project"
+        exit 1
+    }
+fi
 
 
 cd ..
@@ -260,11 +295,16 @@ EOEXPECTED
 echo 'Run run_project_deploy'
 
 { run_project_deploy_code || true ; } > "${TMP}/code.txt" 2>&1
-run_project_deploy_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying run_project_deploy"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/run_project_deploy"
+else
+    run_project_deploy_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying run_project_deploy"
+        exit 1
+    }
+fi
 
 
 clk flowdep --extension k8s set deploy k8s.run-cluster
@@ -289,11 +329,16 @@ EOEXPECTED
 echo 'Run run_project_deploy_again'
 
 { run_project_deploy_again_code || true ; } > "${TMP}/code.txt" 2>&1
-run_project_deploy_again_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying run_project_deploy_again"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/run_project_deploy_again"
+else
+    run_project_deploy_again_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying run_project_deploy_again"
+        exit 1
+    }
+fi
 
 
 clk command create bash k8s.setup-credentials --flowdeps '[overridden]' --description "Setup the credentials of this project" --body '
@@ -322,11 +367,16 @@ EOEXPECTED
 echo 'Run run-flow-in-project'
 
 { run-flow-in-project_code || true ; } > "${TMP}/code.txt" 2>&1
-run-flow-in-project_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying run-flow-in-project"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/run-flow-in-project"
+else
+    run-flow-in-project_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying run-flow-in-project"
+        exit 1
+    }
+fi
 
 
 cd ..
@@ -349,11 +399,16 @@ EOEXPECTED
 echo 'Run find-it'
 
 { find-it_code || true ; } > "${TMP}/code.txt" 2>&1
-find-it_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying find-it"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/find-it"
+else
+    find-it_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying find-it"
+        exit 1
+    }
+fi
 
 
 git init --bare "${TMP}/k8s.git"
@@ -385,11 +440,16 @@ EOEXPECTED
 echo 'Run lose-k8s'
 
 { lose-k8s_code || true ; } > "${TMP}/code.txt" 2>&1
-lose-k8s_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying lose-k8s"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/lose-k8s"
+else
+    lose-k8s_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying lose-k8s"
+        exit 1
+    }
+fi
 
 
 clk extension install "${TMP}/k8s.git" k8s
@@ -416,11 +476,16 @@ EOEXPECTED
 echo 'Run k8s-is-back'
 
 { k8s-is-back_code || true ; } > "${TMP}/code.txt" 2>&1
-k8s-is-back_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying k8s-is-back"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/k8s-is-back"
+else
+    k8s-is-back_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying k8s-is-back"
+        exit 1
+    }
+fi
 
 
 
@@ -441,11 +506,16 @@ EOEXPECTED
 echo 'Run install-k8s-again'
 
 { install-k8s-again_code || true ; } > "${TMP}/code.txt" 2>&1
-install-k8s-again_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying install-k8s-again"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/install-k8s-again"
+else
+    install-k8s-again_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying install-k8s-again"
+        exit 1
+    }
+fi
 
 
 git init --bare "${TMP}/someone-else.git"
@@ -468,11 +538,16 @@ EOEXPECTED
 echo 'Run refuse-another-k8s'
 
 { refuse-another-k8s_code || true ; } > "${TMP}/code.txt" 2>&1
-refuse-another-k8s_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying refuse-another-k8s"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/refuse-another-k8s"
+else
+    refuse-another-k8s_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying refuse-another-k8s"
+        exit 1
+    }
+fi
 
 
 
@@ -493,11 +568,16 @@ EOEXPECTED
 echo 'Run install-from-nowhere'
 
 { install-from-nowhere_code || true ; } > "${TMP}/code.txt" 2>&1
-install-from-nowhere_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying install-from-nowhere"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/install-from-nowhere"
+else
+    install-from-nowhere_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying install-from-nowhere"
+        exit 1
+    }
+fi
 
 
 git clone "${TMP}/k8s.git" "${TMP}/their-k8s"
@@ -531,11 +611,16 @@ EOEXPECTED
 echo 'Run no-stop-cluster'
 
 { no-stop-cluster_code || true ; } > "${TMP}/code.txt" 2>&1
-no-stop-cluster_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying no-stop-cluster"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/no-stop-cluster"
+else
+    no-stop-cluster_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying no-stop-cluster"
+        exit 1
+    }
+fi
 
 
 clk extension update k8s
@@ -558,11 +643,16 @@ EOEXPECTED
 echo 'Run stop-cluster'
 
 { stop-cluster_code || true ; } > "${TMP}/code.txt" 2>&1
-stop-cluster_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying stop-cluster"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/stop-cluster"
+else
+    stop-cluster_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying stop-cluster"
+        exit 1
+    }
+fi
 
 
 
@@ -607,11 +697,16 @@ EOEXPECTED
 echo 'Run install-extension'
 
 { install-extension_code || true ; } > "${TMP}/code.txt" 2>&1
-install-extension_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying install-extension"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/install-extension"
+else
+    install-extension_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying install-extension"
+        exit 1
+    }
+fi
 
 
 
@@ -639,11 +734,16 @@ EOEXPECTED
 echo 'Run describe-hello'
 
 { describe-hello_code || true ; } > "${TMP}/code.txt" 2>&1
-describe-hello_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying describe-hello"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/describe-hello"
+else
+    describe-hello_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying describe-hello"
+        exit 1
+    }
+fi
 
 
 
@@ -672,11 +772,16 @@ EOEXPECTED
 echo 'Run remove-extension'
 
 { remove-extension_code || true ; } > "${TMP}/code.txt" 2>&1
-remove-extension_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying remove-extension"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/remove-extension"
+else
+    remove-extension_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying remove-extension"
+        exit 1
+    }
+fi
 
 
 
@@ -721,11 +826,16 @@ EOEXPECTED
 echo 'Run install-extension-github'
 
 { install-extension-github_code || true ; } > "${TMP}/code.txt" 2>&1
-install-extension-github_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying install-extension-github"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/install-extension-github"
+else
+    install-extension-github_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying install-extension-github"
+        exit 1
+    }
+fi
 
 
 
@@ -771,11 +881,16 @@ EOEXPECTED
 echo 'Run install-extension-name'
 
 { install-extension-name_code || true ; } > "${TMP}/code.txt" 2>&1
-install-extension-name_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying install-extension-name"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/install-extension-name"
+else
+    install-extension-name_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying install-extension-name"
+        exit 1
+    }
+fi
 
 
 clk extension create tempdir-demo
@@ -823,11 +938,16 @@ EOEXPECTED
 echo 'Run run-tempdir-demo'
 
 { run-tempdir-demo_code || true ; } > "${TMP}/code.txt" 2>&1
-run-tempdir-demo_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying run-tempdir-demo"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/run-tempdir-demo"
+else
+    run-tempdir-demo_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying run-tempdir-demo"
+        exit 1
+    }
+fi
 
 
 clk command create --extension tempdir-demo python apply-mock-config --description "Demonstrate temporary_file usage" --body '
@@ -876,11 +996,16 @@ EOEXPECTED
 echo 'Run run-tempfile-demo'
 
 { run-tempfile-demo_code || true ; } > "${TMP}/code.txt" 2>&1
-run-tempfile-demo_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying run-tempfile-demo"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/run-tempfile-demo"
+else
+    run-tempfile-demo_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying run-tempfile-demo"
+        exit 1
+    }
+fi
 
 
 clk extension remove tempdir-demo
@@ -917,11 +1042,16 @@ EOEXPECTED
 echo 'Run run-complaining-demo'
 
 { run-complaining-demo_code || true ; } > "${TMP}/code.txt" 2>&1
-run-complaining-demo_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying run-complaining-demo"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/run-complaining-demo"
+else
+    run-complaining-demo_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying run-complaining-demo"
+        exit 1
+    }
+fi
 
 
 
@@ -942,11 +1072,16 @@ EOEXPECTED
 echo 'Run run-quiet-demo'
 
 { run-quiet-demo_code || true ; } > "${TMP}/code.txt" 2>&1
-run-quiet-demo_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying run-quiet-demo"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/run-quiet-demo"
+else
+    run-quiet-demo_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying run-quiet-demo"
+        exit 1
+    }
+fi
 
 
 
@@ -968,11 +1103,16 @@ EOEXPECTED
 echo 'Run run-failing-demo'
 
 { run-failing-demo_code || true ; } > "${TMP}/code.txt" 2>&1
-run-failing-demo_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying run-failing-demo"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/run-failing-demo"
+else
+    run-failing-demo_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying run-failing-demo"
+        exit 1
+    }
+fi
 
 
 
@@ -994,11 +1134,16 @@ EOEXPECTED
 echo 'Run run-quiet-failing-demo'
 
 { run-quiet-failing-demo_code || true ; } > "${TMP}/code.txt" 2>&1
-run-quiet-failing-demo_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying run-quiet-failing-demo"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/run-quiet-failing-demo"
+else
+    run-quiet-failing-demo_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying run-quiet-failing-demo"
+        exit 1
+    }
+fi
 
 
 clk command create --extension cluster-demo python watch-cluster --description "Wait for the cluster to answer" --body '
@@ -1035,11 +1180,16 @@ EOEXPECTED
 echo 'Run run-waiting-demo'
 
 { run-waiting-demo_code || true ; } > "${TMP}/code.txt" 2>&1
-run-waiting-demo_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying run-waiting-demo"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/run-waiting-demo"
+else
+    run-waiting-demo_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying run-waiting-demo"
+        exit 1
+    }
+fi
 
 
 clk extension remove cluster-demo
@@ -1064,11 +1214,16 @@ EOEXPECTED
 echo 'Run hostname-extension-visible'
 
 { hostname-extension-visible_code || true ; } > "${TMP}/code.txt" 2>&1
-hostname-extension-visible_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying hostname-extension-visible"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/hostname-extension-visible"
+else
+    hostname-extension-visible_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying hostname-extension-visible"
+        exit 1
+    }
+fi
 
 
 clk extension remove "my-host.[example].com"
@@ -1098,11 +1253,16 @@ EOEXPECTED
 echo 'Run kube-is-local'
 
 { kube-is-local_code || true ; } > "${TMP}/code.txt" 2>&1
-kube-is-local_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying kube-is-local"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/kube-is-local"
+else
+    kube-is-local_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying kube-is-local"
+        exit 1
+    }
+fi
 
 
 
@@ -1126,11 +1286,16 @@ EOEXPECTED
 echo 'Run rename-kube'
 
 { rename-kube_code || true ; } > "${TMP}/code.txt" 2>&1
-rename-kube_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying rename-kube"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/rename-kube"
+else
+    rename-kube_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying rename-kube"
+        exit 1
+    }
+fi
 
 
 
@@ -1154,11 +1319,16 @@ EOEXPECTED
 echo 'Run move-kube'
 
 { move-kube_code || true ; } > "${TMP}/code.txt" 2>&1
-move-kube_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying move-kube"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/move-kube"
+else
+    move-kube_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying move-kube"
+        exit 1
+    }
+fi
 
 
 
@@ -1180,9 +1350,14 @@ EOEXPECTED
 echo 'Run leave-tidyproject'
 
 { leave-tidyproject_code || true ; } > "${TMP}/code.txt" 2>&1
-leave-tidyproject_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying leave-tidyproject"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/leave-tidyproject"
+else
+    leave-tidyproject_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying leave-tidyproject"
+        exit 1
+    }
+fi
 # all ends here

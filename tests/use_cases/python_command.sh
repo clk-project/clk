@@ -42,11 +42,16 @@ EOEXPECTED
 echo 'Run help-create'
 
 { help-create_code || true ; } > "${TMP}/code.txt" 2>&1
-help-create_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying help-create"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/help-create"
+else
+    help-create_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying help-create"
+        exit 1
+    }
+fi
 
 
 
@@ -98,11 +103,16 @@ EOEXPECTED
 echo 'Run show_it'
 
 { show_it_code || true ; } > "${TMP}/code.txt" 2>&1
-show_it_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying show_it"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/show_it"
+else
+    show_it_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying show_it"
+        exit 1
+    }
+fi
 
 
 
@@ -123,11 +133,16 @@ EOEXPECTED
 echo 'Run try'
 
 { try_code || true ; } > "${TMP}/code.txt" 2>&1
-try_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying try"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/try"
+else
+    try_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying try"
+        exit 1
+    }
+fi
 
 
 sed -i 's/"Description"/"Command that says something"/g' "$(clk command which mycommand)"
@@ -160,11 +175,16 @@ EOEXPECTED
 echo 'Run help'
 
 { help_code || true ; } > "${TMP}/code.txt" 2>&1
-help_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying help"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/help"
+else
+    help_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying help"
+        exit 1
+    }
+fi
 
 
 cat<<'EOF' > "$(clk command which mycommand)"
@@ -198,11 +218,16 @@ EOEXPECTED
 echo 'Run use_it'
 
 { use_it_code || true ; } > "${TMP}/code.txt" 2>&1
-use_it_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying use_it"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/use_it"
+else
+    use_it_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying use_it"
+        exit 1
+    }
+fi
 
 
 cat<<'EOF' > "$(clk command which mycommand)"
@@ -238,11 +263,16 @@ EOEXPECTED
 echo 'Run required_arg_error'
 
 { required_arg_error_code || true ; } > "${TMP}/code.txt" 2>&1
-required_arg_error_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying required_arg_error"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/required_arg_error"
+else
+    required_arg_error_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying required_arg_error"
+        exit 1
+    }
+fi
 
 
 
@@ -263,11 +293,16 @@ EOEXPECTED
 echo 'Run required_arg_ok'
 
 { required_arg_ok_code || true ; } > "${TMP}/code.txt" 2>&1
-required_arg_ok_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying required_arg_ok"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/required_arg_ok"
+else
+    required_arg_ok_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying required_arg_ok"
+        exit 1
+    }
+fi
 
 
 cat<<'EOF' > "$(clk command which mycommand)"
@@ -306,11 +341,16 @@ EOEXPECTED
 echo 'Run use_with_options'
 
 { use_with_options_code || true ; } > "${TMP}/code.txt" 2>&1
-use_with_options_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying use_with_options"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/use_with_options"
+else
+    use_with_options_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying use_with_options"
+        exit 1
+    }
+fi
 
 
 
@@ -332,11 +372,16 @@ EOEXPECTED
 echo 'Run use_with_options2'
 
 { use_with_options2_code || true ; } > "${TMP}/code.txt" 2>&1
-use_with_options2_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying use_with_options2"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/use_with_options2"
+else
+    use_with_options2_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying use_with_options2"
+        exit 1
+    }
+fi
 
 
 
@@ -359,11 +404,16 @@ EOEXPECTED
 echo 'Run use_with_deprecated_options'
 
 { use_with_deprecated_options_code || true ; } > "${TMP}/code.txt" 2>&1
-use_with_deprecated_options_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying use_with_deprecated_options"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/use_with_deprecated_options"
+else
+    use_with_deprecated_options_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying use_with_deprecated_options"
+        exit 1
+    }
+fi
 
 
 
@@ -396,11 +446,16 @@ EOEXPECTED
 echo 'Run help_without_doc'
 
 { help_without_doc_code || true ; } > "${TMP}/code.txt" 2>&1
-help_without_doc_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying help_without_doc"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/help_without_doc"
+else
+    help_without_doc_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying help_without_doc"
+        exit 1
+    }
+fi
 
 
 sed -i 's|default="Hello")|default="Hello", help="What to say")|' "$(clk command which mycommand)"
@@ -426,11 +481,16 @@ EOEXPECTED
 echo 'Run help_with_doc'
 
 { help_with_doc_code || true ; } > "${TMP}/code.txt" 2>&1
-help_with_doc_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying help_with_doc"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/help_with_doc"
+else
+    help_with_doc_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying help_with_doc"
+        exit 1
+    }
+fi
 
 
 cat <<'EOF' > "${CLKCONFIGDIR}/python/pyenv.py"
@@ -457,11 +517,16 @@ EOEXPECTED
 echo 'Run try-completion-bad-command'
 
 { try-completion-bad-command_code || true ; } > "${TMP}/code.txt" 2>&1
-try-completion-bad-command_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying try-completion-bad-command"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/try-completion-bad-command"
+else
+    try-completion-bad-command_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying try-completion-bad-command"
+        exit 1
+    }
+fi
 
 
 
@@ -484,11 +549,16 @@ EOEXPECTED
 echo 'Run try-bad-command'
 
 { try-bad-command_code || true ; } > "${TMP}/code.txt" 2>&1
-try-bad-command_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying try-bad-command"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/try-bad-command"
+else
+    try-bad-command_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying try-bad-command"
+        exit 1
+    }
+fi
 
 
 try-bad-command-develop_code () {
@@ -508,11 +578,16 @@ EOEXPECTED
 echo 'Run try-bad-command-develop'
 
 { try-bad-command-develop_code || true ; } > "${TMP}/code.txt" 2>&1
-try-bad-command-develop_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying try-bad-command-develop"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/try-bad-command-develop"
+else
+    try-bad-command-develop_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying try-bad-command-develop"
+        exit 1
+    }
+fi
 
 
 
@@ -533,11 +608,16 @@ EOEXPECTED
 echo 'Run try-completion-bad-command-options'
 
 { try-completion-bad-command-options_code || true ; } > "${TMP}/code.txt" 2>&1
-try-completion-bad-command-options_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying try-completion-bad-command-options"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/try-completion-bad-command-options"
+else
+    try-completion-bad-command-options_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying try-completion-bad-command-options"
+        exit 1
+    }
+fi
 
 
 cat <<'EOF' > "${CLKCONFIGDIR}/python/pyenv.py"
@@ -567,11 +647,16 @@ EOEXPECTED
 echo 'Run try-fixed-command'
 
 { try-fixed-command_code || true ; } > "${TMP}/code.txt" 2>&1
-try-fixed-command_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying try-fixed-command"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/try-fixed-command"
+else
+    try-fixed-command_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying try-fixed-command"
+        exit 1
+    }
+fi
 
 
 
@@ -593,11 +678,16 @@ EOEXPECTED
 echo 'Run create-periods'
 
 { create-periods_code || true ; } > "${TMP}/code.txt" 2>&1
-create-periods_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying create-periods"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/create-periods"
+else
+    create-periods_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying create-periods"
+        exit 1
+    }
+fi
 
 
 clk command create python --group mygroup
@@ -638,11 +728,16 @@ EOEXPECTED
 echo 'Run try-mygroup-child'
 
 { try-mygroup-child_code || true ; } > "${TMP}/code.txt" 2>&1
-try-mygroup-child_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying try-mygroup-child"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/try-mygroup-child"
+else
+    try-mygroup-child_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying try-mygroup-child"
+        exit 1
+    }
+fi
 
 
 clk command create python greet --with-data --description "Greet someone" --body '
@@ -675,11 +770,16 @@ EOEXPECTED
 echo 'Run where-greet'
 
 { where-greet_code || true ; } > "${TMP}/code.txt" 2>&1
-where-greet_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying where-greet"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/where-greet"
+else
+    where-greet_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying where-greet"
+        exit 1
+    }
+fi
 
 
 echo "Hello, and welcome aboard" > "$(dirname "$(clk command which greet)")/greeting.txt"
@@ -702,9 +802,14 @@ EOEXPECTED
 echo 'Run try-greet'
 
 { try-greet_code || true ; } > "${TMP}/code.txt" 2>&1
-try-greet_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying try-greet"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/try-greet"
+else
+    try-greet_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying try-greet"
+        exit 1
+    }
+fi
 # shipping data along with the command:6 ends here

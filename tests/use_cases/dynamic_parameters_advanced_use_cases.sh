@@ -71,9 +71,14 @@ EOEXPECTED
 echo 'Run use_it'
 
 { use_it_code || true ; } > "${TMP}/code.txt" 2>&1
-use_it_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying use_it"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/use_it"
+else
+    use_it_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying use_it"
+        exit 1
+    }
+fi
 # all ends here

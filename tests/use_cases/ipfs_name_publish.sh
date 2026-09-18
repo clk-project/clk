@@ -31,11 +31,16 @@ EOEXPECTED
 echo 'Run call-ipfs-key-list'
 
 { call-ipfs-key-list_code || true ; } > "${TMP}/code.txt" 2>&1
-call-ipfs-key-list_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying call-ipfs-key-list"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/call-ipfs-key-list"
+else
+    call-ipfs-key-list_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying call-ipfs-key-list"
+        exit 1
+    }
+fi
 
 
 
@@ -85,11 +90,16 @@ EOEXPECTED
 echo 'Run call-ipfs'
 
 { call-ipfs_code || true ; } > "${TMP}/code.txt" 2>&1
-call-ipfs_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying call-ipfs"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/call-ipfs"
+else
+    call-ipfs_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying call-ipfs"
+        exit 1
+    }
+fi
 
 
 clk command create bash ipfs.name.publish --no-open
@@ -133,11 +143,16 @@ EOEXPECTED
 echo 'Run try-completion'
 
 { try-completion_code || true ; } > "${TMP}/code.txt" 2>&1
-try-completion_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying try-completion"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/try-completion"
+else
+    try-completion_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying try-completion"
+        exit 1
+    }
+fi
 
 
 
@@ -158,9 +173,14 @@ EOEXPECTED
 echo 'Run call-publish'
 
 { call-publish_code || true ; } > "${TMP}/code.txt" 2>&1
-call-publish_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying call-publish"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/call-publish"
+else
+    call-publish_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying call-publish"
+        exit 1
+    }
+fi
 # run ends here

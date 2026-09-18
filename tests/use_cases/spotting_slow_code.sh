@@ -40,11 +40,16 @@ EOEXPECTED
 echo 'Run run-without-timestamp'
 
 { run-without-timestamp_code || true ; } > "${TMP}/code.txt" 2>&1
-run-without-timestamp_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying run-without-timestamp"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/run-without-timestamp"
+else
+    run-without-timestamp_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying run-without-timestamp"
+        exit 1
+    }
+fi
 
 
 run-with-timestamp_code () {
@@ -64,11 +69,16 @@ EOEXPECTED
 echo 'Run run-with-timestamp'
 
 { run-with-timestamp_code || true ; } > "${TMP}/code.txt" 2>&1
-run-with-timestamp_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying run-with-timestamp"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/run-with-timestamp"
+else
+    run-with-timestamp_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying run-with-timestamp"
+        exit 1
+    }
+fi
 
 
 run-with-debug-timestamp_code () {
@@ -92,11 +102,16 @@ EOEXPECTED
 echo 'Run run-with-debug-timestamp'
 
 { run-with-debug-timestamp_code || true ; } > "${TMP}/code.txt" 2>&1
-run-with-debug-timestamp_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying run-with-debug-timestamp"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/run-with-debug-timestamp"
+else
+    run-with-debug-timestamp_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying run-with-debug-timestamp"
+        exit 1
+    }
+fi
 
 
 run-with-profiling_code () {
@@ -116,9 +131,14 @@ EOEXPECTED
 echo 'Run run-with-profiling'
 
 { run-with-profiling_code || true ; } > "${TMP}/code.txt" 2>&1
-run-with-profiling_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying run-with-profiling"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/run-with-profiling"
+else
+    run-with-profiling_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying run-with-profiling"
+        exit 1
+    }
+fi
 # run ends here

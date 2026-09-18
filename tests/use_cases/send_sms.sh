@@ -77,11 +77,16 @@ EOEXPECTED
 echo 'Run command-completion-doit'
 
 { command-completion-doit_code || true ; } > "${TMP}/code.txt" 2>&1
-command-completion-doit_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying command-completion-doit"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/command-completion-doit"
+else
+    command-completion-doit_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying command-completion-doit"
+        exit 1
+    }
+fi
 
 cat<<"EOC" > "$(clk command which termux.sms.send)"
 #!/usr/bin/env bash
@@ -125,11 +130,16 @@ EOEXPECTED
 echo 'Run try-with-clk-value'
 
 { try-with-clk-value_code || true ; } > "${TMP}/code.txt" 2>&1
-try-with-clk-value_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying try-with-clk-value"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/try-with-clk-value"
+else
+    try-with-clk-value_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying try-with-clk-value"
+        exit 1
+    }
+fi
 
 cat<<"EOC" > "$(clk command which termux.sms.send)"
 #!/usr/bin/env bash
@@ -184,9 +194,14 @@ EOEXPECTED
 echo 'Run try-with-json'
 
 { try-with-json_code || true ; } > "${TMP}/code.txt" 2>&1
-try-with-json_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying try-with-json"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/try-with-json"
+else
+    try-with-json_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying try-with-json"
+        exit 1
+    }
+fi
 # run ends here

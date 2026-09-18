@@ -37,11 +37,16 @@ EOEXPECTED
 echo 'Run call_some'
 
 { call_some_code || true ; } > "${TMP}/code.txt" 2>&1
-call_some_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying call_some"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/call_some"
+else
+    call_some_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying call_some"
+        exit 1
+    }
+fi
 
 
 clk alias set eth.mycontract eth contract --abi-path some.json --address 0xdeadbeef
@@ -65,11 +70,16 @@ EOEXPECTED
 echo 'Run call_alias'
 
 { call_alias_code || true ; } > "${TMP}/code.txt" 2>&1
-call_alias_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying call_alias"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/call_alias"
+else
+    call_alias_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying call_alias"
+        exit 1
+    }
+fi
 
 
 
@@ -91,11 +101,16 @@ EOEXPECTED
 echo 'Run try_completion'
 
 { try_completion_code || true ; } > "${TMP}/code.txt" 2>&1
-try_completion_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying try_completion"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/try_completion"
+else
+    try_completion_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying try_completion"
+        exit 1
+    }
+fi
 
 
 clk command create bash eth.deploy --description 'Deploy a new contract, save its address locally' --body '
@@ -135,11 +150,16 @@ EOEXPECTED
 echo 'Run try_deploy'
 
 { try_deploy_code || true ; } > "${TMP}/code.txt" 2>&1
-try_deploy_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying try_deploy"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/try_deploy"
+else
+    try_deploy_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying try_deploy"
+        exit 1
+    }
+fi
 
 
 
@@ -162,11 +182,16 @@ EOEXPECTED
 echo 'Run get-address'
 
 { get-address_code || true ; } > "${TMP}/code.txt" 2>&1
-get-address_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying get-address"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/get-address"
+else
+    get-address_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying get-address"
+        exit 1
+    }
+fi
 
 
 clk alias set eth.mycontract eth contract --abi-path some.json --address "noeval:eval:clk eth get-address"
@@ -195,11 +220,16 @@ EOEXPECTED
 echo 'Run try-command-with-eval'
 
 { try-command-with-eval_code || true ; } > "${TMP}/code.txt" 2>&1
-try-command-with-eval_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying try-command-with-eval"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/try-command-with-eval"
+else
+    try-command-with-eval_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying try-command-with-eval"
+        exit 1
+    }
+fi
 
 
 
@@ -229,11 +259,16 @@ EOEXPECTED
 echo 'Run issue-using-with-cache'
 
 { issue-using-with-cache_code || true ; } > "${TMP}/code.txt" 2>&1
-issue-using-with-cache_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying issue-using-with-cache"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/issue-using-with-cache"
+else
+    issue-using-with-cache_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying issue-using-with-cache"
+        exit 1
+    }
+fi
 
 
 
@@ -260,11 +295,16 @@ EOEXPECTED
 echo 'Run dropping-the-cache-when-deploying'
 
 { dropping-the-cache-when-deploying_code || true ; } > "${TMP}/code.txt" 2>&1
-dropping-the-cache-when-deploying_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying dropping-the-cache-when-deploying"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/dropping-the-cache-when-deploying"
+else
+    dropping-the-cache-when-deploying_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying dropping-the-cache-when-deploying"
+        exit 1
+    }
+fi
 
 
 mkdir -p myproject/.clk
@@ -288,11 +328,16 @@ EOEXPECTED
 echo 'Run alias-with-project'
 
 { alias-with-project_code || true ; } > "${TMP}/code.txt" 2>&1
-alias-with-project_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying alias-with-project"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/alias-with-project"
+else
+    alias-with-project_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying alias-with-project"
+        exit 1
+    }
+fi
 
 
 
@@ -315,11 +360,16 @@ EOEXPECTED
 echo 'Run deploy-again'
 
 { deploy-again_code || true ; } > "${TMP}/code.txt" 2>&1
-deploy-again_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying deploy-again"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/deploy-again"
+else
+    deploy-again_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying deploy-again"
+        exit 1
+    }
+fi
 
 
 
@@ -341,9 +391,14 @@ EOEXPECTED
 echo 'Run run-with-project-abi'
 
 { run-with-project-abi_code || true ; } > "${TMP}/code.txt" 2>&1
-run-with-project-abi_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying run-with-project-abi"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/run-with-project-abi"
+else
+    run-with-project-abi_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying run-with-project-abi"
+        exit 1
+    }
+fi
 # test ends here

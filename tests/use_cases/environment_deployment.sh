@@ -46,11 +46,16 @@ EOEXPECTED
 echo 'Run deploy_default'
 
 { deploy_default_code || true ; } > "${TMP}/code.txt" 2>&1
-deploy_default_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying deploy_default"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/deploy_default"
+else
+    deploy_default_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying deploy_default"
+        exit 1
+    }
+fi
 
 
 
@@ -72,11 +77,16 @@ EOEXPECTED
 echo 'Run deploy_explicit'
 
 { deploy_explicit_code || true ; } > "${TMP}/code.txt" 2>&1
-deploy_explicit_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying deploy_explicit"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/deploy_explicit"
+else
+    deploy_explicit_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying deploy_explicit"
+        exit 1
+    }
+fi
 
 
 
@@ -99,11 +109,16 @@ EOEXPECTED
 echo 'Run create_aliases'
 
 { create_aliases_code || true ; } > "${TMP}/code.txt" 2>&1
-create_aliases_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying create_aliases"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/create_aliases"
+else
+    create_aliases_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying create_aliases"
+        exit 1
+    }
+fi
 
 
 
@@ -125,9 +140,14 @@ EOEXPECTED
 echo 'Run deploy_via_alias'
 
 { deploy_via_alias_code || true ; } > "${TMP}/code.txt" 2>&1
-deploy_via_alias_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying deploy_via_alias"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/deploy_via_alias"
+else
+    deploy_via_alias_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying deploy_via_alias"
+        exit 1
+    }
+fi
 # run ends here

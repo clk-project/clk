@@ -23,11 +23,16 @@ EOEXPECTED
 echo 'Run setup-global'
 
 { setup-global_code || true ; } > "${TMP}/code.txt" 2>&1
-setup-global_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying setup-global"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/setup-global"
+else
+    setup-global_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying setup-global"
+        exit 1
+    }
+fi
 
 
 
@@ -53,11 +58,16 @@ EOEXPECTED
 echo 'Run describe-global'
 
 { describe-global_code || true ; } > "${TMP}/code.txt" 2>&1
-describe-global_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying describe-global"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/describe-global"
+else
+    describe-global_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying describe-global"
+        exit 1
+    }
+fi
 
 
 
@@ -78,11 +88,16 @@ EOEXPECTED
 echo 'Run show-global-alias'
 
 { show-global-alias_code || true ; } > "${TMP}/code.txt" 2>&1
-show-global-alias_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying show-global-alias"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/show-global-alias"
+else
+    show-global-alias_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying show-global-alias"
+        exit 1
+    }
+fi
 
 
 
@@ -103,11 +118,16 @@ EOEXPECTED
 echo 'Run show-global-params'
 
 { show-global-params_code || true ; } > "${TMP}/code.txt" 2>&1
-show-global-params_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying show-global-params"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/show-global-params"
+else
+    show-global-params_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying show-global-params"
+        exit 1
+    }
+fi
 
 
 mkdir myproject && cd myproject && mkdir .clk
@@ -134,11 +154,16 @@ EOEXPECTED
 echo 'Run setup-local'
 
 { setup-local_code || true ; } > "${TMP}/code.txt" 2>&1
-setup-local_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying setup-local"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/setup-local"
+else
+    setup-local_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying setup-local"
+        exit 1
+    }
+fi
 
 
 
@@ -165,11 +190,16 @@ EOEXPECTED
 echo 'Run describe-local'
 
 { describe-local_code || true ; } > "${TMP}/code.txt" 2>&1
-describe-local_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying describe-local"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/describe-local"
+else
+    describe-local_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying describe-local"
+        exit 1
+    }
+fi
 
 
 
@@ -191,11 +221,16 @@ EOEXPECTED
 echo 'Run show-local-alias'
 
 { show-local-alias_code || true ; } > "${TMP}/code.txt" 2>&1
-show-local-alias_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying show-local-alias"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/show-local-alias"
+else
+    show-local-alias_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying show-local-alias"
+        exit 1
+    }
+fi
 
 
 
@@ -217,11 +252,16 @@ EOEXPECTED
 echo 'Run create-extension'
 
 { create-extension_code || true ; } > "${TMP}/code.txt" 2>&1
-create-extension_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying create-extension"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/create-extension"
+else
+    create-extension_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying create-extension"
+        exit 1
+    }
+fi
 
 
 clk command create --extension mytools bash --description "Show current date and time" --body 'date' now
@@ -249,11 +289,16 @@ EOEXPECTED
 echo 'Run describe-extension'
 
 { describe-extension_code || true ; } > "${TMP}/code.txt" 2>&1
-describe-extension_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying describe-extension"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/describe-extension"
+else
+    describe-extension_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying describe-extension"
+        exit 1
+    }
+fi
 
 
 clk command create bash --description "Deploy the application" --body 'echo Deploying...' deploy
@@ -284,11 +329,16 @@ EOEXPECTED
 echo 'Run describe-with-commands'
 
 { describe-with-commands_code || true ; } > "${TMP}/code.txt" 2>&1
-describe-with-commands_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying describe-with-commands"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/describe-with-commands"
+else
+    describe-with-commands_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying describe-with-commands"
+        exit 1
+    }
+fi
 
 
 
@@ -309,11 +359,16 @@ EOEXPECTED
 echo 'Run list-commands'
 
 { list-commands_code || true ; } > "${TMP}/code.txt" 2>&1
-list-commands_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying list-commands"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/list-commands"
+else
+    list-commands_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying list-commands"
+        exit 1
+    }
+fi
 
 
 
@@ -335,11 +390,16 @@ EOEXPECTED
 echo 'Run setup-value'
 
 { setup-value_code || true ; } > "${TMP}/code.txt" 2>&1
-setup-value_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying setup-value"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/setup-value"
+else
+    setup-value_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying setup-value"
+        exit 1
+    }
+fi
 
 
 
@@ -372,9 +432,14 @@ EOEXPECTED
 echo 'Run describe-values'
 
 { describe-values_code || true ; } > "${TMP}/code.txt" 2>&1
-describe-values_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying describe-values"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/describe-values"
+else
+    describe-values_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying describe-values"
+        exit 1
+    }
+fi
 # run ends here

@@ -23,9 +23,14 @@ EOEXPECTED
 echo 'Run run'
 
 { run_code || true ; } > "${TMP}/code.txt" 2>&1
-run_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying run"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/run"
+else
+    run_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying run"
+        exit 1
+    }
+fi
 # hello-world ends here

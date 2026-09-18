@@ -27,11 +27,16 @@ EOEXPECTED
 echo 'Run set-parameters-verbose'
 
 { set-parameters-verbose_code || true ; } > "${TMP}/code.txt" 2>&1
-set-parameters-verbose_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying set-parameters-verbose"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/set-parameters-verbose"
+else
+    set-parameters-verbose_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying set-parameters-verbose"
+        exit 1
+    }
+fi
 
 
 clk parameter unset alias.show
@@ -62,11 +67,16 @@ EOEXPECTED
 echo 'Run show-help-color'
 
 { show-help-color_code || true ; } > "${TMP}/code.txt" 2>&1
-show-help-color_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying show-help-color"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/show-help-color"
+else
+    show-help-color_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying show-help-color"
+        exit 1
+    }
+fi
 
 
 
@@ -89,11 +99,16 @@ EOEXPECTED
 echo 'Run set-other-values'
 
 { set-other-values_code || true ; } > "${TMP}/code.txt" 2>&1
-set-other-values_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying set-other-values"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/set-other-values"
+else
+    set-other-values_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying set-other-values"
+        exit 1
+    }
+fi
 
 
 
@@ -115,11 +130,16 @@ EOEXPECTED
 echo 'Run set-default-option'
 
 { set-default-option_code || true ; } > "${TMP}/code.txt" 2>&1
-set-default-option_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying set-default-option"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/set-default-option"
+else
+    set-default-option_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying set-default-option"
+        exit 1
+    }
+fi
 
 
 clk command create python show-items --no-open --force
@@ -167,11 +187,16 @@ EOEXPECTED
 echo 'Run show-custom-help'
 
 { show-custom-help_code || true ; } > "${TMP}/code.txt" 2>&1
-show-custom-help_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying show-custom-help"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/show-custom-help"
+else
+    show-custom-help_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying show-custom-help"
+        exit 1
+    }
+fi
 
 
 
@@ -195,11 +220,16 @@ EOEXPECTED
 echo 'Run change-value-true'
 
 { change-value-true_code || true ; } > "${TMP}/code.txt" 2>&1
-change-value-true_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying change-value-true"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/change-value-true"
+else
+    change-value-true_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying change-value-true"
+        exit 1
+    }
+fi
 
 
 clk value set config.show.color false
@@ -225,9 +255,14 @@ EOEXPECTED
 echo 'Run unset-value'
 
 { unset-value_code || true ; } > "${TMP}/code.txt" 2>&1
-unset-value_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying unset-value"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/unset-value"
+else
+    unset-value_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying unset-value"
+        exit 1
+    }
+fi
 # a familiar pattern: git config:3 ends here

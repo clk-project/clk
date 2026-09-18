@@ -24,11 +24,16 @@ EOEXPECTED
 echo 'Run show-plugin'
 
 { show-plugin_code || true ; } > "${TMP}/code.txt" 2>&1
-show-plugin_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying show-plugin"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/show-plugin"
+else
+    show-plugin_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying show-plugin"
+        exit 1
+    }
+fi
 
 
 
@@ -63,11 +68,16 @@ EOEXPECTED
 echo 'Run verify_plugin'
 
 { verify_plugin_code || true ; } > "${TMP}/code.txt" 2>&1
-verify_plugin_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying verify_plugin"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/verify_plugin"
+else
+    verify_plugin_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying verify_plugin"
+        exit 1
+    }
+fi
 
 
 clk alias set mycommand echo 'main command'
@@ -92,11 +102,16 @@ EOEXPECTED
 echo 'Run show_trigger'
 
 { show_trigger_code || true ; } > "${TMP}/code.txt" 2>&1
-show_trigger_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying show_trigger"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/show_trigger"
+else
+    show_trigger_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying show_trigger"
+        exit 1
+    }
+fi
 
 
 
@@ -118,11 +133,16 @@ EOEXPECTED
 echo 'Run run_with_pre_trigger'
 
 { run_with_pre_trigger_code || true ; } > "${TMP}/code.txt" 2>&1
-run_with_pre_trigger_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying run_with_pre_trigger"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/run_with_pre_trigger"
+else
+    run_with_pre_trigger_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying run_with_pre_trigger"
+        exit 1
+    }
+fi
 
 
 clk alias set buildcmd echo 'build complete'
@@ -147,11 +167,16 @@ EOEXPECTED
 echo 'Run run_with_success_trigger'
 
 { run_with_success_trigger_code || true ; } > "${TMP}/code.txt" 2>&1
-run_with_success_trigger_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying run_with_success_trigger"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/run_with_success_trigger"
+else
+    run_with_success_trigger_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying run_with_success_trigger"
+        exit 1
+    }
+fi
 
 
 clk trigger unset pre mycommand
@@ -174,11 +199,16 @@ EOEXPECTED
 echo 'Run run_after_unset'
 
 { run_after_unset_code || true ; } > "${TMP}/code.txt" 2>&1
-run_after_unset_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying run_after_unset"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/run_after_unset"
+else
+    run_after_unset_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying run_after_unset"
+        exit 1
+    }
+fi
 
 
 clk alias set cmd1 echo 'one'
@@ -206,9 +236,14 @@ EOEXPECTED
 echo 'Run show_name_only'
 
 { show_name_only_code || true ; } > "${TMP}/code.txt" 2>&1
-show_name_only_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying show_name_only"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/show_name_only"
+else
+    show_name_only_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying show_name_only"
+        exit 1
+    }
+fi
 # listing triggers with --name-only:3 ends here

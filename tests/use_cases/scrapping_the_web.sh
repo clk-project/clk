@@ -46,11 +46,16 @@ EOEXPECTED
 echo 'Run running_the_test'
 
 { running_the_test_code || true ; } > "${TMP}/code.txt" 2>&1
-running_the_test_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying running_the_test"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/running_the_test"
+else
+    running_the_test_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying running_the_test"
+        exit 1
+    }
+fi
 
 clk command create python --force --group --body '
 from clk.core import cache_disk
@@ -117,11 +122,16 @@ EOEXPECTED
 echo 'Run running_the_test_with_cache'
 
 { running_the_test_with_cache_code || true ; } > "${TMP}/code.txt" 2>&1
-running_the_test_with_cache_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying running_the_test_with_cache"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/running_the_test_with_cache"
+else
+    running_the_test_with_cache_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying running_the_test_with_cache"
+        exit 1
+    }
+fi
 
 clk command create python --force --group --body '
 from clk.core import cache_disk
@@ -189,9 +199,14 @@ EOEXPECTED
 echo 'Run running_the_test_with_cache_with_renew'
 
 { running_the_test_with_cache_with_renew_code || true ; } > "${TMP}/code.txt" 2>&1
-running_the_test_with_cache_with_renew_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying running_the_test_with_cache_with_renew"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/running_the_test_with_cache_with_renew"
+else
+    running_the_test_with_cache_with_renew_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying running_the_test_with_cache_with_renew"
+        exit 1
+    }
+fi
 # run ends here

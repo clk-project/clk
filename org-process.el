@@ -111,6 +111,40 @@ Handles `: value`, `#+begin_example` and `#+begin_export` formats."
             (forward-line 1))
           (mapconcat #'identity (nreverse lines) "\n"))))))))
 
+(defconst clk-tangle--check-result-template "
+%1$s_code () {
+      <<%1$s>>
+}
+
+%1$s_expected () {
+      local expected
+      expected=\"$(cat<<\"EOEXPECTED\"
+%2$s
+EOEXPECTED
+)\"
+      # org says nil where the block said nothing
+      test \"${expected}\" = nil || echo \"${expected}\"
+}
+
+echo 'Run %1$s'
+
+{ %1$s_code || true ; } > \"${TMP}/code.txt\" 2>&1
+if [ -n \"${CLK_RECORD_RESULTS-}\" ]
+then
+    cp \"${TMP}/code.txt\" \"${CLK_RECORD_RESULTS}/%1$s\"
+else
+    %1$s_expected > \"${TMP}/expected.txt\" 2>&1
+    diff -uBw \"${TMP}/code.txt\" \"${TMP}/expected.txt\" || {
+        echo \"Something went wrong when trying %1$s\"
+        exit 1
+    }
+fi
+"
+  "The shell that check-result(NAME) becomes.
+%1$s is the name of the block, %2$s the result it is expected to give.
+With CLK_RECORD_RESULTS set, the run writes down what it got there instead
+of comparing, which is how the results in the org files are refreshed.")
+
 ;; The check-result advice — transforms check-result(name) into shell test
 ;; functions during noweb expansion.  Uses inline cached results to avoid
 ;; re-executing blocks in batch mode (where the cache hash may not match).
@@ -126,26 +160,7 @@ Handles `: value`, `#+begin_example` and `#+begin_export` formats."
                  (error (concat "No cached #+RESULTS[...] for the block %s."
                                 " Run the blocks before tangling")
                         name))
-               (concat
-                "\n" name "_code () {\n"
-                "      <<" name ">>\n"
-                "}\n"
-                "\n" name "_expected () {\n"
-                "      local expected\n"
-                "      expected=\"$(cat<<\"EOEXPECTED\"\n"
-                result "\n"
-                "EOEXPECTED\n"
-                ")\"\n"
-                "      # org says nil where the block said nothing\n"
-                "      test \"${expected}\" = nil || echo \"${expected}\"\n"
-                "}\n"
-                "\necho 'Run " name "'\n"
-                "\n{ " name "_code || true ; } > \"${TMP}/code.txt\" 2>&1\n"
-                name "_expected > \"${TMP}/expected.txt\" 2>&1\n"
-                "diff -uBw \"${TMP}/code.txt\" \"${TMP}/expected.txt\" || {\n"
-                "echo \"Something went wrong when trying " name "\"\n"
-                "exit 1\n"
-                "}\n")))
+               (format clk-tangle--check-result-template name result)))
            code nil t))
     (funcall
      orig-func

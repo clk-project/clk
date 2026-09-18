@@ -29,11 +29,16 @@ EOEXPECTED
 echo 'Run tryit'
 
 { tryit_code || true ; } > "${TMP}/code.txt" 2>&1
-tryit_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying tryit"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/tryit"
+else
+    tryit_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying tryit"
+        exit 1
+    }
+fi
 
 
 
@@ -54,11 +59,16 @@ EOEXPECTED
 echo 'Run makeitalias'
 
 { makeitalias_code || true ; } > "${TMP}/code.txt" 2>&1
-makeitalias_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying makeitalias"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/makeitalias"
+else
+    makeitalias_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying makeitalias"
+        exit 1
+    }
+fi
 
 
 
@@ -82,11 +92,16 @@ EOEXPECTED
 echo 'Run callit'
 
 { callit_code || true ; } > "${TMP}/code.txt" 2>&1
-callit_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying callit"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/callit"
+else
+    callit_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying callit"
+        exit 1
+    }
+fi
 
 
 clk command create python podcast --group --force --description "Dealing with podcasts" --body "
@@ -123,11 +138,16 @@ EOEXPECTED
 echo 'Run download_filtered'
 
 { download_filtered_code || true ; } > "${TMP}/code.txt" 2>&1
-download_filtered_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying download_filtered"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/download_filtered"
+else
+    download_filtered_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying download_filtered"
+        exit 1
+    }
+fi
 
 
 
@@ -148,11 +168,16 @@ EOEXPECTED
 echo 'Run music_alias'
 
 { music_alias_code || true ; } > "${TMP}/code.txt" 2>&1
-music_alias_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying music_alias"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/music_alias"
+else
+    music_alias_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying music_alias"
+        exit 1
+    }
+fi
 
 
 
@@ -174,11 +199,16 @@ EOEXPECTED
 echo 'Run use_music_alias'
 
 { use_music_alias_code || true ; } > "${TMP}/code.txt" 2>&1
-use_music_alias_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying use_music_alias"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/use_music_alias"
+else
+    use_music_alias_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying use_music_alias"
+        exit 1
+    }
+fi
 
 
 
@@ -199,11 +229,16 @@ EOEXPECTED
 echo 'Run audio_alias'
 
 { audio_alias_code || true ; } > "${TMP}/code.txt" 2>&1
-audio_alias_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying audio_alias"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/audio_alias"
+else
+    audio_alias_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying audio_alias"
+        exit 1
+    }
+fi
 
 
 
@@ -225,11 +260,16 @@ EOEXPECTED
 echo 'Run use_audio_alias'
 
 { use_audio_alias_code || true ; } > "${TMP}/code.txt" 2>&1
-use_audio_alias_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying use_audio_alias"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/use_audio_alias"
+else
+    use_audio_alias_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying use_audio_alias"
+        exit 1
+    }
+fi
 
 
 
@@ -267,11 +307,16 @@ EOEXPECTED
 echo 'Run group_help_with_alias'
 
 { group_help_with_alias_code || true ; } > "${TMP}/code.txt" 2>&1
-group_help_with_alias_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying group_help_with_alias"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/group_help_with_alias"
+else
+    group_help_with_alias_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying group_help_with_alias"
+        exit 1
+    }
+fi
 
 
 mkdir -p lib
@@ -324,11 +369,16 @@ EOEXPECTED
 echo 'Run run_extract_audio'
 
 { run_extract_audio_code || true ; } > "${TMP}/code.txt" 2>&1
-run_extract_audio_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying run_extract_audio"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/run_extract_audio"
+else
+    run_extract_audio_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying run_extract_audio"
+        exit 1
+    }
+fi
 
 
 
@@ -353,11 +403,16 @@ EOEXPECTED
 echo 'Run state_completion'
 
 { state_completion_code || true ; } > "${TMP}/code.txt" 2>&1
-state_completion_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying state_completion"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/state_completion"
+else
+    state_completion_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying state_completion"
+        exit 1
+    }
+fi
 
 
 sed -i 's/"done"]/"done", "to-digest"]/' lib/podcastlib.py
@@ -385,9 +440,14 @@ EOEXPECTED
 echo 'Run state_completion_after'
 
 { state_completion_after_code || true ; } > "${TMP}/code.txt" 2>&1
-state_completion_after_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying state_completion_after"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/state_completion_after"
+else
+    state_completion_after_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying state_completion_after"
+        exit 1
+    }
+fi
 # run ends here

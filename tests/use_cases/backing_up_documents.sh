@@ -44,11 +44,16 @@ EOEXPECTED
 echo 'Run try-backup-docs-do'
 
 { try-backup-docs-do_code || true ; } > "${TMP}/code.txt" 2>&1
-try-backup-docs-do_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying try-backup-docs-do"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/try-backup-docs-do"
+else
+    try-backup-docs-do_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying try-backup-docs-do"
+        exit 1
+    }
+fi
 
 
 
@@ -83,11 +88,16 @@ EOEXPECTED
 echo 'Run show-backup-help'
 
 { show-backup-help_code || true ; } > "${TMP}/code.txt" 2>&1
-show-backup-help_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying show-backup-help"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/show-backup-help"
+else
+    show-backup-help_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying show-backup-help"
+        exit 1
+    }
+fi
 
 
 
@@ -108,11 +118,16 @@ EOEXPECTED
 echo 'Run set-dest-param'
 
 { set-dest-param_code || true ; } > "${TMP}/code.txt" 2>&1
-set-dest-param_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying set-dest-param"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/set-dest-param"
+else
+    set-dest-param_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying set-dest-param"
+        exit 1
+    }
+fi
 
 
 
@@ -133,11 +148,16 @@ EOEXPECTED
 echo 'Run try-with-param'
 
 { try-with-param_code || true ; } > "${TMP}/code.txt" 2>&1
-try-with-param_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying try-with-param"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/try-with-param"
+else
+    try-with-param_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying try-with-param"
+        exit 1
+    }
+fi
 
 
 
@@ -158,11 +178,16 @@ EOEXPECTED
 echo 'Run override-param'
 
 { override-param_code || true ; } > "${TMP}/code.txt" 2>&1
-override-param_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying override-param"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/override-param"
+else
+    override-param_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying override-param"
+        exit 1
+    }
+fi
 
 
 clk command create bash backup.database \
@@ -211,11 +236,16 @@ EOEXPECTED
 echo 'Run show-backup-commands'
 
 { show-backup-commands_code || true ; } > "${TMP}/code.txt" 2>&1
-show-backup-commands_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying show-backup-commands"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/show-backup-commands"
+else
+    show-backup-commands_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying show-backup-commands"
+        exit 1
+    }
+fi
 
 
 
@@ -238,11 +268,16 @@ EOEXPECTED
 echo 'Run try-all-backups'
 
 { try-all-backups_code || true ; } > "${TMP}/code.txt" 2>&1
-try-all-backups_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying try-all-backups"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/try-all-backups"
+else
+    try-all-backups_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying try-all-backups"
+        exit 1
+    }
+fi
 
 
 clk command create bash backup.docs.verify \
@@ -288,11 +323,16 @@ EOEXPECTED
 echo 'Run show-docs-group'
 
 { show-docs-group_code || true ; } > "${TMP}/code.txt" 2>&1
-show-docs-group_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying show-docs-group"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/show-docs-group"
+else
+    show-docs-group_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying show-docs-group"
+        exit 1
+    }
+fi
 
 
 
@@ -313,11 +353,16 @@ EOEXPECTED
 echo 'Run call-docs-do'
 
 { call-docs-do_code || true ; } > "${TMP}/code.txt" 2>&1
-call-docs-do_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying call-docs-do"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/call-docs-do"
+else
+    call-docs-do_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying call-docs-do"
+        exit 1
+    }
+fi
 
 
 
@@ -340,11 +385,16 @@ EOEXPECTED
 echo 'Run call-docs-subcommands'
 
 { call-docs-subcommands_code || true ; } > "${TMP}/code.txt" 2>&1
-call-docs-subcommands_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying call-docs-subcommands"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/call-docs-subcommands"
+else
+    call-docs-subcommands_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying call-docs-subcommands"
+        exit 1
+    }
+fi
 
 
 
@@ -365,11 +415,16 @@ EOEXPECTED
 echo 'Run set-flowdep'
 
 { set-flowdep_code || true ; } > "${TMP}/code.txt" 2>&1
-set-flowdep_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying set-flowdep"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/set-flowdep"
+else
+    set-flowdep_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying set-flowdep"
+        exit 1
+    }
+fi
 
 
 
@@ -391,11 +446,16 @@ EOEXPECTED
 echo 'Run run-with-flow'
 
 { run-with-flow_code || true ; } > "${TMP}/code.txt" 2>&1
-run-with-flow_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying run-with-flow"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/run-with-flow"
+else
+    run-with-flow_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying run-with-flow"
+        exit 1
+    }
+fi
 
 
 
@@ -416,11 +476,16 @@ EOEXPECTED
 echo 'Run create-full-alias'
 
 { create-full-alias_code || true ; } > "${TMP}/code.txt" 2>&1
-create-full-alias_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying create-full-alias"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/create-full-alias"
+else
+    create-full-alias_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying create-full-alias"
+        exit 1
+    }
+fi
 
 
 
@@ -443,11 +508,16 @@ EOEXPECTED
 echo 'Run run-full-backup'
 
 { run-full-backup_code || true ; } > "${TMP}/code.txt" 2>&1
-run-full-backup_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying run-full-backup"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/run-full-backup"
+else
+    run-full-backup_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying run-full-backup"
+        exit 1
+    }
+fi
 
 
 
@@ -470,11 +540,16 @@ EOEXPECTED
 echo 'Run create-shortcuts'
 
 { create-shortcuts_code || true ; } > "${TMP}/code.txt" 2>&1
-create-shortcuts_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying create-shortcuts"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/create-shortcuts"
+else
+    create-shortcuts_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying create-shortcuts"
+        exit 1
+    }
+fi
 
 
 
@@ -497,11 +572,16 @@ EOEXPECTED
 echo 'Run try-shortcuts'
 
 { try-shortcuts_code || true ; } > "${TMP}/code.txt" 2>&1
-try-shortcuts_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying try-shortcuts"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/try-shortcuts"
+else
+    try-shortcuts_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying try-shortcuts"
+        exit 1
+    }
+fi
 
 
 mkdir -p project-a && cd project-a && mkdir .clk
@@ -526,11 +606,16 @@ EOEXPECTED
 echo 'Run set-project-a-params'
 
 { set-project-a-params_code || true ; } > "${TMP}/code.txt" 2>&1
-set-project-a-params_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying set-project-a-params"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/set-project-a-params"
+else
+    set-project-a-params_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying set-project-a-params"
+        exit 1
+    }
+fi
 
 
 
@@ -551,11 +636,16 @@ EOEXPECTED
 echo 'Run run-in-project-a'
 
 { run-in-project-a_code || true ; } > "${TMP}/code.txt" 2>&1
-run-in-project-a_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying run-in-project-a"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/run-in-project-a"
+else
+    run-in-project-a_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying run-in-project-a"
+        exit 1
+    }
+fi
 
 
 
@@ -577,11 +667,16 @@ EOEXPECTED
 echo 'Run leave-project'
 
 { leave-project_code || true ; } > "${TMP}/code.txt" 2>&1
-leave-project_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying leave-project"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/leave-project"
+else
+    leave-project_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying leave-project"
+        exit 1
+    }
+fi
 
 
 clk extension create "$(hostname)"
@@ -604,11 +699,16 @@ EOEXPECTED
 echo 'Run set-hostname-params'
 
 { set-hostname-params_code || true ; } > "${TMP}/code.txt" 2>&1
-set-hostname-params_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying set-hostname-params"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/set-hostname-params"
+else
+    set-hostname-params_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying set-hostname-params"
+        exit 1
+    }
+fi
 
 
 
@@ -629,11 +729,16 @@ EOEXPECTED
 echo 'Run run-with-hostname'
 
 { run-with-hostname_code || true ; } > "${TMP}/code.txt" 2>&1
-run-with-hostname_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying run-with-hostname"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/run-with-hostname"
+else
+    run-with-hostname_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying run-with-hostname"
+        exit 1
+    }
+fi
 
 
 cd project-a
@@ -656,11 +761,16 @@ EOEXPECTED
 echo 'Run run-in-project-a-hostname'
 
 { run-in-project-a-hostname_code || true ; } > "${TMP}/code.txt" 2>&1
-run-in-project-a-hostname_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying run-in-project-a-hostname"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/run-in-project-a-hostname"
+else
+    run-in-project-a-hostname_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying run-in-project-a-hostname"
+        exit 1
+    }
+fi
 
 
 cd ..
@@ -684,11 +794,16 @@ EOEXPECTED
 echo 'Run try-disable-hostname'
 
 { try-disable-hostname_code || true ; } > "${TMP}/code.txt" 2>&1
-try-disable-hostname_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying try-disable-hostname"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/try-disable-hostname"
+else
+    try-disable-hostname_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying try-disable-hostname"
+        exit 1
+    }
+fi
 
 
 clk extension remove "$(hostname)"
@@ -732,9 +847,14 @@ EOEXPECTED
 echo 'Run final-help'
 
 { final-help_code || true ; } > "${TMP}/code.txt" 2>&1
-final-help_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying final-help"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/final-help"
+else
+    final-help_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying final-help"
+        exit 1
+    }
+fi
 # summary:1 ends here

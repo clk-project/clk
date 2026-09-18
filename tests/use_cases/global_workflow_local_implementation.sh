@@ -21,11 +21,16 @@ EOEXPECTED
 echo 'Run create-global-test'
 
 { create-global-test_code || true ; } > "${TMP}/code.txt" 2>&1
-create-global-test_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying create-global-test"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/create-global-test"
+else
+    create-global-test_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying create-global-test"
+        exit 1
+    }
+fi
 
 
 
@@ -46,11 +51,16 @@ EOEXPECTED
 echo 'Run create-test-n-push'
 
 { create-test-n-push_code || true ; } > "${TMP}/code.txt" 2>&1
-create-test-n-push_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying create-test-n-push"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/create-test-n-push"
+else
+    create-test-n-push_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying create-test-n-push"
+        exit 1
+    }
+fi
 
 
 
@@ -71,11 +81,16 @@ EOEXPECTED
 echo 'Run run-test-n-push-global'
 
 { run-test-n-push-global_code || true ; } > "${TMP}/code.txt" 2>&1
-run-test-n-push-global_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying run-test-n-push-global"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/run-test-n-push-global"
+else
+    run-test-n-push-global_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying run-test-n-push-global"
+        exit 1
+    }
+fi
 
 
 mkdir myproject && cd myproject && mkdir .clk
@@ -105,11 +120,16 @@ EOEXPECTED
 echo 'Run run-test-n-push-local'
 
 { run-test-n-push-local_code || true ; } > "${TMP}/code.txt" 2>&1
-run-test-n-push-local_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying run-test-n-push-local"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/run-test-n-push-local"
+else
+    run-test-n-push-local_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying run-test-n-push-local"
+        exit 1
+    }
+fi
 
 
 
@@ -131,11 +151,16 @@ EOEXPECTED
 echo 'Run leave-project'
 
 { leave-project_code || true ; } > "${TMP}/code.txt" 2>&1
-leave-project_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying leave-project"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/leave-project"
+else
+    leave-project_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying leave-project"
+        exit 1
+    }
+fi
 
 
 cd myproject
@@ -158,11 +183,16 @@ EOEXPECTED
 echo 'Run create-local-alias'
 
 { create-local-alias_code || true ; } > "${TMP}/code.txt" 2>&1
-create-local-alias_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying create-local-alias"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/create-local-alias"
+else
+    create-local-alias_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying create-local-alias"
+        exit 1
+    }
+fi
 
 
 
@@ -183,11 +213,16 @@ EOEXPECTED
 echo 'Run run-deploy'
 
 { run-deploy_code || true ; } > "${TMP}/code.txt" 2>&1
-run-deploy_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying run-deploy"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/run-deploy"
+else
+    run-deploy_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying run-deploy"
+        exit 1
+    }
+fi
 
 
 
@@ -211,9 +246,14 @@ EOEXPECTED
 echo 'Run deploy-outside'
 
 { deploy-outside_code || true ; } > "${TMP}/code.txt" 2>&1
-deploy-outside_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying deploy-outside"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/deploy-outside"
+else
+    deploy-outside_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying deploy-outside"
+        exit 1
+    }
+fi
 # summary:1 ends here

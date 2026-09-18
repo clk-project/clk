@@ -41,11 +41,16 @@ EOEXPECTED
 echo 'Run setsecretinparameter'
 
 { setsecretinparameter_code || true ; } > "${TMP}/code.txt" 2>&1
-setsecretinparameter_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying setsecretinparameter"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/setsecretinparameter"
+else
+    setsecretinparameter_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying setsecretinparameter"
+        exit 1
+    }
+fi
 
 
 
@@ -66,11 +71,16 @@ EOEXPECTED
 echo 'Run usesecretinparameter'
 
 { usesecretinparameter_code || true ; } > "${TMP}/code.txt" 2>&1
-usesecretinparameter_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying usesecretinparameter"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/usesecretinparameter"
+else
+    usesecretinparameter_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying usesecretinparameter"
+        exit 1
+    }
+fi
 
 
 
@@ -92,11 +102,16 @@ EOEXPECTED
 echo 'Run usethebearefromsecret'
 
 { usethebearefromsecret_code || true ; } > "${TMP}/code.txt" 2>&1
-usethebearefromsecret_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying usethebearefromsecret"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/usethebearefromsecret"
+else
+    usethebearefromsecret_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying usethebearefromsecret"
+        exit 1
+    }
+fi
 
 
 
@@ -117,11 +132,16 @@ EOEXPECTED
 echo 'Run httpwithsecretfail'
 
 { httpwithsecretfail_code || true ; } > "${TMP}/code.txt" 2>&1
-httpwithsecretfail_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying httpwithsecretfail"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/httpwithsecretfail"
+else
+    httpwithsecretfail_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying httpwithsecretfail"
+        exit 1
+    }
+fi
 
 
 
@@ -205,11 +225,16 @@ EOEXPECTED
 echo 'Run call_ask_for_real'
 
 { call_ask_for_real_code || true ; } > "${TMP}/code.txt" 2>&1
-call_ask_for_real_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying call_ask_for_real"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/call_ask_for_real"
+else
+    call_ask_for_real_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying call_ask_for_real"
+        exit 1
+    }
+fi
 
 
 
@@ -295,11 +320,16 @@ EOEXPECTED
 echo 'Run call_ask_for_real_error'
 
 { call_ask_for_real_error_code || true ; } > "${TMP}/code.txt" 2>&1
-call_ask_for_real_error_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying call_ask_for_real_error"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/call_ask_for_real_error"
+else
+    call_ask_for_real_error_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying call_ask_for_real_error"
+        exit 1
+    }
+fi
 
 
 
@@ -320,11 +350,16 @@ EOEXPECTED
 echo 'Run try-completion'
 
 { try-completion_code || true ; } > "${TMP}/code.txt" 2>&1
-try-completion_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying try-completion"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/try-completion"
+else
+    try-completion_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying try-completion"
+        exit 1
+    }
+fi
 
 
 
@@ -345,11 +380,16 @@ EOEXPECTED
 echo 'Run try-completion-without-ask-secret'
 
 { try-completion-without-ask-secret_code || true ; } > "${TMP}/code.txt" 2>&1
-try-completion-without-ask-secret_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying try-completion-without-ask-secret"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/try-completion-without-ask-secret"
+else
+    try-completion-without-ask-secret_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying try-completion-without-ask-secret"
+        exit 1
+    }
+fi
 
 
 clk secret set --set-parameter global --secret mytoken
@@ -374,11 +414,16 @@ EOEXPECTED
 echo 'Run showsecret'
 
 { showsecret_code || true ; } > "${TMP}/code.txt" 2>&1
-showsecret_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying showsecret"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/showsecret"
+else
+    showsecret_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying showsecret"
+        exit 1
+    }
+fi
 
 
 
@@ -399,11 +444,16 @@ EOEXPECTED
 echo 'Run reallyshowsecret'
 
 { reallyshowsecret_code || true ; } > "${TMP}/code.txt" 2>&1
-reallyshowsecret_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying reallyshowsecret"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/reallyshowsecret"
+else
+    reallyshowsecret_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying reallyshowsecret"
+        exit 1
+    }
+fi
 
 
 
@@ -424,11 +474,16 @@ EOEXPECTED
 echo 'Run reallyshowonlysecret'
 
 { reallyshowonlysecret_code || true ; } > "${TMP}/code.txt" 2>&1
-reallyshowonlysecret_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying reallyshowonlysecret"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/reallyshowonlysecret"
+else
+    reallyshowonlysecret_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying reallyshowonlysecret"
+        exit 1
+    }
+fi
 
 
 
@@ -449,11 +504,16 @@ EOEXPECTED
 echo 'Run httpwithsecret'
 
 { httpwithsecret_code || true ; } > "${TMP}/code.txt" 2>&1
-httpwithsecret_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying httpwithsecret"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/httpwithsecret"
+else
+    httpwithsecret_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying httpwithsecret"
+        exit 1
+    }
+fi
 
 
 clk command create python dosomething --force
@@ -484,11 +544,16 @@ EOEXPECTED
 echo 'Run showgetsecret'
 
 { showgetsecret_code || true ; } > "${TMP}/code.txt" 2>&1
-showgetsecret_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying showgetsecret"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/showgetsecret"
+else
+    showgetsecret_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying showgetsecret"
+        exit 1
+    }
+fi
 
 
 
@@ -512,11 +577,16 @@ EOEXPECTED
 echo 'Run refusingtheremoval'
 
 { refusingtheremoval_code || true ; } > "${TMP}/code.txt" 2>&1
-refusingtheremoval_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying refusingtheremoval"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/refusingtheremoval"
+else
+    refusingtheremoval_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying refusingtheremoval"
+        exit 1
+    }
+fi
 
 
 clk parameter set secret.unset --force
@@ -541,11 +611,16 @@ EOEXPECTED
 echo 'Run checkthatthesecretisgone'
 
 { checkthatthesecretisgone_code || true ; } > "${TMP}/code.txt" 2>&1
-checkthatthesecretisgone_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying checkthatthesecretisgone"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/checkthatthesecretisgone"
+else
+    checkthatthesecretisgone_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying checkthatthesecretisgone"
+        exit 1
+    }
+fi
 
 
 cat <<EOF > "${CLK_NETRC_LOCATION}"
@@ -571,11 +646,16 @@ EOEXPECTED
 echo 'Run using_netrc'
 
 { using_netrc_code || true ; } > "${TMP}/code.txt" 2>&1
-using_netrc_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying using_netrc"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/using_netrc"
+else
+    using_netrc_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying using_netrc"
+        exit 1
+    }
+fi
 
 
 
@@ -596,11 +676,16 @@ EOEXPECTED
 echo 'Run netrc_missing'
 
 { netrc_missing_code || true ; } > "${TMP}/code.txt" 2>&1
-netrc_missing_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying netrc_missing"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/netrc_missing"
+else
+    netrc_missing_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying netrc_missing"
+        exit 1
+    }
+fi
 
 
 
@@ -623,9 +708,14 @@ EOEXPECTED
 echo 'Run netrc_readonly'
 
 { netrc_readonly_code || true ; } > "${TMP}/code.txt" 2>&1
-netrc_readonly_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying netrc_readonly"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/netrc_readonly"
+else
+    netrc_readonly_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying netrc_readonly"
+        exit 1
+    }
+fi
 # test ends here

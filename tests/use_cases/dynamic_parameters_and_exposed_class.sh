@@ -76,11 +76,16 @@ EOEXPECTED
 echo 'Run help'
 
 { help_code || true ; } > "${TMP}/code.txt" 2>&1
-help_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying help"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/help"
+else
+    help_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying help"
+        exit 1
+    }
+fi
 
 
 
@@ -101,11 +106,16 @@ EOEXPECTED
 echo 'Run which'
 
 { which_code || true ; } > "${TMP}/code.txt" 2>&1
-which_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying which"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/which"
+else
+    which_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying which"
+        exit 1
+    }
+fi
 
 
 
@@ -128,11 +138,16 @@ EOEXPECTED
 echo 'Run simpleget'
 
 { simpleget_code || true ; } > "${TMP}/code.txt" 2>&1
-simpleget_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying simpleget"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/simpleget"
+else
+    simpleget_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying simpleget"
+        exit 1
+    }
+fi
 
 
 
@@ -155,11 +170,16 @@ EOEXPECTED
 echo 'Run simplepost'
 
 { simplepost_code || true ; } > "${TMP}/code.txt" 2>&1
-simplepost_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying simplepost"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/simplepost"
+else
+    simplepost_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying simplepost"
+        exit 1
+    }
+fi
 
 
 
@@ -182,11 +202,16 @@ EOEXPECTED
 echo 'Run completion1'
 
 { completion1_code || true ; } > "${TMP}/code.txt" 2>&1
-completion1_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying completion1"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/completion1"
+else
+    completion1_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying completion1"
+        exit 1
+    }
+fi
 
 
 
@@ -209,11 +234,16 @@ EOEXPECTED
 echo 'Run completion2'
 
 { completion2_code || true ; } > "${TMP}/code.txt" 2>&1
-completion2_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying completion2"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/completion2"
+else
+    completion2_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying completion2"
+        exit 1
+    }
+fi
 
 
 
@@ -242,9 +272,14 @@ EOEXPECTED
 echo 'Run try-somesite'
 
 { try-somesite_code || true ; } > "${TMP}/code.txt" 2>&1
-try-somesite_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying try-somesite"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/try-somesite"
+else
+    try-somesite_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying try-somesite"
+        exit 1
+    }
+fi
 # final ends here

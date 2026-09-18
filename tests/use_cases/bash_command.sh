@@ -39,11 +39,16 @@ EOEXPECTED
 echo 'Run help-create'
 
 { help-create_code || true ; } > "${TMP}/code.txt" 2>&1
-help-create_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying help-create"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/help-create"
+else
+    help-create_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying help-create"
+        exit 1
+    }
+fi
 
 
 
@@ -80,11 +85,16 @@ EOEXPECTED
 echo 'Run show_it'
 
 { show_it_code || true ; } > "${TMP}/code.txt" 2>&1
-show_it_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying show_it"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/show_it"
+else
+    show_it_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying show_it"
+        exit 1
+    }
+fi
 
 
 
@@ -105,11 +115,16 @@ EOEXPECTED
 echo 'Run try'
 
 { try_code || true ; } > "${TMP}/code.txt" 2>&1
-try_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying try"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/try"
+else
+    try_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying try"
+        exit 1
+    }
+fi
 
 
 cat<<'EOF' > myeditor
@@ -148,11 +163,16 @@ EOEXPECTED
 echo 'Run help'
 
 { help_code || true ; } > "${TMP}/code.txt" 2>&1
-help_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying help"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/help"
+else
+    help_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying help"
+        exit 1
+    }
+fi
 
 
 cat<<EOF >> "$(clk command which mycommand)"
@@ -177,11 +197,16 @@ EOEXPECTED
 echo 'Run use_it'
 
 { use_it_code || true ; } > "${TMP}/code.txt" 2>&1
-use_it_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying use_it"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/use_it"
+else
+    use_it_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying use_it"
+        exit 1
+    }
+fi
 
 
 clk command create bash --body "exit 5" --description "Simply exiting with the code 5" exit5
@@ -204,11 +229,16 @@ EOEXPECTED
 echo 'Run exit-5'
 
 { exit-5_code || true ; } > "${TMP}/code.txt" 2>&1
-exit-5_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying exit-5"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/exit-5"
+else
+    exit-5_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying exit-5"
+        exit 1
+    }
+fi
 
 
   clk command create bash --body "
@@ -258,9 +288,14 @@ EOEXPECTED
 echo 'Run clean-test-expect'
 
 { clean-test-expect_code || true ; } > "${TMP}/code.txt" 2>&1
-clean-test-expect_expected > "${TMP}/expected.txt" 2>&1
-diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-echo "Something went wrong when trying clean-test-expect"
-exit 1
-}
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/clean-test-expect"
+else
+    clean-test-expect_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying clean-test-expect"
+        exit 1
+    }
+fi
 # No heading:17 ends here
