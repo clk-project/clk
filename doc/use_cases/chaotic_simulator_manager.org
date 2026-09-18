@@ -323,6 +323,18 @@ test -d build || echo "build is gone"
 #+RESULTS[]: csm-clean-for-real
 : build is gone
 
+It went quietly. With ~--action~ it says what it is doing as it goes.
+
+#+NAME: csm-clean-aloud
+#+BEGIN_SRC bash :results verbatim :exports both :session 807c02cd-a6cf-432f-b982-530fc81dbbf4 :cache yes
+csm build
+csm --action clean
+#+END_SRC
+
+#+RESULTS[]: csm-clean-aloud
+: Building simulator
+: action: remove build
+
 * shipping the settings of your tool
   :PROPERTIES:
   :CUSTOM_ID: shipping-the-settings-of-your-tool
@@ -643,6 +655,8 @@ check-result(csm-run-no-flow)
 check-result(csm-clean-dry-run)
 
 check-result(csm-clean-for-real)
+
+check-result(csm-clean-aloud)
 
 <<csm-ship-settings>>
 

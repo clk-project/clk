@@ -191,6 +191,16 @@ test -d build || echo "build is gone"
 
     build is gone
 
+It went quietly. With `--action` it says what it is doing as it goes.
+
+```bash
+csm build
+csm --action clean
+```
+
+    Building simulator
+    action: remove build
+
 
 <a id="shipping-the-settings-of-your-tool"></a>
 

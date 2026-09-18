@@ -402,6 +402,38 @@ else
 fi
 
 
+
+csm-clean-aloud_code () {
+      csm build
+      csm --action clean
+}
+
+csm-clean-aloud_expected () {
+      local expected
+      expected="$(cat<<"EOEXPECTED"
+Building simulator
+action: remove build
+EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
+}
+
+echo 'Run csm-clean-aloud'
+
+{ csm-clean-aloud_code || true ; } > "${TMP}/code.txt" 2>&1
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/csm-clean-aloud"
+else
+    csm-clean-aloud_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying csm-clean-aloud"
+        exit 1
+    }
+fi
+
+
 mkdir -p csm/csm/settings
 cat<<'EOF' > csm/csm/settings/csm.json
 {
