@@ -55,8 +55,8 @@ Let's start by mocking the use of termux.
 #+END_SRC
 
 Let's suppose this code is put under ~./lib/termux~ in the ~bin~ folder where
-the bash commands are put. See [[file:bash_command_import.org][this documentation]] for more information about
-importing libraries.
+the bash commands are put. Any file you put in that ~lib~ folder can be loaded
+with ~clk_import~, which is how several commands end up sharing the same code.
 
 #+NAME: install-lib
 #+BEGIN_SRC bash :results none :exports none :noweb yes :session 3781d830-096f-4fb6-9e77-d18586507997

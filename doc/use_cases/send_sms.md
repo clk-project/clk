@@ -36,7 +36,7 @@ termux-contact-number () {
 }
 ```
 
-Let's suppose this code is put under `./lib/termux` in the `bin` folder where the bash commands are put. See [this documentation](bash_command_import.md) for more information about importing libraries.
+Let's suppose this code is put under `./lib/termux` in the `bin` folder where the bash commands are put. Any file you put in that `lib` folder can be loaded with `clk_import`, which is how several commands end up sharing the same code.
 
 Now, let's use that library to have a nice completion of contacts
 

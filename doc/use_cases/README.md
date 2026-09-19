@@ -36,7 +36,7 @@ There are organised by feature though so you can find easily what you are lookin
 
 The basics are covered [here](bash_command.md). To get more into how to provide parameters to your command, read [that one](bash_command_use_option.md). If your parameters are too complicated to be simply parsed, follow the idea of this [use case](send_sms.md).
 
-If you find out that your bash command starts to become quite big, read [this](bash_command_import.md) to find out how to split your code.
+If you find out that your bash command starts to become quite big, the [sms sender](send_sms.md) puts its helpers in a lib folder and loads them with `clk_import`.
 
 For an argument that is a day, and that you would rather say than spell out, see [finding recent documents](finding_recent_documents.md).
 
@@ -214,7 +214,6 @@ The [backing up documents](backing_up_documents.md) use case shows how to build 
 | [backing_up_documents.md](backing_up_documents.md) | Building a backup system with hierarchical commands, flows, parameters, and per-project configuration | CLK___DB,CLK___FILENAME,CLK___QUALITY,CLK___SOURCE |
 | [bash_command.md](bash_command.md) | Creating bash commands, clk_usage, clk_help_handler, source _clk.sh, exit codes, traps | A:,CLK___NAME,clk_help_handler,clk_usage |
 | [bash_command_built_in_lib.md](bash_command_built_in_lib.md) | Built-in bash helpers: clk_drop_duplicate and other utilities in _clk.sh |  |
-| [bash_command_import.md](bash_command_import.md) | Sharing code between bash commands using clk_import and a lib directory | clk_help_handler,clk_import,clk_usage |
 | [bash_command_use_option.md](bash_command_use_option.md) | Arguments (A:), options (O:), flags (F:), file completion, clk_value, clk_given, clk_true, clk_format_choice | A:,CLK___KIND_OF_ANIMAL,CLK___REPEAT,F:,O:,clk_format_choice,clk_given,clk_help_handler,clk_true,clk_usage,clk_value |
 | [chaotic_simulator_manager.md](chaotic_simulator_manager.md) | Building your own standalone CLI tool on top of clk as a library |  |
 | [choices.md](choices.md) | Restricting user input to predefined values using Choice types |  |
@@ -260,9 +259,9 @@ The [backing up documents](backing_up_documents.md) use case shows how to build 
 - `clk_extension_hello` : [creating_extensions.md](creating_extensions.md)
 - `clk_format_choice` : [bash_command_use_option.md](bash_command_use_option.md)
 - `clk_given` : [bash_command_use_option.md](bash_command_use_option.md)
-- `clk_help_handler` : [bash_command.md](bash_command.md), [bash_command_import.md](bash_command_import.md), [bash_command_use_option.md](bash_command_use_option.md), [controlling_my_music.md](controlling_my_music.md), [finding_recent_documents.md](finding_recent_documents.md), [ipfs_name_publish.md](ipfs_name_publish.md), [podcast_automation.md](podcast_automation.md), [send_sms.md](send_sms.md)
-- `clk_import` : [bash_command_import.md](bash_command_import.md), [send_sms.md](send_sms.md)
+- `clk_help_handler` : [bash_command.md](bash_command.md), [bash_command_use_option.md](bash_command_use_option.md), [controlling_my_music.md](controlling_my_music.md), [finding_recent_documents.md](finding_recent_documents.md), [ipfs_name_publish.md](ipfs_name_publish.md), [podcast_automation.md](podcast_automation.md), [send_sms.md](send_sms.md)
+- `clk_import` : [send_sms.md](send_sms.md)
 - `clk_list_to_choice` : [ipfs_name_publish.md](ipfs_name_publish.md), [send_sms.md](send_sms.md)
 - `clk_true` : [bash_command_use_option.md](bash_command_use_option.md), [controlling_my_music.md](controlling_my_music.md)
-- `clk_usage` : [bash_command.md](bash_command.md), [bash_command_import.md](bash_command_import.md), [bash_command_use_option.md](bash_command_use_option.md), [controlling_my_music.md](controlling_my_music.md), [finding_recent_documents.md](finding_recent_documents.md), [ipfs_name_publish.md](ipfs_name_publish.md), [podcast_automation.md](podcast_automation.md), [send_sms.md](send_sms.md)
+- `clk_usage` : [bash_command.md](bash_command.md), [bash_command_use_option.md](bash_command_use_option.md), [controlling_my_music.md](controlling_my_music.md), [finding_recent_documents.md](finding_recent_documents.md), [ipfs_name_publish.md](ipfs_name_publish.md), [podcast_automation.md](podcast_automation.md), [send_sms.md](send_sms.md)
 - `clk_value` : [bash_command_use_option.md](bash_command_use_option.md), [controlling_my_music.md](controlling_my_music.md), [finding_recent_documents.md](finding_recent_documents.md), [ipfs_name_publish.md](ipfs_name_publish.md), [podcast_automation.md](podcast_automation.md), [send_sms.md](send_sms.md)

@@ -21,8 +21,8 @@ looking for.
    your command, read [[file:bash_command_use_option.org][that one]]. If your parameters are too complicated to be
    simply parsed, follow the idea of this [[file:send_sms.org][use case]].
 
-   If you find out that your bash command starts to become quite big, read [[file:bash_command_import.org][this]]
-   to find out how to split your code.
+   If you find out that your bash command starts to become quite big, the
+   [[file:send_sms.org][sms sender]] puts its helpers in a lib folder and loads them with ~clk_import~.
 
    For an argument that is a day, and that you would rather say than spell out,
    see [[file:finding_recent_documents.org][finding recent documents]].
