@@ -11,6 +11,9 @@
                                                       ("^clk test" . "")
                                                       ("^bash doc/use_cases/generate-index\\.sh" . "")
                                                       ("^\\./org-process\\.sh\\( doc/use_cases/\\)?" . "")
+                                                      ("^ruff check clk/" . "")
+                                                      ("^pre-commit run" . "")
+                                                      ("^earthly \\+export-coverage --use_git=true" . "")
                                                       ))
          (konix/agent-shell-mcp-project-servers . ("konix-emacs-code-review"
                                                    "konix-emacs-workspace"
