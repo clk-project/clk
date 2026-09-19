@@ -239,6 +239,91 @@ Positional arguments:
 #+end_example
 
 
+That command passes the whole line to mpc. Say what it really takes.
+
+#+NAME: album-usage
+#+BEGIN_SRC bash :results none :exports code
+A:album:str:The album to play
+F:--repeat:Keep playing it
+#+END_SRC
+
+#+NAME: album-body
+#+BEGIN_SRC bash :results none :exports code
+args=()
+if clk_true repeat
+then
+    args+=(--repeat)
+fi
+clk exec mpc start-server
+clk exec mpc wait-for-server
+clk exec mpc play --random --use-speakers --replaygain "${args[@]}" "$(clk_value album)"
+#+END_SRC
+
+#+NAME: write-album-command
+#+BEGIN_SRC bash :results none :exports none :session e6078fc8-4b12-44ad-b008-20f0b7311069 :noweb yes
+cat<<"EOH" > "$(clk command which music.play)"
+#!/usr/bin/env bash
+  set -eu
+
+source "_clk.sh"
+
+clk_usage () {
+    cat<<EOF
+$0
+
+Play an album
+--
+<<album-usage>>
+EOF
+}
+
+clk_help_handler "$@"
+
+<<album-body>>
+
+EOH
+#+END_SRC
+
+#+NAME: play-an-album
+#+BEGIN_SRC bash :results verbatim :exports both :session e6078fc8-4b12-44ad-b008-20f0b7311069 :cache yes
+clk music play Kind-of-Blue
+#+END_SRC
+
+#+RESULTS[]: play-an-album
+: Running mpc with: start-server
+: Running mpc with: wait-for-server
+: Running mpc with: play --random --use-speakers --replaygain --repeat Kind-of-Blue
+
+Loud as well is two steps, so an alias again.
+
+#+NAME: music-loud
+#+BEGIN_SRC bash :results verbatim :exports both :session e6078fc8-4b12-44ad-b008-20f0b7311069 :cache yes
+clk alias set music.loud exec mpc volume 100 , music play
+clk music loud Kind-of-Blue
+#+END_SRC
+
+#+RESULTS[]: music-loud
+: New global alias for music.loud: exec mpc volume 100 , music play
+: Running mpc with: volume 100
+: Running mpc with: start-server
+: Running mpc with: wait-for-server
+: Running mpc with: play --random --use-speakers --replaygain --repeat Kind-of-Blue
+
+That one grows in its turn, and the album follows it into the command.
+
+#+NAME: convert-music-loud
+#+BEGIN_SRC bash :results verbatim :exports both :session e6078fc8-4b12-44ad-b008-20f0b7311069 :cache yes
+clk command create bash --replace-alias music.loud
+clk music loud Bitches-Brew
+#+END_SRC
+
+#+RESULTS[]: convert-music-loud
+: Erasing music.loud alias from global settings
+: Running mpc with: volume 100
+: Running mpc with: start-server
+: Running mpc with: wait-for-server
+: Running mpc with: play --random --use-speakers --replaygain --repeat Bitches-Brew
+
 #+BEGIN_SRC bash :exports none :tangle ../../tests/use_cases/bash_command_from_alias.sh :noweb yes :shebang "#!/usr/bin/env bash"
   set -eu
   <<init>>
@@ -260,4 +345,12 @@ Positional arguments:
   check-result(try_command)
   check-result(which)
   check-result(help)
+
+  <<write-album-command>>
+
+  check-result(play-an-album)
+
+  check-result(music-loud)
+
+  check-result(convert-music-loud)
 #+END_SRC

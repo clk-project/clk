@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# [[file:../../doc/use_cases/tests/use_cases/bash_command_from_alias.sh :noweb yes :shebang "#!/usr/bin/env bash"][No heading:21]]
+# [[file:../../doc/use_cases/tests/use_cases/bash_command_from_alias.sh :noweb yes :shebang "#!/usr/bin/env bash"][No heading:27]]
 set -eu
 . ./sandboxing.sh
 mkdir -p "${TMP}/bin"
@@ -393,4 +393,136 @@ else
         exit 1
     }
 fi
-# No heading:21 ends here
+
+
+cat<<"EOH" > "$(clk command which music.play)"
+#!/usr/bin/env bash
+  set -eu
+
+source "_clk.sh"
+
+clk_usage () {
+    cat<<EOF
+$0
+
+Play an album
+--
+A:album:str:The album to play
+F:--repeat:Keep playing it
+EOF
+}
+
+clk_help_handler "$@"
+
+args=()
+if clk_true repeat
+then
+    args+=(--repeat)
+fi
+clk exec mpc start-server
+clk exec mpc wait-for-server
+clk exec mpc play --random --use-speakers --replaygain "${args[@]}" "$(clk_value album)"
+
+EOH
+
+
+play-an-album_code () {
+      clk music play Kind-of-Blue
+}
+
+play-an-album_expected () {
+      local expected
+      expected="$(cat<<"EOEXPECTED"
+Running mpc with: start-server
+Running mpc with: wait-for-server
+Running mpc with: play --random --use-speakers --replaygain --repeat Kind-of-Blue
+EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
+}
+
+echo 'Run play-an-album'
+
+{ play-an-album_code || true ; } > "${TMP}/code.txt" 2>&1
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/play-an-album"
+else
+    play-an-album_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying play-an-album"
+        exit 1
+    }
+fi
+
+
+
+music-loud_code () {
+      clk alias set music.loud exec mpc volume 100 , music play
+      clk music loud Kind-of-Blue
+}
+
+music-loud_expected () {
+      local expected
+      expected="$(cat<<"EOEXPECTED"
+New global alias for music.loud: exec mpc volume 100 , music play
+Running mpc with: volume 100
+Running mpc with: start-server
+Running mpc with: wait-for-server
+Running mpc with: play --random --use-speakers --replaygain --repeat Kind-of-Blue
+EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
+}
+
+echo 'Run music-loud'
+
+{ music-loud_code || true ; } > "${TMP}/code.txt" 2>&1
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/music-loud"
+else
+    music-loud_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying music-loud"
+        exit 1
+    }
+fi
+
+
+
+convert-music-loud_code () {
+      clk command create bash --replace-alias music.loud
+      clk music loud Bitches-Brew
+}
+
+convert-music-loud_expected () {
+      local expected
+      expected="$(cat<<"EOEXPECTED"
+Erasing music.loud alias from global settings
+Running mpc with: volume 100
+Running mpc with: start-server
+Running mpc with: wait-for-server
+Running mpc with: play --random --use-speakers --replaygain --repeat Bitches-Brew
+EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
+}
+
+echo 'Run convert-music-loud'
+
+{ convert-music-loud_code || true ; } > "${TMP}/code.txt" 2>&1
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/convert-music-loud"
+else
+    convert-music-loud_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying convert-music-loud"
+        exit 1
+    }
+fi
+# No heading:27 ends here

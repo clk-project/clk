@@ -154,3 +154,55 @@ Usage: clk music play [OPTIONS] [ARGS]...
 
 Positional arguments:
 ```
+
+That command passes the whole line to mpc. Say what it really takes.
+
+```bash
+A:album:str:The album to play
+F:--repeat:Keep playing it
+```
+
+```bash
+args=()
+if clk_true repeat
+then
+    args+=(--repeat)
+fi
+clk exec mpc start-server
+clk exec mpc wait-for-server
+clk exec mpc play --random --use-speakers --replaygain "${args[@]}" "$(clk_value album)"
+```
+
+```bash
+clk music play Kind-of-Blue
+```
+
+    Running mpc with: start-server
+    Running mpc with: wait-for-server
+    Running mpc with: play --random --use-speakers --replaygain --repeat Kind-of-Blue
+
+Loud as well is two steps, so an alias again.
+
+```bash
+clk alias set music.loud exec mpc volume 100 , music play
+clk music loud Kind-of-Blue
+```
+
+    New global alias for music.loud: exec mpc volume 100 , music play
+    Running mpc with: volume 100
+    Running mpc with: start-server
+    Running mpc with: wait-for-server
+    Running mpc with: play --random --use-speakers --replaygain --repeat Kind-of-Blue
+
+That one grows in its turn, and the album follows it into the command.
+
+```bash
+clk command create bash --replace-alias music.loud
+clk music loud Bitches-Brew
+```
+
+    Erasing music.loud alias from global settings
+    Running mpc with: volume 100
+    Running mpc with: start-server
+    Running mpc with: wait-for-server
+    Running mpc with: play --random --use-speakers --replaygain --repeat Bitches-Brew
