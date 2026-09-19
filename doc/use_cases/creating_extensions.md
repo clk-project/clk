@@ -266,6 +266,14 @@ That way, the extension provides the workflow and each project provides only the
 
 # publish it
 
+So far that extension is yours alone. There is nowhere to pull it from, and clk says so rather than trying.
+
+```bash
+clk extension update k8s 2>&1 | tail -1
+```
+
+    warning: I cannot update the extension global/k8s. For the time being, I only can update cloned extensions.
+
 In case you lost that extension folder and want to find it again, simply run.
 
 ```bash
@@ -379,6 +387,23 @@ clk stop-cluster 2>/dev/null
 ```
 
     stopping k8s cluster
+
+Working on the extension yourself, you end up on a branch of your own, with changes you have not committed.
+
+```bash
+cd "$(clk extension where-is global/k8s)"
+git checkout -b bigger-cluster
+echo "# still thinking about this one" >> bin/stop-cluster
+cd "${TMP}"
+```
+
+Update now and clk says where you are before pulling, putting your work aside while it does.
+
+```bash
+clk extension update k8s --stash 2>&1 | head -1
+```
+
+    warning: I will update global/k8s on branch bigger-cluster. It does not look like a main branch name. To get back to the main branch, consider calling `clk extension update global/k8s --branch main` (or master).
 
 
 <a id="b7bcef53-dd68-4660-9c5c-d9aa029d1a72"></a>

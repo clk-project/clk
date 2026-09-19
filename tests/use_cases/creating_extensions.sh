@@ -382,6 +382,36 @@ fi
 cd ..
 
 
+update-before-publishing_code () {
+      clk extension update k8s 2>&1 | tail -1
+}
+
+update-before-publishing_expected () {
+      local expected
+      expected="$(cat<<"EOEXPECTED"
+warning: I cannot update the extension global/k8s. For the time being, I only can update cloned extensions.
+EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
+}
+
+echo 'Run update-before-publishing'
+
+{ update-before-publishing_code || true ; } > "${TMP}/code.txt" 2>&1
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/update-before-publishing"
+else
+    update-before-publishing_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying update-before-publishing"
+        exit 1
+    }
+fi
+
+
+
 find-it_code () {
       clk extension where-is global/k8s
 }
@@ -650,6 +680,41 @@ else
     stop-cluster_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
         echo "Something went wrong when trying stop-cluster"
+        exit 1
+    }
+fi
+
+
+cd "$(clk extension where-is global/k8s)"
+git checkout -b bigger-cluster
+echo "# still thinking about this one" >> bin/stop-cluster
+cd "${TMP}"
+
+
+update-while-working_code () {
+      clk extension update k8s --stash 2>&1 | head -1
+}
+
+update-while-working_expected () {
+      local expected
+      expected="$(cat<<"EOEXPECTED"
+warning: I will update global/k8s on branch bigger-cluster. It does not look like a main branch name. To get back to the main branch, consider calling `clk extension update global/k8s --branch main` (or master).
+EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
+}
+
+echo 'Run update-while-working'
+
+{ update-while-working_code || true ; } > "${TMP}/code.txt" 2>&1
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/update-while-working"
+else
+    update-while-working_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying update-while-working"
         exit 1
     }
 fi

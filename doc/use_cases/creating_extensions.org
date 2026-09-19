@@ -309,6 +309,17 @@ cd ..
   :CUSTOM_ID: 21d2895b-db01-4a09-b2a2-18e34e2830b6
   :END:
 
+So far that extension is yours alone. There is nowhere to pull it from, and clk
+says so rather than trying.
+
+#+NAME: update-before-publishing
+#+BEGIN_SRC bash :results verbatim :cache yes :exports both :session f47428c2-56ea-4d91-97d9-4f2ff63ef052
+clk extension update k8s 2>&1 | tail -1
+#+END_SRC
+
+#+RESULTS[]: update-before-publishing
+: warning: I cannot update the extension global/k8s. For the time being, I only can update cloned extensions.
+
 In case you lost that extension folder and want to find it again, simply run.
 
 #+NAME: find-it
@@ -448,6 +459,28 @@ clk stop-cluster 2>/dev/null
 
 #+RESULTS[d9710497821a7fe46a260e8748d7fd7f53b4ea11]: stop-cluster
 : stopping k8s cluster
+
+Working on the extension yourself, you end up on a branch of your own, with
+changes you have not committed.
+
+#+NAME: work-on-k8s
+#+BEGIN_SRC bash :results none :exports code :session f47428c2-56ea-4d91-97d9-4f2ff63ef052
+cd "$(clk extension where-is global/k8s)"
+git checkout -b bigger-cluster
+echo "# still thinking about this one" >> bin/stop-cluster
+cd "${TMP}"
+#+END_SRC
+
+Update now and clk says where you are before pulling, putting your work aside
+while it does.
+
+#+NAME: update-while-working
+#+BEGIN_SRC bash :results verbatim :exports both :session f47428c2-56ea-4d91-97d9-4f2ff63ef052 :cache yes
+clk extension update k8s --stash 2>&1 | head -1
+#+END_SRC
+
+#+RESULTS[]: update-while-working
+: warning: I will update global/k8s on branch bigger-cluster. It does not look like a main branch name. To get back to the main branch, consider calling `clk extension update global/k8s --branch main` (or master).
 
 * get an extension
   :PROPERTIES:
@@ -971,6 +1004,8 @@ check-result(run-flow-in-project)
 
 <<leave_credentials_project>>
 
+check-result(update-before-publishing)
+
 check-result(find-it)
 
 <<publish-k8s>>
@@ -996,6 +1031,10 @@ check-result(no-stop-cluster)
 <<update-k8s>>
 
 check-result(stop-cluster)
+
+<<work-on-k8s>>
+
+check-result(update-while-working)
 
 check-result(install-extension)
 
