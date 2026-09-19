@@ -2,17 +2,20 @@
 :ID:       e6078fc8-4b12-44ad-b008-20f0b7311069
 :END:
 #+LANGUAGE: en
-#+EXPORT_FILE_NAME: ./bash_command_from_alias.md
-#+SUBTITLE: Wrapping CLI tools with aliases, then graduating to bash commands
+#+EXPORT_FILE_NAME: ./controlling_my_music.md
+#+SUBTITLE: Controlling my music player with clk, from a simple alias to a bash command
 
 #+CALL: ../../lp.org:check-result()
-
-For a more general introduction to creating bash commands, see [[file:bash_command.org][here]].
 
 #+name: init
 #+BEGIN_SRC bash :results none :exports none :session e6078fc8-4b12-44ad-b008-20f0b7311069
   . ./sandboxing.sh
 #+END_SRC
+
+* wrapping the music player
+  :PROPERTIES:
+  :CUSTOM_ID: wrapping-the-music-player
+  :END:
 
 Let's imagine you want to use clk to control your musicplayer. Chances are there
 already exists some command line tool to do so and that you want to wrap it into
@@ -61,6 +64,11 @@ Then, we can simple call this command.
 #+RESULTS[528d993ebba0114a75f77f47b1b7e61de533e885]: use_play
 : Running mpc with: play --random --use-speakers --replaygain MyAlbum
 
+* parameters and completion
+  :PROPERTIES:
+  :CUSTOM_ID: parameters-and-completion
+  :END:
+
 We get the benefit of parameters, flow etc.
 
 #+NAME: use_parameters
@@ -93,6 +101,11 @@ only ~global~ is available since we don't have a project.
 
 #+RESULTS[7ac141da6b6844471cc5dec64f6979ba425df20e]: try-completion
 : global
+
+* when one command is not enough
+  :PROPERTIES:
+  :CUSTOM_ID: when-one-command-is-not-enough
+  :END:
 
 Chances are that, after some time, we realize that this command should be a
 little more complicated than wrapping a single executable. For instance, we
@@ -177,6 +190,11 @@ clk music play MyAlbum
 : Running mpc with: wait-for-server
 : Running mpc with: play --random --use-speakers --replaygain --repeat MyAlbum
 
+* falling back to a real command
+  :PROPERTIES:
+  :CUSTOM_ID: falling-back-to-a-real-command
+  :END:
+
 Even doing so, you may at some point want more control about what you are doing,
 like really waiting for the music server rather than asking it to, and you will
 have to fall back in a real command. Replacing this alias with a shell command is
@@ -238,6 +256,10 @@ Usage: clk music play [OPTIONS] [ARGS]...
 Positional arguments:
 #+end_example
 
+* saying what the command takes
+  :PROPERTIES:
+  :CUSTOM_ID: saying-what-the-command-takes
+  :END:
 
 That command passes the whole line to mpc. Say what it really takes.
 
@@ -294,6 +316,11 @@ clk music play Kind-of-Blue
 : Running mpc with: wait-for-server
 : Running mpc with: play --random --use-speakers --replaygain --repeat Kind-of-Blue
 
+* playing it loud
+  :PROPERTIES:
+  :CUSTOM_ID: playing-it-loud
+  :END:
+
 Loud as well is two steps, so an alias again.
 
 #+NAME: music-loud
@@ -324,7 +351,7 @@ clk music loud Bitches-Brew
 : Running mpc with: wait-for-server
 : Running mpc with: play --random --use-speakers --replaygain --repeat Bitches-Brew
 
-#+BEGIN_SRC bash :exports none :tangle ../../tests/use_cases/bash_command_from_alias.sh :noweb yes :shebang "#!/usr/bin/env bash"
+#+BEGIN_SRC bash :exports none :tangle ../../tests/use_cases/controlling_my_music.sh :noweb yes :shebang "#!/usr/bin/env bash"
   set -eu
   <<init>>
   <<install_fake_music_program>>

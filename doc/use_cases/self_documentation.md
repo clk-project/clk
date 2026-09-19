@@ -7,7 +7,7 @@
 - [Settings clk does not know](#settings-clk-does-not-know)
 - [Summary](#summary)
 
-When you start using clk extensively, you might end up with many [aliases](bash_command_from_alias.md), [parameters](setting_default_values.md), [commands](bash_command.md), and [extensions](creating_extensions.md) spread across different profiles. The `clk describe` command helps you discover what features are available in any profile, making clk a self-documented tool.
+When you start using clk extensively, you might end up with many [aliases](controlling_my_music.md), [parameters](setting_default_values.md), [commands](bash_command.md), and [extensions](creating_extensions.md) spread across different profiles. The `clk describe` command helps you discover what features are available in any profile, making clk a self-documented tool.
 
 This is particularly useful when:
 

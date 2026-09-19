@@ -12,12 +12,12 @@
 | [backing_up_documents.md](backing_up_documents.md) | Building a backup system with hierarchical commands, flows, parameters, and per-project configuration | CLK___DB,CLK___FILENAME,CLK___QUALITY,CLK___SOURCE |
 | [bash_command.md](bash_command.md) | Creating bash commands, clk_usage, clk_help_handler, source _clk.sh, exit codes, traps | A:,CLK___NAME,clk_help_handler,clk_usage |
 | [bash_command_built_in_lib.md](bash_command_built_in_lib.md) | Built-in bash helpers: clk_drop_duplicate and other utilities in _clk.sh |  |
-| [bash_command_from_alias.md](bash_command_from_alias.md) | Wrapping CLI tools with aliases, then graduating to bash commands | A:,F:,clk_help_handler,clk_true,clk_usage,clk_value |
 | [bash_command_import.md](bash_command_import.md) | Sharing code between bash commands using clk_import and a lib directory | clk_help_handler,clk_import,clk_usage |
 | [bash_command_use_option.md](bash_command_use_option.md) | Arguments (A:), options (O:), flags (F:), file completion, clk_value, clk_given, clk_true, clk_format_choice | A:,CLK___KIND_OF_ANIMAL,CLK___REPEAT,F:,O:,clk_format_choice,clk_given,clk_help_handler,clk_true,clk_usage,clk_value |
 | [chaotic_simulator_manager.md](chaotic_simulator_manager.md) | Building your own standalone CLI tool on top of clk as a library |  |
 | [choices.md](choices.md) | Restricting user input to predefined values using Choice types |  |
 | [controlling_a_server_using_an_environment_variable.md](controlling_a_server_using_an_environment_variable.md) | Managing server addresses via environment variables and parameters |  |
+| [controlling_my_music.md](controlling_my_music.md) | Controlling my music player with clk, from a simple alias to a bash command | A:,F:,clk_help_handler,clk_true,clk_usage,clk_value |
 | [controlling_the_audio.md](controlling_the_audio.md) | Recording what an application plays, and tearing down the plumbing with clk.atexit |  |
 | [creating_extensions.md](creating_extensions.md) | Creating and sharing extensions (folders of commands and configuration) | clk_extension_hello |
 | [dealing_with_secrets.md](dealing_with_secrets.md) | Handling secrets (passwords, tokens) safely in clk commands |  |
@@ -41,7 +41,7 @@
 
 ## Keyword index
 
-- `A:` : [bash_command.md](bash_command.md), [bash_command_from_alias.md](bash_command_from_alias.md), [bash_command_use_option.md](bash_command_use_option.md), [finding_recent_documents.md](finding_recent_documents.md), [ipfs_name_publish.md](ipfs_name_publish.md), [send_sms.md](send_sms.md)
+- `A:` : [bash_command.md](bash_command.md), [bash_command_use_option.md](bash_command_use_option.md), [controlling_my_music.md](controlling_my_music.md), [finding_recent_documents.md](finding_recent_documents.md), [ipfs_name_publish.md](ipfs_name_publish.md), [send_sms.md](send_sms.md)
 - `CLK___ARGS` : [wrapping_a_cloud_provider_cli.md](wrapping_a_cloud_provider_cli.md)
 - `CLK___DB` : [backing_up_documents.md](backing_up_documents.md)
 - `CLK___DESTINATION` : [wrapping_a_cloud_provider_cli.md](wrapping_a_cloud_provider_cli.md)
@@ -53,15 +53,15 @@
 - `CLK___REPEAT` : [bash_command_use_option.md](bash_command_use_option.md)
 - `CLK___SOURCE` : [backing_up_documents.md](backing_up_documents.md), [wrapping_a_cloud_provider_cli.md](wrapping_a_cloud_provider_cli.md)
 - `CLK____JSON` : [send_sms.md](send_sms.md)
-- `F:` : [bash_command_from_alias.md](bash_command_from_alias.md), [bash_command_use_option.md](bash_command_use_option.md)
+- `F:` : [bash_command_use_option.md](bash_command_use_option.md), [controlling_my_music.md](controlling_my_music.md)
 - `O:` : [bash_command_use_option.md](bash_command_use_option.md), [podcast_automation.md](podcast_automation.md), [send_sms.md](send_sms.md)
 - `clk_extension_hello` : [creating_extensions.md](creating_extensions.md)
 - `clk_format_choice` : [bash_command_use_option.md](bash_command_use_option.md)
 - `clk_given` : [bash_command_use_option.md](bash_command_use_option.md)
-- `clk_help_handler` : [bash_command.md](bash_command.md), [bash_command_from_alias.md](bash_command_from_alias.md), [bash_command_import.md](bash_command_import.md), [bash_command_use_option.md](bash_command_use_option.md), [finding_recent_documents.md](finding_recent_documents.md), [ipfs_name_publish.md](ipfs_name_publish.md), [podcast_automation.md](podcast_automation.md), [send_sms.md](send_sms.md)
+- `clk_help_handler` : [bash_command.md](bash_command.md), [bash_command_import.md](bash_command_import.md), [bash_command_use_option.md](bash_command_use_option.md), [controlling_my_music.md](controlling_my_music.md), [finding_recent_documents.md](finding_recent_documents.md), [ipfs_name_publish.md](ipfs_name_publish.md), [podcast_automation.md](podcast_automation.md), [send_sms.md](send_sms.md)
 - `clk_import` : [bash_command_import.md](bash_command_import.md), [send_sms.md](send_sms.md)
 - `clk_list_to_choice` : [ipfs_name_publish.md](ipfs_name_publish.md), [send_sms.md](send_sms.md)
-- `clk_true` : [bash_command_from_alias.md](bash_command_from_alias.md), [bash_command_use_option.md](bash_command_use_option.md)
-- `clk_usage` : [bash_command.md](bash_command.md), [bash_command_from_alias.md](bash_command_from_alias.md), [bash_command_import.md](bash_command_import.md), [bash_command_use_option.md](bash_command_use_option.md), [finding_recent_documents.md](finding_recent_documents.md), [ipfs_name_publish.md](ipfs_name_publish.md), [podcast_automation.md](podcast_automation.md), [send_sms.md](send_sms.md)
-- `clk_value` : [bash_command_from_alias.md](bash_command_from_alias.md), [bash_command_use_option.md](bash_command_use_option.md), [finding_recent_documents.md](finding_recent_documents.md), [ipfs_name_publish.md](ipfs_name_publish.md), [podcast_automation.md](podcast_automation.md), [send_sms.md](send_sms.md)
+- `clk_true` : [bash_command_use_option.md](bash_command_use_option.md), [controlling_my_music.md](controlling_my_music.md)
+- `clk_usage` : [bash_command.md](bash_command.md), [bash_command_import.md](bash_command_import.md), [bash_command_use_option.md](bash_command_use_option.md), [controlling_my_music.md](controlling_my_music.md), [finding_recent_documents.md](finding_recent_documents.md), [ipfs_name_publish.md](ipfs_name_publish.md), [podcast_automation.md](podcast_automation.md), [send_sms.md](send_sms.md)
+- `clk_value` : [bash_command_use_option.md](bash_command_use_option.md), [controlling_my_music.md](controlling_my_music.md), [finding_recent_documents.md](finding_recent_documents.md), [ipfs_name_publish.md](ipfs_name_publish.md), [podcast_automation.md](podcast_automation.md), [send_sms.md](send_sms.md)
 #+end_export

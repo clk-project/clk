@@ -60,17 +60,33 @@ Update with
 clk update
 ```
 
-Then create a hello world command with
+Then wrap the tools you already use, like in [controlling my music](./doc/use_cases/controlling_my_music.md).
+
+Let's imagine you want to use clk to control your musicplayer. Chances are there already exists some command line tool to do so and that you want to wrap it into clk to take advantages of aliases, parameters and flows.
+
+On that case, you most likely will want to create a simple alias on top of exec.
+
+For the sake of this example, let's use this fake music control program and call it 'mpc'.
 
 ```bash
-clk command create bash hello-world --description "Some simple hello world command" --body 'echo "Hello world"'
+echo "Running mpc with: $*"
 ```
+
+Then, to use this program as a clk command, we could simply create an alias like this.
 
 ```bash
-clk hello-world
+clk alias set music.play exec -- mpc play --random --use-speakers --replaygain
 ```
 
-    Hello world
+    New global alias for music.play: exec mpc play --random --use-speakers --replaygain
+
+Then, we can simple call this command.
+
+```bash
+clk music play MyAlbum
+```
+
+    Running mpc with: play --random --use-speakers --replaygain MyAlbum
 
 This actually does not tell you much why **clk** is so awesome. Try taking a look, the [use cases](./doc/use_cases) to get more real life examples.
 

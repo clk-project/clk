@@ -62,16 +62,6 @@ might write even more [[./doc][documentation]].
     curl -sSL https://clk-project.org/install.sh | bash
   #+END_SRC
 
-  #+NAME: cwd
-  #+BEGIN_SRC bash :results none :exports none :session fe60735c-91c2-4f54-8ae2-7e3b307f27a5
-    cd tests/use_cases/
-  #+END_SRC
-
-  #+NAME: init
-  #+BEGIN_SRC bash :results none :exports none :session fe60735c-91c2-4f54-8ae2-7e3b307f27a5
-    . ./sandboxing.sh
-  #+END_SRC
-
   Update with
 
   #+NAME: update
@@ -79,40 +69,9 @@ might write even more [[./doc][documentation]].
     clk update
   #+END_SRC
 
-  Then create a hello world command with
+  Then wrap the tools you already use, like in [[./doc/use_cases/controlling_my_music.org][controlling my music]].
 
-  #+NAME: cwd
-  #+BEGIN_SRC bash :results none :exports none :session fe60735c-91c2-4f54-8ae2-7e3b307f27a5
-    cd tests/use_cases/
-  #+END_SRC
-
-  #+NAME: init
-  #+BEGIN_SRC bash :results none :exports none :session fe60735c-91c2-4f54-8ae2-7e3b307f27a5
-    . ./sandboxing.sh
-  #+END_SRC
-
-  #+NAME: command
-  #+BEGIN_SRC bash :results none :exports code :session fe60735c-91c2-4f54-8ae2-7e3b307f27a5
-    clk command create bash hello-world --description "Some simple hello world command" --body 'echo "Hello world"'
-  #+END_SRC
-
-  #+NAME: run
-  #+BEGIN_SRC bash :results verbatim :exports both :session fe60735c-91c2-4f54-8ae2-7e3b307f27a5 :cache yes
-    clk hello-world
-  #+END_SRC
-
-  #+RESULTS[0c93732bdafe7b03043b9c23af57ef23f87f6a52]: run
-  : Hello world
-
-  #+NAME: hello-world
-  #+BEGIN_SRC bash :results none :exports none :tangle ./tests/use_cases/hello_world.sh :shebang "#!/usr/bin/env bash" :noweb yes
-    set -eu
-    <<init>>
-
-    <<command>>
-
-    check-result(run)
-  #+END_SRC
+  #+INCLUDE: "./doc/use_cases/controlling_my_music.org::#wrapping-the-music-player" :only-contents t
 
   This actually does not tell you much why *clk* is so awesome. Try taking a look,
   the [[./doc/use_cases][use cases]] to get more real life examples.

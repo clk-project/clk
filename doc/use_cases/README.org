@@ -28,8 +28,9 @@ looking for.
    see [[file:finding_recent_documents.org][finding recent documents]].
 
    Most of my bash commands start with simple aliases (see [[*aliases][aliases]]). You can
-   read more about this way of thinking in [[file:bash_command_from_alias.org][here]]. The [[*standard library][standard library]] section
-   covers the built-in helpers available in bash commands.
+   read more about this way of thinking in [[file:controlling_my_music.org][controlling my music]]. The
+   [[*standard library][standard library]] section covers the built-in helpers available in bash
+   commands.
 
 ** python commands
    :PROPERTIES:

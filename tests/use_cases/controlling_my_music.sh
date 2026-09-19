@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# [[file:../../doc/use_cases/tests/use_cases/bash_command_from_alias.sh :noweb yes :shebang "#!/usr/bin/env bash"][No heading:27]]
+# [[file:../../doc/use_cases/controlling_my_music.org::#playing-it-loud][playing it loud:3]]
 set -eu
 . ./sandboxing.sh
 mkdir -p "${TMP}/bin"
@@ -525,4 +525,4 @@ else
         exit 1
     }
 fi
-# No heading:27 ends here
+# playing it loud:3 ends here

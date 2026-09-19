@@ -1,4 +1,15 @@
-For a more general introduction to creating bash commands, see [here](bash_command.md).
+- [wrapping the music player](#wrapping-the-music-player)
+- [parameters and completion](#parameters-and-completion)
+- [when one command is not enough](#when-one-command-is-not-enough)
+- [falling back to a real command](#falling-back-to-a-real-command)
+- [saying what the command takes](#saying-what-the-command-takes)
+- [playing it loud](#playing-it-loud)
+
+
+
+<a id="wrapping-the-music-player"></a>
+
+# wrapping the music player
 
 Let's imagine you want to use clk to control your musicplayer. Chances are there already exists some command line tool to do so and that you want to wrap it into clk to take advantages of aliases, parameters and flows.
 
@@ -26,6 +37,11 @@ clk music play MyAlbum
 
     Running mpc with: play --random --use-speakers --replaygain MyAlbum
 
+
+<a id="parameters-and-completion"></a>
+
+# parameters and completion
+
 We get the benefit of parameters, flow etc.
 
 ```bash
@@ -43,6 +59,11 @@ clk music play --set-parameter g<TAB>
 ```
 
     global
+
+
+<a id="when-one-command-is-not-enough"></a>
+
+# when one command is not enough
 
 Chances are that, after some time, we realize that this command should be a little more complicated than wrapping a single executable. For instance, we could want to start some music server, then play some music.
 
@@ -106,6 +127,11 @@ clk music play MyAlbum
     Running mpc with: wait-for-server
     Running mpc with: play --random --use-speakers --replaygain --repeat MyAlbum
 
+
+<a id="falling-back-to-a-real-command"></a>
+
+# falling back to a real command
+
 Even doing so, you may at some point want more control about what you are doing, like really waiting for the music server rather than asking it to, and you will have to fall back in a real command. Replacing this alias with a shell command is straightforward:
 
 ```bash
@@ -155,6 +181,11 @@ Usage: clk music play [OPTIONS] [ARGS]...
 Positional arguments:
 ```
 
+
+<a id="saying-what-the-command-takes"></a>
+
+# saying what the command takes
+
 That command passes the whole line to mpc. Say what it really takes.
 
 ```bash
@@ -180,6 +211,11 @@ clk music play Kind-of-Blue
     Running mpc with: start-server
     Running mpc with: wait-for-server
     Running mpc with: play --random --use-speakers --replaygain --repeat Kind-of-Blue
+
+
+<a id="playing-it-loud"></a>
+
+# playing it loud
 
 Loud as well is two steps, so an alias again.
 
