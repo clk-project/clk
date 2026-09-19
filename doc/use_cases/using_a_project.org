@@ -267,7 +267,28 @@ clk completion try --last exec ./scripts/b
 #+RESULTS[55ae13d751a690a48a9a2c3dd550bfe4613acef2]: completion_exec_deep
 : ./scripts/build.sh
 
+The tools your team installed complete as well, since they are on your PATH.
 
+#+NAME: install_run_ci
+#+BEGIN_SRC bash :results none :exports none :session 6de55de4-c0b3-41d6-952a-25e0fe06c881
+mkdir -p "${TMP}/bin"
+export PATH="${TMP}/bin:${PATH}"
+echo '#!/usr/bin/env bash' > "${TMP}/bin/run-ci"
+chmod +x "${TMP}/bin/run-ci"
+#+END_SRC
+
+#+NAME: completion_exec_program_shown
+#+BEGIN_SRC bash :results none :exports code
+clk exec run-c<TAB>
+#+END_SRC
+
+#+NAME: completion_exec_program
+#+BEGIN_SRC bash :results verbatim :exports none :session 6de55de4-c0b3-41d6-952a-25e0fe06c881 :cache yes
+clk completion try --last exec run-c
+#+END_SRC
+
+#+RESULTS[]: completion_exec_program
+: run-ci
 
 Since ~clk exec~ is a regular clk command, you can use it in flows, aliases or
 add parameters to it. For example, you might have a alias that runs your build
@@ -518,6 +539,10 @@ check-result(run_in_cwd)
 check-result(completion_exec)
 
 check-result(completion_exec_deep)
+
+<<install_run_ci>>
+
+check-result(completion_exec_program)
 
 <<create_deploy_script>>
 

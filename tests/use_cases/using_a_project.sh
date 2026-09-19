@@ -428,6 +428,41 @@ else
 fi
 
 
+mkdir -p "${TMP}/bin"
+export PATH="${TMP}/bin:${PATH}"
+echo '#!/usr/bin/env bash' > "${TMP}/bin/run-ci"
+chmod +x "${TMP}/bin/run-ci"
+
+
+completion_exec_program_code () {
+      clk completion try --last exec run-c
+}
+
+completion_exec_program_expected () {
+      local expected
+      expected="$(cat<<"EOEXPECTED"
+run-ci
+EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
+}
+
+echo 'Run completion_exec_program'
+
+{ completion_exec_program_code || true ; } > "${TMP}/code.txt" 2>&1
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/completion_exec_program"
+else
+    completion_exec_program_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying completion_exec_program"
+        exit 1
+    }
+fi
+
+
 cat <<'EOF' > scripts/deploy.sh
 #!/usr/bin/env bash
 echo "Deploying from ${CLK__PROJECT}"

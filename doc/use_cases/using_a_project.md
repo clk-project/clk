@@ -163,6 +163,14 @@ You can also complete deeper paths:
 clk exec ./scripts/b<TAB>
 ```
 
+The tools your team installed complete as well, since they are on your PATH.
+
+```bash
+clk exec run-c<TAB>
+```
+
+    run-ci
+
 Since `clk exec` is a regular clk command, you can use it in flows, aliases or add parameters to it. For example, you might have a alias that runs your build script before deploying:
 
 ```bash
