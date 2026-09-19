@@ -34,37 +34,6 @@ class Value:
         return list(config.settings2["value"].keys())
 
 
-class DynamicConfigBase:
-    """Base class meant to be inherited from and used in callbacks
-
-    Define the subclass as
-
-    class SomeConfig(DynamicConfigBase):
-        name = 'thenameintheconfig'
-
-    Then declare some option like
-
-    @option("--someoption", callback=SomeConfig.get_callback())
-
-    Then, get the option with config.thenameintheconfig.someoption. Because it uses
-    callbacks, the value is available very early, even before running the
-    command. Hence the name dynamic
-    """
-
-    @classmethod
-    def get_callback(klass):
-        def cb(ctx, attr, value):
-            if not hasattr(config, klass.name):
-                inst = klass()
-                setattr(config, klass.name, inst)
-            else:
-                inst = getattr(config, klass.name)
-            setattr(inst, attr.name, value)
-            return value
-
-        return cb
-
-
 def migrate_profiles():
     ctx = click_get_current_context_safe()
     for profile in config.root_profiles + list(config.all_extensions):
