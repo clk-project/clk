@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# [[file:../../doc/use_cases/using_a_plugin.org::#writing-one-of-your-own][writing one of your own:6]]
+# [[file:../../doc/use_cases/using_a_plugin.org::#the-day-one-stops-working][the day one stops working:3]]
 set -eu
 . ./sandboxing.sh
 
@@ -339,4 +339,46 @@ else
         exit 1
     }
 fi
-# writing one of your own:6 ends here
+
+
+clk plugin create global notifier --description "Say things out loud"
+cat<<'EOF' > "$(clk plugin which global notifier)"
+#!/usr/bin/env python3
+
+import notify2
+
+
+def load_plugin():
+    "Nothing here, it never gets this far."
+EOF
+
+
+run_with_broken_plugin_code () {
+      clk echo hello
+}
+
+run_with_broken_plugin_expected () {
+      local expected
+      expected="$(cat<<"EOEXPECTED"
+warning: Error when loading plugin notifier (if the plugin is no more useful, consider uninstalling the plugins notifier): No module named 'notify2'
+hello
+EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
+}
+
+echo 'Run run_with_broken_plugin'
+
+{ run_with_broken_plugin_code || true ; } > "${TMP}/code.txt" 2>&1
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/run_with_broken_plugin"
+else
+    run_with_broken_plugin_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying run_with_broken_plugin"
+        exit 1
+    }
+fi
+# the day one stops working:3 ends here

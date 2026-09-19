@@ -7,6 +7,7 @@
   - [unsetting a trigger](#unsetting-a-trigger)
   - [listing triggers with &ndash;name-only](#listing-triggers-name-only)
 - [writing one of your own](#writing-one-of-your-own)
+- [the day one stops working](#the-day-one-stops-working)
 
 In the past, clk contained a command used to add hooks before and after other commands. This was highly advanced stuff and eventually was barely used. It was removed from clk. But, with the plugin mechanism, you actually can put this feature back into clk.
 
@@ -224,3 +225,32 @@ clk plugin which global g<TAB>
 ```
 
     greet
+
+
+<a id="the-day-one-stops-working"></a>
+
+# the day one stops working
+
+A plugin is python like any other, and it leans on what is installed. Remove the library it wanted and it no longer loads.
+
+```bash
+clk plugin create global notifier --description "Say things out loud"
+cat<<'EOF' > "$(clk plugin which global notifier)"
+#!/usr/bin/env python3
+
+import notify2
+
+
+def load_plugin():
+    "Nothing here, it never gets this far."
+EOF
+```
+
+clk names it, says where you would remove it, and gets on with what you asked.
+
+```bash
+clk echo hello
+```
+
+    warning: Error when loading plugin notifier (if the plugin is no more useful, consider uninstalling the plugins notifier): No module named 'notify2'
+    hello
