@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# [[file:../../doc/use_cases/wrapping_a_cloud_provider_cli.org::#preserving-env][preserving environment variables when no option is given:6]]
+# [[file:../../doc/use_cases/wrapping_a_cloud_provider_cli.org::#dependent-completion][completing the buckets of the account I am on:10]]
 set -eu
 . ./sandboxing.sh
 
@@ -1081,4 +1081,195 @@ fi
 
 unset AWS_PROFILE
 unset AWS_REGION
-# preserving environment variables when no option is given:6 ends here
+
+cat <<'EOF' > "$(clk command which aws)"
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+
+from clk.config import config
+from clk.decorators import group, option
+
+
+class AwsProfile:
+    pass
+
+
+@group()
+@option("--profile", "-p", expose_class=AwsProfile, help="The AWS profile to use")
+@option("--region", "-r", help="The AWS region")
+def aws(region):
+    "AWS CLI wrapper with persistent configuration"
+    config.override_env["AWS_PROFILE"] = config.awsprofile.profile
+    config.override_env["AWS_REGION"] = region
+    config.init()
+
+
+@aws.group()
+def s3():
+    "S3 operations"
+
+from clk.decorators import argument
+from clk.types import DynamicChoice
+
+
+def list_buckets():
+    "Stands for: aws s3api list-buckets"
+    return {
+        "company-prod": ["prod-assets", "prod-logs"],
+        "company-staging": ["staging-assets"],
+    }.get(config.awsprofile.profile, [])
+
+
+def list_objects():
+    "Stands for: aws s3api list-objects"
+    return {
+        "prod-assets": ["logo.png", "style.css"],
+        "prod-logs": ["2026-09-18.log", "2026-09-19.log"],
+        "staging-assets": ["logo.png"],
+    }.get(config.awsprofile.bucket, [])
+
+
+class Bucket(DynamicChoice):
+    def choices(self):
+        return list_buckets()
+
+
+def remember_bucket(ctx, attr, value):
+    config.awsprofile.bucket = value
+    return value
+
+
+class S3Key(DynamicChoice):
+    def choices(self):
+        return list_objects()
+
+
+@s3.command()
+@argument("bucket", type=Bucket(), callback=remember_bucket, help="The bucket to download from")
+@argument("key", type=S3Key(), help="The object to download")
+def get(bucket, key):
+    "Download an object"
+    print(f"[{config.awsprofile.profile}] aws s3 cp s3://{bucket}/{key} .")
+EOF
+
+
+complete-bucket_code () {
+      clk completion try aws --profile company-prod s3 get
+}
+
+complete-bucket_expected () {
+      local expected
+      expected="$(cat<<"EOEXPECTED"
+prod-assets
+prod-logs
+EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
+}
+
+echo 'Run complete-bucket'
+
+{ complete-bucket_code || true ; } > "${TMP}/code.txt" 2>&1
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/complete-bucket"
+else
+    complete-bucket_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying complete-bucket"
+        exit 1
+    }
+fi
+
+
+
+complete-key_code () {
+      clk completion try aws --profile company-prod s3 get prod-logs
+}
+
+complete-key_expected () {
+      local expected
+      expected="$(cat<<"EOEXPECTED"
+2026-09-18.log
+2026-09-19.log
+EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
+}
+
+echo 'Run complete-key'
+
+{ complete-key_code || true ; } > "${TMP}/code.txt" 2>&1
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/complete-key"
+else
+    complete-key_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying complete-key"
+        exit 1
+    }
+fi
+
+
+
+complete-bucket-staging_code () {
+      clk completion try aws --profile company-staging s3 get
+}
+
+complete-bucket-staging_expected () {
+      local expected
+      expected="$(cat<<"EOEXPECTED"
+staging-assets
+EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
+}
+
+echo 'Run complete-bucket-staging'
+
+{ complete-bucket-staging_code || true ; } > "${TMP}/code.txt" 2>&1
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/complete-bucket-staging"
+else
+    complete-bucket-staging_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying complete-bucket-staging"
+        exit 1
+    }
+fi
+
+
+
+try-get_code () {
+      clk aws --profile company-prod s3 get prod-logs 2026-09-19.log
+}
+
+try-get_expected () {
+      local expected
+      expected="$(cat<<"EOEXPECTED"
+[company-prod] aws s3 cp s3://prod-logs/2026-09-19.log .
+EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
+}
+
+echo 'Run try-get'
+
+{ try-get_code || true ; } > "${TMP}/code.txt" 2>&1
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/try-get"
+else
+    try-get_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying try-get"
+        exit 1
+    }
+fi
+# completing the buckets of the account I am on:10 ends here

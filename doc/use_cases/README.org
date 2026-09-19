@@ -46,8 +46,9 @@ looking for.
    :END:
 
    To create powerful, dynamic command line tools that provide the best
-   completion possible, see [[file:dynamic_parameters_and_exposed_class.org][this pattern]] for writing your commands. In case you
-   have some issues, you might want to look at the [[file:dynamic_parameters_advanced_use_cases.org][advanced use cases]].
+   completion possible, see [[file:dynamic_parameters_and_exposed_class.org][this pattern]] for writing your commands. The
+   [[file:wrapping_a_cloud_provider_cli.org::*completing the buckets of the account I am on][cloud provider CLI wrapper]] puts it to work: it completes the buckets of the
+   account you are on, then the objects of the bucket you just typed.
 
 ** commands as first order objects
    :PROPERTIES:

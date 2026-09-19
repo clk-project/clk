@@ -5,6 +5,7 @@
 - [switching environments with extensions](#switching-environments)
 - [environment variable parameters](#30ecf8ae-ebc3-4194-aa85-40df469dde2a)
 - [preserving environment variables when no option is given](#preserving-env)
+- [completing the buckets of the account I am on](#dependent-completion)
 
 I use AWS a lot at work. The AWS CLI is powerful but verbose. Every command needs `--profile` to specify which account I'm targeting, and often `--region` too. I find myself typing things like:
 
@@ -442,3 +443,81 @@ clk aws --profile company-prod --region ap-southeast-1 s3 ls
 ```
 
     [company-prod/ap-southeast-1] aws s3 ls
+
+
+<a id="dependent-completion"></a>
+
+# completing the buckets of the account I am on
+
+Every account has its own buckets, every bucket its own objects, and I remember none of them. clk knows the profile, and a callback tells it the bucket I just typed.
+
+```python
+from clk.decorators import argument
+from clk.types import DynamicChoice
+
+
+def list_buckets():
+    "Stands for: aws s3api list-buckets"
+    return {
+        "company-prod": ["prod-assets", "prod-logs"],
+        "company-staging": ["staging-assets"],
+    }.get(config.awsprofile.profile, [])
+
+
+def list_objects():
+    "Stands for: aws s3api list-objects"
+    return {
+        "prod-assets": ["logo.png", "style.css"],
+        "prod-logs": ["2026-09-18.log", "2026-09-19.log"],
+        "staging-assets": ["logo.png"],
+    }.get(config.awsprofile.bucket, [])
+
+
+class Bucket(DynamicChoice):
+    def choices(self):
+        return list_buckets()
+
+
+def remember_bucket(ctx, attr, value):
+    config.awsprofile.bucket = value
+    return value
+
+
+class S3Key(DynamicChoice):
+    def choices(self):
+        return list_objects()
+
+
+@s3.command()
+@argument("bucket", type=Bucket(), callback=remember_bucket, help="The bucket to download from")
+@argument("key", type=S3Key(), help="The object to download")
+def get(bucket, key):
+    "Download an object"
+    print(f"[{config.awsprofile.profile}] aws s3 cp s3://{bucket}/{key} .")
+```
+
+```bash
+clk aws --profile company-prod s3 get <TAB>
+```
+
+    prod-assets
+    prod-logs
+
+```bash
+clk aws --profile company-prod s3 get prod-logs <TAB>
+```
+
+    2026-09-18.log
+    2026-09-19.log
+
+```bash
+clk aws --profile company-staging s3 get <TAB>
+```
+
+    staging-assets
+
+```bash
+clk aws --profile company-prod s3 get prod-logs 2026-09-19.log
+```
+
+    [company-prod] aws s3 cp s3://prod-logs/2026-09-19.log .

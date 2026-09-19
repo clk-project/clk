@@ -54,7 +54,7 @@ The basics of creating python commands are covered [here](python_command.md). Fo
 
 ## dynamic parameters and exposed classes
 
-To create powerful, dynamic command line tools that provide the best completion possible, see [this pattern](dynamic_parameters_and_exposed_class.md) for writing your commands. In case you have some issues, you might want to look at the [advanced use cases](dynamic_parameters_advanced_use_cases.md).
+To create powerful, dynamic command line tools that provide the best completion possible, see [this pattern](dynamic_parameters_and_exposed_class.md) for writing your commands. The [cloud provider CLI wrapper](wrapping_a_cloud_provider_cli.md) puts it to work: it completes the buckets of the account you are on, then the objects of the bucket you just typed.
 
 
 <a id="commands-as-objects"></a>
@@ -223,7 +223,6 @@ The [backing up documents](backing_up_documents.md) use case shows how to build 
 | [controlling_the_audio.md](controlling_the_audio.md) | Recording what an application plays, and tearing down the plumbing with clk.atexit |  |
 | [creating_extensions.md](creating_extensions.md) | Creating and sharing extensions (folders of commands and configuration) | clk_extension_hello |
 | [dealing_with_secrets.md](dealing_with_secrets.md) | Handling secrets (passwords, tokens) safely in clk commands |  |
-| [dynamic_parameters_advanced_use_cases.md](dynamic_parameters_advanced_use_cases.md) | Advanced dynamic parameters patterns and troubleshooting |  |
 | [dynamic_parameters_and_exposed_class.md](dynamic_parameters_and_exposed_class.md) | Splitting commands into subcommands with shared config via dynamic parameters and exposed classes |  |
 | [ethereum_local_environment_dev_tool.md](ethereum_local_environment_dev_tool.md) | Using clk commands as parameters in other commands (Ethereum dev tool example) |  |
 | [fetching_and_displaying_json_data.md](fetching_and_displaying_json_data.md) | Fetching JSON from APIs and displaying with syntax highlighting, download, echo_json |  |
