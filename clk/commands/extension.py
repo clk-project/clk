@@ -361,19 +361,6 @@ def process_url(name, url):
             urls.append(f"https://{host}/{author}/{extension}")
         if name is None:
             name = extension
-    elif match := re.match(
-        "^(?P<host>[a-zA-Z0-9_.-]+)/(?P<path>[a-zA-Z0-9_/-]+)/(?P<extension>[a-zA-Z0-9]+)$",
-        url,
-    ):
-        host = match.group("host")
-        path = match.group("path")
-        extension = match.group("extension")
-        urls.append(f"git@{host}:{path}/clk_extension_{extension}")
-        urls.append(f"https://{host}/{path}/clk_extension_{extension}")
-        urls.append(f"git@{host}:{path}/{extension}")
-        urls.append(f"https://{host}/{path}/{extension}")
-        if name is None:
-            name = extension
     else:
         urls.append(url)
     if name is None and "/" in url:
