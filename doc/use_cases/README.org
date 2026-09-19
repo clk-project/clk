@@ -74,10 +74,6 @@ looking for.
   For an example of using aliases with templated environment variables to create
   flexible workflows, see the [[file:podcast_automation.org][podcast automation]] example.
 
-  For shortcut aliases that target specific deployment environments, see the
-  [[file:environment_deployment.org][environment deployment]] use case. It also shows how to use
-  ~get_parameter_source~ to distinguish between default and explicit values.
-
   When a global alias and a local command share the same name, the local command
   wins -- see [[*resolution priority][resolution priority]]. You can also create aliases that [[file:alias_to_root.org][point to
   another project's root command]] for [[*cross-project access][cross-project access]].

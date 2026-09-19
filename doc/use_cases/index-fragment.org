@@ -23,7 +23,6 @@
 | [dealing_with_secrets.md](dealing_with_secrets.md) | Handling secrets (passwords, tokens) safely in clk commands |  |
 | [dynamic_parameters_advanced_use_cases.md](dynamic_parameters_advanced_use_cases.md) | Advanced dynamic parameters patterns and troubleshooting |  |
 | [dynamic_parameters_and_exposed_class.md](dynamic_parameters_and_exposed_class.md) | Splitting commands into subcommands with shared config via dynamic parameters and exposed classes |  |
-| [environment_deployment.md](environment_deployment.md) | Auto-detecting deployment target from context (e.g. git branch) with explicit overrides, get_parameter_source |  |
 | [ethereum_local_environment_dev_tool.md](ethereum_local_environment_dev_tool.md) | Using clk commands as parameters in other commands (Ethereum dev tool example) |  |
 | [fetching_and_displaying_json_data.md](fetching_and_displaying_json_data.md) | Fetching JSON from APIs and displaying with syntax highlighting, download, echo_json |  |
 | [finding_recent_documents.md](finding_recent_documents.md) | A bash command with a date argument, read written out or spoken | A:,clk_help_handler,clk_usage,clk_value |
