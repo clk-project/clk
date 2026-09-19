@@ -64,18 +64,12 @@ class ExternalCommandResolver(CommandResolver):
                     for file in os.listdir(path):
                         abspath = p / file
                         if abspath.is_file() and os.access(abspath, os.X_OK):
-                            cmd_name = abspath.stem
-                            ext = abspath.suffix
-                            if ext in (".sh", ".py"):
-                                name = cmd_name + "@" + ext[1:]
-                            else:
-                                name = file
-                            cmds.append(name)
+                            cmds.append(file)
             self._external_cmds_cache[profile_name] = cmds
         return self._external_cmds_cache[profile_name]
 
     def _get_command(self, path, parent, profile):
-        name = path.replace("@", ".")
+        name = path
         cmdhelp = "external command"
         command_name = name
         exec_paths = self._get_executable_paths_for_profile(profile)
