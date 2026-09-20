@@ -1,7 +1,7 @@
 - [manipulating strings](#manipulating-strings)
   - [dropping duplicate lines](#dropping-duplicate-lines)
 
-Now that [you can write a bash command](bash_command.md). you might want to do some complicated stuff with it. If your logic becomes pretty complicated, I definitely recommend that you use a python command instead.
+Now that [you can write a bash command](checking_my_server.md). you might want to do some complicated stuff with it. If your logic becomes pretty complicated, I definitely recommend that you use a python command instead.
 
 But for moderate size commands, bash is pretty usable. clk provides some helpers to help with every day uses.
 

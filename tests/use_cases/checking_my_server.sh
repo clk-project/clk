@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
-# [[file:../../doc/use_cases/bash_command.org::#when-clk-cannot-read-what-you-wrote][when clk cannot read what you wrote:5]]
+# [[file:../../doc/use_cases/checking_my_server.org::#when-i-break-it][when I break it:3]]
 set -eu
 . ./sandboxing.sh
 
-clk command create bash mycommand
+clk command create bash server.check
 
 
 help-create_code () {
@@ -53,14 +53,14 @@ fi
 
 
 show_it_code () {
-      cat $(clk command which mycommand)
+      cat $(clk command which server.check)
 }
 
 show_it_expected () {
       local expected
       expected="$(cat<<"EOEXPECTED"
 #!/usr/bin/env bash
-  set -eu
+set -eu
 
 source "_clk.sh"
 
@@ -99,13 +99,13 @@ fi
 
 
 try_code () {
-      clk mycommand
+      clk server check
 }
 
 try_expected () {
       local expected
       expected="$(cat<<"EOEXPECTED"
-warning: The command 'mycommand' has no documentation
+warning: The command 'server.check' has no documentation
 EOEXPECTED
 )"
       # org says nil where the block said nothing
@@ -130,25 +130,25 @@ fi
 cat<<'EOF' > myeditor
 #!/usr/bin/env bash
   set -eu
-sed -i 's/Description/Command that says something/g' "${1}"
+sed -i 's/Description/Say whether my server answers/g' "${1}"
 EOF
 chmod +x myeditor
-VISUAL=./myeditor clk command edit mycommand
+VISUAL=./myeditor clk command edit server.check
 
 
 help_code () {
-      clk mycommand --help|sed "s|$(pwd)|.|"
+      clk server check --help|sed "s|$(pwd)|.|"
 }
 
 help_expected () {
       local expected
       expected="$(cat<<"EOEXPECTED"
-Usage: clk mycommand [OPTIONS]
+Usage: clk server check [OPTIONS]
 
-  Command that says something
+  Say whether my server answers
 
-  Edit this external command by running `clk command edit mycommand`
-  Or edit ./clk-root/bin/mycommand directly.
+  Edit this external command by running `clk command edit server.check`
+  Or edit ./clk-root/bin/server.check directly.
 
 Options:
   --help-all  Show the full help message, automatic options included.
@@ -175,19 +175,20 @@ else
 fi
 
 
-cat<<EOF >> "$(clk command which mycommand)"
-echo something
+cat<<EOF >> "$(clk command which server.check)"
+echo "no answer from myserver"
+exit 7
 EOF
 
 
 use_it_code () {
-      clk mycommand
+      clk server check
 }
 
 use_it_expected () {
       local expected
       expected="$(cat<<"EOEXPECTED"
-something
+no answer from myserver
 EOEXPECTED
 )"
       # org says nil where the block said nothing
@@ -209,57 +210,56 @@ else
 fi
 
 
-clk command create bash --body "exit 5" --description "Simply exiting with the code 5" exit5
 
-
-exit-5_code () {
-      clk exit5 || echo $?
+exit-7_code () {
+      clk server check || echo $?
 }
 
-exit-5_expected () {
+exit-7_expected () {
       local expected
       expected="$(cat<<"EOEXPECTED"
-5
+no answer from myserver
+7
 EOEXPECTED
 )"
       # org says nil where the block said nothing
       test "${expected}" = nil || echo "${expected}"
 }
 
-echo 'Run exit-5'
+echo 'Run exit-7'
 
-{ exit-5_code || true ; } > "${TMP}/code.txt" 2>&1
+{ exit-7_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/exit-5"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/exit-7"
 else
-    exit-5_expected > "${TMP}/expected.txt" 2>&1
+    exit-7_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-        echo "Something went wrong when trying exit-5"
+        echo "Something went wrong when trying exit-7"
         exit 1
     }
 fi
 
 
   clk command create bash --body "
-  clean () {
-echo 'cleaning'
+  close_tunnel () {
+echo 'closing the tunnel'
 }
-trap clean EXIT
-echo 'starting'
+trap close_tunnel EXIT
+echo 'watching the server'
 sleep 3600
-  " --description "Simply wait but clean before exiting" clean-test
+  " --description "Watch the server through a tunnel" server.watch
 
 cat<<EOF > pass.exp
 #!/usr/bin/env -S expect -f
 
 set timeout -1
-spawn clk clean-test
+spawn clk server watch
 match_max 100000
-expect -exact "starting\r"
+expect -exact "watching the server\r"
 sleep 0.1
 send "\x03"
-expect -exact "cleaning"
+expect -exact "closing the tunnel"
 expect -exact "\r"
 expect -exact "\r"
 expect -exact "\r"
@@ -268,15 +268,16 @@ expect eof
 EOF
 
 
-clean-test-expect_code () {
+watch-expect_code () {
       expect pass.exp |tail -n+2
 }
 
-clean-test-expect_expected () {
+watch-expect_expected () {
       local expected
       expected="$(cat<<"EOEXPECTED"
-starting
-^Ccleaning
+watching the server
+^Cclosing the tunnel
+
 
 Aborted!
 EOEXPECTED
@@ -285,23 +286,23 @@ EOEXPECTED
       test "${expected}" = nil || echo "${expected}"
 }
 
-echo 'Run clean-test-expect'
+echo 'Run watch-expect'
 
-{ clean-test-expect_code || true ; } > "${TMP}/code.txt" 2>&1
+{ watch-expect_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/clean-test-expect"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/watch-expect"
 else
-    clean-test-expect_expected > "${TMP}/expected.txt" 2>&1
+    watch-expect_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
-        echo "Something went wrong when trying clean-test-expect"
+        echo "Something went wrong when trying watch-expect"
         exit 1
     }
 fi
 
 
-clk command create bash greet --description "Greet someone"
-cat<<'EOF' > "$(clk command which greet)"
+check="$(clk command which server.check)"
+cat<<'EOF' > "${check}"
 #!/usr/bin/env bash
 set -eu
 
@@ -311,26 +312,26 @@ clk_usage () {
     cat<<EOS
 $0
 
-Greet someone
+Say whether my server answers
 --
-A:name
+A:host
 EOS
 }
 
 clk_help_handler "$@"
 
-echo "Hello ${CLK___NAME}"
+echo "no answer from ${CLK___HOST}"
 EOF
 
 
 run-bad-usage_code () {
-      clk greet World 2>&1 | head -1
+      clk server check myserver 2>&1 | head -1
 }
 
 run-bad-usage_expected () {
       local expected
       expected="$(cat<<"EOEXPECTED"
-warning: When loading command greet at path ./clk-root/bin/greet: Expected format in greet is A:name:type:help[:{someextrajsondata}], got A:name
+warning: When loading command server.check at path ./clk-root/bin/server.check: Expected format in server.check is A:name:type:help[:{someextrajsondata}], got A:host
 EOEXPECTED
 )"
       # org says nil where the block said nothing
@@ -352,21 +353,52 @@ else
 fi
 
 
-clk command create bash broken --body "exit 1" --description "Broken"
-cat<<'EOF' > "$(clk command which broken)"
+sed -i 's/^A:host$/A:host:str:The server to ask/' "${check}"
+
+
+run-good-usage_code () {
+      clk server check myserver
+}
+
+run-good-usage_expected () {
+      local expected
+      expected="$(cat<<"EOEXPECTED"
+no answer from myserver
+EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
+}
+
+echo 'Run run-good-usage'
+
+{ run-good-usage_code || true ; } > "${TMP}/code.txt" 2>&1
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/run-good-usage"
+else
+    run-good-usage_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying run-good-usage"
+        exit 1
+    }
+fi
+
+
+cat<<'EOF' > "${check}"
 #!/usr/bin/env bash
 exit 1
 EOF
 
 
 run-broken-command_code () {
-      clk broken --help | head -3
+      clk server check --help | head -3
 }
 
 run-broken-command_expected () {
       local expected
       expected="$(cat<<"EOEXPECTED"
-Usage: clk broken [OPTIONS]
+Usage: clk server check [OPTIONS]
 
   No help found... (the command is most likely broken)
 EOEXPECTED
@@ -388,4 +420,4 @@ else
         exit 1
     }
 fi
-# when clk cannot read what you wrote:5 ends here
+# when I break it:3 ends here

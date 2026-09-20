@@ -17,7 +17,7 @@ looking for.
    :CUSTOM_ID: bash-commands
    :END:
 
-   The basics are covered [[file:bash_command.org][here]]. To get more into how to provide parameters to
+   The basics are covered by [[file:checking_my_server.org][checking my server]]. To get more into how to provide parameters to
    your command, read [[file:bash_command_use_option.org][that one]]. If your parameters are too complicated to be
    simply parsed, follow the idea of this [[file:send_sms.org][use case]].
 

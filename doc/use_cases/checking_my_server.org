@@ -2,8 +2,8 @@
 :ID:       85c8e385-7f24-48ac-9a85-30cfc354aebf
 :END:
 #+LANGUAGE: en
-#+EXPORT_FILE_NAME: ./bash_command.md
-#+SUBTITLE: Creating bash commands, clk_usage, clk_help_handler, source _clk.sh, exit codes, traps
+#+EXPORT_FILE_NAME: ./checking_my_server.md
+#+SUBTITLE: A bash command that says whether my server answers, with its exit code and its cleaning up
 
 #+CALL: ../../lp.org:check-result()
 
@@ -12,11 +12,22 @@
 . ./sandboxing.sh
 #+END_SRC
 
+I host a few things at home and I like knowing that they answer. I always end
+up typing the same curl, reading the same output and forgetting what the exit
+code meant. Let's make a command out of it, and take advantage of this
+situation to see what clk does with the exit codes and the interruptions on the
+way.
+
+* making the check a command
+  :PROPERTIES:
+  :CUSTOM_ID: making-the-check-a-command
+  :END:
+
 To create a bash command, you can simply call the following command.
 
 #+name: create
 #+BEGIN_SRC bash :results none :session 85c8e385-7f24-48ac-9a85-30cfc354aebf
-clk command create bash mycommand
+clk command create bash server.check
 #+END_SRC
 
 Your editor will be used to first edit the command. This command will already
@@ -30,7 +41,7 @@ hesitate to try.
 clk command create --help
 #+END_SRC
 
-#+RESULTS[7ad0466fff091d1dd4c87bc00dafe2cec6542897]: help-create
+#+RESULTS[]: help-create
 #+begin_example
 Usage: clk command create [OPTIONS] COMMAND [ARGS]...
 
@@ -50,18 +61,17 @@ Commands:
   python  Create a bash custom command
 #+end_example
 
-
 Let's look at this file together.
 
 #+NAME: show_it
 #+BEGIN_SRC bash :results verbatim  :session 85c8e385-7f24-48ac-9a85-30cfc354aebf :cache yes
-cat $(clk command which mycommand)
+cat $(clk command which server.check)
 #+END_SRC
 
-#+RESULTS[7d3b87635527e2c71dba61b28983f897eb7a8a9f]: show_it
+#+RESULTS[]: show_it
 #+begin_example
 #!/usr/bin/env bash
-  set -eu
+set -eu
 
 source "_clk.sh"
 
@@ -89,25 +99,30 @@ On top of the line with two dashes ~--~ , you write whatever plain text content
 you want. It will be available in the ~--help~ output.
 
 Below the ~--~ line, you will write the descriptions of the arguments and
-options (see [[file:bash_command_use_option.org][the dedicated tutorial]]).
+options.
 
 If you keep the word ~Description~ in the help message, clk will warn you that
 you should replace it with something more interesting.
 
 #+name: try
 #+BEGIN_SRC bash :results verbatim :exports both  :session 85c8e385-7f24-48ac-9a85-30cfc354aebf :cache yes
-clk mycommand
+clk server check
 #+END_SRC
 
-#+RESULTS[b51c75a0bbe5bf44990b233b589594473c828e43]: try
-: warning: The command 'mycommand' has no documentation
+#+RESULTS[]: try
+: warning: The command 'server.check' has no documentation
+
+* saying what it does
+  :PROPERTIES:
+  :CUSTOM_ID: saying-what-it-does
+  :END:
 
 Let's write something in here. You can edit the file directly using ~clk command
 edit~.
 
 #+name: edit
 #+BEGIN_SRC bash :results none :exports code
-clk command edit mycommand
+clk command edit server.check
 #+END_SRC
 
 For the sake of this tutorial, we will provide a custom ~EDITOR~ that
@@ -118,102 +133,107 @@ automatically makes the change.
 cat<<'EOF' > myeditor
 #!/usr/bin/env bash
   set -eu
-sed -i 's/Description/Command that says something/g' "${1}"
+sed -i 's/Description/Say whether my server answers/g' "${1}"
 EOF
 chmod +x myeditor
-VISUAL=./myeditor clk command edit mycommand
+VISUAL=./myeditor clk command edit server.check
 #+END_SRC
 
 #+NAME: help
 #+BEGIN_SRC bash :results verbatim :exports both :session 85c8e385-7f24-48ac-9a85-30cfc354aebf :cache yes
-clk mycommand --help|sed "s|$(pwd)|.|"
+clk server check --help|sed "s|$(pwd)|.|"
 #+END_SRC
 
-#+RESULTS[816a9e78d7a11109944790de77428fd39647abdf]: help
+#+RESULTS[]: help
 #+begin_example
-Usage: clk mycommand [OPTIONS]
+Usage: clk server check [OPTIONS]
 
-  Command that says something
+  Say whether my server answers
 
-  Edit this external command by running `clk command edit mycommand`
-  Or edit ./clk-root/bin/mycommand directly.
+  Edit this external command by running `clk command edit server.check`
+  Or edit ./clk-root/bin/server.check directly.
 
 Options:
   --help-all  Show the full help message, automatic options included.
   --help      Show this message and exit.
 #+end_example
 
-
 The last part ~clk_help_handler "$@"~ is the glue code that makes clk parse the
 command line. After this line, you can write the content of your command line.
 
-Let's make this command say something.
+Here, the server is down and curl says so with its own exit code, 7.
 
-#+name: say_something
+#+name: the_check
 #+BEGIN_SRC bash :results none :exports code :session 85c8e385-7f24-48ac-9a85-30cfc354aebf
-  cat<<EOF >> "$(clk command which mycommand)"
-  echo something
+  cat<<EOF >> "$(clk command which server.check)"
+  echo "no answer from myserver"
+  exit 7
   EOF
 #+END_SRC
 
 #+NAME: use_it
 #+BEGIN_SRC bash :results verbatim :exports both :session 85c8e385-7f24-48ac-9a85-30cfc354aebf :cache yes
-clk mycommand
+clk server check
 #+END_SRC
 
-#+RESULTS[b51c75a0bbe5bf44990b233b589594473c828e43]: use_it
-: something
+#+RESULTS[]: use_it
+: no answer from myserver
 
-clk will try hard to respect the exit code of the bash command.
+* the exit code my scripts read
+  :PROPERTIES:
+  :CUSTOM_ID: the-exit-code-my-scripts-read
+  :END:
 
-Let's assume for instance that you created a command that simply exits with the code 5.
+clk will try hard to respect the exit code of the bash command, so that whatever
+calls this check learns what curl had to say.
 
-#+NAME: create-exit-5
-#+BEGIN_SRC bash :results none :exports code :session 85c8e385-7f24-48ac-9a85-30cfc354aebf
-  clk command create bash --body "exit 5" --description "Simply exiting with the code 5" exit5
-#+END_SRC
-
-Then, let's call it and check its exit code.
-
-#+NAME: exit-5
+#+NAME: exit-7
 #+BEGIN_SRC bash :results verbatim :exports both :session 85c8e385-7f24-48ac-9a85-30cfc354aebf :cache yes
-clk exit5 || echo $?
+clk server check || echo $?
 #+END_SRC
 
-#+RESULTS[810c710ebd06b1a4c9c46ab7fad8e571670b9497]: exit-5
-: 5
+#+RESULTS[]: exit-7
+: no answer from myserver
+: 7
 
-Additionally, you can put whatever traps you want in your code and clk will try to respect them.
+* when I stop it in the middle
+  :PROPERTIES:
+  :CUSTOM_ID: when-i-stop-it-in-the-middle
+  :END:
+
+Watching the server rather than asking it once means opening a tunnel and
+keeping it open. Whatever I do next, that tunnel has to go, so the command puts
+it in a trap, and clk will try to respect it.
 
 #+NAME: trap-code
 #+BEGIN_SRC bash :results none :exports code :session 85c8e385-7f24-48ac-9a85-30cfc354aebf
   clk command create bash --body "
-  clean () {
-echo 'cleaning'
+  close_tunnel () {
+echo 'closing the tunnel'
 }
-trap clean EXIT
-echo 'starting'
+trap close_tunnel EXIT
+echo 'watching the server'
 sleep 3600
-  " --description "Simply wait but clean before exiting" clean-test
+  " --description "Watch the server through a tunnel" server.watch
 #+END_SRC
 
-  #+NAME: clean_test-command
+  #+NAME: watch-command
   #+BEGIN_SRC bash :results none :exports code
-    clk clean-test
+    clk server watch
   #+END_SRC
 
-  #+NAME: generate_expect_clean_test
+  #+NAME: generate_expect_watch
   #+BEGIN_SRC bash :results none :exports none :noweb yes :session 85c8e385-7f24-48ac-9a85-30cfc354aebf
 cat<<EOF > pass.exp
 #!/usr/bin/env -S expect -f
 
 set timeout -1
-spawn clk clean-test
+spawn clk server watch
 match_max 100000
-expect -exact "starting\r"
+expect -exact "watching the server\r"
 sleep 0.1
 send "\x03"
-expect -exact "cleaning"
+expect -exact "closing the tunnel"
 expect -exact "\r"
 expect -exact "\r"
 expect -exact "\r"
@@ -222,32 +242,33 @@ expect eof
 EOF
   #+END_SRC
 
-  #+NAME: clean-test-expect
+  #+NAME: watch-expect
   #+BEGIN_SRC bash :results verbatim :exports results :session 85c8e385-7f24-48ac-9a85-30cfc354aebf :cache yes
     expect pass.exp |tail -n+2
   #+END_SRC
 
-  When starting this command and then killing it with Ctrl-C, you will get.
+  Hitting Ctrl-C gives.
 
-  #+RESULTS[2a3f753a601200e8c62ae847a25cb45790129b38]: clean-test-expect
-  : starting
-  : ^Ccleaning
+  #+RESULTS[]: watch-expect
+  : watching the server
+  : ^Cclosing the tunnel
+  :
   :
   : Aborted!
 
-
-* when clk cannot read what you wrote
+* giving it the host to ask
   :PROPERTIES:
-  :CUSTOM_ID: when-clk-cannot-read-what-you-wrote
+  :CUSTOM_ID: giving-it-the-host-to-ask
   :END:
 
-The lines under the ~--~ have a shape. Get one wrong and clk says which shape it
-wanted.
+One server became three, so the check takes the host to ask. The lines under
+the ~--~ have a shape, and the day I wrote that one too short, clk said which
+shape it wanted.
 
 #+NAME: write-bad-usage
 #+BEGIN_SRC bash :results none :exports code :session 85c8e385-7f24-48ac-9a85-30cfc354aebf
-clk command create bash greet --description "Greet someone"
-cat<<'EOF' > "$(clk command which greet)"
+check="$(clk command which server.check)"
+cat<<'EOF' > "${check}"
 #!/usr/bin/env bash
 set -eu
 
@@ -257,33 +278,52 @@ clk_usage () {
     cat<<EOS
 $0
 
-Greet someone
+Say whether my server answers
 --
-A:name
+A:host
 EOS
 }
 
 clk_help_handler "$@"
 
-echo "Hello ${CLK___NAME}"
+echo "no answer from ${CLK___HOST}"
 EOF
 #+END_SRC
 
 #+NAME: run-bad-usage
 #+BEGIN_SRC bash :results verbatim :exports both :session 85c8e385-7f24-48ac-9a85-30cfc354aebf :cache yes
-clk greet World 2>&1 | head -1
+clk server check myserver 2>&1 | head -1
 #+END_SRC
 
 #+RESULTS[]: run-bad-usage
-: warning: When loading command greet at path ./clk-root/bin/greet: Expected format in greet is A:name:type:help[:{someextrajsondata}], got A:name
+: warning: When loading command server.check at path ./clk-root/bin/server.check: Expected format in server.check is A:name:type:help[:{someextrajsondata}], got A:host
+
+A type and a help later, the host gets through.
+
+#+NAME: write-good-usage
+#+BEGIN_SRC bash :results none :exports code :session 85c8e385-7f24-48ac-9a85-30cfc354aebf
+sed -i 's/^A:host$/A:host:str:The server to ask/' "${check}"
+#+END_SRC
+
+#+NAME: run-good-usage
+#+BEGIN_SRC bash :results verbatim :exports both :session 85c8e385-7f24-48ac-9a85-30cfc354aebf :cache yes
+clk server check myserver
+#+END_SRC
+
+#+RESULTS[]: run-good-usage
+: no answer from myserver
+
+* when I break it
+  :PROPERTIES:
+  :CUSTOM_ID: when-i-break-it
+  :END:
 
 A command whose ~--help~ does not answer at all is not hidden either: it is
 shown, and said to be broken.
 
 #+NAME: write-broken-command
 #+BEGIN_SRC bash :results none :exports code :session 85c8e385-7f24-48ac-9a85-30cfc354aebf
-clk command create bash broken --body "exit 1" --description "Broken"
-cat<<'EOF' > "$(clk command which broken)"
+cat<<'EOF' > "${check}"
 #!/usr/bin/env bash
 exit 1
 EOF
@@ -291,15 +331,15 @@ EOF
 
 #+NAME: run-broken-command
 #+BEGIN_SRC bash :results verbatim :exports both :session 85c8e385-7f24-48ac-9a85-30cfc354aebf :cache yes
-clk broken --help | head -3
+clk server check --help | head -3
 #+END_SRC
 
 #+RESULTS[]: run-broken-command
-: Usage: clk broken [OPTIONS]
+: Usage: clk server check [OPTIONS]
 :
 :   No help found... (the command is most likely broken)
 
-#+BEGIN_SRC bash :exports none :tangle ../../tests/use_cases/bash_command.sh :noweb yes :shebang "#!/usr/bin/env bash"
+#+BEGIN_SRC bash :exports none :tangle ../../tests/use_cases/checking_my_server.sh :noweb yes :shebang "#!/usr/bin/env bash"
   set -eu
 <<init>>
 
@@ -315,23 +355,25 @@ check-result(try)
 
 check-result(help)
 
-<<say_something>>
+<<the_check>>
 
 check-result(use_it)
 
-<<create-exit-5>>
-
-check-result(exit-5)
+check-result(exit-7)
 
 <<trap-code>>
 
-<<generate_expect_clean_test>>
+<<generate_expect_watch>>
 
-check-result(clean-test-expect)
+check-result(watch-expect)
 
 <<write-bad-usage>>
 
 check-result(run-bad-usage)
+
+<<write-good-usage>>
+
+check-result(run-good-usage)
 
 <<write-broken-command>>
 

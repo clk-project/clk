@@ -95,7 +95,7 @@ clk exec cat project:/tmp/somefile.txt
 
 # running project scripts
 
-Of course, you can create [bash commands](bash_command.md) to add logic to your project. But sometimes, projects just have loose scripts lying around in `./scripts` or `./tools` directories. Maybe they were written by someone else, maybe they're legacy, or maybe you just prefer keeping them as plain shell scripts.
+Of course, you can create [bash commands](checking_my_server.md) to add logic to your project. But sometimes, projects just have loose scripts lying around in `./scripts` or `./tools` directories. Maybe they were written by someone else, maybe they're legacy, or maybe you just prefer keeping them as plain shell scripts.
 
 You can run them through `clk exec` to give them access to the project context.
 

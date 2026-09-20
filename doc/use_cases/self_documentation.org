@@ -13,7 +13,7 @@
 #+END_SRC
 
 When you start using clk extensively, you might end up with many [[file:controlling_my_music.org][aliases]],
-[[file:setting_default_values.org][parameters]], [[file:bash_command.org][commands]], and [[file:creating_extensions.org][extensions]] spread across different profiles. The ~clk
+[[file:setting_default_values.org][parameters]], [[file:checking_my_server.org][commands]], and [[file:creating_extensions.org][extensions]] spread across different profiles. The ~clk
 describe~ command helps you discover what features are available in any profile,
 making clk a self-documented tool.
 

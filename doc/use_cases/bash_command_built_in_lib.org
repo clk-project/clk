@@ -12,7 +12,7 @@
   . ./sandboxing.sh
 #+END_SRC
 
-Now that [[file:bash_command.org][you can write a bash command]]. you might want to do some complicated
+Now that [[file:checking_my_server.org][you can write a bash command]]. you might want to do some complicated
 stuff with it. If your logic becomes pretty complicated, I definitely recommend
 that you use a python command instead.
 

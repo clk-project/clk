@@ -148,7 +148,7 @@ clk exec cat project:/tmp/somefile.txt
   :CUSTOM_ID: running-project-scripts
   :END:
 
-Of course, you can create [[file:bash_command.org][bash commands]] to add logic to your project. But
+Of course, you can create [[file:checking_my_server.org][bash commands]] to add logic to your project. But
 sometimes, projects just have loose scripts lying around in ~./scripts~ or
 ~./tools~ directories. Maybe they were written by someone else, maybe they're
 legacy, or maybe you just prefer keeping them as plain shell scripts.
