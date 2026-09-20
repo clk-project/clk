@@ -212,6 +212,111 @@ This gives us a quick overview of all our podcast-related commands: the core
 alias shows a brief description of what it does, making it easy to remember
 which shortcut to use for different podcast categories.
 
+* the state of an episode, shared by several commands
+  :PROPERTIES:
+  :CUSTOM_ID: 6cf69e7a-e155-41dc-896f-a1ed940d42cd
+  :END:
+
+An episode comes in ~todo~. It goes to ~to-process~ to have its audio extracted,
+then to ~next~ to wait, then to ~ready~ when it moves to my phone, and to ~done~
+once I have listened to it. Several commands take that state, some of them bash
+scripts. I write the list once in python, beside the rest of my podcast code.
+
+#+NAME: podcastlib
+#+BEGIN_SRC python :results none :exports code
+from clk.types import Suggestion
+
+STATES = ["todo", "to-process", "next", "ready", "done"]
+
+stateType = Suggestion(STATES)
+#+END_SRC
+
+#+NAME: install_podcastlib
+#+BEGIN_SRC bash :results none :exports code :session c8fcfc53-6d2a-4b9c-a836-c303933b6563 :noweb yes
+mkdir -p lib
+cat<<'EOF' > lib/podcastlib.py
+<<podcastlib>>
+EOF
+export PYTHONPATH="$(pwd)/lib"
+#+END_SRC
+
+The usage of the bash command names the module and the type in it.
+
+#+NAME: extract_audio_code
+#+BEGIN_SRC bash :results none :exports code
+#!/usr/bin/env bash
+set -eu
+
+source "_clk.sh"
+
+clk_usage () {
+    cat<<EOF
+$0
+
+Extract the audio of the episodes in that state
+--
+O:--state:podcastlib.stateType:The state of the episodes to extract the audio of:to-process
+EOF
+}
+
+clk_help_handler "$@"
+
+echo "extracting the audio of the episodes in state $(clk_value state)"
+#+END_SRC
+
+#+NAME: extract_audio
+#+BEGIN_SRC bash :results none :exports none :session c8fcfc53-6d2a-4b9c-a836-c303933b6563 :noweb yes
+clk command create bash podcast.extract-audio
+cat <<"EOH" > "$(clk command which podcast.extract-audio)"
+<<extract_audio_code>>
+EOH
+#+END_SRC
+
+#+NAME: run_extract_audio
+#+BEGIN_SRC bash :results verbatim :exports both :session c8fcfc53-6d2a-4b9c-a836-c303933b6563 :cache yes
+clk podcast extract-audio
+#+END_SRC
+
+#+RESULTS[]: run_extract_audio
+: extracting the audio of the episodes in state to-process
+
+#+NAME: ask_for_state_completion
+#+BEGIN_SRC bash :results none :exports code
+clk podcast extract-audio --state <TAB>
+#+END_SRC
+
+#+NAME: state_completion
+#+BEGIN_SRC bash :results verbatim :exports results :session c8fcfc53-6d2a-4b9c-a836-c303933b6563 :cache yes
+clk completion try --remove-bash-formatting --last podcast extract-audio --state ""
+#+END_SRC
+
+#+RESULTS[]: state_completion
+: todo
+: to-process
+: next
+: ready
+: done
+
+Add a state in python, and the command offers it.
+
+#+NAME: add_state
+#+BEGIN_SRC bash :results none :exports code :session c8fcfc53-6d2a-4b9c-a836-c303933b6563
+sed -i 's/"done"]/"done", "to-digest"]/' lib/podcastlib.py
+#+END_SRC
+
+#+NAME: state_completion_after
+#+BEGIN_SRC bash :results verbatim :exports results :session c8fcfc53-6d2a-4b9c-a836-c303933b6563 :cache yes
+clk completion try --remove-bash-formatting --last podcast extract-audio --state ""
+#+END_SRC
+
+#+RESULTS[]: state_completion_after
+: todo
+: to-process
+: next
+: ready
+: done
+: to-digest
+
 #+NAME: run
 #+BEGIN_SRC bash :results none :exports none :tangle ../../tests/use_cases/podcast_automation.sh :noweb yes :shebang "#!/usr/bin/env bash"
   set -eu
@@ -238,4 +343,16 @@ check-result(audio_alias)
 check-result(use_audio_alias)
 
 check-result(group_help_with_alias)
+
+<<install_podcastlib>>
+
+<<extract_audio>>
+
+check-result(run_extract_audio)
+
+check-result(state_completion)
+
+<<add_state>>
+
+check-result(state_completion_after)
 #+END_SRC

@@ -220,6 +220,7 @@ The [backing up documents](backing_up_documents.md) use case shows how to build 
 | [chaotic_simulator_manager.md](chaotic_simulator_manager.md) | Building your own standalone CLI tool on top of clk as a library |  |
 | [choices.md](choices.md) | Restricting user input to predefined values using Choice types |  |
 | [controlling_a_server_using_an_environment_variable.md](controlling_a_server_using_an_environment_variable.md) | Managing server addresses via environment variables and parameters |  |
+| [controlling_the_audio.md](controlling_the_audio.md) | Recording what an application plays, and tearing down the plumbing with clk.atexit |  |
 | [creating_extensions.md](creating_extensions.md) | Creating and sharing extensions (folders of commands and configuration) | clk_extension_hello |
 | [dealing_with_secrets.md](dealing_with_secrets.md) | Handling secrets (passwords, tokens) safely in clk commands |  |
 | [dynamic_parameters_advanced_use_cases.md](dynamic_parameters_advanced_use_cases.md) | Advanced dynamic parameters patterns and troubleshooting |  |
@@ -231,7 +232,7 @@ The [backing up documents](backing_up_documents.md) use case shows how to build 
 | [ipfs_name_publish.md](ipfs_name_publish.md) | Using bash commands to create completion for other commands (IPFS example) | A:,clk_help_handler,clk_list_to_choice,clk_usage,clk_value |
 | [lib.md](lib.md) | Reference for clk.lib Python helpers (download, echo_json, etc.) |  |
 | [multi_environment_deployment_tool.md](multi_environment_deployment_tool.md) | Sharing configuration between Python groups and bash subcommands via environment variables |  |
-| [podcast_automation.md](podcast_automation.md) | Aliases with templated environment variables for flexible workflows (podcast download example) |  |
+| [podcast_automation.md](podcast_automation.md) | Aliases with templated environment variables for flexible workflows (podcast download example) | O:,clk_help_handler,clk_usage,clk_value |
 | [python_command.md](python_command.md) | Creating Python commands with clk command create python, click decorators |  |
 | [scrapping_the_web.md](scrapping_the_web.md) | Caching web-scraped data locally to avoid redundant requests |  |
 | [self_documentation.md](self_documentation.md) | Using clk describe to explore aliases, parameters, commands, and extensions across profiles |  |
@@ -256,13 +257,13 @@ The [backing up documents](backing_up_documents.md) use case shows how to build 
 - `CLK___SOURCE` : [backing_up_documents.md](backing_up_documents.md), [wrapping_a_cloud_provider_cli.md](wrapping_a_cloud_provider_cli.md)
 - `CLK____JSON` : [send_sms.md](send_sms.md)
 - `F:` : [bash_command_use_option.md](bash_command_use_option.md)
-- `O:` : [bash_command_use_option.md](bash_command_use_option.md), [send_sms.md](send_sms.md)
+- `O:` : [bash_command_use_option.md](bash_command_use_option.md), [podcast_automation.md](podcast_automation.md), [send_sms.md](send_sms.md)
 - `clk_extension_hello` : [creating_extensions.md](creating_extensions.md)
 - `clk_format_choice` : [bash_command_use_option.md](bash_command_use_option.md)
 - `clk_given` : [bash_command_use_option.md](bash_command_use_option.md)
-- `clk_help_handler` : [bash_command_import.md](bash_command_import.md), [bash_command_use_option.md](bash_command_use_option.md), [ipfs_name_publish.md](ipfs_name_publish.md), [send_sms.md](send_sms.md)
+- `clk_help_handler` : [bash_command_import.md](bash_command_import.md), [bash_command_use_option.md](bash_command_use_option.md), [ipfs_name_publish.md](ipfs_name_publish.md), [podcast_automation.md](podcast_automation.md), [send_sms.md](send_sms.md)
 - `clk_import` : [bash_command_import.md](bash_command_import.md), [send_sms.md](send_sms.md)
 - `clk_list_to_choice` : [ipfs_name_publish.md](ipfs_name_publish.md), [send_sms.md](send_sms.md)
 - `clk_true` : [bash_command_use_option.md](bash_command_use_option.md)
-- `clk_usage` : [bash_command_import.md](bash_command_import.md), [bash_command_use_option.md](bash_command_use_option.md), [ipfs_name_publish.md](ipfs_name_publish.md), [send_sms.md](send_sms.md)
-- `clk_value` : [bash_command_use_option.md](bash_command_use_option.md), [ipfs_name_publish.md](ipfs_name_publish.md), [send_sms.md](send_sms.md)
+- `clk_usage` : [bash_command_import.md](bash_command_import.md), [bash_command_use_option.md](bash_command_use_option.md), [ipfs_name_publish.md](ipfs_name_publish.md), [podcast_automation.md](podcast_automation.md), [send_sms.md](send_sms.md)
+- `clk_value` : [bash_command_use_option.md](bash_command_use_option.md), [ipfs_name_publish.md](ipfs_name_publish.md), [podcast_automation.md](podcast_automation.md), [send_sms.md](send_sms.md)

@@ -1,5 +1,6 @@
 - [filtering by directory](#filtering-by-directory)
 - [discovering all podcast commands at a glance](#getting-help-on-groups-with-aliases)
+- [the state of an episode, shared by several commands](#6cf69e7a-e155-41dc-896f-a1ed940d42cd)
 
 When listening to podcast, I like to download some episode up front.
 
@@ -133,3 +134,82 @@ Commands:
 ```
 
 This gives us a quick overview of all our podcast-related commands: the core `download` command and the shortcuts we created (`audio`, `music`, `dwim`). Each alias shows a brief description of what it does, making it easy to remember which shortcut to use for different podcast categories.
+
+
+<a id="6cf69e7a-e155-41dc-896f-a1ed940d42cd"></a>
+
+# the state of an episode, shared by several commands
+
+An episode comes in `todo`. It goes to `to-process` to have its audio extracted, then to `next` to wait, then to `ready` when it moves to my phone, and to `done` once I have listened to it. Several commands take that state, some of them bash scripts. I write the list once in python, beside the rest of my podcast code.
+
+```python
+from clk.types import Suggestion
+
+STATES = ["todo", "to-process", "next", "ready", "done"]
+
+stateType = Suggestion(STATES)
+```
+
+```bash
+mkdir -p lib
+cat<<'EOF' > lib/podcastlib.py
+from clk.types import Suggestion
+
+STATES = ["todo", "to-process", "next", "ready", "done"]
+
+stateType = Suggestion(STATES)
+EOF
+export PYTHONPATH="$(pwd)/lib"
+```
+
+The usage of the bash command names the module and the type in it.
+
+```bash
+#!/usr/bin/env bash
+set -eu
+
+source "_clk.sh"
+
+clk_usage () {
+    cat<<EOF
+$0
+
+Extract the audio of the episodes in that state
+--
+O:--state:podcastlib.stateType:The state of the episodes to extract the audio of:to-process
+EOF
+}
+
+clk_help_handler "$@"
+
+echo "extracting the audio of the episodes in state $(clk_value state)"
+```
+
+```bash
+clk podcast extract-audio
+```
+
+    extracting the audio of the episodes in state to-process
+
+```bash
+clk podcast extract-audio --state <TAB>
+```
+
+    todo
+    to-process
+    next
+    ready
+    done
+
+Add a state in python, and the command offers it.
+
+```bash
+sed -i 's/"done"]/"done", "to-digest"]/' lib/podcastlib.py
+```
+
+    todo
+    to-process
+    next
+    ready
+    done
+    to-digest

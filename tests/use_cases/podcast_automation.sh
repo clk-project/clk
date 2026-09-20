@@ -272,4 +272,122 @@ diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
 echo "Something went wrong when trying group_help_with_alias"
 exit 1
 }
+
+
+mkdir -p lib
+cat<<'EOF' > lib/podcastlib.py
+from clk.types import Suggestion
+
+STATES = ["todo", "to-process", "next", "ready", "done"]
+
+stateType = Suggestion(STATES)
+EOF
+export PYTHONPATH="$(pwd)/lib"
+
+clk command create bash podcast.extract-audio
+cat <<"EOH" > "$(clk command which podcast.extract-audio)"
+#!/usr/bin/env bash
+set -eu
+
+source "_clk.sh"
+
+clk_usage () {
+    cat<<EOF
+$0
+
+Extract the audio of the episodes in that state
+--
+O:--state:podcastlib.stateType:The state of the episodes to extract the audio of:to-process
+EOF
+}
+
+clk_help_handler "$@"
+
+echo "extracting the audio of the episodes in state $(clk_value state)"
+EOH
+
+
+run_extract_audio_code () {
+      clk podcast extract-audio
+}
+
+run_extract_audio_expected () {
+      local expected
+      expected="$(cat<<"EOEXPECTED"
+extracting the audio of the episodes in state to-process
+EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
+}
+
+echo 'Run run_extract_audio'
+
+{ run_extract_audio_code || true ; } > "${TMP}/code.txt" 2>&1
+run_extract_audio_expected > "${TMP}/expected.txt" 2>&1
+diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+echo "Something went wrong when trying run_extract_audio"
+exit 1
+}
+
+
+
+state_completion_code () {
+      clk completion try --remove-bash-formatting --last podcast extract-audio --state ""
+}
+
+state_completion_expected () {
+      local expected
+      expected="$(cat<<"EOEXPECTED"
+todo
+to-process
+next
+ready
+done
+EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
+}
+
+echo 'Run state_completion'
+
+{ state_completion_code || true ; } > "${TMP}/code.txt" 2>&1
+state_completion_expected > "${TMP}/expected.txt" 2>&1
+diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+echo "Something went wrong when trying state_completion"
+exit 1
+}
+
+
+sed -i 's/"done"]/"done", "to-digest"]/' lib/podcastlib.py
+
+
+state_completion_after_code () {
+      clk completion try --remove-bash-formatting --last podcast extract-audio --state ""
+}
+
+state_completion_after_expected () {
+      local expected
+      expected="$(cat<<"EOEXPECTED"
+todo
+to-process
+next
+ready
+done
+to-digest
+EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
+}
+
+echo 'Run state_completion_after'
+
+{ state_completion_after_code || true ; } > "${TMP}/code.txt" 2>&1
+state_completion_after_expected > "${TMP}/expected.txt" 2>&1
+diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+echo "Something went wrong when trying state_completion_after"
+exit 1
+}
 # run ends here
