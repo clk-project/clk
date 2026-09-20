@@ -4,6 +4,8 @@
 - [falling back to a real command](#falling-back-to-a-real-command)
 - [saying what the command takes](#saying-what-the-command-takes)
 - [playing it loud](#playing-it-loud)
+- [the albums I played lately](#the-albums-i-played-lately)
+- [coming back to it after a while](#coming-back-to-it-after-a-while)
 
 
 
@@ -18,6 +20,11 @@ On that case, you most likely will want to create a simple alias on top of exec.
 For the sake of this example, let's use this fake music control program and call it 'mpc'.
 
 ```bash
+if test "$1" = history
+then
+    printf '%s\n' Kind-of-Blue Bitches-Brew Kind-of-Blue Blue-Train Bitches-Brew
+    exit 0
+fi
 echo "Running mpc with: $*"
 ```
 
@@ -242,3 +249,54 @@ clk music loud Bitches-Brew
     Running mpc with: start-server
     Running mpc with: wait-for-server
     Running mpc with: play --random --use-speakers --replaygain --repeat Bitches-Brew
+
+
+<a id="the-albums-i-played-lately"></a>
+
+# the albums I played lately
+
+`mpc history` gives the albums in the order they played, the same ones over and over. I want to see each of them once, in that order, and `clk_drop_duplicate` does exactly that. It comes with the other helpers of `_clk.sh`, the ones your bash commands source.
+
+```bash
+clk command create bash music.recent --description "The albums I played lately" \
+    --body 'clk exec mpc history | clk_drop_duplicate'
+```
+
+```bash
+clk music recent
+```
+
+    Kind-of-Blue
+    Bitches-Brew
+    Blue-Train
+
+
+<a id="coming-back-to-it-after-a-while"></a>
+
+# coming back to it after a while
+
+Time passes, I upgrade clk. My settings were written in json back then, and I had dropped a script of mine in the bin, `music.shuffle.py`, that I called with `clk music shuffle@py`.
+
+The first clk I run writes the settings in yaml. The @ is gone, so it renames my script too, and it tells me what it cannot fix.
+
+```bash
+clk music play Kind-of-Blue 2>&1
+```
+
+    warning: Profile in ./clk-root is obsolete. It has the version 8 and current version is 9. Migration started.
+    warning: Renaming music.shuffle.py into music.shuffle, so that it answers to music shuffle
+    warning: mixer.py uses DynamicConfigBase, which is gone: expose_class does the same
+    Running mpc with: start-server
+    Running mpc with: wait-for-server
+    Running mpc with: play --random --use-speakers --replaygain --repeat Kind-of-Blue
+
+My parameters followed the new name.
+
+```bash
+clk music shuffle
+clk parameter show music.shuffle
+```
+
+    warning: The command 'music.shuffle' has no documentation
+    shuffling
+    music.shuffle --seed 42

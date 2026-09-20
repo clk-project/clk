@@ -151,7 +151,7 @@ clk does not want to compete with dedicated flow tools like nodered, but it help
 
 clk tries hard to provide most of what you need in a generic command line tool.
 
-The bash library (\_clk.sh) provides [helpers](bash_command_built_in_lib.md) for creating friendly shell commands.
+The bash library (\_clk.sh) provides helpers for creating friendly shell commands, like the `clk_drop_duplicate` of [the albums I played lately](controlling_my_music.md).
 
 [Choices](choices.md) for providing selection in commands. [Caching](scrapping_the_web.md) computation results to disk. [Fetching and displaying JSON data](fetching_and_displaying_json_data.md) with `download` and `echo_json`. Handling [secrets](dealing_with_secrets.md) in commands. [Cleaning up](controlling_the_audio.md) what a command set up, with `clk.atexit`.
 
@@ -212,13 +212,12 @@ The [backing up documents](backing_up_documents.md) use case shows how to build 
 | [3D_printing_flow.md](3D_printing_flow.md) | Chaining commands into a workflow sequence using flows |  |
 | [alias_to_root.md](alias_to_root.md) |  |  |
 | [backing_up_documents.md](backing_up_documents.md) | Building a backup system with hierarchical commands, flows, parameters, and per-project configuration | CLK___DB,CLK___FILENAME,CLK___QUALITY,CLK___SOURCE |
-| [bash_command_built_in_lib.md](bash_command_built_in_lib.md) | Built-in bash helpers: clk_drop_duplicate and other utilities in _clk.sh |  |
 | [bash_command_use_option.md](bash_command_use_option.md) | Arguments (A:), options (O:), flags (F:), file completion, clk_value, clk_given, clk_true, clk_format_choice | A:,CLK___KIND_OF_ANIMAL,CLK___REPEAT,F:,O:,clk_format_choice,clk_given,clk_help_handler,clk_true,clk_usage,clk_value |
 | [chaotic_simulator_manager.md](chaotic_simulator_manager.md) | Building your own standalone CLI tool on top of clk as a library |  |
 | [checking_my_server.md](checking_my_server.md) | A bash command that says whether my server answers, with its exit code and its cleaning up | A:,CLK___HOST,clk_help_handler,clk_usage |
 | [choices.md](choices.md) | Restricting user input to predefined values using Choice types |  |
 | [controlling_a_server_using_an_environment_variable.md](controlling_a_server_using_an_environment_variable.md) | Managing server addresses via environment variables and parameters |  |
-| [controlling_my_music.md](controlling_my_music.md) | Controlling my music player with clk, from a simple alias to a bash command | A:,F:,clk_help_handler,clk_true,clk_usage,clk_value |
+| [controlling_my_music.md](controlling_my_music.md) | Controlling my music player with clk, from a simple alias to a bash command | A:,F:,clk_drop_duplicate,clk_help_handler,clk_true,clk_usage,clk_value |
 | [controlling_the_audio.md](controlling_the_audio.md) | Recording what an application plays, and tearing down the plumbing with clk.atexit |  |
 | [creating_extensions.md](creating_extensions.md) | Creating and sharing extensions (folders of commands and configuration) | clk_extension_hello |
 | [dealing_with_secrets.md](dealing_with_secrets.md) | Handling secrets (passwords, tokens) safely in clk commands |  |
@@ -256,6 +255,7 @@ The [backing up documents](backing_up_documents.md) use case shows how to build 
 - `CLK____JSON` : [send_sms.md](send_sms.md)
 - `F:` : [bash_command_use_option.md](bash_command_use_option.md), [controlling_my_music.md](controlling_my_music.md)
 - `O:` : [bash_command_use_option.md](bash_command_use_option.md), [podcast_automation.md](podcast_automation.md), [send_sms.md](send_sms.md)
+- `clk_drop_duplicate` : [controlling_my_music.md](controlling_my_music.md)
 - `clk_extension_hello` : [creating_extensions.md](creating_extensions.md)
 - `clk_format_choice` : [bash_command_use_option.md](bash_command_use_option.md)
 - `clk_given` : [bash_command_use_option.md](bash_command_use_option.md)

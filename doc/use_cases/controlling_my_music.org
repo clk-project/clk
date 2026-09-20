@@ -28,6 +28,11 @@ it 'mpc'.
 
 #+NAME: fake_control_program
 #+BEGIN_SRC bash :results none :exports code
+  if test "$1" = history
+  then
+      printf '%s\n' Kind-of-Blue Bitches-Brew Kind-of-Blue Blue-Train Bitches-Brew
+      exit 0
+  fi
   echo "Running mpc with: $*"
 #+END_SRC
 
@@ -351,6 +356,97 @@ clk music loud Bitches-Brew
 : Running mpc with: wait-for-server
 : Running mpc with: play --random --use-speakers --replaygain --repeat Bitches-Brew
 
+* the albums I played lately
+  :PROPERTIES:
+  :CUSTOM_ID: the-albums-i-played-lately
+  :END:
+
+~mpc history~ gives the albums in the order they played, the same ones over and
+over. I want to see each of them once, in that order, and ~clk_drop_duplicate~
+does exactly that. It comes with the other helpers of ~_clk.sh~, the ones your
+bash commands source.
+
+#+NAME: create-recent
+#+BEGIN_SRC bash :results verbatim :exports code :session e6078fc8-4b12-44ad-b008-20f0b7311069
+clk command create bash music.recent --description "The albums I played lately" \
+    --body 'clk exec mpc history | clk_drop_duplicate'
+#+END_SRC
+
+#+NAME: run-recent
+#+BEGIN_SRC bash :results verbatim :exports both :session e6078fc8-4b12-44ad-b008-20f0b7311069 :cache yes
+clk music recent
+#+END_SRC
+
+#+RESULTS[]: run-recent
+: Kind-of-Blue
+: Bitches-Brew
+: Blue-Train
+
+* coming back to it after a while
+  :PROPERTIES:
+  :CUSTOM_ID: coming-back-to-it-after-a-while
+  :END:
+
+Time passes, I upgrade clk. My settings were written in json back then, and I
+had dropped a script of mine in the bin, ~music.shuffle.py~, that I called with
+~clk music shuffle@py~.
+
+#+NAME: old-config
+#+BEGIN_SRC bash :results none :exports none :session e6078fc8-4b12-44ad-b008-20f0b7311069
+cat<<'EOF' > "${CLKCONFIGDIR}/clk.json"
+{
+  "parameters": {
+    "music.play": ["--repeat"],
+    "music.shuffle@py": ["--seed", "42"]
+  }
+}
+EOF
+rm "${CLKCONFIGDIR}/clk.yaml"
+echo 8 > "${CLKCONFIGDIR}/version.txt"
+cat<<'EOF' > "${CLKCONFIGDIR}/bin/music.shuffle.py"
+#!/usr/bin/env python3
+print("shuffling")
+EOF
+chmod +x "${CLKCONFIGDIR}/bin/music.shuffle.py"
+mkdir -p "${CLKCONFIGDIR}/python"
+cat<<'EOF' > "${CLKCONFIGDIR}/python/mixer.py"
+from clk.config import DynamicConfigBase
+
+
+class Mixer(DynamicConfigBase):
+    pass
+EOF
+#+END_SRC
+
+The first clk I run writes the settings in yaml. The @ is gone, so it renames
+my script too, and it tells me what it cannot fix.
+
+#+NAME: migrate
+#+BEGIN_SRC bash :results verbatim :exports both :session e6078fc8-4b12-44ad-b008-20f0b7311069 :cache yes
+clk music play Kind-of-Blue 2>&1
+#+END_SRC
+
+#+RESULTS[]: migrate
+: warning: Profile in ./clk-root is obsolete. It has the version 8 and current version is 9. Migration started.
+: warning: Renaming music.shuffle.py into music.shuffle, so that it answers to music shuffle
+: warning: mixer.py uses DynamicConfigBase, which is gone: expose_class does the same
+: Running mpc with: start-server
+: Running mpc with: wait-for-server
+: Running mpc with: play --random --use-speakers --replaygain --repeat Kind-of-Blue
+
+My parameters followed the new name.
+
+#+NAME: shuffle-after
+#+BEGIN_SRC bash :results verbatim :exports both :session e6078fc8-4b12-44ad-b008-20f0b7311069 :cache yes
+clk music shuffle
+clk parameter show music.shuffle
+#+END_SRC
+
+#+RESULTS[]: shuffle-after
+: warning: The command 'music.shuffle' has no documentation
+: shuffling
+: music.shuffle --seed 42
+
 #+BEGIN_SRC bash :exports none :tangle ../../tests/use_cases/controlling_my_music.sh :noweb yes :shebang "#!/usr/bin/env bash"
   set -eu
   <<init>>
@@ -380,4 +476,14 @@ clk music loud Bitches-Brew
   check-result(music-loud)
 
   check-result(convert-music-loud)
+
+  <<create-recent>>
+
+  check-result(run-recent)
+
+  <<old-config>>
+
+  check-result(migrate)
+
+  check-result(shuffle-after)
 #+END_SRC

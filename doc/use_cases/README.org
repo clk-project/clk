@@ -182,8 +182,8 @@ looking for.
   clk tries hard to provide most of what you need in a generic command line
   tool.
 
-  The bash library (_clk.sh) provides [[file:bash_command_built_in_lib.org][helpers]] for creating friendly shell
-  commands.
+  The bash library (_clk.sh) provides helpers for creating friendly shell
+  commands, like the ~clk_drop_duplicate~ of [[file:controlling_my_music.org::*the albums I played lately][the albums I played lately]].
 
   [[file:choices.org][Choices]] for providing selection in commands. [[file:scrapping_the_web.org][Caching]] computation results to
   disk. [[file:fetching_and_displaying_json_data.org][Fetching and displaying JSON data]] with ~download~ and ~echo_json~.

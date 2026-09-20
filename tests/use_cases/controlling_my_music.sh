@@ -1,11 +1,16 @@
 #!/usr/bin/env bash
-# [[file:../../doc/use_cases/controlling_my_music.org::#playing-it-loud][playing it loud:3]]
+# [[file:../../doc/use_cases/controlling_my_music.org::#coming-back-to-it-after-a-while][coming back to it after a while:4]]
 set -eu
 . ./sandboxing.sh
 mkdir -p "${TMP}/bin"
 export PATH="${TMP}/bin:${PATH}"
 cat <<"EOF" > "${TMP}/bin/mpc"
 #!/usr/bin/env bash
+if test "$1" = history
+then
+    printf '%s\n' Kind-of-Blue Bitches-Brew Kind-of-Blue Blue-Train Bitches-Brew
+    exit 0
+fi
 echo "Running mpc with: $*"
 EOF
 chmod +x "${TMP}/bin/mpc"
@@ -525,4 +530,131 @@ else
         exit 1
     }
 fi
-# playing it loud:3 ends here
+
+
+clk command create bash music.recent --description "The albums I played lately" \
+    --body 'clk exec mpc history | clk_drop_duplicate'
+
+
+run-recent_code () {
+      clk music recent
+}
+
+run-recent_expected () {
+      local expected
+      expected="$(cat<<"EOEXPECTED"
+Kind-of-Blue
+Bitches-Brew
+Blue-Train
+EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
+}
+
+echo 'Run run-recent'
+
+{ run-recent_code || true ; } > "${TMP}/code.txt" 2>&1
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/run-recent"
+else
+    run-recent_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying run-recent"
+        exit 1
+    }
+fi
+
+
+cat<<'EOF' > "${CLKCONFIGDIR}/clk.json"
+{
+  "parameters": {
+    "music.play": ["--repeat"],
+    "music.shuffle@py": ["--seed", "42"]
+  }
+}
+EOF
+rm "${CLKCONFIGDIR}/clk.yaml"
+echo 8 > "${CLKCONFIGDIR}/version.txt"
+cat<<'EOF' > "${CLKCONFIGDIR}/bin/music.shuffle.py"
+#!/usr/bin/env python3
+print("shuffling")
+EOF
+chmod +x "${CLKCONFIGDIR}/bin/music.shuffle.py"
+mkdir -p "${CLKCONFIGDIR}/python"
+cat<<'EOF' > "${CLKCONFIGDIR}/python/mixer.py"
+from clk.config import DynamicConfigBase
+
+
+class Mixer(DynamicConfigBase):
+    pass
+EOF
+
+
+migrate_code () {
+      clk music play Kind-of-Blue 2>&1
+}
+
+migrate_expected () {
+      local expected
+      expected="$(cat<<"EOEXPECTED"
+warning: Profile in ./clk-root is obsolete. It has the version 8 and current version is 9. Migration started.
+warning: Renaming music.shuffle.py into music.shuffle, so that it answers to music shuffle
+warning: mixer.py uses DynamicConfigBase, which is gone: expose_class does the same
+Running mpc with: start-server
+Running mpc with: wait-for-server
+Running mpc with: play --random --use-speakers --replaygain --repeat Kind-of-Blue
+EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
+}
+
+echo 'Run migrate'
+
+{ migrate_code || true ; } > "${TMP}/code.txt" 2>&1
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/migrate"
+else
+    migrate_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying migrate"
+        exit 1
+    }
+fi
+
+
+
+shuffle-after_code () {
+      clk music shuffle
+      clk parameter show music.shuffle
+}
+
+shuffle-after_expected () {
+      local expected
+      expected="$(cat<<"EOEXPECTED"
+warning: The command 'music.shuffle' has no documentation
+shuffling
+music.shuffle --seed 42
+EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
+}
+
+echo 'Run shuffle-after'
+
+{ shuffle-after_code || true ; } > "${TMP}/code.txt" 2>&1
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/shuffle-after"
+else
+    shuffle-after_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying shuffle-after"
+        exit 1
+    }
+fi
+# coming back to it after a while:4 ends here
