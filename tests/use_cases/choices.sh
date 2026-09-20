@@ -332,4 +332,79 @@ diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
 echo "Something went wrong when trying try-foreground"
 exit 1
 }
+
+
+try-unknown-colour_code () {
+      clk echo --style pink hello
+}
+
+try-unknown-colour_expected () {
+      local expected
+      expected="$(cat<<"EOEXPECTED"
+Usage: clk echo [OPTIONS] [MESSAGE]...
+error: Invalid value for '-s' / '--style': invalid style: pink. (Unknown color 'pink')
+EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
+}
+
+echo 'Run try-unknown-colour'
+
+{ try-unknown-colour_code || true ; } > "${TMP}/code.txt" 2>&1
+try-unknown-colour_expected > "${TMP}/expected.txt" 2>&1
+diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+echo "Something went wrong when trying try-unknown-colour"
+exit 1
+}
+
+
+try-unknown-part_code () {
+      clk echo --style wiggle-True hello
+}
+
+try-unknown-part_expected () {
+      local expected
+      expected="$(cat<<"EOEXPECTED"
+Usage: clk echo [OPTIONS] [MESSAGE]...
+error: Invalid value for '-s' / '--style': invalid style: wiggle. (choose from fg, bg, dim, bold, underline, blink, reverse, reset)
+EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
+}
+
+echo 'Run try-unknown-part'
+
+{ try-unknown-part_code || true ; } > "${TMP}/code.txt" 2>&1
+try-unknown-part_expected > "${TMP}/expected.txt" 2>&1
+diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+echo "Something went wrong when trying try-unknown-part"
+exit 1
+}
+
+clk echo --style bold-True,fg-green hello
+
+echo-with-style_code () {
+      clk --force-color echo --style bold-True,fg-green hello
+}
+
+echo-with-style_expected () {
+      local expected
+      expected="$(cat<<"EOEXPECTED"
+[32m[1mhello[0m
+EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
+}
+
+echo 'Run echo-with-style'
+
+{ echo-with-style_code || true ; } > "${TMP}/code.txt" 2>&1
+echo-with-style_expected > "${TMP}/expected.txt" 2>&1
+diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+echo "Something went wrong when trying echo-with-style"
+exit 1
+}
 # run ends here

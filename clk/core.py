@@ -360,10 +360,22 @@ class ColorType(ParameterType):
         }
 
     def convert(self, value, param, ctx):
-        if isinstance(value, str):
-            return self.unpack_styles(value)
-        else:
+        if not isinstance(value, str):
             return value
+        try:
+            style = self.unpack_styles(value)
+            click.style("", **style)
+        except KeyError as e:
+            self.fail(
+                "invalid style: {}. (choose from {})".format(
+                    e.args[0], ", ".join(self.args)
+                ),
+                param,
+                ctx,
+            )
+        except (TypeError, ValueError) as e:
+            self.fail(f"invalid style: {value}. ({e})", param, ctx)
+        return style
 
 
 class DynamicChoiceType(ParameterType):

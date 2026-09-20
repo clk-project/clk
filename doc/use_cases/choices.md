@@ -232,3 +232,31 @@ clk echo --style fg-<TAB>
     fg-black
     fg-red
     fg-green
+
+Nothing stops you typing past the completion, so ask for a colour it never offered.
+
+```bash
+clk echo --style pink hello
+```
+
+    Usage: clk echo [OPTIONS] [MESSAGE]...
+    error: Invalid value for '-s' / '--style': invalid style: pink. (Unknown color 'pink')
+
+clk turns it down before the command runs. Get the other half wrong and it lists the parts a style is made of.
+
+```bash
+clk echo --style wiggle-True hello
+```
+
+    Usage: clk echo [OPTIONS] [MESSAGE]...
+    error: Invalid value for '-s' / '--style': invalid style: wiggle. (choose from fg, bg, dim, bold, underline, blink, reverse, reset)
+
+Spell one it knows and the message comes out wearing it.
+
+```bash
+clk echo --style bold-True,fg-green hello
+```
+
+<pre>
+<span style="color:green;"></span><span style="font-weight:bold;color:green;">hello</span>
+</pre>

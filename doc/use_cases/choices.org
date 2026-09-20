@@ -304,6 +304,45 @@ use of the click built-in ~Choice~ types.
   : fg-red
   : fg-green
 
+  Nothing stops you typing past the completion, so ask for a colour it never
+  offered.
+
+  #+NAME: try-unknown-colour
+  #+BEGIN_SRC bash :results verbatim :exports both :session a7b996e6-a3e6-410e-a91b-311640c4ada8 :cache yes
+    clk echo --style pink hello
+  #+END_SRC
+
+  #+RESULTS[]: try-unknown-colour
+  : Usage: clk echo [OPTIONS] [MESSAGE]...
+  : error: Invalid value for '-s' / '--style': invalid style: pink. (Unknown color 'pink')
+
+  clk turns it down before the command runs. Get the other half wrong and it
+  lists the parts a style is made of.
+
+  #+NAME: try-unknown-part
+  #+BEGIN_SRC bash :results verbatim :exports both :session a7b996e6-a3e6-410e-a91b-311640c4ada8 :cache yes
+    clk echo --style wiggle-True hello
+  #+END_SRC
+
+  #+RESULTS[]: try-unknown-part
+  : Usage: clk echo [OPTIONS] [MESSAGE]...
+  : error: Invalid value for '-s' / '--style': invalid style: wiggle. (choose from fg, bg, dim, bold, underline, blink, reverse, reset)
+
+  Spell one it knows and the message comes out wearing it.
+
+  #+NAME: echo-with-style-shown
+  #+BEGIN_SRC bash :results none :exports code :session a7b996e6-a3e6-410e-a91b-311640c4ada8
+    clk echo --style bold-True,fg-green hello
+  #+END_SRC
+
+  #+NAME: echo-with-style
+  #+BEGIN_SRC bash :results verbatim :exports results :session a7b996e6-a3e6-410e-a91b-311640c4ada8 :cache yes
+    clk --force-color echo --style bold-True,fg-green hello
+  #+END_SRC
+
+  #+RESULTS[]: echo-with-style
+  : [32m[1mhello[0m
+
   #+NAME: run
   #+BEGIN_SRC bash :results none :exports none :tangle ../../tests/use_cases/choices.sh :noweb yes :shebang "#!/usr/bin/env bash"
     set -eu
@@ -321,4 +360,8 @@ use of the click built-in ~Choice~ types.
     check-result(try-completion2)
     check-result(try-style)
     check-result(try-foreground)
+    check-result(try-unknown-colour)
+    check-result(try-unknown-part)
+    <<echo-with-style-shown>>
+    check-result(echo-with-style)
   #+END_SRC

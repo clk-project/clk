@@ -74,7 +74,7 @@
 
 (defun clk-tangle--get-cached-result (name)
   "Extract the #+RESULTS content for block NAME from the current org buffer.
-Handles both `: value` and `#+begin_example...#+end_example` formats."
+Handles `: value`, `#+begin_example` and `#+begin_export` formats."
   (save-match-data
   (save-excursion
     (goto-char (point-min))
@@ -89,6 +89,15 @@ Handles both `: value` and `#+begin_example...#+end_example` formats."
          ((looking-at "^[ \t]*#\\+begin_example")
           (forward-line 1)
           (while (not (looking-at "^[ \t]*#\\+end_example"))
+            (let ((line (buffer-substring-no-properties
+                         (line-beginning-position) (line-end-position))))
+              (push line lines))
+            (forward-line 1))
+          (concat (mapconcat #'identity (nreverse lines) "\n") "\n"))
+         ;; #+begin_export block — what a block asking for html leaves behind
+         ((looking-at "^[ \t]*#\\+begin_export")
+          (forward-line 1)
+          (while (not (looking-at "^[ \t]*#\\+end_export"))
             (let ((line (buffer-substring-no-properties
                          (line-beginning-position) (line-end-position))))
               (push line lines))
@@ -171,6 +180,45 @@ markdown differs every time for no reason."
            (push id taken)
            (org-entry-put nil "CUSTOM_ID" id)))))))
 
+(defun clk-org--aha (text)
+  "Give back TEXT with the colours it holds turned into html."
+  (with-temp-buffer
+    (insert text)
+    (shell-command-on-region (point-min) (point-max) "aha --no-header" nil t)
+    (buffer-string)))
+
+(defun clk-org--paint-results ()
+  "Turn every result holding terminal colours into html, for the export.
+What the org file keeps is the bytes the command gave, escapes and all.
+The buffer is changed here and never saved, so that the markdown shows
+the colours rather than the escapes."
+  (save-excursion
+    (goto-char (point-min))
+    (while (re-search-forward "^[ \t]*#\\+RESULTS\\(\\[[^]]*\\]\\)?:.*$" nil t)
+      (let ((start (progn (forward-line 1) (point)))
+            (lines nil))
+        (if (looking-at "^[ \t]*#\\+begin_example")
+            (progn
+              (forward-line 1)
+              (while (and (not (eobp))
+                          (not (looking-at "^[ \t]*#\\+end_example")))
+                (push (buffer-substring-no-properties
+                       (line-beginning-position) (line-end-position))
+                      lines)
+                (forward-line 1))
+              (forward-line 1))
+          (while (looking-at "^[ \t]*:\\(?: \\(.*\\)\\)?$")
+            (push (or (match-string 1) "") lines)
+            (forward-line 1)))
+        (let ((body (mapconcat #'identity (nreverse lines) "\n")))
+          (when (string-match-p "\e\\[" body)
+            (delete-region start (point))
+            (insert "#+begin_export html\n"
+                    "<pre>\n"
+                    (clk-org--aha (concat body "\n"))
+                    "</pre>\n"
+                    "#+end_export\n")))))))
+
 (defvar clk-org-written nil
   "The files this run wrote, tangled and exported alike.")
 
@@ -196,6 +244,7 @@ markdown differs every time for no reason."
     (when (clk-org--mentions "^[ \t]*#\\+EXPORT_FILE_NAME:")
       (push clk-org-gfm-dir load-path)
       (require 'ox-gfm)
+      (clk-org--paint-results)
       (let ((exported (org-gfm-export-to-markdown)))
         (unless (and exported (file-exists-p exported))
           (error "Exporting %s wrote nothing" file))
