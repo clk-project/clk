@@ -12,7 +12,7 @@ import click
 from clk.commandresolver import CommandResolver
 from clk.config import config, temp_config
 from clk.customcommands import build_update_extension_callback
-from clk.lib import call, quote, updated_env, value_to_string, which
+from clk.lib import call, quote, updated_env, value_to_string
 from clk.log import get_logger
 from clk.overloads import AutomaticOption
 from clk.types import Date, PathOrURL, Suggestion
@@ -55,27 +55,24 @@ class ExternalCommandResolver(CommandResolver):
         return []
 
     def _list_command_paths(self, parent, profile):
+        """The commands of this profile, each with the file it was found in"""
         profile_name = profile.name
         if profile_name not in self._external_cmds_cache:
-            cmds = []
+            cmds = {}
             for path in self._get_executable_paths_for_profile(profile):
                 p = Path(path)
                 if p.is_dir():
                     for file in os.listdir(path):
                         abspath = p / file
                         if abspath.is_file() and os.access(abspath, os.X_OK):
-                            cmds.append(file)
+                            cmds[file] = abspath
             self._external_cmds_cache[profile_name] = cmds
         return self._external_cmds_cache[profile_name]
 
     def _get_command(self, path, parent, profile):
         name = path
         cmdhelp = "external command"
-        command_name = name
-        exec_paths = self._get_executable_paths_for_profile(profile)
-        command_path = str(
-            Path(which(command_name, os.pathsep.join(exec_paths))).resolve()
-        )
+        command_path = str(self._list_command_paths(parent, profile)[name].resolve())
         options = []
         arguments = []
         flags = []

@@ -19,13 +19,11 @@ class IntermediateEphemeralGroupResolver(CommandResolver):
         ]
 
     def choices(self, parent, profile):
-        return sum(
-            [
-                resolver._list_command_paths(parent, profile)
-                for resolver in self.resolvers
-            ],
-            [],
-        )
+        return [
+            command
+            for resolver in self.resolvers
+            for command in resolver._list_command_paths(parent, profile)
+        ]
 
     def _get_direct_commands(self, parent, profile):
         """Get direct (non-nested) commands for this profile.
