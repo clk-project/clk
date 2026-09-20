@@ -23,6 +23,7 @@ from clk.overloads import (
 )
 from clk.profile import profile_name_to_commandline
 from clk.types import DirectoryProfile as DirectoryProfileType
+from clk.types import Suggestion
 
 LOGGER = get_logger(__name__)
 
@@ -231,11 +232,13 @@ def bash(
         description = description + f"Converted from the alias {from_alias}"
 
         def guess_type(param):
-            if isinstance(param, click.Choice):
+            if isinstance(param.type, Suggestion):
+                return json.dumps(list(param.type.choices)) + "+"
+            elif isinstance(param.type, click.Choice):
                 return json.dumps(list(param.type.choices))
-            elif param.type is int:
+            elif param.type is click.INT:
                 return "int"
-            elif param.type is float:
+            elif param.type is click.FLOAT:
                 return "float"
             else:
                 return "str"
@@ -247,7 +250,7 @@ def bash(
             if isinstance(param, Option):
                 if param.is_flag:
                     flags.append(
-                        f"F:{','.join(param.opts)}:{param.help}:{param.default}"
+                        f"F:{','.join(param.opts)}:{param.help}:{param.default is True}"
                     )
                     args += f"""
 if [ "${{{config.main_command.path.upper()}___{param.name.upper()}-}}" == "True" ]
@@ -303,7 +306,12 @@ args=()"""
         remaining_str = f"N:{remaining}\n"
     else:
         remaining_str = ""
-    if from_alias and get_ctx(from_alias.split(".")).ignore_unknown_options:
+    if (
+        from_alias
+        and get_ctx(
+            from_alias.split("."), resilient_parsing=True
+        ).ignore_unknown_options
+    ):
         remaining_str = f"{remaining_str}M:I\n"
 
     script_content = (
