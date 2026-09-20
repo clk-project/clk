@@ -4,7 +4,6 @@ import functools
 import types
 
 import click
-from click.utils import make_default_short_help
 
 from clk.completion import startswith
 from clk.config import config, merge_settings
@@ -154,24 +153,6 @@ def use_settings(settings_name, settings_cls, override=True, default_profile="co
 pass_context = click.pass_context
 
 
-def deprecated(version=None, message=None):
-    def deprecated_decorator(command):
-        deprecated_suffix = " (deprecated)"
-        help = command.help.splitlines()[0] if command.help else ""
-        ref_short_help = make_default_short_help(help)
-        if command.short_help == ref_short_help:
-            command.short_help = (
-                make_default_short_help(
-                    command.help.splitlines()[0], max_length=90 - len(deprecated_suffix)
-                )
-                + deprecated_suffix
-            )
-        command.deprecated = {"version": version, "message": message}
-        return command
-
-    return deprecated_decorator
-
-
 def table_format(func=None, default=None, config_name="config.table.format"):
     def decorator(func):
         # not sure why, but python can't access the default value with a closure in a statement of this kind
@@ -235,7 +216,6 @@ __all__ = [
     "ParameterType",
     "group",
     "table_format",
-    "deprecated",
     "flag",
     "merge_settings",
     "command",
