@@ -99,8 +99,6 @@ looking for.
    To control how arguments are evaluated through environment variables, see
    [[file:controlling_a_server_using_an_environment_variable.org][this use case]].
 
-   To share configuration between a Python group and its bash subcommands
-   through environment variables, see the [[file:multi_environment_deployment_tool.org][multi-environment deployment tool]].
    Aliases can also use environment variables through templates -- see
    [[*aliases][aliases]].
 

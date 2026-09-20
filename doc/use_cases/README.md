@@ -97,7 +97,7 @@ You can persist command options so you don't have to repeat them. The [cloud pro
 
 To control how arguments are evaluated through environment variables, see [this use case](controlling_a_server_using_an_environment_variable.md).
 
-To share configuration between a Python group and its bash subcommands through environment variables, see the [multi-environment deployment tool](multi_environment_deployment_tool.md). Aliases can also use environment variables through templates &ndash; see [aliases](#aliases).
+Aliases can also use environment variables through templates &ndash; see [aliases](#aliases).
 
 
 <a id="values"></a>
@@ -231,7 +231,6 @@ The [backing up documents](backing_up_documents.md) use case shows how to build 
 | [global_workflow_local_implementation.md](global_workflow_local_implementation.md) | Defining workflows globally while letting each project supply its own implementation |  |
 | [ipfs_name_publish.md](ipfs_name_publish.md) | Using bash commands to create completion for other commands (IPFS example) | A:,clk_help_handler,clk_list_to_choice,clk_usage,clk_value |
 | [lib.md](lib.md) | Reference for clk.lib Python helpers (download, echo_json, etc.) |  |
-| [multi_environment_deployment_tool.md](multi_environment_deployment_tool.md) | Sharing configuration between Python groups and bash subcommands via environment variables |  |
 | [podcast_automation.md](podcast_automation.md) | Aliases with templated environment variables for flexible workflows (podcast download example) | O:,clk_help_handler,clk_usage,clk_value |
 | [python_command.md](python_command.md) | Creating Python commands with clk command create python, click decorators |  |
 | [scrapping_the_web.md](scrapping_the_web.md) | Caching web-scraped data locally to avoid redundant requests |  |
