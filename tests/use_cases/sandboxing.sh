@@ -80,8 +80,8 @@ clk () {
 }
 # what the sandbox needs to behave, kept out of the profiles the reader sees
 mkdir -p "${TMP}/clk-distribution"
-echo 8 > "${TMP}/clk-distribution/version.txt"
-cat <<EOF > "${TMP}/clk-distribution/clk.json"
+echo 9 > "${TMP}/clk-distribution/version.txt"
+cat <<EOF > "${TMP}/clk-distribution/clk.json5"
 {
     "parameters": {
         "clk": [

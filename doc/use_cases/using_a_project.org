@@ -405,7 +405,7 @@ clk release-notes-draft
   :END:
 
 Until version 8, clk kept the settings of a profile in json. A project written
-back then is migrated the first time you use it, and its settings become yaml.
+back then is migrated the first time you use it, and its settings become json5.
 
 #+NAME: old_project
 #+BEGIN_SRC bash :results none :exports code :session 6de55de4-c0b3-41d6-952a-25e0fe06c881
@@ -434,7 +434,7 @@ cd ../myprojet
 #+RESULTS[]: run_old_project
 : warning: Profile in ./.clk is obsolete. It has the version 8 and current version is 9. Migration started.
 : hello echo hello
-: clk.yaml
+: clk.json5
 : version.txt
 
 * a project written by a newer clk
@@ -457,7 +457,7 @@ clk alias show 2>&1 | head -2
 
 #+RESULTS[]: run_from_the_future
 : Usage: clk [OPTIONS] [COMMAND] [ARGS]...
-: error: The profile at location ./.clk is at version 99. I can only manage till version 8. Please upgrade clk and try again.
+: error: The profile at location ./.clk is at version 99. I can only manage till version 9. Please upgrade clk and try again.
 
 Version 8 is old enough that anything before it is no longer supported.
 
@@ -481,12 +481,12 @@ clk alias show 2>&1 | head -2
   :END:
 
 Settings are a file like any other, and one day you edit it and leave it in a
-state no yaml reader can make sense of.
+state no json5 reader can make sense of.
 
 #+NAME: break_settings
 #+BEGIN_SRC bash :results none :exports code :session 6de55de4-c0b3-41d6-952a-25e0fe06c881
 echo 9 > .clk/version.txt
-echo 'parameters: [oops' > .clk/clk.yaml
+echo '{parameters: [oops' > .clk/clk.json5
 #+END_SRC
 
 clk says so and carries on with nothing, rather than stopping you in your tracks.
@@ -497,7 +497,7 @@ clk alias show 2>&1
 #+END_SRC
 
 #+RESULTS[]: run_with_broken_settings
-: warning: Can't read settings from ./.clk/clk.yaml
+: warning: Can't read settings from ./.clk/clk.json5
 
 #+NAME: run
 #+BEGIN_SRC bash :results none :exports none :tangle ../../tests/use_cases/using_a_project.sh :noweb yes :shebang "#!/usr/bin/env bash"

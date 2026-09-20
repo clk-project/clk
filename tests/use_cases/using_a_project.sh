@@ -717,7 +717,7 @@ run_old_project_expected () {
       expected="$(cat<<"EOEXPECTED"
 warning: Profile in ./.clk is obsolete. It has the version 8 and current version is 9. Migration started.
 hello echo hello
-clk.yaml
+clk.json5
 version.txt
 EOEXPECTED
 )"
@@ -751,7 +751,7 @@ run_from_the_future_expected () {
       local expected
       expected="$(cat<<"EOEXPECTED"
 Usage: clk [OPTIONS] [COMMAND] [ARGS]...
-error: The profile at location ./.clk is at version 99. I can only manage till version 8. Please upgrade clk and try again.
+error: The profile at location ./.clk is at version 99. I can only manage till version 9. Please upgrade clk and try again.
 EOEXPECTED
 )"
       # org says nil where the block said nothing
@@ -807,7 +807,7 @@ fi
 
 
 echo 9 > .clk/version.txt
-echo 'parameters: [oops' > .clk/clk.yaml
+echo '{parameters: [oops' > .clk/clk.json5
 
 
 run_with_broken_settings_code () {
@@ -817,7 +817,7 @@ run_with_broken_settings_code () {
 run_with_broken_settings_expected () {
       local expected
       expected="$(cat<<"EOEXPECTED"
-warning: Can't read settings from ./.clk/clk.yaml
+warning: Can't read settings from ./.clk/clk.json5
 EOEXPECTED
 )"
       # org says nil where the block said nothing

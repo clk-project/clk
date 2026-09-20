@@ -757,6 +757,55 @@ def grep(
     xargs.wait()
 
 
+def json5_load_file(path):
+    """Read a json5 file as plain data"""
+    import pyjson5
+
+    try:
+        return pyjson5.loads(Path(path).read_text())
+    except pyjson5.Json5DecoderException as e:
+        raise ValueError(e)
+
+
+def name_of(line):
+    """The name a line of a json5 file stands for, a comment hanging on it"""
+    return line.strip().split(":")[0].strip().strip('"')
+
+
+def comments_of(text):
+    """The comments of a json5 file, each under the name it stands above"""
+    comments = {}
+    said = []
+    for line in text.splitlines():
+        if line.strip().startswith("//"):
+            said.append(line.strip())
+        elif said:
+            comments[name_of(line)] = said
+            said = []
+    return comments
+
+
+def as_json5(content, comments):
+    """The very json clk always wrote, the comments back above their name"""
+    lines = []
+    for line in json_dumps(content).splitlines():
+        indent = " " * (len(line) - len(line.lstrip()))
+        lines.extend(f"{indent}{said}" for said in comments.get(name_of(line), []))
+        lines.append(line)
+    return "\n".join(lines) + "\n"
+
+
+def json5_dump_file(path, content, internal=False):
+    """Dump a python object to a file, in json5, keeping the comments it had"""
+    logger = LOGGER.develop if internal else LOGGER.action
+    logger(f"writing to the file {path}")
+    if dry_run:
+        logger(f"with content {content}")
+        return
+    comments = comments_of(Path(path).read_text()) if Path(path).exists() else {}
+    Path(path).write_text(as_json5(content, comments))
+
+
 def read(f):
     """Read a file an return its content in utf-8"""
     return open(f, "rb").read().decode("utf-8")

@@ -297,10 +297,7 @@ hand that slipped.
 
 #+NAME: unknown-setting
 #+BEGIN_SRC bash :results none :exports code :session a1b2c3d4-e5f6-7890-abcd-ef1234567890
-cat<<EOF >> .clk/clk.yaml
-weather:
-  today: rainy
-EOF
+sed -i '1a\    "weather": {"today": "rainy"},' .clk/clk.json5
 #+END_SRC
 
 describe does not pretend it is not there.

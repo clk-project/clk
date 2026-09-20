@@ -341,7 +341,7 @@ csm --action clean
   :END:
 
 The distribution can come with aliases of its own, when writing a command would
-be too much. Put them in ~csm/settings/csm.json~.
+be too much. Put them in ~csm/settings/csm.json5~.
 
 #+NAME: csm-distribution-settings
 #+BEGIN_SRC json :exports code
@@ -361,7 +361,7 @@ moves on.
 
 #+NAME: csm-settings-version
 #+BEGIN_SRC bash :exports code
-python -c 'from clk.profile import DirectoryProfile; print(DirectoryProfile.oldest_supported_version)' > csm/settings/version.txt
+python -c 'from clk.profile import DirectoryProfile; print(DirectoryProfile.latest_version())' > csm/settings/version.txt
 #+END_SRC
 
 Tell csm where to read them with ~distribution_profile_location~.
@@ -397,10 +397,10 @@ package_data={'csm': ['settings/*']},
 #+NAME: csm-ship-settings
 #+BEGIN_SRC bash :results none :exports none :noweb yes :session 807c02cd-a6cf-432f-b982-530fc81dbbf4
 mkdir -p csm/csm/settings
-cat<<'EOF' > csm/csm/settings/csm.json
+cat<<'EOF' > csm/csm/settings/csm.json5
 <<csm-distribution-settings>>
 EOF
-./venv/bin/python -c 'from clk.profile import DirectoryProfile; print(DirectoryProfile.oldest_supported_version)' > csm/csm/settings/version.txt
+./venv/bin/python -c 'from clk.profile import DirectoryProfile; print(DirectoryProfile.latest_version())' > csm/csm/settings/version.txt
 cat<<'EOF' > csm/csm/main.py
 <<csm-main>>
 EOF

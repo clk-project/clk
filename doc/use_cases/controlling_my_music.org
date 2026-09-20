@@ -401,7 +401,7 @@ cat<<'EOF' > "${CLKCONFIGDIR}/clk.json"
   }
 }
 EOF
-rm "${CLKCONFIGDIR}/clk.yaml"
+rm "${CLKCONFIGDIR}/clk.json5"
 echo 8 > "${CLKCONFIGDIR}/version.txt"
 cat<<'EOF' > "${CLKCONFIGDIR}/bin/music.shuffle.py"
 #!/usr/bin/env python3
@@ -418,7 +418,7 @@ class Mixer(DynamicConfigBase):
 EOF
 #+END_SRC
 
-The first clk I run writes the settings in yaml. The @ is gone, so it renames
+The first clk I run writes the settings in json5. The @ is gone, so it renames
 my script too, and it tells me what it cannot fix.
 
 #+NAME: migrate

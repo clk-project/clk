@@ -235,10 +235,7 @@ Read it from the top and the project comes back to you: `build` and `test` are t
 Something else may have written in that file: a tool of yours, an older clk, a hand that slipped.
 
 ```bash
-cat<<EOF >> .clk/clk.yaml
-weather:
-  today: rainy
-EOF
+sed -i '1a\    "weather": {"today": "rainy"},' .clk/clk.json5
 ```
 
 describe does not pretend it is not there.

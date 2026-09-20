@@ -575,7 +575,7 @@ cat<<'EOF' > "${CLKCONFIGDIR}/clk.json"
   }
 }
 EOF
-rm "${CLKCONFIGDIR}/clk.yaml"
+rm "${CLKCONFIGDIR}/clk.json5"
 echo 8 > "${CLKCONFIGDIR}/version.txt"
 cat<<'EOF' > "${CLKCONFIGDIR}/bin/music.shuffle.py"
 #!/usr/bin/env python3

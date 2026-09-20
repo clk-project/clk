@@ -277,7 +277,7 @@ clk music recent
 
 Time passes, I upgrade clk. My settings were written in json back then, and I had dropped a script of mine in the bin, `music.shuffle.py`, that I called with `clk music shuffle@py`.
 
-The first clk I run writes the settings in yaml. The @ is gone, so it renames my script too, and it tells me what it cannot fix.
+The first clk I run writes the settings in json5. The @ is gone, so it renames my script too, and it tells me what it cannot fix.
 
 ```bash
 clk music play Kind-of-Blue 2>&1

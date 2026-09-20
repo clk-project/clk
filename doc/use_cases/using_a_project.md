@@ -1,5 +1,6 @@
 - [running project scripts](#running-project-scripts)
 - [a command that outgrew the project](#a-command-that-outgrew-the-project)
+- [a project written by an older clk](#a-project-written-by-an-older-clk)
 - [a project written by a newer clk](#a-project-written-by-a-newer-clk)
 - [settings you broke by hand](#settings-you-broke-by-hand)
 
@@ -255,6 +256,40 @@ clk release-notes-draft
     gathering the commits since the last tag
 
 
+<a id="a-project-written-by-an-older-clk"></a>
+
+# a project written by an older clk
+
+Until version 8, clk kept the settings of a profile in json. A project written back then is migrated the first time you use it, and its settings become json5.
+
+```bash
+mkdir -p ../oldproject/.clk
+echo 8 > ../oldproject/.clk/version.txt
+cat<<'EOF' > ../oldproject/.clk/clk.json
+{
+    "alias": {
+        "hello": {
+            "commands": [["echo", "hello"]],
+            "documentation": null
+        }
+    }
+}
+EOF
+```
+
+```bash
+cd ../oldproject
+clk alias show 2>&1
+ls .clk
+cd ../myprojet
+```
+
+    warning: Profile in ./.clk is obsolete. It has the version 8 and current version is 9. Migration started.
+    hello echo hello
+    clk.json5
+    version.txt
+
+
 <a id="a-project-written-by-a-newer-clk"></a>
 
 # a project written by a newer clk
@@ -270,7 +305,7 @@ clk alias show 2>&1 | head -2
 ```
 
     Usage: clk [OPTIONS] [COMMAND] [ARGS]...
-    error: The profile at location ./.clk is at version 99. I can only manage till version 8. Please upgrade clk and try again.
+    error: The profile at location ./.clk is at version 99. I can only manage till version 9. Please upgrade clk and try again.
 
 Version 8 is old enough that anything before it is no longer supported.
 
@@ -290,11 +325,11 @@ clk alias show 2>&1 | head -2
 
 # settings you broke by hand
 
-Settings are a file like any other, and one day you edit it and leave it in a state no yaml reader can make sense of.
+Settings are a file like any other, and one day you edit it and leave it in a state no json5 reader can make sense of.
 
 ```bash
 echo 9 > .clk/version.txt
-echo 'parameters: [oops' > .clk/clk.yaml
+echo '{parameters: [oops' > .clk/clk.json5
 ```
 
 clk says so and carries on with nothing, rather than stopping you in your tracks.
@@ -303,4 +338,4 @@ clk says so and carries on with nothing, rather than stopping you in your tracks
 clk alias show 2>&1
 ```
 
-    warning: Can't read settings from ./.clk/clk.yaml
+    warning: Can't read settings from ./.clk/clk.json5

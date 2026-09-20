@@ -206,7 +206,7 @@ csm --action clean
 
 # shipping the settings of your tool
 
-The distribution can come with aliases of its own, when writing a command would be too much. Put them in `csm/settings/csm.json`.
+The distribution can come with aliases of its own, when writing a command would be too much. Put them in `csm/settings/csm.json5`.
 
 ```json
 {
@@ -222,7 +222,7 @@ The distribution can come with aliases of its own, when writing a command would 
 Like any other profile, it needs a version and may become obsolete. This one-liner says the version clk is at, and don't forget to run it again when clk moves on.
 
 ```bash
-python -c 'from clk.profile import DirectoryProfile; print(DirectoryProfile.oldest_supported_version)' > csm/settings/version.txt
+python -c 'from clk.profile import DirectoryProfile; print(DirectoryProfile.latest_version())' > csm/settings/version.txt
 ```
 
 Tell csm where to read them with `distribution_profile_location`.

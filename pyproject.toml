@@ -28,6 +28,7 @@ dependencies = [
     "cached-property",
     "requests",
     "tqdm",
+    "pyjson5",
 ]
 license = "MIT"
 dynamic = ["version"]

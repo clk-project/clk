@@ -444,10 +444,7 @@ else
 fi
 
 
-cat<<EOF >> .clk/clk.yaml
-weather:
-  today: rainy
-EOF
+sed -i '1a\    "weather": {"today": "rainy"},' .clk/clk.json5
 
 
 describe-unknown-setting_code () {

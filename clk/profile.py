@@ -7,7 +7,6 @@ import re
 import traceback
 from datetime import datetime
 from enum import Enum
-from glob import glob
 from pathlib import Path
 
 import click
@@ -19,7 +18,8 @@ from clk.lib import (
     copy,
     createfile,
     ensure_unicode,
-    json_dump_file,
+    json5_dump_file,
+    json5_load_file,
     makedirs,
     part_of_day,
     rm,
@@ -109,12 +109,11 @@ class ProfileFactory:
 
 def load_settings(path):
     if path is not None and Path(path).exists():
-        with open(path) as f:
-            try:
-                return json.load(f)
-            except ValueError:
-                # just give up on the data in the file
-                LOGGER.warning(f"Can't read settings from {path}")
+        try:
+            return json5_load_file(path) or {}
+        except ValueError:
+            # just give up on the data in the file
+            LOGGER.warning(f"Can't read settings from {path}")
     return {}
 
 
@@ -129,7 +128,7 @@ def write_settings(settings_path, settings, dry_run):
     parent_dir = Path(settings_path).parent
     if not parent_dir.exists():
         makedirs(parent_dir)
-    json_dump_file(settings_path, settings, internal=True)
+    json5_dump_file(settings_path, settings, internal=True)
 
 
 class Profile:
@@ -182,8 +181,16 @@ class DirectoryProfile(Profile):
         "An extension's name must contain only letters, digits, _ -"
         " or " + " ".join(extension_extra_chars)
     )
-    JSON_FILE_EXTENSION = ".json"
+    SETTINGS_FILE_EXTENSION = ".json5"
     oldest_supported_version = 8
+    migrators = [
+        "move_to_9",
+    ]
+
+    @classmethod
+    def latest_version(cls):
+        """The version clk writes a profile at"""
+        return cls.oldest_supported_version + len(cls.migrators)
 
     def describe(self):
         print(
@@ -355,7 +362,7 @@ class DirectoryProfile(Profile):
                 )
                 for location in extensions_dir.iterdir()
                 if location.is_dir()
-                and not location.name.endswith(self.JSON_FILE_EXTENSION)
+                and not location.name.endswith(self.SETTINGS_FILE_EXTENSION)
                 and not location.name.endswith("_backup")
             ],
             key=lambda r: r.name,
@@ -396,11 +403,13 @@ class DirectoryProfile(Profile):
         self.activation_level = activation_level
         self.explicit = explicit
         self.isroot = isroot
-        self.migrate_from = []
+        self.migrate_from = [getattr(self, name) for name in self.migrators]
         self._version = None
         self.location = location
         self._location_path = Path(location)
-        self.settings_path = str(self._location_path / f"{self.app_name}.json")
+        self.settings_path = str(
+            self._location_path / f"{self.app_name}{self.SETTINGS_FILE_EXTENSION}"
+        )
         self.dry_run = dry_run
         self.name = name
 
@@ -437,7 +446,11 @@ class DirectoryProfile(Profile):
             [
                 Path(self.version_file_name).name,
             ]
-            + [Path(f).name for f in glob(self.location + f"/{self.app_name}*json")]
+            + [
+                path.name
+                for pattern in (f"{self.app_name}*json", f"{self.app_name}*json5")
+                for path in self._location_path.glob(pattern)
+            ]
             + ["extensions"]
         )
 
@@ -519,7 +532,7 @@ class DirectoryProfile(Profile):
 
     @property
     def max_version(self):
-        return self.oldest_supported_version + len(self.migrate_from)
+        return self.latest_version()
 
     def compute_settings(self):
         if self.location == self.computed_location:
@@ -537,6 +550,80 @@ class DirectoryProfile(Profile):
     @property
     def isextension(self):
         return self._location_path.parent.name == "extensions"
+
+    def command_names(self):
+        """The commands this profile names, in its settings and in its aliases"""
+        for section in ("alias", "parameters", "flowdeps", "value"):
+            yield from self.settings.get(section, {})
+        for alias in self.settings.get("alias", {}).values():
+            for command in alias.get("commands", []):
+                if command:
+                    yield command[0]
+
+    def drop_the_at_naming(self):
+        """Take the suffix off the scripts that answered to an @, settings included"""
+        renamed = {}
+        for directory in self.executable_paths:
+            for entry in sorted(Path(directory).iterdir()):
+                if entry.suffix not in (".sh", ".py") or not os.access(entry, os.X_OK):
+                    continue
+                without_suffix = entry.with_suffix("")
+                if without_suffix.exists():
+                    LOGGER.warning(
+                        f"{entry.name} keeps its suffix, {without_suffix.name} is taken"
+                    )
+                    continue
+                entry.rename(without_suffix)
+                renamed[f"{entry.stem}@{entry.suffix[1:]}"] = entry.stem
+                LOGGER.warning(
+                    f"Renaming {entry.name} into {without_suffix.name},"
+                    f" so that it answers to {entry.stem.replace('.', ' ')}"
+                )
+        if not renamed:
+            return
+        for section in ("alias", "parameters", "flowdeps", "value"):
+            entries = self.settings.get(section, {})
+            for old, new in renamed.items():
+                if old in entries:
+                    entries[new] = entries.pop(old)
+        for alias in self.settings.get("alias", {}).values():
+            for command in alias.get("commands", []):
+                if command and command[0] in renamed:
+                    command[0] = renamed[command[0]]
+
+    def dropped_features_used(self):
+        """What this profile still asks of clk and clk no longer has"""
+        gone = []
+        for name in dict.fromkeys(self.command_names()):
+            if "@" in name:
+                gone.append(
+                    f"{name} names a script with the @ of an older clk,"
+                    " and nothing answers to it anymore"
+                )
+        for path in sorted(self._location_path.glob("python/*.py")):
+            text = path.read_text()
+            for feature, instead in (
+                ("DynamicConfigBase", "expose_class does the same"),
+                ("git_sync", "it did no more than a few git calls"),
+            ):
+                if feature in text:
+                    gone.append(f"{path.name} uses {feature}, which is gone: {instead}")
+        return gone
+
+    def move_to_9(self):
+        """Everything a profile has to do to go from the version 8 to the version 9"""
+        for json_path in self._location_path.glob(f"{self.app_name}*.json"):
+            content = json.loads(json_path.read_text())
+            if json_path.name == f"{self.app_name}.json":
+                self.settings = content
+            if not self.readonly:
+                json5_dump_file(
+                    json_path.with_suffix(self.SETTINGS_FILE_EXTENSION),
+                    content,
+                    internal=True,
+                )
+                rm(json_path)
+        return True
 
     def write_settings(self):
         if self.readonly:
@@ -577,8 +664,18 @@ class DirectoryProfile(Profile):
                 if self.persist:
                     self.frozen_during_migration = False
                     self.prevented_persistence = False
-                    self.write_settings()
-                    self.write_version()
+                    if self.readonly:
+                        LOGGER.warning(
+                            f"Profile in {self.location} is read only,"
+                            f" so it stays at the version {self.old_version}."
+                            " Tell whoever ships it to migrate it."
+                        )
+                    else:
+                        self.drop_the_at_naming()
+                        self.write_settings()
+                        self.write_version()
+                    for gone in self.dropped_features_used():
+                        LOGGER.warning(gone)
                 else:
                     self.frozen_during_migration = True
                     self.prevented_persistence = True

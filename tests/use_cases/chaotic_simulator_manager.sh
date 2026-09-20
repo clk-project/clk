@@ -435,7 +435,7 @@ fi
 
 
 mkdir -p csm/csm/settings
-cat<<'EOF' > csm/csm/settings/csm.json
+cat<<'EOF' > csm/csm/settings/csm.json5
 {
     "alias": {
         "go": {
@@ -445,7 +445,7 @@ cat<<'EOF' > csm/csm/settings/csm.json
     }
 }
 EOF
-./venv/bin/python -c 'from clk.profile import DirectoryProfile; print(DirectoryProfile.oldest_supported_version)' > csm/csm/settings/version.txt
+./venv/bin/python -c 'from clk.profile import DirectoryProfile; print(DirectoryProfile.latest_version())' > csm/csm/settings/version.txt
 cat<<'EOF' > csm/csm/main.py
 from pathlib import Path
 
