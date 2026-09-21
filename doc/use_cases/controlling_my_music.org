@@ -341,6 +341,18 @@ clk music loud Kind-of-Blue
 : Running mpc with: wait-for-server
 : Running mpc with: play --random --use-speakers --replaygain --repeat Kind-of-Blue
 
+Tidying up, I unset ~music.pause~, which I renamed long ago, and clk answers
+with the aliases I do have.
+
+#+NAME: unset-gone-alias
+#+BEGIN_SRC bash :results verbatim :exports both :session e6078fc8-4b12-44ad-b008-20f0b7311069 :cache yes
+clk alias unset music.pause 2>&1
+#+END_SRC
+
+#+RESULTS[]: unset-gone-alias
+: Usage: clk alias unset [OPTIONS] [ALIASES]...
+: error: Invalid value for '[ALIASES]...': invalid choice: music.pause. (choose from music.loud)
+
 That one grows in its turn, and the album follows it into the command.
 
 #+NAME: convert-music-loud
@@ -474,6 +486,8 @@ clk parameter show music.shuffle
   check-result(play-an-album)
 
   check-result(music-loud)
+
+  check-result(unset-gone-alias)
 
   check-result(convert-music-loud)
 

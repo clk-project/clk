@@ -498,6 +498,37 @@ fi
 
 
 
+unset-gone-alias_code () {
+      clk alias unset music.pause 2>&1
+}
+
+unset-gone-alias_expected () {
+      local expected
+      expected="$(cat<<"EOEXPECTED"
+Usage: clk alias unset [OPTIONS] [ALIASES]...
+error: Invalid value for '[ALIASES]...': invalid choice: music.pause. (choose from music.loud)
+EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
+}
+
+echo 'Run unset-gone-alias'
+
+{ unset-gone-alias_code || true ; } > "${TMP}/code.txt" 2>&1
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/unset-gone-alias"
+else
+    unset-gone-alias_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying unset-gone-alias"
+        exit 1
+    }
+fi
+
+
+
 convert-music-loud_code () {
       clk command create bash --replace-alias music.loud
       clk music loud Bitches-Brew

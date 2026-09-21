@@ -237,6 +237,15 @@ clk music loud Kind-of-Blue
     Running mpc with: wait-for-server
     Running mpc with: play --random --use-speakers --replaygain --repeat Kind-of-Blue
 
+Tidying up, I unset `music.pause`, which I renamed long ago, and clk answers with the aliases I do have.
+
+```bash
+clk alias unset music.pause 2>&1
+```
+
+    Usage: clk alias unset [OPTIONS] [ALIASES]...
+    error: Invalid value for '[ALIASES]...': invalid choice: music.pause. (choose from music.loud)
+
 That one grows in its turn, and the album follows it into the command.
 
 ```bash
