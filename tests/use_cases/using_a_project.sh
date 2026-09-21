@@ -740,6 +740,82 @@ else
 fi
 
 
+mkdir -p ../brokenproject/.clk
+echo 8 > ../brokenproject/.clk/version.txt
+echo '{oops' > ../brokenproject/.clk/clk.json
+
+
+run_unreadable_old_project_code () {
+      cd ../brokenproject
+      clk alias show 2>&1 | tail -2
+      ls .clk
+      cd ../myprojet
+}
+
+run_unreadable_old_project_expected () {
+      local expected
+      expected="$(cat<<"EOEXPECTED"
+error: Expecting property name enclosed in double quotes: line 1 column 2 (char 1)
+warning: The migration of ./.clk did not go well, Restoring backup from ./.clk_backup
+clk.json
+version.txt
+EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
+}
+
+echo 'Run run_unreadable_old_project'
+
+{ run_unreadable_old_project_code || true ; } > "${TMP}/code.txt" 2>&1
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/run_unreadable_old_project"
+else
+    run_unreadable_old_project_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying run_unreadable_old_project"
+        exit 1
+    }
+fi
+
+
+mkdir -p ../deadrun/.clk ../deadrun/.clk_backup
+echo 8 > ../deadrun/.clk/version.txt
+cp ../oldproject/.clk/clk.json5 ../deadrun/.clk/clk.json
+
+
+run_leftover_backup_code () {
+      cd ../deadrun
+      clk alias show 2>&1 | tail -1
+      cd ../myprojet
+}
+
+run_leftover_backup_expected () {
+      local expected
+      expected="$(cat<<"EOEXPECTED"
+error: ./.clk_backup already exists. Cannot migrate.
+EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
+}
+
+echo 'Run run_leftover_backup'
+
+{ run_leftover_backup_code || true ; } > "${TMP}/code.txt" 2>&1
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/run_leftover_backup"
+else
+    run_leftover_backup_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying run_leftover_backup"
+        exit 1
+    }
+fi
+
+
 echo 99 > .clk/version.txt
 
 

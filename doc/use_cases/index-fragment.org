@@ -34,7 +34,7 @@
 | [setting_default_values.md](setting_default_values.md) | Using clk value to set semantic defaults across many commands, parameters vs values |  |
 | [spotting_slow_code.md](spotting_slow_code.md) | Using --timestamp to identify slow parts of a command |  |
 | [using_a_plugin.md](using_a_plugin.md) | Monkey-patching clk internals with the plugin mechanism |  |
-| [using_a_project.md](using_a_project.md) | Using .clk directories for project-scoped commands and configuration |  |
+| [using_a_project.md](using_a_project.md) | Using .clk directories for project-scoped commands and configuration | clk_backup |
 | [wrapping_a_cloud_provider_cli.md](wrapping_a_cloud_provider_cli.md) | Persisting command options (--profile, --region) with clk parameters to avoid repetition | CLK___ARGS,CLK___DESTINATION,CLK___PATH,CLK___SOURCE |
 
 ## Keyword index
@@ -53,6 +53,7 @@
 - `CLK____JSON` : [send_sms.md](send_sms.md)
 - `F:` : [bash_command_use_option.md](bash_command_use_option.md), [controlling_my_music.md](controlling_my_music.md)
 - `O:` : [bash_command_use_option.md](bash_command_use_option.md), [podcast_automation.md](podcast_automation.md), [send_sms.md](send_sms.md)
+- `clk_backup` : [using_a_project.md](using_a_project.md)
 - `clk_drop_duplicate` : [controlling_my_music.md](controlling_my_music.md)
 - `clk_extension_hello` : [creating_extensions.md](creating_extensions.md)
 - `clk_format_choice` : [bash_command_use_option.md](bash_command_use_option.md)

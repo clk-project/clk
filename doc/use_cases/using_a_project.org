@@ -437,6 +437,50 @@ cd ../myprojet
 : clk.json5
 : version.txt
 
+Let's take another one whose settings no reader can make sense of, and watch the
+upgrade give up.
+
+#+NAME: unreadable_old_project
+#+BEGIN_SRC bash :results none :exports code :session 6de55de4-c0b3-41d6-952a-25e0fe06c881
+mkdir -p ../brokenproject/.clk
+echo 8 > ../brokenproject/.clk/version.txt
+echo '{oops' > ../brokenproject/.clk/clk.json
+#+END_SRC
+
+#+NAME: run_unreadable_old_project
+#+BEGIN_SRC bash :results verbatim :exports both :session 6de55de4-c0b3-41d6-952a-25e0fe06c881 :cache yes
+cd ../brokenproject
+clk alias show 2>&1 | tail -2
+ls .clk
+cd ../myprojet
+#+END_SRC
+
+#+RESULTS[]: run_unreadable_old_project
+: error: Expecting property name enclosed in double quotes: line 1 column 2 (char 1)
+: warning: The migration of ./.clk did not go well, Restoring backup from ./.clk_backup
+: clk.json
+: version.txt
+
+A run that died in the middle leaves its backup behind, and the next one will
+not step over it.
+
+#+NAME: leftover_backup
+#+BEGIN_SRC bash :results none :exports code :session 6de55de4-c0b3-41d6-952a-25e0fe06c881
+mkdir -p ../deadrun/.clk ../deadrun/.clk_backup
+echo 8 > ../deadrun/.clk/version.txt
+cp ../oldproject/.clk/clk.json5 ../deadrun/.clk/clk.json
+#+END_SRC
+
+#+NAME: run_leftover_backup
+#+BEGIN_SRC bash :results verbatim :exports both :session 6de55de4-c0b3-41d6-952a-25e0fe06c881 :cache yes
+cd ../deadrun
+clk alias show 2>&1 | tail -1
+cd ../myprojet
+#+END_SRC
+
+#+RESULTS[]: run_leftover_backup
+: error: ./.clk_backup already exists. Cannot migrate.
+
 * a project written by a newer clk
   :PROPERTIES:
   :CUSTOM_ID: a-project-written-by-a-newer-clk
@@ -581,6 +625,14 @@ check-result(copy_release_notes_forced)
 <<old_project>>
 
 check-result(run_old_project)
+
+<<unreadable_old_project>>
+
+check-result(run_unreadable_old_project)
+
+<<leftover_backup>>
+
+check-result(run_leftover_backup)
 
 <<project_from_the_future>>
 

@@ -290,6 +290,42 @@ cd ../myprojet
     clk.json5
     version.txt
 
+Let's take another one whose settings no reader can make sense of, and watch the upgrade give up.
+
+```bash
+mkdir -p ../brokenproject/.clk
+echo 8 > ../brokenproject/.clk/version.txt
+echo '{oops' > ../brokenproject/.clk/clk.json
+```
+
+```bash
+cd ../brokenproject
+clk alias show 2>&1 | tail -2
+ls .clk
+cd ../myprojet
+```
+
+    error: Expecting property name enclosed in double quotes: line 1 column 2 (char 1)
+    warning: The migration of ./.clk did not go well, Restoring backup from ./.clk_backup
+    clk.json
+    version.txt
+
+A run that died in the middle leaves its backup behind, and the next one will not step over it.
+
+```bash
+mkdir -p ../deadrun/.clk ../deadrun/.clk_backup
+echo 8 > ../deadrun/.clk/version.txt
+cp ../oldproject/.clk/clk.json5 ../deadrun/.clk/clk.json
+```
+
+```bash
+cd ../deadrun
+clk alias show 2>&1 | tail -1
+cd ../myprojet
+```
+
+    error: ./.clk_backup already exists. Cannot migrate.
+
 
 <a id="a-project-written-by-a-newer-clk"></a>
 
