@@ -31,7 +31,7 @@ def calibrate():
 from clk.overloads import get_command
 
 @printer.flow_command(flowdepends=["printer.calibrate"])
-@get_command("printer.slice").flow_option("model")
+@get_command("printer.slice").flow_options()
 @get_command("printer.send").flow_option("warn_when_done")
 @get_command("printer.send").flow_argument("printer")
 def flow(**kwargs):
@@ -41,14 +41,14 @@ EOF
 
 
 run_flow_code () {
-      clk printer flow myprinter --model somemodel --model someothermodel --warn-when-done
+      clk printer flow myprinter --model somemodel --model someothermodel --output some.gcode --warn-when-done
 }
 
 run_flow_expected () {
       local expected
       expected="$(cat<<"EOEXPECTED"
 Running some stuff for the printer to be ready to go
-Slicing somemodel, someothermodel to model.gcode
+Slicing somemodel, someothermodel to some.gcode
 Printing model.gcode using myprinter
 Driiiiiiing!
 The flow is done

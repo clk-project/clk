@@ -64,7 +64,7 @@ Let's define such a flow.
 from clk.overloads import get_command
 
 @printer.flow_command(flowdepends=["printer.calibrate"])
-@get_command("printer.slice").flow_option("model")
+@get_command("printer.slice").flow_options()
 @get_command("printer.send").flow_option("warn_when_done")
 @get_command("printer.send").flow_argument("printer")
 def flow(**kwargs):
@@ -72,22 +72,22 @@ def flow(**kwargs):
     print("The flow is done")
 ```
 
-Note that calibrate, slice and send don't have any precedence relationship between each other. By providing `flow_command`, `flow_option` and `flow_argument` in that order, we explicitly say to the command named flow that it should run them from top to bottom: calibrate, slice and then send.
+Note that calibrate, slice and send don't have any precedence relationship between each other. By providing `flow_command`, `flow_options` and `flow_argument` in that order, we explicitly say to the command named flow that it should run them from top to bottom: calibrate, slice and then send.
 
-The flow\_option and flow\_argument lines tell that this new command "captures" those parameters from the respective commands.
+The flow\_options and flow\_argument lines tell that this new command "captures" those parameters from the respective commands. `flow_options` takes all the options of slice at once, where `flow_option` takes the one you name.
 
-This new command can be called with `--model`, `--warn-when-done` and `--printer` and will eventually run `printer calibrate`, `printer slice` and then `printer send` with the appropriate parameters.
+This new command can be called with `--model`, `--output`, `--warn-when-done` and `--printer` and will eventually run `printer calibrate`, `printer slice` and then `printer send` with the appropriate parameters.
 
 Note that we only defined explicitly the flow dependency to `printer calibrate`. The dependency to `printer slice` and `printer send` is implicitly known by the fact we captured some of their parameters.
 
 Let's try to run the flow to get the feeling of how it is used.
 
 ```bash
-clk printer flow myprinter --model somemodel --model someothermodel --warn-when-done
+clk printer flow myprinter --model somemodel --model someothermodel --output some.gcode --warn-when-done
 ```
 
     Running some stuff for the printer to be ready to go
-    Slicing somemodel, someothermodel to model.gcode
+    Slicing somemodel, someothermodel to some.gcode
     Printing model.gcode using myprinter
     Driiiiiiing!
     The flow is done
