@@ -236,6 +236,42 @@ clk server check myserver
 
     no answer from myserver
 
+The bad news should catch my eye, so it goes through `clk echo` and comes out red.
+
+```bash
+sed -i 's/^echo /clk echo --style bold-True,fg-red /' "${check}"
+```
+
+```bash
+clk server check myserver
+```
+
+    no answer from myserver
+
+I never remember the names of the colours, and tab does.
+
+```bash
+clk echo --style fg-<TAB>
+```
+
+    fg-black
+    fg-red
+    fg-green
+    fg-yellow
+    fg-blue
+    fg-magenta
+    fg-cyan
+    fg-white
+
+pink is not one of them.
+
+```bash
+clk echo --style pink hello 2>&1
+```
+
+    Usage: clk echo [OPTIONS] [MESSAGE]...
+    error: Invalid value for '-s' / '--style': invalid style: pink. (Unknown color 'pink')
+
 
 <a id="when-i-break-it"></a>
 

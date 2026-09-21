@@ -385,6 +385,106 @@ else
 fi
 
 
+sed -i 's/^echo /clk echo --style bold-True,fg-red /' "${check}"
+
+
+run-styled-check_code () {
+      clk server check myserver
+}
+
+run-styled-check_expected () {
+      local expected
+      expected="$(cat<<"EOEXPECTED"
+no answer from myserver
+EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
+}
+
+echo 'Run run-styled-check'
+
+{ run-styled-check_code || true ; } > "${TMP}/code.txt" 2>&1
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/run-styled-check"
+else
+    run-styled-check_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying run-styled-check"
+        exit 1
+    }
+fi
+
+
+
+complete-style_code () {
+      clk completion try --remove-bash-formatting --last echo --style fg-
+}
+
+complete-style_expected () {
+      local expected
+      expected="$(cat<<"EOEXPECTED"
+fg-black
+fg-red
+fg-green
+fg-yellow
+fg-blue
+fg-magenta
+fg-cyan
+fg-white
+EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
+}
+
+echo 'Run complete-style'
+
+{ complete-style_code || true ; } > "${TMP}/code.txt" 2>&1
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/complete-style"
+else
+    complete-style_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying complete-style"
+        exit 1
+    }
+fi
+
+
+
+run-bad-style_code () {
+      clk echo --style pink hello 2>&1
+}
+
+run-bad-style_expected () {
+      local expected
+      expected="$(cat<<"EOEXPECTED"
+Usage: clk echo [OPTIONS] [MESSAGE]...
+error: Invalid value for '-s' / '--style': invalid style: pink. (Unknown color 'pink')
+EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
+}
+
+echo 'Run run-bad-style'
+
+{ run-bad-style_code || true ; } > "${TMP}/code.txt" 2>&1
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/run-bad-style"
+else
+    run-bad-style_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying run-bad-style"
+        exit 1
+    }
+fi
+
+
 cat<<'EOF' > "${check}"
 #!/usr/bin/env bash
 exit 1

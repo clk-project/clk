@@ -313,6 +313,55 @@ clk server check myserver
 #+RESULTS[]: run-good-usage
 : no answer from myserver
 
+The bad news should catch my eye, so it goes through ~clk echo~ and comes out
+red.
+
+#+NAME: write-styled-check
+#+BEGIN_SRC bash :results none :exports code :session 85c8e385-7f24-48ac-9a85-30cfc354aebf
+sed -i 's/^echo /clk echo --style bold-True,fg-red /' "${check}"
+#+END_SRC
+
+#+NAME: run-styled-check
+#+BEGIN_SRC bash :results verbatim :exports both :session 85c8e385-7f24-48ac-9a85-30cfc354aebf :cache yes
+clk server check myserver
+#+END_SRC
+
+#+RESULTS[]: run-styled-check
+: no answer from myserver
+
+I never remember the names of the colours, and tab does.
+
+#+NAME: complete-style-shown
+#+BEGIN_SRC bash :results none :exports code
+clk echo --style fg-<TAB>
+#+END_SRC
+
+#+NAME: complete-style
+#+BEGIN_SRC bash :results verbatim :exports results :session 85c8e385-7f24-48ac-9a85-30cfc354aebf :cache yes
+clk completion try --remove-bash-formatting --last echo --style fg-
+#+END_SRC
+
+#+RESULTS[]: complete-style
+: fg-black
+: fg-red
+: fg-green
+: fg-yellow
+: fg-blue
+: fg-magenta
+: fg-cyan
+: fg-white
+
+pink is not one of them.
+
+#+NAME: run-bad-style
+#+BEGIN_SRC bash :results verbatim :exports both :session 85c8e385-7f24-48ac-9a85-30cfc354aebf :cache yes
+clk echo --style pink hello 2>&1
+#+END_SRC
+
+#+RESULTS[]: run-bad-style
+: Usage: clk echo [OPTIONS] [MESSAGE]...
+: error: Invalid value for '-s' / '--style': invalid style: pink. (Unknown color 'pink')
+
 * when I break it
   :PROPERTIES:
   :CUSTOM_ID: when-i-break-it
@@ -374,6 +423,14 @@ check-result(run-bad-usage)
 <<write-good-usage>>
 
 check-result(run-good-usage)
+
+<<write-styled-check>>
+
+check-result(run-styled-check)
+
+check-result(complete-style)
+
+check-result(run-bad-style)
 
 <<write-broken-command>>
 
