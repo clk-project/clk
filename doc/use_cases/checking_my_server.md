@@ -356,3 +356,31 @@ clk server check --help | head -3
     Usage: clk server check [OPTIONS]
 
       No help found... (the command is most likely broken)
+
+Let's break the python one as well, with an import that leads nowhere.
+
+```bash
+cat<<'EOF' >> "${CLKCONFIGDIR}/python/server.py"
+
+import thismoduledoesnotexist
+EOF
+```
+
+```bash
+clk server logs myserver 2>&1
+```
+
+    error: Found the command server in the resolver customcommand but could not load it.
+    warning: Failed to get the command server: No module named 'thismoduledoesnotexist'
+    error: clk.server could not be loaded. Re run with clk --develop to see the stacktrace or clk --debug-on-command-load-error to debug the load error
+
+To send that to someone, let's put it in a report file.
+
+```bash
+clk --report-file report.txt server logs myserver 2>/dev/null
+cat report.txt
+```
+
+    Found the command server in the resolver customcommand but could not load it.
+    Failed to get the command server: No module named 'thismoduledoesnotexist'
+    clk.server could not be loaded. Re run with clk --develop to see the stacktrace or clk --debug-on-command-load-error to debug the load error

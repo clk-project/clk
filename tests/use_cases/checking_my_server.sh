@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# [[file:../../doc/use_cases/checking_my_server.org::#when-i-break-it][when I break it:3]]
+# [[file:../../doc/use_cases/checking_my_server.org::#when-i-break-it][when I break it:6]]
 set -eu
 . ./sandboxing.sh
 
@@ -650,4 +650,74 @@ else
         exit 1
     }
 fi
-# when I break it:3 ends here
+
+
+cat<<'EOF' >> "${CLKCONFIGDIR}/python/server.py"
+
+import thismoduledoesnotexist
+EOF
+
+
+run-broken-logs_code () {
+      clk server logs myserver 2>&1
+}
+
+run-broken-logs_expected () {
+      local expected
+      expected="$(cat<<"EOEXPECTED"
+error: Found the command server in the resolver customcommand but could not load it.
+warning: Failed to get the command server: No module named 'thismoduledoesnotexist'
+error: clk.server could not be loaded. Re run with clk --develop to see the stacktrace or clk --debug-on-command-load-error to debug the load error
+EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
+}
+
+echo 'Run run-broken-logs'
+
+{ run-broken-logs_code || true ; } > "${TMP}/code.txt" 2>&1
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/run-broken-logs"
+else
+    run-broken-logs_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying run-broken-logs"
+        exit 1
+    }
+fi
+
+
+
+run-with-report-file_code () {
+      clk --report-file report.txt server logs myserver 2>/dev/null
+      cat report.txt
+}
+
+run-with-report-file_expected () {
+      local expected
+      expected="$(cat<<"EOEXPECTED"
+Found the command server in the resolver customcommand but could not load it.
+Failed to get the command server: No module named 'thismoduledoesnotexist'
+clk.server could not be loaded. Re run with clk --develop to see the stacktrace or clk --debug-on-command-load-error to debug the load error
+EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
+}
+
+echo 'Run run-with-report-file'
+
+{ run-with-report-file_code || true ; } > "${TMP}/code.txt" 2>&1
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/run-with-report-file"
+else
+    run-with-report-file_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying run-with-report-file"
+        exit 1
+    }
+fi
+# when I break it:6 ends here
