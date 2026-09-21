@@ -13,6 +13,7 @@ README.html
 **/.claude/settings.local.json
 **/venv
 /output
+/coverage
 /ralph-output
 /plan.md
 /todo.org
