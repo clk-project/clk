@@ -684,10 +684,12 @@ profiling = None
 
 
 def enable_profiling_callback(ctx, attr, value):
-    if value:
+    global profiling
+    # a completion parses the command line again, and the profile of that second
+    # parsing holds nothing
+    if value and profiling is None:
         import cProfile
 
-        global profiling
         profiling = cProfile.Profile()
         profiling.enable()
     return value
@@ -1082,6 +1084,7 @@ def main():
     finally:
         if profiling is not None:
             profiling.disable()
+            profiling.create_stats()
             sortby = "cumulative"
             s = StringIO()
             ps = pstats.Stats(profiling, stream=s).sort_stats(sortby)
