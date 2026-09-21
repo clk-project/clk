@@ -39,6 +39,40 @@ clk podcast dwim
 
 Note that it needs the environment variable to be set, or it will raise an error.
 
+A download that stops halfway should not leave anything in my collection, so let's write the episode in a temporary place and move it in when it is done.
+
+```python
+from pathlib import Path
+
+from clk.lib import createfile, makedirs, move, tempdir
+
+
+@podcast.command()
+@argument('episode', help='The episode to download')
+def get(episode):
+    'Download an episode'
+    collection = Path('music')
+    with tempdir() as workspace:
+        downloading = Path(workspace) / episode
+        createfile(downloading, 'some audio\n')
+        makedirs(collection)
+        move(downloading, collection / episode)
+    createfile(collection / 'fetched.txt', f'{episode}\n', append=True)
+```
+
+```bash
+clk podcast get episode-1.mp3
+clk podcast get episode-2.mp3
+ls music
+cat music/fetched.txt
+```
+
+    episode-1.mp3
+    episode-2.mp3
+    fetched.txt
+    episode-1.mp3
+    episode-2.mp3
+
 
 <a id="filtering-by-directory"></a>
 

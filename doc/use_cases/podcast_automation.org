@@ -73,6 +73,53 @@ clk podcast dwim
 Note that it needs the environment variable to be set, or it will raise an
 error.
 
+A download that stops halfway should not leave anything in my collection, so
+let's write the episode in a temporary place and move it in when it is done.
+
+#+NAME: get_body
+#+BEGIN_SRC python :results none :exports code
+from pathlib import Path
+
+from clk.lib import createfile, makedirs, move, tempdir
+
+
+@podcast.command()
+@argument('episode', help='The episode to download')
+def get(episode):
+    'Download an episode'
+    collection = Path('music')
+    with tempdir() as workspace:
+        downloading = Path(workspace) / episode
+        createfile(downloading, 'some audio\n')
+        makedirs(collection)
+        move(downloading, collection / episode)
+    createfile(collection / 'fetched.txt', f'{episode}\n', append=True)
+#+END_SRC
+
+#+NAME: podcast_with_get
+#+BEGIN_SRC bash :results none :exports none :session c8fcfc53-6d2a-4b9c-a836-c303933b6563 :noweb yes
+clk command create python podcast --group --force --description "Dealing with podcasts" --body "
+<<download_body>>
+
+<<get_body>>
+"
+#+END_SRC
+
+#+NAME: get_episodes
+#+BEGIN_SRC bash :results verbatim :exports both :session c8fcfc53-6d2a-4b9c-a836-c303933b6563 :cache yes
+clk podcast get episode-1.mp3
+clk podcast get episode-2.mp3
+ls music
+cat music/fetched.txt
+#+END_SRC
+
+#+RESULTS[]: get_episodes
+: episode-1.mp3
+: episode-2.mp3
+: fetched.txt
+: episode-1.mp3
+: episode-2.mp3
+
 * filtering by directory
   :PROPERTIES:
   :CUSTOM_ID: filtering-by-directory
@@ -329,6 +376,10 @@ check-result(tryit)
 check-result(makeitalias)
 
 check-result(callit)
+
+<<podcast_with_get>>
+
+check-result(get_episodes)
 
 <<podcast_with_directory>>
 

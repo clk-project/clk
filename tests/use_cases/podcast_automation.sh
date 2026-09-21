@@ -105,6 +105,68 @@ fi
 
 
 clk command create python podcast --group --force --description "Dealing with podcasts" --body "
+@podcast.command()
+@option('--number', type=int, default=10, help='How many episodes to download at once')
+def download(number):
+    'Downloading podcasts'
+    print(f'Downloading {number} episodes')
+
+from pathlib import Path
+
+from clk.lib import createfile, makedirs, move, tempdir
+
+
+@podcast.command()
+@argument('episode', help='The episode to download')
+def get(episode):
+    'Download an episode'
+    collection = Path('music')
+    with tempdir() as workspace:
+        downloading = Path(workspace) / episode
+        createfile(downloading, 'some audio\n')
+        makedirs(collection)
+        move(downloading, collection / episode)
+    createfile(collection / 'fetched.txt', f'{episode}\n', append=True)
+"
+
+
+get_episodes_code () {
+      clk podcast get episode-1.mp3
+      clk podcast get episode-2.mp3
+      ls music
+      cat music/fetched.txt
+}
+
+get_episodes_expected () {
+      local expected
+      expected="$(cat<<"EOEXPECTED"
+episode-1.mp3
+episode-2.mp3
+fetched.txt
+episode-1.mp3
+episode-2.mp3
+EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
+}
+
+echo 'Run get_episodes'
+
+{ get_episodes_code || true ; } > "${TMP}/code.txt" 2>&1
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/get_episodes"
+else
+    get_episodes_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying get_episodes"
+        exit 1
+    }
+fi
+
+
+clk command create python podcast --group --force --description "Dealing with podcasts" --body "
 @group()
 @option('--directory', '-d', multiple=True, help='Only work with these directories')
 def podcast(directory):
