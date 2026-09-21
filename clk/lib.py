@@ -15,9 +15,7 @@ import signal
 import subprocess
 import sys
 import tempfile
-import traceback
 from contextlib import contextmanager
-from copy import deepcopy
 from pathlib import Path
 
 import click
@@ -372,12 +370,6 @@ def cd(dir, internal=False, makedirs=False):
     os.chdir(prevdir)
 
 
-def ccd(dir):
-    """Create and change to a directory temporarily. To be used in a with statement"""
-    LOGGER.deprecated("`ccd(dir)` is deprecated, use `cd(dir, makedirs=True)` instead")
-    return cd(dir, makedirs=True)
-
-
 @contextmanager
 def updated_env(**kwargs):
     """Temporarily update the environment. To be used in a with statement"""
@@ -728,33 +720,9 @@ def get_key_values_formats():
     return get_tabulate_formats()
 
 
-def json_dump_file(path, content, internal=False):
-    """Dump a python object to a file using a nicely formated json format"""
-    createfile(path, json_dumps(content), internal=internal)
-
-
 def json_dumps(content):
     """Dump a python object using a nicely formated json format"""
     return json.dumps(content, indent=4, sort_keys=True).replace(" \n", "\n") + "\n"
-
-
-def grep(
-    file_list,
-    args=None,
-    pager=True,
-):
-    args = args or []
-    args = [quote(arg) for arg in args]
-    color_opt = ["--color=always"] if sys.stdout.isatty() else []
-    xargs = subprocess.Popen(
-        "xargs -0 grep "
-        + " ".join(color_opt + list(args))
-        + (" | less" if pager else ""),
-        stdin=subprocess.PIPE,
-        shell=True,
-    )
-    xargs.communicate(input="\0".join(file_list).encode("utf-8"))
-    xargs.wait()
 
 
 def json5_load_file(path):
@@ -904,13 +872,6 @@ def date_and_delta(value):
     return date, _abs_timedelta(delta)
 
 
-def read_cmakecache(file):
-    content = open(file).read()
-    return dict(
-        re.findall("^([a-zA-Z_]+)(?::[^=]+=)(.+)$", content, flags=re.MULTILINE)
-    )
-
-
 class ParameterType(click.ParamType):
     def __init__(self):
         click.ParamType.__init__(self)
@@ -929,18 +890,6 @@ class ParameterType(click.ParamType):
             )
 
 
-@contextmanager
-def json_file(location):
-    location = Path(location)
-    if not location.exists() or location.read_text().strip() == "":
-        location.write_text("{}")
-    values = json.load(open(location))
-    oldvalues = deepcopy(values)
-    yield values
-    if values != oldvalues:
-        json.dump(values, open(location, "w"))
-
-
 def flat_map(elem):
     """Transform a list of list in a list with all the elements of the nested lists
 
@@ -955,30 +904,6 @@ def flat_map(elem):
     """
     elem = list(map(list, elem))
     return functools.reduce(list.__add__, elem) if elem else []
-
-
-def subkwargs(kwargs, params):
-    return {key: value for key, value in kwargs.items() if key in params}
-
-
-def deprecated_module(src, dst):
-    stack = traceback.extract_stack()
-
-    def get_frame_info(frame):
-        filename = frame.filename
-        lineno = frame.lineno
-        line = frame.line
-        return filename, lineno, line
-
-    # find a relevant frame
-    frame = [
-        frame
-        for frame in stack[:-2]
-        if "frozen" not in get_frame_info(frame)[0]
-        and "pluginbase" not in get_frame_info(frame)[0]
-    ][-1]
-    filename, lineno, line = get_frame_info(frame)
-    return f"{filename}:{lineno} '{line}' => Importing {src} is deprecated, import {dst} instead"
 
 
 class TablePrinter:
@@ -1179,6 +1104,16 @@ def parsedatetime(value):
     return cal.parseDT(value, sourceTime=datetime.datetime.today())
 
 
+def is_port_available(port, hostname="127.0.0.1"):
+    """Say whether nothing listens on that port yet"""
+    import socket
+
+    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    result = s.connect_ex((hostname, port))
+    s.close()
+    return result != 0
+
+
 def value_to_string(value):
     if isinstance(value, tuple):
         return " ".join([value_to_string(element) for element in value])
@@ -1194,19 +1129,3 @@ def value_to_string(value):
         return str(value)
     else:
         return ""
-
-
-def is_port_available(port, hostname="127.0.0.1"):
-    import socket
-
-    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    result = s.connect_ex((hostname, port))
-    s.close()
-    return result != 0
-
-
-def find_available_port(start_port, hostname="127.0.0.1"):
-    port = start_port
-    while not is_port_available(port, hostname):
-        port += 1
-    return port
