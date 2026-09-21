@@ -79,11 +79,17 @@ def merge_settings(settings):
                         elif isinstance(v2, str):
                             computed_settings2[k] = v2
                         else:
-                            raise NotImplementedError("Please help us code this part")
+                            raise click.UsageError(
+                                f"{k}.{k2} in the settings holds {v2!r},"
+                                " and clk can only merge lists, dicts and strings"
+                            )
                 elif isinstance(v, list):
                     computed_settings[k].extend(v)
                 else:
-                    raise NotImplementedError("Please help us code this part")
+                    raise click.UsageError(
+                        f"{k} in the settings holds {v!r},"
+                        " and clk can only merge dicts and lists"
+                    )
     return computed_settings, computed_settings2
 
 
