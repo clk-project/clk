@@ -284,7 +284,7 @@ clk music recent
 
 # coming back to it after a while
 
-Time passes, I upgrade clk. My settings were written in json back then, and I had dropped a script of mine in the bin, `music.shuffle.py`, that I called with `clk music shuffle@py`.
+Time passes, I upgrade clk. My settings were written in json back then, and I had dropped a script of mine in the bin, `music.shuffle.py`, that I called with `clk music shuffle@py`. There was a `music.volume.py` as well, beside a `music.volume` of its own.
 
 The first clk I run writes the settings in json5. The @ is gone, so it renames my script too, and it tells me what it cannot fix.
 
@@ -294,6 +294,8 @@ clk music play Kind-of-Blue 2>&1
 
     warning: Profile in ./clk-root is obsolete. It has the version 8 and current version is 9. Migration started.
     warning: Renaming music.shuffle.py into music.shuffle, so that it answers to music shuffle
+    warning: music.volume.py keeps its suffix, music.volume is taken
+    warning: music.volume@py names a script with the @ of an older clk, and nothing answers to it anymore
     warning: mixer.py uses DynamicConfigBase, which is gone: expose_class does the same
     Running mpc with: start-server
     Running mpc with: wait-for-server

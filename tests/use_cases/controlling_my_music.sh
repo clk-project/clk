@@ -602,7 +602,8 @@ cat<<'EOF' > "${CLKCONFIGDIR}/clk.json"
 {
   "parameters": {
     "music.play": ["--repeat"],
-    "music.shuffle@py": ["--seed", "42"]
+    "music.shuffle@py": ["--seed", "42"],
+    "music.volume@py": ["--level", "3"]
   }
 }
 EOF
@@ -613,6 +614,16 @@ cat<<'EOF' > "${CLKCONFIGDIR}/bin/music.shuffle.py"
 print("shuffling")
 EOF
 chmod +x "${CLKCONFIGDIR}/bin/music.shuffle.py"
+cat<<'EOF' > "${CLKCONFIGDIR}/bin/music.volume.py"
+#!/usr/bin/env python3
+print("volume, from python")
+EOF
+chmod +x "${CLKCONFIGDIR}/bin/music.volume.py"
+cat<<'EOF' > "${CLKCONFIGDIR}/bin/music.volume"
+#!/usr/bin/env bash
+echo "volume, from bash"
+EOF
+chmod +x "${CLKCONFIGDIR}/bin/music.volume"
 mkdir -p "${CLKCONFIGDIR}/python"
 cat<<'EOF' > "${CLKCONFIGDIR}/python/mixer.py"
 from clk.config import DynamicConfigBase
@@ -632,6 +643,8 @@ migrate_expected () {
       expected="$(cat<<"EOEXPECTED"
 warning: Profile in ./clk-root is obsolete. It has the version 8 and current version is 9. Migration started.
 warning: Renaming music.shuffle.py into music.shuffle, so that it answers to music shuffle
+warning: music.volume.py keeps its suffix, music.volume is taken
+warning: music.volume@py names a script with the @ of an older clk, and nothing answers to it anymore
 warning: mixer.py uses DynamicConfigBase, which is gone: expose_class does the same
 Running mpc with: start-server
 Running mpc with: wait-for-server
