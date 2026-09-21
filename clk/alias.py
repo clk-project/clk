@@ -112,6 +112,20 @@ class AliasToGroupCommandResolver(CommandResolver):
             )
 
 
+def help_of(alias_settings):
+    """What an alias says about itself, or what it stands for"""
+    documentation = alias_settings.get("documentation")
+    return documentation or f"Alias for: {format_commands(alias_settings['commands'])}"
+
+
+def short_help_of(alias_settings):
+    """The single line an alias shows in a listing"""
+    documentation = help_of(alias_settings)
+    if len(documentation) > 55:
+        return documentation[:52] + "..."
+    return documentation.splitlines()[0]
+
+
 class AliasCommandResolver(CommandResolver):
     name = "alias"
 
@@ -303,11 +317,8 @@ class AliasCommandResolver(CommandResolver):
         name = path.split(".")[-1]
         alias_settings = profile.settings["alias"][path]
         commands_to_run = alias_settings["commands"]
-        cmdhelp = alias_settings["documentation"]
-        cmdhelp = cmdhelp or f"Alias for: {format_commands(commands_to_run)}"
-        short_help = cmdhelp.splitlines()[0]
-        if len(cmdhelp) > 55:
-            short_help = cmdhelp[:52] + "..."
+        cmdhelp = help_of(alias_settings)
+        short_help = short_help_of(alias_settings)
 
         # Collect flow dependencies from all commands
         deps = self._collect_flow_dependencies(commands_to_run)
