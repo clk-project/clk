@@ -796,6 +796,25 @@ class MainGroupCommandResolver(GroupCommandResolver):
 allow_dotted_commands = False
 
 
+def complete_commands(group, ctx, incomplete, prefix):
+    """What a group offers to a tab, the aliases answered from the settings"""
+    from clk.alias import short_help_of
+
+    aliases = config.get_settings("alias")
+    for name in group.list_commands(ctx):
+        if not clk.completion.startswith(name, incomplete):
+            continue
+        alias = aliases.get(prefix + name)
+        if alias is not None:
+            yield click.shell_completion.CompletionItem(name, help=short_help_of(alias))
+            continue
+        command = group.get_command(ctx, name)
+        if command is not None and not command.hidden:
+            yield click.shell_completion.CompletionItem(
+                name, help=command.get_short_help_str()
+            )
+
+
 class Group(
     click_didyoumean.DYMMixin,
     MissingDocumentationMixin,
@@ -934,6 +953,11 @@ class Group(
             res += self.original_command.list_commands(ctx)
         res = [(c.split(".")[0] if "." in c else c) for c in res]
         return sorted(set(res))
+
+    def shell_complete(self, ctx, incomplete):
+        return list(complete_commands(self, ctx, incomplete, self.path + ".")) + list(
+            click.Command.shell_complete(self, ctx, incomplete)
+        )
 
     def get_command(self, ctx, cmd_name):
         # type: (click.Context, str) -> Command
@@ -1537,6 +1561,11 @@ class MainCommand(
                     self.commandresolvers, self.path, include_subcommands=True
                 )
             }
+        )
+
+    def shell_complete(self, ctx, incomplete):
+        return list(complete_commands(self, ctx, incomplete, "")) + list(
+            click.Command.shell_complete(self, ctx, incomplete)
         )
 
     def get_command(self, ctx, name):

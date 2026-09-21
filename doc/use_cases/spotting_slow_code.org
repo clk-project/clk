@@ -134,6 +134,79 @@ I have a command that feels slow and I want to find out why.
   method time.sleep}~ with 3 seconds of cumulative time, confirming where
   the bottleneck is.
 
+* three hundred aliases and a tab key
+  :PROPERTIES:
+  :CREATED:  [2026-09-21 08:00]
+  :CUSTOM_ID: completion-time
+  :END:
+
+  #+NAME: real-time
+  #+BEGIN_SRC bash :results none :exports none :session a18bd457-477f-4454-af0d-1e6f91277820
+    stop_faked_time
+  #+END_SRC
+
+  My configuration has grown. Rather than set three hundred aliases one by one,
+  I write them straight into the settings, trailing comma and all:
+
+  #+NAME: many-aliases
+  #+BEGIN_SRC bash :results none :exports code :session a18bd457-477f-4454-af0d-1e6f91277820
+    {
+        echo '{'
+        echo '    "alias": {'
+        for i in $(seq -w 0 299)
+        do
+            echo "        \"a${i}\": {\"commands\": [[\"echo\", \"a${i}\"]]},"
+        done
+        echo '    }'
+        echo '}'
+    } > "${CLKCONFIGDIR}/clk.json5"
+  #+END_SRC
+
+  Tab on ~a29~ offers the ten it stands for.
+
+  #+NAME: complete-a29
+  #+BEGIN_SRC bash :results verbatim :exports both :session a18bd457-477f-4454-af0d-1e6f91277820 :cache yes
+    clk completion try --last clk a29
+  #+END_SRC
+
+  #+RESULTS[]: complete-a29
+  : a290
+  : a291
+  : a292
+  : a293
+  : a294
+  : a295
+  : a296
+  : a297
+  : a298
+  : a299
+
+  Does that tab wait on the two hundred and ninety others? I time it twice, once
+  against my aliases and once against a configuration holding nothing. Both
+  measurements move with the machine, so their comparison holds on any of mine.
+
+  #+NAME: time-completion
+  #+BEGIN_SRC bash :results verbatim :exports both :session a18bd457-477f-4454-af0d-1e6f91277820 :cache yes
+    fastest () {
+        local best=999999 start elapsed
+        for _ in 1 2 3
+        do
+            start=$(date +%s%N)
+            "$@" > /dev/null 2>&1
+            elapsed=$(( ($(date +%s%N) - start) / 1000000 ))
+            test "${elapsed}" -lt "${best}" && best="${elapsed}"
+        done
+        echo "${best}"
+    }
+    mine=$(fastest clk completion try --last clk a29)
+    bare=$(CLKCONFIGDIR="$(mktemp -d)" fastest clk completion try --last clk a29)
+    test "${mine}" -lt "$(( bare * 2 ))" \
+        && echo "my three hundred aliases cost less than starting clk at all"
+  #+END_SRC
+
+  #+RESULTS[]: time-completion
+  : my three hundred aliases cost less than starting clk at all
+
 #+NAME: run
 #+BEGIN_SRC bash :exports none :tangle ../../tests/use_cases/spotting_slow_code.sh :noweb yes :shebang "#!/usr/bin/env bash"
   set -eu
@@ -143,4 +216,8 @@ I have a command that feels slow and I want to find out why.
   check-result(run-with-timestamp)
   check-result(run-with-debug-timestamp)
   check-result(run-with-profiling)
+  <<real-time>>
+  <<many-aliases>>
+  check-result(complete-a29)
+  check-result(time-completion)
 #+END_SRC

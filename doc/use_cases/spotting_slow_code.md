@@ -3,6 +3,7 @@
 - [adding &ndash;timestamp to spot the bottleneck](#with-timestamp)
 - [adding &ndash;debug for the full picture](#with-debug-timestamp)
 - [going deeper with &ndash;profiling](#with-profiling)
+- [three hundred aliases and a tab key](#completion-time)
 
 I have a command that feels slow and I want to find out why.
 
@@ -91,3 +92,62 @@ clk --profiling slowcmd 2>&1 | grep sleep
     1    0.000    0.000    0.000    0.000 clk/core.py:0(_fake_sleep)
 
 Here `_fake_sleep` appears because the test environment replaces `time.sleep` with a fake. In real life, the output would show `{built-in method time.sleep}` with 3 seconds of cumulative time, confirming where the bottleneck is.
+
+
+<a id="completion-time"></a>
+
+# three hundred aliases and a tab key
+
+My configuration has grown. Rather than set three hundred aliases one by one, I write them straight into the settings, trailing comma and all:
+
+```bash
+{
+    echo '{'
+    echo '    "alias": {'
+    for i in $(seq -w 0 299)
+    do
+        echo "        \"a${i}\": {\"commands\": [[\"echo\", \"a${i}\"]]},"
+    done
+    echo '    }'
+    echo '}'
+} > "${CLKCONFIGDIR}/clk.json5"
+```
+
+Tab on `a29` offers the ten it stands for.
+
+```bash
+clk completion try --last clk a29
+```
+
+    a290
+    a291
+    a292
+    a293
+    a294
+    a295
+    a296
+    a297
+    a298
+    a299
+
+Does that tab wait on the two hundred and ninety others? I time it twice, once against my aliases and once against a configuration holding nothing. Both measurements move with the machine, so their comparison holds on any of mine.
+
+```bash
+fastest () {
+    local best=999999 start elapsed
+    for _ in 1 2 3
+    do
+        start=$(date +%s%N)
+        "$@" > /dev/null 2>&1
+        elapsed=$(( ($(date +%s%N) - start) / 1000000 ))
+        test "${elapsed}" -lt "${best}" && best="${elapsed}"
+    done
+    echo "${best}"
+}
+mine=$(fastest clk completion try --last clk a29)
+bare=$(CLKCONFIGDIR="$(mktemp -d)" fastest clk completion try --last clk a29)
+test "${mine}" -lt "$(( bare * 2 ))" \
+    && echo "my three hundred aliases cost less than starting clk at all"
+```
+
+    my three hundred aliases cost less than starting clk at all

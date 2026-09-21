@@ -141,4 +141,96 @@ else
         exit 1
     }
 fi
+
+stop_faked_time
+{
+    echo '{'
+    echo '    "alias": {'
+    for i in $(seq -w 0 299)
+    do
+        echo "        \"a${i}\": {\"commands\": [[\"echo\", \"a${i}\"]]},"
+    done
+    echo '    }'
+    echo '}'
+} > "${CLKCONFIGDIR}/clk.json5"
+
+complete-a29_code () {
+      clk completion try --last clk a29
+}
+
+complete-a29_expected () {
+      local expected
+      expected="$(cat<<"EOEXPECTED"
+a290
+a291
+a292
+a293
+a294
+a295
+a296
+a297
+a298
+a299
+EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
+}
+
+echo 'Run complete-a29'
+
+{ complete-a29_code || true ; } > "${TMP}/code.txt" 2>&1
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/complete-a29"
+else
+    complete-a29_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying complete-a29"
+        exit 1
+    }
+fi
+
+
+time-completion_code () {
+      fastest () {
+          local best=999999 start elapsed
+          for _ in 1 2 3
+          do
+              start=$(date +%s%N)
+              "$@" > /dev/null 2>&1
+              elapsed=$(( ($(date +%s%N) - start) / 1000000 ))
+              test "${elapsed}" -lt "${best}" && best="${elapsed}"
+          done
+          echo "${best}"
+      }
+      mine=$(fastest clk completion try --last clk a29)
+      bare=$(CLKCONFIGDIR="$(mktemp -d)" fastest clk completion try --last clk a29)
+      test "${mine}" -lt "$(( bare * 2 ))" \
+          && echo "my three hundred aliases cost less than starting clk at all"
+}
+
+time-completion_expected () {
+      local expected
+      expected="$(cat<<"EOEXPECTED"
+my three hundred aliases cost less than starting clk at all
+EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
+}
+
+echo 'Run time-completion'
+
+{ time-completion_code || true ; } > "${TMP}/code.txt" 2>&1
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/time-completion"
+else
+    time-completion_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying time-completion"
+        exit 1
+    }
+fi
 # run ends here

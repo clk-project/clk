@@ -206,6 +206,9 @@ def execute_flow_dependencies(cmd, flow_from=None, flow_after=None):
 
 
 def has_flow(cmd):
+    if "." not in cmd and not flowdeps[cmd]:
+        # nothing declares a dependency and there is no parent to inherit from
+        return False
     with temp_config():
         return get_flow_commands_to_run(cmd) != []
 
