@@ -196,6 +196,98 @@ clk server check || echo $?
 : no answer from myserver
 : 7
 
+Let's take a look at what it logged now.
+
+For the sake of the demonstration, let's mock journalctl.
+
+#+NAME: fake-journalctl
+#+BEGIN_SRC bash :results none :exports code
+  if test "$2" = myserver
+  then
+      echo 'myserver: started'
+      echo 'myserver: listening on 443'
+      exit 0
+  fi
+  echo "Failed to get unit: Unit $2.service not loaded." >&2
+  exit 4
+#+END_SRC
+
+#+NAME: install-fake-journalctl
+#+BEGIN_SRC bash :results none :exports none :session 85c8e385-7f24-48ac-9a85-30cfc354aebf :noweb yes
+  mkdir -p "${TMP}/bin"
+  export PATH="${TMP}/bin:${PATH}"
+  cat <<"EOF" > "${TMP}/bin/journalctl"
+  #!/usr/bin/env bash
+  <<fake-journalctl>>
+  EOF
+  chmod +x "${TMP}/bin/journalctl"
+#+END_SRC
+
+~check_output~ hands me what it printed.
+
+#+NAME: logs-code
+#+BEGIN_SRC python :results none :exports code
+  from clk.decorators import argument, flag, group
+  from clk.lib import check_output, safe_check_output
+
+
+  @group()
+  def server():
+      """Look after my server"""
+
+
+  @server.command()
+  @argument("unit", help="The service to read")
+  @flag("--never-mind", help="Take silence for an answer")
+  def logs(unit, never_mind):
+      """Show what the service last said"""
+      if never_mind:
+          print(safe_check_output(["journalctl", "--unit", unit]).strip() or "no news")
+      else:
+          print(check_output(["journalctl", "--unit", unit]).strip())
+#+END_SRC
+
+#+NAME: create-logs
+#+BEGIN_SRC bash :results none :exports none :session 85c8e385-7f24-48ac-9a85-30cfc354aebf :noweb yes
+  cat > "${TMP}/server.py" <<'EOF'
+  <<logs-code>>
+  EOF
+  clk command create python server --group --force --from-file "${TMP}/server.py"
+#+END_SRC
+
+#+NAME: logs-myserver
+#+BEGIN_SRC bash :results verbatim :exports both :session 85c8e385-7f24-48ac-9a85-30cfc354aebf :cache yes
+clk server logs myserver
+#+END_SRC
+
+#+RESULTS[]: logs-myserver
+: myserver: started
+: myserver: listening on 443
+
+Let's ask for a unit that is not there. journalctl fails, and clk hands me its
+exit code.
+
+#+NAME: logs-nowhere
+#+BEGIN_SRC bash :results verbatim :exports both :session 85c8e385-7f24-48ac-9a85-30cfc354aebf :cache yes
+clk server logs nowhere 2>&1 || echo $?
+#+END_SRC
+
+#+RESULTS[]: logs-nowhere
+: Failed to get unit: Unit nowhere.service not loaded.
+: error: journalctl --unit nowhere exited with 4
+: 4
+
+Read in a loop, I'd rather it kept quiet, and ~safe_check_output~ answers the
+empty string instead.
+
+#+NAME: logs-never-mind
+#+BEGIN_SRC bash :results verbatim :exports both :session 85c8e385-7f24-48ac-9a85-30cfc354aebf :cache yes
+clk server logs --never-mind nowhere
+#+END_SRC
+
+#+RESULTS[]: logs-never-mind
+: no news
+
 * when I stop it in the middle
   :PROPERTIES:
   :CUSTOM_ID: when-i-stop-it-in-the-middle
@@ -409,6 +501,16 @@ check-result(help)
 check-result(use_it)
 
 check-result(exit-7)
+
+<<install-fake-journalctl>>
+
+<<create-logs>>
+
+check-result(logs-myserver)
+
+check-result(logs-nowhere)
+
+check-result(logs-never-mind)
 
 <<trap-code>>
 

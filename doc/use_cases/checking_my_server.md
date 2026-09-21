@@ -157,6 +157,69 @@ clk server check || echo $?
     no answer from myserver
     7
 
+Let's take a look at what it logged now.
+
+For the sake of the demonstration, let's mock journalctl.
+
+```bash
+if test "$2" = myserver
+then
+    echo 'myserver: started'
+    echo 'myserver: listening on 443'
+    exit 0
+fi
+echo "Failed to get unit: Unit $2.service not loaded." >&2
+exit 4
+```
+
+`check_output` hands me what it printed.
+
+```python
+from clk.decorators import argument, flag, group
+from clk.lib import check_output, safe_check_output
+
+
+@group()
+def server():
+    """Look after my server"""
+
+
+@server.command()
+@argument("unit", help="The service to read")
+@flag("--never-mind", help="Take silence for an answer")
+def logs(unit, never_mind):
+    """Show what the service last said"""
+    if never_mind:
+        print(safe_check_output(["journalctl", "--unit", unit]).strip() or "no news")
+    else:
+        print(check_output(["journalctl", "--unit", unit]).strip())
+```
+
+```bash
+clk server logs myserver
+```
+
+    myserver: started
+    myserver: listening on 443
+
+Let's ask for a unit that is not there. journalctl fails, and clk hands me its exit code.
+
+```bash
+clk server logs nowhere 2>&1 || echo $?
+```
+
+    Failed to get unit: Unit nowhere.service not loaded.
+    error: journalctl --unit nowhere exited with 4
+    4
+
+Read in a loop, I'd rather it kept quiet, and `safe_check_output` answers the empty string instead.
+
+```bash
+clk server logs --never-mind nowhere
+```
+
+    no news
+
 
 <a id="when-i-stop-it-in-the-middle"></a>
 

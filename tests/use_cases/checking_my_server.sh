@@ -241,6 +241,136 @@ else
 fi
 
 
+mkdir -p "${TMP}/bin"
+export PATH="${TMP}/bin:${PATH}"
+cat <<"EOF" > "${TMP}/bin/journalctl"
+#!/usr/bin/env bash
+if test "$2" = myserver
+then
+    echo 'myserver: started'
+    echo 'myserver: listening on 443'
+    exit 0
+fi
+echo "Failed to get unit: Unit $2.service not loaded." >&2
+exit 4
+EOF
+chmod +x "${TMP}/bin/journalctl"
+
+cat > "${TMP}/server.py" <<'EOF'
+from clk.decorators import argument, flag, group
+from clk.lib import check_output, safe_check_output
+
+
+@group()
+def server():
+    """Look after my server"""
+
+
+@server.command()
+@argument("unit", help="The service to read")
+@flag("--never-mind", help="Take silence for an answer")
+def logs(unit, never_mind):
+    """Show what the service last said"""
+    if never_mind:
+        print(safe_check_output(["journalctl", "--unit", unit]).strip() or "no news")
+    else:
+        print(check_output(["journalctl", "--unit", unit]).strip())
+EOF
+clk command create python server --group --force --from-file "${TMP}/server.py"
+
+
+logs-myserver_code () {
+      clk server logs myserver
+}
+
+logs-myserver_expected () {
+      local expected
+      expected="$(cat<<"EOEXPECTED"
+myserver: started
+myserver: listening on 443
+EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
+}
+
+echo 'Run logs-myserver'
+
+{ logs-myserver_code || true ; } > "${TMP}/code.txt" 2>&1
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/logs-myserver"
+else
+    logs-myserver_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying logs-myserver"
+        exit 1
+    }
+fi
+
+
+
+logs-nowhere_code () {
+      clk server logs nowhere 2>&1 || echo $?
+}
+
+logs-nowhere_expected () {
+      local expected
+      expected="$(cat<<"EOEXPECTED"
+Failed to get unit: Unit nowhere.service not loaded.
+error: journalctl --unit nowhere exited with 4
+4
+EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
+}
+
+echo 'Run logs-nowhere'
+
+{ logs-nowhere_code || true ; } > "${TMP}/code.txt" 2>&1
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/logs-nowhere"
+else
+    logs-nowhere_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying logs-nowhere"
+        exit 1
+    }
+fi
+
+
+
+logs-never-mind_code () {
+      clk server logs --never-mind nowhere
+}
+
+logs-never-mind_expected () {
+      local expected
+      expected="$(cat<<"EOEXPECTED"
+no news
+EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
+}
+
+echo 'Run logs-never-mind'
+
+{ logs-never-mind_code || true ; } > "${TMP}/code.txt" 2>&1
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/logs-never-mind"
+else
+    logs-never-mind_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying logs-never-mind"
+        exit 1
+    }
+fi
+
+
   clk command create bash --body "
   close_tunnel () {
 echo 'closing the tunnel'
