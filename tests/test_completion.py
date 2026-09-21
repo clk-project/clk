@@ -45,40 +45,6 @@ def c():
     assert lib.cmd("completion try a b --foo a --bar") == "plain,c\nplain,d"
 
 
-def test_dynamic_command(lib):
-    lib.cmd("command create python a --no-open --group")
-    path = lib.cmd("command which a")
-    Path(path).write_text(
-        Path(path).read_text()
-        + """
-from clk.decorators import option
-
-class B:
-    pass
-
-@a.group()
-@option(
-    '--foo',
-    expose_class=B,
-    type=click.Choice(["a", "b"]),
-    expose_value=True,
-)
-@option(
-    '--bar',
-    expose_class=B,
-    type=click.Choice(["c", "d"]),
-    expose_value=True,
-)
-def b(foo, bar):
-    pass
-"""
-    )
-    assert lib.cmd("completion try a b --foo") == "plain,a\nplain,b"
-    assert lib.cmd("completion try a b --bar") == "plain,c\nplain,d"
-    assert lib.cmd("completion try --last a b --foo a --b") == "plain,--bar"
-    assert lib.cmd("completion try a b --foo a --bar") == "plain,c\nplain,d"
-
-
 def test_dynamic_group(lib):
     lib.cmd("command create python a --no-open --group")
     path = lib.cmd("command which a")

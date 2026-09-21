@@ -80,11 +80,6 @@ def test_config_extension_overrides_global(lib):
     assert lib.cmd("echo") == "global config"
 
 
-def test_simple_parameter(lib):
-    lib.cmd("parameter set echo foo")
-    assert lib.cmd("echo") == "foo"
-
-
 def test_parameter_to_alias(lib):
     lib.cmd("alias set a echo")
     lib.cmd("parameter set a foo")

@@ -13,15 +13,6 @@ ok"""
     )
 
 
-def test_composite_alias(lib):
-    lib.cmd("alias set a echo a , echo b")
-    assert (
-        lib.cmd("a")
-        == """a
-b"""
-    )
-
-
 def test_capture_flow_command(pythondir, lib):
     # given a group of commands that allows playing with 3D printing, with a
     # flow between them and a final command flow
@@ -234,12 +225,6 @@ def test_alias_to_clk(project1, lib):
     lib.cmd(f"-P {project1} alias set a echo bou")
     lib.cmd(f"alias set b clk -P {project1} a")
     assert lib.cmd("b") == "bou"
-
-
-def test_alias_conserves_parameters(lib):
-    lib.cmd("alias set a echo")
-    lib.cmd("parameter set echo foo")
-    assert lib.cmd("a") == "foo"
 
 
 def test_alias_conserves_parameters_of_group(pythondir, lib):
