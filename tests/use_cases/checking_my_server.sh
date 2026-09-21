@@ -371,6 +371,48 @@ else
 fi
 
 
+cat >> "${CLKCONFIGDIR}/python/server.py" <<'EOF'
+
+
+from clk.lib import is_port_available
+
+@server.command()
+@argument("port", type=int, help="The port the tunnel would take")
+def port(port):
+    """Say whether the tunnel can have that port"""
+    print("free" if is_port_available(port) else "taken")
+EOF
+
+
+run-port_code () {
+      clk server port 8443
+}
+
+run-port_expected () {
+      local expected
+      expected="$(cat<<"EOEXPECTED"
+free
+EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
+}
+
+echo 'Run run-port'
+
+{ run-port_code || true ; } > "${TMP}/code.txt" 2>&1
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/run-port"
+else
+    run-port_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying run-port"
+        exit 1
+    }
+fi
+
+
   clk command create bash --body "
   close_tunnel () {
 echo 'closing the tunnel'

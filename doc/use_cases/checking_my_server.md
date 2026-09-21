@@ -225,7 +225,23 @@ clk server logs --never-mind nowhere
 
 # when I stop it in the middle
 
-Watching the server rather than asking it once means opening a tunnel and keeping it open. Whatever I do next, that tunnel has to go, so the command puts it in a trap, and clk will try to respect it.
+Watching the server rather than asking it once means opening a tunnel and keeping it open. Let's make sure nothing is on that port already.
+
+```python
+@server.command()
+@argument("port", type=int, help="The port the tunnel would take")
+def port(port):
+    """Say whether the tunnel can have that port"""
+    print("free" if is_port_available(port) else "taken")
+```
+
+```bash
+clk server port 8443
+```
+
+    free
+
+Whatever I do next, that tunnel has to go, so the command puts it in a trap, and clk will try to respect it.
 
 ```bash
   clk command create bash --body "
