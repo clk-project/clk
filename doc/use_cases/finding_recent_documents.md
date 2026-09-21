@@ -1,3 +1,5 @@
+- [how old they are](#how-old-they-are)
+
 Everything you scan, download or write ends up in the same folder, and after a while you have no idea what landed there this week.
 
 ```bash
@@ -35,3 +37,38 @@ clk find-new-documents yesterday
 ```
 
     receipt.txt
+
+
+<a id="how-old-they-are"></a>
+
+# how old they are
+
+Knowing what is new is one thing, knowing how old it is another, and `natural_time` says it the way you would.
+
+```python
+from datetime import datetime
+from pathlib import Path
+
+from clk.decorators import command
+from clk.lib import natural_delta, natural_time
+
+
+@command()
+def howold():
+    """Say how old the documents are"""
+    times = []
+    for path in sorted(Path(".").glob("*.txt")):
+        when = datetime.fromtimestamp(path.stat().st_mtime).astimezone()
+        times.append(when)
+        print(f"{path.name}: {natural_time(when)}")
+    print(f"{natural_delta(max(times) - min(times))} between the oldest and the newest")
+```
+
+```bash
+clk howold
+```
+
+    invoice.txt: 2 days ago
+    minutes.txt: 13 days ago
+    receipt.txt: 23 hours ago
+    13 days 0 hour between the oldest and the newest

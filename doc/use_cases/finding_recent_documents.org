@@ -87,6 +87,53 @@ clk find-new-documents yesterday
 #+RESULTS[]: since-yesterday
 : receipt.txt
 
+* how old they are
+  :PROPERTIES:
+  :CUSTOM_ID: how-old-they-are
+  :END:
+
+Knowing what is new is one thing, knowing how old it is another, and
+~natural_time~ says it the way you would.
+
+#+NAME: howold-code
+#+BEGIN_SRC python :results none :exports code
+  from datetime import datetime
+  from pathlib import Path
+
+  from clk.decorators import command
+  from clk.lib import natural_delta, natural_time
+
+
+  @command()
+  def howold():
+      """Say how old the documents are"""
+      times = []
+      for path in sorted(Path(".").glob("*.txt")):
+          when = datetime.fromtimestamp(path.stat().st_mtime).astimezone()
+          times.append(when)
+          print(f"{path.name}: {natural_time(when)}")
+      print(f"{natural_delta(max(times) - min(times))} between the oldest and the newest")
+#+END_SRC
+
+#+NAME: write-howold
+#+BEGIN_SRC bash :results none :exports none :session 25f8c49f-c030-4a45-8b6a-18f1cfffe542 :noweb yes
+  cat > "${TMP}/howold.py" <<'EOF'
+  <<howold-code>>
+  EOF
+  clk command create python howold --force --from-file "${TMP}/howold.py"
+#+END_SRC
+
+#+NAME: run-howold
+#+BEGIN_SRC bash :results verbatim :exports both :session 25f8c49f-c030-4a45-8b6a-18f1cfffe542 :cache yes
+clk howold
+#+END_SRC
+
+#+RESULTS[]: run-howold
+: invoice.txt: 2 days ago
+: minutes.txt: 13 days ago
+: receipt.txt: 23 hours ago
+: 13 days 0 hour between the oldest and the newest
+
 #+BEGIN_SRC bash :exports none :tangle ../../tests/use_cases/finding_recent_documents.sh :noweb yes :shebang "#!/usr/bin/env bash"
   set -eu
   <<init>>
@@ -98,4 +145,8 @@ clk find-new-documents yesterday
   check-result(since-a-written-day)
 
   check-result(since-yesterday)
+
+  <<write-howold>>
+
+  check-result(run-howold)
 #+END_SRC

@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# [[file:../../doc/use_cases/tests/use_cases/finding_recent_documents.sh :noweb yes :shebang "#!/usr/bin/env bash"][No heading:8]]
+# [[file:../../doc/use_cases/finding_recent_documents.org::#how-old-they-are][how old they are:4]]
 set -eu
 . ./sandboxing.sh
 init_faked_time
@@ -91,4 +91,57 @@ else
         exit 1
     }
 fi
-# No heading:8 ends here
+
+
+cat > "${TMP}/howold.py" <<'EOF'
+from datetime import datetime
+from pathlib import Path
+
+from clk.decorators import command
+from clk.lib import natural_delta, natural_time
+
+
+@command()
+def howold():
+    """Say how old the documents are"""
+    times = []
+    for path in sorted(Path(".").glob("*.txt")):
+        when = datetime.fromtimestamp(path.stat().st_mtime).astimezone()
+        times.append(when)
+        print(f"{path.name}: {natural_time(when)}")
+    print(f"{natural_delta(max(times) - min(times))} between the oldest and the newest")
+EOF
+clk command create python howold --force --from-file "${TMP}/howold.py"
+
+
+run-howold_code () {
+      clk howold
+}
+
+run-howold_expected () {
+      local expected
+      expected="$(cat<<"EOEXPECTED"
+invoice.txt: 2 days ago
+minutes.txt: 13 days ago
+receipt.txt: 23 hours ago
+13 days 0 hour between the oldest and the newest
+EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
+}
+
+echo 'Run run-howold'
+
+{ run-howold_code || true ; } > "${TMP}/code.txt" 2>&1
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/run-howold"
+else
+    run-howold_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying run-howold"
+        exit 1
+    }
+fi
+# how old they are:4 ends here
