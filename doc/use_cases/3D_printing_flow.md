@@ -170,6 +170,33 @@ clk printer send myprinter --flow-after printer.slice
 
     Printing model.gcode using myprinter
 
+The gcode file is named twice, once by slice and once by send. Let's put it in a value and have both parameters read it.
+
+```bash
+clk value set gcode print.gcode
+clk parameter set printer.slice --model someothermodel --output noeval:value:gcode
+clk parameter set printer.send --gcode noeval:value:gcode
+clk printer send myprinter --flow
+```
+
+    Removing global parameters of printer.slice: --model someothermodel
+    New global parameters for printer.slice: --model someothermodel --output value:gcode
+    New global parameters for printer.send: --gcode value:gcode
+    Running some stuff for the printer to be ready to go
+    Slicing someothermodel to print.gcode
+    Printing print.gcode using myprinter
+
+Let's rename the file, in one place.
+
+```bash
+clk value set gcode other.gcode
+clk printer send myprinter --flow
+```
+
+    Running some stuff for the printer to be ready to go
+    Slicing someothermodel to other.gcode
+    Printing other.gcode using myprinter
+
 Here, your mileage may vary. Choose the implementation that suits you better.
 
 

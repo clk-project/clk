@@ -231,6 +231,81 @@ fi
 
 
 
+gcode-in-value_code () {
+      clk value set gcode print.gcode
+      clk parameter set printer.slice --model someothermodel --output noeval:value:gcode
+      clk parameter set printer.send --gcode noeval:value:gcode
+      clk printer send myprinter --flow
+}
+
+gcode-in-value_expected () {
+      local expected
+      expected="$(cat<<"EOEXPECTED"
+Removing global parameters of printer.slice: --model someothermodel
+New global parameters for printer.slice: --model someothermodel --output value:gcode
+New global parameters for printer.send: --gcode value:gcode
+Running some stuff for the printer to be ready to go
+Slicing someothermodel to print.gcode
+Printing print.gcode using myprinter
+EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
+}
+
+echo 'Run gcode-in-value'
+
+{ gcode-in-value_code || true ; } > "${TMP}/code.txt" 2>&1
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/gcode-in-value"
+else
+    gcode-in-value_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying gcode-in-value"
+        exit 1
+    }
+fi
+
+
+
+move-gcode-value_code () {
+      clk value set gcode other.gcode
+      clk printer send myprinter --flow
+}
+
+move-gcode-value_expected () {
+      local expected
+      expected="$(cat<<"EOEXPECTED"
+Running some stuff for the printer to be ready to go
+Slicing someothermodel to other.gcode
+Printing other.gcode using myprinter
+EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
+}
+
+echo 'Run move-gcode-value'
+
+{ move-gcode-value_code || true ; } > "${TMP}/code.txt" 2>&1
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/move-gcode-value"
+else
+    move-gcode-value_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying move-gcode-value"
+        exit 1
+    }
+fi
+
+
+clk parameter set printer.slice --model someothermodel
+clk parameter unset printer.send
+clk value unset gcode
+
+
 flowdep-show_code () {
       clk flowdep show printer.send --all
 }

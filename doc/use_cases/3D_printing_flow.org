@@ -235,6 +235,45 @@ clk printer send myprinter --flow-after printer.slice
 #+RESULTS[]: running-the-flow-after
 : Printing model.gcode using myprinter
 
+The gcode file is named twice, once by slice and once by send. Let's put it in a
+value and have both parameters read it.
+
+#+NAME: gcode-in-value
+#+BEGIN_SRC bash :results verbatim :exports both :session 73f5d57e-d16a-490a-b4e1-0254d6296590 :cache yes
+clk value set gcode print.gcode
+clk parameter set printer.slice --model someothermodel --output noeval:value:gcode
+clk parameter set printer.send --gcode noeval:value:gcode
+clk printer send myprinter --flow
+#+END_SRC
+
+#+RESULTS[]: gcode-in-value
+: Removing global parameters of printer.slice: --model someothermodel
+: New global parameters for printer.slice: --model someothermodel --output value:gcode
+: New global parameters for printer.send: --gcode value:gcode
+: Running some stuff for the printer to be ready to go
+: Slicing someothermodel to print.gcode
+: Printing print.gcode using myprinter
+
+Let's rename the file, in one place.
+
+#+NAME: move-gcode-value
+#+BEGIN_SRC bash :results verbatim :exports both :session 73f5d57e-d16a-490a-b4e1-0254d6296590 :cache yes
+clk value set gcode other.gcode
+clk printer send myprinter --flow
+#+END_SRC
+
+#+RESULTS[]: move-gcode-value
+: Running some stuff for the printer to be ready to go
+: Slicing someothermodel to other.gcode
+: Printing other.gcode using myprinter
+
+#+NAME: cleanup-gcode-value
+#+BEGIN_SRC bash :results none :exports none :session 73f5d57e-d16a-490a-b4e1-0254d6296590
+clk parameter set printer.slice --model someothermodel
+clk parameter unset printer.send
+clk value unset gcode
+#+END_SRC
+
 Here, your mileage may vary. Choose the implementation that suits you better.
 
 * more information about the flow
@@ -610,6 +649,12 @@ Beware that this means that you have to check that this command it actually defi
   check-result(running-the-flow-from)
 
   check-result(running-the-flow-after)
+
+  check-result(gcode-in-value)
+
+  check-result(move-gcode-value)
+
+  <<cleanup-gcode-value>>
 
   check-result(flowdep-show)
 
