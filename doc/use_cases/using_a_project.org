@@ -499,6 +499,22 @@ clk alias show 2>&1
 #+RESULTS[]: run_with_broken_settings
 : warning: Can't read settings from ./.clk/clk.json5
 
+* a project you name that is not there
+  :PROPERTIES:
+  :CUSTOM_ID: a-project-you-name-that-is-not-there
+  :END:
+
+You can name the project by hand with ~--project~, and one day the one you name
+has been moved away. clk says so and goes on without it.
+
+#+NAME: run_with_gone_project
+#+BEGIN_SRC bash :results verbatim :exports both :session 6de55de4-c0b3-41d6-952a-25e0fe06c881 :cache yes
+clk --project ../movedaway alias show 2>&1
+#+END_SRC
+
+#+RESULTS[]: run_with_gone_project
+: critical: ../movedaway does not exist. It will be ignored.
+
 #+NAME: run
 #+BEGIN_SRC bash :results none :exports none :tangle ../../tests/use_cases/using_a_project.sh :noweb yes :shebang "#!/usr/bin/env bash"
   set -eu
@@ -577,4 +593,6 @@ check-result(run_from_the_past)
 <<break_settings>>
 
 check-result(run_with_broken_settings)
+
+check-result(run_with_gone_project)
 #+END_SRC

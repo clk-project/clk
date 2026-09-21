@@ -837,4 +837,34 @@ else
         exit 1
     }
 fi
+
+
+
+run_with_gone_project_code () {
+      clk --project ../movedaway alias show 2>&1
+}
+
+run_with_gone_project_expected () {
+      local expected
+      expected="$(cat<<"EOEXPECTED"
+critical: ../movedaway does not exist. It will be ignored.
+EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
+}
+
+echo 'Run run_with_gone_project'
+
+{ run_with_gone_project_code || true ; } > "${TMP}/code.txt" 2>&1
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/run_with_gone_project"
+else
+    run_with_gone_project_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying run_with_gone_project"
+        exit 1
+    }
+fi
 # run ends here

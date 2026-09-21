@@ -3,6 +3,7 @@
 - [a project written by an older clk](#a-project-written-by-an-older-clk)
 - [a project written by a newer clk](#a-project-written-by-a-newer-clk)
 - [settings you broke by hand](#settings-you-broke-by-hand)
+- [a project you name that is not there](#a-project-you-name-that-is-not-there)
 
 When working in project, it is useful to have a way to tell where the root of the project is.
 
@@ -339,3 +340,16 @@ clk alias show 2>&1
 ```
 
     warning: Can't read settings from ./.clk/clk.json5
+
+
+<a id="a-project-you-name-that-is-not-there"></a>
+
+# a project you name that is not there
+
+You can name the project by hand with `--project`, and one day the one you name has been moved away. clk says so and goes on without it.
+
+```bash
+clk --project ../movedaway alias show 2>&1
+```
+
+    critical: ../movedaway does not exist. It will be ignored.
