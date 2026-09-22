@@ -6,6 +6,7 @@
                                                       ("^Edit tests/use_cases/" . "Never touch that file. It is tangled from ./doc/use_cases/")
                                                       ("^\\./export\\.sh" . "./tangle-n-export.sh")
                                                       ("^clk python -m pytest" . "use clk test")
+                                                      ("@mcp(mcp__konix-coord__coord_sleep)" . "gh run watch")
                                                       ))
          (konix/agent-shell-tool-whitelist-project . (("^rm -f tests/\\.coverage\\.\\*" . "")
                                                       ("^clk test" . "")
