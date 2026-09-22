@@ -14,7 +14,6 @@ import click
 import click_didyoumean
 from click.core import UNSET
 from click.exceptions import MissingParameter
-from click.utils import make_default_short_help
 
 import clk.completion
 from clk.click_helpers import click_get_current_context_safe
@@ -441,9 +440,7 @@ class HelpMixin:
         super().__init__(*args, **kwargs)
         if self.help and "short_help" not in kwargs.keys():
             # just keep the first line of the help in the short help
-            self.short_help = make_default_short_help(
-                self.help.splitlines()[0], max_length=90
-            )
+            self.short_help = self.help.splitlines()[0]
 
         def show_help(ctx, param, value):
             if value and not ctx.resilient_parsing:
@@ -837,13 +834,6 @@ class Group(
         super().__init__(*args, **kwargs)
 
         self.path = None
-        if (
-            self.help
-            and self.short_help.endswith("...")
-            and "short_help" not in kwargs.keys()
-        ):
-            # just keep the first line of the help in the short help
-            self.short_help = self.help.splitlines()[0]
 
     def format_help_text(self, ctx, formatter):
         super().format_help_text(ctx, formatter)
