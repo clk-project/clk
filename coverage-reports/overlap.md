@@ -2,10 +2,10 @@
 
 ## Summary
 
-- **Total tests:** 109
-- **Full subsets (100%):** 89
-- **High overlap (≥75%):** 4875
-- **Significant overlap (≥50%):** 5005
+- **Total tests:** 101
+- **Full subsets (100%):** 26
+- **High overlap (≥75%):** 3949
+- **Significant overlap (≥50%):** 4079
 
 ## Full Subsets (100% overlap)
 
@@ -13,158 +13,92 @@ These tests have coverage completely contained within another test:
 
 | Test | Contained In | Lines |
 |------|--------------|-------|
-| alias:alias_conserves_parameters | parameter:parameter_to_alias | 2983 |
-| parameter:simple_parameter | alias:alias_conserves_parameters | 2709 |
-| alias:alias_conserves_parameters_of_group | alias:alias_conserves_parameters_of_group_with_exposed_class | 3058 |
-| alias:alias_conserves_parameters_of_group | alias:alias_overrides_parameters | 3058 |
-| alias:alias_conserves_parameters_of_group_with_exposed_class | alias:alias_overrides_parameters | 3067 |
-| command:dynamic_default_value | alias:alias_conserves_parameters_of_group_with_exposed_class | 2340 |
-| command:dynamic_default_value_callback | alias:alias_conserves_parameters_of_group_with_exposed_class | 2340 |
-| command:dynamic_default_value_callback_that_depends_on_another_param | alias:alias_conserves_parameters_of_group_with_exposed_class | 2349 |
-| command:dynamic_option | alias:alias_conserves_parameters_of_group_with_exposed_class | 2349 |
-| command:dynamic_default_value | alias:alias_overrides_parameters | 2340 |
-| command:dynamic_default_value_callback | alias:alias_overrides_parameters | 2340 |
-| command:dynamic_default_value_callback_that_depends_on_another_param | alias:alias_overrides_parameters | 2349 |
-| command:dynamic_option | alias:alias_overrides_parameters | 2349 |
-| alias:composite_alias | alias:simple_alias_command | 2926 |
-| alias:simple_alias_command | alias:composite_alias | 2926 |
-| command:dynamic_default_value | command:dynamic_default_value_callback | 2340 |
-| command:dynamic_default_value_callback | command:dynamic_default_value | 2340 |
-| command:dynamic_default_value | command:dynamic_default_value_callback_that_depends_on_another_param | 2340 |
-| command:dynamic_default_value | command:dynamic_option | 2340 |
-| command:dynamic_default_value_callback | command:dynamic_default_value_callback_that_depends_on_another_param | 2340 |
-| command:dynamic_default_value_callback | command:dynamic_option | 2340 |
-| command:dynamic_default_value_callback_that_depends_on_another_param | command:dynamic_option | 2349 |
-| command:dynamic_option | command:dynamic_default_value_callback_that_depends_on_another_param | 2349 |
-| completion:command | completion:completion_with_saved_parameter | 2965 |
-| completion:command | completion:dynamic_command | 2965 |
-| completion:command | completion:dynamic_group | 2965 |
-| completion:command | completion:group | 2965 |
-| completion:command | types:complete_date | 2965 |
-| completion:command | types:suggestion | 2965 |
-| custom:group_python | completion:completion_with_saved_parameter | 2885 |
-| completion:dynamic_command | completion:dynamic_group | 3019 |
-| completion:dynamic_group | completion:dynamic_command | 3019 |
-| completion:group | completion:dynamic_command | 3011 |
-| completion:group | completion:dynamic_group | 3011 |
-| custom:group_python | custom:simple_python | 2885 |
-| custom:group_python | types:date | 2885 |
-| custom:group_python | types:default_with_converter | 2885 |
-| custom:group_python | types:suggestion | 2885 |
-| parameter:simple_parameter | extension:copy_extension | 2709 |
-| parameter:simple_parameter | extension:move_extension | 2709 |
-| flow:overwrite_flow | flow:extend_flow | 3191 |
-| parameter:simple_parameter | parameter:config_extension_overrides_global | 2709 |
-| parameter:simple_parameter | parameter:parameter_precedence | 2709 |
-| parameter:simple_parameter | parameter:parameter_to_alias | 2709 |
-| parameter:simple_parameter | parameter:removing_parameters | 2709 |
-| parameter:removing_parameters | parameter:using_automatic_options | 2731 |
-| parameter:simple_parameter | parameter:replacing_parameters | 2709 |
-| parameter:simple_parameter | parameter:using_automatic_options | 2709 |
-| parameter:simple_parameter | parameter_eval:use_value_as_parameter | 2709 |
-| types:default_with_converter | types:date | 2887 |
-| types:default_with_converter | types:suggestion | 2887 |
-| use_cases:use_case[environment_deployment] | use_cases:use_case[3D_printing_flow] | 3241 |
-| use_cases:use_case[bash_command_built_in_lib] | use_cases:use_case[backing_up_documents] | 2843 |
-| use_cases:use_case[bash_command_import] | use_cases:use_case[backing_up_documents] | 3182 |
-| use_cases:use_case[environment_deployment] | use_cases:use_case[backing_up_documents] | 3241 |
-| use_cases:use_case[hello_world] | use_cases:use_case[backing_up_documents] | 3168 |
-| use_cases:use_case[multi_environment_deployment_tool] | use_cases:use_case[backing_up_documents] | 3247 |
-| use_cases:use_case[bash_command_built_in_lib] | use_cases:use_case[bash_command] | 2843 |
-| use_cases:use_case[bash_command_import] | use_cases:use_case[bash_command] | 3182 |
-| use_cases:use_case[hello_world] | use_cases:use_case[bash_command] | 3168 |
-| use_cases:use_case[bash_command_built_in_lib] | use_cases:use_case[bash_command_import] | 2843 |
-| use_cases:use_case[bash_command_built_in_lib] | use_cases:use_case[bash_command_use_option] | 2843 |
-| use_cases:use_case[bash_command_built_in_lib] | use_cases:use_case[choices] | 2843 |
-| use_cases:use_case[bash_command_built_in_lib] | use_cases:use_case[creating_extensions] | 2843 |
-| use_cases:use_case[bash_command_built_in_lib] | use_cases:use_case[ethereum_local_environment_dev_tool] | 2843 |
-| use_cases:use_case[bash_command_built_in_lib] | use_cases:use_case[global_workflow_local_implementation] | 2843 |
-| use_cases:use_case[bash_command_built_in_lib] | use_cases:use_case[hello_world] | 2843 |
-| use_cases:use_case[bash_command_built_in_lib] | use_cases:use_case[ipfs_name_publish] | 2843 |
-| use_cases:use_case[bash_command_built_in_lib] | use_cases:use_case[multi_environment_deployment_tool] | 2843 |
-| use_cases:use_case[bash_command_built_in_lib] | use_cases:use_case[self_documentation] | 2843 |
-| use_cases:use_case[bash_command_built_in_lib] | use_cases:use_case[send_sms] | 2843 |
-| use_cases:use_case[bash_command_built_in_lib] | use_cases:use_case[using_a_project] | 2843 |
-| use_cases:use_case[bash_command_built_in_lib] | use_cases:use_case[wrapping_a_cloud_provider_cli] | 2843 |
-| use_cases:use_case[bash_command_import] | use_cases:use_case[bash_command_use_option] | 3182 |
-| use_cases:use_case[bash_command_import] | use_cases:use_case[ipfs_name_publish] | 3182 |
-| use_cases:use_case[bash_command_import] | use_cases:use_case[multi_environment_deployment_tool] | 3182 |
-| use_cases:use_case[bash_command_import] | use_cases:use_case[send_sms] | 3182 |
-| use_cases:use_case[bash_command_import] | use_cases:use_case[using_a_project] | 3182 |
-| use_cases:use_case[bash_command_import] | use_cases:use_case[wrapping_a_cloud_provider_cli] | 3182 |
-| use_cases:use_case[hello_world] | use_cases:use_case[choices] | 3168 |
-| use_cases:use_case[hello_world] | use_cases:use_case[creating_extensions] | 3168 |
-| use_cases:use_case[dynamic_parameters_advanced_use_cases] | use_cases:use_case[dynamic_parameters_and_exposed_class] | 2968 |
-| use_cases:use_case[dynamic_parameters_advanced_use_cases] | use_cases:use_case[wrapping_a_cloud_provider_cli] | 2968 |
-| use_cases:use_case[environment_deployment] | use_cases:use_case[ethereum_local_environment_dev_tool] | 3241 |
-| use_cases:use_case[environment_deployment] | use_cases:use_case[podcast_automation] | 3241 |
-| use_cases:use_case[hello_world] | use_cases:use_case[ethereum_local_environment_dev_tool] | 3168 |
-| use_cases:use_case[hello_world] | use_cases:use_case[global_workflow_local_implementation] | 3168 |
-| use_cases:use_case[hello_world] | use_cases:use_case[ipfs_name_publish] | 3168 |
-| use_cases:use_case[hello_world] | use_cases:use_case[multi_environment_deployment_tool] | 3168 |
-| use_cases:use_case[hello_world] | use_cases:use_case[send_sms] | 3168 |
-| use_cases:use_case[hello_world] | use_cases:use_case[using_a_project] | 3168 |
-| use_cases:use_case[hello_world] | use_cases:use_case[wrapping_a_cloud_provider_cli] | 3168 |
-| use_cases:use_case[multi_environment_deployment_tool] | use_cases:use_case[wrapping_a_cloud_provider_cli] | 3247 |
+| alias:alias_conserves_parameters_of_group | alias:alias_conserves_parameters_of_group_with_exposed_class | 3061 |
+| alias:alias_conserves_parameters_of_group | alias:alias_overrides_parameters | 3061 |
+| alias:alias_conserves_parameters_of_group_with_exposed_class | alias:alias_overrides_parameters | 3070 |
+| command:dynamic_default_value | alias:alias_conserves_parameters_of_group_with_exposed_class | 2338 |
+| command:dynamic_default_value_callback | alias:alias_conserves_parameters_of_group_with_exposed_class | 2338 |
+| command:dynamic_default_value_callback_that_depends_on_another_param | alias:alias_conserves_parameters_of_group_with_exposed_class | 2347 |
+| command:dynamic_default_value | alias:alias_overrides_parameters | 2338 |
+| command:dynamic_default_value_callback | alias:alias_overrides_parameters | 2338 |
+| command:dynamic_default_value_callback_that_depends_on_another_param | alias:alias_overrides_parameters | 2347 |
+| command:dynamic_default_value | command:dynamic_default_value_callback | 2338 |
+| command:dynamic_default_value_callback | command:dynamic_default_value | 2338 |
+| command:dynamic_default_value | command:dynamic_default_value_callback_that_depends_on_another_param | 2338 |
+| command:dynamic_default_value_callback | command:dynamic_default_value_callback_that_depends_on_another_param | 2338 |
+| completion:command | completion:completion_with_saved_parameter | 2819 |
+| completion:command | completion:dynamic_group | 2819 |
+| completion:command | completion:group | 2819 |
+| completion:command | types:complete_date | 2819 |
+| completion:command | types:suggestion | 2819 |
+| custom:group_python | completion:completion_with_saved_parameter | 2739 |
+| completion:group | completion:dynamic_group | 2873 |
+| custom:group_python | custom:simple_python | 2739 |
+| custom:group_python | types:date | 2739 |
+| custom:group_python | types:default_with_converter | 2739 |
+| custom:group_python | types:suggestion | 2739 |
+| parameter:removing_parameters | parameter:using_automatic_options | 2739 |
+| types:default_with_converter | types:date | 2742 |
+| types:default_with_converter | types:suggestion | 2742 |
 
 ## High Overlap (≥75%)
 
 | Test A | Test B | A→B % | B→A % | Lines A | Lines B |
 |--------|--------|-------|-------|---------|---------|
-| alias:alias_conserves_parameters | parameter:replacing_parameters | 90.8% | 99.9% | 2983 | 2712 |
-| alias:alias_conserves_parameters_of_group | command:invoked_commands_still_work_even_though_they_are_no_customizable | 89.1% | 99.9% | 3058 | 2727 |
-| alias:alias_conserves_parameters_of_group_with_exposed_class | command:invoked_commands_still_work_even_though_they_are_no_customizable | 88.8% | 99.9% | 3067 | 2727 |
-| alias:alias_overrides_parameters | command:invoked_commands_still_work_even_though_they_are_no_customizable | 88.6% | 99.9% | 3075 | 2727 |
-| alias:capture_flow_command | alias:capture_partial_flow | 99.3% | 99.9% | 3045 | 3027 |
-| completion:completion_with_saved_parameter | types:default_with_converter | 94.4% | 99.9% | 3055 | 2887 |
-| completion:completion_with_saved_parameter | types:suggestion | 97.3% | 99.9% | 3055 | 2976 |
-| custom:simple_python | types:default_with_converter | 99.4% | 99.9% | 2901 | 2887 |
-| extension:copy_extension | parameter:config_extension_overrides_global | 96.5% | 99.9% | 3091 | 2986 |
-| extension:copy_extension | parameter:replacing_parameters | 87.7% | 99.9% | 3091 | 2712 |
-| extension:move_extension | parameter:config_extension_overrides_global | 96.2% | 99.9% | 3102 | 2986 |
-| extension:move_extension | parameter:replacing_parameters | 87.4% | 99.9% | 3102 | 2712 |
-| parameter:config_extension_overrides_global | parameter:parameter_precedence | 99.9% | 98.5% | 2986 | 3030 |
-| parameter:config_extension_overrides_global | parameter:replacing_parameters | 90.8% | 99.9% | 2986 | 2712 |
-| parameter:parameter_precedence | parameter:replacing_parameters | 89.4% | 99.9% | 3030 | 2712 |
-| parameter:parameter_to_alias | parameter:replacing_parameters | 90.7% | 99.9% | 2988 | 2712 |
-| parameter:removing_parameters | parameter:replacing_parameters | 99.2% | 99.9% | 2731 | 2712 |
-| parameter:replacing_parameters | parameter:using_automatic_options | 99.9% | 96.6% | 2712 | 2806 |
-| parameter:replacing_parameters | parameter_eval:use_value_as_parameter | 99.9% | 97.9% | 2712 | 2768 |
-| use_cases:use_case[bash_command_built_in_lib] | use_cases:use_case[bash_command_from_alias] | 99.9% | 70.2% | 2843 | 4045 |
-| use_cases:use_case[bash_command_import] | use_cases:use_case[hello_world] | 99.5% | 99.9% | 3182 | 3168 |
-| use_cases:use_case[bash_command_use_option] | use_cases:use_case[hello_world] | 92.5% | 99.9% | 3424 | 3168 |
-| use_cases:use_case[dynamic_parameters_and_exposed_class] | use_cases:use_case[environment_deployment] | 92.8% | 99.9% | 3488 | 3241 |
-| use_cases:use_case[global_workflow_local_implementation] | use_cases:use_case[using_a_project] | 99.9% | 94.0% | 3641 | 3872 |
-| alias:alias_conserves_parameters | use_cases:use_case[3D_printing_flow] | 99.8% | 74.7% | 2983 | 3988 |
-| alias:alias_conserves_parameters | use_cases:use_case[using_a_project] | 99.8% | 76.9% | 2983 | 3872 |
-| alias:can_use_a_flow_in_an_alias | flow:reuse_flow_parameters | 77.8% | 99.8% | 3132 | 2443 |
-| alias:capture_flow_command | flow:extend_flow | 99.8% | 95.1% | 3045 | 3197 |
-| alias:capture_flow_command | flow:overwrite_flow | 99.8% | 95.3% | 3045 | 3191 |
-| alias:capture_partial_flow | flow:extend_flow | 99.8% | 94.5% | 3027 | 3197 |
-| ... | *4756 more* | | | | |
+| alias:alias_conserves_parameters_of_group | command:invoked_commands_still_work_even_though_they_are_no_customizable | 89.3% | 99.9% | 3061 | 2735 |
+| alias:alias_conserves_parameters_of_group_with_exposed_class | command:invoked_commands_still_work_even_though_they_are_no_customizable | 89.0% | 99.9% | 3070 | 2735 |
+| alias:alias_overrides_parameters | command:invoked_commands_still_work_even_though_they_are_no_customizable | 88.8% | 99.9% | 3078 | 2735 |
+| alias:capture_flow_command | alias:capture_partial_flow | 99.3% | 99.9% | 3056 | 3038 |
+| custom:simple_python | types:default_with_converter | 99.4% | 99.9% | 2755 | 2742 |
+| extension:copy_extension | parameter:config_extension_overrides_global | 96.1% | 99.9% | 3100 | 2982 |
+| extension:copy_extension | parameter:replacing_parameters | 87.7% | 99.9% | 3100 | 2720 |
+| extension:move_extension | parameter:config_extension_overrides_global | 95.9% | 99.9% | 3109 | 2982 |
+| extension:move_extension | parameter:replacing_parameters | 87.4% | 99.9% | 3109 | 2720 |
+| parameter:config_extension_overrides_global | parameter:parameter_precedence | 99.9% | 98.5% | 2982 | 3026 |
+| parameter:config_extension_overrides_global | parameter:replacing_parameters | 91.1% | 99.9% | 2982 | 2720 |
+| parameter:parameter_precedence | parameter:replacing_parameters | 89.8% | 99.9% | 3026 | 2720 |
+| parameter:parameter_to_alias | parameter:replacing_parameters | 90.8% | 99.9% | 2992 | 2720 |
+| parameter:removing_parameters | parameter:replacing_parameters | 99.2% | 99.9% | 2739 | 2720 |
+| parameter:replacing_parameters | parameter:using_automatic_options | 99.9% | 96.6% | 2720 | 2814 |
+| parameter:replacing_parameters | parameter_eval:use_value_as_parameter | 99.9% | 98.2% | 2720 | 2769 |
+| use_cases:use_case[controlling_the_audio] | use_cases:use_case[python_command] | 99.9% | 91.2% | 2851 | 3125 |
+| use_cases:use_case[controlling_the_audio] | use_cases:use_case[wrapping_a_cloud_provider_cli] | 99.9% | 68.9% | 2851 | 4133 |
+| use_cases:use_case[global_workflow_local_implementation] | use_cases:use_case[using_a_project] | 99.9% | 88.9% | 3616 | 4063 |
+| alias:can_use_a_flow_in_an_alias | flow:reuse_flow_parameters | 77.6% | 99.8% | 3138 | 2441 |
+| alias:capture_flow_command | flow:extend_flow | 99.8% | 95.1% | 3056 | 3208 |
+| alias:capture_partial_flow | flow:extend_flow | 99.8% | 94.5% | 3038 | 3208 |
+| alias:capture_partial_flow | use_cases:use_case[3D_printing_flow] | 99.8% | 66.1% | 3038 | 4587 |
+| alias:simple_alias_command | use_cases:use_case[global_workflow_local_implementation] | 99.8% | 80.9% | 2931 | 3616 |
+| alias:simple_alias_command | use_cases:use_case[podcast_automation] | 99.8% | 77.3% | 2931 | 3784 |
+| alias:simple_alias_command | use_cases:use_case[using_a_project] | 99.8% | 72.0% | 2931 | 4063 |
+| command:invoked_commands_still_work_even_though_they_are_no_customizable | completion:completion_with_saved_parameter | 99.8% | 89.5% | 2735 | 3048 |
+| command:invoked_commands_still_work_even_though_they_are_no_customizable | run:can_edit_parameters | 99.8% | 95.3% | 2735 | 2864 |
+| completion:completion_with_saved_parameter | types:default_with_converter | 89.8% | 99.8% | 3048 | 2742 |
+| completion:completion_with_saved_parameter | types:suggestion | 92.7% | 99.8% | 3048 | 2831 |
+| ... | *3893 more* | | | | |
 
 ## Test Sizes
 
 | Test | Lines Covered |
 |------|---------------|
-| use_cases:use_case[backing_up_documents] | 4361 |
-| use_cases:use_case[creating_extensions] | 4341 |
-| use_cases:use_case[bash_command_from_alias] | 4045 |
-| use_cases:use_case[3D_printing_flow] | 3988 |
-| use_cases:use_case[wrapping_a_cloud_provider_cli] | 3975 |
+| use_cases:use_case[3D_printing_flow] | 4587 |
+| use_cases:use_case[creating_extensions] | 4476 |
+| use_cases:use_case[backing_up_documents] | 4320 |
+| use_cases:use_case[controlling_my_music] | 4183 |
+| use_cases:use_case[wrapping_a_cloud_provider_cli] | 4133 |
+| use_cases:use_case[using_a_project] | 4063 |
 | use_cases:use_case[self_documentation] | 3973 |
-| use_cases:use_case[ethereum_local_environment_dev_tool] | 3915 |
-| use_cases:use_case[using_a_project] | 3872 |
-| use_cases:use_case[setting_default_values] | 3682 |
-| command:command | 3665 |
-| use_cases:use_case[global_workflow_local_implementation] | 3641 |
-| custom:capture_alias | 3552 |
-| use_cases:use_case[dynamic_parameters_and_exposed_class] | 3488 |
-| help:main_help | 3477 |
-| use_cases:use_case[bash_command_use_option] | 3424 |
-| use_cases:use_case[ipfs_name_publish] | 3418 |
-| use_cases:use_case[choices] | 3415 |
-| use_cases:use_case[alias_to_root] | 3405 |
-| use_cases:use_case[podcast_automation] | 3394 |
-| use_cases:use_case[using_a_plugin] | 3394 |
-| ... | *89 more tests* |
+| use_cases:use_case[ethereum_local_environment_dev_tool] | 3883 |
+| use_cases:use_case[podcast_automation] | 3784 |
+| use_cases:use_case[setting_default_values] | 3631 |
+| use_cases:use_case[global_workflow_local_implementation] | 3616 |
+| command:command | 3599 |
+| use_cases:use_case[using_a_plugin] | 3581 |
+| use_cases:use_case[checking_my_server] | 3518 |
+| custom:capture_alias | 3517 |
+| use_cases:use_case[dynamic_parameters_and_exposed_class] | 3486 |
+| use_cases:use_case[alias_to_root] | 3459 |
+| use_cases:use_case[dealing_with_secrets] | 3381 |
+| help:main_help | 3373 |
+| custom:cannot_remove_existing_command | 3335 |
+| ... | *81 more tests* |
