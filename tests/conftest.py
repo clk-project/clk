@@ -6,8 +6,9 @@ from shlex import split
 from shutil import copytree, rmtree
 from subprocess import STDOUT, check_call, check_output
 
-import coverage
 import pytest
+
+import coverage
 
 # Global coverage instance for per-test coverage tracking
 _per_test_cov = None
@@ -60,6 +61,9 @@ def pytest_runtest_protocol(item, nextitem):
         source=["clk"],
         context=context_name,
     )
+    # most tests drive clk through subprocesses only, so this in-process
+    # collector legitimately sees nothing
+    _per_test_cov.config.disable_warnings = ["no-data-collected"]
     _per_test_cov.start()
 
     yield
