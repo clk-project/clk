@@ -1,3 +1,4 @@
+- [what do you want to do?](#what-do-you-want-to-do)
 - [creating commands](#creating-commands)
   - [bash commands](#bash-commands)
   - [python commands](#python-commands)
@@ -23,6 +24,37 @@
 These use cases illustrate clk features through concrete examples. They show common patterns that emerged from real usage and give hints about when clk might be useful.
 
 There are organised by feature though so you can find easily what you are looking for.
+
+
+<a id="what-do-you-want-to-do"></a>
+
+# what do you want to do?
+
+If you know what you need but not what clk calls it, start here.
+
+-   wrap a tool I already use: [controlling my music](controlling_my_music.md)
+-   write a small command that takes arguments: [checking my server](checking_my_server.md), then [options and flags](bash_command_use_option.md)
+-   write it in python rather than bash: [python command](python_command.md)
+-   take a date, said as "yesterday": [finding recent documents](finding_recent_documents.md)
+-   offer a fixed list of values: [choices](choices.md)
+-   complete with what exists right now, like the buckets of my account: [cloud provider CLI wrapper](wrapping_a_cloud_provider_cli.md)
+-   stop typing the same options again and again: [cloud provider CLI wrapper](wrapping_a_cloud_provider_cli.md)
+-   set one value that many commands read: [setting default values](setting_default_values.md)
+-   control a command with an environment variable: [controlling a server](controlling_a_server_using_an_environment_variable.md), [podcast automation](podcast_automation.md)
+-   chain steps that depend on each other: [3D printing flow](3D_printing_flow.md)
+-   have commands that only exist in a project: [using a project](using_a_project.md)
+-   run the same workflow everywhere, each project doing it its own way: [global workflow, local implementation](global_workflow_local_implementation.md)
+-   reach the commands of a sibling project without `cd`: [alias to root](alias_to_root.md)
+-   keep a password out of my scripts: [dealing with secrets](dealing_with_secrets.md)
+-   fetch some json and show it: [fetching and displaying json data](fetching_and_displaying_json_data.md)
+-   not fetch the same page twice: [scrapping the web](scrapping_the_web.md)
+-   clean up what my command set up, even when it fails: [controlling the audio](controlling_the_audio.md)
+-   call clk from another program that brings its own python libraries: [reading later from qutebrowser](reading_later_from_qutebrowser.md)
+-   find out why a command is slow: [spotting slow code](spotting_slow_code.md)
+-   know where a setting comes from: [self documentation](self_documentation.md)
+-   share my commands with other people: [creating extensions](creating_extensions.md)
+-   build my own tool, with its own name, on top of clk: [chaotic simulator manager](chaotic_simulator_manager.md)
+-   see it all put together: [backing up documents](backing_up_documents.md)
 
 
 <a id="creating-commands"></a>
@@ -98,6 +130,8 @@ You can persist command options so you don't have to repeat them. The [cloud pro
 To control how arguments are evaluated through environment variables, see [this use case](controlling_a_server_using_an_environment_variable.md).
 
 Aliases can also use environment variables through templates &ndash; see [aliases](#aliases).
+
+When another python program calls clk, like qutebrowser running a userscript, `CLK_FORCE_DEPS` keeps [the libraries of that program](reading_later_from_qutebrowser.md) out of clk's way.
 
 
 <a id="values"></a>
@@ -209,59 +243,73 @@ The [backing up documents](backing_up_documents.md) use case shows how to build 
 
 | File | Description | Auto-detected keywords |
 |------|-------------|----------------------|
-| [3D_printing_flow.md](3D_printing_flow.md) | Chaining commands into a workflow sequence using flows |  |
-| [alias_to_root.md](alias_to_root.md) |  |  |
-| [backing_up_documents.md](backing_up_documents.md) | Building a backup system with hierarchical commands, flows, parameters, and per-project configuration | CLK___DB,CLK___FILENAME,CLK___QUALITY,CLK___SOURCE |
-| [bash_command_use_option.md](bash_command_use_option.md) | Arguments (A:), options (O:), flags (F:), file completion, clk_value, clk_given, clk_true, clk_format_choice | A:,CLK___KIND_OF_ANIMAL,CLK___REPEAT,F:,O:,clk_format_choice,clk_given,clk_help_handler,clk_true,clk_usage,clk_value |
-| [chaotic_simulator_manager.md](chaotic_simulator_manager.md) | Building your own standalone CLI tool on top of clk as a library |  |
-| [checking_my_server.md](checking_my_server.md) | A bash command that says whether my server answers, with its exit code and its cleaning up | A:,CLK___HOST,clk_help_handler,clk_usage |
-| [choices.md](choices.md) | Restricting user input to predefined values using Choice types |  |
+| [3D_printing_flow.md](3D_printing_flow.md) | Chaining commands into a workflow sequence using flows | clk.overloads.get_command |
+| [alias_to_root.md](alias_to_root.md) | Aliases pointing to the root command of a sibling project, to run its commands without cd-ing into it |  |
+| [backing_up_documents.md](backing_up_documents.md) | Building a backup system with hierarchical commands, flows, parameters, and per-project configuration |  |
+| [bash_command_use_option.md](bash_command_use_option.md) | Arguments (A:), options (O:), flags (F:), file completion, clk_value, clk_given, clk_true, clk_format_choice | clk_format_choice,clk_given,clk_true,clk_value |
+| [chaotic_simulator_manager.md](chaotic_simulator_manager.md) | Building your own standalone CLI tool on top of clk as a library | clk.lib.format_options,clk.lib.rm,clk.overloads.option,clk.setup.basic_entry_point,clk.setup.main |
+| [checking_my_server.md](checking_my_server.md) | A bash command that says whether my server answers, with its exit code and its cleaning up | clk.lib.check_output,clk.lib.safe_check_output |
+| [choices.md](choices.md) | Restricting user input to predefined values using Choice types | clk.lib.call,clk.lib.check_output,clk.types.DocumentedChoice,clk.types.Suggestion |
 | [controlling_a_server_using_an_environment_variable.md](controlling_a_server_using_an_environment_variable.md) | Managing server addresses via environment variables and parameters |  |
-| [controlling_my_music.md](controlling_my_music.md) | Controlling my music player with clk, from a simple alias to a bash command | A:,F:,clk_drop_duplicate,clk_help_handler,clk_true,clk_usage,clk_value |
-| [controlling_the_audio.md](controlling_the_audio.md) | Recording what an application plays, and tearing down the plumbing with clk.atexit |  |
-| [creating_extensions.md](creating_extensions.md) | Creating and sharing extensions (folders of commands and configuration) | clk_extension_hello |
-| [dealing_with_secrets.md](dealing_with_secrets.md) | Handling secrets (passwords, tokens) safely in clk commands |  |
-| [dynamic_parameters_and_exposed_class.md](dynamic_parameters_and_exposed_class.md) | Splitting commands into subcommands with shared config via dynamic parameters and exposed classes |  |
+| [controlling_my_music.md](controlling_my_music.md) | Controlling my music player with clk, from a simple alias to a bash command | clk_drop_duplicate,clk_true,clk_value |
+| [controlling_the_audio.md](controlling_the_audio.md) | Recording what an application plays, and tearing down the plumbing with clk.atexit | clk.atexit.register |
+| [creating_extensions.md](creating_extensions.md) | Creating and sharing extensions (folders of commands and configuration) | clk.lib.check_output,clk.lib.makedirs,clk.lib.move,clk.lib.tempdir,clk.lib.temporary_file,clk_extension_hello |
+| [dealing_with_secrets.md](dealing_with_secrets.md) | Handling secrets (passwords, tokens) safely in clk commands | clk.get_secret,expose_class |
+| [dynamic_parameters_and_exposed_class.md](dynamic_parameters_and_exposed_class.md) | Splitting commands into subcommands with shared config via dynamic parameters and exposed classes | expose_class |
 | [ethereum_local_environment_dev_tool.md](ethereum_local_environment_dev_tool.md) | Using clk commands as parameters in other commands (Ethereum dev tool example) |  |
 | [fetching_and_displaying_json_data.md](fetching_and_displaying_json_data.md) | Fetching JSON from APIs and displaying with syntax highlighting, download, echo_json |  |
-| [finding_recent_documents.md](finding_recent_documents.md) | A bash command with a date argument, read written out or spoken | A:,clk_help_handler,clk_usage,clk_value |
+| [finding_recent_documents.md](finding_recent_documents.md) | A bash command with a date argument, read written out or spoken | clk.lib.natural_delta,clk.lib.natural_time,clk_value |
 | [global_workflow_local_implementation.md](global_workflow_local_implementation.md) | Defining workflows globally while letting each project supply its own implementation |  |
-| [ipfs_name_publish.md](ipfs_name_publish.md) | Using bash commands to create completion for other commands (IPFS example) | A:,clk_help_handler,clk_list_to_choice,clk_usage,clk_value |
-| [lib.md](lib.md) | Reference for clk.lib Python helpers (download, echo_json, etc.) |  |
-| [podcast_automation.md](podcast_automation.md) | Aliases with templated environment variables for flexible workflows (podcast download example) | O:,clk_help_handler,clk_usage,clk_value |
+| [ipfs_name_publish.md](ipfs_name_publish.md) | Using bash commands to create completion for other commands (IPFS example) | clk_list_to_choice,clk_value |
+| [lib.md](lib.md) | Reference for clk.lib Python helpers (download, echo_json, etc.) | clk.lib.check_output,clk.lib.download,clk.lib.extract |
+| [podcast_automation.md](podcast_automation.md) | Aliases with templated environment variables for flexible workflows (podcast download example) | clk.lib.createfile,clk.lib.makedirs,clk.lib.move,clk.lib.tempdir,clk.types.Suggestion,clk_value |
 | [python_command.md](python_command.md) | Creating Python commands with clk command create python, click decorators |  |
-| [scrapping_the_web.md](scrapping_the_web.md) | Caching web-scraped data locally to avoid redundant requests |  |
+| [reading_later_from_qutebrowser.md](reading_later_from_qutebrowser.md) | Calling clk from a qutebrowser userscript, with CLK_FORCE_DEPS so that the PYTHONPATH of the browser does not break it | CLK_FORCE_DEPS |
+| [scrapping_the_web.md](scrapping_the_web.md) | Caching web-scraped data locally to avoid redundant requests | clk.core.cache_disk |
 | [self_documentation.md](self_documentation.md) | Using clk describe to explore aliases, parameters, commands, and extensions across profiles |  |
-| [send_sms.md](send_sms.md) | Advanced bash parameter parsing and wrapping termux for SMS sending | A:,CLK____JSON,O:,clk_help_handler,clk_import,clk_list_to_choice,clk_usage,clk_value |
+| [send_sms.md](send_sms.md) | Advanced bash parameter parsing and wrapping termux for SMS sending | clk_import,clk_list_to_choice,clk_value |
 | [setting_default_values.md](setting_default_values.md) | Using clk value to set semantic defaults across many commands, parameters vs values |  |
 | [spotting_slow_code.md](spotting_slow_code.md) | Using --timestamp to identify slow parts of a command |  |
 | [using_a_plugin.md](using_a_plugin.md) | Monkey-patching clk internals with the plugin mechanism |  |
-| [using_a_project.md](using_a_project.md) | Using .clk directories for project-scoped commands and configuration |  |
-| [wrapping_a_cloud_provider_cli.md](wrapping_a_cloud_provider_cli.md) | Persisting command options (--profile, --region) with clk parameters to avoid repetition | CLK___ARGS,CLK___DESTINATION,CLK___PATH,CLK___SOURCE |
+| [using_a_project.md](using_a_project.md) | Using .clk directories for project-scoped commands and configuration | CLK_APPNAME,clk_backup |
+| [wrapping_a_cloud_provider_cli.md](wrapping_a_cloud_provider_cli.md) | Persisting command options (--profile, --region) with clk parameters to avoid repetition | CLK_P_AWS,clk.types.DynamicChoice,expose_class |
 
 ## Keyword index
 
-- `A:` : [bash_command_use_option.md](bash_command_use_option.md), [checking_my_server.md](checking_my_server.md), [controlling_my_music.md](controlling_my_music.md), [finding_recent_documents.md](finding_recent_documents.md), [ipfs_name_publish.md](ipfs_name_publish.md), [send_sms.md](send_sms.md)
-- `CLK___ARGS` : [wrapping_a_cloud_provider_cli.md](wrapping_a_cloud_provider_cli.md)
-- `CLK___DB` : [backing_up_documents.md](backing_up_documents.md)
-- `CLK___DESTINATION` : [wrapping_a_cloud_provider_cli.md](wrapping_a_cloud_provider_cli.md)
-- `CLK___FILENAME` : [backing_up_documents.md](backing_up_documents.md)
-- `CLK___HOST` : [checking_my_server.md](checking_my_server.md)
-- `CLK___KIND_OF_ANIMAL` : [bash_command_use_option.md](bash_command_use_option.md)
-- `CLK___PATH` : [wrapping_a_cloud_provider_cli.md](wrapping_a_cloud_provider_cli.md)
-- `CLK___QUALITY` : [backing_up_documents.md](backing_up_documents.md)
-- `CLK___REPEAT` : [bash_command_use_option.md](bash_command_use_option.md)
-- `CLK___SOURCE` : [backing_up_documents.md](backing_up_documents.md), [wrapping_a_cloud_provider_cli.md](wrapping_a_cloud_provider_cli.md)
-- `CLK____JSON` : [send_sms.md](send_sms.md)
-- `F:` : [bash_command_use_option.md](bash_command_use_option.md), [controlling_my_music.md](controlling_my_music.md)
-- `O:` : [bash_command_use_option.md](bash_command_use_option.md), [podcast_automation.md](podcast_automation.md), [send_sms.md](send_sms.md)
+- `CLK_APPNAME` : [using_a_project.md](using_a_project.md)
+- `CLK_FORCE_DEPS` : [reading_later_from_qutebrowser.md](reading_later_from_qutebrowser.md)
+- `CLK_P_AWS` : [wrapping_a_cloud_provider_cli.md](wrapping_a_cloud_provider_cli.md)
+- `clk.atexit.register` : [controlling_the_audio.md](controlling_the_audio.md)
+- `clk.core.cache_disk` : [scrapping_the_web.md](scrapping_the_web.md)
+- `clk.get_secret` : [dealing_with_secrets.md](dealing_with_secrets.md)
+- `clk.lib.call` : [choices.md](choices.md)
+- `clk.lib.check_output` : [checking_my_server.md](checking_my_server.md), [choices.md](choices.md), [creating_extensions.md](creating_extensions.md), [lib.md](lib.md)
+- `clk.lib.createfile` : [podcast_automation.md](podcast_automation.md)
+- `clk.lib.download` : [lib.md](lib.md)
+- `clk.lib.extract` : [lib.md](lib.md)
+- `clk.lib.format_options` : [chaotic_simulator_manager.md](chaotic_simulator_manager.md)
+- `clk.lib.makedirs` : [creating_extensions.md](creating_extensions.md), [podcast_automation.md](podcast_automation.md)
+- `clk.lib.move` : [creating_extensions.md](creating_extensions.md), [podcast_automation.md](podcast_automation.md)
+- `clk.lib.natural_delta` : [finding_recent_documents.md](finding_recent_documents.md)
+- `clk.lib.natural_time` : [finding_recent_documents.md](finding_recent_documents.md)
+- `clk.lib.rm` : [chaotic_simulator_manager.md](chaotic_simulator_manager.md)
+- `clk.lib.safe_check_output` : [checking_my_server.md](checking_my_server.md)
+- `clk.lib.tempdir` : [creating_extensions.md](creating_extensions.md), [podcast_automation.md](podcast_automation.md)
+- `clk.lib.temporary_file` : [creating_extensions.md](creating_extensions.md)
+- `clk.overloads.get_command` : [3D_printing_flow.md](3D_printing_flow.md)
+- `clk.overloads.option` : [chaotic_simulator_manager.md](chaotic_simulator_manager.md)
+- `clk.setup.basic_entry_point` : [chaotic_simulator_manager.md](chaotic_simulator_manager.md)
+- `clk.setup.main` : [chaotic_simulator_manager.md](chaotic_simulator_manager.md)
+- `clk.types.DocumentedChoice` : [choices.md](choices.md)
+- `clk.types.DynamicChoice` : [wrapping_a_cloud_provider_cli.md](wrapping_a_cloud_provider_cli.md)
+- `clk.types.Suggestion` : [choices.md](choices.md), [podcast_automation.md](podcast_automation.md)
+- `clk_backup` : [using_a_project.md](using_a_project.md)
 - `clk_drop_duplicate` : [controlling_my_music.md](controlling_my_music.md)
 - `clk_extension_hello` : [creating_extensions.md](creating_extensions.md)
 - `clk_format_choice` : [bash_command_use_option.md](bash_command_use_option.md)
 - `clk_given` : [bash_command_use_option.md](bash_command_use_option.md)
-- `clk_help_handler` : [bash_command_use_option.md](bash_command_use_option.md), [checking_my_server.md](checking_my_server.md), [controlling_my_music.md](controlling_my_music.md), [finding_recent_documents.md](finding_recent_documents.md), [ipfs_name_publish.md](ipfs_name_publish.md), [podcast_automation.md](podcast_automation.md), [send_sms.md](send_sms.md)
 - `clk_import` : [send_sms.md](send_sms.md)
 - `clk_list_to_choice` : [ipfs_name_publish.md](ipfs_name_publish.md), [send_sms.md](send_sms.md)
 - `clk_true` : [bash_command_use_option.md](bash_command_use_option.md), [controlling_my_music.md](controlling_my_music.md)
-- `clk_usage` : [bash_command_use_option.md](bash_command_use_option.md), [checking_my_server.md](checking_my_server.md), [controlling_my_music.md](controlling_my_music.md), [finding_recent_documents.md](finding_recent_documents.md), [ipfs_name_publish.md](ipfs_name_publish.md), [podcast_automation.md](podcast_automation.md), [send_sms.md](send_sms.md)
 - `clk_value` : [bash_command_use_option.md](bash_command_use_option.md), [controlling_my_music.md](controlling_my_music.md), [finding_recent_documents.md](finding_recent_documents.md), [ipfs_name_publish.md](ipfs_name_publish.md), [podcast_automation.md](podcast_automation.md), [send_sms.md](send_sms.md)
+- `expose_class` : [dealing_with_secrets.md](dealing_with_secrets.md), [dynamic_parameters_and_exposed_class.md](dynamic_parameters_and_exposed_class.md), [wrapping_a_cloud_provider_cli.md](wrapping_a_cloud_provider_cli.md)

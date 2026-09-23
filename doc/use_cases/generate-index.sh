@@ -8,7 +8,67 @@ SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 DOC_DIR="${SCRIPT_DIR}"
 OUTPUT="${DOC_DIR}/index-fragment.org"
 
-CLK_PATTERNS='clk_[a-z_]+|CLK___[A-Z_]+|^[[:space:]]*[AOFNM]:'
+# every command has them, so they point nowhere in particular
+CLK_BOILERPLATE='^(clk_help_handler|clk_usage|clk\.decorators\.(argument|command|flag|group|option)|clk\.config\.config|clk\.log\.get_logger)$'
+
+# the code the reader sees: the shown blocks, and the hidden ones they include
+shown_code () {
+    awk '
+        /^[[:space:]]*#\+(NAME|name):/ { name = $2; next }
+        /^[[:space:]]*#\+(BEGIN_SRC|begin_src)/ {
+            n++; inside = 1
+            names[n] = name; name = ""
+            shown[n] = ($0 !~ /:exports none/)
+            next
+        }
+        /^[[:space:]]*#\+(END_SRC|end_src)/ { inside = 0; next }
+        inside { code[n] = code[n] $0 "\n" }
+        END {
+            do {
+                changed = 0
+                for (i = 1; i <= n; i++) {
+                    if (!shown[i]) continue
+                    for (j = 1; j <= n; j++) {
+                        if (!shown[j] && names[j] != "" && index(code[i], "<<" names[j] ">>")) {
+                            shown[j] = 1; changed = 1
+                        }
+                    }
+                }
+            } while (changed)
+            for (i = 1; i <= n; i++) if (shown[i]) printf "%s", code[i]
+        }
+    ' "$1"
+}
+
+# the bash helpers, the variables clk reads and what the python code takes from clk
+keywords_of () {
+    local code
+    code="$(shown_code "$1")"
+    {
+        grep -oE 'clk_[a-z_]+|CLK_[A-Z][A-Z_]*|expose_class' <<< "${code}"
+        awk '
+            match($0, /^[[:space:]]*from clk[.a-z_]* import/) {
+                module = $0
+                sub(/^[[:space:]]*from /, "", module)
+                sub(/ import.*/, "", module)
+                names = $0
+                sub(/.* import[[:space:]]*/, "", names)
+                paren = (names ~ /^\(/ && names !~ /\)/)
+                print module " " names
+                next
+            }
+            paren {
+                print module " " $0
+                if ($0 ~ /\)/) paren = 0
+            }
+        ' <<< "${code}" \
+            | sed 's/#.*//; s/[()]//g' \
+            | while read -r module names; do
+                  tr ',' '\n' <<< "${names}" | sed 's/[[:space:]]//g' | grep -v '^$' \
+                      | sed "s/^/${module}./"
+              done
+    } | grep -vE "${CLK_BOILERPLATE}" | sort -u
+}
 
 {
     cat <<'HEADER'
@@ -36,13 +96,7 @@ HEADER
 
         subtitle="$(grep -m1 '^#+SUBTITLE:' "$f" | sed 's|^#+SUBTITLE: *||')" || true
 
-        keywords="$(sed -n '/^#+BEGIN_SRC/,/^#+END_SRC/p' "$f" \
-            | grep -oE "${CLK_PATTERNS}" \
-            | tr ' ' '\n' \
-            | sed 's/^[[:space:]]*//' \
-            | grep -v '^$' \
-            | sort -u \
-            | paste -sd,)" || true
+        keywords="$(keywords_of "$f" | paste -sd,)" || true
 
         echo "| [${export_name}](${export_name}) | ${subtitle} | ${keywords} |"
     done
@@ -65,12 +119,7 @@ SEPARATOR
             continue
         fi
 
-        for kw in $(sed -n '/^#+BEGIN_SRC/,/^#+END_SRC/p' "$f" \
-            | grep -oE "${CLK_PATTERNS}" \
-            | tr ' ' '\n' \
-            | sed 's/^[[:space:]]*//' \
-            | grep -v '^$' \
-            | sort -u); do
+        for kw in $(keywords_of "$f"); do
             if test -n "${keyword_files[$kw]+x}"; then
                 keyword_files[$kw]="${keyword_files[$kw]}, [${export_name}](${export_name})"
             else

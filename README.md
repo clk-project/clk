@@ -34,14 +34,40 @@ Come and discuss clk with us on
 
 clk, the **Command Line Kit** is a unique tool that aims to contains everything needed to create human friendly command line tools.
 
-The [rationale](#7857f3bb-e4c7-4bad-9e27-ea48bf808a44) attempts to explain why clk started to exist. You will find in the [use cases](./doc/use_cases) classical situations where clk is worth being used. In the future, we might write even more [documentation](./doc).
+The [rationale](#7857f3bb-e4c7-4bad-9e27-ea48bf808a44) attempts to explain why clk started to exist. You will find in the [use cases](./doc/use_cases/README.md) classical situations where clk is worth being used. In the future, we might write even more [documentation](./doc).
 
 
 <a id="d7cb0451-bc8f-42cc-912c-8a46599375a7"></a>
 
 # Use cases
 
-This is most likely the most useful part of the documentation. Take a look at the [use cases](./doc/use_cases) to find out how clk could be used in real life situations.
+This is most likely the most useful part of the documentation. Take a look at the [use cases](./doc/use_cases/README.md) to find out how clk could be used in real life situations.
+
+If you know what you need but not what clk calls it, start here.
+
+-   wrap a tool I already use: [controlling my music](doc/use_cases/controlling_my_music.md)
+-   write a small command that takes arguments: [checking my server](doc/use_cases/checking_my_server.md), then [options and flags](doc/use_cases/bash_command_use_option.md)
+-   write it in python rather than bash: [python command](doc/use_cases/python_command.md)
+-   take a date, said as "yesterday": [finding recent documents](doc/use_cases/finding_recent_documents.md)
+-   offer a fixed list of values: [choices](doc/use_cases/choices.md)
+-   complete with what exists right now, like the buckets of my account: [cloud provider CLI wrapper](doc/use_cases/wrapping_a_cloud_provider_cli.md)
+-   stop typing the same options again and again: [cloud provider CLI wrapper](doc/use_cases/wrapping_a_cloud_provider_cli.md)
+-   set one value that many commands read: [setting default values](doc/use_cases/setting_default_values.md)
+-   control a command with an environment variable: [controlling a server](doc/use_cases/controlling_a_server_using_an_environment_variable.md), [podcast automation](doc/use_cases/podcast_automation.md)
+-   chain steps that depend on each other: [3D printing flow](doc/use_cases/3D_printing_flow.md)
+-   have commands that only exist in a project: [using a project](doc/use_cases/using_a_project.md)
+-   run the same workflow everywhere, each project doing it its own way: [global workflow, local implementation](doc/use_cases/global_workflow_local_implementation.md)
+-   reach the commands of a sibling project without `cd`: [alias to root](doc/use_cases/alias_to_root.md)
+-   keep a password out of my scripts: [dealing with secrets](doc/use_cases/dealing_with_secrets.md)
+-   fetch some json and show it: [fetching and displaying json data](doc/use_cases/fetching_and_displaying_json_data.md)
+-   not fetch the same page twice: [scrapping the web](doc/use_cases/scrapping_the_web.md)
+-   clean up what my command set up, even when it fails: [controlling the audio](doc/use_cases/controlling_the_audio.md)
+-   call clk from another program that brings its own python libraries: [reading later from qutebrowser](doc/use_cases/reading_later_from_qutebrowser.md)
+-   find out why a command is slow: [spotting slow code](doc/use_cases/spotting_slow_code.md)
+-   know where a setting comes from: [self documentation](doc/use_cases/self_documentation.md)
+-   share my commands with other people: [creating extensions](doc/use_cases/creating_extensions.md)
+-   build my own tool, with its own name, on top of clk: [chaotic simulator manager](doc/use_cases/chaotic_simulator_manager.md)
+-   see it all put together: [backing up documents](doc/use_cases/backing_up_documents.md)
 
 
 <a id="fe60735c-91c2-4f54-8ae2-7e3b307f27a5"></a>
@@ -69,6 +95,11 @@ On that case, you most likely will want to create a simple alias on top of exec.
 For the sake of this example, let's use this fake music control program and call it 'mpc'.
 
 ```bash
+if test "$1" = history
+then
+    printf '%s\n' Kind-of-Blue Bitches-Brew Kind-of-Blue Blue-Train Bitches-Brew
+    exit 0
+fi
 echo "Running mpc with: $*"
 ```
 
@@ -88,7 +119,7 @@ clk music play MyAlbum
 
     Running mpc with: play --random --use-speakers --replaygain MyAlbum
 
-This actually does not tell you much why **clk** is so awesome. Try taking a look, the [use cases](./doc/use_cases) to get more real life examples.
+This actually does not tell you much why **clk** is so awesome. Try taking a look, the [use cases](./doc/use_cases/README.md) to get more real life examples.
 
 
 <a id="7857f3bb-e4c7-4bad-9e27-ea48bf808a44"></a>
@@ -122,7 +153,7 @@ Nowadays, I use **clk** for most of my day to day use, from communicating in sla
 
 # Note on version
 
-**clk** is quite old, and most of its concepts are stable. There are still a few areas that I want to dig into before starting a v1. For a start, I want to end up describing all the [use cases](./doc/use_cases) that matter to me before considering it ready.
+**clk** is quite old, and most of its concepts are stable. There are still a few areas that I want to dig into before starting a v1. For a start, I want to end up describing all the [use cases](./doc/use_cases/README.md) that matter to me before considering it ready.
 
 
 <a id="a53fa97d-ceb5-44e9-b921-89cf03d2775d"></a>

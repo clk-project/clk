@@ -41,7 +41,7 @@ clk, the *Command Line Kit* is a unique tool that aims to contains everything
 needed to create human friendly command line tools.
 
 The [[id:7857f3bb-e4c7-4bad-9e27-ea48bf808a44][rationale]] attempts to explain why clk started to exist. You will find in the
-[[./doc/use_cases][use cases]] classical situations where clk is worth being used. In the future, we
+[[./doc/use_cases/README.org][use cases]] classical situations where clk is worth being used. In the future, we
 might write even more [[./doc][documentation]].
 
 * Use cases
@@ -49,7 +49,9 @@ might write even more [[./doc][documentation]].
   :CUSTOM_ID: d7cb0451-bc8f-42cc-912c-8a46599375a7
   :END:
   This is most likely the most useful part of the documentation. Take a look at
-  the [[./doc/use_cases][use cases]] to find out how clk could be used in real life situations.
+  the [[./doc/use_cases/README.org][use cases]] to find out how clk could be used in real life situations.
+
+  #+INCLUDE: "./doc/use_cases/README.org::#what-do-you-want-to-do" :only-contents t
 
 * In a nutshell
   :PROPERTIES:
@@ -74,7 +76,7 @@ might write even more [[./doc][documentation]].
   #+INCLUDE: "./doc/use_cases/controlling_my_music.org::#wrapping-the-music-player" :only-contents t
 
   This actually does not tell you much why *clk* is so awesome. Try taking a look,
-  the [[./doc/use_cases][use cases]] to get more real life examples.
+  the [[./doc/use_cases/README.org][use cases]] to get more real life examples.
 * Rationale
   :PROPERTIES:
   :CUSTOM_ID: 7857f3bb-e4c7-4bad-9e27-ea48bf808a44
@@ -135,7 +137,7 @@ might write even more [[./doc][documentation]].
 
   *clk* is quite old, and most of its concepts are stable. There are still a few
   areas that I want to dig into before starting a v1. For a start, I want to end
-  up describing all the [[./doc/use_cases][use cases]] that matter to me before considering it ready.
+  up describing all the [[./doc/use_cases/README.org][use cases]] that matter to me before considering it ready.
 * Coverage reports
   :PROPERTIES:
   :CREATED:  [2026-02-20 12:38]

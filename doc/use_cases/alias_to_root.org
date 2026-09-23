@@ -3,6 +3,7 @@
 :END:
 #+LANGUAGE: en
 #+EXPORT_FILE_NAME: ./alias_to_root.md
+#+SUBTITLE: Aliases pointing to the root command of a sibling project, to run its commands without cd-ing into it
 
 #+CALL: ../../lp.org:check-result()
 

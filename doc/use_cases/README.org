@@ -8,6 +8,37 @@ might be useful.
 There are organised by feature though so you can find easily what you are
 looking for.
 
+* what do you want to do?
+  :PROPERTIES:
+  :CUSTOM_ID: what-do-you-want-to-do
+  :END:
+
+  If you know what you need but not what clk calls it, start here.
+
+  - wrap a tool I already use: [[file:controlling_my_music.org][controlling my music]]
+  - write a small command that takes arguments: [[file:checking_my_server.org][checking my server]], then [[file:bash_command_use_option.org][options and flags]]
+  - write it in python rather than bash: [[file:python_command.org][python command]]
+  - take a date, said as "yesterday": [[file:finding_recent_documents.org][finding recent documents]]
+  - offer a fixed list of values: [[file:choices.org][choices]]
+  - complete with what exists right now, like the buckets of my account: [[file:wrapping_a_cloud_provider_cli.org][cloud provider CLI wrapper]]
+  - stop typing the same options again and again: [[file:wrapping_a_cloud_provider_cli.org][cloud provider CLI wrapper]]
+  - set one value that many commands read: [[file:setting_default_values.org][setting default values]]
+  - control a command with an environment variable: [[file:controlling_a_server_using_an_environment_variable.org][controlling a server]], [[file:podcast_automation.org][podcast automation]]
+  - chain steps that depend on each other: [[file:3D_printing_flow.org][3D printing flow]]
+  - have commands that only exist in a project: [[file:using_a_project.org][using a project]]
+  - run the same workflow everywhere, each project doing it its own way: [[file:global_workflow_local_implementation.org][global workflow, local implementation]]
+  - reach the commands of a sibling project without ~cd~: [[file:alias_to_root.org][alias to root]]
+  - keep a password out of my scripts: [[file:dealing_with_secrets.org][dealing with secrets]]
+  - fetch some json and show it: [[file:fetching_and_displaying_json_data.org][fetching and displaying json data]]
+  - not fetch the same page twice: [[file:scrapping_the_web.org][scrapping the web]]
+  - clean up what my command set up, even when it fails: [[file:controlling_the_audio.org][controlling the audio]]
+  - call clk from another program that brings its own python libraries: [[file:reading_later_from_qutebrowser.org][reading later from qutebrowser]]
+  - find out why a command is slow: [[file:spotting_slow_code.org][spotting slow code]]
+  - know where a setting comes from: [[file:self_documentation.org][self documentation]]
+  - share my commands with other people: [[file:creating_extensions.org][creating extensions]]
+  - build my own tool, with its own name, on top of clk: [[file:chaotic_simulator_manager.org][chaotic simulator manager]]
+  - see it all put together: [[file:backing_up_documents.org][backing up documents]]
+
 * creating commands
   :PROPERTIES:
   :CUSTOM_ID: creating-commands
