@@ -252,6 +252,22 @@ sanity-check:
     SAVE ARTIFACT /output/coverage-reports AS LOCAL output/coverage-reports
     SAVE ARTIFACT /output/coverage-reports/*.md AS LOCAL coverage-reports/
 
+pages-base:
+    FROM ruby:3.3
+    WORKDIR /app
+    RUN printf 'source "https://rubygems.org"\ngem "github-pages", group: :jekyll_plugins\n' > Gemfile
+    RUN bundle install
+
+pages:
+    FROM +pages-base
+    COPY --dir _config.yml CNAME README.md install.sh doc assets coverage-reports /app/
+    RUN PAGES_REPO_NWO=clk-project/clk bundle exec jekyll build --destination /site
+    RUN cd /site && find . -name '*.html' | while read -r page; do \
+            up="$(dirname "${page}" | sed -E 's|^\.||; s|/[^/]+|../|g')"; \
+            sed -i -E "s#(href|src)=\"/([^/])#\1=\"${up:-./}\2#g" "${page}"; \
+        done
+    SAVE ARTIFACT /site AS LOCAL output/site
+
 ralph:
     # Example: earthly --secret-file CLAUDE_CREDENTIALS=~/.claude/.credentials.json +ralph --ralph_args="run --max-iterations 1 -p 'do something'" --output_dir=results
     # Start from the test base: debian with python venv, all test tooling, plus npm for ralph

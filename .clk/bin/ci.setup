@@ -1,0 +1,25 @@
+#!/usr/bin/env bash
+set -eu
+
+source "_clk.sh"
+
+clk_usage () {
+    cat<<EOF
+$0
+
+Put the settings of the repository in the state the CI expects
+--
+EOF
+}
+
+clk_help_handler "$@"
+pushd "${CLK__PROJECT}" > /dev/null
+{
+    repository="$(gh repo view --json nameWithOwner --jq .nameWithOwner)"
+    gh api --method PUT "repos/${repository}/pages" \
+       -f build_type=workflow \
+       -f cname="$(cat CNAME)" \
+       -F https_enforced=true
+    gh api "repos/${repository}/pages" --jq '"pages: \(.build_type), \(.cname)"'
+}
+popd > /dev/null
