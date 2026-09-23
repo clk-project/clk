@@ -7,6 +7,7 @@
                                                       ("^\\./export\\.sh" . "./tangle-n-export.sh")
                                                       ("^clk python -m pytest" . "use clk test")
                                                       ("@mcp(mcp__konix-coord__coord_sleep)" . "gh run watch")
+                                                      ("^ruff check" . "run pre-commit")
                                                       ))
          (konix/agent-shell-tool-whitelist-project . (("^rm -f tests/\\.coverage\\.\\*" . "")
                                                       ("^clk test" . "")
