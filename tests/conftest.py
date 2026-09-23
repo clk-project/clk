@@ -35,8 +35,7 @@ def _short_test_name(nodeid):
     """Convert pytest nodeid to a short test name for context."""
     # tests/test_foo.py::test_bar -> foo:bar
     name = nodeid
-    if name.startswith("tests/test_"):
-        name = name[len("tests/test_") :]
+    name = name.removeprefix("tests/test_")
     if ".py::test_" in name:
         parts = name.split(".py::test_")
         return f"{parts[0]}:{parts[1]}"
