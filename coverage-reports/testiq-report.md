@@ -16,7 +16,11 @@ Found 1 groups with 1 duplicate tests:
 
 ## Subset Duplicates
 
-Found 15 tests that are subsets of others (showing top 20 by coverage ratio):
+Found 20 tests that are subsets of others (showing top 20 by coverage ratio):
+
+
+  - `custom:group_python` is 99.9% covered by `types:default_with_converter`
+    **Action**: Consider removing if no unique edge cases
 
 
   - `completion:group` is 99.7% covered by `completion:dynamic_group`
@@ -39,11 +43,23 @@ Found 15 tests that are subsets of others (showing top 20 by coverage ratio):
     **Action**: Consider removing if no unique edge cases
 
 
+  - `completion:command` is 99.6% covered by `types:suggestion`
+    **Action**: Consider removing if no unique edge cases
+
+
+  - `custom:group_python` is 99.6% covered by `types:date`
+    **Action**: Consider removing if no unique edge cases
+
+
   - `alias:alias_conserves_parameters_of_group` is 99.4% covered by `alias:alias_overrides_parameters`
     **Action**: Consider removing if no unique edge cases
 
 
   - `custom:group_python` is 99.4% covered by `custom:simple_python`
+    **Action**: Consider removing if no unique edge cases
+
+
+  - `completion:command` is 98.8% covered by `types:complete_date`
     **Action**: Consider removing if no unique edge cases
 
 
@@ -60,6 +76,10 @@ Found 15 tests that are subsets of others (showing top 20 by coverage ratio):
 
 
   - `types:default_with_converter` is 96.9% covered by `types:suggestion`
+    **Action**: Consider removing if no unique edge cases
+
+
+  - `custom:group_python` is 96.8% covered by `types:suggestion`
     **Action**: Consider removing if no unique edge cases
 
 
@@ -81,10 +101,10 @@ Found 15 tests that are subsets of others (showing top 20 by coverage ratio):
 
 ## Similar Tests (≥30% overlap)
 
-Found 3923 test pairs with ≥30% similarity (showing top 20):
+Found 4012 test pairs with ≥30% similarity (showing top 20):
 
 
-  - `custom:group_python` ↔ `types:default_with_converter`: 99.8% similar
+  - `custom:group_python` ↔ `types:default_with_converter`: 99.9% similar
     **Action**: Review for potential merge or refactoring
 
 
@@ -112,11 +132,11 @@ Found 3923 test pairs with ≥30% similarity (showing top 20):
     **Action**: Review for potential merge or refactoring
 
 
-  - `completion:command` ↔ `types:suggestion`: 99.5% similar
+  - `completion:command` ↔ `types:suggestion`: 99.6% similar
     **Action**: Review for potential merge or refactoring
 
 
-  - `custom:group_python` ↔ `types:date`: 99.5% similar
+  - `custom:group_python` ↔ `types:date`: 99.6% similar
     **Action**: Review for potential merge or refactoring
 
 
@@ -128,11 +148,11 @@ Found 3923 test pairs with ≥30% similarity (showing top 20):
     **Action**: Review for potential merge or refactoring
 
 
-  - `alias:capture_flow_command` ↔ `alias:capture_partial_flow`: 99.3% similar
+  - `custom:simple_python` ↔ `types:default_with_converter`: 99.3% similar
     **Action**: Review for potential merge or refactoring
 
 
-  - `custom:simple_python` ↔ `types:default_with_converter`: 99.2% similar
+  - `alias:capture_flow_command` ↔ `alias:capture_partial_flow`: 99.3% similar
     **Action**: Review for potential merge or refactoring
 
 
@@ -148,11 +168,11 @@ Found 3923 test pairs with ≥30% similarity (showing top 20):
     **Action**: Review for potential merge or refactoring
 
 
-  - `custom:simple_python` ↔ `types:date`: 98.9% similar
+  - `custom:simple_python` ↔ `types:date`: 99.0% similar
     **Action**: Review for potential merge or refactoring
 
 
-  - `completion:command` ↔ `types:complete_date`: 98.7% similar
+  - `completion:command` ↔ `types:complete_date`: 98.8% similar
     **Action**: Review for potential merge or refactoring
 
 
@@ -164,12 +184,12 @@ Found 3923 test pairs with ≥30% similarity (showing top 20):
     **Action**: Review for potential merge or refactoring
 
 
-  ... and 3903 more similar test pairs
+  ... and 3992 more similar test pairs
 
 
 ## Summary
 
-- Total tests analyzed: 101
+- Total tests analyzed: 102
 - Exact duplicates: 1 tests can be removed
-- Subset duplicates: 15 tests may be redundant
-- Similar tests: 3923 pairs need review
+- Subset duplicates: 20 tests may be redundant
+- Similar tests: 4012 pairs need review
