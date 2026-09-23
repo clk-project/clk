@@ -4,19 +4,12 @@
 
 ## Exact Duplicates (Identical Coverage)
 
-Found 1 groups with 1 duplicate tests:
-
-
-### Group 1 (2 tests):
-  - command:dynamic_default_value
-  - command:dynamic_default_value_callback
-
-  **Action**: Keep one test, remove 1 duplicates
+Found 0 groups with 0 duplicate tests:
 
 
 ## Subset Duplicates
 
-Found 20 tests that are subsets of others (showing top 20 by coverage ratio):
+Found 18 tests that are subsets of others (showing top 20 by coverage ratio):
 
 
   - `custom:group_python` is 99.9% covered by `types:default_with_converter`
@@ -36,10 +29,6 @@ Found 20 tests that are subsets of others (showing top 20 by coverage ratio):
 
 
   - `command:dynamic_default_value` is 99.6% covered by `command:dynamic_default_value_callback_that_depends_on_another_param`
-    **Action**: Consider removing if no unique edge cases
-
-
-  - `command:dynamic_default_value_callback` is 99.6% covered by `command:dynamic_default_value_callback_that_depends_on_another_param`
     **Action**: Consider removing if no unique edge cases
 
 
@@ -95,13 +84,9 @@ Found 20 tests that are subsets of others (showing top 20 by coverage ratio):
     **Action**: Consider removing if no unique edge cases
 
 
-  - `command:dynamic_default_value_callback` is 76.2% covered by `alias:alias_conserves_parameters_of_group_with_exposed_class`
-    **Action**: Consider removing if no unique edge cases
-
-
 ## Similar Tests (≥30% overlap)
 
-Found 4012 test pairs with ≥30% similarity (showing top 20):
+Found 3924 test pairs with ≥30% similarity (showing top 20):
 
 
   - `custom:group_python` ↔ `types:default_with_converter`: 99.9% similar
@@ -125,10 +110,6 @@ Found 4012 test pairs with ≥30% similarity (showing top 20):
 
 
   - `command:dynamic_default_value` ↔ `command:dynamic_default_value_callback_that_depends_on_another_param`: 99.6% similar
-    **Action**: Review for potential merge or refactoring
-
-
-  - `command:dynamic_default_value_callback` ↔ `command:dynamic_default_value_callback_that_depends_on_another_param`: 99.6% similar
     **Action**: Review for potential merge or refactoring
 
 
@@ -184,12 +165,16 @@ Found 4012 test pairs with ≥30% similarity (showing top 20):
     **Action**: Review for potential merge or refactoring
 
 
-  ... and 3992 more similar test pairs
+  - `parameter:config_extension_overrides_global` ↔ `parameter:parameter_precedence`: 98.4% similar
+    **Action**: Review for potential merge or refactoring
+
+
+  ... and 3904 more similar test pairs
 
 
 ## Summary
 
-- Total tests analyzed: 102
-- Exact duplicates: 1 tests can be removed
-- Subset duplicates: 20 tests may be redundant
-- Similar tests: 4012 pairs need review
+- Total tests analyzed: 101
+- Exact duplicates: 0 tests can be removed
+- Subset duplicates: 18 tests may be redundant
+- Similar tests: 3924 pairs need review

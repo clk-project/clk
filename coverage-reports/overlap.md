@@ -2,10 +2,10 @@
 
 ## Summary
 
-- **Total tests:** 102
-- **Full subsets (100%):** 26
-- **High overlap (≥75%):** 4038
-- **Significant overlap (≥50%):** 4170
+- **Total tests:** 101
+- **Full subsets (100%):** 22
+- **High overlap (≥75%):** 3949
+- **Significant overlap (≥50%):** 4081
 
 ## Full Subsets (100% overlap)
 
@@ -17,15 +17,10 @@ These tests have coverage completely contained within another test:
 | alias:alias_conserves_parameters_of_group | alias:alias_overrides_parameters | 3061 |
 | alias:alias_conserves_parameters_of_group_with_exposed_class | alias:alias_overrides_parameters | 3070 |
 | command:dynamic_default_value | alias:alias_conserves_parameters_of_group_with_exposed_class | 2339 |
-| command:dynamic_default_value_callback | alias:alias_conserves_parameters_of_group_with_exposed_class | 2339 |
 | command:dynamic_default_value_callback_that_depends_on_another_param | alias:alias_conserves_parameters_of_group_with_exposed_class | 2348 |
 | command:dynamic_default_value | alias:alias_overrides_parameters | 2339 |
-| command:dynamic_default_value_callback | alias:alias_overrides_parameters | 2339 |
 | command:dynamic_default_value_callback_that_depends_on_another_param | alias:alias_overrides_parameters | 2348 |
-| command:dynamic_default_value | command:dynamic_default_value_callback | 2339 |
-| command:dynamic_default_value_callback | command:dynamic_default_value | 2339 |
 | command:dynamic_default_value | command:dynamic_default_value_callback_that_depends_on_another_param | 2339 |
-| command:dynamic_default_value_callback | command:dynamic_default_value_callback_that_depends_on_another_param | 2339 |
 | completion:command | completion:completion_with_saved_parameter | 2821 |
 | completion:command | completion:dynamic_group | 2821 |
 | completion:command | completion:group | 2821 |
@@ -75,7 +70,7 @@ These tests have coverage completely contained within another test:
 | alias:simple_alias_command | use_cases:use_case[using_a_project] | 99.8% | 72.0% | 2931 | 4064 |
 | command:invoked_commands_still_work_even_though_they_are_no_customizable | completion:completion_with_saved_parameter | 99.8% | 89.5% | 2735 | 3050 |
 | command:invoked_commands_still_work_even_though_they_are_no_customizable | run:can_edit_parameters | 99.8% | 95.3% | 2735 | 2864 |
-| ... | *3982 more* | | | | |
+| ... | *3897 more* | | | | |
 
 ## Test Sizes
 
@@ -101,4 +96,4 @@ These tests have coverage completely contained within another test:
 | use_cases:use_case[dealing_with_secrets] | 3382 |
 | help:main_help | 3373 |
 | custom:cannot_remove_existing_command | 3337 |
-| ... | *82 more tests* |
+| ... | *81 more tests* |
