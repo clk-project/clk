@@ -28,6 +28,7 @@
 | [lib.md](lib.md) | Reference for clk.lib Python helpers (download, echo_json, etc.) |  |
 | [podcast_automation.md](podcast_automation.md) | Aliases with templated environment variables for flexible workflows (podcast download example) | O:,clk_help_handler,clk_usage,clk_value |
 | [python_command.md](python_command.md) | Creating Python commands with clk command create python, click decorators |  |
+| [reading_later_from_qutebrowser.md](reading_later_from_qutebrowser.md) | Calling clk from a qutebrowser userscript, with CLK_FORCE_DEPS so that the PYTHONPATH of the browser does not break it |  |
 | [scrapping_the_web.md](scrapping_the_web.md) | Caching web-scraped data locally to avoid redundant requests |  |
 | [self_documentation.md](self_documentation.md) | Using clk describe to explore aliases, parameters, commands, and extensions across profiles |  |
 | [send_sms.md](send_sms.md) | Advanced bash parameter parsing and wrapping termux for SMS sending | A:,CLK____JSON,O:,clk_help_handler,clk_import,clk_list_to_choice,clk_usage,clk_value |

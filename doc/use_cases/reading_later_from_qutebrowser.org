@@ -1,0 +1,148 @@
+:PROPERTIES:
+:ID:       3ce220fd-c143-4223-aeac-a62212fd8e99
+:END:
+#+language: en
+#+EXPORT_FILE_NAME: ./reading_later_from_qutebrowser.md
+#+SUBTITLE: Calling clk from a qutebrowser userscript, with CLK_FORCE_DEPS so that the PYTHONPATH of the browser does not break it
+
+#+CALL: ../../lp.org:check-result()
+
+#+name: init
+#+BEGIN_SRC bash :results none :exports none :session 3ce220fd-c143-4223-aeac-a62212fd8e99
+  . ./sandboxing.sh
+#+END_SRC
+
+* keeping a page for later
+  :PROPERTIES:
+  :CUSTOM_ID: keeping-a-page-for-later
+  :END:
+
+I read with qutebrowser, and I often stumble upon a page I have no time for. I
+already keep them with a clk command.
+
+#+NAME: read_later_body
+#+BEGIN_SRC python :results none :exports code
+@command()
+@argument('url', help='The page to read later')
+def read_later(url):
+    'Keep a page to read it later'
+    print(f'I will read {url} later')
+#+END_SRC
+
+#+NAME: read_later
+#+BEGIN_SRC bash :results none :exports none :session 3ce220fd-c143-4223-aeac-a62212fd8e99 :noweb yes
+clk command create python read-later --description "Keep a page to read it later" --body "
+<<read_later_body>>
+"
+#+END_SRC
+
+#+NAME: try_read_later
+#+BEGIN_SRC bash :results verbatim :exports both :session 3ce220fd-c143-4223-aeac-a62212fd8e99 :cache yes
+clk read-later https://clk-project.org/
+#+END_SRC
+
+#+RESULTS[88ea61aa291718f55b243d4672dc71cb1984683d]: try_read_later
+: I will read https://clk-project.org/ later
+
+* a key in qutebrowser
+  :PROPERTIES:
+  :CUSTOM_ID: a-key-in-qutebrowser
+  :END:
+
+I want a key that does it on the page I am reading. qutebrowser runs userscripts
+and gives them the url in ~QUTE_URL~, so mine only calls clk.
+
+#+NAME: userscript
+#+BEGIN_SRC bash :results none :exports code
+#!/usr/bin/env bash
+clk read-later "${QUTE_URL}"
+#+END_SRC
+
+I bind it in my config.py.
+
+#+BEGIN_SRC python :results none :exports code
+config.bind('<Space>r', 'spawn --userscript read-later')
+#+END_SRC
+
+qutebrowser is a python program, and its userscripts get the PYTHONPATH it runs
+with. Mine comes with a click of its own, one clk cannot work with.
+
+#+NAME: fake_qutebrowser
+#+BEGIN_SRC bash :results none :exports none :session 3ce220fd-c143-4223-aeac-a62212fd8e99
+mkdir -p "${TMP}/qutebrowser/lib/click" "${TMP}/qutebrowser/userscripts"
+echo 'raise ImportError("clk cannot work with the click of qutebrowser")' > "${TMP}/qutebrowser/lib/click/__init__.py"
+# what qutebrowser does when I press the key
+press_the_key () {
+    (
+        export PYTHONPATH="${TMP}/qutebrowser/lib"
+        export QUTE_URL="https://clk-project.org/"
+        . "${TMP}/qutebrowser/userscripts/read-later"
+    )
+}
+#+END_SRC
+
+#+NAME: install_userscript
+#+BEGIN_SRC bash :results none :exports none :session 3ce220fd-c143-4223-aeac-a62212fd8e99 :noweb yes
+cat <<"EOF" > "${TMP}/qutebrowser/userscripts/read-later"
+<<userscript>>
+EOF
+#+END_SRC
+
+I press the key, and clk does not even start.
+
+#+NAME: press_the_key
+#+BEGIN_SRC bash :results verbatim :exports results :session 3ce220fd-c143-4223-aeac-a62212fd8e99 :cache yes
+press_the_key 2>&1 | tail -1
+#+END_SRC
+
+#+RESULTS[]: press_the_key
+: ImportError: clk cannot work with the click of qutebrowser
+
+* letting clk use its own libraries
+  :PROPERTIES:
+  :CUSTOM_ID: letting-clk-use-its-own-libraries
+  :END:
+
+With ~CLK_FORCE_DEPS~ set, clk puts what PYTHONPATH says after its own
+libraries. It takes its own click, and still finds the rest of PYTHONPATH.
+
+#+NAME: userscript_forcing_deps
+#+BEGIN_SRC bash :results none :exports code
+#!/usr/bin/env bash
+export CLK_FORCE_DEPS=1
+clk read-later "${QUTE_URL}"
+#+END_SRC
+
+#+NAME: install_userscript_forcing_deps
+#+BEGIN_SRC bash :results none :exports none :session 3ce220fd-c143-4223-aeac-a62212fd8e99 :noweb yes
+cat <<"EOF" > "${TMP}/qutebrowser/userscripts/read-later"
+<<userscript_forcing_deps>>
+EOF
+#+END_SRC
+
+#+NAME: press_the_key_again
+#+BEGIN_SRC bash :results verbatim :exports results :session 3ce220fd-c143-4223-aeac-a62212fd8e99 :cache yes
+press_the_key
+#+END_SRC
+
+#+RESULTS[]: press_the_key_again
+: I will read https://clk-project.org/ later
+
+#+BEGIN_SRC bash :exports none :tangle ../../tests/use_cases/reading_later_from_qutebrowser.sh :noweb yes :shebang "#!/usr/bin/env bash"
+  set -eu
+  <<init>>
+
+  <<read_later>>
+
+  check-result(try_read_later)
+
+  <<fake_qutebrowser>>
+
+  <<install_userscript>>
+
+  check-result(press_the_key)
+
+  <<install_userscript_forcing_deps>>
+
+  check-result(press_the_key_again)
+#+END_SRC

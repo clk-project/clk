@@ -104,6 +104,10 @@ looking for.
    Aliases can also use environment variables through templates -- see
    [[*aliases][aliases]].
 
+   When another python program calls clk, like qutebrowser running a
+   userscript, ~CLK_FORCE_DEPS~ keeps [[file:reading_later_from_qutebrowser.org][the libraries of that program]] out of
+   clk's way.
+
 ** values (semantic defaults)
    :PROPERTIES:
    :CUSTOM_ID: values
