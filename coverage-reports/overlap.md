@@ -4,7 +4,7 @@
 
 - **Total tests:** 101
 - **Full subsets (100%):** 22
-- **High overlap (≥75%):** 3949
+- **High overlap (≥75%):** 3948
 - **Significant overlap (≥50%):** 4081
 
 ## Full Subsets (100% overlap)
@@ -58,42 +58,42 @@ These tests have coverage completely contained within another test:
 | parameter:removing_parameters | parameter:replacing_parameters | 99.2% | 99.9% | 2739 | 2720 |
 | parameter:replacing_parameters | parameter:using_automatic_options | 99.9% | 96.6% | 2720 | 2814 |
 | parameter:replacing_parameters | parameter_eval:use_value_as_parameter | 99.9% | 98.2% | 2720 | 2769 |
-| use_cases:use_case[controlling_the_audio] | use_cases:use_case[python_command] | 99.9% | 91.2% | 2852 | 3126 |
-| use_cases:use_case[controlling_the_audio] | use_cases:use_case[wrapping_a_cloud_provider_cli] | 99.9% | 68.9% | 2852 | 4134 |
-| use_cases:use_case[global_workflow_local_implementation] | use_cases:use_case[using_a_project] | 99.9% | 88.9% | 3617 | 4064 |
+| use_cases:use_case[controlling_the_audio] | use_cases:use_case[python_command] | 99.9% | 91.2% | 2853 | 3127 |
+| use_cases:use_case[controlling_the_audio] | use_cases:use_case[wrapping_a_cloud_provider_cli] | 99.9% | 68.9% | 2853 | 4135 |
+| use_cases:use_case[global_workflow_local_implementation] | use_cases:use_case[using_a_project] | 99.9% | 88.9% | 3618 | 4065 |
 | alias:can_use_a_flow_in_an_alias | flow:reuse_flow_parameters | 77.7% | 99.8% | 3138 | 2442 |
 | alias:capture_flow_command | flow:extend_flow | 99.8% | 95.1% | 3056 | 3208 |
 | alias:capture_partial_flow | flow:extend_flow | 99.8% | 94.5% | 3038 | 3208 |
-| alias:capture_partial_flow | use_cases:use_case[3D_printing_flow] | 99.8% | 66.1% | 3038 | 4588 |
-| alias:simple_alias_command | use_cases:use_case[global_workflow_local_implementation] | 99.8% | 80.9% | 2931 | 3617 |
-| alias:simple_alias_command | use_cases:use_case[podcast_automation] | 99.8% | 77.3% | 2931 | 3785 |
-| alias:simple_alias_command | use_cases:use_case[using_a_project] | 99.8% | 72.0% | 2931 | 4064 |
+| alias:capture_partial_flow | use_cases:use_case[3D_printing_flow] | 99.8% | 66.1% | 3038 | 4589 |
+| alias:simple_alias_command | use_cases:use_case[global_workflow_local_implementation] | 99.8% | 80.9% | 2931 | 3618 |
+| alias:simple_alias_command | use_cases:use_case[podcast_automation] | 99.8% | 77.3% | 2931 | 3786 |
+| alias:simple_alias_command | use_cases:use_case[using_a_project] | 99.8% | 72.0% | 2931 | 4065 |
 | command:invoked_commands_still_work_even_though_they_are_no_customizable | completion:completion_with_saved_parameter | 99.8% | 89.5% | 2735 | 3050 |
 | command:invoked_commands_still_work_even_though_they_are_no_customizable | run:can_edit_parameters | 99.8% | 95.3% | 2735 | 2864 |
-| ... | *3897 more* | | | | |
+| ... | *3896 more* | | | | |
 
 ## Test Sizes
 
 | Test | Lines Covered |
 |------|---------------|
-| use_cases:use_case[3D_printing_flow] | 4588 |
-| use_cases:use_case[creating_extensions] | 4477 |
-| use_cases:use_case[backing_up_documents] | 4321 |
-| use_cases:use_case[controlling_my_music] | 4184 |
-| use_cases:use_case[wrapping_a_cloud_provider_cli] | 4134 |
-| use_cases:use_case[using_a_project] | 4064 |
+| use_cases:use_case[3D_printing_flow] | 4589 |
+| use_cases:use_case[creating_extensions] | 4478 |
+| use_cases:use_case[backing_up_documents] | 4322 |
+| use_cases:use_case[controlling_my_music] | 4185 |
+| use_cases:use_case[wrapping_a_cloud_provider_cli] | 4135 |
+| use_cases:use_case[using_a_project] | 4065 |
 | use_cases:use_case[self_documentation] | 3973 |
-| use_cases:use_case[ethereum_local_environment_dev_tool] | 3883 |
-| use_cases:use_case[podcast_automation] | 3785 |
+| use_cases:use_case[ethereum_local_environment_dev_tool] | 3884 |
+| use_cases:use_case[podcast_automation] | 3786 |
 | use_cases:use_case[setting_default_values] | 3631 |
-| use_cases:use_case[global_workflow_local_implementation] | 3617 |
+| use_cases:use_case[global_workflow_local_implementation] | 3618 |
 | command:command | 3599 |
-| use_cases:use_case[using_a_plugin] | 3582 |
-| use_cases:use_case[checking_my_server] | 3519 |
+| use_cases:use_case[using_a_plugin] | 3583 |
+| use_cases:use_case[checking_my_server] | 3520 |
 | custom:capture_alias | 3517 |
-| use_cases:use_case[dynamic_parameters_and_exposed_class] | 3487 |
+| use_cases:use_case[dynamic_parameters_and_exposed_class] | 3488 |
 | use_cases:use_case[alias_to_root] | 3459 |
-| use_cases:use_case[dealing_with_secrets] | 3382 |
+| use_cases:use_case[dealing_with_secrets] | 3383 |
 | help:main_help | 3373 |
 | custom:cannot_remove_existing_command | 3337 |
 | ... | *81 more tests* |
