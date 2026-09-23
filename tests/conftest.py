@@ -6,9 +6,8 @@ from shlex import split
 from shutil import copytree, rmtree
 from subprocess import STDOUT, check_call, check_output
 
-import pytest
-
 import coverage
+import pytest
 
 # Global coverage instance for per-test coverage tracking
 _per_test_cov = None
