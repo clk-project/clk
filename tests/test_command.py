@@ -84,31 +84,6 @@ def get():
     assert lib.cmd("http --api myapi get") == "Getting http://myapi"
 
 
-def test_dynamic_default_value_callback(pythondir, lib):
-    # given a command to perform http request with a default url lazily computed
-    (pythondir / "http.py").write_text("""
-from clk.config import config
-from clk.decorators import group, option
-
-class Http:
-    pass
-
-def default():
-    return 'http://myapi'
-
-@group()
-@option('--url', expose_class=Http, default=default)
-def http():
-    ""
-
-@http.command()
-def get():
-    print("Getting " + config.http.url)
-""")
-    # when I use the command without providing a value, then I get the default value
-    assert lib.cmd("http get") == "Getting http://myapi"
-
-
 def test_dynamic_default_value(pythondir, lib):
     # given a command to perform http request with a default url
     (pythondir / "http.py").write_text("""
