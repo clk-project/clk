@@ -1,5 +1,7 @@
 VERSION 0.8
 IMPORT github.com/Konubinix/Earthfile AS e
+ARG --global TEST_EXTRA_PACKAGES="git expect direnv faketime jq graphviz procps"
+ARG --global TEST_PACKAGES="coverage pytest keyring testiq"
 
 requirements:
     FROM e+alpine-python-user-venv --packages=pip-tools --workdir=/app
@@ -81,7 +83,7 @@ dist:
 
 test:
     # we expect the end user to have an environment closer to debian than alpine. Therefore we use debian here.
-    FROM e+debian-python-user-venv --extra_packages="git expect direnv faketime jq graphviz procps" --packages="coverage pytest keyring testiq"
+    FROM e+debian-python-user-venv --extra_packages="${TEST_EXTRA_PACKAGES}" --packages="${TEST_PACKAGES}"
     RUN echo 'source <(direnv hook bash)' >> "${HOME}/.bashrc"
     ARG from=source
     ARG use_git=no
@@ -271,7 +273,7 @@ pages:
 ralph:
     # Example: earthly --secret-file CLAUDE_CREDENTIALS=~/.claude/.credentials.json +ralph --ralph_args="run --max-iterations 1 -p 'do something'" --output_dir=results
     # Start from the test base: debian with python venv, all test tooling, plus npm for ralph
-    FROM e+debian-python-user-venv --extra_packages="git expect direnv faketime jq graphviz procps npm xz-utils" --packages="coverage pytest keyring testiq"
+    FROM e+debian-python-user-venv --extra_packages="${TEST_EXTRA_PACKAGES} npm xz-utils" --packages="${TEST_PACKAGES}"
     RUN echo 'source <(direnv hook bash)' >> "${HOME}/.bashrc"
     # Install clk (same pattern as test target)
     ARG from=source
