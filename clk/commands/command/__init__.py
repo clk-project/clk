@@ -171,7 +171,7 @@ def create():
 @option(
     "--option",
     "options_",
-    help="Add an option (format: --name:TYPE:HELP)",
+    help="Add an option (format: --name:TYPE:HELP or --name:TYPE:HELP:JSON_OPTS)",
     multiple=True,
 )
 @option(

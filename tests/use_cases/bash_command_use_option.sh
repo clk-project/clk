@@ -18,7 +18,7 @@ This command shows something
 --
 A:kind-of-animal:$(clk_format_choice duck whale cat dog):A kind of animal:{"default": "duck", "nargs": 1}
 O:--sound-of-animal:str:The sound the animal makes
-O:--repeat:int:How many times to repeat the message:0
+O:--repeat:int:How many times to repeat the message:{"default": 0}
 F:--shout:Print the message of the animal in capital case
 EOF
 }

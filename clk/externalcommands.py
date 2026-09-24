@@ -139,13 +139,19 @@ class ExternalCommandResolver(CommandResolver):
                 for line in metadata_out.splitlines():
                     if line.startswith("O:"):
                         m = re.match(
-                            "^O:(?P<name>[^:]+):(?P<type>[^:]+):(?P<help>[^:]+)(:(?P<default>[^:]+))?(:(?P<multiple>[^:]+))?$",
+                            "^O:(?P<name>[^:]+):(?P<type>[^:]+):(?P<help>[^:]+)(:(?P<extra>{.+})|(:(?P<default>[^:]+))?(:(?P<multiple>[^:]+))?)$",
                             line,
                         )
                         if m is None:
                             raise click.UsageError(
-                                f"Expected format in {path} is O:name:type:help[:default],"
+                                f"Expected format in {path} is O:name:type:help[:{{someextrajsondata}}],"
                                 f" got {line}"
+                            )
+                        if m.group("default") or m.group("multiple"):
+                            LOGGER.deprecated(
+                                f"In {path}, {line} gives its default after a colon."
+                                " Give it in the json that ends the line instead,"
+                                ' like O:name:type:help:{"default": "value"}'
                             )
                         options.append(m.groupdict())
                     if line.startswith("F:"):
@@ -250,23 +256,17 @@ class ExternalCommandResolver(CommandResolver):
                 external_command
             )
         for o in options:
+            extra = json.loads(o["extra"] or "{}")
             if "type" in o:
                 t = get_type(o["type"])
             t = t or str
+            default = extra.get("default", o.get("default"))
             external_command = option(
                 *(o["name"].split(",")),
                 help=o["help"],
                 type=t,
-                multiple=o.get("multiple") == "True",
-                default=t(o.get("default"))
-                if (
-                    o.get("default")
-                    not in (
-                        None,
-                        "None",
-                    )
-                )
-                else None,
+                multiple=extra.get("multiple", o.get("multiple") == "True"),
+                default=t(default) if default not in (None, "None") else None,
             )(external_command)
         for a in reversed(arguments):
             extra = json.loads(a["extra"] or "{}")

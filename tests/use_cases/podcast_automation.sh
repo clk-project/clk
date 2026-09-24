@@ -404,7 +404,7 @@ $0
 
 Extract the audio of the episodes in that state
 --
-O:--state:podcastlib.stateType:The state of the episodes to extract the audio of:to-process
+O:--state:podcastlib.stateType:The state of the episodes to extract the audio of:{"default": "to-process"}
 EOF
 }
 
