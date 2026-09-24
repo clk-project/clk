@@ -28,7 +28,7 @@ Options:
 
 Commands:
   bash    Create a bash custom command
-  python  Create a bash custom command
+  python  Create a python custom command
 
 EOEXPECTED
 )"

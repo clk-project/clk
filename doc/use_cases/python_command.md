@@ -22,7 +22,7 @@ clk command create python --help
 ```
 Usage: clk command create python [OPTIONS] NAME
 
-  Create a bash custom command
+  Create a python custom command
 
   This is a built-in command.
 

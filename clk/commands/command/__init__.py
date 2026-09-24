@@ -371,7 +371,7 @@ clk_help_handler "$@"
 @option("--description", help="The initial description to put", default="Description")
 @option("--from-file", help="Copy this file instead of using the template")
 def python(name, open, force, description, body, with_data, from_file, group):
-    """Create a bash custom command"""
+    """Create a python custom command"""
     if "." in name.removesuffix(".py"):
         raise click.UsageError(
             f"'{name}' is not a valid Python command name (it contains periods)."
