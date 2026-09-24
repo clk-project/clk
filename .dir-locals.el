@@ -5,9 +5,10 @@
                                                       ("^./doc/use_cases/generate-index.sh$" . "this is done in a pre-commit hook")
                                                       ("^Edit tests/use_cases/" . "Never touch that file. It is tangled from ./doc/use_cases/")
                                                       ("^\\./export\\.sh" . "./tangle-n-export.sh")
-                                                      ("^clk python -m pytest" . "use clk test")
                                                       ("@mcp(mcp__konix-coord__coord_sleep)" . "gh run watch")
                                                       ("^ruff check" . "run pre-commit")
+                                                      ("^\\(clk \\)?python -m pytest" . "use clk test")
+                                                      ("^Write tests/" . "prefer curating user stories")
                                                       ))
          (konix/agent-shell-tool-whitelist-project . (("^rm -f tests/\\.coverage\\.\\*" . "")
                                                       ("^clk test" . "")
@@ -16,6 +17,8 @@
                                                       ("^ruff check clk/" . "")
                                                       ("^pre-commit run" . "")
                                                       ("^earthly \\+export-coverage --use_git=true" . "")
+                                                      ("^ruff format" . "")
+                                                      ("^clk coverage missing" . "")
                                                       ))
          (konix/agent-shell-mcp-project-servers . ("konix-emacs-code-review"
                                                    "konix-emacs-workspace"
