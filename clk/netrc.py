@@ -24,7 +24,7 @@ class Netrc:
         except:  # NOQA: E722
             return None
 
-    def delete_password(self, servicename, username, password):
+    def delete_password(self, servicename, username):
         raise click.UsageError(
             "The netrc keyring only reads secrets."
             " Remove this one from your netrc file to get rid of it."
