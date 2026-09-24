@@ -882,6 +882,9 @@ def redact_locations(message):
     if install_location:
         project_root = str(Path(install_location).parent) + "/"
         message = message.replace(project_root, "")
+    config_home = os.environ.get("XDG_CONFIG_HOME")
+    if config_home:
+        message = message.replace(config_home, make_relative(config_home))
     return message.replace(hostname(), "myhostname")
 
 
