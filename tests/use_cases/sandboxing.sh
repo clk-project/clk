@@ -119,6 +119,7 @@ cat<<EOF > "${TMP}/.envrc" && direnv allow
 export CLKCONFIGDIR="${TMP}/clk-root"
 export CLK_DISTRIBUTION_PROFILE="${TMP}/clk-distribution"
 export PYTHON_KEYRING_BACKEND=clk.keyrings.DummyFileKeyring
+export XDG_CONFIG_HOME="${TMP}/config"
 export DUMMYFILEKEYRINGPATH="${TMP}/keyring.json"
 export CLK_NETRC_LOCATION="${TMP}/netrc"
 export CLK_BIN="${CLK_BIN}"

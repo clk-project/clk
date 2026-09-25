@@ -7,6 +7,7 @@
 - [when the demo-buyer password is reset](#when-the-demo-buyer-password-is-reset)
 - [when an agent runs it for me](#when-an-agent-runs-it-for-me)
 - [when the team shares the password](#when-the-team-shares-the-password)
+- [keeping it in the project](#keeping-it-in-the-project)
 - [when the demo is over](#when-the-demo-is-over)
 
 I have an MCP server running on Amazon Bedrock AgentCore. It sits behind a Cognito user pool, so before calling one of its tools I need an access token, and to get one I log in as a test user, demo-buyer, with its password.
@@ -304,6 +305,20 @@ clk secret show demo-buyer-password --secret
 
     demo-buyer-password thevalue
 
+```bash
+clk secret backend which
+```
+
+    clk keeps your secrets in clk.netrc.Netrc, because the python library keyring is not installed.
+
+```bash
+clk secret backend show
+```
+
+    backend          configuration      priority  status
+    ---------------  ---------------  ----------  --------
+    clk.netrc.Netrc  Unset                     1  in use
+
 Naming a keyring there makes no sense, and clk says so.
 
 ```bash
@@ -320,6 +335,26 @@ clk secret show demo-buyer-password --secret
 ```
 
     demo-buyer-password thevalue
+
+When I wonder where a secret comes from, clk tells me where it keeps them, and why.
+
+```bash
+clk secret backend which
+```
+
+    clk keeps your secrets in clk.keyrings.NetrcKeyring, because the python library keyring found no password manager on this machine.
+
+And which keyrings it could use instead.
+
+```bash
+clk secret backend show
+```
+
+    backend                                  configuration      priority  status
+    ---------------------------------------  ---------------  ----------  --------
+    clk.keyrings.NetrcKeyring                Unset                     1  in use
+    keyring.backends.fail.Keyring            Unset                     0
+    keyring.backends.chainer.ChainerBackend  Unset                    -1
 
 I can also ask for netrc explicitly, with the `NetrcKeyring` of `clk.keyrings`.
 
@@ -388,6 +423,61 @@ clk --keyring team_keyring.SecretsManagerKeyring secret set demo-buyer-password
 
     error: The keyring team_keyring.SecretsManagerKeyring cannot store secrets. Store it with the tool of that password manager, or pick another keyring with --keyring.
 
+```bash
+clk --keyring team_keyring.SecretsManagerKeyring secret backend which
+```
+
+    clk keeps your secrets in team_keyring.SecretsManagerKeyring, because --keyring names it.
+
+Rather than typing `--keyring` every time, I tell clk to use it from now on.
+
+```bash
+clk secret backend use team_keyring.SecretsManagerKeyring
+```
+
+    clk now keeps your secrets in team_keyring.SecretsManagerKeyring (global settings)
+
+```bash
+clk secret backend which
+```
+
+    clk keeps your secrets in team_keyring.SecretsManagerKeyring, because the global settings name it.
+
+```bash
+clk secret backend show
+```
+
+    backend                                  configuration      priority  status
+    ---------------------------------------  ---------------  ----------  --------
+    team_keyring.SecretsManagerKeyring       global                    6  in use
+    keyring.backends.fail.Keyring            Unset                     0
+    keyring.backends.chainer.ChainerBackend  Unset                    -1
+
+
+<a id="keeping-it-in-the-project"></a>
+
+# keeping it in the project
+
+In the project of my MCP server, I keep the demo-buyer password in the password manager of my desktop session, behind the Secret Service interface, rather than in the team keyring.
+
+```bash
+clk secret backend --local use keyring.backends.SecretService.Keyring
+```
+
+    clk now keeps your secrets in keyring.backends.SecretService.Keyring (local settings)
+
+```bash
+clk secret set demo-buyer-password
+```
+
+```bash
+clk secret show demo-buyer-password --secret
+clk secret backend which
+```
+
+    demo-buyer-password mytoken
+    clk keeps your secrets in keyring.backends.SecretService.Keyring, because the local settings name it.
+
 
 <a id="when-the-demo-is-over"></a>
 
@@ -399,6 +489,67 @@ The demo-buyer user is gone, and so are its parameter and its alias.
 clk parameter unset agentcore
 clk alias unset buyer-token
 ```
+
+I no longer need the team keyring either.
+
+```bash
+clk secret backend unuse
+```
+
+    clk no longer picks a keyring
+
+Once is enough.
+
+```bash
+clk secret backend unuse
+```
+
+    error: The global settings pick no keyring
+
+Without a choice of clk, the python library keyring picks the backend. It first reads the environment variable PYTHON\_KEYRING\_BACKEND.
+
+```bash
+PYTHON_KEYRING_BACKEND=clk.keyrings.NetrcKeyring clk secret backend which
+```
+
+    clk keeps your secrets in clk.keyrings.NetrcKeyring, because the environment variable PYTHON_KEYRING_BACKEND names it.
+
+Then its configuration file.
+
+```bash
+mkdir -p "${XDG_CONFIG_HOME}/python_keyring"
+cat <<EOF > "${XDG_CONFIG_HOME}/python_keyring/keyringrc.cfg"
+[backend]
+default-keyring=clk.keyrings.NetrcKeyring
+EOF
+```
+
+```bash
+clk secret backend which
+```
+
+    clk keeps your secrets in clk.keyrings.NetrcKeyring, because ./config/python_keyring/keyringrc.cfg names it.
+
+Without either, it takes the backend of highest priority, here the Secret Service of my session.
+
+```bash
+rm "${XDG_CONFIG_HOME}/python_keyring/keyringrc.cfg"
+clk secret backend which
+```
+
+    clk keeps your secrets in keyring.backends.SecretService.Keyring, because it has the highest priority of the backends the python library keyring found.
+
+Once the team publishes its Secrets Manager keyring as a package, installing it is enough: keyring finds it beside the Secret Service, and chains the two, asking the team keyring first.
+
+```bash
+pip install team-keyring
+```
+
+```bash
+clk secret backend which
+```
+
+    clk keeps your secrets in keyring.backends.chainer.ChainerBackend, because it has the highest priority of the backends the python library keyring found.
 
 No command of mine needs a secret any more.
 

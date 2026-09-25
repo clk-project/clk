@@ -205,6 +205,7 @@ class DirectoryProfile(Profile):
             ("flowdeps", "flowdep"),
             ("value", "value"),
             ("recipe", "extension"),
+            ("keyring", "secret backend"),
         ]:
             entries = self.settings.get(setting)
             if entries:
@@ -236,6 +237,7 @@ class DirectoryProfile(Profile):
             "flowdeps",
             "value",
             "recipe",
+            "keyring",
             "plugins",
             "customcommands",
         }:

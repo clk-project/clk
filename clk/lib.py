@@ -521,7 +521,18 @@ def get_keyring():
         )
         from clk.netrc import Netrc
 
-        return Netrc()
+        backend = Netrc()
+        backend.reason = "the python library keyring is not installed"
+        return backend
+
+    from clk.config import config
+
+    profile = keyring_settings_profile()
+    if config.keyring_option is None and profile is not None:
+        backend = profile.get_settings("keyring")["backend"]
+        if getattr(get_keyring, "loaded", None) != backend:
+            keyring.set_keyring(keyring.core.load_keyring(backend))
+            get_keyring.loaded = backend
 
     if isinstance(keyring.get_keyring(), keyring.backends.fail.Keyring):
         LOGGER.debug(
@@ -529,9 +540,37 @@ def get_keyring():
         )
         from clk.keyrings import NetrcKeyring
 
-        keyring.set_keyring(NetrcKeyring())
+        fallback = NetrcKeyring()
+        fallback.reason = (
+            "the python library keyring found no password manager on this machine"
+        )
+        keyring.set_keyring(fallback)
 
     return keyring.get_keyring()
+
+
+def known_keyrings():
+    """The keyrings clk could use, the one in use among them"""
+    in_use = get_keyring()
+    try:
+        import keyring.backend
+    except ModuleNotFoundError:
+        return [in_use]
+    return [
+        backend
+        for backend in keyring.backend.get_all_keyring()
+        if type(backend) is not type(in_use)
+    ] + [in_use]
+
+
+def keyring_settings_profile():
+    """The most specific profile whose settings pick a keyring, if any"""
+    from clk.config import config
+
+    for profile in reversed(list(config.all_enabled_profiles)):
+        if profile.get_settings("keyring").get("backend"):
+            return profile
+    return None
 
 
 def get_secret(key):

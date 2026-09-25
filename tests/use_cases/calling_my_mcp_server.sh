@@ -740,6 +740,68 @@ fi
 
 
 
+nokeyring_backend_code () {
+      clk secret backend which
+}
+
+nokeyring_backend_expected () {
+      local expected
+      expected="$(cat<<"EOEXPECTED"
+clk keeps your secrets in clk.netrc.Netrc, because the python library keyring is not installed.
+EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
+}
+
+echo 'Run nokeyring_backend'
+
+{ nokeyring_backend_code || true ; } > "${TMP}/code.txt" 2>&1
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/nokeyring_backend"
+else
+    nokeyring_backend_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying nokeyring_backend"
+        exit 1
+    }
+fi
+
+
+
+nokeyring_backends_code () {
+      clk secret backend show
+}
+
+nokeyring_backends_expected () {
+      local expected
+      expected="$(cat<<"EOEXPECTED"
+backend          configuration      priority  status
+---------------  ---------------  ----------  --------
+clk.netrc.Netrc  Unset                     1  in use
+EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
+}
+
+echo 'Run nokeyring_backends'
+
+{ nokeyring_backends_code || true ; } > "${TMP}/code.txt" 2>&1
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/nokeyring_backends"
+else
+    nokeyring_backends_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying nokeyring_backends"
+        exit 1
+    }
+fi
+
+
+
 nokeyring_named_code () {
       clk --keyring clk.keyrings.NetrcKeyring secret show demo-buyer-password
 }
@@ -799,6 +861,72 @@ else
     netrc_fallback_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
         echo "Something went wrong when trying netrc_fallback"
+        exit 1
+    }
+fi
+
+
+unset DUMMYFILEKEYRINGPATH
+
+
+whichbackend_code () {
+      clk secret backend which
+}
+
+whichbackend_expected () {
+      local expected
+      expected="$(cat<<"EOEXPECTED"
+clk keeps your secrets in clk.keyrings.NetrcKeyring, because the python library keyring found no password manager on this machine.
+EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
+}
+
+echo 'Run whichbackend'
+
+{ whichbackend_code || true ; } > "${TMP}/code.txt" 2>&1
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/whichbackend"
+else
+    whichbackend_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying whichbackend"
+        exit 1
+    }
+fi
+
+
+
+showbackends_code () {
+      clk secret backend show
+}
+
+showbackends_expected () {
+      local expected
+      expected="$(cat<<"EOEXPECTED"
+backend                                  configuration      priority  status
+---------------------------------------  ---------------  ----------  --------
+clk.keyrings.NetrcKeyring                Unset                     1  in use
+keyring.backends.fail.Keyring            Unset                     0
+keyring.backends.chainer.ChainerBackend  Unset                    -1
+EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
+}
+
+echo 'Run showbackends'
+
+{ showbackends_code || true ; } > "${TMP}/code.txt" 2>&1
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/showbackends"
+else
+    showbackends_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying showbackends"
         exit 1
     }
 fi
@@ -976,8 +1104,409 @@ else
 fi
 
 
+
+teambackend_code () {
+      clk --keyring team_keyring.SecretsManagerKeyring secret backend which
+}
+
+teambackend_expected () {
+      local expected
+      expected="$(cat<<"EOEXPECTED"
+clk keeps your secrets in team_keyring.SecretsManagerKeyring, because --keyring names it.
+EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
+}
+
+echo 'Run teambackend'
+
+{ teambackend_code || true ; } > "${TMP}/code.txt" 2>&1
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/teambackend"
+else
+    teambackend_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying teambackend"
+        exit 1
+    }
+fi
+
+
+clk parameter unset clk
+
+
+useteambackend_code () {
+      clk secret backend use team_keyring.SecretsManagerKeyring
+}
+
+useteambackend_expected () {
+      local expected
+      expected="$(cat<<"EOEXPECTED"
+clk now keeps your secrets in team_keyring.SecretsManagerKeyring (global settings)
+EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
+}
+
+echo 'Run useteambackend'
+
+{ useteambackend_code || true ; } > "${TMP}/code.txt" 2>&1
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/useteambackend"
+else
+    useteambackend_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying useteambackend"
+        exit 1
+    }
+fi
+
+
+
+showteambackend_code () {
+      clk secret backend which
+}
+
+showteambackend_expected () {
+      local expected
+      expected="$(cat<<"EOEXPECTED"
+clk keeps your secrets in team_keyring.SecretsManagerKeyring, because the global settings name it.
+EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
+}
+
+echo 'Run showteambackend'
+
+{ showteambackend_code || true ; } > "${TMP}/code.txt" 2>&1
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/showteambackend"
+else
+    showteambackend_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying showteambackend"
+        exit 1
+    }
+fi
+
+
+
+showteambackends_code () {
+      clk secret backend show
+}
+
+showteambackends_expected () {
+      local expected
+      expected="$(cat<<"EOEXPECTED"
+backend                                  configuration      priority  status
+---------------------------------------  ---------------  ----------  --------
+team_keyring.SecretsManagerKeyring       global                    6  in use
+keyring.backends.fail.Keyring            Unset                     0
+keyring.backends.chainer.ChainerBackend  Unset                    -1
+EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
+}
+
+echo 'Run showteambackends'
+
+{ showteambackends_code || true ; } > "${TMP}/code.txt" 2>&1
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/showteambackends"
+else
+    showteambackends_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying showteambackends"
+        exit 1
+    }
+fi
+
+
+mkdir -p "${TMP}/mcp-server/.clk"
+cd "${TMP}/mcp-server"
+
+export DBUS_SESSION_BUS_ADDRESS="$(dbus-daemon --session --fork --print-address)"
+echo -n desktop | gnome-keyring-daemon --unlock --components=secrets > /dev/null
+
+
+usesecretservice_code () {
+      clk secret backend --local use keyring.backends.SecretService.Keyring
+}
+
+usesecretservice_expected () {
+      local expected
+      expected="$(cat<<"EOEXPECTED"
+clk now keeps your secrets in keyring.backends.SecretService.Keyring (local settings)
+EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
+}
+
+echo 'Run usesecretservice'
+
+{ usesecretservice_code || true ; } > "${TMP}/code.txt" 2>&1
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/usesecretservice"
+else
+    usesecretservice_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying usesecretservice"
+        exit 1
+    }
+fi
+
+
+clk secret set demo-buyer-password
+
+
+secretserviceshow_code () {
+      clk secret show demo-buyer-password --secret
+      clk secret backend which
+}
+
+secretserviceshow_expected () {
+      local expected
+      expected="$(cat<<"EOEXPECTED"
+demo-buyer-password mytoken
+clk keeps your secrets in keyring.backends.SecretService.Keyring, because the local settings name it.
+EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
+}
+
+echo 'Run secretserviceshow'
+
+{ secretserviceshow_code || true ; } > "${TMP}/code.txt" 2>&1
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/secretserviceshow"
+else
+    secretserviceshow_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying secretserviceshow"
+        exit 1
+    }
+fi
+
+
+clk secret unset demo-buyer-password
+clk secret backend --local unuse
+
+cd "${TMP}"
+
 clk parameter unset agentcore
 clk alias unset buyer-token
+
+
+unuseteambackend_code () {
+      clk secret backend unuse
+}
+
+unuseteambackend_expected () {
+      local expected
+      expected="$(cat<<"EOEXPECTED"
+clk no longer picks a keyring
+EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
+}
+
+echo 'Run unuseteambackend'
+
+{ unuseteambackend_code || true ; } > "${TMP}/code.txt" 2>&1
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/unuseteambackend"
+else
+    unuseteambackend_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying unuseteambackend"
+        exit 1
+    }
+fi
+
+
+
+unuseagain_code () {
+      clk secret backend unuse
+}
+
+unuseagain_expected () {
+      local expected
+      expected="$(cat<<"EOEXPECTED"
+error: The global settings pick no keyring
+EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
+}
+
+echo 'Run unuseagain'
+
+{ unuseagain_code || true ; } > "${TMP}/code.txt" 2>&1
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/unuseagain"
+else
+    unuseagain_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying unuseagain"
+        exit 1
+    }
+fi
+
+
+
+envbackend_code () {
+      PYTHON_KEYRING_BACKEND=clk.keyrings.NetrcKeyring clk secret backend which
+}
+
+envbackend_expected () {
+      local expected
+      expected="$(cat<<"EOEXPECTED"
+clk keeps your secrets in clk.keyrings.NetrcKeyring, because the environment variable PYTHON_KEYRING_BACKEND names it.
+EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
+}
+
+echo 'Run envbackend'
+
+{ envbackend_code || true ; } > "${TMP}/code.txt" 2>&1
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/envbackend"
+else
+    envbackend_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying envbackend"
+        exit 1
+    }
+fi
+
+
+unset PYTHON_KEYRING_BACKEND
+
+mkdir -p "${XDG_CONFIG_HOME}/python_keyring"
+cat <<EOF > "${XDG_CONFIG_HOME}/python_keyring/keyringrc.cfg"
+[backend]
+default-keyring=clk.keyrings.NetrcKeyring
+EOF
+
+
+rcbackend_code () {
+      clk secret backend which
+}
+
+rcbackend_expected () {
+      local expected
+      expected="$(cat<<"EOEXPECTED"
+clk keeps your secrets in clk.keyrings.NetrcKeyring, because ./config/python_keyring/keyringrc.cfg names it.
+EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
+}
+
+echo 'Run rcbackend'
+
+{ rcbackend_code || true ; } > "${TMP}/code.txt" 2>&1
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/rcbackend"
+else
+    rcbackend_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying rcbackend"
+        exit 1
+    }
+fi
+
+
+
+prioritybackend_code () {
+      rm "${XDG_CONFIG_HOME}/python_keyring/keyringrc.cfg"
+      clk secret backend which
+}
+
+prioritybackend_expected () {
+      local expected
+      expected="$(cat<<"EOEXPECTED"
+clk keeps your secrets in keyring.backends.SecretService.Keyring, because it has the highest priority of the backends the python library keyring found.
+EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
+}
+
+echo 'Run prioritybackend'
+
+{ prioritybackend_code || true ; } > "${TMP}/code.txt" 2>&1
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/prioritybackend"
+else
+    prioritybackend_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying prioritybackend"
+        exit 1
+    }
+fi
+
+
+mkdir -p "${TMP}/pylib/team_keyring-1.0.dist-info"
+cat <<EOF > "${TMP}/pylib/team_keyring-1.0.dist-info/METADATA"
+Metadata-Version: 2.1
+Name: team-keyring
+Version: 1.0
+EOF
+cat <<EOF > "${TMP}/pylib/team_keyring-1.0.dist-info/entry_points.txt"
+[keyring.backends]
+team = team_keyring
+EOF
+
+
+packagedbackend_code () {
+      clk secret backend which
+}
+
+packagedbackend_expected () {
+      local expected
+      expected="$(cat<<"EOEXPECTED"
+clk keeps your secrets in keyring.backends.chainer.ChainerBackend, because it has the highest priority of the backends the python library keyring found.
+EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
+}
+
+echo 'Run packagedbackend'
+
+{ packagedbackend_code || true ; } > "${TMP}/code.txt" 2>&1
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/packagedbackend"
+else
+    packagedbackend_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying packagedbackend"
+        exit 1
+    }
+fi
+
 
 
 listnosecret_code () {

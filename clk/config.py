@@ -101,6 +101,7 @@ class Config:
 
     def __init__(self):
         self.ask_secret = None
+        self.keyring_option = None
         self.settings2 = None
         self.debug_on_command_load_error_callback = False
         self.frozen = False

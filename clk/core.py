@@ -770,6 +770,7 @@ def keyring_callback(ctx, attr, value):
                 " Hint: python3 -m pip install keyring"
             )
         keyring.set_keyring(keyring.core.load_keyring(value))
+    config.keyring_option = value
     return value
 
 

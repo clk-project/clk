@@ -4,16 +4,10 @@ import json
 import os
 from pathlib import Path
 
-import click
+import keyring.backend
+from keyring.compat import properties
 
 from clk import netrc
-
-try:
-    import keyring.backend
-except ModuleNotFoundError:
-    raise click.UsageError(
-        "You have to install keyring `pip install keyring` for this to work"
-    )
 
 
 class NetrcKeyring(netrc.Netrc, keyring.backend.KeyringBackend):
@@ -28,11 +22,15 @@ class DummyFileKeyring(keyring.backend.KeyringBackend):
 
     """
 
-    priority = 1
+    @properties.classproperty
+    def priority(cls):
+        if "DUMMYFILEKEYRINGPATH" not in os.environ:
+            raise RuntimeError("DUMMYFILEKEYRINGPATH is not set")
+        return 1
 
-    def __init__(self):
-        path = os.environ["DUMMYFILEKEYRINGPATH"]
-        self.path = Path(path)
+    @property
+    def path(self):
+        return Path(os.environ["DUMMYFILEKEYRINGPATH"])
 
     @property
     def _content(self):

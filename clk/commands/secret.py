@@ -1,13 +1,23 @@
 #!/usr/bin/env python
 
+import os
 from collections import defaultdict
+from pathlib import Path
 
 import click
 
 from clk.colors import Colorer
 from clk.config import config
-from clk.decorators import argument, flag, group, option, table_fields, table_format
-from clk.lib import TablePrinter, get_keyring
+from clk.decorators import (
+    argument,
+    flag,
+    group,
+    option,
+    table_fields,
+    table_format,
+    use_settings,
+)
+from clk.lib import TablePrinter, get_keyring, keyring_settings_profile, known_keyrings
 from clk.log import get_logger
 
 LOGGER = get_logger(__name__)
@@ -22,6 +32,108 @@ def backend_name(backend):
 @group()
 def secret():
     """Manipulate your secrets"""
+
+
+class KeyringConfig:
+    pass
+
+
+class BackendType(click.ParamType):
+    name = "backend"
+
+    def shell_complete(self, ctx, param, incomplete):
+        import keyring.backend
+
+        names = [backend_name(backend) for backend in keyring.backend.get_all_keyring()]
+        names += ["clk.keyrings.NetrcKeyring"]
+        return [
+            click.shell_completion.CompletionItem(name)
+            for name in sorted(set(names))
+            if name.startswith(incomplete)
+        ]
+
+
+@secret.group(default_command="show")
+@use_settings("keyring", KeyringConfig, override=False)
+def backend():
+    """Tell which keyring holds your secrets, and pick another"""
+
+
+@backend.command(handle_dry_run=True)
+@argument("backend", type=BackendType(), help="The keyring to keep the secrets in")
+def use(backend):
+    """Keep the secrets in this keyring from now on"""
+    config.keyring.writable["backend"] = backend
+    config.keyring.write()
+    LOGGER.info(
+        f"{config.main_command.path} now keeps your secrets in {backend}"
+        f" ({Colorer.apply_color_profilename(config.keyring.writeprofilename)} settings)"
+    )
+
+
+@backend.command(handle_dry_run=True)
+def unuse():
+    """Stop picking a keyring, and let the python library keyring choose"""
+    if "backend" not in config.keyring.writable:
+        raise click.ClickException(
+            f"The {Colorer.apply_color_profilename(config.keyring.writeprofilename)}"
+            " settings pick no keyring"
+        )
+    del config.keyring.writable["backend"]
+    config.keyring.write()
+    LOGGER.info(f"{config.main_command.path} no longer picks a keyring")
+
+
+@backend.command(change_directory_options=False)
+def which():
+    """Tell which keyring clk uses, and why"""
+    name = config.main_command.path
+    in_use = get_keyring()
+    if reason := getattr(in_use, "reason", None):
+        pass
+    elif config.keyring_option:
+        reason = "--keyring names it"
+    elif profile := keyring_settings_profile():
+        reason = f"the {Colorer.apply_color_profilename(profile.friendly_name)} settings name it"
+    elif os.environ.get("PYTHON_KEYRING_BACKEND"):
+        reason = "the environment variable PYTHON_KEYRING_BACKEND names it"
+    else:
+        import keyring.core
+        import keyring.util.platform_
+
+        if keyring.core.load_config() is not None:
+            path = Path(keyring.util.platform_.config_root()) / "keyringrc.cfg"
+            reason = f"{path} names it"
+        else:
+            reason = "it has the highest priority of the backends the python library keyring found"
+    click.echo(
+        f"{name} keeps your secrets in {backend_name(in_use)}, because {reason}."
+    )
+
+
+@backend.command(name="show", handle_dry_run=True)
+@table_fields(choices=["backend", "configuration", "priority", "status"])
+@table_format(default="simple")
+@Colorer.color_options
+def show_backend(fields, format, **kwargs):
+    """List the keyrings, the profiles that pick them and the one in use"""
+    in_use = get_keyring()
+    keyrings = {backend_name(found): found for found in known_keyrings()}
+    with Colorer(kwargs) as colorer, TablePrinter(fields, format) as tp:
+        for label, found in sorted(
+            keyrings.items(), key=lambda item: (-item[1].priority, item[0])
+        ):
+            profiles = ", ".join(
+                click.style(profile.name, **colorer.get_style(profile.name))
+                for profile in config.all_enabled_profiles
+                if profile.get_settings("keyring").get("backend") == label
+            )
+            tp.echo(
+                label,
+                profiles or "Unset",
+                found.priority,
+                "in use" if type(found) is type(in_use) else "",
+            )
 
 
 @secret.command(ignore_unknown_options=True, change_directory_options=False)

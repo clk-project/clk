@@ -8,6 +8,8 @@ import click
 
 
 class Netrc:
+    priority = 1
+
     def set_password(self, servicename, username, password):
         raise click.UsageError(
             "The netrc keyring only reads secrets."

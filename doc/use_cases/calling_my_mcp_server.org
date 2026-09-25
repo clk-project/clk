@@ -490,6 +490,24 @@ file on the way.
   #+RESULTS[]: nokeyring_show
   : demo-buyer-password thevalue
 
+  #+NAME: nokeyring_backend
+  #+BEGIN_SRC bash :results verbatim :exports both :session 0b6acd63-d091-4c6b-83f6-7d2dd3ce908f :cache yes
+    clk secret backend which
+  #+END_SRC
+
+  #+RESULTS[]: nokeyring_backend
+  : clk keeps your secrets in clk.netrc.Netrc, because the python library keyring is not installed.
+
+  #+NAME: nokeyring_backends
+  #+BEGIN_SRC bash :results verbatim :exports both :session 0b6acd63-d091-4c6b-83f6-7d2dd3ce908f :cache yes
+    clk secret backend show
+  #+END_SRC
+
+  #+RESULTS[]: nokeyring_backends
+  : backend          configuration      priority  status
+  : ---------------  ---------------  ----------  --------
+  : clk.netrc.Netrc  Unset                     1  in use
+
   Naming a keyring there makes no sense, and clk says so.
 
   #+NAME: nokeyring_named
@@ -521,6 +539,36 @@ file on the way.
 
   #+RESULTS[]: netrc_fallback
   : demo-buyer-password thevalue
+
+  When I wonder where a secret comes from, clk tells me where it keeps them,
+  and why.
+
+  #+NAME: nodummy
+  #+BEGIN_SRC bash :results none :exports none :session 0b6acd63-d091-4c6b-83f6-7d2dd3ce908f
+    unset DUMMYFILEKEYRINGPATH
+  #+END_SRC
+
+  #+NAME: whichbackend
+  #+BEGIN_SRC bash :results verbatim :exports both :session 0b6acd63-d091-4c6b-83f6-7d2dd3ce908f :cache yes
+    clk secret backend which
+  #+END_SRC
+
+  #+RESULTS[]: whichbackend
+  : clk keeps your secrets in clk.keyrings.NetrcKeyring, because the python library keyring found no password manager on this machine.
+
+  And which keyrings it could use instead.
+
+  #+NAME: showbackends
+  #+BEGIN_SRC bash :results verbatim :exports both :session 0b6acd63-d091-4c6b-83f6-7d2dd3ce908f :cache yes
+    clk secret backend show
+  #+END_SRC
+
+  #+RESULTS[]: showbackends
+  : backend                                  configuration      priority  status
+  : ---------------------------------------  ---------------  ----------  --------
+  : clk.keyrings.NetrcKeyring                Unset                     1  in use
+  : keyring.backends.fail.Keyring            Unset                     0
+  : keyring.backends.chainer.ChainerBackend  Unset                    -1
 
   I can also ask for netrc explicitly, with the ~NetrcKeyring~ of
   ~clk.keyrings~.
@@ -614,6 +662,104 @@ file on the way.
   #+RESULTS[]: readonly_keyring_set
   : error: The keyring team_keyring.SecretsManagerKeyring cannot store secrets. Store it with the tool of that password manager, or pick another keyring with --keyring.
 
+  #+NAME: teambackend
+  #+BEGIN_SRC bash :results verbatim :exports both :session 0b6acd63-d091-4c6b-83f6-7d2dd3ce908f :cache yes
+    clk --keyring team_keyring.SecretsManagerKeyring secret backend which
+  #+END_SRC
+
+  #+RESULTS[]: teambackend
+  : clk keeps your secrets in team_keyring.SecretsManagerKeyring, because --keyring names it.
+
+  #+NAME: backendfound
+  #+BEGIN_SRC bash :results none :exports none :session 0b6acd63-d091-4c6b-83f6-7d2dd3ce908f
+    clk parameter unset clk
+  #+END_SRC
+
+  Rather than typing ~--keyring~ every time, I tell clk to use it from now on.
+
+  #+NAME: useteambackend
+  #+BEGIN_SRC bash :results verbatim :exports both :session 0b6acd63-d091-4c6b-83f6-7d2dd3ce908f :cache yes
+    clk secret backend use team_keyring.SecretsManagerKeyring
+  #+END_SRC
+
+  #+RESULTS[]: useteambackend
+  : clk now keeps your secrets in team_keyring.SecretsManagerKeyring (global settings)
+
+  #+NAME: showteambackend
+  #+BEGIN_SRC bash :results verbatim :exports both :session 0b6acd63-d091-4c6b-83f6-7d2dd3ce908f :cache yes
+    clk secret backend which
+  #+END_SRC
+
+  #+RESULTS[]: showteambackend
+  : clk keeps your secrets in team_keyring.SecretsManagerKeyring, because the global settings name it.
+
+  #+NAME: showteambackends
+  #+BEGIN_SRC bash :results verbatim :exports both :session 0b6acd63-d091-4c6b-83f6-7d2dd3ce908f :cache yes
+    clk secret backend show
+  #+END_SRC
+
+  #+RESULTS[]: showteambackends
+  : backend                                  configuration      priority  status
+  : ---------------------------------------  ---------------  ----------  --------
+  : team_keyring.SecretsManagerKeyring       global                    6  in use
+  : keyring.backends.fail.Keyring            Unset                     0
+  : keyring.backends.chainer.ChainerBackend  Unset                    -1
+
+* keeping it in the project
+  :PROPERTIES:
+  :CUSTOM_ID: keeping-it-in-the-project
+  :END:
+
+  In the project of my MCP server, I keep the demo-buyer password in the
+  password manager of my desktop session, behind the Secret Service interface,
+  rather than in the team keyring.
+
+  #+NAME: projectsetup
+  #+BEGIN_SRC bash :results none :exports none :session 0b6acd63-d091-4c6b-83f6-7d2dd3ce908f
+    mkdir -p "${TMP}/mcp-server/.clk"
+    cd "${TMP}/mcp-server"
+  #+END_SRC
+
+  #+NAME: secretservicesetup
+  #+BEGIN_SRC bash :results none :exports none :session 0b6acd63-d091-4c6b-83f6-7d2dd3ce908f
+    export DBUS_SESSION_BUS_ADDRESS="$(dbus-daemon --session --fork --print-address)"
+    echo -n desktop | gnome-keyring-daemon --unlock --components=secrets > /dev/null
+  #+END_SRC
+
+  #+NAME: usesecretservice
+  #+BEGIN_SRC bash :results verbatim :exports both :session 0b6acd63-d091-4c6b-83f6-7d2dd3ce908f :cache yes
+    clk secret backend --local use keyring.backends.SecretService.Keyring
+  #+END_SRC
+
+  #+RESULTS[]: usesecretservice
+  : clk now keeps your secrets in keyring.backends.SecretService.Keyring (local settings)
+
+  #+NAME: secretserviceset
+  #+BEGIN_SRC bash :results none :exports code :session 0b6acd63-d091-4c6b-83f6-7d2dd3ce908f
+    clk secret set demo-buyer-password
+  #+END_SRC
+
+  #+NAME: secretserviceshow
+  #+BEGIN_SRC bash :results verbatim :exports both :session 0b6acd63-d091-4c6b-83f6-7d2dd3ce908f :cache yes
+    clk secret show demo-buyer-password --secret
+    clk secret backend which
+  #+END_SRC
+
+  #+RESULTS[]: secretserviceshow
+  : demo-buyer-password mytoken
+  : clk keeps your secrets in keyring.backends.SecretService.Keyring, because the local settings name it.
+
+  #+NAME: unusesecretservice
+  #+BEGIN_SRC bash :results none :exports none :session 0b6acd63-d091-4c6b-83f6-7d2dd3ce908f
+    clk secret unset demo-buyer-password
+    clk secret backend --local unuse
+  #+END_SRC
+
+  #+NAME: leaveproject
+  #+BEGIN_SRC bash :results none :exports none :session 0b6acd63-d091-4c6b-83f6-7d2dd3ce908f
+    cd "${TMP}"
+  #+END_SRC
+
 * when the demo is over
   :PROPERTIES:
   :CUSTOM_ID: when-the-demo-is-over
@@ -626,6 +772,104 @@ file on the way.
     clk parameter unset agentcore
     clk alias unset buyer-token
   #+END_SRC
+
+  I no longer need the team keyring either.
+
+  #+NAME: unuseteambackend
+  #+BEGIN_SRC bash :results verbatim :exports both :session 0b6acd63-d091-4c6b-83f6-7d2dd3ce908f :cache yes
+    clk secret backend unuse
+  #+END_SRC
+
+  #+RESULTS[]: unuseteambackend
+  : clk no longer picks a keyring
+
+  Once is enough.
+
+  #+NAME: unuseagain
+  #+BEGIN_SRC bash :results verbatim :exports both :session 0b6acd63-d091-4c6b-83f6-7d2dd3ce908f :cache yes
+    clk secret backend unuse
+  #+END_SRC
+
+  #+RESULTS[]: unuseagain
+  : error: The global settings pick no keyring
+
+  Without a choice of clk, the python library keyring picks the backend. It
+  first reads the environment variable PYTHON_KEYRING_BACKEND.
+
+  #+NAME: envbackend
+  #+BEGIN_SRC bash :results verbatim :exports both :session 0b6acd63-d091-4c6b-83f6-7d2dd3ce908f :cache yes
+    PYTHON_KEYRING_BACKEND=clk.keyrings.NetrcKeyring clk secret backend which
+  #+END_SRC
+
+  #+RESULTS[]: envbackend
+  : clk keeps your secrets in clk.keyrings.NetrcKeyring, because the environment variable PYTHON_KEYRING_BACKEND names it.
+
+  #+NAME: noenv
+  #+BEGIN_SRC bash :results none :exports none :session 0b6acd63-d091-4c6b-83f6-7d2dd3ce908f
+    unset PYTHON_KEYRING_BACKEND
+  #+END_SRC
+
+  Then its configuration file.
+
+  #+NAME: keyringrc
+  #+BEGIN_SRC bash :results none :exports code :session 0b6acd63-d091-4c6b-83f6-7d2dd3ce908f
+    mkdir -p "${XDG_CONFIG_HOME}/python_keyring"
+    cat <<EOF > "${XDG_CONFIG_HOME}/python_keyring/keyringrc.cfg"
+    [backend]
+    default-keyring=clk.keyrings.NetrcKeyring
+    EOF
+  #+END_SRC
+
+  #+NAME: rcbackend
+  #+BEGIN_SRC bash :results verbatim :exports both :session 0b6acd63-d091-4c6b-83f6-7d2dd3ce908f :cache yes
+    clk secret backend which
+  #+END_SRC
+
+  #+RESULTS[]: rcbackend
+  : clk keeps your secrets in clk.keyrings.NetrcKeyring, because ./config/python_keyring/keyringrc.cfg names it.
+
+  Without either, it takes the backend of highest priority, here the Secret
+  Service of my session.
+
+  #+NAME: prioritybackend
+  #+BEGIN_SRC bash :results verbatim :exports both :session 0b6acd63-d091-4c6b-83f6-7d2dd3ce908f :cache yes
+    rm "${XDG_CONFIG_HOME}/python_keyring/keyringrc.cfg"
+    clk secret backend which
+  #+END_SRC
+
+  #+RESULTS[]: prioritybackend
+  : clk keeps your secrets in keyring.backends.SecretService.Keyring, because it has the highest priority of the backends the python library keyring found.
+
+  Once the team publishes its Secrets Manager keyring as a package, installing
+  it is enough: keyring finds it beside the Secret Service, and chains the two,
+  asking the team keyring first.
+
+  #+NAME: installteamkeyring-shown
+  #+BEGIN_SRC bash :results none :exports code
+    pip install team-keyring
+  #+END_SRC
+
+  #+NAME: installteamkeyring
+  #+BEGIN_SRC bash :results none :exports none :session 0b6acd63-d091-4c6b-83f6-7d2dd3ce908f
+    mkdir -p "${TMP}/pylib/team_keyring-1.0.dist-info"
+    cat <<EOF > "${TMP}/pylib/team_keyring-1.0.dist-info/METADATA"
+    Metadata-Version: 2.1
+    Name: team-keyring
+    Version: 1.0
+    EOF
+    cat <<EOF > "${TMP}/pylib/team_keyring-1.0.dist-info/entry_points.txt"
+    [keyring.backends]
+    team = team_keyring
+    EOF
+  #+END_SRC
+
+  #+NAME: packagedbackend
+  #+BEGIN_SRC bash :results verbatim :exports both :session 0b6acd63-d091-4c6b-83f6-7d2dd3ce908f :cache yes
+    clk secret backend which
+  #+END_SRC
+
+  #+RESULTS[]: packagedbackend
+  : clk keeps your secrets in keyring.backends.chainer.ChainerBackend, because it has the highest priority of the backends the python library keyring found.
 
   No command of mine needs a secret any more.
 
@@ -708,6 +952,10 @@ file on the way.
 
     check-result(nokeyring_show)
 
+    check-result(nokeyring_backend)
+
+    check-result(nokeyring_backends)
+
     check-result(nokeyring_named)
 
     <<bringbackkeyring>>
@@ -715,6 +963,12 @@ file on the way.
     <<nobackend>>
 
     check-result(netrc_fallback)
+
+    <<nodummy>>
+
+    check-result(whichbackend)
+
+    check-result(showbackends)
 
     check-result(using_netrc)
 
@@ -728,7 +982,49 @@ file on the way.
 
     check-result(readonly_keyring_set)
 
+    check-result(teambackend)
+
+    <<backendfound>>
+
+    check-result(useteambackend)
+
+    check-result(showteambackend)
+
+    check-result(showteambackends)
+
+    <<projectsetup>>
+
+    <<secretservicesetup>>
+
+    check-result(usesecretservice)
+
+    <<secretserviceset>>
+
+    check-result(secretserviceshow)
+
+    <<unusesecretservice>>
+
+    <<leaveproject>>
+
     <<dropparameter>>
+
+    check-result(unuseteambackend)
+
+    check-result(unuseagain)
+
+    check-result(envbackend)
+
+    <<noenv>>
+
+    <<keyringrc>>
+
+    check-result(rcbackend)
+
+    check-result(prioritybackend)
+
+    <<installteamkeyring>>
+
+    check-result(packagedbackend)
 
     check-result(listnosecret)
 
