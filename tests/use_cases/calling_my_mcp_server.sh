@@ -807,7 +807,7 @@ nokeyring_backends_expected () {
       expected="$(cat<<"EOEXPECTED"
 backend          configuration      priority  status
 ---------------  ---------------  ----------  --------
-clk.netrc.Netrc  Unset                     1  in use
+[32mclk.netrc.Netrc[0m  Unset                     1  in use
 EOEXPECTED
 )"
       # org says nil where the block said nothing
@@ -940,10 +940,10 @@ showbackends_expected () {
       expected="$(cat<<"EOEXPECTED"
 backend                                  configuration      priority  status
 ---------------------------------------  ---------------  ----------  --------
-keyring.backends.chainer.ChainerBackend  Unset                    10
-clk.keyrings.GpgKeyring                  Unset                     1
-clk.keyrings.NetrcKeyring                Unset                     1  in use
-keyring.backends.fail.Keyring            Unset                     0
+[31mkeyring.backends.chainer.ChainerBackend[0m  Unset                    10
+[31mclk.keyrings.GpgKeyring[0m                  Unset                     1
+[32mclk.keyrings.NetrcKeyring[0m                Unset                     1  in use
+[31mkeyring.backends.fail.Keyring[0m            Unset                     0
 EOEXPECTED
 )"
       # org says nil where the block said nothing
@@ -1248,9 +1248,9 @@ showteambackends_expected () {
       expected="$(cat<<"EOEXPECTED"
 backend                                  configuration      priority  status
 ---------------------------------------  ---------------  ----------  --------
-team_keyring.SecretsManagerKeyring       [36m[2mglobal[0m                    6  in use
-keyring.backends.fail.Keyring            Unset                     0
-keyring.backends.chainer.ChainerBackend  Unset                    -1
+[32mteam_keyring.SecretsManagerKeyring[0m       [36m[2mglobal[0m                    6  in use
+[31mkeyring.backends.fail.Keyring[0m            Unset                     0
+[31mkeyring.backends.chainer.ChainerBackend[0m  Unset                    -1
 [2m--------------[0m
 Legend: [36m[2mglobal[0m
 EOEXPECTED

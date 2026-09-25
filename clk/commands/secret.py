@@ -128,11 +128,12 @@ def show_backend(fields, format, **kwargs):
                 for profile in config.all_enabled_profiles
                 if profile.get_settings("keyring").get("backend") == label
             )
+            used = type(found) is type(in_use)
             tp.echo(
-                label,
+                click.style(label, fg="green" if used else "red"),
                 profiles or "Unset",
                 found.priority,
-                "in use" if type(found) is type(in_use) else "",
+                "in use" if used else "",
             )
 
 

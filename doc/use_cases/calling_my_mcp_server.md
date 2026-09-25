@@ -341,9 +341,11 @@ clk secret backend which
 clk secret backend show
 ```
 
-    backend          configuration      priority  status
-    ---------------  ---------------  ----------  --------
-    clk.netrc.Netrc  Unset                     1  in use
+<pre>
+backend          configuration      priority  status
+---------------  ---------------  ----------  --------
+<span style="color:green;">clk.netrc.Netrc</span>  Unset                     1  in use
+</pre>
 
 Naming a keyring there makes no sense, and clk says so.
 
@@ -378,12 +380,14 @@ And which keyrings it could use instead.
 clk secret backend show
 ```
 
-    backend                                  configuration      priority  status
-    ---------------------------------------  ---------------  ----------  --------
-    keyring.backends.chainer.ChainerBackend  Unset                    10
-    clk.keyrings.GpgKeyring                  Unset                     1
-    clk.keyrings.NetrcKeyring                Unset                     1  in use
-    keyring.backends.fail.Keyring            Unset                     0
+<pre>
+backend                                  configuration      priority  status
+---------------------------------------  ---------------  ----------  --------
+<span style="color:red;">keyring.backends.chainer.ChainerBackend</span>  Unset                    10
+<span style="color:red;">clk.keyrings.GpgKeyring</span>                  Unset                     1
+<span style="color:green;">clk.keyrings.NetrcKeyring</span>                Unset                     1  in use
+<span style="color:red;">keyring.backends.fail.Keyring</span>            Unset                     0
+</pre>
 
 I can also ask for netrc explicitly, with the `NetrcKeyring` of `clk.keyrings`.
 
@@ -487,9 +491,9 @@ clk secret backend show
 <pre>
 backend                                  configuration      priority  status
 ---------------------------------------  ---------------  ----------  --------
-team_keyring.SecretsManagerKeyring       <span style="color:teal;">global</span>                    6  in use
-keyring.backends.fail.Keyring            Unset                     0
-keyring.backends.chainer.ChainerBackend  Unset                    -1
+<span style="color:green;">team_keyring.SecretsManagerKeyring</span>       <span style="color:teal;">global</span>                    6  in use
+<span style="color:red;">keyring.backends.fail.Keyring</span>            Unset                     0
+<span style="color:red;">keyring.backends.chainer.ChainerBackend</span>  Unset                    -1
 --------------
 Legend: <span style="color:teal;">global</span>
 </pre>
