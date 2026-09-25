@@ -51,7 +51,7 @@ clk alias set podcast.dwim echo 'Would do something before' , podcast download -
 #+END_SRC
 
 #+RESULTS[878bae04a233b829b08b4b6deaa8bbec63a73d61]: makeitalias
-: New global alias for podcast.dwim: echo 'Would do something before' , podcast download --number 'tpl:{NUMBER_TO_DOWNLOAD}' , echo 'would do something after'
+: New [36mglobal[0m alias for podcast.dwim: echo 'Would do something before' , podcast download --number 'tpl:{NUMBER_TO_DOWNLOAD}' , echo 'would do something after'
 
 
 
@@ -169,7 +169,7 @@ clk alias set podcast.music podcast --directory music download
 #+END_SRC
 
 #+RESULTS[151779b6a57982cc8048f4540baede86e36c4a1e]: music_alias
-: New global alias for podcast.music: podcast --directory music download
+: New [36mglobal[0m alias for podcast.music: podcast --directory music download
 
 
 
@@ -198,7 +198,7 @@ clk alias set podcast.audio podcast --directory music --directory song download
 #+END_SRC
 
 #+RESULTS[465bbbb90e91bd532c919fda633372f18db53bee]: audio_alias
-: New global alias for podcast.audio: podcast --directory music --directory song download
+: New [36mglobal[0m alias for podcast.audio: podcast --directory music --directory song download
 
 
 
@@ -232,25 +232,23 @@ clk podcast --help
 #+END_SRC
 
 #+RESULTS[42da70335c90e76d4afe7c525571573ac1577d77]: group_help_with_alias
-#+begin_example
-Usage: clk podcast [OPTIONS] COMMAND [ARGS]...
-
-  Dealing with podcasts
-
-  Edit this custom command by running `clk command edit podcast`
-  Or edit ./clk-root/python/podcast.py directly.
-
-Options:
-  -d, --directory TEXT  Only work with these directories
-  --help-all            Show the full help message, automatic options included.
-  --help                Show this message and exit.
-
-Commands:
-  audio     Alias for: podcast --directory music --directory son...
-  download  Downloading podcasts
-  dwim      Alias for: echo 'Would do something before' , podcas...
-  music     Alias for: podcast --directory music download
-#+end_example
+: Usage: clk podcast [OPTIONS] COMMAND [ARGS]...
+:
+:   Dealing with podcasts
+:
+:   Edit this custom command by running `clk command edit podcast`
+:   Or edit ./clk-root/python/podcast.py directly.
+:
+: Options:
+:   -d, --directory TEXT  Only work with these directories
+:   --help-all            Show the full help message, automatic options included.
+:   --help                Show this message and exit.
+:
+: Commands:
+:   audio     Alias for: podcast --directory music --directory son...
+:   download  Downloading podcasts
+:   dwim      Alias for: echo 'Would do something before' , podcas...
+:   music     Alias for: podcast --directory music download
 
 
 

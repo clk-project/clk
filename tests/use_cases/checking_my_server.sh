@@ -29,7 +29,6 @@ Options:
 Commands:
   bash    Create a bash custom command
   python  Create a python custom command
-
 EOEXPECTED
 )"
       # org says nil where the block said nothing
@@ -41,7 +40,8 @@ echo 'Run help-create'
 { help-create_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/help-create"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/help-create"
 else
     help-create_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -75,7 +75,6 @@ EOF
 }
 
 clk_help_handler "$@"
-
 EOEXPECTED
 )"
       # org says nil where the block said nothing
@@ -87,7 +86,8 @@ echo 'Run show_it'
 { show_it_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/show_it"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/show_it"
 else
     show_it_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -105,7 +105,7 @@ try_code () {
 try_expected () {
       local expected
       expected="$(cat<<"EOEXPECTED"
-warning: The command 'server.check' has no documentation
+[33mwarning: [0mThe command 'server.check' has no documentation
 EOEXPECTED
 )"
       # org says nil where the block said nothing
@@ -117,7 +117,8 @@ echo 'Run try'
 { try_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/try"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/try"
 else
     try_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -153,7 +154,6 @@ Usage: clk server check [OPTIONS]
 Options:
   --help-all  Show the full help message, automatic options included.
   --help      Show this message and exit.
-
 EOEXPECTED
 )"
       # org says nil where the block said nothing
@@ -165,7 +165,8 @@ echo 'Run help'
 { help_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/help"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/help"
 else
     help_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -200,7 +201,8 @@ echo 'Run use_it'
 { use_it_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/use_it"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/use_it"
 else
     use_it_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -231,7 +233,8 @@ echo 'Run exit-7'
 { exit-7_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/exit-7"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/exit-7"
 else
     exit-7_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -299,7 +302,8 @@ echo 'Run logs-myserver'
 { logs-myserver_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/logs-myserver"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/logs-myserver"
 else
     logs-myserver_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -318,7 +322,7 @@ logs-nowhere_expected () {
       local expected
       expected="$(cat<<"EOEXPECTED"
 Failed to get unit: Unit nowhere.service not loaded.
-error: journalctl --unit nowhere exited with 4
+[31merror: [0mjournalctl --unit nowhere exited with 4
 4
 EOEXPECTED
 )"
@@ -331,7 +335,8 @@ echo 'Run logs-nowhere'
 { logs-nowhere_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/logs-nowhere"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/logs-nowhere"
 else
     logs-nowhere_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -361,7 +366,8 @@ echo 'Run logs-never-mind'
 { logs-never-mind_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/logs-never-mind"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/logs-never-mind"
 else
     logs-never-mind_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -403,7 +409,8 @@ echo 'Run run-port'
 { run-port_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/run-port"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/run-port"
 else
     run-port_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -425,8 +432,9 @@ sleep 3600
 cat<<EOF > pass.exp
 #!/usr/bin/env -S expect -f
 
-set timeout -1
+set timeout 30
 spawn clk server watch
+expect_after timeout { puts "timed out"; exit 1 }
 match_max 100000
 expect -exact "watching the server\r"
 sleep 0.1
@@ -463,7 +471,8 @@ echo 'Run watch-expect'
 { watch-expect_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/watch-expect"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/watch-expect"
 else
     watch-expect_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -503,7 +512,7 @@ run-bad-usage_code () {
 run-bad-usage_expected () {
       local expected
       expected="$(cat<<"EOEXPECTED"
-warning: When loading command server.check at path ./clk-root/bin/server.check: Expected format in server.check is A:name:type:help[:{someextrajsondata}], got A:host
+[33mwarning: [0mWhen loading command server.check at path ./clk-root/bin/server.check: Expected format in server.check is A:name:type:help[:{someextrajsondata}], got A:host
 EOEXPECTED
 )"
       # org says nil where the block said nothing
@@ -515,7 +524,8 @@ echo 'Run run-bad-usage'
 { run-bad-usage_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/run-bad-usage"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/run-bad-usage"
 else
     run-bad-usage_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -547,7 +557,8 @@ echo 'Run run-good-usage'
 { run-good-usage_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/run-good-usage"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/run-good-usage"
 else
     run-good-usage_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -567,7 +578,7 @@ run-styled-check_code () {
 run-styled-check_expected () {
       local expected
       expected="$(cat<<"EOEXPECTED"
-no answer from myserver
+[31m[1mno answer from myserver[0m
 EOEXPECTED
 )"
       # org says nil where the block said nothing
@@ -579,7 +590,8 @@ echo 'Run run-styled-check'
 { run-styled-check_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/run-styled-check"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/run-styled-check"
 else
     run-styled-check_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -616,7 +628,8 @@ echo 'Run complete-style'
 { complete-style_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/complete-style"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/complete-style"
 else
     complete-style_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -647,7 +660,8 @@ echo 'Run run-bad-style'
 { run-bad-style_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/run-bad-style"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/run-bad-style"
 else
     run-bad-style_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -684,7 +698,8 @@ echo 'Run run-broken-command'
 { run-broken-command_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/run-broken-command"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/run-broken-command"
 else
     run-broken-command_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -707,8 +722,8 @@ run-broken-logs_code () {
 run-broken-logs_expected () {
       local expected
       expected="$(cat<<"EOEXPECTED"
-error: Found the command server in the resolver customcommand but could not load it.
-warning: Failed to get the command server: No module named 'thismoduledoesnotexist'
+[31merror: [0mFound the command server in the resolver customcommand but could not load it.
+[33mwarning: [0mFailed to get the command server: No module named 'thismoduledoesnotexist'
 error: clk.server could not be loaded. Re run with clk --develop to see the stacktrace or clk --debug-on-command-load-error to debug the load error
 EOEXPECTED
 )"
@@ -721,7 +736,8 @@ echo 'Run run-broken-logs'
 { run-broken-logs_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/run-broken-logs"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/run-broken-logs"
 else
     run-broken-logs_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -754,7 +770,8 @@ echo 'Run run-with-report-file'
 { run-with-report-file_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/run-with-report-file"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/run-with-report-file"
 else
     run-with-report-file_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {

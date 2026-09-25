@@ -23,7 +23,9 @@ For example, let's create a local alias.
 clk alias set somelocalcommand echo hello
 ```
 
-    New local alias for somelocalcommand: echo hello
+<pre>
+New <span style="color:green;">local</span> alias for somelocalcommand: echo hello
+</pre>
 
 You can call this alias when inside the project.
 
@@ -43,12 +45,14 @@ cd ..
 clk somelocalcommand
 ```
 
-    warning: Failed to get the command somelocalcommand: Command somelocalcommand not found
-    Usage: clk [OPTIONS] [COMMAND] [ARGS]...
-    error: No such command 'somelocalcommand'.
-    error:
-    error: Did you mean one of these?
-    error:     command
+<pre>
+<span style="color:olive;">warning: </span>Failed to get the command somelocalcommand: Command somelocalcommand not found
+Usage: clk [OPTIONS] [COMMAND] [ARGS]...
+error: No such command 'somelocalcommand'.
+error:
+error: Did you mean one of these?
+error:     command
+</pre>
 
 Let's go back in the project and create a parameter.
 
@@ -61,8 +65,10 @@ clk parameter set echo hello
 clk echo world
 ```
 
-    New local parameters for echo: hello
-    hello world
+<pre>
+New <span style="color:green;">local</span> parameters for echo: hello
+hello world
+</pre>
 
 This parameter is also unavailable only inside the project.
 
@@ -89,8 +95,10 @@ Be careful not to use an absolute path with the `project:` prefix. Since `projec
 clk exec cat project:/tmp/somefile.txt
 ```
 
-    warning: when evaluating project:/tmp/somefile.txt: /tmp/somefile.txt is absolute, prepending project is a noop.
-    cat: /tmp/somefile.txt: No such file or directory
+<pre>
+<span style="color:olive;">warning: </span>when evaluating project:/tmp/somefile.txt: /tmp/somefile.txt is absolute, prepending project is a noop.
+cat: /tmp/somefile.txt: No such file or directory
+</pre>
 
 
 <a id="running-project-scripts"></a>
@@ -187,7 +195,9 @@ chmod +x scripts/deploy.sh
 clk alias set deploy exec ./scripts/build.sh , exec ./scripts/deploy.sh
 ```
 
-    New local alias for deploy: exec ./scripts/build.sh , exec ./scripts/deploy.sh
+<pre>
+New <span style="color:green;">local</span> alias for deploy: exec ./scripts/build.sh , exec ./scripts/deploy.sh
+</pre>
 
 ```bash
 clk deploy
@@ -285,10 +295,14 @@ ls .clk
 cd ../myprojet
 ```
 
-    warning: Profile in ./.clk is obsolete. It has the version 8 and current version is 9. Migration started.
-    hello echo hello
-    clk.json5
-    version.txt
+<pre>
+<span style="color:olive;">warning: </span>Profile in ./.clk is obsolete. It has the version 8 and current version is 9. Migration started.
+hello <span style="color:green;">echo hello</span>
+-------------
+Legend: <span style="color:green;">local</span>
+clk.json5
+version.txt
+</pre>
 
 Let's take another one whose settings no reader can make sense of, and watch the upgrade give up.
 
@@ -305,10 +319,12 @@ ls .clk
 cd ../myprojet
 ```
 
-    error: Expecting property name enclosed in double quotes: line 1 column 2 (char 1)
-    warning: The migration of ./.clk did not go well, Restoring backup from ./.clk_backup
-    clk.json
-    version.txt
+<pre>
+<span style="color:red;">error: </span>Expecting property name enclosed in double quotes: line 1 column 2 (char 1)
+<span style="color:olive;">warning: </span>The migration of ./.clk did not go well, Restoring backup from ./.clk_backup
+clk.json
+version.txt
+</pre>
 
 A run that died in the middle leaves its backup behind, and the next one will not step over it.
 
@@ -324,7 +340,9 @@ clk alias show 2>&1 | tail -1
 cd ../myprojet
 ```
 
-    error: ./.clk_backup already exists. Cannot migrate.
+<pre>
+<span style="color:red;">error: </span>./.clk_backup already exists. Cannot migrate.
+</pre>
 
 
 <a id="a-project-written-by-a-newer-clk"></a>
@@ -375,7 +393,9 @@ clk says so and carries on with nothing, rather than stopping you in your tracks
 clk alias show 2>&1
 ```
 
-    warning: Can't read settings from ./.clk/clk.json5
+<pre>
+<span style="color:olive;">warning: </span>Can't read settings from ./.clk/clk.json5
+</pre>
 
 
 <a id="a-project-you-name-that-is-not-there"></a>
@@ -388,4 +408,6 @@ You can name the project by hand with `--project`, and one day the one you name 
 clk --project ../movedaway alias show 2>&1
 ```
 
-    critical: ../movedaway does not exist. It will be ignored.
+<pre>
+<span style="color:red;">critical: </span>../movedaway does not exist. It will be ignored.
+</pre>

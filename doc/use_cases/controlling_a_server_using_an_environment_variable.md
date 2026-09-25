@@ -9,8 +9,10 @@ clk alias set myserver echo curl http://myserverip/somecommand
 clk myserver
 ```
 
-    New global alias for myserver: echo curl http://myserverip/somecommand
-    curl http://myserverip/somecommand
+<pre>
+New <span style="color:teal;">global</span> alias for myserver: echo curl http://myserverip/somecommand
+curl http://myserverip/somecommand
+</pre>
 
 In my setup, the address of the server is actually in some environment variable.
 
@@ -29,9 +31,11 @@ clk alias set myserver echo curl 'noeval:pyeval:"http://{MYSERVER}/sommecommand"
 clk myserver
 ```
 
-    Removing global alias of myserver: echo curl http://myserverip/somecommand
-    New global alias for myserver: echo curl 'pyeval:"http://{MYSERVER}/sommecommand".format(**os.environ)'
-    curl http://myserverip/sommecommand
+<pre>
+Removing <span style="color:teal;">global</span> alias of myserver: echo curl http://myserverip/somecommand
+New <span style="color:teal;">global</span> alias for myserver: echo curl 'pyeval:&quot;http://{MYSERVER}/sommecommand&quot;.format(**os.environ)'
+curl http://myserverip/sommecommand
+</pre>
 
 This might be useful in some situation, but as you can see it is quite verbose.
 
@@ -42,9 +46,11 @@ clk alias set myserver echo curl 'noeval:eval:sh -c "echo http://${MYSERVER}/som
 clk myserver
 ```
 
-    Removing global alias of myserver: echo curl 'pyeval:"http://{MYSERVER}/sommecommand".format(**os.environ)'
-    New global alias for myserver: echo curl 'eval:sh -c "echo http://${MYSERVER}/sommecommand"'
-    curl http://myserverip/sommecommand
+<pre>
+Removing <span style="color:teal;">global</span> alias of myserver: echo curl 'pyeval:&quot;http://{MYSERVER}/sommecommand&quot;.format(**os.environ)'
+New <span style="color:teal;">global</span> alias for myserver: echo curl 'eval:sh -c &quot;echo http://${MYSERVER}/sommecommand&quot;'
+curl http://myserverip/sommecommand
+</pre>
 
 That's better. But still very verbose compared to what I want.
 
@@ -55,8 +61,10 @@ clk alias set myserver echo curl 'noeval:tpl:http://{MYSERVER}/sommecommand'
 clk myserver
 ```
 
-    Removing global alias of myserver: echo curl 'eval:sh -c "echo http://${MYSERVER}/sommecommand"'
-    New global alias for myserver: echo curl 'tpl:http://{MYSERVER}/sommecommand'
-    curl http://myserverip/sommecommand
+<pre>
+Removing <span style="color:teal;">global</span> alias of myserver: echo curl 'eval:sh -c &quot;echo http://${MYSERVER}/sommecommand&quot;'
+New <span style="color:teal;">global</span> alias for myserver: echo curl 'tpl:http://{MYSERVER}/sommecommand'
+curl http://myserverip/sommecommand
+</pre>
 
 That's much better!

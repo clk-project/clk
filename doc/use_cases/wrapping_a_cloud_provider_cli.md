@@ -96,7 +96,9 @@ Here's where clk shines. I can persist options so they become the default.
 clk parameter set aws --profile company-prod --region eu-west-1
 ```
 
-    New global parameters for aws: --profile company-prod --region eu-west-1
+<pre>
+New <span style="color:teal;">global</span> parameters for aws: --profile company-prod --region eu-west-1
+</pre>
 
 Now I don't need to specify them anymore:
 
@@ -150,7 +152,11 @@ I can check what's currently set:
 clk parameter show aws
 ```
 
-    aws --profile company-prod --region eu-west-1
+<pre>
+aws <span style="color:teal;">--profile company-prod --region eu-west-1</span>
+--------------
+Legend: <span style="color:teal;">global</span>
+</pre>
 
 And remove options I no longer want persisted:
 
@@ -159,8 +165,12 @@ clk parameter remove aws --region eu-west-1
 clk parameter show aws
 ```
 
-    Erasing aws parameters --region eu-west-1 from global settings
-    aws --profile company-prod
+<pre>
+Erasing aws parameters --region eu-west-1 from <span style="color:teal;">global</span> settings
+aws <span style="color:teal;">--profile company-prod</span>
+--------------
+Legend: <span style="color:teal;">global</span>
+</pre>
 
 Or clear everything:
 
@@ -169,8 +179,10 @@ clk parameter unset aws
 clk aws s3 ls
 ```
 
-    Erasing global parameters of aws (was: --profile company-prod)
-    [default/us-east-1] aws s3 ls
+<pre>
+Erasing <span style="color:teal;">global</span> parameters of aws (was: --profile company-prod)
+[default/us-east-1] aws s3 ls
+</pre>
 
 When the line gets long, I would rather open it in my editor than type it all again.
 
@@ -179,8 +191,10 @@ clk parameter edit aws
 clk aws s3 ls
 ```
 
-    New global parameters for aws: --profile company-prod --region eu-west-1
-    [company-prod/eu-west-1] aws s3 ls
+<pre>
+New <span style="color:teal;">global</span> parameters for aws: --profile company-prod --region eu-west-1
+[company-prod/eu-west-1] aws s3 ls
+</pre>
 
 Open it again and quit without touching anything, and clk writes nothing.
 
@@ -204,7 +218,9 @@ Parameters work for all the commands, `parameter` itself included, so I can shoo
 clk parameter set parameter set
 ```
 
-    New global parameters for parameter: set
+<pre>
+New <span style="color:teal;">global</span> parameters for parameter: set
+</pre>
 
 Every command under `parameter` has become `parameter set`, `unset` the first of them, so I cannot take it back.
 
@@ -212,9 +228,11 @@ Every command under `parameter` has become `parameter set`, `unset` the first of
 clk parameter unset parameter 2>&1
 ```
 
-    warning: Failed to get the command unset: Command unset not found
-    Usage: clk parameter set [OPTIONS] CMD [PARAMS]...
-    error: Invalid value for 'CMD': invalid choice: unset. (choose from alias, aws, command, completion, describe, echo, exec, extension, flowdep, fork, help, log, parameter, pip, plugin, python, secret, update, value)
+<pre>
+<span style="color:olive;">warning: </span>Failed to get the command unset: Command unset not found
+Usage: clk parameter set [OPTIONS] CMD [PARAMS]...
+error: Invalid value for 'CMD': invalid choice: unset. (choose from alias, aws, command, completion, describe, echo, exec, extension, flowdep, fork, help, log, parameter, pip, plugin, python, secret, update, value)
+</pre>
 
 `--no-parameter` runs the command I ask for with none of my parameters, those of `parameter` included.
 
@@ -222,7 +240,9 @@ clk parameter unset parameter 2>&1
 clk --no-parameter parameter unset parameter
 ```
 
-    Erasing global parameters of parameter (was: set)
+<pre>
+Erasing <span style="color:teal;">global</span> parameters of parameter (was: set)
+</pre>
 
 I almost always use `ec2` to list the instances, so I set that as its default.
 
@@ -231,8 +251,10 @@ clk parameter set aws.ec2 describe-instances
 clk aws ec2
 ```
 
-    New global parameters for aws.ec2: describe-instances
-    [default/us-east-1] aws ec2 describe-instances
+<pre>
+New <span style="color:teal;">global</span> parameters for aws.ec2: describe-instances
+[default/us-east-1] aws ec2 describe-instances
+</pre>
 
 A few months later, we moved our machines elsewhere and I removed the command. The parameters I had set for it stayed in my profile: they belong to me, not to the command. clk reminds me of them the next time I look.
 
@@ -241,9 +263,13 @@ clk command remove aws.ec2 --force
 clk parameter show aws.ec2 2>&1
 ```
 
-    warning: Failed to get the command aws.ec2: Command aws.ec2 not found
-    warning: You should know that the command aws.ec2 does not exist
-    aws.ec2 describe-instances
+<pre>
+<span style="color:olive;">warning: </span>Failed to get the command aws.ec2: Command aws.ec2 not found
+<span style="color:olive;">warning: </span>You should know that the command aws.ec2 does not exist
+aws.ec2 <span style="color:teal;">describe-instances</span>
+--------------
+Legend: <span style="color:teal;">global</span>
+</pre>
 
 I unset them, and nothing is left of that command.
 
@@ -251,7 +277,9 @@ I unset them, and nothing is left of that command.
 clk parameter unset aws.ec2
 ```
 
-    Erasing global parameters of aws.ec2 (was: describe-instances)
+<pre>
+Erasing <span style="color:teal;">global</span> parameters of aws.ec2 (was: describe-instances)
+</pre>
 
 
 <a id="per-project"></a>
@@ -273,8 +301,12 @@ clk --project . parameter set aws --profile webapp-prod --region ap-southeast-1
 clk parameter show aws
 ```
 
-    New local parameters for aws: --profile webapp-prod --region ap-southeast-1
-    aws --profile webapp-prod --region ap-southeast-1
+<pre>
+New <span style="color:green;">local</span> parameters for aws: --profile webapp-prod --region ap-southeast-1
+aws <span style="color:green;">--profile webapp-prod --region ap-southeast-1</span>
+-------------
+Legend: <span style="color:green;">local</span>
+</pre>
 
 ```bash
 clk aws s3 ls s3://webapp-assets
@@ -308,7 +340,9 @@ I first set my usual production defaults globally:
 clk parameter set aws --profile company-prod --region eu-west-1
 ```
 
-    New global parameters for aws: --profile company-prod --region eu-west-1
+<pre>
+New <span style="color:teal;">global</span> parameters for aws: --profile company-prod --region eu-west-1
+</pre>
 
 Then I create a `config-staging` extension that overrides just the profile:
 
@@ -321,7 +355,9 @@ clk extension enable config-staging
 clk parameter --extension config-staging set aws --profile company-staging
 ```
 
-    New global/config-staging parameters for aws: --profile company-staging
+<pre>
+New <span style="color:teal;"></span><span style="font-weight:bold;color:teal;">global/config-staging</span> parameters for aws: --profile company-staging
+</pre>
 
 With the extension enabled, the staging profile overrides the global one. The region stays `eu-west-1` because the extension doesn't touch it:
 
@@ -382,7 +418,11 @@ And they show up in `parameter show` as well:
 clk parameter show aws
 ```
 
-    aws --profile env-prod --region us-west-2
+<pre>
+aws <span style="font-weight:bold;">--profile env-prod --region us-west-2</span>
+-----------
+Legend: <span style="font-weight:bold;">env</span>
+</pre>
 
 When you unset the environment variable, the parameters are gone:
 

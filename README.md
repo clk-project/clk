@@ -109,7 +109,9 @@ Then, to use this program as a clk command, we could simply create an alias like
 clk alias set music.play exec -- mpc play --random --use-speakers --replaygain
 ```
 
-    New global alias for music.play: exec mpc play --random --use-speakers --replaygain
+<pre>
+New <span style="color:teal;">global</span> alias for music.play: exec mpc play --random --use-speakers --replaygain
+</pre>
 
 Then, we can simple call this command.
 

@@ -26,7 +26,8 @@ echo 'Run csm-fork-again'
 { csm-fork-again_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/csm-fork-again"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/csm-fork-again"
 else
     csm-fork-again_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -58,7 +59,8 @@ echo 'Run csm-fork-force'
 { csm-fork-force_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/csm-fork-force"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/csm-fork-force"
 else
     csm-fork-force_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -209,7 +211,8 @@ echo 'Run csm-run-flow'
 { csm-run-flow_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/csm-run-flow"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/csm-run-flow"
 else
     csm-run-flow_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -239,7 +242,8 @@ echo 'Run csm-configure-options'
 { csm-configure-options_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/csm-configure-options"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/csm-configure-options"
 else
     csm-configure-options_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -269,7 +273,8 @@ echo 'Run csm-configure-defines'
 { csm-configure-defines_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/csm-configure-defines"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/csm-configure-defines"
 else
     csm-configure-defines_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -299,7 +304,8 @@ echo 'Run csm-build-options'
 { csm-build-options_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/csm-build-options"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/csm-build-options"
 else
     csm-build-options_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -329,7 +335,8 @@ echo 'Run csm-run-no-flow'
 { csm-run-no-flow_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/csm-run-no-flow"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/csm-run-no-flow"
 else
     csm-run-no-flow_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -361,7 +368,8 @@ echo 'Run csm-clean-dry-run'
 { csm-clean-dry-run_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/csm-clean-dry-run"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/csm-clean-dry-run"
 else
     csm-clean-dry-run_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -392,7 +400,8 @@ echo 'Run csm-clean-for-real'
 { csm-clean-for-real_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/csm-clean-for-real"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/csm-clean-for-real"
 else
     csm-clean-for-real_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -424,7 +433,8 @@ echo 'Run csm-clean-aloud'
 { csm-clean-aloud_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/csm-clean-aloud"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/csm-clean-aloud"
 else
     csm-clean-aloud_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -491,7 +501,8 @@ echo 'Run csm-run-shipped-alias'
 { csm-run-shipped-alias_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/csm-run-shipped-alias"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/csm-run-shipped-alias"
 else
     csm-run-shipped-alias_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -583,7 +594,8 @@ echo 'Run csm-show-launchers'
 { csm-show-launchers_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/csm-show-launchers"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/csm-show-launchers"
 else
     csm-show-launchers_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -613,7 +625,8 @@ echo 'Run csm-show-gdb'
 { csm-show-gdb_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/csm-show-gdb"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/csm-show-gdb"
 else
     csm-show-gdb_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -657,7 +670,8 @@ echo 'Run csm-simulate-with-gdb'
 { csm-simulate-with-gdb_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/csm-simulate-with-gdb"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/csm-simulate-with-gdb"
 else
     csm-simulate-with-gdb_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -687,7 +701,8 @@ echo 'Run csm-simulate-with-perf'
 { csm-simulate-with-perf_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/csm-simulate-with-perf"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/csm-simulate-with-perf"
 else
     csm-simulate-with-perf_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -717,7 +732,8 @@ echo 'Run csm-simulate-without-launcher'
 { csm-simulate-without-launcher_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/csm-simulate-without-launcher"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/csm-simulate-without-launcher"
 else
     csm-simulate-without-launcher_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -750,7 +766,8 @@ echo 'Run csm-flow-with-launcher'
 { csm-flow-with-launcher_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/csm-flow-with-launcher"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/csm-flow-with-launcher"
 else
     csm-flow-with-launcher_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {

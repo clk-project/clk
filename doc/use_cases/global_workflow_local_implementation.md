@@ -17,7 +17,9 @@ Start with a `test` placeholder - a command that does nothing by default.
 clk alias set test echo "No tests configured" , exec false
 ```
 
-    New global alias for test: echo 'No tests configured' , exec false
+<pre>
+New <span style="color:teal;">global</span> alias for test: echo 'No tests configured' , exec false
+</pre>
 
 Then create your workflow alias.
 
@@ -25,7 +27,9 @@ Then create your workflow alias.
 clk alias set test-n-push test , echo "git push"
 ```
 
-    New global alias for test-n-push: test , echo 'git push'
+<pre>
+New <span style="color:teal;">global</span> alias for test-n-push: test , echo 'git push'
+</pre>
 
 This workflow works everywhere, even where tests aren't configured yet.
 
@@ -96,7 +100,9 @@ cd myproject
 clk alias set deploy echo "Deploying to production..."
 ```
 
-    New local alias for deploy: echo 'Deploying to production...'
+<pre>
+New <span style="color:green;">local</span> alias for deploy: echo 'Deploying to production...'
+</pre>
 
 This `deploy` command only exists inside this project.
 
@@ -111,9 +117,11 @@ cd ..
 clk deploy
 ```
 
-    warning: Failed to get the command deploy: Command deploy not found
-    Usage: clk [OPTIONS] [COMMAND] [ARGS]...
-    error: No such command 'deploy'.
+<pre>
+<span style="color:olive;">warning: </span>Failed to get the command deploy: Command deploy not found
+Usage: clk [OPTIONS] [COMMAND] [ARGS]...
+error: No such command 'deploy'.
+</pre>
 
 
 <a id="summary"></a>

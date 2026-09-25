@@ -26,10 +26,12 @@ clk parameter set value.show --no-color
 clk parameter set extension.show --no-color
 ```
 
-    New global parameters for alias.show: --no-color
-    New global parameters for parameter.show: --no-color
-    New global parameters for value.show: --no-color
-    New global parameters for extension.show: --no-color
+<pre>
+New <span style="color:teal;">global</span> parameters for alias.show: --no-color
+New <span style="color:teal;">global</span> parameters for parameter.show: --no-color
+New <span style="color:teal;">global</span> parameters for value.show: --no-color
+New <span style="color:teal;">global</span> parameters for extension.show: --no-color
+</pre>
 
 This works, but it's tedious. You have to remember every command that has a `--color` option. And when a new command is added, you need to set its parameter too. Parameters work at the **syntactic** level: you're saying "for this specific command, add these specific flags".
 

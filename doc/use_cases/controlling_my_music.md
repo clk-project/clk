@@ -34,7 +34,9 @@ Then, to use this program as a clk command, we could simply create an alias like
 clk alias set music.play exec -- mpc play --random --use-speakers --replaygain
 ```
 
-    New global alias for music.play: exec mpc play --random --use-speakers --replaygain
+<pre>
+New <span style="color:teal;">global</span> alias for music.play: exec mpc play --random --use-speakers --replaygain
+</pre>
 
 Then, we can simple call this command.
 
@@ -56,8 +58,10 @@ clk music play --repeat --set-parameter global
 clk music play MyAlbum
 ```
 
-    New global parameters for music.play: --repeat
-    Running mpc with: play --random --use-speakers --replaygain --repeat MyAlbum
+<pre>
+New <span style="color:teal;">global</span> parameters for music.play: --repeat
+Running mpc with: play --random --use-speakers --replaygain --repeat MyAlbum
+</pre>
 
 Of course, `--set-parameter` provides completion for the profile name. Here, only `global` is available since we don't have a project.
 
@@ -81,10 +85,12 @@ clk alias set music.play exec mpc start-server , exec -- mpc play --random --use
 clk music play MyAlbum
 ```
 
-    Removing global alias of music.play: exec mpc play --random --use-speakers --replaygain
-    New global alias for music.play: exec mpc start-server , exec mpc play --random --use-speakers --replaygain
-    Running mpc with: start-server
-    Running mpc with: play --random --use-speakers --replaygain --repeat MyAlbum
+<pre>
+Removing <span style="color:teal;">global</span> alias of music.play: exec mpc play --random --use-speakers --replaygain
+New <span style="color:teal;">global</span> alias for music.play: exec mpc start-server , exec mpc play --random --use-speakers --replaygain
+Running mpc with: start-server
+Running mpc with: play --random --use-speakers --replaygain --repeat MyAlbum
+</pre>
 
 As aliases grow, you may need to take a look at what it does to avoid getting lost.
 
@@ -94,7 +100,11 @@ You can call the alias command to do so.
 clk alias show music.play
 ```
 
-    music.play exec mpc start-server, exec mpc play --random --use-speakers --replaygain
+<pre>
+music.play <span style="color:teal;">exec mpc start-server, exec mpc play --random --use-speakers --replaygain</span>
+--------------
+Legend: <span style="color:teal;">global</span>
+</pre>
 
 Note that showing the help of the command also gives that information.
 
@@ -145,7 +155,9 @@ Even doing so, you may at some point want more control about what you are doing,
 clk command create bash --replace-alias music.play
 ```
 
-    Erasing music.play alias from global settings
+<pre>
+Erasing music.play alias from <span style="color:teal;">global</span> settings
+</pre>
 
 This command tries hard to have the same behavior as its original alias.
 
@@ -175,18 +187,16 @@ Note that it is also shown in the help of the command.
 clk music play --help|head -10
 ```
 
-```
-Usage: clk music play [OPTIONS] [ARGS]...
+    Usage: clk music play [OPTIONS] [ARGS]...
 
-  Description Converted from the alias music.play
+      Description Converted from the alias music.play
 
-  The current parameters set for this command are: --repeat
+      The current parameters set for this command are: --repeat
 
-  Edit this external command by running `clk command edit music.play`
-  Or edit ./clk-root/bin/music.play directly.
+      Edit this external command by running `clk command edit music.play`
+      Or edit ./clk-root/bin/music.play directly.
 
-Positional arguments:
-```
+    Positional arguments:
 
 
 <a id="saying-what-the-command-takes"></a>
@@ -231,11 +241,13 @@ clk alias set music.loud exec mpc volume 100 , music play
 clk music loud Kind-of-Blue
 ```
 
-    New global alias for music.loud: exec mpc volume 100 , music play
-    Running mpc with: volume 100
-    Running mpc with: start-server
-    Running mpc with: wait-for-server
-    Running mpc with: play --random --use-speakers --replaygain --repeat Kind-of-Blue
+<pre>
+New <span style="color:teal;">global</span> alias for music.loud: exec mpc volume 100 , music play
+Running mpc with: volume 100
+Running mpc with: start-server
+Running mpc with: wait-for-server
+Running mpc with: play --random --use-speakers --replaygain --repeat Kind-of-Blue
+</pre>
 
 Tidying up, I unset `music.pause`, which I renamed long ago, and clk answers with the aliases I do have.
 
@@ -253,11 +265,13 @@ clk command create bash --replace-alias music.loud
 clk music loud Bitches-Brew
 ```
 
-    Erasing music.loud alias from global settings
-    Running mpc with: volume 100
-    Running mpc with: start-server
-    Running mpc with: wait-for-server
-    Running mpc with: play --random --use-speakers --replaygain --repeat Bitches-Brew
+<pre>
+Erasing music.loud alias from <span style="color:teal;">global</span> settings
+Running mpc with: volume 100
+Running mpc with: start-server
+Running mpc with: wait-for-server
+Running mpc with: play --random --use-speakers --replaygain --repeat Bitches-Brew
+</pre>
 
 
 <a id="the-albums-i-played-lately"></a>
@@ -292,14 +306,16 @@ The first clk I run writes the settings in json5. The @ is gone, so it renames m
 clk music play Kind-of-Blue 2>&1
 ```
 
-    warning: Profile in ./clk-root is obsolete. It has the version 8 and current version is 9. Migration started.
-    warning: Renaming music.shuffle.py into music.shuffle, so that it answers to music shuffle
-    warning: music.volume.py keeps its suffix, music.volume is taken
-    warning: music.volume@py names a script with the @ of an older clk, and nothing answers to it anymore
-    warning: mixer.py uses DynamicConfigBase, which is gone: expose_class does the same
-    Running mpc with: start-server
-    Running mpc with: wait-for-server
-    Running mpc with: play --random --use-speakers --replaygain --repeat Kind-of-Blue
+<pre>
+<span style="color:olive;">warning: </span>Profile in ./clk-root is obsolete. It has the version 8 and current version is 9. Migration started.
+<span style="color:olive;">warning: </span>Renaming music.shuffle.py into music.shuffle, so that it answers to music shuffle
+<span style="color:olive;">warning: </span>music.volume.py keeps its suffix, music.volume is taken
+<span style="color:olive;">warning: </span>music.volume@py names a script with the @ of an older clk, and nothing answers to it anymore
+<span style="color:olive;">warning: </span>mixer.py uses DynamicConfigBase, which is gone: expose_class does the same
+Running mpc with: start-server
+Running mpc with: wait-for-server
+Running mpc with: play --random --use-speakers --replaygain --repeat Kind-of-Blue
+</pre>
 
 My parameters followed the new name.
 
@@ -308,6 +324,10 @@ clk music shuffle
 clk parameter show music.shuffle
 ```
 
-    warning: The command 'music.shuffle' has no documentation
-    shuffling
-    music.shuffle --seed 42
+<pre>
+<span style="color:olive;">warning: </span>The command 'music.shuffle' has no documentation
+shuffling
+music.shuffle <span style="color:teal;">--seed 42</span>
+--------------
+Legend: <span style="color:teal;">global</span>
+</pre>

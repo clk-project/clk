@@ -12,7 +12,7 @@ curl_code () {
 curl_expected () {
       local expected
       expected="$(cat<<"EOEXPECTED"
-New global alias for myserver: echo curl http://myserverip/somecommand
+New [36mglobal[0m alias for myserver: echo curl http://myserverip/somecommand
 curl http://myserverip/somecommand
 EOEXPECTED
 )"
@@ -25,7 +25,8 @@ echo 'Run curl'
 { curl_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/curl"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/curl"
 else
     curl_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -46,8 +47,8 @@ withpyeval_code () {
 withpyeval_expected () {
       local expected
       expected="$(cat<<"EOEXPECTED"
-Removing global alias of myserver: echo curl http://myserverip/somecommand
-New global alias for myserver: echo curl 'pyeval:"http://{MYSERVER}/sommecommand".format(**os.environ)'
+Removing [36mglobal[0m alias of myserver: echo curl http://myserverip/somecommand
+New [36mglobal[0m alias for myserver: echo curl 'pyeval:"http://{MYSERVER}/sommecommand".format(**os.environ)'
 curl http://myserverip/sommecommand
 EOEXPECTED
 )"
@@ -60,7 +61,8 @@ echo 'Run withpyeval'
 { withpyeval_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/withpyeval"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/withpyeval"
 else
     withpyeval_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -79,8 +81,8 @@ witheval_code () {
 witheval_expected () {
       local expected
       expected="$(cat<<"EOEXPECTED"
-Removing global alias of myserver: echo curl 'pyeval:"http://{MYSERVER}/sommecommand".format(**os.environ)'
-New global alias for myserver: echo curl 'eval:sh -c "echo http://${MYSERVER}/sommecommand"'
+Removing [36mglobal[0m alias of myserver: echo curl 'pyeval:"http://{MYSERVER}/sommecommand".format(**os.environ)'
+New [36mglobal[0m alias for myserver: echo curl 'eval:sh -c "echo http://${MYSERVER}/sommecommand"'
 curl http://myserverip/sommecommand
 EOEXPECTED
 )"
@@ -93,7 +95,8 @@ echo 'Run witheval'
 { witheval_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/witheval"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/witheval"
 else
     witheval_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -112,8 +115,8 @@ withtpl_code () {
 withtpl_expected () {
       local expected
       expected="$(cat<<"EOEXPECTED"
-Removing global alias of myserver: echo curl 'eval:sh -c "echo http://${MYSERVER}/sommecommand"'
-New global alias for myserver: echo curl 'tpl:http://{MYSERVER}/sommecommand'
+Removing [36mglobal[0m alias of myserver: echo curl 'eval:sh -c "echo http://${MYSERVER}/sommecommand"'
+New [36mglobal[0m alias for myserver: echo curl 'tpl:http://{MYSERVER}/sommecommand'
 curl http://myserverip/sommecommand
 EOEXPECTED
 )"
@@ -126,7 +129,8 @@ echo 'Run withtpl'
 { withtpl_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/withtpl"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/withtpl"
 else
     withtpl_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {

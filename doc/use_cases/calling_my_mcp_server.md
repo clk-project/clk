@@ -63,7 +63,9 @@ Being prompted every hour gets old fast. I could make the password a parameter.
 clk parameter set agentcore --password mytoken
 ```
 
-    New global parameters for agentcore: --password mytoken
+<pre>
+New <span style="color:teal;">global</span> parameters for agentcore: --password mytoken
+</pre>
 
 ```bash
 clk agentcore token
@@ -79,8 +81,10 @@ Instead, the parameter can tell clk to look the password up in my password manag
 clk parameter set agentcore --password noeval:secret:demo-buyer-password
 ```
 
-    Removing global parameters of agentcore: --password mytoken
-    New global parameters for agentcore: --password secret:demo-buyer-password
+<pre>
+Removing <span style="color:teal;">global</span> parameters of agentcore: --password mytoken
+New <span style="color:teal;">global</span> parameters for agentcore: --password secret:demo-buyer-password
+</pre>
 
 1.  `secret:demo-buyer-password` tells clk to get the value from my password manager, under the key `demo-buyer-password`,
 2.  `noeval:` keeps clk from looking it up right now, so that the parameter holds the reference rather than the password.
@@ -91,7 +95,9 @@ I have not stored it yet, so clk fails and says so<sup><a id="fnr.1" class="foot
 clk agentcore token
 ```
 
-    error: Could not find the secret for demo-buyer-password
+<pre>
+<span style="color:red;">error: </span>Could not find the secret for demo-buyer-password
+</pre>
 
 
 <a id="on-a-machine-where-i-have-not-stored-it"></a>
@@ -104,20 +110,24 @@ On a colleague's laptop, or on mine before I store it, `--ask-secret` makes clk 
 clk --ask-secret agentcore token
 ```
 
-    warning: Could not find the secret for demo-buyer-password
-    Please provide the secret demo-buyer-password:
-    Repeat for confirmation:
-    Logging in as demo-buyer with password test
+<pre>
+<span style="color:olive;">warning: </span>Could not find the secret for demo-buyer-password
+Please provide the secret demo-buyer-password:
+Repeat for confirmation:
+Logging in as demo-buyer with password test
+</pre>
 
 The error became a warning, and I typed the password.
 
 When I mistype it, clk asks again until both match.
 
-    warning: Could not find the secret for demo-buyer-password
-    Please provide the secret demo-buyer-password:
-    Repeat for confirmation:
-    Error: The two entered values do not match.
-    Please provide the secret demo-buyer-password:
+<pre>
+<span style="color:olive;">warning: </span>Could not find the secret for demo-buyer-password
+Please provide the secret demo-buyer-password:
+Repeat for confirmation:
+Error: The two entered values do not match.
+Please provide the secret demo-buyer-password:
+</pre>
 
 The missing password does not get in the way of completing the command, with or without `--ask-secret`.
 
@@ -146,7 +156,9 @@ It prompts for the password, to keep it out of my shell history too. Let's say I
 clk secret show demo-buyer-password
 ```
 
-    demo-buyer-password *****
+<pre>
+demo-buyer-password *****
+</pre>
 
 That tells me it is there without putting it on my screen. When I do want to see it, I say so.
 
@@ -154,7 +166,9 @@ That tells me it is there without putting it on my screen. When I do want to see
 clk secret show demo-buyer-password --secret
 ```
 
-    demo-buyer-password mytoken
+<pre>
+demo-buyer-password mytoken
+</pre>
 
 And to hand it to another program, the value alone.
 
@@ -204,9 +218,13 @@ To know which secrets to store again, clk lists the ones they refer to, and whet
 clk secret list
 ```
 
-    key                  status    commands
-    -------------------  --------  ---------------------
-    demo-buyer-password  set       agentcore buyer-token
+<pre>
+key                  status    commands
+-------------------  --------  ---------------------
+demo-buyer-password  <span style="color:green;">set</span>       <span style="color:teal;">agentcore</span> <span style="color:teal;">buyer-token</span>
+--------------
+Legend: <span style="color:teal;">global</span>
+</pre>
 
 
 <a id="a-check-of-my-own-in-python"></a>
@@ -251,7 +269,9 @@ It is still there.
 clk secret show demo-buyer-password
 ```
 
-    demo-buyer-password *****
+<pre>
+demo-buyer-password *****
+</pre>
 
 The reset is done, so this time I answer yes. In a script, `--force` skips the question.
 
@@ -281,9 +301,13 @@ And the list reminds me to store the new one.
 clk secret list
 ```
 
-    key                  status    commands
-    -------------------  --------  ---------------------
-    demo-buyer-password  missing   agentcore buyer-token
+<pre>
+key                  status    commands
+-------------------  --------  ---------------------
+demo-buyer-password  <span style="color:red;">missing</span>   <span style="color:teal;">agentcore</span> <span style="color:teal;">buyer-token</span>
+--------------
+Legend: <span style="color:teal;">global</span>
+</pre>
 
 
 <a id="when-an-agent-runs-it-for-me"></a>
@@ -303,7 +327,9 @@ Sometimes the agent runs in a container where clk was installed without the pyth
 clk secret show demo-buyer-password --secret
 ```
 
-    demo-buyer-password thevalue
+<pre>
+demo-buyer-password thevalue
+</pre>
 
 ```bash
 clk secret backend which
@@ -334,7 +360,9 @@ Where keyring is installed but finds no password manager, clk falls back on netr
 clk secret show demo-buyer-password --secret
 ```
 
-    demo-buyer-password thevalue
+<pre>
+demo-buyer-password thevalue
+</pre>
 
 When I wonder where a secret comes from, clk tells me where it keeps them, and why.
 
@@ -363,7 +391,9 @@ I can also ask for netrc explicitly, with the `NetrcKeyring` of `clk.keyrings`.
 clk --keyring clk.keyrings.NetrcKeyring secret show demo-buyer-password --secret
 ```
 
-    demo-buyer-password thevalue
+<pre>
+demo-buyer-password thevalue
+</pre>
 
 A secret my netrc file does not hold is simply not there.
 
@@ -379,9 +409,11 @@ It only reads: storing one is up to me, in the file itself.
 clk --keyring clk.keyrings.NetrcKeyring secret set other_token
 ```
 
-    error: Could not save your secret.
-    Usage: clk secret set [OPTIONS] KEY
-    error: The netrc keyring only reads secrets. Write this one in your netrc file to use it.
+<pre>
+<span style="color:red;">error: </span>Could not save your secret.
+Usage: clk secret set [OPTIONS] KEY
+error: The netrc keyring only reads secrets. Write this one in your netrc file to use it.
+</pre>
 
 Removing one is up to me as well.
 
@@ -436,23 +468,31 @@ Rather than typing `--keyring` every time, I tell clk to use it from now on.
 clk secret backend use team_keyring.SecretsManagerKeyring
 ```
 
-    clk now keeps your secrets in team_keyring.SecretsManagerKeyring (global settings)
+<pre>
+clk now keeps your secrets in team_keyring.SecretsManagerKeyring (<span style="color:teal;">global</span> settings)
+</pre>
 
 ```bash
 clk secret backend which
 ```
 
-    clk keeps your secrets in team_keyring.SecretsManagerKeyring, because the global settings name it.
+<pre>
+clk keeps your secrets in team_keyring.SecretsManagerKeyring, because the <span style="color:teal;">global</span> settings name it.
+</pre>
 
 ```bash
 clk secret backend show
 ```
 
-    backend                                  configuration      priority  status
-    ---------------------------------------  ---------------  ----------  --------
-    team_keyring.SecretsManagerKeyring       global                    6  in use
-    keyring.backends.fail.Keyring            Unset                     0
-    keyring.backends.chainer.ChainerBackend  Unset                    -1
+<pre>
+backend                                  configuration      priority  status
+---------------------------------------  ---------------  ----------  --------
+team_keyring.SecretsManagerKeyring       <span style="color:teal;">global</span>                    6  in use
+keyring.backends.fail.Keyring            Unset                     0
+keyring.backends.chainer.ChainerBackend  Unset                    -1
+--------------
+Legend: <span style="color:teal;">global</span>
+</pre>
 
 
 <a id="keeping-it-in-the-project"></a>
@@ -467,9 +507,11 @@ I give it a try first.
 clk --keyring clk.keyrings.GpgKeyring secret set demo-buyer-password
 ```
 
-    error: Could not save your secret.
-    Usage: clk secret set [OPTIONS] KEY
-    error: Write in ./.clk/secrets/.gpg-id the gpg ids to encrypt the secrets to, one per line. gpg --list-secret-keys shows yours.
+<pre>
+<span style="color:red;">error: </span>Could not save your secret.
+Usage: clk secret set [OPTIONS] KEY
+error: Write in ./.clk/secrets/.gpg-id the gpg ids to encrypt the secrets to, one per line. gpg --list-secret-keys shows yours.
+</pre>
 
 ```bash
 mkdir -p .clk/secrets
@@ -489,7 +531,9 @@ clk secret backend --local use clk.keyrings.<TAB>
 clk secret backend --local use clk.keyrings.GpgKeyring
 ```
 
-    clk now keeps your secrets in clk.keyrings.GpgKeyring (local settings)
+<pre>
+clk now keeps your secrets in clk.keyrings.GpgKeyring (<span style="color:green;">local</span> settings)
+</pre>
 
 ```bash
 clk secret set demo-buyer-password
@@ -505,7 +549,9 @@ ls .clk/secrets
 clk secret show demo-buyer-password --secret
 ```
 
-    demo-buyer-password mytoken
+<pre>
+demo-buyer-password mytoken
+</pre>
 
 Removing it removes the file.
 
@@ -531,7 +577,9 @@ On my desktop, the password manager of my session, behind the Secret Service int
 clk secret backend --local use keyring.backends.SecretService.Keyring
 ```
 
-    clk now keeps your secrets in keyring.backends.SecretService.Keyring (local settings)
+<pre>
+clk now keeps your secrets in keyring.backends.SecretService.Keyring (<span style="color:green;">local</span> settings)
+</pre>
 
 ```bash
 clk secret set demo-buyer-password
@@ -542,8 +590,10 @@ clk secret show demo-buyer-password --secret
 clk secret backend which
 ```
 
-    demo-buyer-password mytoken
-    clk keeps your secrets in keyring.backends.SecretService.Keyring, because the local settings name it.
+<pre>
+demo-buyer-password mytoken
+clk keeps your secrets in keyring.backends.SecretService.Keyring, because the <span style="color:green;">local</span> settings name it.
+</pre>
 
 
 <a id="when-the-demo-is-over"></a>

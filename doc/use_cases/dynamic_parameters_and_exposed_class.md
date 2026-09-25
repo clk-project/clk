@@ -166,18 +166,16 @@ Hint: If you want to edit that file afterwards, you can use a dedicated command 
 clk http --help | head -10
 ```
 
-```
-Usage: clk http [OPTIONS] COMMAND [ARGS]...
+    Usage: clk http [OPTIONS] COMMAND [ARGS]...
 
-  Commands to make http requests
+      Commands to make http requests
 
-  Edit this custom command by running `clk command edit http`
-  Or edit ./clk-root/python/http.py directly.
+      Edit this custom command by running `clk command edit http`
+      Or edit ./clk-root/python/http.py directly.
 
-Options:
-  --base-url TEXT  The url to use as a basis for all commands  [required]
-  --help-all       Show the full help message, automatic options included.
-```
+    Options:
+      --base-url TEXT  The url to use as a basis for all commands  [required]
+      --help-all       Show the full help message, automatic options included.
 
 Note that there also exists a command to only output its location, useful for scripting purposes.
 
@@ -227,10 +225,12 @@ clk somesite get something
 clk somesite post something --body bodyoftherequest
 ```
 
-    New global alias for somesite: http --base-url http://url
-    GET http://url/something
-    Would run the get code
-    res = None
-    POST http://url/something with body bodyoftherequest
-    Would run the post code
-    res = None
+<pre>
+New <span style="color:teal;">global</span> alias for somesite: http --base-url http://url
+GET http://url/something
+Would run the get code
+res = None
+POST http://url/something with body bodyoftherequest
+Would run the post code
+res = None
+</pre>

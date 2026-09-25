@@ -39,7 +39,8 @@ echo 'Run call_some'
 { call_some_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/call_some"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/call_some"
 else
     call_some_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -72,7 +73,8 @@ echo 'Run call_alias'
 { call_alias_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/call_alias"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/call_alias"
 else
     call_alias_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -103,7 +105,8 @@ echo 'Run try_completion'
 { try_completion_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/try_completion"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/try_completion"
 else
     try_completion_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -152,7 +155,8 @@ echo 'Run try_deploy'
 { try_deploy_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/try_deploy"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/try_deploy"
 else
     try_deploy_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -171,7 +175,7 @@ get-address_code () {
 get-address_expected () {
       local expected
       expected="$(cat<<"EOEXPECTED"
-New global alias for eth.get-address: exec cat contract-address.txt
+New [36mglobal[0m alias for eth.get-address: exec cat contract-address.txt
 223632c428784fecaaa3e2a6aaaf6d8e
 EOEXPECTED
 )"
@@ -184,7 +188,8 @@ echo 'Run get-address'
 { get-address_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/get-address"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/get-address"
 else
     get-address_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -222,7 +227,8 @@ echo 'Run try-command-with-eval'
 { try-command-with-eval_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/try-command-with-eval"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/try-command-with-eval"
 else
     try-command-with-eval_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -243,8 +249,8 @@ issue-using-with-cache_code () {
 issue-using-with-cache_expected () {
       local expected
       expected="$(cat<<"EOEXPECTED"
-Removing global alias of eth.mycontract: eth contract --abi-path some.json --address 'eval:clk eth get-address'
-New global alias for eth.mycontract: eth contract --abi-path some.json --address 'eval(60):clk eth get-address'
+Removing [36mglobal[0m alias of eth.mycontract: eth contract --abi-path some.json --address 'eval:clk eth get-address'
+New [36mglobal[0m alias for eth.mycontract: eth contract --abi-path some.json --address 'eval(60):clk eth get-address'
 I would discuss with the contract whose address is 47156ddb404b893cbbe9c85509710f64 and abi path is some.json
 I would call the function dosomething
 Contract deployed at address: ed5b4c043e36c30f31a158e8bda16e2b
@@ -261,7 +267,8 @@ echo 'Run issue-using-with-cache'
 { issue-using-with-cache_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/issue-using-with-cache"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/issue-using-with-cache"
 else
     issue-using-with-cache_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -297,7 +304,8 @@ echo 'Run dropping-the-cache-when-deploying'
 { dropping-the-cache-when-deploying_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/dropping-the-cache-when-deploying"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/dropping-the-cache-when-deploying"
 else
     dropping-the-cache-when-deploying_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -318,7 +326,7 @@ alias-with-project_code () {
 alias-with-project_expected () {
       local expected
       expected="$(cat<<"EOEXPECTED"
-New local alias for eth.mycontract: eth contract --abi-path project:some.json --address 'eval:clk eth get-address'
+New [32mlocal[0m alias for eth.mycontract: eth contract --abi-path project:some.json --address 'eval:clk eth get-address'
 EOEXPECTED
 )"
       # org says nil where the block said nothing
@@ -330,7 +338,8 @@ echo 'Run alias-with-project'
 { alias-with-project_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/alias-with-project"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/alias-with-project"
 else
     alias-with-project_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -362,7 +371,8 @@ echo 'Run deploy-again'
 { deploy-again_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/deploy-again"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/deploy-again"
 else
     deploy-again_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -393,7 +403,8 @@ echo 'Run run-with-project-abi'
 { run-with-project-abi_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/run-with-project-abi"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/run-with-project-abi"
 else
     run-with-project-abi_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {

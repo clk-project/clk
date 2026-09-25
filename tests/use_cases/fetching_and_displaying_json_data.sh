@@ -31,26 +31,25 @@ run_cat_code () {
 run_cat_expected () {
       local expected
       expected="$(cat<<"EOEXPECTED"
-[
-    {
-        "description": "Vacances de No\u00ebl",
-        "end_date": "2025-01-06",
-        "location": "Zone A",
-        "population": "\u00c9l\u00e8ves",
-        "start_date": "2024-12-21"
-    },
-    {
-        "description": "Vacances de No\u00ebl",
-        "end_date": "2025-01-06",
-        "location": "Zone B",
-        "population": "\u00c9l\u00e8ves",
-        "start_date": "2024-12-21"
-    },
-    {
-        "description": "Vacances d'hiver",
-        "end_date": "2025-02-24",
-        "location": "Zone A",
-
+[[37m[39;49;00m
+[37m    [39;49;00m{[37m[39;49;00m
+[37m        [39;49;00m[94m"description"[39;49;00m:[37m [39;49;00m[33m"Vacances de No\u00ebl"[39;49;00m,[37m[39;49;00m
+[37m        [39;49;00m[94m"end_date"[39;49;00m:[37m [39;49;00m[33m"2025-01-06"[39;49;00m,[37m[39;49;00m
+[37m        [39;49;00m[94m"location"[39;49;00m:[37m [39;49;00m[33m"Zone A"[39;49;00m,[37m[39;49;00m
+[37m        [39;49;00m[94m"population"[39;49;00m:[37m [39;49;00m[33m"\u00c9l\u00e8ves"[39;49;00m,[37m[39;49;00m
+[37m        [39;49;00m[94m"start_date"[39;49;00m:[37m [39;49;00m[33m"2024-12-21"[39;49;00m[37m[39;49;00m
+[37m    [39;49;00m},[37m[39;49;00m
+[37m    [39;49;00m{[37m[39;49;00m
+[37m        [39;49;00m[94m"description"[39;49;00m:[37m [39;49;00m[33m"Vacances de No\u00ebl"[39;49;00m,[37m[39;49;00m
+[37m        [39;49;00m[94m"end_date"[39;49;00m:[37m [39;49;00m[33m"2025-01-06"[39;49;00m,[37m[39;49;00m
+[37m        [39;49;00m[94m"location"[39;49;00m:[37m [39;49;00m[33m"Zone B"[39;49;00m,[37m[39;49;00m
+[37m        [39;49;00m[94m"population"[39;49;00m:[37m [39;49;00m[33m"\u00c9l\u00e8ves"[39;49;00m,[37m[39;49;00m
+[37m        [39;49;00m[94m"start_date"[39;49;00m:[37m [39;49;00m[33m"2024-12-21"[39;49;00m[37m[39;49;00m
+[37m    [39;49;00m},[37m[39;49;00m
+[37m    [39;49;00m{[37m[39;49;00m
+[37m        [39;49;00m[94m"description"[39;49;00m:[37m [39;49;00m[33m"Vacances d'hiver"[39;49;00m,[37m[39;49;00m
+[37m        [39;49;00m[94m"end_date"[39;49;00m:[37m [39;49;00m[33m"2025-02-24"[39;49;00m,[37m[39;49;00m
+[37m        [39;49;00m[94m"location"[39;49;00m:[37m [39;49;00m[33m"Zone A"[39;49;00m,[37m[39;49;00m
 EOEXPECTED
 )"
       # org says nil where the block said nothing
@@ -62,7 +61,8 @@ echo 'Run run_cat'
 { run_cat_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/run_cat"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/run_cat"
 else
     run_cat_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -91,30 +91,29 @@ run_filter_code () {
 run_filter_expected () {
       local expected
       expected="$(cat<<"EOEXPECTED"
-[
-    {
-        "description": "Vacances de No\u00ebl",
-        "end_date": "2025-01-06",
-        "location": "Zone A",
-        "population": "\u00c9l\u00e8ves",
-        "start_date": "2024-12-21"
-    },
-    {
-        "description": "Vacances d'hiver",
-        "end_date": "2025-02-24",
-        "location": "Zone A",
-        "population": "\u00c9l\u00e8ves",
-        "start_date": "2025-02-08"
-    },
-    {
-        "description": "Vacances de printemps",
-        "end_date": "2025-04-22",
-        "location": "Zone A",
-        "population": "\u00c9l\u00e8ves",
-        "start_date": "2025-04-05"
-    }
-]
-
+[[37m[39;49;00m
+[37m    [39;49;00m{[37m[39;49;00m
+[37m        [39;49;00m[94m"description"[39;49;00m:[37m [39;49;00m[33m"Vacances de No\u00ebl"[39;49;00m,[37m[39;49;00m
+[37m        [39;49;00m[94m"end_date"[39;49;00m:[37m [39;49;00m[33m"2025-01-06"[39;49;00m,[37m[39;49;00m
+[37m        [39;49;00m[94m"location"[39;49;00m:[37m [39;49;00m[33m"Zone A"[39;49;00m,[37m[39;49;00m
+[37m        [39;49;00m[94m"population"[39;49;00m:[37m [39;49;00m[33m"\u00c9l\u00e8ves"[39;49;00m,[37m[39;49;00m
+[37m        [39;49;00m[94m"start_date"[39;49;00m:[37m [39;49;00m[33m"2024-12-21"[39;49;00m[37m[39;49;00m
+[37m    [39;49;00m},[37m[39;49;00m
+[37m    [39;49;00m{[37m[39;49;00m
+[37m        [39;49;00m[94m"description"[39;49;00m:[37m [39;49;00m[33m"Vacances d'hiver"[39;49;00m,[37m[39;49;00m
+[37m        [39;49;00m[94m"end_date"[39;49;00m:[37m [39;49;00m[33m"2025-02-24"[39;49;00m,[37m[39;49;00m
+[37m        [39;49;00m[94m"location"[39;49;00m:[37m [39;49;00m[33m"Zone A"[39;49;00m,[37m[39;49;00m
+[37m        [39;49;00m[94m"population"[39;49;00m:[37m [39;49;00m[33m"\u00c9l\u00e8ves"[39;49;00m,[37m[39;49;00m
+[37m        [39;49;00m[94m"start_date"[39;49;00m:[37m [39;49;00m[33m"2025-02-08"[39;49;00m[37m[39;49;00m
+[37m    [39;49;00m},[37m[39;49;00m
+[37m    [39;49;00m{[37m[39;49;00m
+[37m        [39;49;00m[94m"description"[39;49;00m:[37m [39;49;00m[33m"Vacances de printemps"[39;49;00m,[37m[39;49;00m
+[37m        [39;49;00m[94m"end_date"[39;49;00m:[37m [39;49;00m[33m"2025-04-22"[39;49;00m,[37m[39;49;00m
+[37m        [39;49;00m[94m"location"[39;49;00m:[37m [39;49;00m[33m"Zone A"[39;49;00m,[37m[39;49;00m
+[37m        [39;49;00m[94m"population"[39;49;00m:[37m [39;49;00m[33m"\u00c9l\u00e8ves"[39;49;00m,[37m[39;49;00m
+[37m        [39;49;00m[94m"start_date"[39;49;00m:[37m [39;49;00m[33m"2025-04-05"[39;49;00m[37m[39;49;00m
+[37m    [39;49;00m}[37m[39;49;00m
+][37m[39;49;00m
 EOEXPECTED
 )"
       # org says nil where the block said nothing
@@ -126,7 +125,8 @@ echo 'Run run_filter'
 { run_filter_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/run_filter"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/run_filter"
 else
     run_filter_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {

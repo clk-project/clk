@@ -31,27 +31,25 @@ clk command create python --help
 #+END_SRC
 
 #+RESULTS[79bb39f6967899be6a29ac0b6c90699bf3a824a2]: help-create
-#+begin_example
-Usage: clk command create python [OPTIONS] NAME
-
-  Create a python custom command
-
-  This is a built-in command.
-
-Positional arguments:
-  NAME  The name of the new command
-
-Options:
-  --open / --no-open   Also open the file after its creation  [default: open]
-  --force              Overwrite a file if it already exists
-  --group / --command  Bootstrap a command or a group of commands  [default: command]
-  --with-data          Create a directory module instead of a single file. So that you can ship data with it
-  --body TEXT          The initial body to put  [default: ""]
-  --description TEXT   The initial description to put  [default: Description]
-  --from-file TEXT     Copy this file instead of using the template
-  --help-all           Show the full help message, automatic options included.
-  --help               Show this message and exit.
-#+end_example
+: Usage: clk command create python [OPTIONS] NAME
+:
+:   Create a python custom command
+:
+:   This is a built-in command.
+:
+: Positional arguments:
+:   NAME  The name of the new command
+:
+: Options:
+:   --open / --no-open   Also open the file after its creation  [default: open]
+:   --force              Overwrite a file if it already exists
+:   --group / --command  Bootstrap a command or a group of commands  [default: command]
+:   --with-data          Create a directory module instead of a single file. So that you can ship data with it
+:   --body TEXT          The initial body to put  [default: ""]
+:   --description TEXT   The initial description to put  [default: Description]
+:   --from-file TEXT     Copy this file instead of using the template
+:   --help-all           Show the full help message, automatic options included.
+:   --help               Show this message and exit.
 
 Let's look at the file that was created.
 
@@ -61,39 +59,38 @@ cat $(clk command which mycommand)
 #+END_SRC
 
 #+RESULTS[f1f70dbaf02e9ced27bf20557c8ec71e3d29f6a5]: show_it
-#+begin_example
-#!/usr/bin/env python3
-# -*- coding:utf-8 -*-
-
-from pathlib import Path
-
-import click
-
-from clk.decorators import (
-    argument,
-    flag,
-    option,
-    command,
-    use_settings,
-    table_format,
-    table_fields,
-)
-from clk.lib import (
-    TablePrinter,
-    call,
-)
-from clk.config import config
-from clk.log import get_logger
-from clk.types import DynamicChoice
-
-
-LOGGER = get_logger(__name__)
-
-
-@command()
-def mycommand():
-    "Description"
-#+end_example
+: #!/usr/bin/env python3
+: # -*- coding:utf-8 -*-
+:
+: from pathlib import Path
+:
+: import click
+:
+: from clk.decorators import (
+:     argument,
+:     flag,
+:     option,
+:     command,
+:     use_settings,
+:     table_format,
+:     table_fields,
+: )
+: from clk.lib import (
+:     TablePrinter,
+:     call,
+: )
+: from clk.config import config
+: from clk.log import get_logger
+: from clk.types import DynamicChoice
+:
+:
+: LOGGER = get_logger(__name__)
+:
+:
+: @command()
+: def mycommand():
+:     "Description"
+:
 
 The ~@command()~ decorator is provided by clk. It is a thin wrapper around the
 click ~@command()~ decorator that adds some features like automatic option
@@ -107,7 +104,7 @@ clk mycommand
 #+END_SRC
 
 #+RESULTS[c79c1298c6898b13962d7526bd02cf22c63d1d54]: try
-: warning: The command 'mycommand' has no documentation
+: [33mwarning: [0mThe command 'mycommand' has no documentation
 
 If you keep the word ~Description~ in the help message, clk will warn you that
 you should replace it with something more interesting.
@@ -125,18 +122,16 @@ clk mycommand --help | head -10
 #+END_SRC
 
 #+RESULTS[fe88f92e0d201f6a77507ea5266987c47bb4b62d]: help
-#+begin_example
-Usage: clk mycommand [OPTIONS]
-
-  Command that says something
-
-  Edit this custom command by running `clk command edit mycommand`
-  Or edit ./clk-root/python/mycommand.py directly.
-
-Options:
-  --help-all  Show the full help message, automatic options included.
-  --help      Show this message and exit.
-#+end_example
+: Usage: clk mycommand [OPTIONS]
+:
+:   Command that says something
+:
+:   Edit this custom command by running `clk command edit mycommand`
+:   Or edit ./clk-root/python/mycommand.py directly.
+:
+: Options:
+:   --help-all  Show the full help message, automatic options included.
+:   --help      Show this message and exit.
 
 Let's make this command say something.
 
@@ -260,7 +255,7 @@ clk mycommand
 #+END_SRC
 
 #+RESULTS[c79c1298c6898b13962d7526bd02cf22c63d1d54]: use_with_options
-: warning: The parameter 'greeting' in the command 'mycommand' has no documentation
+: [33mwarning: [0mThe parameter 'greeting' in the command 'mycommand' has no documentation
 : Hello, world!
 
 #+NAME: use_with_options2
@@ -269,7 +264,7 @@ clk mycommand --name clk Goodbye
 #+END_SRC
 
 #+RESULTS[af16c7dfc8e6d93fc671a29deb20e345466a5c3a]: use_with_options2
-: warning: The parameter 'greeting' in the command 'mycommand' has no documentation
+: [33mwarning: [0mThe parameter 'greeting' in the command 'mycommand' has no documentation
 : Goodbye, clk!
 
 #+NAME: use_with_deprecated_options
@@ -278,8 +273,8 @@ clk mycommand --use-name clk Goodbye
 #+END_SRC
 
 #+RESULTS[fef9f1cd56d15dd24a3b5714c4f61efa70102b0c]: use_with_deprecated_options
-: DeprecationWarning: The option 'use_name' is deprecated. since forever
-: warning: The parameter 'greeting' in the command 'mycommand' has no documentation
+: [31mDeprecationWarning: The option 'use_name' is deprecated. since forever[0m
+: [33mwarning: [0mThe parameter 'greeting' in the command 'mycommand' has no documentation
 : Goodbye, world!
 
 That warning about ~greeting~ shows in the help as well.
@@ -290,20 +285,18 @@ clk mycommand --help 2>/dev/null
 #+END_SRC
 
 #+RESULTS[]: help_without_doc
-#+begin_example
-Usage: clk mycommand [OPTIONS] [GREETING]
-
-  A greeting command
-
-  Edit this custom command by running `clk command edit mycommand`
-  Or edit ./clk-root/python/mycommand.py directly.
-
-Options:
-  --name TEXT      Name to greet  [default: world]
-  --use-name TEXT  Name to greet (DEPRECATED: since forever)  [default: world]
-  --help-all       Show the full help message, automatic options included.
-  --help           Show this message and exit.
-#+end_example
+: Usage: clk mycommand [OPTIONS] [GREETING]
+:
+:   A greeting command
+:
+:   Edit this custom command by running `clk command edit mycommand`
+:   Or edit ./clk-root/python/mycommand.py directly.
+:
+: Options:
+:   --name TEXT      Name to greet  [default: world]
+:   --use-name TEXT  Name to greet (DEPRECATED: since forever)  [default: world]
+:   --help-all       Show the full help message, automatic options included.
+:   --help           Show this message and exit.
 
 Give it a help of its own.
 
@@ -378,8 +371,8 @@ clk pyenv 2>&1|sed "s|$(pwd)|.|"
 #+END_SRC
 
 #+RESULTS[d3af7307b4a90513093c8fec7eb41ccf188e9537]: try-bad-command
-: error: Found the command pyenv in the resolver customcommand but could not load it.
-: warning: Failed to get the command pyenv: The file ./clk-root/python/pyenv.py must contain a click command or group named pyenv, but found a function instead. Did you forget the @command or @group decorator?
+: [31merror: [0mFound the command pyenv in the resolver customcommand but could not load it.
+: [33mwarning: [0mFailed to get the command pyenv: The file ./clk-root/python/pyenv.py must contain a click command or group named pyenv, but found a function instead. Did you forget the @command or @group decorator?
 : error: clk.pyenv could not be loaded. Re run with clk --develop to see the stacktrace or clk --debug-on-command-load-error to debug the load error
 
 Let's take a look at the stack trace with ~--develop~.

@@ -208,7 +208,7 @@ clk printer send myprinter --flow
 #+END_SRC
 
 #+RESULTS[b8519ee1dee8a9434b4253ec4cfcb9c2ca8263a7]: running-the-explicit-flow-with-model
-: New global parameters for printer.slice: --model someothermodel
+: New [36mglobal[0m parameters for printer.slice: --model someothermodel
 : Running some stuff for the printer to be ready to go
 : Slicing someothermodel to model.gcode
 : Printing model.gcode using myprinter
@@ -248,9 +248,9 @@ clk printer send myprinter --flow
 #+END_SRC
 
 #+RESULTS[]: gcode-in-value
-: Removing global parameters of printer.slice: --model someothermodel
-: New global parameters for printer.slice: --model someothermodel --output value:gcode
-: New global parameters for printer.send: --gcode value:gcode
+: Removing [36mglobal[0m parameters of printer.slice: --model someothermodel
+: New [36mglobal[0m parameters for printer.slice: --model someothermodel --output value:gcode
+: New [36mglobal[0m parameters for printer.send: --gcode value:gcode
 : Running some stuff for the printer to be ready to go
 : Slicing someothermodel to print.gcode
 : Printing print.gcode using myprinter
@@ -293,7 +293,7 @@ clk flowdep show printer.send --all
 #+END_SRC
 
 #+RESULTS[03bbaa76b02cd96216ea4be5d49fdf33b6b3d1ab]: flowdep-show
-: printer.send printer.calibrate printer.slice
+: printer.send [2mprinter.calibrate printer.slice[0m
 
 
 Then, you can show the graph
@@ -448,7 +448,7 @@ clk printer send myprinter --flow
 #+END_SRC
 
 #+RESULTS[4ece043a28d90c9c45606b200fb5fefee29e7d6e]: flowdep-set-clean
-: New global flowdep for printer.calibrate: printer.clean
+: New [36mglobal[0m flowdep for printer.calibrate: printer.clean
 : Cleaning the printer bed
 : Running some stuff for the printer to be ready to go
 : Slicing someothermodel to model.gcode
@@ -522,7 +522,7 @@ clk printer send myprinter --flow
 #+END_SRC
 
 #+RESULTS[836d59f9cccf28b6172effe6e43d7ac74d13fa11]: flowdep-unset
-: Erasing printer.calibrate flow dependencies from global settings
+: Erasing printer.calibrate flow dependencies from [36mglobal[0m settings
 : Running some stuff for the printer to be ready to go
 : Slicing someothermodel to model.gcode
 : Printing model.gcode using myprinter
@@ -537,8 +537,8 @@ clk printer nightly --flow
 #+END_SRC
 
 #+RESULTS[]: alias-with-flowdep
-: New global alias for printer.nightly: printer send myprinter
-: New global flowdep for printer.nightly: printer.calibrate
+: New [36mglobal[0m alias for printer.nightly: printer send myprinter
+: New [36mglobal[0m flowdep for printer.nightly: printer.calibrate
 : Running some stuff for the printer to be ready to go
 : Printing model.gcode using myprinter
 
@@ -623,9 +623,9 @@ clk printer send --flow myprinter
 #+END_SRC
 
 #+RESULTS[a6e0572d6385dc840dd38fe6aebc100866184f32]: run-with-wrong-flow-deps
-: error: Could not load the flow of printer.slice with the error: Command printer.calib not found
-: error: Could not load the flow of printer.send with the error: Command printer.calib not found
-: warning: Failed to get the command printer.send: Command printer.calib not found
+: [31merror: [0mCould not load the flow of printer.slice with the error: Command printer.calib not found
+: [31merror: [0mCould not load the flow of printer.send with the error: Command printer.calib not found
+: [33mwarning: [0mFailed to get the command printer.send: Command printer.calib not found
 : error: printer.send could not be loaded. Re run with clk --develop to see the stacktrace or clk --debug-on-command-load-error to debug the load error
 
 Beware that this means that you have to check that this command it actually defined.

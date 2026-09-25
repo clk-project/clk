@@ -57,7 +57,8 @@ echo 'Run try-it'
 { try-it_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/try-it"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/try-it"
 else
     try-it_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -76,7 +77,7 @@ disable_code () {
 disable_expected () {
       local expected
       expected="$(cat<<"EOEXPECTED"
-warning: Failed to get the command k8s: Command k8s not found
+[33mwarning: [0mFailed to get the command k8s: Command k8s not found
 Usage: clk [OPTIONS] [COMMAND] [ARGS]...
 error: No such command 'k8s'.
 EOEXPECTED
@@ -90,7 +91,8 @@ echo 'Run disable'
 { disable_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/disable"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/disable"
 else
     disable_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -124,7 +126,8 @@ echo 'Run enable-for-one-run'
 { enable-for-one-run_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/enable-for-one-run"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/enable-for-one-run"
 else
     enable-for-one-run_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -159,7 +162,8 @@ echo 'Run enable'
 { enable_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/enable"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/enable"
 else
     enable_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -177,7 +181,7 @@ disable-for-one-run_code () {
 disable-for-one-run_expected () {
       local expected
       expected="$(cat<<"EOEXPECTED"
-warning: Failed to get the command k8s: Command k8s not found
+[33mwarning: [0mFailed to get the command k8s: Command k8s not found
 Usage: clk [OPTIONS] [COMMAND] [ARGS]...
 error: No such command 'k8s'.
 EOEXPECTED
@@ -191,7 +195,8 @@ echo 'Run disable-for-one-run'
 { disable-for-one-run_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/disable-for-one-run"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/disable-for-one-run"
 else
     disable-for-one-run_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -224,7 +229,8 @@ echo 'Run disable-in-project'
 { disable-in-project_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/disable-in-project"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/disable-in-project"
 else
     disable-in-project_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -259,7 +265,8 @@ echo 'Run unset-in-project'
 { unset-in-project_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/unset-in-project"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/unset-in-project"
 else
     unset-in-project_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -297,7 +304,8 @@ echo 'Run run_project_deploy'
 { run_project_deploy_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/run_project_deploy"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/run_project_deploy"
 else
     run_project_deploy_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -331,7 +339,8 @@ echo 'Run run_project_deploy_again'
 { run_project_deploy_again_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/run_project_deploy_again"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/run_project_deploy_again"
 else
     run_project_deploy_again_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -369,7 +378,8 @@ echo 'Run run-flow-in-project'
 { run-flow-in-project_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/run-flow-in-project"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/run-flow-in-project"
 else
     run-flow-in-project_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -389,7 +399,7 @@ update-before-publishing_code () {
 update-before-publishing_expected () {
       local expected
       expected="$(cat<<"EOEXPECTED"
-warning: I cannot update the extension global/k8s. For the time being, I only can update cloned extensions.
+[33mwarning: [0mI cannot update the extension global/k8s. For the time being, I only can update cloned extensions.
 EOEXPECTED
 )"
       # org says nil where the block said nothing
@@ -401,7 +411,8 @@ echo 'Run update-before-publishing'
 { update-before-publishing_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/update-before-publishing"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/update-before-publishing"
 else
     update-before-publishing_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -431,7 +442,8 @@ echo 'Run find-it'
 { find-it_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/find-it"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/find-it"
 else
     find-it_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -472,7 +484,8 @@ echo 'Run lose-k8s'
 { lose-k8s_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/lose-k8s"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/lose-k8s"
 else
     lose-k8s_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -508,7 +521,8 @@ echo 'Run k8s-is-back'
 { k8s-is-back_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/k8s-is-back"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/k8s-is-back"
 else
     k8s-is-back_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -538,7 +552,8 @@ echo 'Run install-k8s-again'
 { install-k8s-again_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/install-k8s-again"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/install-k8s-again"
 else
     install-k8s-again_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -570,7 +585,8 @@ echo 'Run refuse-another-k8s'
 { refuse-another-k8s_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/refuse-another-k8s"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/refuse-another-k8s"
 else
     refuse-another-k8s_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -600,7 +616,8 @@ echo 'Run install-from-nowhere'
 { install-from-nowhere_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/install-from-nowhere"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/install-from-nowhere"
 else
     install-from-nowhere_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -643,7 +660,8 @@ echo 'Run no-stop-cluster'
 { no-stop-cluster_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/no-stop-cluster"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/no-stop-cluster"
 else
     no-stop-cluster_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -675,7 +693,8 @@ echo 'Run stop-cluster'
 { stop-cluster_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/stop-cluster"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/stop-cluster"
 else
     stop-cluster_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -698,7 +717,7 @@ update-while-working_code () {
 update-while-working_expected () {
       local expected
       expected="$(cat<<"EOEXPECTED"
-warning: I will update global/k8s on branch bigger-cluster. It does not look like a main branch name. To get back to the main branch, consider calling `clk extension update global/k8s --branch main` (or master).
+[33mwarning: [0mI will update global/k8s on branch bigger-cluster. It does not look like a main branch name. To get back to the main branch, consider calling `clk extension update global/k8s --branch main` (or master).
 EOEXPECTED
 )"
       # org says nil where the block said nothing
@@ -710,7 +729,8 @@ echo 'Run update-while-working'
 { update-while-working_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/update-while-working"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/update-while-working"
 else
     update-while-working_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -729,7 +749,7 @@ install-extension_code () {
 install-extension_expected () {
       local expected
       expected="$(cat<<"EOEXPECTED"
-_____
+  _____
 | hello |
   =====
        \
@@ -752,7 +772,6 @@ _____
                   ///.----..>        \\             _ -~             `.  ^-`  ^-_
                     ///-._ _ _ _ _ _ _}^ - - - - ~                     ~-- ,.-~
                                                                        /.-~
-
 EOEXPECTED
 )"
       # org says nil where the block said nothing
@@ -764,7 +783,8 @@ echo 'Run install-extension'
 { install-extension_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/install-extension"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/install-extension"
 else
     install-extension_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -801,7 +821,8 @@ echo 'Run describe-hello'
 { describe-hello_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/describe-hello"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/describe-hello"
 else
     describe-hello_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -820,7 +841,7 @@ remove-extension_code () {
 remove-extension_expected () {
       local expected
       expected="$(cat<<"EOEXPECTED"
-warning: Failed to get the command hello: Command hello not found
+[33mwarning: [0mFailed to get the command hello: Command hello not found
 Usage: clk [OPTIONS] [COMMAND] [ARGS]...
 error: No such command 'hello'.
 error:
@@ -839,7 +860,8 @@ echo 'Run remove-extension'
 { remove-extension_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/remove-extension"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/remove-extension"
 else
     remove-extension_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -858,7 +880,7 @@ install-extension-github_code () {
 install-extension-github_expected () {
       local expected
       expected="$(cat<<"EOEXPECTED"
-_____
+  _____
 | hello |
   =====
        \
@@ -881,7 +903,6 @@ _____
                   ///.----..>        \\             _ -~             `.  ^-`  ^-_
                     ///-._ _ _ _ _ _ _}^ - - - - ~                     ~-- ,.-~
                                                                        /.-~
-
 EOEXPECTED
 )"
       # org says nil where the block said nothing
@@ -893,7 +914,8 @@ echo 'Run install-extension-github'
 { install-extension-github_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/install-extension-github"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/install-extension-github"
 else
     install-extension-github_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -913,7 +935,7 @@ install-extension-name_code () {
 install-extension-name_expected () {
       local expected
       expected="$(cat<<"EOEXPECTED"
-_____
+  _____
 | hello |
   =====
        \
@@ -936,7 +958,6 @@ _____
                   ///.----..>        \\             _ -~             `.  ^-`  ^-_
                     ///-._ _ _ _ _ _ _}^ - - - - ~                     ~-- ,.-~
                                                                        /.-~
-
 EOEXPECTED
 )"
       # org says nil where the block said nothing
@@ -948,7 +969,8 @@ echo 'Run install-extension-name'
 { install-extension-name_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/install-extension-name"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/install-extension-name"
 else
     install-extension-name_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -1005,7 +1027,8 @@ echo 'Run run-tempdir-demo'
 { run-tempdir-demo_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/run-tempdir-demo"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/run-tempdir-demo"
 else
     run-tempdir-demo_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -1063,7 +1086,8 @@ echo 'Run run-tempfile-demo'
 { run-tempfile-demo_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/run-tempfile-demo"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/run-tempfile-demo"
 else
     run-tempfile-demo_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -1109,7 +1133,8 @@ echo 'Run run-complaining-demo'
 { run-complaining-demo_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/run-complaining-demo"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/run-complaining-demo"
 else
     run-complaining-demo_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -1139,7 +1164,8 @@ echo 'Run run-quiet-demo'
 { run-quiet-demo_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/run-quiet-demo"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/run-quiet-demo"
 else
     run-quiet-demo_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -1158,7 +1184,7 @@ run-failing-demo_expected () {
       local expected
       expected="$(cat<<"EOEXPECTED"
 trouble reaching other
-error: bash -c 'echo trouble reaching $1 >&2 ; test $1 = main || exit 4 ; echo ok' -- other exited with 4
+[31merror: [0mbash -c 'echo trouble reaching $1 >&2 ; test $1 = main || exit 4 ; echo ok' -- other exited with 4
 EOEXPECTED
 )"
       # org says nil where the block said nothing
@@ -1170,7 +1196,8 @@ echo 'Run run-failing-demo'
 { run-failing-demo_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/run-failing-demo"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/run-failing-demo"
 else
     run-failing-demo_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -1188,8 +1215,8 @@ run-quiet-failing-demo_code () {
 run-quiet-failing-demo_expected () {
       local expected
       expected="$(cat<<"EOEXPECTED"
-error: bash -c 'echo trouble reaching $1 >&2 ; test $1 = main || exit 4 ; echo ok' -- other exited with 4, saying:
-error: trouble reaching other
+[31merror: [0mbash -c 'echo trouble reaching $1 >&2 ; test $1 = main || exit 4 ; echo ok' -- other exited with 4, saying:
+[31merror: [0mtrouble reaching other
 EOEXPECTED
 )"
       # org says nil where the block said nothing
@@ -1201,7 +1228,8 @@ echo 'Run run-quiet-failing-demo'
 { run-quiet-failing-demo_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/run-quiet-failing-demo"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/run-quiet-failing-demo"
 else
     run-quiet-failing-demo_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -1234,7 +1262,7 @@ run-waiting-demo_code () {
 run-waiting-demo_expected () {
       local expected
       expected="$(cat<<"EOEXPECTED"
-error: bash -c 'sleep 600' did not finish in 1s
+[31merror: [0mbash -c 'sleep 600' did not finish in 1s
 giving up, the cluster is not answering
 EOEXPECTED
 )"
@@ -1247,7 +1275,8 @@ echo 'Run run-waiting-demo'
 { run-waiting-demo_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/run-waiting-demo"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/run-waiting-demo"
 else
     run-waiting-demo_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -1269,7 +1298,7 @@ hostname-extension-visible_code () {
 hostname-extension-visible_expected () {
       local expected
       expected="$(cat<<"EOEXPECTED"
-my-host.[example].com  Unset            global
+[32mmy-host.[example].com[0m  Unset            [36m[2mglobal[0m
 EOEXPECTED
 )"
       # org says nil where the block said nothing
@@ -1281,7 +1310,8 @@ echo 'Run hostname-extension-visible'
 { hostname-extension-visible_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/hostname-extension-visible"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/hostname-extension-visible"
 else
     hostname-extension-visible_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -1308,7 +1338,9 @@ kube-is-local_expected () {
       expected="$(cat<<"EOEXPECTED"
 extension    configuration    installation
 -----------  ---------------  --------------
-kube         Unset            local
+[32mkube[0m         Unset            [32m[2mlocal[0m
+[2m-------------[0m
+Legend: [32m[2mlocal[0m
 EOEXPECTED
 )"
       # org says nil where the block said nothing
@@ -1320,7 +1352,8 @@ echo 'Run kube-is-local'
 { kube-is-local_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/kube-is-local"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/kube-is-local"
 else
     kube-is-local_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -1341,7 +1374,9 @@ rename-kube_expected () {
       expected="$(cat<<"EOEXPECTED"
 extension    configuration    installation
 -----------  ---------------  --------------
-kubernetes   Unset            local
+[32mkubernetes[0m   Unset            [32m[2mlocal[0m
+[2m-------------[0m
+Legend: [32m[2mlocal[0m
 EOEXPECTED
 )"
       # org says nil where the block said nothing
@@ -1353,7 +1388,8 @@ echo 'Run rename-kube'
 { rename-kube_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/rename-kube"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/rename-kube"
 else
     rename-kube_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -1374,7 +1410,9 @@ move-kube_expected () {
       expected="$(cat<<"EOEXPECTED"
 extension    configuration    installation
 -----------  ---------------  --------------
-kubernetes   Unset            global
+[32mkubernetes[0m   Unset            [36m[2mglobal[0m
+[2m--------------[0m
+Legend: [36m[2mglobal[0m
 EOEXPECTED
 )"
       # org says nil where the block said nothing
@@ -1386,7 +1424,8 @@ echo 'Run move-kube'
 { move-kube_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/move-kube"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/move-kube"
 else
     move-kube_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -1417,7 +1456,8 @@ echo 'Run leave-tidyproject'
 { leave-tidyproject_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/leave-tidyproject"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/leave-tidyproject"
 else
     leave-tidyproject_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {

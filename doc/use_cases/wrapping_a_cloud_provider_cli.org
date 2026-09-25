@@ -127,7 +127,7 @@ clk parameter set aws --profile company-prod --region eu-west-1
 #+END_SRC
 
 #+RESULTS[6aa36a675863382e697af76c9cb2a5fd705d252b]: set-parameters
-: New global parameters for aws: --profile company-prod --region eu-west-1
+: New [36mglobal[0m parameters for aws: --profile company-prod --region eu-west-1
 
 Now I don't need to specify them anymore:
 
@@ -204,7 +204,9 @@ clk parameter show aws
 #+END_SRC
 
 #+RESULTS[22cbbb2da55bc7bdc50453cae5d1868d09603ae1]: show-parameters
-: aws --profile company-prod --region eu-west-1
+: aws [2m[36m[2m--profile company-prod --region eu-west-1[0m[0m
+: [2m--------------[0m
+: Legend: [36m[2mglobal[0m
 
 And remove options I no longer want persisted:
 
@@ -215,8 +217,10 @@ clk parameter show aws
 #+END_SRC
 
 #+RESULTS[b58105ce5a5cf470b0d3356e588173fa74660e0c]: unset-region
-: Erasing aws parameters --region eu-west-1 from global settings
-: aws --profile company-prod
+: Erasing aws parameters --region eu-west-1 from [36mglobal[0m settings
+: aws [2m[36m[2m--profile company-prod[0m[0m
+: [2m--------------[0m
+: Legend: [36m[2mglobal[0m
 
 Or clear everything:
 
@@ -227,7 +231,7 @@ clk aws s3 ls
 #+END_SRC
 
 #+RESULTS[65e5e029f679e8f3257927910171c06af26d1a3f]: unset-all
-: Erasing global parameters of aws (was: --profile company-prod)
+: Erasing [36mglobal[0m parameters of aws (was: --profile company-prod)
 : [default/us-east-1] aws s3 ls
 
 When the line gets long, I would rather open it in my editor than type it all
@@ -247,7 +251,7 @@ clk aws s3 ls
 #+END_SRC
 
 #+RESULTS[]: edit-parameters
-: New global parameters for aws: --profile company-prod --region eu-west-1
+: New [36mglobal[0m parameters for aws: --profile company-prod --region eu-west-1
 : [company-prod/eu-west-1] aws s3 ls
 
 Open it again and quit without touching anything, and clk writes nothing.
@@ -295,7 +299,7 @@ clk parameter set parameter set
 #+END_SRC
 
 #+RESULTS[]: shoot-myself-in-the-foot
-: New global parameters for parameter: set
+: New [36mglobal[0m parameters for parameter: set
 
 Every command under ~parameter~ has become ~parameter set~, ~unset~ the first of
 them, so I cannot take it back.
@@ -306,7 +310,7 @@ clk parameter unset parameter 2>&1
 #+END_SRC
 
 #+RESULTS[]: cannot-unset
-: warning: Failed to get the command unset: Command unset not found
+: [33mwarning: [0mFailed to get the command unset: Command unset not found
 : Usage: clk parameter set [OPTIONS] CMD [PARAMS]...
 : error: Invalid value for 'CMD': invalid choice: unset. (choose from alias, aws, command, completion, describe, echo, exec, extension, flowdep, fork, help, log, parameter, pip, plugin, python, secret, update, value)
 
@@ -319,7 +323,7 @@ clk --no-parameter parameter unset parameter
 #+END_SRC
 
 #+RESULTS[]: no-parameter-to-the-rescue
-: Erasing global parameters of parameter (was: set)
+: Erasing [36mglobal[0m parameters of parameter (was: set)
 
 I almost always use ~ec2~ to list the instances, so I set that as its default.
 
@@ -330,7 +334,7 @@ clk aws ec2
 #+END_SRC
 
 #+RESULTS[]: set-ec2-parameter
-: New global parameters for aws.ec2: describe-instances
+: New [36mglobal[0m parameters for aws.ec2: describe-instances
 : [default/us-east-1] aws ec2 describe-instances
 
 A few months later, we moved our machines elsewhere and I removed the command.
@@ -344,9 +348,11 @@ clk parameter show aws.ec2 2>&1
 #+END_SRC
 
 #+RESULTS[]: remove-command-with-parameters
-: warning: Failed to get the command aws.ec2: Command aws.ec2 not found
-: warning: You should know that the command aws.ec2 does not exist
-: aws.ec2 describe-instances
+: [33mwarning: [0mFailed to get the command aws.ec2: Command aws.ec2 not found
+: [33mwarning: [0mYou should know that the command aws.ec2 does not exist
+: aws.ec2 [2m[36m[2mdescribe-instances[0m[0m
+: [2m--------------[0m
+: Legend: [36m[2mglobal[0m
 
 I unset them, and nothing is left of that command.
 
@@ -356,7 +362,7 @@ clk parameter unset aws.ec2
 #+END_SRC
 
 #+RESULTS[]: unset-orphan-parameters
-: Erasing global parameters of aws.ec2 (was: describe-instances)
+: Erasing [36mglobal[0m parameters of aws.ec2 (was: describe-instances)
 
 * per-project configuration
   :PROPERTIES:
@@ -382,8 +388,10 @@ clk parameter show aws
 #+END_SRC
 
 #+RESULTS[5702401435bac00af24a5b9fe43f8e54b1b4bb03]: set-project-parameters
-: New local parameters for aws: --profile webapp-prod --region ap-southeast-1
-: aws --profile webapp-prod --region ap-southeast-1
+: New [32mlocal[0m parameters for aws: --profile webapp-prod --region ap-southeast-1
+: aws [2m[32m[2m--profile webapp-prod --region ap-southeast-1[0m[0m
+: [2m-------------[0m
+: Legend: [32m[2mlocal[0m
 
 #+NAME: try-project-parameters
 #+BEGIN_SRC bash :results verbatim :exports both :session 2a1f20f5-2f74-4221-bcab-677a045d3a8f :cache yes
@@ -429,7 +437,7 @@ clk parameter set aws --profile company-prod --region eu-west-1
 #+END_SRC
 
 #+RESULTS[6aa36a675863382e697af76c9cb2a5fd705d252b]: set-global-prod
-: New global parameters for aws: --profile company-prod --region eu-west-1
+: New [36mglobal[0m parameters for aws: --profile company-prod --region eu-west-1
 
 Then I create a ~config-staging~ extension that overrides just the profile:
 
@@ -445,7 +453,7 @@ clk parameter --extension config-staging set aws --profile company-staging
 #+END_SRC
 
 #+RESULTS[a268cf651c08ceb7859e6b0a06515df4c128dcc7]: set-staging-params
-: New global/config-staging parameters for aws: --profile company-staging
+: New [36m[1mglobal/config-staging[0m parameters for aws: --profile company-staging
 
 With the extension enabled, the staging profile overrides the global one. The
 region stays ~eu-west-1~ because the extension doesn't touch it:
@@ -526,7 +534,7 @@ clk aws --help 2>&1 | grep "current parameters"
 #+END_SRC
 
 #+RESULTS[7640dbdb917da03401844d2c7ea5157734353fb4]: env-help
-: The current parameters set for this command are: --profile env-prod --region us-west-2
+:   The current parameters set for this command are: --profile env-prod --region us-west-2
 
 And they show up in ~parameter show~ as well:
 
@@ -536,7 +544,9 @@ clk parameter show aws
 #+END_SRC
 
 #+RESULTS[22cbbb2da55bc7bdc50453cae5d1868d09603ae1]: env-show
-: aws --profile env-prod --region us-west-2
+: aws [2m[1m[2m--profile env-prod --region us-west-2[0m[0m
+: [2m-----------[0m
+: Legend: [1m[2menv[0m
 
 When you unset the environment variable, the parameters are gone:
 

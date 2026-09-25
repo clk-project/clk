@@ -96,8 +96,15 @@ test:
     COPY --dir +test-files/app/* /app
     ARG test_args
     ENV CLK_ALLOW_INTRUSIVE_TEST=True
+    ARG record=no
     # Run pytest - per-test coverage is handled by conftest.py hooks
-    RUN pytest ${test_args}
+    RUN mkdir -p output/recorded
+    IF [ "${record}" = "yes" ]
+        # the stories write down what they got, to refresh the org files with
+        RUN CLK_RECORD_RESULTS=/app/output/recorded pytest ${test_args}
+    ELSE
+        RUN pytest ${test_args}
+    END
     # Combine all per-test coverage files (preserves contexts for per-test analysis)
     RUN cd coverage && coverage combine --append ../tests/.coverage.* 2>/dev/null || true
     RUN cd coverage && coverage xml
@@ -235,8 +242,10 @@ local-sanity-check:
     ARG from=source
     ARG build_requirements=no
     ARG test_args
-    COPY (+test/output --use_git="$use_git" --from="$from" --build_requirements="${build_requirements}") output
+    ARG record=no
+    COPY (+test/output --use_git="$use_git" --from="$from" --build_requirements="${build_requirements}" --record="${record}") output
     SAVE ARTIFACT /output
+    SAVE ARTIFACT /output/recorded AS LOCAL output/recorded
     SAVE ARTIFACT /output/coverage-reports AS LOCAL output/coverage-reports
     SAVE ARTIFACT /output/testiq-coverage.json AS LOCAL output/testiq-coverage.json
     SAVE ARTIFACT /output/coverage/coverage-contexts.json AS LOCAL output/coverage-contexts.json

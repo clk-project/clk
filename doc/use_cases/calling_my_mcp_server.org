@@ -85,7 +85,7 @@ file on the way.
   #+END_SRC
 
   #+RESULTS[]: setsecretinparameter
-  : New global parameters for agentcore: --password mytoken
+  : New [36mglobal[0m parameters for agentcore: --password mytoken
 
   #+NAME: usesecretinparameter
   #+BEGIN_SRC bash :results verbatim :exports both :session 0b6acd63-d091-4c6b-83f6-7d2dd3ce908f :cache yes
@@ -107,8 +107,8 @@ file on the way.
   #+END_SRC
 
   #+RESULTS[]: usethebearefromsecret
-  : Removing global parameters of agentcore: --password mytoken
-  : New global parameters for agentcore: --password secret:demo-buyer-password
+  : Removing [36mglobal[0m parameters of agentcore: --password mytoken
+  : New [36mglobal[0m parameters for agentcore: --password secret:demo-buyer-password
 
   1. ~secret:demo-buyer-password~ tells clk to get the value from my password
      manager, under the key ~demo-buyer-password~,
@@ -123,7 +123,7 @@ file on the way.
   #+END_SRC
 
   #+RESULTS[]: httpwithsecretfail
-  : error: Could not find the secret for demo-buyer-password
+  : [31merror: [0mCould not find the secret for demo-buyer-password
 
 * on a machine where I have not stored it
   :PROPERTIES:
@@ -142,10 +142,11 @@ file on the way.
   #+BEGIN_SRC bash :results none :exports none :noweb yes :session 0b6acd63-d091-4c6b-83f6-7d2dd3ce908f
     cat<<"EOEXPECT" > "pass.exp"
     #!/usr/bin/env -S expect -f
-    set timeout -1
+    set timeout 30
     spawn <<askforpassword>>
+    expect_after timeout { puts "timed out"; exit 1 }
     match_max 100000
-    expect -exact "warning: Could not find the secret for demo-buyer-password\r
+    expect -exact "Could not find the secret for demo-buyer-password\r
     Please provide the secret demo-buyer-password: "
     send -- "test\r"
     expect -exact "\r
@@ -161,7 +162,7 @@ file on the way.
   #+END_SRC
 
   #+RESULTS[]: call_ask_for_real
-  : warning: Could not find the secret for demo-buyer-password
+  : [33mwarning: [0mCould not find the secret for demo-buyer-password
   : Please provide the secret demo-buyer-password:
   : Repeat for confirmation:
   : Logging in as demo-buyer with password test
@@ -172,10 +173,11 @@ file on the way.
   #+BEGIN_SRC bash :results none :exports none :noweb yes :session 0b6acd63-d091-4c6b-83f6-7d2dd3ce908f
     cat<<"EOEXPECT" > "passerror.exp"
     #!/usr/bin/env -S expect -f
-    set timeout -1
+    set timeout 30
     spawn <<askforpassword>>
+    expect_after timeout { puts "timed out"; exit 1 }
     match_max 100000
-    expect -exact "warning: Could not find the secret for demo-buyer-password\r
+    expect -exact "Could not find the secret for demo-buyer-password\r
     Please provide the secret demo-buyer-password: "
     send -- "something\r"
     expect -exact "\r
@@ -194,7 +196,7 @@ file on the way.
   When I mistype it, clk asks again until both match.
 
   #+RESULTS[]: call_ask_for_real_error
-  : warning: Could not find the secret for demo-buyer-password
+  : [33mwarning: [0mCould not find the secret for demo-buyer-password
   : Please provide the secret demo-buyer-password:
   : Repeat for confirmation:
   : Error: The two entered values do not match.
@@ -256,7 +258,7 @@ file on the way.
   #+END_SRC
 
   #+RESULTS[]: showsecret
-  : demo-buyer-password *****
+  : demo-buyer-password [2m*****[0m
 
   That tells me it is there without putting it on my screen. When I do want to
   see it, I say so.
@@ -267,7 +269,7 @@ file on the way.
   #+END_SRC
 
   #+RESULTS[]: reallyshowsecret
-  : demo-buyer-password mytoken
+  : demo-buyer-password [2mmytoken[0m
 
   And to hand it to another program, the value alone.
 
@@ -334,7 +336,9 @@ file on the way.
   #+RESULTS[]: listsecrets
   : key                  status    commands
   : -------------------  --------  ---------------------
-  : demo-buyer-password  set       agentcore buyer-token
+  : demo-buyer-password  [32mset[0m       [36m[2magentcore[0m [36m[2mbuyer-token[0m
+  : [2m--------------[0m
+  : Legend: [36m[2mglobal[0m
 
 * a check of my own in python
   :PROPERTIES:
@@ -401,7 +405,7 @@ file on the way.
   #+END_SRC
 
   #+RESULTS[]: stillthere
-  : demo-buyer-password *****
+  : demo-buyer-password [2m*****[0m
 
   #+NAME: forceunset
   #+BEGIN_SRC bash :results none :exports none :session 0b6acd63-d091-4c6b-83f6-7d2dd3ce908f
@@ -446,7 +450,9 @@ file on the way.
   #+RESULTS[]: listmissingsecrets
   : key                  status    commands
   : -------------------  --------  ---------------------
-  : demo-buyer-password  missing   agentcore buyer-token
+  : demo-buyer-password  [31mmissing[0m   [36m[2magentcore[0m [36m[2mbuyer-token[0m
+  : [2m--------------[0m
+  : Legend: [36m[2mglobal[0m
 
 * when an agent runs it for me
   :PROPERTIES:
@@ -488,7 +494,7 @@ file on the way.
   #+END_SRC
 
   #+RESULTS[]: nokeyring_show
-  : demo-buyer-password thevalue
+  : demo-buyer-password [2mthevalue[0m
 
   #+NAME: nokeyring_backend
   #+BEGIN_SRC bash :results verbatim :exports both :session 0b6acd63-d091-4c6b-83f6-7d2dd3ce908f :cache yes
@@ -538,7 +544,7 @@ file on the way.
   #+END_SRC
 
   #+RESULTS[]: netrc_fallback
-  : demo-buyer-password thevalue
+  : demo-buyer-password [2mthevalue[0m
 
   When I wonder where a secret comes from, clk tells me where it keeps them,
   and why.
@@ -580,7 +586,7 @@ file on the way.
   #+END_SRC
 
   #+RESULTS[]: using_netrc
-  : demo-buyer-password thevalue
+  : demo-buyer-password [2mthevalue[0m
 
   A secret my netrc file does not hold is simply not there.
 
@@ -600,7 +606,7 @@ file on the way.
   #+END_SRC
 
   #+RESULTS[]: netrc_readonly
-  : error: Could not save your secret.
+  : [31merror: [0mCould not save your secret.
   : Usage: clk secret set [OPTIONS] KEY
   : error: The netrc keyring only reads secrets. Write this one in your netrc file to use it.
 
@@ -684,7 +690,7 @@ file on the way.
   #+END_SRC
 
   #+RESULTS[]: useteambackend
-  : clk now keeps your secrets in team_keyring.SecretsManagerKeyring (global settings)
+  : clk now keeps your secrets in team_keyring.SecretsManagerKeyring ([36mglobal[0m settings)
 
   #+NAME: showteambackend
   #+BEGIN_SRC bash :results verbatim :exports both :session 0b6acd63-d091-4c6b-83f6-7d2dd3ce908f :cache yes
@@ -692,7 +698,7 @@ file on the way.
   #+END_SRC
 
   #+RESULTS[]: showteambackend
-  : clk keeps your secrets in team_keyring.SecretsManagerKeyring, because the global settings name it.
+  : clk keeps your secrets in team_keyring.SecretsManagerKeyring, because the [36mglobal[0m settings name it.
 
   #+NAME: showteambackends
   #+BEGIN_SRC bash :results verbatim :exports both :session 0b6acd63-d091-4c6b-83f6-7d2dd3ce908f :cache yes
@@ -702,9 +708,11 @@ file on the way.
   #+RESULTS[]: showteambackends
   : backend                                  configuration      priority  status
   : ---------------------------------------  ---------------  ----------  --------
-  : team_keyring.SecretsManagerKeyring       global                    6  in use
+  : team_keyring.SecretsManagerKeyring       [36m[2mglobal[0m                    6  in use
   : keyring.backends.fail.Keyring            Unset                     0
   : keyring.backends.chainer.ChainerBackend  Unset                    -1
+  : [2m--------------[0m
+  : Legend: [36m[2mglobal[0m
 
 * keeping it in the project
   :PROPERTIES:
@@ -732,7 +740,7 @@ file on the way.
   #+END_SRC
 
   #+RESULTS[]: gpgnoid
-  : error: Could not save your secret.
+  : [31merror: [0mCould not save your secret.
   : Usage: clk secret set [OPTIONS] KEY
   : error: Write in ./.clk/secrets/.gpg-id the gpg ids to encrypt the secrets to, one per line. gpg --list-secret-keys shows yours.
 
@@ -765,7 +773,7 @@ file on the way.
   #+END_SRC
 
   #+RESULTS[]: usegpg
-  : clk now keeps your secrets in clk.keyrings.GpgKeyring (local settings)
+  : clk now keeps your secrets in clk.keyrings.GpgKeyring ([32mlocal[0m settings)
 
   #+NAME: gpgset
   #+BEGIN_SRC bash :results none :exports code :session 0b6acd63-d091-4c6b-83f6-7d2dd3ce908f
@@ -786,7 +794,7 @@ file on the way.
   #+END_SRC
 
   #+RESULTS[]: gpgshow
-  : demo-buyer-password mytoken
+  : demo-buyer-password [2mmytoken[0m
 
   Removing it removes the file.
 
@@ -826,7 +834,7 @@ file on the way.
   #+END_SRC
 
   #+RESULTS[]: usesecretservice
-  : clk now keeps your secrets in keyring.backends.SecretService.Keyring (local settings)
+  : clk now keeps your secrets in keyring.backends.SecretService.Keyring ([32mlocal[0m settings)
 
   #+NAME: secretserviceset
   #+BEGIN_SRC bash :results none :exports code :session 0b6acd63-d091-4c6b-83f6-7d2dd3ce908f
@@ -840,8 +848,8 @@ file on the way.
   #+END_SRC
 
   #+RESULTS[]: secretserviceshow
-  : demo-buyer-password mytoken
-  : clk keeps your secrets in keyring.backends.SecretService.Keyring, because the local settings name it.
+  : demo-buyer-password [2mmytoken[0m
+  : clk keeps your secrets in keyring.backends.SecretService.Keyring, because the [32mlocal[0m settings name it.
 
   #+NAME: unusesecretservice
   #+BEGIN_SRC bash :results none :exports none :session 0b6acd63-d091-4c6b-83f6-7d2dd3ce908f

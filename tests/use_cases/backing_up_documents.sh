@@ -34,6 +34,7 @@ try-backup-docs-do_code () {
 try-backup-docs-do_expected () {
       local expected
       expected="$(cat<<"EOEXPECTED"
+[35mdeprecated: [0mIn backup.docs.do, O:--source:str:Source directory:~/docs gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{"default": "value"}
 Backing up documents from ~/docs to /mnt/backup
 EOEXPECTED
 )"
@@ -46,7 +47,8 @@ echo 'Run try-backup-docs-do'
 { try-backup-docs-do_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/try-backup-docs-do"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/try-backup-docs-do"
 else
     try-backup-docs-do_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -78,7 +80,6 @@ Options:
 
 Commands:
   docs  Automatically created group to organize subcommands
-
 EOEXPECTED
 )"
       # org says nil where the block said nothing
@@ -90,7 +91,8 @@ echo 'Run show-backup-help'
 { show-backup-help_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/show-backup-help"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/show-backup-help"
 else
     show-backup-help_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -108,7 +110,7 @@ set-dest-param_code () {
 set-dest-param_expected () {
       local expected
       expected="$(cat<<"EOEXPECTED"
-New global parameters for backup: --dest /media/external/documents
+New [36mglobal[0m parameters for backup: --dest /media/external/documents
 EOEXPECTED
 )"
       # org says nil where the block said nothing
@@ -120,7 +122,8 @@ echo 'Run set-dest-param'
 { set-dest-param_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/set-dest-param"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/set-dest-param"
 else
     set-dest-param_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -138,6 +141,7 @@ try-with-param_code () {
 try-with-param_expected () {
       local expected
       expected="$(cat<<"EOEXPECTED"
+[35mdeprecated: [0mIn backup.docs.do, O:--source:str:Source directory:~/docs gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{"default": "value"}
 Backing up documents from ~/docs to /media/external/documents
 EOEXPECTED
 )"
@@ -150,7 +154,8 @@ echo 'Run try-with-param'
 { try-with-param_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/try-with-param"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/try-with-param"
 else
     try-with-param_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -168,6 +173,7 @@ override-param_code () {
 override-param_expected () {
       local expected
       expected="$(cat<<"EOEXPECTED"
+[35mdeprecated: [0mIn backup.docs.do, O:--source:str:Source directory:~/docs gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{"default": "value"}
 Backing up documents from ~/docs to /tmp/quick-backup
 EOEXPECTED
 )"
@@ -180,7 +186,8 @@ echo 'Run override-param'
 { override-param_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/override-param"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/override-param"
 else
     override-param_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -208,6 +215,8 @@ show-backup-commands_code () {
 show-backup-commands_expected () {
       local expected
       expected="$(cat<<"EOEXPECTED"
+[35mdeprecated: [0mIn backup.database, O:--db:str:Database name:main.db gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{"default": "value"}
+[35mdeprecated: [0mIn backup.photos, O:--quality:str:Compression quality:high gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{"default": "value"}
 Usage: clk backup [OPTIONS] COMMAND [ARGS]...
 
   Backup operations
@@ -226,7 +235,6 @@ Commands:
   database  Backup database
   docs      Automatically created group to organize subcommands
   photos    Backup photos
-
 EOEXPECTED
 )"
       # org says nil where the block said nothing
@@ -238,7 +246,8 @@ echo 'Run show-backup-commands'
 { show-backup-commands_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/show-backup-commands"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/show-backup-commands"
 else
     show-backup-commands_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -257,7 +266,9 @@ try-all-backups_code () {
 try-all-backups_expected () {
       local expected
       expected="$(cat<<"EOEXPECTED"
+[35mdeprecated: [0mIn backup.database, O:--db:str:Database name:main.db gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{"default": "value"}
 Dumping database main.db to /media/external/documents
+[35mdeprecated: [0mIn backup.photos, O:--quality:str:Compression quality:high gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{"default": "value"}
 Backing up photos with high quality to /media/external/documents
 EOEXPECTED
 )"
@@ -270,7 +281,8 @@ echo 'Run try-all-backups'
 { try-all-backups_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/try-all-backups"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/try-all-backups"
 else
     try-all-backups_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -297,6 +309,7 @@ show-docs-group_code () {
 show-docs-group_expected () {
       local expected
       expected="$(cat<<"EOEXPECTED"
+[35mdeprecated: [0mIn backup.docs.do, O:--source:str:Source directory:~/docs gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{"default": "value"}
 Usage: clk backup docs [OPTIONS] COMMAND [ARGS]...
 
   Automatically created group to organize subcommands
@@ -313,7 +326,6 @@ Commands:
   do        Backup documents to external drive
   retrieve  Retrieve a file from backup
   verify    Verify backup integrity
-
 EOEXPECTED
 )"
       # org says nil where the block said nothing
@@ -325,7 +337,8 @@ echo 'Run show-docs-group'
 { show-docs-group_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/show-docs-group"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/show-docs-group"
 else
     show-docs-group_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -343,6 +356,7 @@ call-docs-do_code () {
 call-docs-do_expected () {
       local expected
       expected="$(cat<<"EOEXPECTED"
+[35mdeprecated: [0mIn backup.docs.do, O:--source:str:Source directory:~/docs gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{"default": "value"}
 Backing up documents from ~/docs to /media/external/documents
 EOEXPECTED
 )"
@@ -355,7 +369,8 @@ echo 'Run call-docs-do'
 { call-docs-do_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/call-docs-do"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/call-docs-do"
 else
     call-docs-do_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -387,7 +402,8 @@ echo 'Run call-docs-subcommands'
 { call-docs-subcommands_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/call-docs-subcommands"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/call-docs-subcommands"
 else
     call-docs-subcommands_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -405,7 +421,9 @@ set-flowdep_code () {
 set-flowdep_expected () {
       local expected
       expected="$(cat<<"EOEXPECTED"
-New global flowdep for backup.docs.do: backup.database
+[35mdeprecated: [0mIn backup.docs.do, O:--source:str:Source directory:~/docs gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{"default": "value"}
+[35mdeprecated: [0mIn backup.database, O:--db:str:Database name:main.db gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{"default": "value"}
+New [36mglobal[0m flowdep for backup.docs.do: backup.database
 EOEXPECTED
 )"
       # org says nil where the block said nothing
@@ -417,7 +435,8 @@ echo 'Run set-flowdep'
 { set-flowdep_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/set-flowdep"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/set-flowdep"
 else
     set-flowdep_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -435,6 +454,8 @@ run-with-flow_code () {
 run-with-flow_expected () {
       local expected
       expected="$(cat<<"EOEXPECTED"
+[35mdeprecated: [0mIn backup.docs.do, O:--source:str:Source directory:~/docs gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{"default": "value"}
+[35mdeprecated: [0mIn backup.database, O:--db:str:Database name:main.db gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{"default": "value"}
 Dumping database main.db to /media/external/documents
 Backing up documents from ~/docs to /media/external/documents
 EOEXPECTED
@@ -448,7 +469,8 @@ echo 'Run run-with-flow'
 { run-with-flow_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/run-with-flow"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/run-with-flow"
 else
     run-with-flow_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -466,7 +488,7 @@ create-full-alias_code () {
 create-full-alias_expected () {
       local expected
       expected="$(cat<<"EOEXPECTED"
-New global alias for backup.full: backup database , backup docs do , backup photos
+New [36mglobal[0m alias for backup.full: backup database , backup docs do , backup photos
 EOEXPECTED
 )"
       # org says nil where the block said nothing
@@ -478,7 +500,8 @@ echo 'Run create-full-alias'
 { create-full-alias_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/create-full-alias"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/create-full-alias"
 else
     create-full-alias_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -496,6 +519,9 @@ run-full-backup_code () {
 run-full-backup_expected () {
       local expected
       expected="$(cat<<"EOEXPECTED"
+[35mdeprecated: [0mIn backup.database, O:--db:str:Database name:main.db gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{"default": "value"}
+[35mdeprecated: [0mIn backup.docs.do, O:--source:str:Source directory:~/docs gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{"default": "value"}
+[35mdeprecated: [0mIn backup.photos, O:--quality:str:Compression quality:high gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{"default": "value"}
 Dumping database main.db to /media/external/documents
 Backing up documents from ~/docs to /media/external/documents
 Backing up photos with high quality to /media/external/documents
@@ -510,7 +536,8 @@ echo 'Run run-full-backup'
 { run-full-backup_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/run-full-backup"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/run-full-backup"
 else
     run-full-backup_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -529,8 +556,8 @@ create-shortcuts_code () {
 create-shortcuts_expected () {
       local expected
       expected="$(cat<<"EOEXPECTED"
-New global alias for backup.quick: backup docs do --source '~/notes'
-New global alias for backup.work: backup docs do --source '~/work/documents'
+New [36mglobal[0m alias for backup.quick: backup docs do --source '~/notes'
+New [36mglobal[0m alias for backup.work: backup docs do --source '~/work/documents'
 EOEXPECTED
 )"
       # org says nil where the block said nothing
@@ -542,7 +569,8 @@ echo 'Run create-shortcuts'
 { create-shortcuts_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/create-shortcuts"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/create-shortcuts"
 else
     create-shortcuts_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -561,7 +589,11 @@ try-shortcuts_code () {
 try-shortcuts_expected () {
       local expected
       expected="$(cat<<"EOEXPECTED"
+[35mdeprecated: [0mIn backup.docs.do, O:--source:str:Source directory:~/docs gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{"default": "value"}
+[35mdeprecated: [0mIn backup.database, O:--db:str:Database name:main.db gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{"default": "value"}
 Backing up documents from ~/notes to /media/external/documents
+[35mdeprecated: [0mIn backup.docs.do, O:--source:str:Source directory:~/docs gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{"default": "value"}
+[35mdeprecated: [0mIn backup.database, O:--db:str:Database name:main.db gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{"default": "value"}
 Backing up documents from ~/work/documents to /media/external/documents
 EOEXPECTED
 )"
@@ -574,7 +606,8 @@ echo 'Run try-shortcuts'
 { try-shortcuts_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/try-shortcuts"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/try-shortcuts"
 else
     try-shortcuts_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -595,8 +628,10 @@ set-project-a-params_code () {
 set-project-a-params_expected () {
       local expected
       expected="$(cat<<"EOEXPECTED"
-New local parameters for backup.docs.do: --source ./documentation
-New local parameters for backup: --dest /mnt/backup/project-a
+[35mdeprecated: [0mIn backup.docs.do, O:--source:str:Source directory:~/docs gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{"default": "value"}
+[35mdeprecated: [0mIn backup.database, O:--db:str:Database name:main.db gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{"default": "value"}
+New [32mlocal[0m parameters for backup.docs.do: --source ./documentation
+New [32mlocal[0m parameters for backup: --dest /mnt/backup/project-a
 EOEXPECTED
 )"
       # org says nil where the block said nothing
@@ -608,7 +643,8 @@ echo 'Run set-project-a-params'
 { set-project-a-params_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/set-project-a-params"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/set-project-a-params"
 else
     set-project-a-params_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -626,6 +662,8 @@ run-in-project-a_code () {
 run-in-project-a_expected () {
       local expected
       expected="$(cat<<"EOEXPECTED"
+[35mdeprecated: [0mIn backup.docs.do, O:--source:str:Source directory:~/docs gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{"default": "value"}
+[35mdeprecated: [0mIn backup.database, O:--db:str:Database name:main.db gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{"default": "value"}
 Backing up documents from ./documentation to /mnt/backup/project-a
 EOEXPECTED
 )"
@@ -638,7 +676,8 @@ echo 'Run run-in-project-a'
 { run-in-project-a_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/run-in-project-a"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/run-in-project-a"
 else
     run-in-project-a_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -657,6 +696,8 @@ leave-project_code () {
 leave-project_expected () {
       local expected
       expected="$(cat<<"EOEXPECTED"
+[35mdeprecated: [0mIn backup.docs.do, O:--source:str:Source directory:~/docs gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{"default": "value"}
+[35mdeprecated: [0mIn backup.database, O:--db:str:Database name:main.db gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{"default": "value"}
 Backing up documents from ~/docs to /media/external/documents
 EOEXPECTED
 )"
@@ -669,7 +710,8 @@ echo 'Run leave-project'
 { leave-project_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/leave-project"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/leave-project"
 else
     leave-project_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -689,7 +731,7 @@ set-hostname-params_code () {
 set-hostname-params_expected () {
       local expected
       expected="$(cat<<"EOEXPECTED"
-New global/myhostname parameters for backup: --dest /mnt/my-nas/documents
+New [36m[1mglobal/myhostname[0m parameters for backup: --dest /mnt/my-nas/documents
 EOEXPECTED
 )"
       # org says nil where the block said nothing
@@ -701,7 +743,8 @@ echo 'Run set-hostname-params'
 { set-hostname-params_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/set-hostname-params"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/set-hostname-params"
 else
     set-hostname-params_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -719,6 +762,8 @@ run-with-hostname_code () {
 run-with-hostname_expected () {
       local expected
       expected="$(cat<<"EOEXPECTED"
+[35mdeprecated: [0mIn backup.docs.do, O:--source:str:Source directory:~/docs gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{"default": "value"}
+[35mdeprecated: [0mIn backup.database, O:--db:str:Database name:main.db gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{"default": "value"}
 Backing up documents from ~/docs to /mnt/my-nas/documents
 EOEXPECTED
 )"
@@ -731,7 +776,8 @@ echo 'Run run-with-hostname'
 { run-with-hostname_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/run-with-hostname"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/run-with-hostname"
 else
     run-with-hostname_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -751,6 +797,8 @@ run-in-project-a-hostname_code () {
 run-in-project-a-hostname_expected () {
       local expected
       expected="$(cat<<"EOEXPECTED"
+[35mdeprecated: [0mIn backup.docs.do, O:--source:str:Source directory:~/docs gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{"default": "value"}
+[35mdeprecated: [0mIn backup.database, O:--db:str:Database name:main.db gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{"default": "value"}
 Backing up documents from ./documentation to /mnt/backup/project-a
 EOEXPECTED
 )"
@@ -763,7 +811,8 @@ echo 'Run run-in-project-a-hostname'
 { run-in-project-a-hostname_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/run-in-project-a-hostname"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/run-in-project-a-hostname"
 else
     run-in-project-a-hostname_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -784,6 +833,8 @@ try-disable-hostname_code () {
 try-disable-hostname_expected () {
       local expected
       expected="$(cat<<"EOEXPECTED"
+[35mdeprecated: [0mIn backup.docs.do, O:--source:str:Source directory:~/docs gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{"default": "value"}
+[35mdeprecated: [0mIn backup.database, O:--db:str:Database name:main.db gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{"default": "value"}
 Backing up documents from ~/docs to /mnt/my-nas/documents
 EOEXPECTED
 )"
@@ -796,7 +847,8 @@ echo 'Run try-disable-hostname'
 { try-disable-hostname_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/try-disable-hostname"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/try-disable-hostname"
 else
     try-disable-hostname_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -816,6 +868,9 @@ final-help_code () {
 final-help_expected () {
       local expected
       expected="$(cat<<"EOEXPECTED"
+[35mdeprecated: [0mIn backup.database, O:--db:str:Database name:main.db gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{"default": "value"}
+[35mdeprecated: [0mIn backup.docs.do, O:--source:str:Source directory:~/docs gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{"default": "value"}
+[35mdeprecated: [0mIn backup.photos, O:--quality:str:Compression quality:high gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{"default": "value"}
 Usage: clk backup [OPTIONS] COMMAND [ARGS]...
 
   Backup operations
@@ -837,7 +892,6 @@ Commands:
   photos    Backup photos
   quick     Alias for: backup docs do --source '~/notes'
   work      Alias for: backup docs do --source '~/work/documents'
-
 EOEXPECTED
 )"
       # org says nil where the block said nothing
@@ -849,7 +903,8 @@ echo 'Run final-help'
 { final-help_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/final-help"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/final-help"
 else
     final-help_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {

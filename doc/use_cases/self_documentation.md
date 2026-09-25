@@ -27,8 +27,10 @@ clk alias set hello echo Hello
 clk parameter set echo --no-newline
 ```
 
-    New global alias for hello: echo Hello
-    New global parameters for echo: --no-newline
+<pre>
+New <span style="color:teal;">global</span> alias for hello: echo Hello
+New <span style="color:teal;">global</span> parameters for echo: --no-newline
+</pre>
 
 Now let's describe the global profile to see what it contains.
 
@@ -49,13 +51,19 @@ It says what it found, and the usual show commands remain there when you want th
 clk alias --global show
 ```
 
-    hello echo Hello
+<pre>
+hello <span style="color:teal;">echo Hello</span>
+--------------
+Legend: <span style="color:teal;">global</span>
+</pre>
 
 ```bash
 clk parameter --global show | grep echo
 ```
 
-    echo --no-newline
+<pre>
+echo <span style="color:teal;">--no-newline</span>
+</pre>
 
 
 <a id="describing-a-local-project"></a>
@@ -74,9 +82,11 @@ clk alias set test echo Running tests
 clk parameter set build --verbose
 ```
 
-    New local alias for build: echo Building the project
-    New local alias for test: echo Running tests
-    New local parameters for build: --verbose
+<pre>
+New <span style="color:green;">local</span> alias for build: echo Building the project
+New <span style="color:green;">local</span> alias for test: echo Running tests
+New <span style="color:green;">local</span> parameters for build: --verbose
+</pre>
 
 Now let's describe the local profile.
 
@@ -98,8 +108,12 @@ This helps you quickly understand what's configured specifically for this projec
 clk alias --local show
 ```
 
-    build echo Building the project
-    test echo Running tests
+<pre>
+build <span style="color:green;">echo Building the project</span>
+test <span style="color:green;">echo Running tests</span>
+-------------
+Legend: <span style="color:green;">local</span>
+</pre>
 
 
 <a id="describing-an-extension"></a>
@@ -113,7 +127,9 @@ clk extension create mytools
 clk alias set --extension mytools greet echo Greetings
 ```
 
-    New local/mytools alias for greet: echo Greetings
+<pre>
+New <span style="color:purple;"></span><span style="font-weight:bold;color:purple;">local/mytools</span> alias for greet: echo Greetings
+</pre>
 
 ```bash
 clk command create --extension mytools bash --description "Show current date and time" --body 'date' now

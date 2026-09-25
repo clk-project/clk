@@ -13,7 +13,7 @@ usingaliases_code () {
 usingaliases_expected () {
       local expected
       expected="$(cat<<"EOEXPECTED"
-New local alias for somelocalcommand: echo hello
+New [32mlocal[0m alias for somelocalcommand: echo hello
 EOEXPECTED
 )"
       # org says nil where the block said nothing
@@ -25,7 +25,8 @@ echo 'Run usingaliases'
 { usingaliases_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/usingaliases"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/usingaliases"
 else
     usingaliases_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -55,7 +56,8 @@ echo 'Run callingthealias'
 { callingthealias_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/callingthealias"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/callingthealias"
 else
     callingthealias_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -75,7 +77,7 @@ callingthealiasoutsideoftheproject_code () {
 callingthealiasoutsideoftheproject_expected () {
       local expected
       expected="$(cat<<"EOEXPECTED"
-warning: Failed to get the command somelocalcommand: Command somelocalcommand not found
+[33mwarning: [0mFailed to get the command somelocalcommand: Command somelocalcommand not found
 Usage: clk [OPTIONS] [COMMAND] [ARGS]...
 error: No such command 'somelocalcommand'.
 error:
@@ -92,7 +94,8 @@ echo 'Run callingthealiasoutsideoftheproject'
 { callingthealiasoutsideoftheproject_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/callingthealiasoutsideoftheproject"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/callingthealiasoutsideoftheproject"
 else
     callingthealiasoutsideoftheproject_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -113,7 +116,7 @@ createaparameter_code () {
 createaparameter_expected () {
       local expected
       expected="$(cat<<"EOEXPECTED"
-New local parameters for echo: hello
+New [32mlocal[0m parameters for echo: hello
 hello world
 EOEXPECTED
 )"
@@ -126,7 +129,8 @@ echo 'Run createaparameter'
 { createaparameter_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/createaparameter"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/createaparameter"
 else
     createaparameter_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -158,7 +162,8 @@ echo 'Run callingparameteroutsideofproject'
 { callingparameteroutsideofproject_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/callingparameteroutsideofproject"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/callingparameteroutsideofproject"
 else
     callingparameteroutsideofproject_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -189,7 +194,8 @@ echo 'Run projectprefix'
 { projectprefix_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/projectprefix"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/projectprefix"
 else
     projectprefix_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -207,7 +213,7 @@ projectprefix_absolute_warning_code () {
 projectprefix_absolute_warning_expected () {
       local expected
       expected="$(cat<<"EOEXPECTED"
-warning: when evaluating project:/tmp/somefile.txt: /tmp/somefile.txt is absolute, prepending project is a noop.
+[33mwarning: [0mwhen evaluating project:/tmp/somefile.txt: /tmp/somefile.txt is absolute, prepending project is a noop.
 cat: /tmp/somefile.txt: No such file or directory
 EOEXPECTED
 )"
@@ -220,7 +226,8 @@ echo 'Run projectprefix_absolute_warning'
 { projectprefix_absolute_warning_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/projectprefix_absolute_warning"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/projectprefix_absolute_warning"
 else
     projectprefix_absolute_warning_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -259,7 +266,8 @@ echo 'Run run_build_script'
 { run_build_script_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/run_build_script"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/run_build_script"
 else
     run_build_script_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -293,7 +301,8 @@ echo 'Run run_from_subdir'
 { run_from_subdir_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/run_from_subdir"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/run_from_subdir"
 else
     run_from_subdir_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -325,7 +334,8 @@ echo 'Run run_in_project'
 { run_in_project_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/run_in_project"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/run_in_project"
 else
     run_in_project_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -356,7 +366,8 @@ echo 'Run run_in_cwd'
 { run_in_cwd_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/run_in_cwd"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/run_in_cwd"
 else
     run_in_cwd_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -388,7 +399,8 @@ echo 'Run completion_exec'
 { completion_exec_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/completion_exec"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/completion_exec"
 else
     completion_exec_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -418,7 +430,8 @@ echo 'Run completion_exec_deep'
 { completion_exec_deep_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/completion_exec_deep"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/completion_exec_deep"
 else
     completion_exec_deep_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -453,7 +466,8 @@ echo 'Run completion_exec_program'
 { completion_exec_program_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/completion_exec_program"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/completion_exec_program"
 else
     completion_exec_program_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -477,7 +491,7 @@ create_flow_alias_code () {
 create_flow_alias_expected () {
       local expected
       expected="$(cat<<"EOEXPECTED"
-New local alias for deploy: exec ./scripts/build.sh , exec ./scripts/deploy.sh
+New [32mlocal[0m alias for deploy: exec ./scripts/build.sh , exec ./scripts/deploy.sh
 EOEXPECTED
 )"
       # org says nil where the block said nothing
@@ -489,7 +503,8 @@ echo 'Run create_flow_alias'
 { create_flow_alias_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/create_flow_alias"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/create_flow_alias"
 else
     create_flow_alias_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -521,7 +536,8 @@ echo 'Run run_flow'
 { run_flow_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/run_flow"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/run_flow"
 else
     run_flow_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -555,7 +571,8 @@ echo 'Run where_release_notes'
 { where_release_notes_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/where_release_notes"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/where_release_notes"
 else
     where_release_notes_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -588,7 +605,8 @@ echo 'Run move_release_notes'
 { move_release_notes_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/move_release_notes"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/move_release_notes"
 else
     move_release_notes_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -619,7 +637,8 @@ echo 'Run copy_release_notes'
 { copy_release_notes_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/copy_release_notes"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/copy_release_notes"
 else
     copy_release_notes_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -650,7 +669,8 @@ echo 'Run copy_release_notes_again'
 { copy_release_notes_again_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/copy_release_notes_again"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/copy_release_notes_again"
 else
     copy_release_notes_again_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -681,7 +701,8 @@ echo 'Run copy_release_notes_forced'
 { copy_release_notes_forced_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/copy_release_notes_forced"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/copy_release_notes_forced"
 else
     copy_release_notes_forced_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -715,8 +736,10 @@ run_old_project_code () {
 run_old_project_expected () {
       local expected
       expected="$(cat<<"EOEXPECTED"
-warning: Profile in ./.clk is obsolete. It has the version 8 and current version is 9. Migration started.
-hello echo hello
+[33mwarning: [0mProfile in ./.clk is obsolete. It has the version 8 and current version is 9. Migration started.
+hello [2m[32m[2mecho hello[0m[0m
+[2m-------------[0m
+Legend: [32m[2mlocal[0m
 clk.json5
 version.txt
 EOEXPECTED
@@ -730,7 +753,8 @@ echo 'Run run_old_project'
 { run_old_project_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/run_old_project"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/run_old_project"
 else
     run_old_project_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -755,8 +779,8 @@ run_unreadable_old_project_code () {
 run_unreadable_old_project_expected () {
       local expected
       expected="$(cat<<"EOEXPECTED"
-error: Expecting property name enclosed in double quotes: line 1 column 2 (char 1)
-warning: The migration of ./.clk did not go well, Restoring backup from ./.clk_backup
+[31merror: [0mExpecting property name enclosed in double quotes: line 1 column 2 (char 1)
+[33mwarning: [0mThe migration of ./.clk did not go well, Restoring backup from ./.clk_backup
 clk.json
 version.txt
 EOEXPECTED
@@ -770,7 +794,8 @@ echo 'Run run_unreadable_old_project'
 { run_unreadable_old_project_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/run_unreadable_old_project"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/run_unreadable_old_project"
 else
     run_unreadable_old_project_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -794,7 +819,7 @@ run_leftover_backup_code () {
 run_leftover_backup_expected () {
       local expected
       expected="$(cat<<"EOEXPECTED"
-error: ./.clk_backup already exists. Cannot migrate.
+[31merror: [0m./.clk_backup already exists. Cannot migrate.
 EOEXPECTED
 )"
       # org says nil where the block said nothing
@@ -806,7 +831,8 @@ echo 'Run run_leftover_backup'
 { run_leftover_backup_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/run_leftover_backup"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/run_leftover_backup"
 else
     run_leftover_backup_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -839,7 +865,8 @@ echo 'Run run_from_the_future'
 { run_from_the_future_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/run_from_the_future"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/run_from_the_future"
 else
     run_from_the_future_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -872,7 +899,8 @@ echo 'Run run_from_the_past'
 { run_from_the_past_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/run_from_the_past"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/run_from_the_past"
 else
     run_from_the_past_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -893,7 +921,7 @@ run_with_broken_settings_code () {
 run_with_broken_settings_expected () {
       local expected
       expected="$(cat<<"EOEXPECTED"
-warning: Can't read settings from ./.clk/clk.json5
+[33mwarning: [0mCan't read settings from ./.clk/clk.json5
 EOEXPECTED
 )"
       # org says nil where the block said nothing
@@ -905,7 +933,8 @@ echo 'Run run_with_broken_settings'
 { run_with_broken_settings_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/run_with_broken_settings"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/run_with_broken_settings"
 else
     run_with_broken_settings_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -923,7 +952,7 @@ run_with_gone_project_code () {
 run_with_gone_project_expected () {
       local expected
       expected="$(cat<<"EOEXPECTED"
-critical: ../movedaway does not exist. It will be ignored.
+[31mcritical: [0m../movedaway does not exist. It will be ignored.
 EOEXPECTED
 )"
       # org says nil where the block said nothing
@@ -935,7 +964,8 @@ echo 'Run run_with_gone_project'
 { run_with_gone_project_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/run_with_gone_project"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/run_with_gone_project"
 else
     run_with_gone_project_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {

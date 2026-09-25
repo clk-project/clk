@@ -11,7 +11,7 @@ alias-api-build_code () {
 alias-api-build_expected () {
       local expected
       expected="$(cat<<"EOEXPECTED"
-New local alias for build: echo 'Building the API'
+New [32mlocal[0m alias for build: echo 'Building the API'
 EOEXPECTED
 )"
       # org says nil where the block said nothing
@@ -23,7 +23,8 @@ echo 'Run alias-api-build'
 { alias-api-build_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/alias-api-build"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/alias-api-build"
 else
     alias-api-build_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -40,7 +41,7 @@ alias-api-test_code () {
 alias-api-test_expected () {
       local expected
       expected="$(cat<<"EOEXPECTED"
-New local alias for test: echo 'Running API tests'
+New [32mlocal[0m alias for test: echo 'Running API tests'
 EOEXPECTED
 )"
       # org says nil where the block said nothing
@@ -52,7 +53,8 @@ echo 'Run alias-api-test'
 { alias-api-test_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/alias-api-test"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/alias-api-test"
 else
     alias-api-test_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -72,7 +74,7 @@ alias-app-build_code () {
 alias-app-build_expected () {
       local expected
       expected="$(cat<<"EOEXPECTED"
-New local alias for build: echo 'Building the frontend'
+New [32mlocal[0m alias for build: echo 'Building the frontend'
 EOEXPECTED
 )"
       # org says nil where the block said nothing
@@ -84,7 +86,8 @@ echo 'Run alias-app-build'
 { alias-app-build_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/alias-app-build"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/alias-app-build"
 else
     alias-app-build_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -101,7 +104,7 @@ alias-app-test_code () {
 alias-app-test_expected () {
       local expected
       expected="$(cat<<"EOEXPECTED"
-New local alias for test: echo 'Running frontend tests'
+New [32mlocal[0m alias for test: echo 'Running frontend tests'
 EOEXPECTED
 )"
       # org says nil where the block said nothing
@@ -113,7 +116,8 @@ echo 'Run alias-app-test'
 { alias-app-test_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/alias-app-test"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/alias-app-test"
 else
     alias-app-test_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -142,7 +146,8 @@ echo 'Run api-build-from-app'
 { api-build-from-app_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/api-build-from-app"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/api-build-from-app"
 else
     api-build-from-app_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -171,7 +176,8 @@ echo 'Run verbose-project'
 { verbose-project_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/verbose-project"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/verbose-project"
 else
     verbose-project_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -189,7 +195,7 @@ create-api-alias_code () {
 create-api-alias_expected () {
       local expected
       expected="$(cat<<"EOEXPECTED"
-New global alias for api: clk --project ./billing-api
+New [36mglobal[0m alias for api: clk --project ./billing-api
 EOEXPECTED
 )"
       # org says nil where the block said nothing
@@ -201,7 +207,8 @@ echo 'Run create-api-alias'
 { create-api-alias_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/create-api-alias"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/create-api-alias"
 else
     create-api-alias_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -218,7 +225,7 @@ create-app-alias_code () {
 create-app-alias_expected () {
       local expected
       expected="$(cat<<"EOEXPECTED"
-New global alias for app: clk --project ./billing-app
+New [36mglobal[0m alias for app: clk --project ./billing-app
 EOEXPECTED
 )"
       # org says nil where the block said nothing
@@ -230,7 +237,8 @@ echo 'Run create-app-alias'
 { create-app-alias_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/create-app-alias"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/create-app-alias"
 else
     create-app-alias_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -259,7 +267,8 @@ echo 'Run api-build'
 { api-build_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/api-build"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/api-build"
 else
     api-build_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -288,7 +297,8 @@ echo 'Run app-build'
 { app-build_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/app-build"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/app-build"
 else
     app-build_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -317,7 +327,8 @@ echo 'Run api-test'
 { api-test_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/api-test"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/api-test"
 else
     api-test_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -346,7 +357,8 @@ echo 'Run app-test'
 { app-test_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/app-test"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/app-test"
 else
     app-test_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -363,7 +375,9 @@ show-api-alias_code () {
 show-api-alias_expected () {
       local expected
       expected="$(cat<<"EOEXPECTED"
-build echo Building the API
+build [2m[32m[2mecho Building the API[0m[0m
+[2m-------------[0m
+Legend: [32m[2mlocal[0m
 EOEXPECTED
 )"
       # org says nil where the block said nothing
@@ -375,7 +389,8 @@ echo 'Run show-api-alias'
 { show-api-alias_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/show-api-alias"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/show-api-alias"
 else
     show-api-alias_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -406,7 +421,8 @@ echo 'Run help-through-the-alias'
 { help-through-the-alias_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/help-through-the-alias"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/help-through-the-alias"
 else
     help-through-the-alias_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -423,7 +439,7 @@ remove-global-api-alias_code () {
 remove-global-api-alias_expected () {
       local expected
       expected="$(cat<<"EOEXPECTED"
-Erasing api alias from global settings
+Erasing api alias from [36mglobal[0m settings
 EOEXPECTED
 )"
       # org says nil where the block said nothing
@@ -435,7 +451,8 @@ echo 'Run remove-global-api-alias'
 { remove-global-api-alias_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/remove-global-api-alias"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/remove-global-api-alias"
 else
     remove-global-api-alias_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -452,7 +469,7 @@ remove-global-app-alias_code () {
 remove-global-app-alias_expected () {
       local expected
       expected="$(cat<<"EOEXPECTED"
-Erasing app alias from global settings
+Erasing app alias from [36mglobal[0m settings
 EOEXPECTED
 )"
       # org says nil where the block said nothing
@@ -464,7 +481,8 @@ echo 'Run remove-global-app-alias'
 { remove-global-app-alias_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/remove-global-app-alias"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/remove-global-app-alias"
 else
     remove-global-app-alias_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -482,7 +500,7 @@ local-api-app-alias_code () {
 local-api-app-alias_expected () {
       local expected
       expected="$(cat<<"EOEXPECTED"
-New local alias for app: clk --project ../billing-app
+New [32mlocal[0m alias for app: clk --project ../billing-app
 EOEXPECTED
 )"
       # org says nil where the block said nothing
@@ -494,7 +512,8 @@ echo 'Run local-api-app-alias'
 { local-api-app-alias_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/local-api-app-alias"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/local-api-app-alias"
 else
     local-api-app-alias_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -513,7 +532,7 @@ local-app-api-alias_code () {
 local-app-api-alias_expected () {
       local expected
       expected="$(cat<<"EOEXPECTED"
-New local alias for api: clk --project ../billing-api
+New [32mlocal[0m alias for api: clk --project ../billing-api
 EOEXPECTED
 )"
       # org says nil where the block said nothing
@@ -525,7 +544,8 @@ echo 'Run local-app-api-alias'
 { local-app-api-alias_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/local-app-api-alias"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/local-app-api-alias"
 else
     local-app-api-alias_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -554,7 +574,8 @@ echo 'Run local-api-build'
 { local-api-build_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/local-api-build"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/local-api-build"
 else
     local-api-build_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -583,7 +604,8 @@ echo 'Run local-api-test'
 { local-api-test_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/local-api-test"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/local-api-test"
 else
     local-api-test_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -614,7 +636,8 @@ echo 'Run local-app-build'
 { local-app-build_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/local-app-build"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/local-app-build"
 else
     local-app-build_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -643,7 +666,8 @@ echo 'Run local-app-test'
 { local-app-test_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/local-app-test"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/local-app-test"
 else
     local-app-test_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -660,7 +684,7 @@ promote-build_code () {
 promote-build_expected () {
       local expected
       expected="$(cat<<"EOEXPECTED"
-Moved alias build, local -> global
+Moved alias build, [32mlocal[0m -> [36mglobal[0m
 EOEXPECTED
 )"
       # org says nil where the block said nothing
@@ -672,7 +696,8 @@ echo 'Run promote-build'
 { promote-build_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/promote-build"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/promote-build"
 else
     promote-build_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -701,7 +726,8 @@ echo 'Run promoted-build'
 { promoted-build_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/promoted-build"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/promoted-build"
 else
     promoted-build_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -731,7 +757,8 @@ echo 'Run shadowed-build'
 { shadowed-build_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/shadowed-build"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/shadowed-build"
 else
     shadowed-build_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -748,7 +775,7 @@ ship_code () {
 ship_expected () {
       local expected
       expected="$(cat<<"EOEXPECTED"
-New local alias for ship: build , test
+New [32mlocal[0m alias for ship: build , test
 EOEXPECTED
 )"
       # org says nil where the block said nothing
@@ -760,7 +787,8 @@ echo 'Run ship'
 { ship_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/ship"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/ship"
 else
     ship_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -778,7 +806,9 @@ quiet-ship_code () {
 quiet-ship_expected () {
       local expected
       expected="$(cat<<"EOEXPECTED"
-ship-nightly build, test
+ship-nightly [2m[32m[2mbuild, test[0m[0m
+[2m-------------[0m
+Legend: [32m[2mlocal[0m
 EOEXPECTED
 )"
       # org says nil where the block said nothing
@@ -790,7 +820,8 @@ echo 'Run quiet-ship'
 { quiet-ship_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/quiet-ship"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/quiet-ship"
 else
     quiet-ship_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -821,7 +852,8 @@ echo 'Run ship-help-before'
 { ship-help-before_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/ship-help-before"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/ship-help-before"
 else
     ship-help-before_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -853,7 +885,8 @@ echo 'Run ship-help-after'
 { ship-help-after_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/ship-help-after"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/ship-help-after"
 else
     ship-help-after_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -882,7 +915,8 @@ echo 'Run copy-ship'
 { copy-ship_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/copy-ship"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/copy-ship"
 else
     copy-ship_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -912,7 +946,8 @@ echo 'Run dry-run-rename'
 { dry-run-rename_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/dry-run-rename"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/dry-run-rename"
 else
     dry-run-rename_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -929,12 +964,14 @@ show-before-rename_code () {
 show-before-rename_expected () {
       local expected
       expected="$(cat<<"EOEXPECTED"
-api clk --project ../billing-api
-build echo Building the frontend
-ship build, test
-ship-all build, test, api build, api test
-ship-nightly build, test
-test echo Running frontend tests
+api [2m[32m[2mclk --project ../billing-api[0m[0m
+build [2m[32m[2mecho Building the frontend[0m[0m
+ship [2m[32m[2mbuild, test[0m[0m
+ship-all [2m[32m[2mbuild, test, api build, api test[0m[0m
+ship-nightly [2m[32m[2mbuild, test[0m[0m
+test [2m[32m[2mecho Running frontend tests[0m[0m
+[2m-------------[0m
+Legend: [32m[2mlocal[0m
 EOEXPECTED
 )"
       # org says nil where the block said nothing
@@ -946,7 +983,8 @@ echo 'Run show-before-rename'
 { show-before-rename_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/show-before-rename"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/show-before-rename"
 else
     show-before-rename_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -975,7 +1013,8 @@ echo 'Run rename-test'
 { rename-test_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/rename-test"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/rename-test"
 else
     rename-test_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -992,12 +1031,14 @@ show-after-rename_code () {
 show-after-rename_expected () {
       local expected
       expected="$(cat<<"EOEXPECTED"
-api clk --project ../billing-api
-build echo Building the frontend
-ship build, test-front
-ship-all build, test-front, api build, api test
-ship-nightly build, test-front
-test-front echo Running frontend tests
+api [2m[32m[2mclk --project ../billing-api[0m[0m
+build [2m[32m[2mecho Building the frontend[0m[0m
+ship [2m[32m[2mbuild, test-front[0m[0m
+ship-all [2m[32m[2mbuild, test-front, api build, api test[0m[0m
+ship-nightly [2m[32m[2mbuild, test-front[0m[0m
+test-front [2m[32m[2mecho Running frontend tests[0m[0m
+[2m-------------[0m
+Legend: [32m[2mlocal[0m
 EOEXPECTED
 )"
       # org says nil where the block said nothing
@@ -1009,7 +1050,8 @@ echo 'Run show-after-rename'
 { show-after-rename_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/show-after-rename"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/show-after-rename"
 else
     show-after-rename_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -1039,7 +1081,8 @@ echo 'Run dash-alias'
 { dash-alias_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/dash-alias"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/dash-alias"
 else
     dash-alias_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -1068,7 +1111,8 @@ echo 'Run punctuation-alias'
 { punctuation-alias_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/punctuation-alias"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/punctuation-alias"
 else
     punctuation-alias_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -1098,7 +1142,8 @@ echo 'Run document-elsewhere'
 { document-elsewhere_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/document-elsewhere"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/document-elsewhere"
 else
     document-elsewhere_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -1127,7 +1172,8 @@ echo 'Run unset-elsewhere'
 { unset-elsewhere_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/unset-elsewhere"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/unset-elsewhere"
 else
     unset-elsewhere_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {

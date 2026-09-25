@@ -61,7 +61,8 @@ echo 'Run try-explicit'
 { try-explicit_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/try-explicit"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/try-explicit"
 else
     try-explicit_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -79,7 +80,7 @@ set-parameters_code () {
 set-parameters_expected () {
       local expected
       expected="$(cat<<"EOEXPECTED"
-New global parameters for aws: --profile company-prod --region eu-west-1
+New [36mglobal[0m parameters for aws: --profile company-prod --region eu-west-1
 EOEXPECTED
 )"
       # org says nil where the block said nothing
@@ -91,7 +92,8 @@ echo 'Run set-parameters'
 { set-parameters_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/set-parameters"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/set-parameters"
 else
     set-parameters_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -125,7 +127,8 @@ echo 'Run try-with-defaults'
 { try-with-defaults_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/try-with-defaults"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/try-with-defaults"
 else
     try-with-defaults_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -155,7 +158,8 @@ echo 'Run try-override'
 { try-override_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/try-override"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/try-override"
 else
     try-override_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -186,7 +190,8 @@ echo 'Run complete-parameter-command'
 { complete-parameter-command_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/complete-parameter-command"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/complete-parameter-command"
 else
     complete-parameter-command_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -218,7 +223,8 @@ echo 'Run complete-parameter-subcommand'
 { complete-parameter-subcommand_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/complete-parameter-subcommand"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/complete-parameter-subcommand"
 else
     complete-parameter-subcommand_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -236,7 +242,9 @@ show-parameters_code () {
 show-parameters_expected () {
       local expected
       expected="$(cat<<"EOEXPECTED"
-aws --profile company-prod --region eu-west-1
+aws [2m[36m[2m--profile company-prod --region eu-west-1[0m[0m
+[2m--------------[0m
+Legend: [36m[2mglobal[0m
 EOEXPECTED
 )"
       # org says nil where the block said nothing
@@ -248,7 +256,8 @@ echo 'Run show-parameters'
 { show-parameters_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/show-parameters"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/show-parameters"
 else
     show-parameters_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -267,8 +276,10 @@ unset-region_code () {
 unset-region_expected () {
       local expected
       expected="$(cat<<"EOEXPECTED"
-Erasing aws parameters --region eu-west-1 from global settings
-aws --profile company-prod
+Erasing aws parameters --region eu-west-1 from [36mglobal[0m settings
+aws [2m[36m[2m--profile company-prod[0m[0m
+[2m--------------[0m
+Legend: [36m[2mglobal[0m
 EOEXPECTED
 )"
       # org says nil where the block said nothing
@@ -280,7 +291,8 @@ echo 'Run unset-region'
 { unset-region_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/unset-region"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/unset-region"
 else
     unset-region_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -299,7 +311,7 @@ unset-all_code () {
 unset-all_expected () {
       local expected
       expected="$(cat<<"EOEXPECTED"
-Erasing global parameters of aws (was: --profile company-prod)
+Erasing [36mglobal[0m parameters of aws (was: --profile company-prod)
 [default/us-east-1] aws s3 ls
 EOEXPECTED
 )"
@@ -312,7 +324,8 @@ echo 'Run unset-all'
 { unset-all_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/unset-all"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/unset-all"
 else
     unset-all_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -335,7 +348,7 @@ edit-parameters_code () {
 edit-parameters_expected () {
       local expected
       expected="$(cat<<"EOEXPECTED"
-New global parameters for aws: --profile company-prod --region eu-west-1
+New [36mglobal[0m parameters for aws: --profile company-prod --region eu-west-1
 [company-prod/eu-west-1] aws s3 ls
 EOEXPECTED
 )"
@@ -348,7 +361,8 @@ echo 'Run edit-parameters'
 { edit-parameters_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/edit-parameters"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/edit-parameters"
 else
     edit-parameters_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -381,7 +395,8 @@ echo 'Run edit-parameters-unchanged'
 { edit-parameters-unchanged_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/edit-parameters-unchanged"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/edit-parameters-unchanged"
 else
     edit-parameters-unchanged_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -413,7 +428,8 @@ echo 'Run edit-parameters-emptied'
 { edit-parameters-emptied_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/edit-parameters-emptied"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/edit-parameters-emptied"
 else
     edit-parameters-emptied_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -433,7 +449,7 @@ shoot-myself-in-the-foot_code () {
 shoot-myself-in-the-foot_expected () {
       local expected
       expected="$(cat<<"EOEXPECTED"
-New global parameters for parameter: set
+New [36mglobal[0m parameters for parameter: set
 EOEXPECTED
 )"
       # org says nil where the block said nothing
@@ -445,7 +461,8 @@ echo 'Run shoot-myself-in-the-foot'
 { shoot-myself-in-the-foot_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/shoot-myself-in-the-foot"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/shoot-myself-in-the-foot"
 else
     shoot-myself-in-the-foot_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -463,7 +480,7 @@ cannot-unset_code () {
 cannot-unset_expected () {
       local expected
       expected="$(cat<<"EOEXPECTED"
-warning: Failed to get the command unset: Command unset not found
+[33mwarning: [0mFailed to get the command unset: Command unset not found
 Usage: clk parameter set [OPTIONS] CMD [PARAMS]...
 error: Invalid value for 'CMD': invalid choice: unset. (choose from alias, aws, command, completion, describe, echo, exec, extension, flowdep, fork, help, log, parameter, pip, plugin, python, secret, update, value)
 EOEXPECTED
@@ -477,7 +494,8 @@ echo 'Run cannot-unset'
 { cannot-unset_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/cannot-unset"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/cannot-unset"
 else
     cannot-unset_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -495,7 +513,7 @@ no-parameter-to-the-rescue_code () {
 no-parameter-to-the-rescue_expected () {
       local expected
       expected="$(cat<<"EOEXPECTED"
-Erasing global parameters of parameter (was: set)
+Erasing [36mglobal[0m parameters of parameter (was: set)
 EOEXPECTED
 )"
       # org says nil where the block said nothing
@@ -507,7 +525,8 @@ echo 'Run no-parameter-to-the-rescue'
 { no-parameter-to-the-rescue_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/no-parameter-to-the-rescue"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/no-parameter-to-the-rescue"
 else
     no-parameter-to-the-rescue_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -526,7 +545,7 @@ set-ec2-parameter_code () {
 set-ec2-parameter_expected () {
       local expected
       expected="$(cat<<"EOEXPECTED"
-New global parameters for aws.ec2: describe-instances
+New [36mglobal[0m parameters for aws.ec2: describe-instances
 [default/us-east-1] aws ec2 describe-instances
 EOEXPECTED
 )"
@@ -539,7 +558,8 @@ echo 'Run set-ec2-parameter'
 { set-ec2-parameter_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/set-ec2-parameter"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/set-ec2-parameter"
 else
     set-ec2-parameter_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -558,9 +578,11 @@ remove-command-with-parameters_code () {
 remove-command-with-parameters_expected () {
       local expected
       expected="$(cat<<"EOEXPECTED"
-warning: Failed to get the command aws.ec2: Command aws.ec2 not found
-warning: You should know that the command aws.ec2 does not exist
-aws.ec2 describe-instances
+[33mwarning: [0mFailed to get the command aws.ec2: Command aws.ec2 not found
+[33mwarning: [0mYou should know that the command aws.ec2 does not exist
+aws.ec2 [2m[36m[2mdescribe-instances[0m[0m
+[2m--------------[0m
+Legend: [36m[2mglobal[0m
 EOEXPECTED
 )"
       # org says nil where the block said nothing
@@ -572,7 +594,8 @@ echo 'Run remove-command-with-parameters'
 { remove-command-with-parameters_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/remove-command-with-parameters"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/remove-command-with-parameters"
 else
     remove-command-with-parameters_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -590,7 +613,7 @@ unset-orphan-parameters_code () {
 unset-orphan-parameters_expected () {
       local expected
       expected="$(cat<<"EOEXPECTED"
-Erasing global parameters of aws.ec2 (was: describe-instances)
+Erasing [36mglobal[0m parameters of aws.ec2 (was: describe-instances)
 EOEXPECTED
 )"
       # org says nil where the block said nothing
@@ -602,7 +625,8 @@ echo 'Run unset-orphan-parameters'
 { unset-orphan-parameters_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/unset-orphan-parameters"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/unset-orphan-parameters"
 else
     unset-orphan-parameters_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -625,8 +649,10 @@ set-project-parameters_code () {
 set-project-parameters_expected () {
       local expected
       expected="$(cat<<"EOEXPECTED"
-New local parameters for aws: --profile webapp-prod --region ap-southeast-1
-aws --profile webapp-prod --region ap-southeast-1
+New [32mlocal[0m parameters for aws: --profile webapp-prod --region ap-southeast-1
+aws [2m[32m[2m--profile webapp-prod --region ap-southeast-1[0m[0m
+[2m-------------[0m
+Legend: [32m[2mlocal[0m
 EOEXPECTED
 )"
       # org says nil where the block said nothing
@@ -638,7 +664,8 @@ echo 'Run set-project-parameters'
 { set-project-parameters_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/set-project-parameters"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/set-project-parameters"
 else
     set-project-parameters_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -668,7 +695,8 @@ echo 'Run try-project-parameters'
 { try-project-parameters_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/try-project-parameters"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/try-project-parameters"
 else
     try-project-parameters_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -699,7 +727,8 @@ echo 'Run leave-project'
 { leave-project_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/leave-project"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/leave-project"
 else
     leave-project_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -719,7 +748,7 @@ set-global-prod_code () {
 set-global-prod_expected () {
       local expected
       expected="$(cat<<"EOEXPECTED"
-New global parameters for aws: --profile company-prod --region eu-west-1
+New [36mglobal[0m parameters for aws: --profile company-prod --region eu-west-1
 EOEXPECTED
 )"
       # org says nil where the block said nothing
@@ -731,7 +760,8 @@ echo 'Run set-global-prod'
 { set-global-prod_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/set-global-prod"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/set-global-prod"
 else
     set-global-prod_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -752,7 +782,7 @@ set-staging-params_code () {
 set-staging-params_expected () {
       local expected
       expected="$(cat<<"EOEXPECTED"
-New global/config-staging parameters for aws: --profile company-staging
+New [36m[1mglobal/config-staging[0m parameters for aws: --profile company-staging
 EOEXPECTED
 )"
       # org says nil where the block said nothing
@@ -764,7 +794,8 @@ echo 'Run set-staging-params'
 { set-staging-params_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/set-staging-params"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/set-staging-params"
 else
     set-staging-params_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -794,7 +825,8 @@ echo 'Run try-staging'
 { try-staging_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/try-staging"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/try-staging"
 else
     try-staging_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -824,7 +856,8 @@ echo 'Run try-staging-override'
 { try-staging-override_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/try-staging-override"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/try-staging-override"
 else
     try-staging-override_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -855,7 +888,8 @@ echo 'Run disable-staging'
 { disable-staging_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/disable-staging"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/disable-staging"
 else
     disable-staging_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -889,7 +923,8 @@ echo 'Run env-parameters'
 { env-parameters_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/env-parameters"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/env-parameters"
 else
     env-parameters_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -907,7 +942,7 @@ env-help_code () {
 env-help_expected () {
       local expected
       expected="$(cat<<"EOEXPECTED"
-The current parameters set for this command are: --profile env-prod --region us-west-2
+  The current parameters set for this command are: --profile env-prod --region us-west-2
 EOEXPECTED
 )"
       # org says nil where the block said nothing
@@ -919,7 +954,8 @@ echo 'Run env-help'
 { env-help_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/env-help"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/env-help"
 else
     env-help_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -937,7 +973,9 @@ env-show_code () {
 env-show_expected () {
       local expected
       expected="$(cat<<"EOEXPECTED"
-aws --profile env-prod --region us-west-2
+aws [2m[1m[2m--profile env-prod --region us-west-2[0m[0m
+[2m-----------[0m
+Legend: [1m[2menv[0m
 EOEXPECTED
 )"
       # org says nil where the block said nothing
@@ -949,7 +987,8 @@ echo 'Run env-show'
 { env-show_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/env-show"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/env-show"
 else
     env-show_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -980,7 +1019,8 @@ echo 'Run env-unset'
 { env-unset_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/env-unset"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/env-unset"
 else
     env-unset_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -1039,7 +1079,8 @@ echo 'Run no-default-env-preserved'
 { no-default-env-preserved_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/no-default-env-preserved"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/no-default-env-preserved"
 else
     no-default-env-preserved_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -1069,7 +1110,8 @@ echo 'Run no-default-explicit'
 { no-default-explicit_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/no-default-explicit"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/no-default-explicit"
 else
     no-default-explicit_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -1173,7 +1215,8 @@ echo 'Run complete-bucket'
 { complete-bucket_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/complete-bucket"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/complete-bucket"
 else
     complete-bucket_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -1204,7 +1247,8 @@ echo 'Run complete-key'
 { complete-key_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/complete-key"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/complete-key"
 else
     complete-key_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -1234,7 +1278,8 @@ echo 'Run complete-bucket-staging'
 { complete-bucket-staging_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/complete-bucket-staging"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/complete-bucket-staging"
 else
     complete-bucket-staging_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -1264,7 +1309,8 @@ echo 'Run try-get'
 { try-get_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/try-get"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/try-get"
 else
     try-get_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {

@@ -24,7 +24,9 @@ Now, I want this command to be wrapped into an alias to ease making it part of m
 clk alias set podcast.dwim echo 'Would do something before' , podcast download --number 'noeval:tpl:{NUMBER_TO_DOWNLOAD}' , echo 'would do something after'
 ```
 
-    New global alias for podcast.dwim: echo 'Would do something before' , podcast download --number 'tpl:{NUMBER_TO_DOWNLOAD}' , echo 'would do something after'
+<pre>
+New <span style="color:teal;">global</span> alias for podcast.dwim: echo 'Would do something before' , podcast download --number 'tpl:{NUMBER_TO_DOWNLOAD}' , echo 'would do something after'
+</pre>
 
 Then I can call it with:
 
@@ -104,7 +106,9 @@ I frequently work with my music podcasts, so I create an alias to save typing:
 clk alias set podcast.music podcast --directory music download
 ```
 
-    New global alias for podcast.music: podcast --directory music download
+<pre>
+New <span style="color:teal;">global</span> alias for podcast.music: podcast --directory music download
+</pre>
 
 Now `clk podcast music` is a shortcut for downloading music podcasts:
 
@@ -123,7 +127,9 @@ I can also create an alias that filters multiple directories at once. For instan
 clk alias set podcast.audio podcast --directory music --directory song download
 ```
 
-    New global alias for podcast.audio: podcast --directory music --directory song download
+<pre>
+New <span style="color:teal;">global</span> alias for podcast.audio: podcast --directory music --directory song download
+</pre>
 
 Now `clk podcast audio` downloads from both directories:
 
@@ -147,25 +153,23 @@ Now that we have several ways to download podcasts—the base `download` command
 clk podcast --help
 ```
 
-```
-Usage: clk podcast [OPTIONS] COMMAND [ARGS]...
+    Usage: clk podcast [OPTIONS] COMMAND [ARGS]...
 
-  Dealing with podcasts
+      Dealing with podcasts
 
-  Edit this custom command by running `clk command edit podcast`
-  Or edit ./clk-root/python/podcast.py directly.
+      Edit this custom command by running `clk command edit podcast`
+      Or edit ./clk-root/python/podcast.py directly.
 
-Options:
-  -d, --directory TEXT  Only work with these directories
-  --help-all            Show the full help message, automatic options included.
-  --help                Show this message and exit.
+    Options:
+      -d, --directory TEXT  Only work with these directories
+      --help-all            Show the full help message, automatic options included.
+      --help                Show this message and exit.
 
-Commands:
-  audio     Alias for: podcast --directory music --directory son...
-  download  Downloading podcasts
-  dwim      Alias for: echo 'Would do something before' , podcas...
-  music     Alias for: podcast --directory music download
-```
+    Commands:
+      audio     Alias for: podcast --directory music --directory son...
+      download  Downloading podcasts
+      dwim      Alias for: echo 'Would do something before' , podcas...
+      music     Alias for: podcast --directory music download
 
 This gives us a quick overview of all our podcast-related commands: the core `download` command and the shortcuts we created (`audio`, `music`, `dwim`). Each alias shows a brief description of what it does, making it easy to remember which shortcut to use for different podcast categories.
 

@@ -42,7 +42,8 @@ echo 'Run run-without-timestamp'
 { run-without-timestamp_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/run-without-timestamp"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/run-without-timestamp"
 else
     run-without-timestamp_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -71,7 +72,8 @@ echo 'Run run-with-timestamp'
 { run-with-timestamp_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/run-with-timestamp"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/run-with-timestamp"
 else
     run-with-timestamp_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -88,9 +90,9 @@ run-with-debug-timestamp_code () {
 run-with-debug-timestamp_expected () {
       local expected
       expected="$(cat<<"EOEXPECTED"
-2024-02-14 23:00:06,000 debug: starting step 1: fetch config
-2024-02-14 23:00:06,000 debug: starting step 2: heavy computation
-2024-02-14 23:00:09,000 debug: starting step 3: write results
+2024-02-14 23:00:06,000 [34mdebug: [0mstarting step 1: fetch config
+2024-02-14 23:00:06,000 [34mdebug: [0mstarting step 2: heavy computation
+2024-02-14 23:00:09,000 [34mdebug: [0mstarting step 3: write results
 2024-02-14 23:00:09,000 done
 2024-02-14 23:00:09,000 debug: command `clk/__main__.py --debug --timestamp slowcmd` run in 3 seconds
 EOEXPECTED
@@ -104,7 +106,8 @@ echo 'Run run-with-debug-timestamp'
 { run-with-debug-timestamp_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/run-with-debug-timestamp"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/run-with-debug-timestamp"
 else
     run-with-debug-timestamp_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -121,7 +124,7 @@ run-with-profiling_code () {
 run-with-profiling_expected () {
       local expected
       expected="$(cat<<"EOEXPECTED"
-1    0.000    0.000    0.000    0.000 clk/core.py:0(_fake_sleep)
+        1    0.000    0.000    0.000    0.000 clk/core.py:0(_fake_sleep)
 EOEXPECTED
 )"
       # org says nil where the block said nothing
@@ -133,7 +136,8 @@ echo 'Run run-with-profiling'
 { run-with-profiling_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/run-with-profiling"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/run-with-profiling"
 else
     run-with-profiling_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -182,7 +186,8 @@ echo 'Run complete-a29'
 { complete-a29_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/complete-a29"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/complete-a29"
 else
     complete-a29_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -225,7 +230,8 @@ echo 'Run time-completion'
 { time-completion_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/time-completion"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/time-completion"
 else
     time-completion_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {

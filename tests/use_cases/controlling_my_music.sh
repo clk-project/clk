@@ -22,7 +22,7 @@ create_code () {
 create_expected () {
       local expected
       expected="$(cat<<"EOEXPECTED"
-New global alias for music.play: exec mpc play --random --use-speakers --replaygain
+New [36mglobal[0m alias for music.play: exec mpc play --random --use-speakers --replaygain
 EOEXPECTED
 )"
       # org says nil where the block said nothing
@@ -34,7 +34,8 @@ echo 'Run create'
 { create_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/create"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/create"
 else
     create_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -63,7 +64,8 @@ echo 'Run use_play'
 { use_play_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/use_play"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/use_play"
 else
     use_play_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -81,7 +83,7 @@ use_parameters_code () {
 use_parameters_expected () {
       local expected
       expected="$(cat<<"EOEXPECTED"
-New global parameters for music.play: --repeat
+New [36mglobal[0m parameters for music.play: --repeat
 Running mpc with: play --random --use-speakers --replaygain --repeat MyAlbum
 EOEXPECTED
 )"
@@ -94,7 +96,8 @@ echo 'Run use_parameters'
 { use_parameters_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/use_parameters"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/use_parameters"
 else
     use_parameters_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -123,7 +126,8 @@ echo 'Run try-completion'
 { try-completion_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/try-completion"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/try-completion"
 else
     try-completion_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -141,8 +145,8 @@ more_complicated_alias_code () {
 more_complicated_alias_expected () {
       local expected
       expected="$(cat<<"EOEXPECTED"
-Removing global alias of music.play: exec mpc play --random --use-speakers --replaygain
-New global alias for music.play: exec mpc start-server , exec mpc play --random --use-speakers --replaygain
+Removing [36mglobal[0m alias of music.play: exec mpc play --random --use-speakers --replaygain
+New [36mglobal[0m alias for music.play: exec mpc start-server , exec mpc play --random --use-speakers --replaygain
 Running mpc with: start-server
 Running mpc with: play --random --use-speakers --replaygain --repeat MyAlbum
 EOEXPECTED
@@ -156,7 +160,8 @@ echo 'Run more_complicated_alias'
 { more_complicated_alias_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/more_complicated_alias"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/more_complicated_alias"
 else
     more_complicated_alias_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -173,7 +178,9 @@ show-alias_code () {
 show-alias_expected () {
       local expected
       expected="$(cat<<"EOEXPECTED"
-music.play exec mpc start-server, exec mpc play --random --use-speakers --replaygain
+music.play [2m[36m[2mexec mpc start-server, exec mpc play --random --use-speakers --replaygain[0m[0m
+[2m--------------[0m
+Legend: [36m[2mglobal[0m
 EOEXPECTED
 )"
       # org says nil where the block said nothing
@@ -185,7 +192,8 @@ echo 'Run show-alias'
 { show-alias_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/show-alias"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/show-alias"
 else
     show-alias_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -211,6 +219,7 @@ Usage: clk music play [OPTIONS] [COMMAND]...
   Edit this alias by running `clk alias edit music.play`
   Or adjust this command `clk alias set music.play exec mpc start-server , exec mpc play --random --use-speakers
   --replaygain`
+
 EOEXPECTED
 )"
       # org says nil where the block said nothing
@@ -222,7 +231,8 @@ echo 'Run help-alias'
 { help-alias_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/help-alias"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/help-alias"
 else
     help-alias_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -262,7 +272,8 @@ echo 'Run run-edited-alias'
 { run-edited-alias_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/run-edited-alias"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/run-edited-alias"
 else
     run-edited-alias_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -279,7 +290,7 @@ bootstrap_code () {
 bootstrap_expected () {
       local expected
       expected="$(cat<<"EOEXPECTED"
-Erasing music.play alias from global settings
+Erasing music.play alias from [36mglobal[0m settings
 EOEXPECTED
 )"
       # org says nil where the block said nothing
@@ -291,7 +302,8 @@ echo 'Run bootstrap'
 { bootstrap_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/bootstrap"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/bootstrap"
 else
     bootstrap_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -322,7 +334,8 @@ echo 'Run try_command'
 { try_command_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/try_command"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/try_command"
 else
     try_command_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -351,7 +364,8 @@ echo 'Run which'
 { which_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/which"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/which"
 else
     which_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -378,7 +392,6 @@ Usage: clk music play [OPTIONS] [ARGS]...
   Or edit ./clk-root/bin/music.play directly.
 
 Positional arguments:
-
 EOEXPECTED
 )"
       # org says nil where the block said nothing
@@ -390,7 +403,8 @@ echo 'Run help'
 { help_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/help"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/help"
 else
     help_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -452,7 +466,8 @@ echo 'Run play-an-album'
 { play-an-album_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/play-an-album"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/play-an-album"
 else
     play-an-album_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -471,7 +486,7 @@ music-loud_code () {
 music-loud_expected () {
       local expected
       expected="$(cat<<"EOEXPECTED"
-New global alias for music.loud: exec mpc volume 100 , music play
+New [36mglobal[0m alias for music.loud: exec mpc volume 100 , music play
 Running mpc with: volume 100
 Running mpc with: start-server
 Running mpc with: wait-for-server
@@ -487,7 +502,8 @@ echo 'Run music-loud'
 { music-loud_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/music-loud"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/music-loud"
 else
     music-loud_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -518,7 +534,8 @@ echo 'Run unset-gone-alias'
 { unset-gone-alias_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/unset-gone-alias"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/unset-gone-alias"
 else
     unset-gone-alias_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -537,7 +554,7 @@ convert-music-loud_code () {
 convert-music-loud_expected () {
       local expected
       expected="$(cat<<"EOEXPECTED"
-Erasing music.loud alias from global settings
+Erasing music.loud alias from [36mglobal[0m settings
 Running mpc with: volume 100
 Running mpc with: start-server
 Running mpc with: wait-for-server
@@ -553,7 +570,8 @@ echo 'Run convert-music-loud'
 { convert-music-loud_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/convert-music-loud"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/convert-music-loud"
 else
     convert-music-loud_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -588,7 +606,8 @@ echo 'Run run-recent'
 { run-recent_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/run-recent"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/run-recent"
 else
     run-recent_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -641,11 +660,11 @@ migrate_code () {
 migrate_expected () {
       local expected
       expected="$(cat<<"EOEXPECTED"
-warning: Profile in ./clk-root is obsolete. It has the version 8 and current version is 9. Migration started.
-warning: Renaming music.shuffle.py into music.shuffle, so that it answers to music shuffle
-warning: music.volume.py keeps its suffix, music.volume is taken
-warning: music.volume@py names a script with the @ of an older clk, and nothing answers to it anymore
-warning: mixer.py uses DynamicConfigBase, which is gone: expose_class does the same
+[33mwarning: [0mProfile in ./clk-root is obsolete. It has the version 8 and current version is 9. Migration started.
+[33mwarning: [0mRenaming music.shuffle.py into music.shuffle, so that it answers to music shuffle
+[33mwarning: [0mmusic.volume.py keeps its suffix, music.volume is taken
+[33mwarning: [0mmusic.volume@py names a script with the @ of an older clk, and nothing answers to it anymore
+[33mwarning: [0mmixer.py uses DynamicConfigBase, which is gone: expose_class does the same
 Running mpc with: start-server
 Running mpc with: wait-for-server
 Running mpc with: play --random --use-speakers --replaygain --repeat Kind-of-Blue
@@ -660,7 +679,8 @@ echo 'Run migrate'
 { migrate_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/migrate"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/migrate"
 else
     migrate_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -679,9 +699,11 @@ shuffle-after_code () {
 shuffle-after_expected () {
       local expected
       expected="$(cat<<"EOEXPECTED"
-warning: The command 'music.shuffle' has no documentation
+[33mwarning: [0mThe command 'music.shuffle' has no documentation
 shuffling
-music.shuffle --seed 42
+music.shuffle [2m[36m[2m--seed 42[0m[0m
+[2m--------------[0m
+Legend: [36m[2mglobal[0m
 EOEXPECTED
 )"
       # org says nil where the block said nothing
@@ -693,7 +715,8 @@ echo 'Run shuffle-after'
 { shuffle-after_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/shuffle-after"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/shuffle-after"
 else
     shuffle-after_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {

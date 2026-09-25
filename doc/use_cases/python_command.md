@@ -19,27 +19,25 @@ Note that you can always get the help of any command using `--help`. So don't he
 clk command create python --help
 ```
 
-```
-Usage: clk command create python [OPTIONS] NAME
+    Usage: clk command create python [OPTIONS] NAME
 
-  Create a python custom command
+      Create a python custom command
 
-  This is a built-in command.
+      This is a built-in command.
 
-Positional arguments:
-  NAME  The name of the new command
+    Positional arguments:
+      NAME  The name of the new command
 
-Options:
-  --open / --no-open   Also open the file after its creation  [default: open]
-  --force              Overwrite a file if it already exists
-  --group / --command  Bootstrap a command or a group of commands  [default: command]
-  --with-data          Create a directory module instead of a single file. So that you can ship data with it
-  --body TEXT          The initial body to put  [default: ""]
-  --description TEXT   The initial description to put  [default: Description]
-  --from-file TEXT     Copy this file instead of using the template
-  --help-all           Show the full help message, automatic options included.
-  --help               Show this message and exit.
-```
+    Options:
+      --open / --no-open   Also open the file after its creation  [default: open]
+      --force              Overwrite a file if it already exists
+      --group / --command  Bootstrap a command or a group of commands  [default: command]
+      --with-data          Create a directory module instead of a single file. So that you can ship data with it
+      --body TEXT          The initial body to put  [default: ""]
+      --description TEXT   The initial description to put  [default: Description]
+      --from-file TEXT     Copy this file instead of using the template
+      --help-all           Show the full help message, automatic options included.
+      --help               Show this message and exit.
 
 Let's look at the file that was created.
 
@@ -47,39 +45,37 @@ Let's look at the file that was created.
 cat $(clk command which mycommand)
 ```
 
-```
-#!/usr/bin/env python3
-# -*- coding:utf-8 -*-
+    #!/usr/bin/env python3
+    # -*- coding:utf-8 -*-
 
-from pathlib import Path
+    from pathlib import Path
 
-import click
+    import click
 
-from clk.decorators import (
-    argument,
-    flag,
-    option,
-    command,
-    use_settings,
-    table_format,
-    table_fields,
-)
-from clk.lib import (
-    TablePrinter,
-    call,
-)
-from clk.config import config
-from clk.log import get_logger
-from clk.types import DynamicChoice
-
-
-LOGGER = get_logger(__name__)
+    from clk.decorators import (
+        argument,
+        flag,
+        option,
+        command,
+        use_settings,
+        table_format,
+        table_fields,
+    )
+    from clk.lib import (
+        TablePrinter,
+        call,
+    )
+    from clk.config import config
+    from clk.log import get_logger
+    from clk.types import DynamicChoice
 
 
-@command()
-def mycommand():
-    "Description"
-```
+    LOGGER = get_logger(__name__)
+
+
+    @command()
+    def mycommand():
+        "Description"
 
 The `@command()` decorator is provided by clk. It is a thin wrapper around the click `@command()` decorator that adds some features like automatic option handling.
 
@@ -89,7 +85,9 @@ Let's run this command.
 clk mycommand
 ```
 
-    warning: The command 'mycommand' has no documentation
+<pre>
+<span style="color:olive;">warning: </span>The command 'mycommand' has no documentation
+</pre>
 
 If you keep the word `Description` in the help message, clk will warn you that you should replace it with something more interesting.
 
@@ -103,18 +101,16 @@ sed -i 's/"Description"/"Command that says something"/g' "$(clk command which my
 clk mycommand --help | head -10
 ```
 
-```
-Usage: clk mycommand [OPTIONS]
+    Usage: clk mycommand [OPTIONS]
 
-  Command that says something
+      Command that says something
 
-  Edit this custom command by running `clk command edit mycommand`
-  Or edit ./clk-root/python/mycommand.py directly.
+      Edit this custom command by running `clk command edit mycommand`
+      Or edit ./clk-root/python/mycommand.py directly.
 
-Options:
-  --help-all  Show the full help message, automatic options included.
-  --help      Show this message and exit.
-```
+    Options:
+      --help-all  Show the full help message, automatic options included.
+      --help      Show this message and exit.
 
 Let's make this command say something.
 
@@ -203,23 +199,29 @@ def mycommand(name, greeting, use_name):
 clk mycommand
 ```
 
-    warning: The parameter 'greeting' in the command 'mycommand' has no documentation
-    Hello, world!
+<pre>
+<span style="color:olive;">warning: </span>The parameter 'greeting' in the command 'mycommand' has no documentation
+Hello, world!
+</pre>
 
 ```bash
 clk mycommand --name clk Goodbye
 ```
 
-    warning: The parameter 'greeting' in the command 'mycommand' has no documentation
-    Goodbye, clk!
+<pre>
+<span style="color:olive;">warning: </span>The parameter 'greeting' in the command 'mycommand' has no documentation
+Goodbye, clk!
+</pre>
 
 ```bash
 clk mycommand --use-name clk Goodbye
 ```
 
-    DeprecationWarning: The option 'use_name' is deprecated. since forever
-    warning: The parameter 'greeting' in the command 'mycommand' has no documentation
-    Goodbye, world!
+<pre>
+<span style="color:red;">DeprecationWarning: The option 'use_name' is deprecated. since forever</span>
+<span style="color:olive;">warning: </span>The parameter 'greeting' in the command 'mycommand' has no documentation
+Goodbye, world!
+</pre>
 
 That warning about `greeting` shows in the help as well.
 
@@ -227,20 +229,18 @@ That warning about `greeting` shows in the help as well.
 clk mycommand --help 2>/dev/null
 ```
 
-```
-Usage: clk mycommand [OPTIONS] [GREETING]
+    Usage: clk mycommand [OPTIONS] [GREETING]
 
-  A greeting command
+      A greeting command
 
-  Edit this custom command by running `clk command edit mycommand`
-  Or edit ./clk-root/python/mycommand.py directly.
+      Edit this custom command by running `clk command edit mycommand`
+      Or edit ./clk-root/python/mycommand.py directly.
 
-Options:
-  --name TEXT      Name to greet  [default: world]
-  --use-name TEXT  Name to greet (DEPRECATED: since forever)  [default: world]
-  --help-all       Show the full help message, automatic options included.
-  --help           Show this message and exit.
-```
+    Options:
+      --name TEXT      Name to greet  [default: world]
+      --use-name TEXT  Name to greet (DEPRECATED: since forever)  [default: world]
+      --help-all       Show the full help message, automatic options included.
+      --help           Show this message and exit.
 
 Give it a help of its own.
 
@@ -286,9 +286,11 @@ It does not come up. That is the hint that something is wrong with it, and runni
 clk pyenv 2>&1|sed "s|$(pwd)|.|"
 ```
 
-    error: Found the command pyenv in the resolver customcommand but could not load it.
-    warning: Failed to get the command pyenv: The file ./clk-root/python/pyenv.py must contain a click command or group named pyenv, but found a function instead. Did you forget the @command or @group decorator?
-    error: clk.pyenv could not be loaded. Re run with clk --develop to see the stacktrace or clk --debug-on-command-load-error to debug the load error
+<pre>
+<span style="color:red;">error: </span>Found the command pyenv in the resolver customcommand but could not load it.
+<span style="color:olive;">warning: </span>Failed to get the command pyenv: The file ./clk-root/python/pyenv.py must contain a click command or group named pyenv, but found a function instead. Did you forget the @command or @group decorator?
+error: clk.pyenv could not be loaded. Re run with clk --develop to see the stacktrace or clk --debug-on-command-load-error to debug the load error
+</pre>
 
 Let's take a look at the stack trace with `--develop`.
 

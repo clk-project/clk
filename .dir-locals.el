@@ -16,7 +16,6 @@
                                                       ("^\\./org-process\\.sh\\( doc/use_cases/\\)?" . "")
                                                       ("^ruff check clk/" . "")
                                                       ("^pre-commit run" . "")
-                                                      ("^earthly \\+export-coverage --use_git=true" . "")
                                                       ("^ruff format" . "")
                                                       ("^clk coverage missing" . "")
                                                       ))

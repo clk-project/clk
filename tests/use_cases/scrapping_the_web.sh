@@ -48,7 +48,8 @@ echo 'Run running_the_test'
 { running_the_test_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/running_the_test"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/running_the_test"
 else
     running_the_test_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -112,7 +113,6 @@ After a 200 seconds, the cache is older than 3600s and is fetched again
 Thu Feb 15 00:01:40 UTC 2024
 Getting the content of http://clk-project.org
 The title is clk project
-
 EOEXPECTED
 )"
       # org says nil where the block said nothing
@@ -124,7 +124,8 @@ echo 'Run running_the_test_with_cache'
 { running_the_test_with_cache_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/running_the_test_with_cache"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/running_the_test_with_cache"
 else
     running_the_test_with_cache_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -189,7 +190,6 @@ Therefore, the cached content, whose expiration is set to 65s, was kept for 120s
 At Thu Feb 15 00:05:00 UTC 2024, after having waited 80s, hence slightly more than the expiration time of 65s, the content expired and the page is fetched again
 Getting the content of http://clk-project.org
 The title is clk project
-
 EOEXPECTED
 )"
       # org says nil where the block said nothing
@@ -201,7 +201,8 @@ echo 'Run running_the_test_with_cache_with_renew'
 { running_the_test_with_cache_with_renew_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/running_the_test_with_cache_with_renew"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/running_the_test_with_cache_with_renew"
 else
     running_the_test_with_cache_with_renew_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {

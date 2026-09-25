@@ -77,18 +77,16 @@ date
 clk scrap --url "http://clk-project.org" title
 ```
 
-```
-Wed Feb 14 23:00:00 UTC 2024
-Getting the content of http://clk-project.org
-The title is clk project
-After 3500 seconds of waiting, it gets the result from the cache
-Wed Feb 14 23:58:20 UTC 2024
-The title is clk project
-After a 200 seconds, the cache is older than 3600s and is fetched again
-Thu Feb 15 00:01:40 UTC 2024
-Getting the content of http://clk-project.org
-The title is clk project
-```
+    Wed Feb 14 23:00:00 UTC 2024
+    Getting the content of http://clk-project.org
+    The title is clk project
+    After 3500 seconds of waiting, it gets the result from the cache
+    Wed Feb 14 23:58:20 UTC 2024
+    The title is clk project
+    After a 200 seconds, the cache is older than 3600s and is fetched again
+    Thu Feb 15 00:01:40 UTC 2024
+    Getting the content of http://clk-project.org
+    The title is clk project
 
 The first call fetches the page and puts its result in the cache. A proof of this is that we can see the log "Getting the content of&hellip;".
 
@@ -122,19 +120,17 @@ echo "At $(date), after having waited 80s, hence slightly more than the expirati
 clk scrap --url "http://clk-project.org" title
 ```
 
-```
-At Thu Feb 15 00:01:40 UTC 2024, running the commands for the first time -> the page is fetched and its content is cached
-Getting the content of http://clk-project.org
-The title is clk project
-At Thu Feb 15 00:02:40 UTC 2024, after having waited for 60s, slightly less than the expiration time of 65s, the cached content is got and the cache is renewed
-The title is clk project
-At Thu Feb 15 00:03:40 UTC 2024, after having waited again for 60s, again slightly less than the expiration time of 65s, the cached content is got and the cache is renewed
-The title is clk project
-Therefore, the cached content, whose expiration is set to 65s, was kept for 120s, thanks to the renewal
-At Thu Feb 15 00:05:00 UTC 2024, after having waited 80s, hence slightly more than the expiration time of 65s, the content expired and the page is fetched again
-Getting the content of http://clk-project.org
-The title is clk project
-```
+    At Thu Feb 15 00:01:40 UTC 2024, running the commands for the first time -> the page is fetched and its content is cached
+    Getting the content of http://clk-project.org
+    The title is clk project
+    At Thu Feb 15 00:02:40 UTC 2024, after having waited for 60s, slightly less than the expiration time of 65s, the cached content is got and the cache is renewed
+    The title is clk project
+    At Thu Feb 15 00:03:40 UTC 2024, after having waited again for 60s, again slightly less than the expiration time of 65s, the cached content is got and the cache is renewed
+    The title is clk project
+    Therefore, the cached content, whose expiration is set to 65s, was kept for 120s, thanks to the renewal
+    At Thu Feb 15 00:05:00 UTC 2024, after having waited 80s, hence slightly more than the expiration time of 65s, the content expired and the page is fetched again
+    Getting the content of http://clk-project.org
+    The title is clk project
 
 ## Footnotes
 

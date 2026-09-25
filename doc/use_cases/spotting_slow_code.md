@@ -70,11 +70,13 @@ Adding `--debug` reveals the debug log lines. Combined with `--timestamp`, I can
 clk --debug --timestamp slowcmd 2>&1
 ```
 
-    2024-02-14 23:00:06,000 debug: starting step 1: fetch config
-    2024-02-14 23:00:06,000 debug: starting step 2: heavy computation
-    2024-02-14 23:00:09,000 debug: starting step 3: write results
-    2024-02-14 23:00:09,000 done
-    2024-02-14 23:00:09,000 debug: command `clk/__main__.py --debug --timestamp slowcmd` run in 3 seconds
+<pre>
+2024-02-14 23:00:06,000 <span style="color:blue;">debug: </span>starting step 1: fetch config
+2024-02-14 23:00:06,000 <span style="color:blue;">debug: </span>starting step 2: heavy computation
+2024-02-14 23:00:09,000 <span style="color:blue;">debug: </span>starting step 3: write results
+2024-02-14 23:00:09,000 done
+2024-02-14 23:00:09,000 debug: command `clk/__main__.py --debug --timestamp slowcmd` run in 3 seconds
+</pre>
 
 The three-second gap between step 2 and step 3 is immediately visible, pointing to the heavy computation as the bottleneck.
 

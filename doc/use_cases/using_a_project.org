@@ -36,7 +36,7 @@ clk alias set somelocalcommand echo hello
 #+END_SRC
 
 #+RESULTS[0d6c576f9b6b9bf567f6a69e614604ea2774c1ef]: usingaliases
-: New local alias for somelocalcommand: echo hello
+: New [32mlocal[0m alias for somelocalcommand: echo hello
 
 
 
@@ -70,7 +70,7 @@ clk somelocalcommand
 #+END_SRC
 
 #+RESULTS[6d570aedac0dd9c98e79c8e989bdf8cce7ec7db1]: callingthealiasoutsideoftheproject
-: warning: Failed to get the command somelocalcommand: Command somelocalcommand not found
+: [33mwarning: [0mFailed to get the command somelocalcommand: Command somelocalcommand not found
 : Usage: clk [OPTIONS] [COMMAND] [ARGS]...
 : error: No such command 'somelocalcommand'.
 : error:
@@ -96,7 +96,7 @@ clk echo world
 #+END_SRC
 
 #+RESULTS[ad781d6972442108f1c68e05c77e76d1261ceea2]: createaparameter
-: New local parameters for echo: hello
+: New [32mlocal[0m parameters for echo: hello
 : hello world
 
 
@@ -139,7 +139,7 @@ clk exec cat project:/tmp/somefile.txt
 #+END_SRC
 
 #+RESULTS[4b0a4c3d5722d65deff77bbceb51761de2b968fe]: projectprefix_absolute_warning
-: warning: when evaluating project:/tmp/somefile.txt: /tmp/somefile.txt is absolute, prepending project is a noop.
+: [33mwarning: [0mwhen evaluating project:/tmp/somefile.txt: /tmp/somefile.txt is absolute, prepending project is a noop.
 : cat: /tmp/somefile.txt: No such file or directory
 
 
@@ -309,7 +309,7 @@ clk alias set deploy exec ./scripts/build.sh , exec ./scripts/deploy.sh
 #+END_SRC
 
 #+RESULTS[6bf7da797d4495965656efad6a362211afc5f7ab]: create_flow_alias
-: New local alias for deploy: exec ./scripts/build.sh , exec ./scripts/deploy.sh
+: New [32mlocal[0m alias for deploy: exec ./scripts/build.sh , exec ./scripts/deploy.sh
 
 
 
@@ -432,8 +432,10 @@ cd ../myprojet
 #+END_SRC
 
 #+RESULTS[]: run_old_project
-: warning: Profile in ./.clk is obsolete. It has the version 8 and current version is 9. Migration started.
-: hello echo hello
+: [33mwarning: [0mProfile in ./.clk is obsolete. It has the version 8 and current version is 9. Migration started.
+: hello [2m[32m[2mecho hello[0m[0m
+: [2m-------------[0m
+: Legend: [32m[2mlocal[0m
 : clk.json5
 : version.txt
 
@@ -456,8 +458,8 @@ cd ../myprojet
 #+END_SRC
 
 #+RESULTS[]: run_unreadable_old_project
-: error: Expecting property name enclosed in double quotes: line 1 column 2 (char 1)
-: warning: The migration of ./.clk did not go well, Restoring backup from ./.clk_backup
+: [31merror: [0mExpecting property name enclosed in double quotes: line 1 column 2 (char 1)
+: [33mwarning: [0mThe migration of ./.clk did not go well, Restoring backup from ./.clk_backup
 : clk.json
 : version.txt
 
@@ -479,7 +481,7 @@ cd ../myprojet
 #+END_SRC
 
 #+RESULTS[]: run_leftover_backup
-: error: ./.clk_backup already exists. Cannot migrate.
+: [31merror: [0m./.clk_backup already exists. Cannot migrate.
 
 * a project written by a newer clk
   :PROPERTIES:
@@ -541,7 +543,7 @@ clk alias show 2>&1
 #+END_SRC
 
 #+RESULTS[]: run_with_broken_settings
-: warning: Can't read settings from ./.clk/clk.json5
+: [33mwarning: [0mCan't read settings from ./.clk/clk.json5
 
 * a project you name that is not there
   :PROPERTIES:
@@ -557,7 +559,7 @@ clk --project ../movedaway alias show 2>&1
 #+END_SRC
 
 #+RESULTS[]: run_with_gone_project
-: critical: ../movedaway does not exist. It will be ignored.
+: [31mcritical: [0m../movedaway does not exist. It will be ignored.
 
 #+NAME: run
 #+BEGIN_SRC bash :results none :exports none :tangle ../../tests/use_cases/using_a_project.sh :noweb yes :shebang "#!/usr/bin/env bash"

@@ -131,7 +131,8 @@ echo 'Run %1$s'
 { %1$s_code || true ; } > \"${TMP}/code.txt\" 2>&1
 if [ -n \"${CLK_RECORD_RESULTS-}\" ]
 then
-    cp \"${TMP}/code.txt\" \"${CLK_RECORD_RESULTS}/%1$s\"
+    mkdir -p \"${CLK_RECORD_RESULTS}/$(basename \"$0\" .sh)\"
+    cp \"${TMP}/code.txt\" \"${CLK_RECORD_RESULTS}/$(basename \"$0\" .sh)/%1$s\"
 else
     %1$s_expected > \"${TMP}/expected.txt\" 2>&1
     diff -uBw \"${TMP}/code.txt\" \"${TMP}/expected.txt\" || {
@@ -143,7 +144,8 @@ fi
   "The shell that check-result(NAME) becomes.
 %1$s is the name of the block, %2$s the result it is expected to give.
 With CLK_RECORD_RESULTS set, the run writes down what it got there instead
-of comparing, which is how the results in the org files are refreshed.")
+of comparing, in a directory named after the script, which is how the results
+in the org files are refreshed.")
 
 ;; The check-result advice — transforms check-result(name) into shell test
 ;; functions during noweb expansion.  Uses inline cached results to avoid
@@ -205,7 +207,7 @@ markdown differs every time for no reason."
 (defun clk-org--paint-results ()
   "Turn every result holding terminal colours into html, for the export.
 What the org file keeps is the bytes the command gave, escapes and all.
-The buffer is changed here and never saved, so that the markdown shows
+Only the copy the export works on is changed, so that the markdown shows
 the colours rather than the escapes."
   (save-excursion
     (goto-char (point-min))
@@ -259,8 +261,13 @@ the colours rather than the escapes."
     (when (clk-org--mentions "^[ \t]*#\\+EXPORT_FILE_NAME:")
       (push clk-org-gfm-dir load-path)
       (require 'ox-gfm)
-      (clk-org--paint-results)
-      (let ((exported (org-gfm-export-to-markdown)))
+      (let ((exported
+             ;; in the copy the export works on, where the includes already
+             ;; brought their results in
+             (let ((org-export-before-parsing-functions
+                    (cons (lambda (_backend) (clk-org--paint-results))
+                          org-export-before-parsing-functions)))
+               (org-gfm-export-to-markdown))))
         (unless (and exported (file-exists-p exported))
           (error "Exporting %s wrote nothing" file))
         (setq clk-org-written

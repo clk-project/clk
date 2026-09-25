@@ -12,8 +12,8 @@ setup-global_code () {
 setup-global_expected () {
       local expected
       expected="$(cat<<"EOEXPECTED"
-New global alias for hello: echo Hello
-New global parameters for echo: --no-newline
+New [36mglobal[0m alias for hello: echo Hello
+New [36mglobal[0m parameters for echo: --no-newline
 EOEXPECTED
 )"
       # org says nil where the block said nothing
@@ -25,7 +25,8 @@ echo 'Run setup-global'
 { setup-global_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/setup-global"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/setup-global"
 else
     setup-global_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -60,7 +61,8 @@ echo 'Run describe-global'
 { describe-global_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/describe-global"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/describe-global"
 else
     describe-global_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -78,7 +80,9 @@ show-global-alias_code () {
 show-global-alias_expected () {
       local expected
       expected="$(cat<<"EOEXPECTED"
-hello echo Hello
+hello [2m[36m[2mecho Hello[0m[0m
+[2m--------------[0m
+Legend: [36m[2mglobal[0m
 EOEXPECTED
 )"
       # org says nil where the block said nothing
@@ -90,7 +94,8 @@ echo 'Run show-global-alias'
 { show-global-alias_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/show-global-alias"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/show-global-alias"
 else
     show-global-alias_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -108,7 +113,7 @@ show-global-params_code () {
 show-global-params_expected () {
       local expected
       expected="$(cat<<"EOEXPECTED"
-echo --no-newline
+echo [2m[36m[2m--no-newline[0m[0m
 EOEXPECTED
 )"
       # org says nil where the block said nothing
@@ -120,7 +125,8 @@ echo 'Run show-global-params'
 { show-global-params_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/show-global-params"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/show-global-params"
 else
     show-global-params_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -142,9 +148,9 @@ setup-local_code () {
 setup-local_expected () {
       local expected
       expected="$(cat<<"EOEXPECTED"
-New local alias for build: echo Building the project
-New local alias for test: echo Running tests
-New local parameters for build: --verbose
+New [32mlocal[0m alias for build: echo Building the project
+New [32mlocal[0m alias for test: echo Running tests
+New [32mlocal[0m parameters for build: --verbose
 EOEXPECTED
 )"
       # org says nil where the block said nothing
@@ -156,7 +162,8 @@ echo 'Run setup-local'
 { setup-local_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/setup-local"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/setup-local"
 else
     setup-local_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -192,7 +199,8 @@ echo 'Run describe-local'
 { describe-local_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/describe-local"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/describe-local"
 else
     describe-local_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -210,8 +218,10 @@ show-local-alias_code () {
 show-local-alias_expected () {
       local expected
       expected="$(cat<<"EOEXPECTED"
-build echo Building the project
-test echo Running tests
+build [2m[32m[2mecho Building the project[0m[0m
+test [2m[32m[2mecho Running tests[0m[0m
+[2m-------------[0m
+Legend: [32m[2mlocal[0m
 EOEXPECTED
 )"
       # org says nil where the block said nothing
@@ -223,7 +233,8 @@ echo 'Run show-local-alias'
 { show-local-alias_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/show-local-alias"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/show-local-alias"
 else
     show-local-alias_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -242,7 +253,7 @@ create-extension_code () {
 create-extension_expected () {
       local expected
       expected="$(cat<<"EOEXPECTED"
-New local/mytools alias for greet: echo Greetings
+New [35m[1mlocal/mytools[0m alias for greet: echo Greetings
 EOEXPECTED
 )"
       # org says nil where the block said nothing
@@ -254,7 +265,8 @@ echo 'Run create-extension'
 { create-extension_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/create-extension"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/create-extension"
 else
     create-extension_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -291,7 +303,8 @@ echo 'Run describe-extension'
 { describe-extension_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/describe-extension"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/describe-extension"
 else
     describe-extension_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -331,7 +344,8 @@ echo 'Run describe-with-commands'
 { describe-with-commands_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/describe-with-commands"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/describe-with-commands"
 else
     describe-with-commands_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -361,7 +375,8 @@ echo 'Run list-commands'
 { list-commands_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/list-commands"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/list-commands"
 else
     list-commands_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -392,7 +407,8 @@ echo 'Run setup-value'
 { setup-value_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/setup-value"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/setup-value"
 else
     setup-value_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -434,7 +450,8 @@ echo 'Run describe-values'
 { describe-values_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/describe-values"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/describe-values"
 else
     describe-values_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -467,7 +484,8 @@ echo 'Run describe-unknown-setting'
 { describe-unknown-setting_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/describe-unknown-setting"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/describe-unknown-setting"
 else
     describe-unknown-setting_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {

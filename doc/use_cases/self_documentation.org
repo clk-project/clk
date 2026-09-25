@@ -37,8 +37,8 @@ clk parameter set echo --no-newline
 #+END_SRC
 
 #+RESULTS[914c8e598a39d14ca25e44f82b8eea7e5d6b55b1]: setup-global
-: New global alias for hello: echo Hello
-: New global parameters for echo: --no-newline
+: New [36mglobal[0m alias for hello: echo Hello
+: New [36mglobal[0m parameters for echo: --no-newline
 
 Now let's describe the global profile to see what it contains.
 
@@ -64,7 +64,9 @@ clk alias --global show
 #+END_SRC
 
 #+RESULTS[ffe433ef8c53b13399b50e3da58db1db6118ff3b]: show-global-alias
-: hello echo Hello
+: hello [2m[36m[2mecho Hello[0m[0m
+: [2m--------------[0m
+: Legend: [36m[2mglobal[0m
 
 #+NAME: show-global-params
 #+BEGIN_SRC bash :results verbatim :exports both :session a1b2c3d4-e5f6-7890-abcd-ef1234567890 :cache yes
@@ -72,7 +74,7 @@ clk parameter --global show | grep echo
 #+END_SRC
 
 #+RESULTS[7c034d5a1104c9e0580fa38d814b61f0e008fcdc]: show-global-params
-: echo --no-newline
+: echo [2m[36m[2m--no-newline[0m[0m
 
 * Describing a local project
   :PROPERTIES:
@@ -96,9 +98,9 @@ clk parameter set build --verbose
 #+END_SRC
 
 #+RESULTS[44804a3376b94c1ac0006864d067c77cff824e1e]: setup-local
-: New local alias for build: echo Building the project
-: New local alias for test: echo Running tests
-: New local parameters for build: --verbose
+: New [32mlocal[0m alias for build: echo Building the project
+: New [32mlocal[0m alias for test: echo Running tests
+: New [32mlocal[0m parameters for build: --verbose
 
 Now let's describe the local profile.
 
@@ -124,8 +126,10 @@ clk alias --local show
 #+END_SRC
 
 #+RESULTS[b4a0ad0b2b0642d48c663ea70526ddc79d8bb4fe]: show-local-alias
-: build echo Building the project
-: test echo Running tests
+: build [2m[32m[2mecho Building the project[0m[0m
+: test [2m[32m[2mecho Running tests[0m[0m
+: [2m-------------[0m
+: Legend: [32m[2mlocal[0m
 
 * Describing an extension
   :PROPERTIES:
@@ -143,7 +147,7 @@ clk alias set --extension mytools greet echo Greetings
 #+END_SRC
 
 #+RESULTS[606f451ddd219485a241372f6c1a0a4d29b72032]: create-extension
-: New local/mytools alias for greet: echo Greetings
+: New [35m[1mlocal/mytools[0m alias for greet: echo Greetings
 
 #+NAME: create-extension-command
 #+BEGIN_SRC bash :results none :exports code :session a1b2c3d4-e5f6-7890-abcd-ef1234567890

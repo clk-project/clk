@@ -81,6 +81,7 @@ clk backup docs do
 #+END_SRC
 
 #+RESULTS[6ac099e1f8d9a7a71fa425bb837d0c80f99fe4ca]: try-backup-docs-do
+: [35mdeprecated: [0mIn backup.docs.do, O:--source:str:Source directory:~/docs gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{"default": "value"}
 : Backing up documents from ~/docs to /mnt/backup
 
 The bash command automatically has access to ~BACKUP_DESTINATION~ because the
@@ -94,22 +95,20 @@ clk backup --help
 #+END_SRC
 
 #+RESULTS[c68e489e34c5f4a54025f419fd5515006eeddcff]: show-backup-help
-#+begin_example
-Usage: clk backup [OPTIONS] COMMAND [ARGS]...
-
-  Backup operations
-
-  Edit this custom command by running `clk command edit backup`
-  Or edit ./clk-root/python/backup.py directly.
-
-Options:
-  --dest TEXT  Backup destination base directory  [default: /mnt/backup]
-  --help-all   Show the full help message, automatic options included.
-  --help       Show this message and exit.
-
-Commands:
-  docs  Automatically created group to organize subcommands
-#+end_example
+: Usage: clk backup [OPTIONS] COMMAND [ARGS]...
+:
+:   Backup operations
+:
+:   Edit this custom command by running `clk command edit backup`
+:   Or edit ./clk-root/python/backup.py directly.
+:
+: Options:
+:   --dest TEXT  Backup destination base directory  [default: /mnt/backup]
+:   --help-all   Show the full help message, automatic options included.
+:   --help       Show this message and exit.
+:
+: Commands:
+:   docs  Automatically created group to organize subcommands
 
 * persisting the destination
   :PROPERTIES:
@@ -126,7 +125,7 @@ clk parameter set backup --dest /media/external/documents
 #+END_SRC
 
 #+RESULTS[8555946ca8d5464d5d5a7411e37254c12d2c78de]: set-dest-param
-: New global parameters for backup: --dest /media/external/documents
+: New [36mglobal[0m parameters for backup: --dest /media/external/documents
 
 Now the command uses my preferred destination automatically.
 
@@ -136,6 +135,7 @@ clk backup docs do
 #+END_SRC
 
 #+RESULTS[6ac099e1f8d9a7a71fa425bb837d0c80f99fe4ca]: try-with-param
+: [35mdeprecated: [0mIn backup.docs.do, O:--source:str:Source directory:~/docs gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{"default": "value"}
 : Backing up documents from ~/docs to /media/external/documents
 
 I can still override it when needed.
@@ -146,6 +146,7 @@ clk backup --dest /tmp/quick-backup docs do
 #+END_SRC
 
 #+RESULTS[aa4050eb6555f7616ebc106cfc53dce3b90101df]: override-param
+: [35mdeprecated: [0mIn backup.docs.do, O:--source:str:Source directory:~/docs gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{"default": "value"}
 : Backing up documents from ~/docs to /tmp/quick-backup
 
 * adding more backup targets
@@ -181,26 +182,26 @@ clk backup --help
 #+END_SRC
 
 #+RESULTS[c68e489e34c5f4a54025f419fd5515006eeddcff]: show-backup-commands
-#+begin_example
-Usage: clk backup [OPTIONS] COMMAND [ARGS]...
-
-  Backup operations
-
-  The current parameters set for this command are: --dest /media/external/documents
-
-  Edit this custom command by running `clk command edit backup`
-  Or edit ./clk-root/python/backup.py directly.
-
-Options:
-  --dest TEXT  Backup destination base directory  [default: /mnt/backup]
-  --help-all   Show the full help message, automatic options included.
-  --help       Show this message and exit.
-
-Commands:
-  database  Backup database
-  docs      Automatically created group to organize subcommands
-  photos    Backup photos
-#+end_example
+: [35mdeprecated: [0mIn backup.database, O:--db:str:Database name:main.db gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{"default": "value"}
+: [35mdeprecated: [0mIn backup.photos, O:--quality:str:Compression quality:high gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{"default": "value"}
+: Usage: clk backup [OPTIONS] COMMAND [ARGS]...
+:
+:   Backup operations
+:
+:   The current parameters set for this command are: --dest /media/external/documents
+:
+:   Edit this custom command by running `clk command edit backup`
+:   Or edit ./clk-root/python/backup.py directly.
+:
+: Options:
+:   --dest TEXT  Backup destination base directory  [default: /mnt/backup]
+:   --help-all   Show the full help message, automatic options included.
+:   --help       Show this message and exit.
+:
+: Commands:
+:   database  Backup database
+:   docs      Automatically created group to organize subcommands
+:   photos    Backup photos
 
 #+NAME: try-all-backups
 #+BEGIN_SRC bash :results verbatim :exports both :session f8a2b3c4-d5e6-7890-abcd-ef1234567891 :cache yes
@@ -209,7 +210,9 @@ clk backup photos
 #+END_SRC
 
 #+RESULTS[299bcef965bc261666c9bfc8d1d55bccbef66c20]: try-all-backups
+: [35mdeprecated: [0mIn backup.database, O:--db:str:Database name:main.db gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{"default": "value"}
 : Dumping database main.db to /media/external/documents
+: [35mdeprecated: [0mIn backup.photos, O:--quality:str:Compression quality:high gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{"default": "value"}
 : Backing up photos with high quality to /media/external/documents
 
 Notice how both commands use ~/media/external/documents~ - the destination I
@@ -250,24 +253,23 @@ clk backup docs --help
 #+END_SRC
 
 #+RESULTS[ee8140f68d7a71aa77a808b5b993fe71da009823]: show-docs-group
-#+begin_example
-Usage: clk backup docs [OPTIONS] COMMAND [ARGS]...
-
-  Automatically created group to organize subcommands
-
-  This is a built in created group. To remove it, simply remove all its subcommands (with `clk command remove SUBCMD`,
-  or `clk alias unset SUBCMD`). To rename it, simply rename them (with `clk command rename SUBCMD` or `clk alias rename
-  SUBCMD`)
-
-Options:
-  --help-all  Show the full help message, automatic options included.
-  --help      Show this message and exit.
-
-Commands:
-  do        Backup documents to external drive
-  retrieve  Retrieve a file from backup
-  verify    Verify backup integrity
-#+end_example
+: [35mdeprecated: [0mIn backup.docs.do, O:--source:str:Source directory:~/docs gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{"default": "value"}
+: Usage: clk backup docs [OPTIONS] COMMAND [ARGS]...
+:
+:   Automatically created group to organize subcommands
+:
+:   This is a built in created group. To remove it, simply remove all its subcommands (with `clk command remove SUBCMD`,
+:   or `clk alias unset SUBCMD`). To rename it, simply rename them (with `clk command rename SUBCMD` or `clk alias rename
+:   SUBCMD`)
+:
+: Options:
+:   --help-all  Show the full help message, automatic options included.
+:   --help      Show this message and exit.
+:
+: Commands:
+:   do        Backup documents to external drive
+:   retrieve  Retrieve a file from backup
+:   verify    Verify backup integrity
 
 I can call the backup command directly.
 
@@ -277,6 +279,7 @@ clk backup docs do
 #+END_SRC
 
 #+RESULTS[6ac099e1f8d9a7a71fa425bb837d0c80f99fe4ca]: call-docs-do
+: [35mdeprecated: [0mIn backup.docs.do, O:--source:str:Source directory:~/docs gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{"default": "value"}
 : Backing up documents from ~/docs to /media/external/documents
 
 Or use the subcommands.
@@ -305,7 +308,9 @@ clk flowdep set backup.docs.do backup.database
 #+END_SRC
 
 #+RESULTS[6884ee47aab2752817f5ec08a49fe711cb34a802]: set-flowdep
-: New global flowdep for backup.docs.do: backup.database
+: [35mdeprecated: [0mIn backup.docs.do, O:--source:str:Source directory:~/docs gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{"default": "value"}
+: [35mdeprecated: [0mIn backup.database, O:--db:str:Database name:main.db gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{"default": "value"}
+: New [36mglobal[0m flowdep for backup.docs.do: backup.database
 
 Now when I run ~backup docs do~ with ~--flow~, it first backs up the database.
 
@@ -315,6 +320,8 @@ clk backup docs do --flow
 #+END_SRC
 
 #+RESULTS[ca58910ff31b48f4cc81e37ff83469711e42490f]: run-with-flow
+: [35mdeprecated: [0mIn backup.docs.do, O:--source:str:Source directory:~/docs gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{"default": "value"}
+: [35mdeprecated: [0mIn backup.database, O:--db:str:Database name:main.db gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{"default": "value"}
 : Dumping database main.db to /media/external/documents
 : Backing up documents from ~/docs to /media/external/documents
 
@@ -332,7 +339,7 @@ clk alias set backup.full backup database , backup docs do , backup photos
 #+END_SRC
 
 #+RESULTS[65dfa3e184653b1267c08eb8ef80907551f46357]: create-full-alias
-: New global alias for backup.full: backup database , backup docs do , backup photos
+: New [36mglobal[0m alias for backup.full: backup database , backup docs do , backup photos
 
 #+NAME: run-full-backup
 #+BEGIN_SRC bash :results verbatim :exports both :session f8a2b3c4-d5e6-7890-abcd-ef1234567891 :cache yes
@@ -340,6 +347,9 @@ clk backup full
 #+END_SRC
 
 #+RESULTS[568a73df160aa2a1082c1a3ad8fe20f184154b5b]: run-full-backup
+: [35mdeprecated: [0mIn backup.database, O:--db:str:Database name:main.db gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{"default": "value"}
+: [35mdeprecated: [0mIn backup.docs.do, O:--source:str:Source directory:~/docs gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{"default": "value"}
+: [35mdeprecated: [0mIn backup.photos, O:--quality:str:Compression quality:high gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{"default": "value"}
 : Dumping database main.db to /media/external/documents
 : Backing up documents from ~/docs to /media/external/documents
 : Backing up photos with high quality to /media/external/documents
@@ -358,8 +368,8 @@ clk alias set backup.work backup docs do --source '~/work/documents'
 #+END_SRC
 
 #+RESULTS[d6067778edf44b54be404dd547ae5632568ee655]: create-shortcuts
-: New global alias for backup.quick: backup docs do --source '~/notes'
-: New global alias for backup.work: backup docs do --source '~/work/documents'
+: New [36mglobal[0m alias for backup.quick: backup docs do --source '~/notes'
+: New [36mglobal[0m alias for backup.work: backup docs do --source '~/work/documents'
 
 #+NAME: try-shortcuts
 #+BEGIN_SRC bash :results verbatim :exports both :session f8a2b3c4-d5e6-7890-abcd-ef1234567891 :cache yes
@@ -368,7 +378,11 @@ clk backup work
 #+END_SRC
 
 #+RESULTS[734a48c658572a54c68074500cfb567e1a050798]: try-shortcuts
+: [35mdeprecated: [0mIn backup.docs.do, O:--source:str:Source directory:~/docs gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{"default": "value"}
+: [35mdeprecated: [0mIn backup.database, O:--db:str:Database name:main.db gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{"default": "value"}
 : Backing up documents from ~/notes to /media/external/documents
+: [35mdeprecated: [0mIn backup.docs.do, O:--source:str:Source directory:~/docs gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{"default": "value"}
+: [35mdeprecated: [0mIn backup.database, O:--db:str:Database name:main.db gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{"default": "value"}
 : Backing up documents from ~/work/documents to /media/external/documents
 
 * per-project backup configuration
@@ -395,8 +409,10 @@ clk parameter set backup --dest /mnt/backup/project-a
 #+END_SRC
 
 #+RESULTS[518b8bda1205e6df5385106c56757cb83f291133]: set-project-a-params
-: New local parameters for backup.docs.do: --source ./documentation
-: New local parameters for backup: --dest /mnt/backup/project-a
+: [35mdeprecated: [0mIn backup.docs.do, O:--source:str:Source directory:~/docs gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{"default": "value"}
+: [35mdeprecated: [0mIn backup.database, O:--db:str:Database name:main.db gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{"default": "value"}
+: New [32mlocal[0m parameters for backup.docs.do: --source ./documentation
+: New [32mlocal[0m parameters for backup: --dest /mnt/backup/project-a
 
 #+NAME: run-in-project-a
 #+BEGIN_SRC bash :results verbatim :exports both :session f8a2b3c4-d5e6-7890-abcd-ef1234567891 :cache yes
@@ -404,6 +420,8 @@ clk backup docs do
 #+END_SRC
 
 #+RESULTS[6ac099e1f8d9a7a71fa425bb837d0c80f99fe4ca]: run-in-project-a
+: [35mdeprecated: [0mIn backup.docs.do, O:--source:str:Source directory:~/docs gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{"default": "value"}
+: [35mdeprecated: [0mIn backup.database, O:--db:str:Database name:main.db gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{"default": "value"}
 : Backing up documents from ./documentation to /mnt/backup/project-a
 
 When I leave the project, global settings take over.
@@ -415,6 +433,8 @@ clk backup docs do
 #+END_SRC
 
 #+RESULTS[9569ad32ff5d8cf776686c91ebf0dcb8f9713495]: leave-project
+: [35mdeprecated: [0mIn backup.docs.do, O:--source:str:Source directory:~/docs gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{"default": "value"}
+: [35mdeprecated: [0mIn backup.database, O:--db:str:Database name:main.db gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{"default": "value"}
 : Backing up documents from ~/docs to /media/external/documents
 
 * personal preferences with a hostname extension
@@ -439,7 +459,7 @@ clk parameter --extension "$(hostname)" set backup --dest /mnt/my-nas/documents
 #+END_SRC
 
 #+RESULTS[f0a06af9ce66159b816a933612addfc9e74ce7a5]: set-hostname-params
-: New global/myhostname parameters for backup: --dest /mnt/my-nas/documents
+: New [36m[1mglobal/myhostname[0m parameters for backup: --dest /mnt/my-nas/documents
 
 
 Outside any project, the extension's destination is used.
@@ -450,6 +470,8 @@ clk backup docs do
 #+END_SRC
 
 #+RESULTS[6ac099e1f8d9a7a71fa425bb837d0c80f99fe4ca]: run-with-hostname
+: [35mdeprecated: [0mIn backup.docs.do, O:--source:str:Source directory:~/docs gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{"default": "value"}
+: [35mdeprecated: [0mIn backup.database, O:--db:str:Database name:main.db gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{"default": "value"}
 : Backing up documents from ~/docs to /mnt/my-nas/documents
 
 Inside a project that defines its own ~--dest~, the project-local parameters
@@ -467,6 +489,8 @@ clk backup docs do
 #+END_SRC
 
 #+RESULTS[6ac099e1f8d9a7a71fa425bb837d0c80f99fe4ca]: run-in-project-a-hostname
+: [35mdeprecated: [0mIn backup.docs.do, O:--source:str:Source directory:~/docs gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{"default": "value"}
+: [35mdeprecated: [0mIn backup.database, O:--db:str:Database name:main.db gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{"default": "value"}
 : Backing up documents from ./documentation to /mnt/backup/project-a
 
 Note that clk will always enable the extension matching your hostname, even if
@@ -486,6 +510,8 @@ clk backup docs do
 #+END_SRC
 
 #+RESULTS[c2de72eb8e0154d3db842611d2ee221e7f6b3636]: try-disable-hostname
+: [35mdeprecated: [0mIn backup.docs.do, O:--source:str:Source directory:~/docs gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{"default": "value"}
+: [35mdeprecated: [0mIn backup.database, O:--db:str:Database name:main.db gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{"default": "value"}
 : Backing up documents from ~/docs to /mnt/my-nas/documents
 
 Even after disabling, the hostname extension remains active and its parameters
@@ -510,29 +536,30 @@ clk backup --help
 #+END_SRC
 
 #+RESULTS[c68e489e34c5f4a54025f419fd5515006eeddcff]: final-help
-#+begin_example
-Usage: clk backup [OPTIONS] COMMAND [ARGS]...
-
-  Backup operations
-
-  The current parameters set for this command are: --dest /media/external/documents
-
-  Edit this custom command by running `clk command edit backup`
-  Or edit ./clk-root/python/backup.py directly.
-
-Options:
-  --dest TEXT  Backup destination base directory  [default: /mnt/backup]
-  --help-all   Show the full help message, automatic options included.
-  --help       Show this message and exit.
-
-Commands:
-  database  Backup database
-  docs      Automatically created group to organize subcommands
-  full      Alias for: backup database , backup docs do , backup...
-  photos    Backup photos
-  quick     Alias for: backup docs do --source '~/notes'
-  work      Alias for: backup docs do --source '~/work/documents'
-#+end_example
+: [35mdeprecated: [0mIn backup.database, O:--db:str:Database name:main.db gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{"default": "value"}
+: [35mdeprecated: [0mIn backup.docs.do, O:--source:str:Source directory:~/docs gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{"default": "value"}
+: [35mdeprecated: [0mIn backup.photos, O:--quality:str:Compression quality:high gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{"default": "value"}
+: Usage: clk backup [OPTIONS] COMMAND [ARGS]...
+:
+:   Backup operations
+:
+:   The current parameters set for this command are: --dest /media/external/documents
+:
+:   Edit this custom command by running `clk command edit backup`
+:   Or edit ./clk-root/python/backup.py directly.
+:
+: Options:
+:   --dest TEXT  Backup destination base directory  [default: /mnt/backup]
+:   --help-all   Show the full help message, automatic options included.
+:   --help       Show this message and exit.
+:
+: Commands:
+:   database  Backup database
+:   docs      Automatically created group to organize subcommands
+:   full      Alias for: backup database , backup docs do , backup...
+:   photos    Backup photos
+:   quick     Alias for: backup docs do --source '~/notes'
+:   work      Alias for: backup docs do --source '~/work/documents'
 
 This gives me a complete overview: the core commands (~database~, ~docs~,
 ~photos~), the convenience aliases (~full~, ~quick~, ~work~), and I can drill

@@ -119,9 +119,11 @@ clk extension disable k8s
 clk k8s run-dev-env --flow
 ```
 
-    warning: Failed to get the command k8s: Command k8s not found
-    Usage: clk [OPTIONS] [COMMAND] [ARGS]...
-    error: No such command 'k8s'.
+<pre>
+<span style="color:olive;">warning: </span>Failed to get the command k8s: Command k8s not found
+Usage: clk [OPTIONS] [COMMAND] [ARGS]...
+error: No such command 'k8s'.
+</pre>
 
 While it is disabled, you can still call it for one command line, without changing your mind about it.
 
@@ -154,9 +156,11 @@ The other way round works too, to leave it out of a single command line.
 clk --without-extension k8s k8s run-dev-env --flow
 ```
 
-    warning: Failed to get the command k8s: Command k8s not found
-    Usage: clk [OPTIONS] [COMMAND] [ARGS]...
-    error: No such command 'k8s'.
+<pre>
+<span style="color:olive;">warning: </span>Failed to get the command k8s: Command k8s not found
+Usage: clk [OPTIONS] [COMMAND] [ARGS]...
+error: No such command 'k8s'.
+</pre>
 
 Each profile decides for itself whether an extension is enabled. Say you work on a project that has nothing to do with kubernetes: you can disable k8s there, and it remains available everywhere else.
 
@@ -272,7 +276,9 @@ So far that extension is yours alone. There is nowhere to pull it from, and clk 
 clk extension update k8s 2>&1 | tail -1
 ```
 
-    warning: I cannot update the extension global/k8s. For the time being, I only can update cloned extensions.
+<pre>
+<span style="color:olive;">warning: </span>I cannot update the extension global/k8s. For the time being, I only can update cloned extensions.
+</pre>
 
 In case you lost that extension folder and want to find it again, simply run.
 
@@ -403,7 +409,9 @@ Update now and clk says where you are before pulling, putting your work aside wh
 clk extension update k8s --stash 2>&1 | head -1
 ```
 
-    warning: I will update global/k8s on branch bigger-cluster. It does not look like a main branch name. To get back to the main branch, consider calling `clk extension update global/k8s --branch main` (or master).
+<pre>
+<span style="color:olive;">warning: </span>I will update global/k8s on branch bigger-cluster. It does not look like a main branch name. To get back to the main branch, consider calling `clk extension update global/k8s --branch main` (or master).
+</pre>
 
 
 <a id="b7bcef53-dd68-4660-9c5c-d9aa029d1a72"></a>
@@ -425,31 +433,29 @@ clk extension install https://github.com/clk-project/clk_extension_hello > /dev/
 clk hello
 ```
 
-```
-_____
-| hello |
-  =====
-       \
-        \
-         \
-          \
-                                / \\  //\\
-                 |\\___/|      /   \\//  \\\\
-                 /0  0  \\__  /    //  | \\ \\
-                /     /  \\/_/    //   |  \\  \\
-                \@_^_\@'/   \\/_   //    |   \\   \\
-                //_^_/     \\/_ //     |    \\    \\
-             ( //) |        \\///      |     \\     \\
-           ( / /) _|_ /   )  //       |      \\     _\\
-         ( // /) '/,_ _ _/  ( ; -.    |    _ _\\.-~        .-~~~^-.
-       (( / / )) ,-{        _      `-.|.-~-.           .~         `.
-      (( // / ))  '/\\      /                 ~-. _ .-~      .-~^-.  \\
-      (( /// ))      `.   {            }                   /      \\  \\
-       (( / ))     .----~-.\\        \\-'                 .~         \\  `. \\^-.
-                  ///.----..>        \\             _ -~             `.  ^-`  ^-_
-                    ///-._ _ _ _ _ _ _}^ - - - - ~                     ~-- ,.-~
-                                                                       /.-~
-```
+      _____
+    | hello |
+      =====
+           \
+            \
+             \
+              \
+                                    / \\  //\\
+                     |\\___/|      /   \\//  \\\\
+                     /0  0  \\__  /    //  | \\ \\
+                    /     /  \\/_/    //   |  \\  \\
+                    \@_^_\@'/   \\/_   //    |   \\   \\
+                    //_^_/     \\/_ //     |    \\    \\
+                 ( //) |        \\///      |     \\     \\
+               ( / /) _|_ /   )  //       |      \\     _\\
+             ( // /) '/,_ _ _/  ( ; -.    |    _ _\\.-~        .-~~~^-.
+           (( / / )) ,-{        _      `-.|.-~-.           .~         `.
+          (( // / ))  '/\\      /                 ~-. _ .-~      .-~^-.  \\
+          (( /// ))      `.   {            }                   /      \\  \\
+           (( / ))     .----~-.\\        \\-'                 .~         \\  `. \\^-.
+                      ///.----..>        \\             _ -~             `.  ^-`  ^-_
+                        ///-._ _ _ _ _ _ _}^ - - - - ~                     ~-- ,.-~
+                                                                           /.-~
 
 An extension you did not write yourself leaves you wondering what is in it. `clk extension describe` answers that.
 
@@ -473,14 +479,16 @@ clk extension remove hello
 clk hello
 ```
 
-    warning: Failed to get the command hello: Command hello not found
-    Usage: clk [OPTIONS] [COMMAND] [ARGS]...
-    error: No such command 'hello'.
-    error:
-    error: Did you mean one of these?
-    error:     help
-    error:     deploy
-    error:     log
+<pre>
+<span style="color:olive;">warning: </span>Failed to get the command hello: Command hello not found
+Usage: clk [OPTIONS] [COMMAND] [ARGS]...
+error: No such command 'hello'.
+error:
+error: Did you mean one of these?
+error:     help
+error:     deploy
+error:     log
+</pre>
 
 Because it is hosted on github, this should do as well to install it.
 
@@ -489,31 +497,29 @@ clk extension install clk-project/hello > /dev/null 2>&1
 clk hello
 ```
 
-```
-_____
-| hello |
-  =====
-       \
-        \
-         \
-          \
-                                / \\  //\\
-                 |\\___/|      /   \\//  \\\\
-                 /0  0  \\__  /    //  | \\ \\
-                /     /  \\/_/    //   |  \\  \\
-                \@_^_\@'/   \\/_   //    |   \\   \\
-                //_^_/     \\/_ //     |    \\    \\
-             ( //) |        \\///      |     \\     \\
-           ( / /) _|_ /   )  //       |      \\     _\\
-         ( // /) '/,_ _ _/  ( ; -.    |    _ _\\.-~        .-~~~^-.
-       (( / / )) ,-{        _      `-.|.-~-.           .~         `.
-      (( // / ))  '/\\      /                 ~-. _ .-~      .-~^-.  \\
-      (( /// ))      `.   {            }                   /      \\  \\
-       (( / ))     .----~-.\\        \\-'                 .~         \\  `. \\^-.
-                  ///.----..>        \\             _ -~             `.  ^-`  ^-_
-                    ///-._ _ _ _ _ _ _}^ - - - - ~                     ~-- ,.-~
-                                                                       /.-~
-```
+      _____
+    | hello |
+      =====
+           \
+            \
+             \
+              \
+                                    / \\  //\\
+                     |\\___/|      /   \\//  \\\\
+                     /0  0  \\__  /    //  | \\ \\
+                    /     /  \\/_/    //   |  \\  \\
+                    \@_^_\@'/   \\/_   //    |   \\   \\
+                    //_^_/     \\/_ //     |    \\    \\
+                 ( //) |        \\///      |     \\     \\
+               ( / /) _|_ /   )  //       |      \\     _\\
+             ( // /) '/,_ _ _/  ( ; -.    |    _ _\\.-~        .-~~~^-.
+           (( / / )) ,-{        _      `-.|.-~-.           .~         `.
+          (( // / ))  '/\\      /                 ~-. _ .-~      .-~^-.  \\
+          (( /// ))      `.   {            }                   /      \\  \\
+           (( / ))     .----~-.\\        \\-'                 .~         \\  `. \\^-.
+                      ///.----..>        \\             _ -~             `.  ^-`  ^-_
+                        ///-._ _ _ _ _ _ _}^ - - - - ~                     ~-- ,.-~
+                                                                           /.-~
 
 And because this is also a clk provided extension, the name is enough.
 
@@ -523,31 +529,29 @@ clk extension install hello > /dev/null 2>&1
 clk hello
 ```
 
-```
-_____
-| hello |
-  =====
-       \
-        \
-         \
-          \
-                                / \\  //\\
-                 |\\___/|      /   \\//  \\\\
-                 /0  0  \\__  /    //  | \\ \\
-                /     /  \\/_/    //   |  \\  \\
-                \@_^_\@'/   \\/_   //    |   \\   \\
-                //_^_/     \\/_ //     |    \\    \\
-             ( //) |        \\///      |     \\     \\
-           ( / /) _|_ /   )  //       |      \\     _\\
-         ( // /) '/,_ _ _/  ( ; -.    |    _ _\\.-~        .-~~~^-.
-       (( / / )) ,-{        _      `-.|.-~-.           .~         `.
-      (( // / ))  '/\\      /                 ~-. _ .-~      .-~^-.  \\
-      (( /// ))      `.   {            }                   /      \\  \\
-       (( / ))     .----~-.\\        \\-'                 .~         \\  `. \\^-.
-                  ///.----..>        \\             _ -~             `.  ^-`  ^-_
-                    ///-._ _ _ _ _ _ _}^ - - - - ~                     ~-- ,.-~
-                                                                       /.-~
-```
+      _____
+    | hello |
+      =====
+           \
+            \
+             \
+              \
+                                    / \\  //\\
+                     |\\___/|      /   \\//  \\\\
+                     /0  0  \\__  /    //  | \\ \\
+                    /     /  \\/_/    //   |  \\  \\
+                    \@_^_\@'/   \\/_   //    |   \\   \\
+                    //_^_/     \\/_ //     |    \\    \\
+                 ( //) |        \\///      |     \\     \\
+               ( / /) _|_ /   )  //       |      \\     _\\
+             ( // /) '/,_ _ _/  ( ; -.    |    _ _\\.-~        .-~~~^-.
+           (( / / )) ,-{        _      `-.|.-~-.           .~         `.
+          (( // / ))  '/\\      /                 ~-. _ .-~      .-~^-.  \\
+          (( /// ))      `.   {            }                   /      \\  \\
+           (( / ))     .----~-.\\        \\-'                 .~         \\  `. \\^-.
+                      ///.----..>        \\             _ -~             `.  ^-`  ^-_
+                        ///-._ _ _ _ _ _ _}^ - - - - ~                     ~-- ,.-~
+                                                                           /.-~
 
 
 <a id="795e915b-29f5-4fbc-a8d9-480a094d3e37"></a>
@@ -694,8 +698,10 @@ Now ask about a cluster the program cannot reach.
 clk check-cluster other 2>&1
 ```
 
-    trouble reaching other
-    error: bash -c 'echo trouble reaching $1 >&2 ; test $1 = main || exit 4 ; echo ok' -- other exited with 4
+<pre>
+trouble reaching other
+<span style="color:red;">error: </span>bash -c 'echo trouble reaching $1 &gt;&amp;2 ; test $1 = main || exit 4 ; echo ok' -- other exited with 4
+</pre>
 
 Ask quietly and it fails just the same.
 
@@ -703,8 +709,10 @@ Ask quietly and it fails just the same.
 clk check-cluster --quiet other 2>&1
 ```
 
-    error: bash -c 'echo trouble reaching $1 >&2 ; test $1 = main || exit 4 ; echo ok' -- other exited with 4, saying:
-    error: trouble reaching other
+<pre>
+<span style="color:red;">error: </span>bash -c 'echo trouble reaching $1 &gt;&amp;2 ; test $1 = main || exit 4 ; echo ok' -- other exited with 4, saying:
+<span style="color:red;">error: </span>trouble reaching other
+</pre>
 
 Of course, you can use `--timeout` as well.
 
@@ -729,8 +737,10 @@ def watch_cluster(timeout):
 clk watch-cluster --timeout 1 2>&1
 ```
 
-    error: bash -c 'sleep 600' did not finish in 1s
-    giving up, the cluster is not answering
+<pre>
+<span style="color:red;">error: </span>bash -c 'sleep 600' did not finish in 1s
+giving up, the cluster is not answering
+</pre>
 
 
 <a id="1a2b3c4d-5678-90ab-cdef-abcdef012345"></a>
@@ -747,7 +757,9 @@ clk extension create "my-host.[example].com"
 clk extension | grep "my-host.\[example\].com"
 ```
 
-    my-host.[example].com  Unset            global
+<pre>
+<span style="color:green;">my-host.[example].com</span>  Unset            <span style="color:teal;">global</span>
+</pre>
 
 Note that clk will always enable the extension matching your hostname, even if you explicitly disable it in a project. This is practical to put personal preference in shared project without disturbing the colleagues.
 
@@ -769,9 +781,13 @@ clk command create --extension kube bash run-cluster --description "Run the clus
 clk extension show kube
 ```
 
-    extension    configuration    installation
-    -----------  ---------------  --------------
-    kube         Unset            local
+<pre>
+extension    configuration    installation
+-----------  ---------------  --------------
+<span style="color:green;">kube</span>         Unset            <span style="color:green;">local</span>
+-------------
+Legend: <span style="color:green;">local</span>
+</pre>
 
 `clk extension rename` gives it the name you would have chosen with more time.
 
@@ -780,9 +796,13 @@ clk extension rename kube kubernetes
 clk extension show kubernetes
 ```
 
-    extension    configuration    installation
-    -----------  ---------------  --------------
-    kubernetes   Unset            local
+<pre>
+extension    configuration    installation
+-----------  ---------------  --------------
+<span style="color:green;">kubernetes</span>   Unset            <span style="color:green;">local</span>
+-------------
+Legend: <span style="color:green;">local</span>
+</pre>
 
 And `clk extension move` carries it out of the project, so that it answers everywhere.
 
@@ -791,9 +811,13 @@ clk extension move kubernetes global
 clk extension show kubernetes
 ```
 
-    extension    configuration    installation
-    -----------  ---------------  --------------
-    kubernetes   Unset            global
+<pre>
+extension    configuration    installation
+-----------  ---------------  --------------
+<span style="color:green;">kubernetes</span>   Unset            <span style="color:teal;">global</span>
+--------------
+Legend: <span style="color:teal;">global</span>
+</pre>
 
 ```bash
 cd ..

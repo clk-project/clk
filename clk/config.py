@@ -114,6 +114,7 @@ class Config:
         self._project = None
         self.alt_style = None
         self.reproducible_output = False
+        self.force_color = False
         self.no_parameter = False
         self.persist_migration = False
         # environment values

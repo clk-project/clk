@@ -97,8 +97,10 @@ clk alias set eth.get-address exec cat contract-address.txt
 clk eth get-address
 ```
 
-    New global alias for eth.get-address: exec cat contract-address.txt
-    223632c428784fecaaa3e2a6aaaf6d8e
+<pre>
+New <span style="color:teal;">global</span> alias for eth.get-address: exec cat contract-address.txt
+223632c428784fecaaa3e2a6aaaf6d8e
+</pre>
 
 Now, let's use a call to this command instead of hardcoding `0xdeadbeef`.
 
@@ -140,13 +142,15 @@ clk eth deploy
 clk eth mycontract call dosomething
 ```
 
-    Removing global alias of eth.mycontract: eth contract --abi-path some.json --address 'eval:clk eth get-address'
-    New global alias for eth.mycontract: eth contract --abi-path some.json --address 'eval(60):clk eth get-address'
-    I would discuss with the contract whose address is 47156ddb404b893cbbe9c85509710f64 and abi path is some.json
-    I would call the function dosomething
-    Contract deployed at address: ed5b4c043e36c30f31a158e8bda16e2b
-    I would discuss with the contract whose address is 47156ddb404b893cbbe9c85509710f64 and abi path is some.json
-    I would call the function dosomething
+<pre>
+Removing <span style="color:teal;">global</span> alias of eth.mycontract: eth contract --abi-path some.json --address 'eval:clk eth get-address'
+New <span style="color:teal;">global</span> alias for eth.mycontract: eth contract --abi-path some.json --address 'eval(60):clk eth get-address'
+I would discuss with the contract whose address is 47156ddb404b893cbbe9c85509710f64 and abi path is some.json
+I would call the function dosomething
+Contract deployed at address: ed5b4c043e36c30f31a158e8bda16e2b
+I would discuss with the contract whose address is 47156ddb404b893cbbe9c85509710f64 and abi path is some.json
+I would call the function dosomething
+</pre>
 
 As you can see, even though we create a new contract, the command still use the last address. This is expected, as its result is cached for 60 seconds.
 
@@ -188,7 +192,9 @@ Then, let's create the command again, using the shortcut `project:`.
 clk alias set eth.mycontract eth contract --abi-path noeval:project:some.json --address "noeval:eval:clk eth get-address"
 ```
 
-    New local alias for eth.mycontract: eth contract --abi-path project:some.json --address 'eval:clk eth get-address'
+<pre>
+New <span style="color:green;">local</span> alias for eth.mycontract: eth contract --abi-path project:some.json --address 'eval:clk eth get-address'
+</pre>
 
 Similarly to the `--address` option, we need to prepend it with `noeval:`, or the alias would be defined with the absolute location of the file instead of the instruction to evaluate it when run.
 

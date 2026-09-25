@@ -56,7 +56,7 @@ like this.
 #+END_SRC
 
 #+RESULTS[b647c2a71f82abeed6340d9486c5c23e9c81bf75]: create
-: New global alias for music.play: exec mpc play --random --use-speakers --replaygain
+: New [36mglobal[0m alias for music.play: exec mpc play --random --use-speakers --replaygain
 
 
 Then, we can simple call this command.
@@ -83,7 +83,7 @@ clk music play MyAlbum
 #+END_SRC
 
 #+RESULTS[878efeb6fda1602dbdb5296cb1a67cfa8adb7c78]: use_parameters
-: New global parameters for music.play: --repeat
+: New [36mglobal[0m parameters for music.play: --repeat
 : Running mpc with: play --random --use-speakers --replaygain --repeat MyAlbum
 
 Of course, ~--set-parameter~ provides completion for the profile name. Here,
@@ -125,8 +125,8 @@ We could do this with a more complicated alias.
 #+END_SRC
 
 #+RESULTS[f006cf9ec91386ec657cccf56629f0a2b23f94a7]: more_complicated_alias
-: Removing global alias of music.play: exec mpc play --random --use-speakers --replaygain
-: New global alias for music.play: exec mpc start-server , exec mpc play --random --use-speakers --replaygain
+: Removing [36mglobal[0m alias of music.play: exec mpc play --random --use-speakers --replaygain
+: New [36mglobal[0m alias for music.play: exec mpc start-server , exec mpc play --random --use-speakers --replaygain
 : Running mpc with: start-server
 : Running mpc with: play --random --use-speakers --replaygain --repeat MyAlbum
 
@@ -141,7 +141,9 @@ clk alias show music.play
 #+END_SRC
 
 #+RESULTS[ec752b2d64d3875b3cd1344259fc4b3c49233e01]: show-alias
-: music.play exec mpc start-server, exec mpc play --random --use-speakers --replaygain
+: music.play [2m[36m[2mexec mpc start-server, exec mpc play --random --use-speakers --replaygain[0m[0m
+: [2m--------------[0m
+: Legend: [36m[2mglobal[0m
 
 Note that showing the help of the command also gives that information.
 
@@ -160,6 +162,7 @@ clk music play --help|head -10
 :   Edit this alias by running `clk alias edit music.play`
 :   Or adjust this command `clk alias set music.play exec mpc start-server , exec mpc play --random --use-speakers
 :   --replaygain`
+:
 
 
 Let's take that first advice and add the step that waits for the server.
@@ -211,7 +214,7 @@ clk command create bash --replace-alias music.play
 #+END_SRC
 
 #+RESULTS[5faaca627fd5783bd0facfee4ad8845a696ab9c9]: bootstrap
-: Erasing music.play alias from global settings
+: Erasing music.play alias from [36mglobal[0m settings
 
 This command tries hard to have the same behavior as its original alias.
 
@@ -248,18 +251,16 @@ clk music play --help|head -10
 #+END_SRC
 
 #+RESULTS[da13213a5b95d29790482b257f938028808294d4]: help
-#+begin_example
-Usage: clk music play [OPTIONS] [ARGS]...
-
-  Description Converted from the alias music.play
-
-  The current parameters set for this command are: --repeat
-
-  Edit this external command by running `clk command edit music.play`
-  Or edit ./clk-root/bin/music.play directly.
-
-Positional arguments:
-#+end_example
+: Usage: clk music play [OPTIONS] [ARGS]...
+:
+:   Description Converted from the alias music.play
+:
+:   The current parameters set for this command are: --repeat
+:
+:   Edit this external command by running `clk command edit music.play`
+:   Or edit ./clk-root/bin/music.play directly.
+:
+: Positional arguments:
 
 * saying what the command takes
   :PROPERTIES:
@@ -335,7 +336,7 @@ clk music loud Kind-of-Blue
 #+END_SRC
 
 #+RESULTS[]: music-loud
-: New global alias for music.loud: exec mpc volume 100 , music play
+: New [36mglobal[0m alias for music.loud: exec mpc volume 100 , music play
 : Running mpc with: volume 100
 : Running mpc with: start-server
 : Running mpc with: wait-for-server
@@ -362,7 +363,7 @@ clk music loud Bitches-Brew
 #+END_SRC
 
 #+RESULTS[]: convert-music-loud
-: Erasing music.loud alias from global settings
+: Erasing music.loud alias from [36mglobal[0m settings
 : Running mpc with: volume 100
 : Running mpc with: start-server
 : Running mpc with: wait-for-server
@@ -451,11 +452,11 @@ clk music play Kind-of-Blue 2>&1
 #+END_SRC
 
 #+RESULTS[]: migrate
-: warning: Profile in ./clk-root is obsolete. It has the version 8 and current version is 9. Migration started.
-: warning: Renaming music.shuffle.py into music.shuffle, so that it answers to music shuffle
-: warning: music.volume.py keeps its suffix, music.volume is taken
-: warning: music.volume@py names a script with the @ of an older clk, and nothing answers to it anymore
-: warning: mixer.py uses DynamicConfigBase, which is gone: expose_class does the same
+: [33mwarning: [0mProfile in ./clk-root is obsolete. It has the version 8 and current version is 9. Migration started.
+: [33mwarning: [0mRenaming music.shuffle.py into music.shuffle, so that it answers to music shuffle
+: [33mwarning: [0mmusic.volume.py keeps its suffix, music.volume is taken
+: [33mwarning: [0mmusic.volume@py names a script with the @ of an older clk, and nothing answers to it anymore
+: [33mwarning: [0mmixer.py uses DynamicConfigBase, which is gone: expose_class does the same
 : Running mpc with: start-server
 : Running mpc with: wait-for-server
 : Running mpc with: play --random --use-speakers --replaygain --repeat Kind-of-Blue
@@ -469,9 +470,11 @@ clk parameter show music.shuffle
 #+END_SRC
 
 #+RESULTS[]: shuffle-after
-: warning: The command 'music.shuffle' has no documentation
+: [33mwarning: [0mThe command 'music.shuffle' has no documentation
 : shuffling
-: music.shuffle --seed 42
+: music.shuffle [2m[36m[2m--seed 42[0m[0m
+: [2m--------------[0m
+: Legend: [36m[2mglobal[0m
 
 #+BEGIN_SRC bash :exports none :tangle ../../tests/use_cases/controlling_my_music.sh :noweb yes :shebang "#!/usr/bin/env bash"
   set -eu

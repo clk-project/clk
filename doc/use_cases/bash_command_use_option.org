@@ -97,7 +97,7 @@ clk animal --help-all | grep -- '--in-project / --no-in-project'
 #+END_SRC
 
 #+RESULTS[1b109e357a17f8adc06b428cb98d37f5dbe4a845]: see-help-all
-: --in-project / --no-in-project  Run the command in the project directory  [default: no-in-project]
+:   --in-project / --no-in-project  Run the command in the project directory  [default: no-in-project]
 
 #+name: check
 #+BEGIN_SRC bash :results none :exports none :session 100aa89b-f320-46ee-9d5d-2193ef48d4eb

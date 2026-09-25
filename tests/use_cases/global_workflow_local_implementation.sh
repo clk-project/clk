@@ -11,7 +11,7 @@ create-global-test_code () {
 create-global-test_expected () {
       local expected
       expected="$(cat<<"EOEXPECTED"
-New global alias for test: echo 'No tests configured' , exec false
+New [36mglobal[0m alias for test: echo 'No tests configured' , exec false
 EOEXPECTED
 )"
       # org says nil where the block said nothing
@@ -23,7 +23,8 @@ echo 'Run create-global-test'
 { create-global-test_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/create-global-test"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/create-global-test"
 else
     create-global-test_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -41,7 +42,7 @@ create-test-n-push_code () {
 create-test-n-push_expected () {
       local expected
       expected="$(cat<<"EOEXPECTED"
-New global alias for test-n-push: test , echo 'git push'
+New [36mglobal[0m alias for test-n-push: test , echo 'git push'
 EOEXPECTED
 )"
       # org says nil where the block said nothing
@@ -53,7 +54,8 @@ echo 'Run create-test-n-push'
 { create-test-n-push_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/create-test-n-push"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/create-test-n-push"
 else
     create-test-n-push_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -83,7 +85,8 @@ echo 'Run run-test-n-push-global'
 { run-test-n-push-global_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/run-test-n-push-global"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/run-test-n-push-global"
 else
     run-test-n-push-global_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -122,7 +125,8 @@ echo 'Run run-test-n-push-local'
 { run-test-n-push-local_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/run-test-n-push-local"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/run-test-n-push-local"
 else
     run-test-n-push-local_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -153,7 +157,8 @@ echo 'Run leave-project'
 { leave-project_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/leave-project"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/leave-project"
 else
     leave-project_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -173,7 +178,7 @@ create-local-alias_code () {
 create-local-alias_expected () {
       local expected
       expected="$(cat<<"EOEXPECTED"
-New local alias for deploy: echo 'Deploying to production...'
+New [32mlocal[0m alias for deploy: echo 'Deploying to production...'
 EOEXPECTED
 )"
       # org says nil where the block said nothing
@@ -185,7 +190,8 @@ echo 'Run create-local-alias'
 { create-local-alias_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/create-local-alias"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/create-local-alias"
 else
     create-local-alias_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -215,7 +221,8 @@ echo 'Run run-deploy'
 { run-deploy_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/run-deploy"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/run-deploy"
 else
     run-deploy_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -234,7 +241,7 @@ deploy-outside_code () {
 deploy-outside_expected () {
       local expected
       expected="$(cat<<"EOEXPECTED"
-warning: Failed to get the command deploy: Command deploy not found
+[33mwarning: [0mFailed to get the command deploy: Command deploy not found
 Usage: clk [OPTIONS] [COMMAND] [ARGS]...
 error: No such command 'deploy'.
 EOEXPECTED
@@ -248,7 +255,8 @@ echo 'Run deploy-outside'
 { deploy-outside_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/deploy-outside"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/deploy-outside"
 else
     deploy-outside_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {

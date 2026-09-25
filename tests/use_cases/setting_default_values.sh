@@ -14,10 +14,10 @@ set-parameters-verbose_code () {
 set-parameters-verbose_expected () {
       local expected
       expected="$(cat<<"EOEXPECTED"
-New global parameters for alias.show: --no-color
-New global parameters for parameter.show: --no-color
-New global parameters for value.show: --no-color
-New global parameters for extension.show: --no-color
+New [36mglobal[0m parameters for alias.show: --no-color
+New [36mglobal[0m parameters for parameter.show: --no-color
+New [36mglobal[0m parameters for value.show: --no-color
+New [36mglobal[0m parameters for extension.show: --no-color
 EOEXPECTED
 )"
       # org says nil where the block said nothing
@@ -29,7 +29,8 @@ echo 'Run set-parameters-verbose'
 { set-parameters-verbose_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/set-parameters-verbose"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/set-parameters-verbose"
 else
     set-parameters-verbose_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -57,7 +58,7 @@ show-help-color_code () {
 show-help-color_expected () {
       local expected
       expected="$(cat<<"EOEXPECTED"
---color / --no-color            Show profiles in color  [default: no-color]
+  --color / --no-color            Show profiles in color  [default: no-color]
 EOEXPECTED
 )"
       # org says nil where the block said nothing
@@ -69,7 +70,8 @@ echo 'Run show-help-color'
 { show-help-color_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/show-help-color"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/show-help-color"
 else
     show-help-color_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -101,7 +103,8 @@ echo 'Run set-other-values'
 { set-other-values_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/set-other-values"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/set-other-values"
 else
     set-other-values_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -132,7 +135,8 @@ echo 'Run set-default-option'
 { set-default-option_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/set-default-option"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/set-default-option"
 else
     set-default-option_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -177,7 +181,7 @@ show-custom-help_code () {
 show-custom-help_expected () {
       local expected
       expected="$(cat<<"EOEXPECTED"
---color / --no-color  Show output in color  [default: no-color]
+  --color / --no-color  Show output in color  [default: no-color]
 EOEXPECTED
 )"
       # org says nil where the block said nothing
@@ -189,7 +193,8 @@ echo 'Run show-custom-help'
 { show-custom-help_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/show-custom-help"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/show-custom-help"
 else
     show-custom-help_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -209,8 +214,8 @@ change-value-true_code () {
 change-value-true_expected () {
       local expected
       expected="$(cat<<"EOEXPECTED"
---color / --no-color  Show output in color  [default: color]
---color / --no-color            Show profiles in color  [default: color]
+  --color / --no-color  Show output in color  [default: color]
+  --color / --no-color            Show profiles in color  [default: color]
 EOEXPECTED
 )"
       # org says nil where the block said nothing
@@ -222,7 +227,8 @@ echo 'Run change-value-true'
 { change-value-true_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/change-value-true"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/change-value-true"
 else
     change-value-true_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -257,7 +263,8 @@ echo 'Run unset-value'
 { unset-value_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/unset-value"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/unset-value"
 else
     unset-value_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {

@@ -42,24 +42,22 @@ clk command create --help
 #+END_SRC
 
 #+RESULTS[]: help-create
-#+begin_example
-Usage: clk command create [OPTIONS] COMMAND [ARGS]...
-
-  Create custom commands directly from the command line.
-
-  This is a built-in command.
-
-Options:
-  --help-all             Show the full help message, automatic options included.
-  --extension EXTENSION  Use this extension
-  --context              Guess the profile
-  --global               Consider only the global profile
-  --help                 Show this message and exit.
-
-Commands:
-  bash    Create a bash custom command
-  python  Create a python custom command
-#+end_example
+: Usage: clk command create [OPTIONS] COMMAND [ARGS]...
+:
+:   Create custom commands directly from the command line.
+:
+:   This is a built-in command.
+:
+: Options:
+:   --help-all             Show the full help message, automatic options included.
+:   --extension EXTENSION  Use this extension
+:   --context              Guess the profile
+:   --global               Consider only the global profile
+:   --help                 Show this message and exit.
+:
+: Commands:
+:   bash    Create a bash custom command
+:   python  Create a python custom command
 
 Let's look at this file together.
 
@@ -69,24 +67,22 @@ cat $(clk command which server.check)
 #+END_SRC
 
 #+RESULTS[]: show_it
-#+begin_example
-#!/usr/bin/env bash
-set -eu
-
-source "_clk.sh"
-
-clk_usage () {
-    cat<<EOF
-$0
-
-Description
---
-
-EOF
-}
-
-clk_help_handler "$@"
-#+end_example
+: #!/usr/bin/env bash
+: set -eu
+:
+: source "_clk.sh"
+:
+: clk_usage () {
+:     cat<<EOF
+: $0
+:
+: Description
+: --
+:
+: EOF
+: }
+:
+: clk_help_handler "$@"
 
 The first part, ~source "_clk.sh"~ loads a few helpers provided by clk to make
 your life easier. Among other things, it contains the glue code to make clk
@@ -110,7 +106,7 @@ clk server check
 #+END_SRC
 
 #+RESULTS[]: try
-: warning: The command 'server.check' has no documentation
+: [33mwarning: [0mThe command 'server.check' has no documentation
 
 * saying what it does
   :PROPERTIES:
@@ -145,18 +141,16 @@ clk server check --help|sed "s|$(pwd)|.|"
 #+END_SRC
 
 #+RESULTS[]: help
-#+begin_example
-Usage: clk server check [OPTIONS]
-
-  Say whether my server answers
-
-  Edit this external command by running `clk command edit server.check`
-  Or edit ./clk-root/bin/server.check directly.
-
-Options:
-  --help-all  Show the full help message, automatic options included.
-  --help      Show this message and exit.
-#+end_example
+: Usage: clk server check [OPTIONS]
+:
+:   Say whether my server answers
+:
+:   Edit this external command by running `clk command edit server.check`
+:   Or edit ./clk-root/bin/server.check directly.
+:
+: Options:
+:   --help-all  Show the full help message, automatic options included.
+:   --help      Show this message and exit.
 
 The last part ~clk_help_handler "$@"~ is the glue code that makes clk parse the
 command line. After this line, you can write the content of your command line.
@@ -274,7 +268,7 @@ clk server logs nowhere 2>&1 || echo $?
 
 #+RESULTS[]: logs-nowhere
 : Failed to get unit: Unit nowhere.service not loaded.
-: error: journalctl --unit nowhere exited with 4
+: [31merror: [0mjournalctl --unit nowhere exited with 4
 : 4
 
 Read in a loop, I'd rather it kept quiet, and ~safe_check_output~ answers the
@@ -349,8 +343,9 @@ sleep 3600
 cat<<EOF > pass.exp
 #!/usr/bin/env -S expect -f
 
-set timeout -1
+set timeout 30
 spawn clk server watch
+expect_after timeout { puts "timed out"; exit 1 }
 match_max 100000
 expect -exact "watching the server\r"
 sleep 0.1
@@ -418,7 +413,7 @@ clk server check myserver 2>&1 | head -1
 #+END_SRC
 
 #+RESULTS[]: run-bad-usage
-: warning: When loading command server.check at path ./clk-root/bin/server.check: Expected format in server.check is A:name:type:help[:{someextrajsondata}], got A:host
+: [33mwarning: [0mWhen loading command server.check at path ./clk-root/bin/server.check: Expected format in server.check is A:name:type:help[:{someextrajsondata}], got A:host
 
 A type and a help later, the host gets through.
 
@@ -449,7 +444,7 @@ clk server check myserver
 #+END_SRC
 
 #+RESULTS[]: run-styled-check
-: no answer from myserver
+: [31m[1mno answer from myserver[0m
 
 I never remember the names of the colours, and tab does.
 
@@ -526,8 +521,8 @@ clk server logs myserver 2>&1
 #+END_SRC
 
 #+RESULTS[]: run-broken-logs
-: error: Found the command server in the resolver customcommand but could not load it.
-: warning: Failed to get the command server: No module named 'thismoduledoesnotexist'
+: [31merror: [0mFound the command server in the resolver customcommand but could not load it.
+: [33mwarning: [0mFailed to get the command server: No module named 'thismoduledoesnotexist'
 : error: clk.server could not be loaded. Re run with clk --develop to see the stacktrace or clk --debug-on-command-load-error to debug the load error
 
 To send that to someone, let's put it in a report file.

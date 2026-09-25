@@ -32,7 +32,6 @@ Options:
   --from-file TEXT     Copy this file instead of using the template
   --help-all           Show the full help message, automatic options included.
   --help               Show this message and exit.
-
 EOEXPECTED
 )"
       # org says nil where the block said nothing
@@ -44,7 +43,8 @@ echo 'Run help-create'
 { help-create_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/help-create"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/help-create"
 else
     help-create_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -105,7 +105,8 @@ echo 'Run show_it'
 { show_it_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/show_it"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/show_it"
 else
     show_it_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -123,7 +124,7 @@ try_code () {
 try_expected () {
       local expected
       expected="$(cat<<"EOEXPECTED"
-warning: The command 'mycommand' has no documentation
+[33mwarning: [0mThe command 'mycommand' has no documentation
 EOEXPECTED
 )"
       # org says nil where the block said nothing
@@ -135,7 +136,8 @@ echo 'Run try'
 { try_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/try"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/try"
 else
     try_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -165,7 +167,6 @@ Usage: clk mycommand [OPTIONS]
 Options:
   --help-all  Show the full help message, automatic options included.
   --help      Show this message and exit.
-
 EOEXPECTED
 )"
       # org says nil where the block said nothing
@@ -177,7 +178,8 @@ echo 'Run help'
 { help_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/help"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/help"
 else
     help_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -220,7 +222,8 @@ echo 'Run use_it'
 { use_it_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/use_it"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/use_it"
 else
     use_it_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -265,7 +268,8 @@ echo 'Run required_arg_error'
 { required_arg_error_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/required_arg_error"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/required_arg_error"
 else
     required_arg_error_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -295,7 +299,8 @@ echo 'Run required_arg_ok'
 { required_arg_ok_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/required_arg_ok"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/required_arg_ok"
 else
     required_arg_ok_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -330,7 +335,7 @@ use_with_options_code () {
 use_with_options_expected () {
       local expected
       expected="$(cat<<"EOEXPECTED"
-warning: The parameter 'greeting' in the command 'mycommand' has no documentation
+[33mwarning: [0mThe parameter 'greeting' in the command 'mycommand' has no documentation
 Hello, world!
 EOEXPECTED
 )"
@@ -343,7 +348,8 @@ echo 'Run use_with_options'
 { use_with_options_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/use_with_options"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/use_with_options"
 else
     use_with_options_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -361,7 +367,7 @@ use_with_options2_code () {
 use_with_options2_expected () {
       local expected
       expected="$(cat<<"EOEXPECTED"
-warning: The parameter 'greeting' in the command 'mycommand' has no documentation
+[33mwarning: [0mThe parameter 'greeting' in the command 'mycommand' has no documentation
 Goodbye, clk!
 EOEXPECTED
 )"
@@ -374,7 +380,8 @@ echo 'Run use_with_options2'
 { use_with_options2_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/use_with_options2"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/use_with_options2"
 else
     use_with_options2_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -392,8 +399,8 @@ use_with_deprecated_options_code () {
 use_with_deprecated_options_expected () {
       local expected
       expected="$(cat<<"EOEXPECTED"
-DeprecationWarning: The option 'use_name' is deprecated. since forever
-warning: The parameter 'greeting' in the command 'mycommand' has no documentation
+[31mDeprecationWarning: The option 'use_name' is deprecated. since forever[0m
+[33mwarning: [0mThe parameter 'greeting' in the command 'mycommand' has no documentation
 Goodbye, world!
 EOEXPECTED
 )"
@@ -406,7 +413,8 @@ echo 'Run use_with_deprecated_options'
 { use_with_deprecated_options_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/use_with_deprecated_options"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/use_with_deprecated_options"
 else
     use_with_deprecated_options_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -436,7 +444,6 @@ Options:
   --use-name TEXT  Name to greet (DEPRECATED: since forever)  [default: world]
   --help-all       Show the full help message, automatic options included.
   --help           Show this message and exit.
-
 EOEXPECTED
 )"
       # org says nil where the block said nothing
@@ -448,7 +455,8 @@ echo 'Run help_without_doc'
 { help_without_doc_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/help_without_doc"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/help_without_doc"
 else
     help_without_doc_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -483,7 +491,8 @@ echo 'Run help_with_doc'
 { help_with_doc_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/help_with_doc"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/help_with_doc"
 else
     help_with_doc_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -519,7 +528,8 @@ echo 'Run try-completion-bad-command'
 { try-completion-bad-command_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/try-completion-bad-command"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/try-completion-bad-command"
 else
     try-completion-bad-command_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -537,8 +547,8 @@ try-bad-command_code () {
 try-bad-command_expected () {
       local expected
       expected="$(cat<<"EOEXPECTED"
-error: Found the command pyenv in the resolver customcommand but could not load it.
-warning: Failed to get the command pyenv: The file ./clk-root/python/pyenv.py must contain a click command or group named pyenv, but found a function instead. Did you forget the @command or @group decorator?
+[31merror: [0mFound the command pyenv in the resolver customcommand but could not load it.
+[33mwarning: [0mFailed to get the command pyenv: The file ./clk-root/python/pyenv.py must contain a click command or group named pyenv, but found a function instead. Did you forget the @command or @group decorator?
 error: clk.pyenv could not be loaded. Re run with clk --develop to see the stacktrace or clk --debug-on-command-load-error to debug the load error
 EOEXPECTED
 )"
@@ -551,7 +561,8 @@ echo 'Run try-bad-command'
 { try-bad-command_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/try-bad-command"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/try-bad-command"
 else
     try-bad-command_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -580,7 +591,8 @@ echo 'Run try-bad-command-develop'
 { try-bad-command-develop_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/try-bad-command-develop"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/try-bad-command-develop"
 else
     try-bad-command-develop_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -610,7 +622,8 @@ echo 'Run try-completion-bad-command-options'
 { try-completion-bad-command-options_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/try-completion-bad-command-options"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/try-completion-bad-command-options"
 else
     try-completion-bad-command-options_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -649,7 +662,8 @@ echo 'Run try-fixed-command'
 { try-fixed-command_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/try-fixed-command"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/try-fixed-command"
 else
     try-fixed-command_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -680,7 +694,8 @@ echo 'Run create-periods'
 { create-periods_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/create-periods"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/create-periods"
 else
     create-periods_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -730,7 +745,8 @@ echo 'Run try-mygroup-child'
 { try-mygroup-child_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/try-mygroup-child"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/try-mygroup-child"
 else
     try-mygroup-child_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -772,7 +788,8 @@ echo 'Run where-greet'
 { where-greet_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/where-greet"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/where-greet"
 else
     where-greet_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -804,7 +821,8 @@ echo 'Run try-greet'
 { try-greet_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/try-greet"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/try-greet"
 else
     try-greet_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -849,7 +867,8 @@ echo 'Run run-notyet'
 { run-notyet_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/run-notyet"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/run-notyet"
 else
     run-notyet_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -893,7 +912,8 @@ echo 'Run run-boom'
 { run-boom_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/run-boom"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/run-boom"
 else
     run-boom_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {

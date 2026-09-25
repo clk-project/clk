@@ -45,27 +45,27 @@ Let's try it out.
 clk holidays cat 2>/dev/null | head -19
 ```
 
-```
-[
-    {
-        "description": "Vacances de No\u00ebl",
-        "end_date": "2025-01-06",
-        "location": "Zone A",
-        "population": "\u00c9l\u00e8ves",
-        "start_date": "2024-12-21"
-    },
-    {
-        "description": "Vacances de No\u00ebl",
-        "end_date": "2025-01-06",
-        "location": "Zone B",
-        "population": "\u00c9l\u00e8ves",
-        "start_date": "2024-12-21"
-    },
-    {
-        "description": "Vacances d'hiver",
-        "end_date": "2025-02-24",
-        "location": "Zone A",
-```
+<pre>
+[<span style="color:gray;"></span>
+<span style="color:gray;">    </span>{<span style="color:gray;"></span>
+<span style="color:gray;">        </span><span style="filter: contrast(70%) brightness(190%);color:blue;">&quot;description&quot;</span>:<span style="color:gray;"> </span><span style="color:olive;">&quot;Vacances de No\u00ebl&quot;</span>,<span style="color:gray;"></span>
+<span style="color:gray;">        </span><span style="filter: contrast(70%) brightness(190%);color:blue;">&quot;end_date&quot;</span>:<span style="color:gray;"> </span><span style="color:olive;">&quot;2025-01-06&quot;</span>,<span style="color:gray;"></span>
+<span style="color:gray;">        </span><span style="filter: contrast(70%) brightness(190%);color:blue;">&quot;location&quot;</span>:<span style="color:gray;"> </span><span style="color:olive;">&quot;Zone A&quot;</span>,<span style="color:gray;"></span>
+<span style="color:gray;">        </span><span style="filter: contrast(70%) brightness(190%);color:blue;">&quot;population&quot;</span>:<span style="color:gray;"> </span><span style="color:olive;">&quot;\u00c9l\u00e8ves&quot;</span>,<span style="color:gray;"></span>
+<span style="color:gray;">        </span><span style="filter: contrast(70%) brightness(190%);color:blue;">&quot;start_date&quot;</span>:<span style="color:gray;"> </span><span style="color:olive;">&quot;2024-12-21&quot;</span><span style="color:gray;"></span>
+<span style="color:gray;">    </span>},<span style="color:gray;"></span>
+<span style="color:gray;">    </span>{<span style="color:gray;"></span>
+<span style="color:gray;">        </span><span style="filter: contrast(70%) brightness(190%);color:blue;">&quot;description&quot;</span>:<span style="color:gray;"> </span><span style="color:olive;">&quot;Vacances de No\u00ebl&quot;</span>,<span style="color:gray;"></span>
+<span style="color:gray;">        </span><span style="filter: contrast(70%) brightness(190%);color:blue;">&quot;end_date&quot;</span>:<span style="color:gray;"> </span><span style="color:olive;">&quot;2025-01-06&quot;</span>,<span style="color:gray;"></span>
+<span style="color:gray;">        </span><span style="filter: contrast(70%) brightness(190%);color:blue;">&quot;location&quot;</span>:<span style="color:gray;"> </span><span style="color:olive;">&quot;Zone B&quot;</span>,<span style="color:gray;"></span>
+<span style="color:gray;">        </span><span style="filter: contrast(70%) brightness(190%);color:blue;">&quot;population&quot;</span>:<span style="color:gray;"> </span><span style="color:olive;">&quot;\u00c9l\u00e8ves&quot;</span>,<span style="color:gray;"></span>
+<span style="color:gray;">        </span><span style="filter: contrast(70%) brightness(190%);color:blue;">&quot;start_date&quot;</span>:<span style="color:gray;"> </span><span style="color:olive;">&quot;2024-12-21&quot;</span><span style="color:gray;"></span>
+<span style="color:gray;">    </span>},<span style="color:gray;"></span>
+<span style="color:gray;">    </span>{<span style="color:gray;"></span>
+<span style="color:gray;">        </span><span style="filter: contrast(70%) brightness(190%);color:blue;">&quot;description&quot;</span>:<span style="color:gray;"> </span><span style="color:olive;">&quot;Vacances d'hiver&quot;</span>,<span style="color:gray;"></span>
+<span style="color:gray;">        </span><span style="filter: contrast(70%) brightness(190%);color:blue;">&quot;end_date&quot;</span>:<span style="color:gray;"> </span><span style="color:olive;">&quot;2025-02-24&quot;</span>,<span style="color:gray;"></span>
+<span style="color:gray;">        </span><span style="filter: contrast(70%) brightness(190%);color:blue;">&quot;location&quot;</span>:<span style="color:gray;"> </span><span style="color:olive;">&quot;Zone A&quot;</span>,<span style="color:gray;"></span>
+</pre>
 
 
 <a id="filtering-the-data"></a>
@@ -88,31 +88,31 @@ def show(location):
 clk holidays show "Zone A" 2>/dev/null
 ```
 
-```
-[
-    {
-        "description": "Vacances de No\u00ebl",
-        "end_date": "2025-01-06",
-        "location": "Zone A",
-        "population": "\u00c9l\u00e8ves",
-        "start_date": "2024-12-21"
-    },
-    {
-        "description": "Vacances d'hiver",
-        "end_date": "2025-02-24",
-        "location": "Zone A",
-        "population": "\u00c9l\u00e8ves",
-        "start_date": "2025-02-08"
-    },
-    {
-        "description": "Vacances de printemps",
-        "end_date": "2025-04-22",
-        "location": "Zone A",
-        "population": "\u00c9l\u00e8ves",
-        "start_date": "2025-04-05"
-    }
-]
-```
+<pre>
+[<span style="color:gray;"></span>
+<span style="color:gray;">    </span>{<span style="color:gray;"></span>
+<span style="color:gray;">        </span><span style="filter: contrast(70%) brightness(190%);color:blue;">&quot;description&quot;</span>:<span style="color:gray;"> </span><span style="color:olive;">&quot;Vacances de No\u00ebl&quot;</span>,<span style="color:gray;"></span>
+<span style="color:gray;">        </span><span style="filter: contrast(70%) brightness(190%);color:blue;">&quot;end_date&quot;</span>:<span style="color:gray;"> </span><span style="color:olive;">&quot;2025-01-06&quot;</span>,<span style="color:gray;"></span>
+<span style="color:gray;">        </span><span style="filter: contrast(70%) brightness(190%);color:blue;">&quot;location&quot;</span>:<span style="color:gray;"> </span><span style="color:olive;">&quot;Zone A&quot;</span>,<span style="color:gray;"></span>
+<span style="color:gray;">        </span><span style="filter: contrast(70%) brightness(190%);color:blue;">&quot;population&quot;</span>:<span style="color:gray;"> </span><span style="color:olive;">&quot;\u00c9l\u00e8ves&quot;</span>,<span style="color:gray;"></span>
+<span style="color:gray;">        </span><span style="filter: contrast(70%) brightness(190%);color:blue;">&quot;start_date&quot;</span>:<span style="color:gray;"> </span><span style="color:olive;">&quot;2024-12-21&quot;</span><span style="color:gray;"></span>
+<span style="color:gray;">    </span>},<span style="color:gray;"></span>
+<span style="color:gray;">    </span>{<span style="color:gray;"></span>
+<span style="color:gray;">        </span><span style="filter: contrast(70%) brightness(190%);color:blue;">&quot;description&quot;</span>:<span style="color:gray;"> </span><span style="color:olive;">&quot;Vacances d'hiver&quot;</span>,<span style="color:gray;"></span>
+<span style="color:gray;">        </span><span style="filter: contrast(70%) brightness(190%);color:blue;">&quot;end_date&quot;</span>:<span style="color:gray;"> </span><span style="color:olive;">&quot;2025-02-24&quot;</span>,<span style="color:gray;"></span>
+<span style="color:gray;">        </span><span style="filter: contrast(70%) brightness(190%);color:blue;">&quot;location&quot;</span>:<span style="color:gray;"> </span><span style="color:olive;">&quot;Zone A&quot;</span>,<span style="color:gray;"></span>
+<span style="color:gray;">        </span><span style="filter: contrast(70%) brightness(190%);color:blue;">&quot;population&quot;</span>:<span style="color:gray;"> </span><span style="color:olive;">&quot;\u00c9l\u00e8ves&quot;</span>,<span style="color:gray;"></span>
+<span style="color:gray;">        </span><span style="filter: contrast(70%) brightness(190%);color:blue;">&quot;start_date&quot;</span>:<span style="color:gray;"> </span><span style="color:olive;">&quot;2025-02-08&quot;</span><span style="color:gray;"></span>
+<span style="color:gray;">    </span>},<span style="color:gray;"></span>
+<span style="color:gray;">    </span>{<span style="color:gray;"></span>
+<span style="color:gray;">        </span><span style="filter: contrast(70%) brightness(190%);color:blue;">&quot;description&quot;</span>:<span style="color:gray;"> </span><span style="color:olive;">&quot;Vacances de printemps&quot;</span>,<span style="color:gray;"></span>
+<span style="color:gray;">        </span><span style="filter: contrast(70%) brightness(190%);color:blue;">&quot;end_date&quot;</span>:<span style="color:gray;"> </span><span style="color:olive;">&quot;2025-04-22&quot;</span>,<span style="color:gray;"></span>
+<span style="color:gray;">        </span><span style="filter: contrast(70%) brightness(190%);color:blue;">&quot;location&quot;</span>:<span style="color:gray;"> </span><span style="color:olive;">&quot;Zone A&quot;</span>,<span style="color:gray;"></span>
+<span style="color:gray;">        </span><span style="filter: contrast(70%) brightness(190%);color:blue;">&quot;population&quot;</span>:<span style="color:gray;"> </span><span style="color:olive;">&quot;\u00c9l\u00e8ves&quot;</span>,<span style="color:gray;"></span>
+<span style="color:gray;">        </span><span style="filter: contrast(70%) brightness(190%);color:blue;">&quot;start_date&quot;</span>:<span style="color:gray;"> </span><span style="color:olive;">&quot;2025-04-05&quot;</span><span style="color:gray;"></span>
+<span style="color:gray;">    </span>}<span style="color:gray;"></span>
+]<span style="color:gray;"></span>
+</pre>
 
 
 <a id="caching-the-downloaded-data"></a>

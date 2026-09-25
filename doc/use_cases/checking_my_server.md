@@ -26,24 +26,22 @@ Note that you can always get the help of any command using `--help`. So don't he
 clk command create --help
 ```
 
-```
-Usage: clk command create [OPTIONS] COMMAND [ARGS]...
+    Usage: clk command create [OPTIONS] COMMAND [ARGS]...
 
-  Create custom commands directly from the command line.
+      Create custom commands directly from the command line.
 
-  This is a built-in command.
+      This is a built-in command.
 
-Options:
-  --help-all             Show the full help message, automatic options included.
-  --extension EXTENSION  Use this extension
-  --context              Guess the profile
-  --global               Consider only the global profile
-  --help                 Show this message and exit.
+    Options:
+      --help-all             Show the full help message, automatic options included.
+      --extension EXTENSION  Use this extension
+      --context              Guess the profile
+      --global               Consider only the global profile
+      --help                 Show this message and exit.
 
-Commands:
-  bash    Create a bash custom command
-  python  Create a python custom command
-```
+    Commands:
+      bash    Create a bash custom command
+      python  Create a python custom command
 
 Let's look at this file together.
 
@@ -51,24 +49,22 @@ Let's look at this file together.
 cat $(clk command which server.check)
 ```
 
-```
-#!/usr/bin/env bash
-set -eu
+    #!/usr/bin/env bash
+    set -eu
 
-source "_clk.sh"
+    source "_clk.sh"
 
-clk_usage () {
-    cat<<EOF
-$0
+    clk_usage () {
+        cat<<EOF
+    $0
 
-Description
---
+    Description
+    --
 
-EOF
-}
+    EOF
+    }
 
-clk_help_handler "$@"
-```
+    clk_help_handler "$@"
 
 The first part, `source "_clk.sh"` loads a few helpers provided by clk to make your life easier. Among other things, it contains the glue code to make clk parse your command line.
 
@@ -84,7 +80,9 @@ If you keep the word `Description` in the help message, clk will warn you that y
 clk server check
 ```
 
-    warning: The command 'server.check' has no documentation
+<pre>
+<span style="color:olive;">warning: </span>The command 'server.check' has no documentation
+</pre>
 
 
 <a id="saying-what-it-does"></a>
@@ -113,18 +111,16 @@ VISUAL=./myeditor clk command edit server.check
 clk server check --help|sed "s|$(pwd)|.|"
 ```
 
-```
-Usage: clk server check [OPTIONS]
+    Usage: clk server check [OPTIONS]
 
-  Say whether my server answers
+      Say whether my server answers
 
-  Edit this external command by running `clk command edit server.check`
-  Or edit ./clk-root/bin/server.check directly.
+      Edit this external command by running `clk command edit server.check`
+      Or edit ./clk-root/bin/server.check directly.
 
-Options:
-  --help-all  Show the full help message, automatic options included.
-  --help      Show this message and exit.
-```
+    Options:
+      --help-all  Show the full help message, automatic options included.
+      --help      Show this message and exit.
 
 The last part `clk_help_handler "$@"` is the glue code that makes clk parse the command line. After this line, you can write the content of your command line.
 
@@ -208,9 +204,11 @@ Let's ask for a unit that is not there. journalctl fails, and clk hands me its e
 clk server logs nowhere 2>&1 || echo $?
 ```
 
-    Failed to get unit: Unit nowhere.service not loaded.
-    error: journalctl --unit nowhere exited with 4
-    4
+<pre>
+Failed to get unit: Unit nowhere.service not loaded.
+<span style="color:red;">error: </span>journalctl --unit nowhere exited with 4
+4
+</pre>
 
 Read in a loop, I'd rather it kept quiet, and `safe_check_output` answers the empty string instead.
 
@@ -301,7 +299,9 @@ EOF
 clk server check myserver 2>&1 | head -1
 ```
 
-    warning: When loading command server.check at path ./clk-root/bin/server.check: Expected format in server.check is A:name:type:help[:{someextrajsondata}], got A:host
+<pre>
+<span style="color:olive;">warning: </span>When loading command server.check at path ./clk-root/bin/server.check: Expected format in server.check is A:name:type:help[:{someextrajsondata}], got A:host
+</pre>
 
 A type and a help later, the host gets through.
 
@@ -325,7 +325,9 @@ sed -i 's/^echo /clk echo --style bold-True,fg-red /' "${check}"
 clk server check myserver
 ```
 
-    no answer from myserver
+<pre>
+<span style="color:red;"></span><span style="font-weight:bold;color:red;">no answer from myserver</span>
+</pre>
 
 I never remember the names of the colours, and tab does.
 
@@ -386,9 +388,11 @@ EOF
 clk server logs myserver 2>&1
 ```
 
-    error: Found the command server in the resolver customcommand but could not load it.
-    warning: Failed to get the command server: No module named 'thismoduledoesnotexist'
-    error: clk.server could not be loaded. Re run with clk --develop to see the stacktrace or clk --debug-on-command-load-error to debug the load error
+<pre>
+<span style="color:red;">error: </span>Found the command server in the resolver customcommand but could not load it.
+<span style="color:olive;">warning: </span>Failed to get the command server: No module named 'thismoduledoesnotexist'
+error: clk.server could not be loaded. Re run with clk --develop to see the stacktrace or clk --debug-on-command-load-error to debug the load error
+</pre>
 
 To send that to someone, let's put it in a report file.
 

@@ -24,13 +24,17 @@ cd billing-api
 clk alias set build echo "Building the API"
 ```
 
-    New local alias for build: echo 'Building the API'
+<pre>
+New <span style="color:green;">local</span> alias for build: echo 'Building the API'
+</pre>
 
 ```bash
 clk alias set test echo "Running API tests"
 ```
 
-    New local alias for test: echo 'Running API tests'
+<pre>
+New <span style="color:green;">local</span> alias for test: echo 'Running API tests'
+</pre>
 
 ```bash
 cd ..
@@ -45,13 +49,17 @@ cd billing-app
 clk alias set build echo "Building the frontend"
 ```
 
-    New local alias for build: echo 'Building the frontend'
+<pre>
+New <span style="color:green;">local</span> alias for build: echo 'Building the frontend'
+</pre>
 
 ```bash
 clk alias set test echo "Running frontend tests"
 ```
 
-    New local alias for test: echo 'Running frontend tests'
+<pre>
+New <span style="color:green;">local</span> alias for test: echo 'Running frontend tests'
+</pre>
 
 Each project works fine on its own. But the moment you're inside `billing-app` and want to rebuild the API, the command isn't there.
 
@@ -86,13 +94,17 @@ cd ..
 clk alias set api clk --project ./billing-api
 ```
 
-    New global alias for api: clk --project ./billing-api
+<pre>
+New <span style="color:teal;">global</span> alias for api: clk --project ./billing-api
+</pre>
 
 ```bash
 clk alias set app clk --project ./billing-app
 ```
 
-    New global alias for app: clk --project ./billing-app
+<pre>
+New <span style="color:teal;">global</span> alias for app: clk --project ./billing-app
+</pre>
 
 Now every command from both projects is available from anywhere, under `api` and `app`. No more `cd`-ing around.
 
@@ -128,7 +140,11 @@ Subgroups and introspection commands work too. You can inspect either project's 
 clk api alias show build 2>/dev/null
 ```
 
-    build echo Building the API
+<pre>
+build <span style="color:green;">echo Building the API</span>
+-------------
+Legend: <span style="color:green;">local</span>
+</pre>
 
 Ask one of them for help and clk says where it really comes from, so you know which of the two to go and edit.
 
@@ -152,13 +168,17 @@ First, let's remove the global aliases.
 clk alias unset api
 ```
 
-    Erasing api alias from global settings
+<pre>
+Erasing api alias from <span style="color:teal;">global</span> settings
+</pre>
 
 ```bash
 clk alias unset app
 ```
 
-    Erasing app alias from global settings
+<pre>
+Erasing app alias from <span style="color:teal;">global</span> settings
+</pre>
 
 Now, inside `billing-api`, create a local alias that points to the frontend.
 
@@ -170,7 +190,9 @@ cd billing-api
 clk alias set app clk --project ../billing-app
 ```
 
-    New local alias for app: clk --project ../billing-app
+<pre>
+New <span style="color:green;">local</span> alias for app: clk --project ../billing-app
+</pre>
 
 ```bash
 cd ..
@@ -186,7 +208,9 @@ cd billing-app
 clk alias set api clk --project ../billing-api
 ```
 
-    New local alias for api: clk --project ../billing-api
+<pre>
+New <span style="color:green;">local</span> alias for api: clk --project ../billing-api
+</pre>
 
 From inside `billing-app`, you can now reach the API the same way as before.
 
@@ -237,7 +261,9 @@ An alias you end up wanting everywhere need not be typed again elsewhere. From `
 clk alias move build global
 ```
 
-    Moved alias build, local -> global
+<pre>
+Moved alias build, <span style="color:green;">local</span> -&gt; <span style="color:teal;">global</span>
+</pre>
 
 It still answers here, now from the global profile rather than the local one.
 
@@ -270,7 +296,9 @@ Made in a hurry, aliases pile up and say nothing about themselves. Here is one m
 clk alias set ship build , test
 ```
 
-    New local alias for ship: build , test
+<pre>
+New <span style="color:green;">local</span> alias for ship: build , test
+</pre>
 
 Were you setting things up from a script, you would rather it kept quiet. It still does the work, it just stops saying so.
 
@@ -279,7 +307,11 @@ clk --quiet alias set ship-nightly build , test
 clk alias show ship-nightly
 ```
 
-    ship-nightly build, test
+<pre>
+ship-nightly <span style="color:green;">build, test</span>
+-------------
+Legend: <span style="color:green;">local</span>
+</pre>
 
 Asked for its help, it can only repeat itself.
 
@@ -329,12 +361,16 @@ clk --dry-run alias rename test test-front
 clk alias show
 ```
 
-    api clk --project ../billing-api
-    build echo Building the frontend
-    ship build, test
-    ship-all build, test, api build, api test
-    ship-nightly build, test
-    test echo Running frontend tests
+<pre>
+api <span style="color:green;">clk --project ../billing-api</span>
+build <span style="color:green;">echo Building the frontend</span>
+ship <span style="color:green;">build, test</span>
+ship-all <span style="color:green;">build, test, api build, api test</span>
+ship-nightly <span style="color:green;">build, test</span>
+test <span style="color:green;">echo Running frontend tests</span>
+-------------
+Legend: <span style="color:green;">local</span>
+</pre>
 
 Nothing moved, so now do it for real.
 
@@ -350,12 +386,16 @@ Both `ship` and `ship-all` were built on `test`, and now call `test-front` witho
 clk alias show
 ```
 
-    api clk --project ../billing-api
-    build echo Building the frontend
-    ship build, test-front
-    ship-all build, test-front, api build, api test
-    ship-nightly build, test-front
-    test-front echo Running frontend tests
+<pre>
+api <span style="color:green;">clk --project ../billing-api</span>
+build <span style="color:green;">echo Building the frontend</span>
+ship <span style="color:green;">build, test-front</span>
+ship-all <span style="color:green;">build, test-front, api build, api test</span>
+ship-nightly <span style="color:green;">build, test-front</span>
+test-front <span style="color:green;">echo Running frontend tests</span>
+-------------
+Legend: <span style="color:green;">local</span>
+</pre>
 
 Had one of them lived in a profile clk cannot write to, it would have warned you that the old name is still used there, for you to correct by hand.
 

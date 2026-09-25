@@ -41,7 +41,7 @@ clk alias set build echo "Building the API"
 #+END_SRC
 
 #+RESULTS[b7704bdad023fa2f26e94a8f07d08139c676a189]: alias-api-build
-: New local alias for build: echo 'Building the API'
+: New [32mlocal[0m alias for build: echo 'Building the API'
 
 #+NAME: alias-api-test
 #+BEGIN_SRC bash :results verbatim :exports both :session 55ed49b4-065d-440e-903b-658d1dcec014 :cache yes
@@ -49,7 +49,7 @@ clk alias set test echo "Running API tests"
 #+END_SRC
 
 #+RESULTS[76719964e207c3266a6b733e26c05beb6c4dfcbb]: alias-api-test
-: New local alias for test: echo 'Running API tests'
+: New [32mlocal[0m alias for test: echo 'Running API tests'
 
 #+NAME: leave-api
 #+BEGIN_SRC bash :results none :exports code :session 55ed49b4-065d-440e-903b-658d1dcec014
@@ -68,7 +68,7 @@ clk alias set build echo "Building the frontend"
 #+END_SRC
 
 #+RESULTS[37edf4f9199d034935d80c938efd5b04f5b5558a]: alias-app-build
-: New local alias for build: echo 'Building the frontend'
+: New [32mlocal[0m alias for build: echo 'Building the frontend'
 
 #+NAME: alias-app-test
 #+BEGIN_SRC bash :results verbatim :exports both :session 55ed49b4-065d-440e-903b-658d1dcec014 :cache yes
@@ -76,7 +76,7 @@ clk alias set test echo "Running frontend tests"
 #+END_SRC
 
 #+RESULTS[46f75df81f435cc0a0296a8a3b896373e061efa4]: alias-app-test
-: New local alias for test: echo 'Running frontend tests'
+: New [32mlocal[0m alias for test: echo 'Running frontend tests'
 
 Each project works fine on its own. But the moment you're inside ~billing-app~
 and want to rebuild the API, the command isn't there.
@@ -123,7 +123,7 @@ clk alias set api clk --project ./billing-api
 #+END_SRC
 
 #+RESULTS[790ec28c9431c53e40d2f65fdf420f3d27ff4645]: create-api-alias
-: New global alias for api: clk --project ./billing-api
+: New [36mglobal[0m alias for api: clk --project ./billing-api
 
 #+NAME: create-app-alias
 #+BEGIN_SRC bash :results verbatim :exports both :session 55ed49b4-065d-440e-903b-658d1dcec014 :cache yes
@@ -131,7 +131,7 @@ clk alias set app clk --project ./billing-app
 #+END_SRC
 
 #+RESULTS[74872c53ce36d9380c026c3eeb5c0cfc376ef446]: create-app-alias
-: New global alias for app: clk --project ./billing-app
+: New [36mglobal[0m alias for app: clk --project ./billing-app
 
 Now every command from both projects is available from anywhere, under ~api~ and
 ~app~. No more ~cd~-ing around.
@@ -180,7 +180,9 @@ clk api alias show build 2>/dev/null
 #+END_SRC
 
 #+RESULTS[3caae149055f81a8f7c1824809a99e1fc9aa22f6]: show-api-alias
-: build echo Building the API
+: build [2m[32m[2mecho Building the API[0m[0m
+: [2m-------------[0m
+: Legend: [32m[2mlocal[0m
 
 Ask one of them for help and clk says where it really comes from, so you know
 which of the two to go and edit.
@@ -212,7 +214,7 @@ clk alias unset api
 #+END_SRC
 
 #+RESULTS[148d12a3901956002b23843b18861630d4fa00a6]: remove-global-api-alias
-: Erasing api alias from global settings
+: Erasing api alias from [36mglobal[0m settings
 
 #+NAME: remove-global-app-alias
 #+BEGIN_SRC bash :results verbatim :exports both :session 55ed49b4-065d-440e-903b-658d1dcec014 :cache yes
@@ -220,7 +222,7 @@ clk alias unset app
 #+END_SRC
 
 #+RESULTS[586426e2c7d48fe1eae63aa5cbaa8beadc984fa9]: remove-global-app-alias
-: Erasing app alias from global settings
+: Erasing app alias from [36mglobal[0m settings
 
 Now, inside ~billing-api~, create a local alias that points to the frontend.
 
@@ -235,7 +237,7 @@ clk alias set app clk --project ../billing-app
 #+END_SRC
 
 #+RESULTS[74c1ecba8058eeb2c267ef61f727316d7d126dee]: local-api-app-alias
-: New local alias for app: clk --project ../billing-app
+: New [32mlocal[0m alias for app: clk --project ../billing-app
 
 #+NAME: leave-api-for-local
 #+BEGIN_SRC bash :results none :exports code :session 55ed49b4-065d-440e-903b-658d1dcec014
@@ -255,7 +257,7 @@ clk alias set api clk --project ../billing-api
 #+END_SRC
 
 #+RESULTS[fb045ae602d1be8f7d226038bcd36b35169519d8]: local-app-api-alias
-: New local alias for api: clk --project ../billing-api
+: New [32mlocal[0m alias for api: clk --project ../billing-api
 
 From inside ~billing-app~, you can now reach the API the same way as before.
 
@@ -321,7 +323,7 @@ clk alias move build global
 #+END_SRC
 
 #+RESULTS[]: promote-build
-: Moved alias build, local -> global
+: Moved alias build, [32mlocal[0m -> [36mglobal[0m
 
 It still answers here, now from the global profile rather than the local one.
 
@@ -363,7 +365,7 @@ clk alias set ship build , test
 #+END_SRC
 
 #+RESULTS[]: ship
-: New local alias for ship: build , test
+: New [32mlocal[0m alias for ship: build , test
 
 Were you setting things up from a script, you would rather it kept quiet. It
 still does the work, it just stops saying so.
@@ -375,7 +377,9 @@ clk alias show ship-nightly
 #+END_SRC
 
 #+RESULTS[]: quiet-ship
-: ship-nightly build, test
+: ship-nightly [2m[32m[2mbuild, test[0m[0m
+: [2m-------------[0m
+: Legend: [32m[2mlocal[0m
 
 Asked for its help, it can only repeat itself.
 
@@ -440,12 +444,14 @@ clk alias show
 #+END_SRC
 
 #+RESULTS[]: show-before-rename
-: api clk --project ../billing-api
-: build echo Building the frontend
-: ship build, test
-: ship-all build, test, api build, api test
-: ship-nightly build, test
-: test echo Running frontend tests
+: api [2m[32m[2mclk --project ../billing-api[0m[0m
+: build [2m[32m[2mecho Building the frontend[0m[0m
+: ship [2m[32m[2mbuild, test[0m[0m
+: ship-all [2m[32m[2mbuild, test, api build, api test[0m[0m
+: ship-nightly [2m[32m[2mbuild, test[0m[0m
+: test [2m[32m[2mecho Running frontend tests[0m[0m
+: [2m-------------[0m
+: Legend: [32m[2mlocal[0m
 
 Nothing moved, so now do it for real.
 
@@ -466,12 +472,14 @@ clk alias show
 #+END_SRC
 
 #+RESULTS[]: show-after-rename
-: api clk --project ../billing-api
-: build echo Building the frontend
-: ship build, test-front
-: ship-all build, test-front, api build, api test
-: ship-nightly build, test-front
-: test-front echo Running frontend tests
+: api [2m[32m[2mclk --project ../billing-api[0m[0m
+: build [2m[32m[2mecho Building the frontend[0m[0m
+: ship [2m[32m[2mbuild, test-front[0m[0m
+: ship-all [2m[32m[2mbuild, test-front, api build, api test[0m[0m
+: ship-nightly [2m[32m[2mbuild, test-front[0m[0m
+: test-front [2m[32m[2mecho Running frontend tests[0m[0m
+: [2m-------------[0m
+: Legend: [32m[2mlocal[0m
 
 Had one of them lived in a profile clk cannot write to, it would have warned you
 that the old name is still used there, for you to correct by hand.

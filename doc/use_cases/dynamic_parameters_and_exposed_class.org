@@ -231,18 +231,16 @@ clk http --help | head -10
 #+END_SRC
 
 #+RESULTS[eaaac02ca2f213cf70b945c7ba5ad576430d9592]: help
-#+begin_example
-Usage: clk http [OPTIONS] COMMAND [ARGS]...
-
-  Commands to make http requests
-
-  Edit this custom command by running `clk command edit http`
-  Or edit ./clk-root/python/http.py directly.
-
-Options:
-  --base-url TEXT  The url to use as a basis for all commands  [required]
-  --help-all       Show the full help message, automatic options included.
-#+end_example
+: Usage: clk http [OPTIONS] COMMAND [ARGS]...
+:
+:   Commands to make http requests
+:
+:   Edit this custom command by running `clk command edit http`
+:   Or edit ./clk-root/python/http.py directly.
+:
+: Options:
+:   --base-url TEXT  The url to use as a basis for all commands  [required]
+:   --help-all       Show the full help message, automatic options included.
 
 Note that there also exists a command to only output its location, useful for
 scripting purposes.
@@ -324,7 +322,7 @@ Now, let's try creating an alias to play with somesite, as explained above.
 #+END_SRC
 
 #+RESULTS[6efed1ef20947eeee651b29cd1d8f4b7051fcdeb]: try-somesite
-: New global alias for somesite: http --base-url http://url
+: New [36mglobal[0m alias for somesite: http --base-url http://url
 : GET http://url/something
 : Would run the get code
 : res = None

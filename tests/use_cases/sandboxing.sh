@@ -86,6 +86,7 @@ cat <<EOF > "${TMP}/clk-distribution/clk.json5"
     "parameters": {
         "clk": [
             "--forced-width",
+            "--force-color",
             "--reproducible-output"
         ],
         "command.create.python": [
@@ -108,7 +109,7 @@ cat <<EOF > "${TMP}/clk-distribution/clk.json5"
     },
   "value": {
       "config.show.color": {
-          "value": "false"
+          "value": "true"
       }
   }
 }
@@ -141,6 +142,7 @@ EOF
     echo 'import coverage; coverage.process_startup()' > "${SUBCOV_SITE}/subcoverage.pth"
     export COVERAGE_PROCESS_START="${TMP}/coveragerc"
 fi
-export TERM=dumb # to avoid possible issues with colors
+# the colors clk shows in a terminal, which the export paints in the markdown
+export TERM=xterm-256color
 echo "${TMP}"
 # sandboxing ends here

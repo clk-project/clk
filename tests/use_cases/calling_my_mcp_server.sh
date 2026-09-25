@@ -41,7 +41,7 @@ setsecretinparameter_code () {
 setsecretinparameter_expected () {
       local expected
       expected="$(cat<<"EOEXPECTED"
-New global parameters for agentcore: --password mytoken
+New [36mglobal[0m parameters for agentcore: --password mytoken
 EOEXPECTED
 )"
       # org says nil where the block said nothing
@@ -53,7 +53,8 @@ echo 'Run setsecretinparameter'
 { setsecretinparameter_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/setsecretinparameter"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/setsecretinparameter"
 else
     setsecretinparameter_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -83,7 +84,8 @@ echo 'Run usesecretinparameter'
 { usesecretinparameter_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/usesecretinparameter"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/usesecretinparameter"
 else
     usesecretinparameter_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -101,8 +103,8 @@ usethebearefromsecret_code () {
 usethebearefromsecret_expected () {
       local expected
       expected="$(cat<<"EOEXPECTED"
-Removing global parameters of agentcore: --password mytoken
-New global parameters for agentcore: --password secret:demo-buyer-password
+Removing [36mglobal[0m parameters of agentcore: --password mytoken
+New [36mglobal[0m parameters for agentcore: --password secret:demo-buyer-password
 EOEXPECTED
 )"
       # org says nil where the block said nothing
@@ -114,7 +116,8 @@ echo 'Run usethebearefromsecret'
 { usethebearefromsecret_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/usethebearefromsecret"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/usethebearefromsecret"
 else
     usethebearefromsecret_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -132,7 +135,7 @@ httpwithsecretfail_code () {
 httpwithsecretfail_expected () {
       local expected
       expected="$(cat<<"EOEXPECTED"
-error: Could not find the secret for demo-buyer-password
+[31merror: [0mCould not find the secret for demo-buyer-password
 EOEXPECTED
 )"
       # org says nil where the block said nothing
@@ -144,7 +147,8 @@ echo 'Run httpwithsecretfail'
 { httpwithsecretfail_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/httpwithsecretfail"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/httpwithsecretfail"
 else
     httpwithsecretfail_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -156,10 +160,11 @@ fi
 
 cat<<"EOEXPECT" > "pass.exp"
 #!/usr/bin/env -S expect -f
-set timeout -1
+set timeout 30
 spawn clk --ask-secret agentcore token
+expect_after timeout { puts "timed out"; exit 1 }
 match_max 100000
-expect -exact "warning: Could not find the secret for demo-buyer-password\r
+expect -exact "Could not find the secret for demo-buyer-password\r
 Please provide the secret demo-buyer-password: "
 send -- "test\r"
 expect -exact "\r
@@ -176,7 +181,7 @@ call_ask_for_real_code () {
 call_ask_for_real_expected () {
       local expected
       expected="$(cat<<"EOEXPECTED"
-warning: Could not find the secret for demo-buyer-password
+[33mwarning: [0mCould not find the secret for demo-buyer-password
 Please provide the secret demo-buyer-password:
 Repeat for confirmation:
 Logging in as demo-buyer with password test
@@ -191,7 +196,8 @@ echo 'Run call_ask_for_real'
 { call_ask_for_real_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/call_ask_for_real"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/call_ask_for_real"
 else
     call_ask_for_real_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -203,10 +209,11 @@ fi
 
 cat<<"EOEXPECT" > "passerror.exp"
 #!/usr/bin/env -S expect -f
-set timeout -1
+set timeout 30
 spawn clk --ask-secret agentcore token
+expect_after timeout { puts "timed out"; exit 1 }
 match_max 100000
-expect -exact "warning: Could not find the secret for demo-buyer-password\r
+expect -exact "Could not find the secret for demo-buyer-password\r
 Please provide the secret demo-buyer-password: "
 send -- "something\r"
 expect -exact "\r
@@ -224,7 +231,7 @@ call_ask_for_real_error_code () {
 call_ask_for_real_error_expected () {
       local expected
       expected="$(cat<<"EOEXPECTED"
-warning: Could not find the secret for demo-buyer-password
+[33mwarning: [0mCould not find the secret for demo-buyer-password
 Please provide the secret demo-buyer-password:
 Repeat for confirmation:
 Error: The two entered values do not match.
@@ -240,7 +247,8 @@ echo 'Run call_ask_for_real_error'
 { call_ask_for_real_error_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/call_ask_for_real_error"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/call_ask_for_real_error"
 else
     call_ask_for_real_error_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -270,7 +278,8 @@ echo 'Run try-completion'
 { try-completion_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/try-completion"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/try-completion"
 else
     try-completion_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -300,7 +309,8 @@ echo 'Run try-completion-without-ask-secret'
 { try-completion-without-ask-secret_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/try-completion-without-ask-secret"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/try-completion-without-ask-secret"
 else
     try-completion-without-ask-secret_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -322,7 +332,7 @@ showsecret_code () {
 showsecret_expected () {
       local expected
       expected="$(cat<<"EOEXPECTED"
-demo-buyer-password *****
+demo-buyer-password [2m*****[0m
 EOEXPECTED
 )"
       # org says nil where the block said nothing
@@ -334,7 +344,8 @@ echo 'Run showsecret'
 { showsecret_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/showsecret"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/showsecret"
 else
     showsecret_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -352,7 +363,7 @@ reallyshowsecret_code () {
 reallyshowsecret_expected () {
       local expected
       expected="$(cat<<"EOEXPECTED"
-demo-buyer-password mytoken
+demo-buyer-password [2mmytoken[0m
 EOEXPECTED
 )"
       # org says nil where the block said nothing
@@ -364,7 +375,8 @@ echo 'Run reallyshowsecret'
 { reallyshowsecret_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/reallyshowsecret"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/reallyshowsecret"
 else
     reallyshowsecret_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -394,7 +406,8 @@ echo 'Run reallyshowonlysecret'
 { reallyshowonlysecret_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/reallyshowonlysecret"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/reallyshowonlysecret"
 else
     reallyshowonlysecret_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -424,7 +437,8 @@ echo 'Run httpwithsecret'
 { httpwithsecret_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/httpwithsecret"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/httpwithsecret"
 else
     httpwithsecret_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -459,7 +473,8 @@ echo 'Run runbashcall'
 { runbashcall_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/runbashcall"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/runbashcall"
 else
     runbashcall_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -481,7 +496,9 @@ listsecrets_expected () {
       expected="$(cat<<"EOEXPECTED"
 key                  status    commands
 -------------------  --------  ---------------------
-demo-buyer-password  set       agentcore buyer-token
+demo-buyer-password  [32mset[0m       [36m[2magentcore[0m [36m[2mbuyer-token[0m
+[2m--------------[0m
+Legend: [36m[2mglobal[0m
 EOEXPECTED
 )"
       # org says nil where the block said nothing
@@ -493,7 +510,8 @@ echo 'Run listsecrets'
 { listsecrets_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/listsecrets"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/listsecrets"
 else
     listsecrets_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -533,7 +551,8 @@ echo 'Run showgetsecret'
 { showgetsecret_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/showgetsecret"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/showgetsecret"
 else
     showgetsecret_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -563,7 +582,8 @@ echo 'Run refusingtheremoval'
 { refusingtheremoval_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/refusingtheremoval"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/refusingtheremoval"
 else
     refusingtheremoval_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -581,7 +601,7 @@ stillthere_code () {
 stillthere_expected () {
       local expected
       expected="$(cat<<"EOEXPECTED"
-demo-buyer-password *****
+demo-buyer-password [2m*****[0m
 EOEXPECTED
 )"
       # org says nil where the block said nothing
@@ -593,7 +613,8 @@ echo 'Run stillthere'
 { stillthere_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/stillthere"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/stillthere"
 else
     stillthere_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -627,7 +648,8 @@ echo 'Run checkthatthesecretisgone'
 { checkthatthesecretisgone_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/checkthatthesecretisgone"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/checkthatthesecretisgone"
 else
     checkthatthesecretisgone_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -657,7 +679,8 @@ echo 'Run unsetmissingsecret'
 { unsetmissingsecret_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/unsetmissingsecret"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/unsetmissingsecret"
 else
     unsetmissingsecret_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -677,7 +700,9 @@ listmissingsecrets_expected () {
       expected="$(cat<<"EOEXPECTED"
 key                  status    commands
 -------------------  --------  ---------------------
-demo-buyer-password  missing   agentcore buyer-token
+demo-buyer-password  [31mmissing[0m   [36m[2magentcore[0m [36m[2mbuyer-token[0m
+[2m--------------[0m
+Legend: [36m[2mglobal[0m
 EOEXPECTED
 )"
       # org says nil where the block said nothing
@@ -689,7 +714,8 @@ echo 'Run listmissingsecrets'
 { listmissingsecrets_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/listmissingsecrets"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/listmissingsecrets"
 else
     listmissingsecrets_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -717,7 +743,7 @@ nokeyring_show_code () {
 nokeyring_show_expected () {
       local expected
       expected="$(cat<<"EOEXPECTED"
-demo-buyer-password thevalue
+demo-buyer-password [2mthevalue[0m
 EOEXPECTED
 )"
       # org says nil where the block said nothing
@@ -729,7 +755,8 @@ echo 'Run nokeyring_show'
 { nokeyring_show_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/nokeyring_show"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/nokeyring_show"
 else
     nokeyring_show_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -759,7 +786,8 @@ echo 'Run nokeyring_backend'
 { nokeyring_backend_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/nokeyring_backend"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/nokeyring_backend"
 else
     nokeyring_backend_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -791,7 +819,8 @@ echo 'Run nokeyring_backends'
 { nokeyring_backends_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/nokeyring_backends"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/nokeyring_backends"
 else
     nokeyring_backends_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -822,7 +851,8 @@ echo 'Run nokeyring_named'
 { nokeyring_named_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/nokeyring_named"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/nokeyring_named"
 else
     nokeyring_named_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -844,7 +874,7 @@ netrc_fallback_code () {
 netrc_fallback_expected () {
       local expected
       expected="$(cat<<"EOEXPECTED"
-demo-buyer-password thevalue
+demo-buyer-password [2mthevalue[0m
 EOEXPECTED
 )"
       # org says nil where the block said nothing
@@ -856,7 +886,8 @@ echo 'Run netrc_fallback'
 { netrc_fallback_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/netrc_fallback"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/netrc_fallback"
 else
     netrc_fallback_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -888,7 +919,8 @@ echo 'Run whichbackend'
 { whichbackend_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/whichbackend"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/whichbackend"
 else
     whichbackend_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -923,7 +955,8 @@ echo 'Run showbackends'
 { showbackends_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/showbackends"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/showbackends"
 else
     showbackends_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -941,7 +974,7 @@ using_netrc_code () {
 using_netrc_expected () {
       local expected
       expected="$(cat<<"EOEXPECTED"
-demo-buyer-password thevalue
+demo-buyer-password [2mthevalue[0m
 EOEXPECTED
 )"
       # org says nil where the block said nothing
@@ -953,7 +986,8 @@ echo 'Run using_netrc'
 { using_netrc_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/using_netrc"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/using_netrc"
 else
     using_netrc_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -983,7 +1017,8 @@ echo 'Run netrc_missing'
 { netrc_missing_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/netrc_missing"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/netrc_missing"
 else
     netrc_missing_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -1001,7 +1036,7 @@ netrc_readonly_code () {
 netrc_readonly_expected () {
       local expected
       expected="$(cat<<"EOEXPECTED"
-error: Could not save your secret.
+[31merror: [0mCould not save your secret.
 Usage: clk secret set [OPTIONS] KEY
 error: The netrc keyring only reads secrets. Write this one in your netrc file to use it.
 EOEXPECTED
@@ -1015,7 +1050,8 @@ echo 'Run netrc_readonly'
 { netrc_readonly_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/netrc_readonly"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/netrc_readonly"
 else
     netrc_readonly_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -1046,7 +1082,8 @@ echo 'Run netrc_readonly_unset'
 { netrc_readonly_unset_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/netrc_readonly_unset"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/netrc_readonly_unset"
 else
     netrc_readonly_unset_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -1095,7 +1132,8 @@ echo 'Run readonly_keyring_set'
 { readonly_keyring_set_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/readonly_keyring_set"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/readonly_keyring_set"
 else
     readonly_keyring_set_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -1125,7 +1163,8 @@ echo 'Run teambackend'
 { teambackend_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/teambackend"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/teambackend"
 else
     teambackend_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -1145,7 +1184,7 @@ useteambackend_code () {
 useteambackend_expected () {
       local expected
       expected="$(cat<<"EOEXPECTED"
-clk now keeps your secrets in team_keyring.SecretsManagerKeyring (global settings)
+clk now keeps your secrets in team_keyring.SecretsManagerKeyring ([36mglobal[0m settings)
 EOEXPECTED
 )"
       # org says nil where the block said nothing
@@ -1157,7 +1196,8 @@ echo 'Run useteambackend'
 { useteambackend_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/useteambackend"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/useteambackend"
 else
     useteambackend_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -1175,7 +1215,7 @@ showteambackend_code () {
 showteambackend_expected () {
       local expected
       expected="$(cat<<"EOEXPECTED"
-clk keeps your secrets in team_keyring.SecretsManagerKeyring, because the global settings name it.
+clk keeps your secrets in team_keyring.SecretsManagerKeyring, because the [36mglobal[0m settings name it.
 EOEXPECTED
 )"
       # org says nil where the block said nothing
@@ -1187,7 +1227,8 @@ echo 'Run showteambackend'
 { showteambackend_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/showteambackend"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/showteambackend"
 else
     showteambackend_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -1207,9 +1248,11 @@ showteambackends_expected () {
       expected="$(cat<<"EOEXPECTED"
 backend                                  configuration      priority  status
 ---------------------------------------  ---------------  ----------  --------
-team_keyring.SecretsManagerKeyring       global                    6  in use
+team_keyring.SecretsManagerKeyring       [36m[2mglobal[0m                    6  in use
 keyring.backends.fail.Keyring            Unset                     0
 keyring.backends.chainer.ChainerBackend  Unset                    -1
+[2m--------------[0m
+Legend: [36m[2mglobal[0m
 EOEXPECTED
 )"
       # org says nil where the block said nothing
@@ -1221,7 +1264,8 @@ echo 'Run showteambackends'
 { showteambackends_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/showteambackends"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/showteambackends"
 else
     showteambackends_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -1245,7 +1289,7 @@ gpgnoid_code () {
 gpgnoid_expected () {
       local expected
       expected="$(cat<<"EOEXPECTED"
-error: Could not save your secret.
+[31merror: [0mCould not save your secret.
 Usage: clk secret set [OPTIONS] KEY
 error: Write in ./.clk/secrets/.gpg-id the gpg ids to encrypt the secrets to, one per line. gpg --list-secret-keys shows yours.
 EOEXPECTED
@@ -1259,7 +1303,8 @@ echo 'Run gpgnoid'
 { gpgnoid_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/gpgnoid"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/gpgnoid"
 else
     gpgnoid_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -1293,7 +1338,8 @@ echo 'Run completegpg'
 { completegpg_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/completegpg"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/completegpg"
 else
     completegpg_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -1311,7 +1357,7 @@ usegpg_code () {
 usegpg_expected () {
       local expected
       expected="$(cat<<"EOEXPECTED"
-clk now keeps your secrets in clk.keyrings.GpgKeyring (local settings)
+clk now keeps your secrets in clk.keyrings.GpgKeyring ([32mlocal[0m settings)
 EOEXPECTED
 )"
       # org says nil where the block said nothing
@@ -1323,7 +1369,8 @@ echo 'Run usegpg'
 { usegpg_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/usegpg"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/usegpg"
 else
     usegpg_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -1355,7 +1402,8 @@ echo 'Run gpgfiles'
 { gpgfiles_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/gpgfiles"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/gpgfiles"
 else
     gpgfiles_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -1373,7 +1421,7 @@ gpgshow_code () {
 gpgshow_expected () {
       local expected
       expected="$(cat<<"EOEXPECTED"
-demo-buyer-password mytoken
+demo-buyer-password [2mmytoken[0m
 EOEXPECTED
 )"
       # org says nil where the block said nothing
@@ -1385,7 +1433,8 @@ echo 'Run gpgshow'
 { gpgshow_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/gpgshow"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/gpgshow"
 else
     gpgshow_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -1417,7 +1466,8 @@ echo 'Run gpgunset'
 { gpgunset_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/gpgunset"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/gpgunset"
 else
     gpgunset_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -1447,7 +1497,8 @@ echo 'Run unusegpg'
 { unusegpg_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/unusegpg"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/unusegpg"
 else
     unusegpg_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -1468,7 +1519,7 @@ usesecretservice_code () {
 usesecretservice_expected () {
       local expected
       expected="$(cat<<"EOEXPECTED"
-clk now keeps your secrets in keyring.backends.SecretService.Keyring (local settings)
+clk now keeps your secrets in keyring.backends.SecretService.Keyring ([32mlocal[0m settings)
 EOEXPECTED
 )"
       # org says nil where the block said nothing
@@ -1480,7 +1531,8 @@ echo 'Run usesecretservice'
 { usesecretservice_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/usesecretservice"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/usesecretservice"
 else
     usesecretservice_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -1501,8 +1553,8 @@ secretserviceshow_code () {
 secretserviceshow_expected () {
       local expected
       expected="$(cat<<"EOEXPECTED"
-demo-buyer-password mytoken
-clk keeps your secrets in keyring.backends.SecretService.Keyring, because the local settings name it.
+demo-buyer-password [2mmytoken[0m
+clk keeps your secrets in keyring.backends.SecretService.Keyring, because the [32mlocal[0m settings name it.
 EOEXPECTED
 )"
       # org says nil where the block said nothing
@@ -1514,7 +1566,8 @@ echo 'Run secretserviceshow'
 { secretserviceshow_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/secretserviceshow"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/secretserviceshow"
 else
     secretserviceshow_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -1552,7 +1605,8 @@ echo 'Run unuseteambackend'
 { unuseteambackend_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/unuseteambackend"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/unuseteambackend"
 else
     unuseteambackend_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -1583,7 +1637,8 @@ echo 'Run unuseagain'
 { unuseagain_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/unuseagain"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/unuseagain"
 else
     unuseagain_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -1613,7 +1668,8 @@ echo 'Run envbackend'
 { envbackend_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/envbackend"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/envbackend"
 else
     envbackend_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -1651,7 +1707,8 @@ echo 'Run rcbackend'
 { rcbackend_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/rcbackend"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/rcbackend"
 else
     rcbackend_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -1682,7 +1739,8 @@ echo 'Run prioritybackend'
 { prioritybackend_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/prioritybackend"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/prioritybackend"
 else
     prioritybackend_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -1723,7 +1781,8 @@ echo 'Run packagedbackend'
 { packagedbackend_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/packagedbackend"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/packagedbackend"
 else
     packagedbackend_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -1753,7 +1812,8 @@ echo 'Run listnosecret'
 { listnosecret_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/listnosecret"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/listnosecret"
 else
     listnosecret_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {

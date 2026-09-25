@@ -59,7 +59,11 @@ Once copied in the plugin directory, you should be able to see it listed in the 
 clk plugin show
 ```
 
-    trigger Trigger plugin - run commands before/after other commands.
+<pre>
+<span style="color:teal;">trigger</span> Trigger plugin - run commands before/after other commands.
+--------------
+Legend: <span style="color:teal;">global</span>
+</pre>
 
 &hellip;and use the injected command like any other.
 
@@ -67,22 +71,20 @@ clk plugin show
 clk trigger --help | head -15
 ```
 
-```
-Usage: clk trigger [OPTIONS] COMMAND [ARGS]...
+    Usage: clk trigger [OPTIONS] COMMAND [ARGS]...
 
-  Manipulate command triggers.
+      Manipulate command triggers.
 
-  Triggers allow you to automatically run commands before or after other commands. This is useful for working around
-  issues in tools or adding consistent behaviors.
+      Triggers allow you to automatically run commands before or after other commands. This is useful for working around
+      issues in tools or adding consistent behaviors.
 
-  To run command B before command A:
+      To run command B before command A:
 
-      clk trigger set pre A B
+          clk trigger set pre A B
 
-  To run command B only after successful execution of A:
+      To run command B only after successful execution of A:
 
-      clk trigger set success A B
-```
+          clk trigger set success A B
 
 
 <a id="using-triggers"></a>
@@ -252,5 +254,7 @@ clk names it, says where you would remove it, and gets on with what you asked.
 clk echo hello
 ```
 
-    warning: Error when loading plugin notifier (if the plugin is no more useful, consider uninstalling the plugins notifier): No module named 'notify2'
-    hello
+<pre>
+<span style="color:olive;">warning: </span>Error when loading plugin notifier (if the plugin is no more useful, consider uninstalling the plugins notifier): No module named 'notify2'
+hello
+</pre>

@@ -63,7 +63,8 @@ echo 'Run run_flow'
 { run_flow_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/run_flow"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/run_flow"
 else
     run_flow_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -125,7 +126,8 @@ echo 'Run running-the-explicit-flow'
 { running-the-explicit-flow_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/running-the-explicit-flow"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/running-the-explicit-flow"
 else
     running-the-explicit-flow_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -144,7 +146,7 @@ running-the-explicit-flow-with-model_code () {
 running-the-explicit-flow-with-model_expected () {
       local expected
       expected="$(cat<<"EOEXPECTED"
-New global parameters for printer.slice: --model someothermodel
+New [36mglobal[0m parameters for printer.slice: --model someothermodel
 Running some stuff for the printer to be ready to go
 Slicing someothermodel to model.gcode
 Printing model.gcode using myprinter
@@ -159,7 +161,8 @@ echo 'Run running-the-explicit-flow-with-model'
 { running-the-explicit-flow-with-model_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/running-the-explicit-flow-with-model"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/running-the-explicit-flow-with-model"
 else
     running-the-explicit-flow-with-model_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -190,7 +193,8 @@ echo 'Run running-the-flow-from'
 { running-the-flow-from_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/running-the-flow-from"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/running-the-flow-from"
 else
     running-the-flow-from_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -220,7 +224,8 @@ echo 'Run running-the-flow-after'
 { running-the-flow-after_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/running-the-flow-after"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/running-the-flow-after"
 else
     running-the-flow-after_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -241,9 +246,9 @@ gcode-in-value_code () {
 gcode-in-value_expected () {
       local expected
       expected="$(cat<<"EOEXPECTED"
-Removing global parameters of printer.slice: --model someothermodel
-New global parameters for printer.slice: --model someothermodel --output value:gcode
-New global parameters for printer.send: --gcode value:gcode
+Removing [36mglobal[0m parameters of printer.slice: --model someothermodel
+New [36mglobal[0m parameters for printer.slice: --model someothermodel --output value:gcode
+New [36mglobal[0m parameters for printer.send: --gcode value:gcode
 Running some stuff for the printer to be ready to go
 Slicing someothermodel to print.gcode
 Printing print.gcode using myprinter
@@ -258,7 +263,8 @@ echo 'Run gcode-in-value'
 { gcode-in-value_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/gcode-in-value"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/gcode-in-value"
 else
     gcode-in-value_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -291,7 +297,8 @@ echo 'Run move-gcode-value'
 { move-gcode-value_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/move-gcode-value"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/move-gcode-value"
 else
     move-gcode-value_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -313,7 +320,7 @@ flowdep-show_code () {
 flowdep-show_expected () {
       local expected
       expected="$(cat<<"EOEXPECTED"
-printer.send printer.calibrate printer.slice
+printer.send [2mprinter.calibrate printer.slice[0m
 EOEXPECTED
 )"
       # org says nil where the block said nothing
@@ -325,7 +332,8 @@ echo 'Run flowdep-show'
 { flowdep-show_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/flowdep-show"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/flowdep-show"
 else
     flowdep-show_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -379,7 +387,8 @@ echo 'Run flow-verbose'
 { flow-verbose_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/flow-verbose"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/flow-verbose"
 else
     flow-verbose_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -415,7 +424,8 @@ echo 'Run flow-step'
 { flow-step_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/flow-step"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/flow-step"
 else
     flow-step_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -460,7 +470,8 @@ echo 'Run flow-progress'
 { flow-progress_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/flow-progress"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/flow-progress"
 else
     flow-progress_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -481,7 +492,7 @@ flowdep-set-clean_code () {
 flowdep-set-clean_expected () {
       local expected
       expected="$(cat<<"EOEXPECTED"
-New global flowdep for printer.calibrate: printer.clean
+New [36mglobal[0m flowdep for printer.calibrate: printer.clean
 Cleaning the printer bed
 Running some stuff for the printer to be ready to go
 Slicing someothermodel to model.gcode
@@ -497,7 +508,8 @@ echo 'Run flowdep-set-clean'
 { flowdep-set-clean_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/flowdep-set-clean"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/flowdep-set-clean"
 else
     flowdep-set-clean_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -534,7 +546,8 @@ echo 'Run flowdep-append'
 { flowdep-append_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/flowdep-append"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/flowdep-append"
 else
     flowdep-append_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -572,7 +585,8 @@ echo 'Run flowdep-insert'
 { flowdep-insert_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/flowdep-insert"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/flowdep-insert"
 else
     flowdep-insert_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -607,7 +621,8 @@ echo 'Run flowdep-remove'
 { flowdep-remove_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/flowdep-remove"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/flowdep-remove"
 else
     flowdep-remove_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -626,7 +641,7 @@ flowdep-unset_code () {
 flowdep-unset_expected () {
       local expected
       expected="$(cat<<"EOEXPECTED"
-Erasing printer.calibrate flow dependencies from global settings
+Erasing printer.calibrate flow dependencies from [36mglobal[0m settings
 Running some stuff for the printer to be ready to go
 Slicing someothermodel to model.gcode
 Printing model.gcode using myprinter
@@ -641,7 +656,8 @@ echo 'Run flowdep-unset'
 { flowdep-unset_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/flowdep-unset"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/flowdep-unset"
 else
     flowdep-unset_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -660,8 +676,8 @@ alias-with-flowdep_code () {
 alias-with-flowdep_expected () {
       local expected
       expected="$(cat<<"EOEXPECTED"
-New global alias for printer.nightly: printer send myprinter
-New global flowdep for printer.nightly: printer.calibrate
+New [36mglobal[0m alias for printer.nightly: printer send myprinter
+New [36mglobal[0m flowdep for printer.nightly: printer.calibrate
 Running some stuff for the printer to be ready to go
 Printing model.gcode using myprinter
 EOEXPECTED
@@ -675,7 +691,8 @@ echo 'Run alias-with-flowdep'
 { alias-with-flowdep_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/alias-with-flowdep"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/alias-with-flowdep"
 else
     alias-with-flowdep_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -731,7 +748,8 @@ echo 'Run run-with-failing-step'
 { run-with-failing-step_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/run-with-failing-step"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/run-with-failing-step"
 else
     run-with-failing-step_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
@@ -773,9 +791,9 @@ run-with-wrong-flow-deps_code () {
 run-with-wrong-flow-deps_expected () {
       local expected
       expected="$(cat<<"EOEXPECTED"
-error: Could not load the flow of printer.slice with the error: Command printer.calib not found
-error: Could not load the flow of printer.send with the error: Command printer.calib not found
-warning: Failed to get the command printer.send: Command printer.calib not found
+[31merror: [0mCould not load the flow of printer.slice with the error: Command printer.calib not found
+[31merror: [0mCould not load the flow of printer.send with the error: Command printer.calib not found
+[33mwarning: [0mFailed to get the command printer.send: Command printer.calib not found
 error: printer.send could not be loaded. Re run with clk --develop to see the stacktrace or clk --debug-on-command-load-error to debug the load error
 EOEXPECTED
 )"
@@ -788,7 +806,8 @@ echo 'Run run-with-wrong-flow-deps'
 { run-with-wrong-flow-deps_code || true ; } > "${TMP}/code.txt" 2>&1
 if [ -n "${CLK_RECORD_RESULTS-}" ]
 then
-    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/run-with-wrong-flow-deps"
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/run-with-wrong-flow-deps"
 else
     run-with-wrong-flow-deps_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {

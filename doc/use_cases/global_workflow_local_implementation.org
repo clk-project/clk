@@ -30,7 +30,7 @@ clk alias set test echo "No tests configured" , exec false
 #+END_SRC
 
 #+RESULTS[e8e13237352c6310ac79661671acde2602c3dd30]: create-global-test
-: New global alias for test: echo 'No tests configured' , exec false
+: New [36mglobal[0m alias for test: echo 'No tests configured' , exec false
 
 Then create your workflow alias.
 
@@ -40,7 +40,7 @@ clk alias set test-n-push test , echo "git push"
 #+END_SRC
 
 #+RESULTS[7c94bb5a963cd132f0b42151ae2d3aa9696d27d6]: create-test-n-push
-: New global alias for test-n-push: test , echo 'git push'
+: New [36mglobal[0m alias for test-n-push: test , echo 'git push'
 
 This workflow works everywhere, even where tests aren't configured yet.
 
@@ -126,7 +126,7 @@ clk alias set deploy echo "Deploying to production..."
 #+END_SRC
 
 #+RESULTS[f2f248a65fad2c8cf772007f1284a003134df374]: create-local-alias
-: New local alias for deploy: echo 'Deploying to production...'
+: New [32mlocal[0m alias for deploy: echo 'Deploying to production...'
 
 This ~deploy~ command only exists inside this project.
 
@@ -145,7 +145,7 @@ clk deploy
 #+END_SRC
 
 #+RESULTS[e532f6860d0aa6d91f6d559988b83a2aaee13c9a]: deploy-outside
-: warning: Failed to get the command deploy: Command deploy not found
+: [33mwarning: [0mFailed to get the command deploy: Command deploy not found
 : Usage: clk [OPTIONS] [COMMAND] [ARGS]...
 : error: No such command 'deploy'.
 

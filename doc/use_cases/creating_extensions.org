@@ -108,7 +108,7 @@ clk k8s run-dev-env --flow
 #+END_SRC
 
 #+RESULTS[caa531b03ee6b31d35eed3a0dc93b254d4545bbc]: disable
-: warning: Failed to get the command k8s: Command k8s not found
+: [33mwarning: [0mFailed to get the command k8s: Command k8s not found
 : Usage: clk [OPTIONS] [COMMAND] [ARGS]...
 : error: No such command 'k8s'.
 
@@ -150,7 +150,7 @@ clk --without-extension k8s k8s run-dev-env --flow
 #+END_SRC
 
 #+RESULTS[4013dc3f99e58fd5bc22301405cb090b961a30ca]: disable-for-one-run
-: warning: Failed to get the command k8s: Command k8s not found
+: [33mwarning: [0mFailed to get the command k8s: Command k8s not found
 : Usage: clk [OPTIONS] [COMMAND] [ARGS]...
 : error: No such command 'k8s'.
 
@@ -318,7 +318,7 @@ clk extension update k8s 2>&1 | tail -1
 #+END_SRC
 
 #+RESULTS[]: update-before-publishing
-: warning: I cannot update the extension global/k8s. For the time being, I only can update cloned extensions.
+: [33mwarning: [0mI cannot update the extension global/k8s. For the time being, I only can update cloned extensions.
 
 In case you lost that extension folder and want to find it again, simply run.
 
@@ -480,7 +480,7 @@ clk extension update k8s --stash 2>&1 | head -1
 #+END_SRC
 
 #+RESULTS[]: update-while-working
-: warning: I will update global/k8s on branch bigger-cluster. It does not look like a main branch name. To get back to the main branch, consider calling `clk extension update global/k8s --branch main` (or master).
+: [33mwarning: [0mI will update global/k8s on branch bigger-cluster. It does not look like a main branch name. To get back to the main branch, consider calling `clk extension update global/k8s --branch main` (or master).
 
 * get an extension
   :PROPERTIES:
@@ -511,31 +511,29 @@ clk hello
 #+END_SRC
 
 #+RESULTS[ddc8b5f07fbf3c07198b62e1c6dd77537bdce685]: install-extension
-#+begin_example
-_____
-| hello |
-  =====
-       \
-        \
-         \
-          \
-                                / \\  //\\
-                 |\\___/|      /   \\//  \\\\
-                 /0  0  \\__  /    //  | \\ \\
-                /     /  \\/_/    //   |  \\  \\
-                \@_^_\@'/   \\/_   //    |   \\   \\
-                //_^_/     \\/_ //     |    \\    \\
-             ( //) |        \\///      |     \\     \\
-           ( / /) _|_ /   )  //       |      \\     _\\
-         ( // /) '/,_ _ _/  ( ; -.    |    _ _\\.-~        .-~~~^-.
-       (( / / )) ,-{        _      `-.|.-~-.           .~         `.
-      (( // / ))  '/\\      /                 ~-. _ .-~      .-~^-.  \\
-      (( /// ))      `.   {            }                   /      \\  \\
-       (( / ))     .----~-.\\        \\-'                 .~         \\  `. \\^-.
-                  ///.----..>        \\             _ -~             `.  ^-`  ^-_
-                    ///-._ _ _ _ _ _ _}^ - - - - ~                     ~-- ,.-~
-                                                                       /.-~
-#+end_example
+:   _____
+: | hello |
+:   =====
+:        \
+:         \
+:          \
+:           \
+:                                 / \\  //\\
+:                  |\\___/|      /   \\//  \\\\
+:                  /0  0  \\__  /    //  | \\ \\
+:                 /     /  \\/_/    //   |  \\  \\
+:                 \@_^_\@'/   \\/_   //    |   \\   \\
+:                 //_^_/     \\/_ //     |    \\    \\
+:              ( //) |        \\///      |     \\     \\
+:            ( / /) _|_ /   )  //       |      \\     _\\
+:          ( // /) '/,_ _ _/  ( ; -.    |    _ _\\.-~        .-~~~^-.
+:        (( / / )) ,-{        _      `-.|.-~-.           .~         `.
+:       (( // / ))  '/\\      /                 ~-. _ .-~      .-~^-.  \\
+:       (( /// ))      `.   {            }                   /      \\  \\
+:        (( / ))     .----~-.\\        \\-'                 .~         \\  `. \\^-.
+:                   ///.----..>        \\             _ -~             `.  ^-`  ^-_
+:                     ///-._ _ _ _ _ _ _}^ - - - - ~                     ~-- ,.-~
+:                                                                        /.-~
 
 An extension you did not write yourself leaves you wondering what is in it.
 ~clk extension describe~ answers that.
@@ -564,7 +562,7 @@ clk hello
 #+END_SRC
 
 #+RESULTS[16bb914fcc2d2d14fd1d6f6aa8abf780c09ddedd]: remove-extension
-: warning: Failed to get the command hello: Command hello not found
+: [33mwarning: [0mFailed to get the command hello: Command hello not found
 : Usage: clk [OPTIONS] [COMMAND] [ARGS]...
 : error: No such command 'hello'.
 : error:
@@ -582,31 +580,29 @@ clk hello
 #+END_SRC
 
 #+RESULTS[49c1c62970af8db344f9ad2e27ecb87082431174]: install-extension-github
-#+begin_example
-_____
-| hello |
-  =====
-       \
-        \
-         \
-          \
-                                / \\  //\\
-                 |\\___/|      /   \\//  \\\\
-                 /0  0  \\__  /    //  | \\ \\
-                /     /  \\/_/    //   |  \\  \\
-                \@_^_\@'/   \\/_   //    |   \\   \\
-                //_^_/     \\/_ //     |    \\    \\
-             ( //) |        \\///      |     \\     \\
-           ( / /) _|_ /   )  //       |      \\     _\\
-         ( // /) '/,_ _ _/  ( ; -.    |    _ _\\.-~        .-~~~^-.
-       (( / / )) ,-{        _      `-.|.-~-.           .~         `.
-      (( // / ))  '/\\      /                 ~-. _ .-~      .-~^-.  \\
-      (( /// ))      `.   {            }                   /      \\  \\
-       (( / ))     .----~-.\\        \\-'                 .~         \\  `. \\^-.
-                  ///.----..>        \\             _ -~             `.  ^-`  ^-_
-                    ///-._ _ _ _ _ _ _}^ - - - - ~                     ~-- ,.-~
-                                                                       /.-~
-#+end_example
+:   _____
+: | hello |
+:   =====
+:        \
+:         \
+:          \
+:           \
+:                                 / \\  //\\
+:                  |\\___/|      /   \\//  \\\\
+:                  /0  0  \\__  /    //  | \\ \\
+:                 /     /  \\/_/    //   |  \\  \\
+:                 \@_^_\@'/   \\/_   //    |   \\   \\
+:                 //_^_/     \\/_ //     |    \\    \\
+:              ( //) |        \\///      |     \\     \\
+:            ( / /) _|_ /   )  //       |      \\     _\\
+:          ( // /) '/,_ _ _/  ( ; -.    |    _ _\\.-~        .-~~~^-.
+:        (( / / )) ,-{        _      `-.|.-~-.           .~         `.
+:       (( // / ))  '/\\      /                 ~-. _ .-~      .-~^-.  \\
+:       (( /// ))      `.   {            }                   /      \\  \\
+:        (( / ))     .----~-.\\        \\-'                 .~         \\  `. \\^-.
+:                   ///.----..>        \\             _ -~             `.  ^-`  ^-_
+:                     ///-._ _ _ _ _ _ _}^ - - - - ~                     ~-- ,.-~
+:                                                                        /.-~
 
 And because this is also a clk provided extension, the name is enough.
 
@@ -618,31 +614,29 @@ clk hello
 #+END_SRC
 
 #+RESULTS[57260c733fd9dbb7ef455f4c6a567e0fab79bc82]: install-extension-name
-#+begin_example
-_____
-| hello |
-  =====
-       \
-        \
-         \
-          \
-                                / \\  //\\
-                 |\\___/|      /   \\//  \\\\
-                 /0  0  \\__  /    //  | \\ \\
-                /     /  \\/_/    //   |  \\  \\
-                \@_^_\@'/   \\/_   //    |   \\   \\
-                //_^_/     \\/_ //     |    \\    \\
-             ( //) |        \\///      |     \\     \\
-           ( / /) _|_ /   )  //       |      \\     _\\
-         ( // /) '/,_ _ _/  ( ; -.    |    _ _\\.-~        .-~~~^-.
-       (( / / )) ,-{        _      `-.|.-~-.           .~         `.
-      (( // / ))  '/\\      /                 ~-. _ .-~      .-~^-.  \\
-      (( /// ))      `.   {            }                   /      \\  \\
-       (( / ))     .----~-.\\        \\-'                 .~         \\  `. \\^-.
-                  ///.----..>        \\             _ -~             `.  ^-`  ^-_
-                    ///-._ _ _ _ _ _ _}^ - - - - ~                     ~-- ,.-~
-                                                                       /.-~
-#+end_example
+:   _____
+: | hello |
+:   =====
+:        \
+:         \
+:          \
+:           \
+:                                 / \\  //\\
+:                  |\\___/|      /   \\//  \\\\
+:                  /0  0  \\__  /    //  | \\ \\
+:                 /     /  \\/_/    //   |  \\  \\
+:                 \@_^_\@'/   \\/_   //    |   \\   \\
+:                 //_^_/     \\/_ //     |    \\    \\
+:              ( //) |        \\///      |     \\     \\
+:            ( / /) _|_ /   )  //       |      \\     _\\
+:          ( // /) '/,_ _ _/  ( ; -.    |    _ _\\.-~        .-~~~^-.
+:        (( / / )) ,-{        _      `-.|.-~-.           .~         `.
+:       (( // / ))  '/\\      /                 ~-. _ .-~      .-~^-.  \\
+:       (( /// ))      `.   {            }                   /      \\  \\
+:        (( / ))     .----~-.\\        \\-'                 .~         \\  `. \\^-.
+:                   ///.----..>        \\             _ -~             `.  ^-`  ^-_
+:                     ///-._ _ _ _ _ _ _}^ - - - - ~                     ~-- ,.-~
+:                                                                        /.-~
 
 * leaning on the helpers of clk.lib
   :PROPERTIES:
@@ -822,7 +816,7 @@ clk check-cluster other 2>&1
 
 #+RESULTS[49b6057dd637b77fa5716a9a2bc288f5525c3ab4]: run-failing-demo
 : trouble reaching other
-: error: bash -c 'echo trouble reaching $1 >&2 ; test $1 = main || exit 4 ; echo ok' -- other exited with 4
+: [31merror: [0mbash -c 'echo trouble reaching $1 >&2 ; test $1 = main || exit 4 ; echo ok' -- other exited with 4
 
 Ask quietly and it fails just the same.
 
@@ -832,8 +826,8 @@ clk check-cluster --quiet other 2>&1
 #+END_SRC
 
 #+RESULTS[e293314ba6a24120bf65be8a6f5b5870a88963d0]: run-quiet-failing-demo
-: error: bash -c 'echo trouble reaching $1 >&2 ; test $1 = main || exit 4 ; echo ok' -- other exited with 4, saying:
-: error: trouble reaching other
+: [31merror: [0mbash -c 'echo trouble reaching $1 >&2 ; test $1 = main || exit 4 ; echo ok' -- other exited with 4, saying:
+: [31merror: [0mtrouble reaching other
 
 Of course, you can use ~--timeout~ as well.
 
@@ -861,7 +855,7 @@ clk watch-cluster --timeout 1 2>&1
 #+END_SRC
 
 #+RESULTS[df3bc68deb8f3fa3405dea99add46836975ce036]: run-waiting-demo
-: error: bash -c 'sleep 600' did not finish in 1s
+: [31merror: [0mbash -c 'sleep 600' did not finish in 1s
 : giving up, the cluster is not answering
 
 #+NAME: cleanup-cluster-demo
@@ -891,7 +885,7 @@ clk extension | grep "my-host.\[example\].com"
 #+END_SRC
 
 #+RESULTS[7401030ad5104a118c72e41b09d3d841269ea942]: hostname-extension-visible
-: my-host.[example].com  Unset            global
+: [32mmy-host.[example].com[0m  Unset            [36m[2mglobal[0m
 
 Note that clk will always enable the extension matching your hostname, even if
 you explicitly disable it in a project. This is practical to put personal
@@ -921,7 +915,9 @@ clk extension show kube
 #+RESULTS[13cf4fe0728d1c8ab43f682f56f4852a5f250af8]: kube-is-local
 : extension    configuration    installation
 : -----------  ---------------  --------------
-: kube         Unset            local
+: [32mkube[0m         Unset            [32m[2mlocal[0m
+: [2m-------------[0m
+: Legend: [32m[2mlocal[0m
 
 ~clk extension rename~ gives it the name you would have chosen with more time.
 
@@ -934,7 +930,9 @@ clk extension show kubernetes
 #+RESULTS[079f37cf724bbb9aa0726c3b0cd97b1bdf9e565e]: rename-kube
 : extension    configuration    installation
 : -----------  ---------------  --------------
-: kubernetes   Unset            local
+: [32mkubernetes[0m   Unset            [32m[2mlocal[0m
+: [2m-------------[0m
+: Legend: [32m[2mlocal[0m
 
 And ~clk extension move~ carries it out of the project, so that it answers
 everywhere.
@@ -948,7 +946,9 @@ clk extension show kubernetes
 #+RESULTS[1c67527a4e0a3248d58d4b27a012ad5422382acc]: move-kube
 : extension    configuration    installation
 : -----------  ---------------  --------------
-: kubernetes   Unset            global
+: [32mkubernetes[0m   Unset            [36m[2mglobal[0m
+: [2m--------------[0m
+: Legend: [36m[2mglobal[0m
 
 #+NAME: leave-tidyproject
 #+BEGIN_SRC bash :results verbatim :cache yes :exports both :session f47428c2-56ea-4d91-97d9-4f2ff63ef052

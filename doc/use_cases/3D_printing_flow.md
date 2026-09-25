@@ -148,10 +148,12 @@ clk parameter set printer.slice --model someothermodel
 clk printer send myprinter --flow
 ```
 
-    New global parameters for printer.slice: --model someothermodel
-    Running some stuff for the printer to be ready to go
-    Slicing someothermodel to model.gcode
-    Printing model.gcode using myprinter
+<pre>
+New <span style="color:teal;">global</span> parameters for printer.slice: --model someothermodel
+Running some stuff for the printer to be ready to go
+Slicing someothermodel to model.gcode
+Printing model.gcode using myprinter
+</pre>
 
 Sometimes you have already calibrated the printer and you only want the rest of the flow. `--flow-from` starts it at the step you name.
 
@@ -179,12 +181,14 @@ clk parameter set printer.send --gcode noeval:value:gcode
 clk printer send myprinter --flow
 ```
 
-    Removing global parameters of printer.slice: --model someothermodel
-    New global parameters for printer.slice: --model someothermodel --output value:gcode
-    New global parameters for printer.send: --gcode value:gcode
-    Running some stuff for the printer to be ready to go
-    Slicing someothermodel to print.gcode
-    Printing print.gcode using myprinter
+<pre>
+Removing <span style="color:teal;">global</span> parameters of printer.slice: --model someothermodel
+New <span style="color:teal;">global</span> parameters for printer.slice: --model someothermodel --output value:gcode
+New <span style="color:teal;">global</span> parameters for printer.send: --gcode value:gcode
+Running some stuff for the printer to be ready to go
+Slicing someothermodel to print.gcode
+Printing print.gcode using myprinter
+</pre>
 
 Let's rename the file, in one place.
 
@@ -212,7 +216,9 @@ First, you can list the commands that would be run in a flow using the flowdep c
 clk flowdep show printer.send --all
 ```
 
-    printer.send printer.calibrate printer.slice
+<pre>
+printer.send printer.calibrate printer.slice
+</pre>
 
 Then, you can show the graph
 
@@ -307,11 +313,13 @@ clk flowdep set printer.calibrate printer.clean
 clk printer send myprinter --flow
 ```
 
-    New global flowdep for printer.calibrate: printer.clean
-    Cleaning the printer bed
-    Running some stuff for the printer to be ready to go
-    Slicing someothermodel to model.gcode
-    Printing model.gcode using myprinter
+<pre>
+New <span style="color:teal;">global</span> flowdep for printer.calibrate: printer.clean
+Cleaning the printer bed
+Running some stuff for the printer to be ready to go
+Slicing someothermodel to model.gcode
+Printing model.gcode using myprinter
+</pre>
 
 Now, let's say you also want to add a `preheat` step after clean but before calibrate. You can append it to the existing flow.
 
@@ -368,10 +376,12 @@ clk flowdep unset printer.calibrate
 clk printer send myprinter --flow
 ```
 
-    Erasing printer.calibrate flow dependencies from global settings
-    Running some stuff for the printer to be ready to go
-    Slicing someothermodel to model.gcode
-    Printing model.gcode using myprinter
+<pre>
+Erasing printer.calibrate flow dependencies from <span style="color:teal;">global</span> settings
+Running some stuff for the printer to be ready to go
+Slicing someothermodel to model.gcode
+Printing model.gcode using myprinter
+</pre>
 
 An alias often comes with the step that must run before it. `--flowdep` says both in one line.
 
@@ -380,10 +390,12 @@ clk alias set --flowdep printer.calibrate printer.nightly printer send myprinter
 clk printer nightly --flow
 ```
 
-    New global alias for printer.nightly: printer send myprinter
-    New global flowdep for printer.nightly: printer.calibrate
-    Running some stuff for the printer to be ready to go
-    Printing model.gcode using myprinter
+<pre>
+New <span style="color:teal;">global</span> alias for printer.nightly: printer send myprinter
+New <span style="color:teal;">global</span> flowdep for printer.nightly: printer.calibrate
+Running some stuff for the printer to be ready to go
+Printing model.gcode using myprinter
+</pre>
 
 
 <a id="when-the-printer-does-not-answer"></a>
@@ -472,9 +484,11 @@ When you run it, you will get the error
 clk printer send --flow myprinter
 ```
 
-    error: Could not load the flow of printer.slice with the error: Command printer.calib not found
-    error: Could not load the flow of printer.send with the error: Command printer.calib not found
-    warning: Failed to get the command printer.send: Command printer.calib not found
-    error: printer.send could not be loaded. Re run with clk --develop to see the stacktrace or clk --debug-on-command-load-error to debug the load error
+<pre>
+<span style="color:red;">error: </span>Could not load the flow of printer.slice with the error: Command printer.calib not found
+<span style="color:red;">error: </span>Could not load the flow of printer.send with the error: Command printer.calib not found
+<span style="color:olive;">warning: </span>Failed to get the command printer.send: Command printer.calib not found
+error: printer.send could not be loaded. Re run with clk --develop to see the stacktrace or clk --debug-on-command-load-error to debug the load error
+</pre>
 
 Beware that this means that you have to check that this command it actually defined.

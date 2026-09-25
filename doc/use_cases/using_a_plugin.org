@@ -77,7 +77,9 @@ clk plugin show
 #+END_SRC
 
 #+RESULTS[930ad0342e7b300ca925352bf09e1ef4867d0b6a]: show-plugin
-: trigger Trigger plugin - run commands before/after other commands.
+: [36m[2mtrigger[0m [2mTrigger plugin - run commands before/after other commands.[0m
+: [2m--------------[0m
+: Legend: [36m[2mglobal[0m
 
 ...and use the injected command like any other.
 
@@ -87,22 +89,21 @@ clk trigger --help | head -15
 #+END_SRC
 
 #+RESULTS[73b6d8a305098a50a2908a37aa9cdb50ec59dab5]: verify_plugin
-#+begin_example
-Usage: clk trigger [OPTIONS] COMMAND [ARGS]...
-
-  Manipulate command triggers.
-
-  Triggers allow you to automatically run commands before or after other commands. This is useful for working around
-  issues in tools or adding consistent behaviors.
-
-  To run command B before command A:
-
-      clk trigger set pre A B
-
-  To run command B only after successful execution of A:
-
-      clk trigger set success A B
-#+end_example
+: Usage: clk trigger [OPTIONS] COMMAND [ARGS]...
+:
+:   Manipulate command triggers.
+:
+:   Triggers allow you to automatically run commands before or after other commands. This is useful for working around
+:   issues in tools or adding consistent behaviors.
+:
+:   To run command B before command A:
+:
+:       clk trigger set pre A B
+:
+:   To run command B only after successful execution of A:
+:
+:       clk trigger set success A B
+:
 
 
 * using triggers
@@ -313,7 +314,7 @@ clk echo hello
 #+END_SRC
 
 #+RESULTS[]: run_with_broken_plugin
-: warning: Error when loading plugin notifier (if the plugin is no more useful, consider uninstalling the plugins notifier): No module named 'notify2'
+: [33mwarning: [0mError when loading plugin notifier (if the plugin is no more useful, consider uninstalling the plugins notifier): No module named 'notify2'
 : hello
 
 #+BEGIN_SRC bash :exports none :tangle ../../tests/use_cases/using_a_plugin.sh :noweb yes :shebang "#!/usr/bin/env bash"
