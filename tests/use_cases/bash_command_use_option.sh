@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# [[file:../../doc/use_cases/bash_command_use_option.org::#giving-the-defaults-in-json][giving the defaults in json:7]]
+# [[file:../../doc/use_cases/bash_command_use_option.org::#giving-the-defaults-in-json][giving the defaults in json:9]]
 set -eu
 . ./sandboxing.sh
 
@@ -502,4 +502,74 @@ else
         exit 1
     }
 fi
-# giving the defaults in json:7 ends here
+
+
+
+typo-option_code () {
+      clk command create bash typo --option '--times:int'
+      clk typo
+}
+
+typo-option_expected () {
+      local expected
+      expected="$(cat<<"EOEXPECTED"
+[33mwarning: [0mWhen loading command typo at path ./clk-root/bin/typo: Expected format in typo is O:name:type:help[:{someextrajsondata}], got O:--times:int
+[31merror: [0mFound the command typo in the resolver external but could not load it.
+[33mwarning: [0mFailed to get the command typo: Expected format in typo is O:name:type:help[:{someextrajsondata}], got O:--times:int
+error: clk.typo could not be loaded. Re run with clk --develop to see the stacktrace or clk --debug-on-command-load-error to debug the load error
+EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
+}
+
+echo 'Run typo-option'
+
+{ typo-option_code || true ; } > "${TMP}/code.txt" 2>&1
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/typo-option"
+else
+    typo-option_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying typo-option"
+        exit 1
+    }
+fi
+
+
+
+typo-flag_code () {
+      clk command create bash typo --force --flag '--loud'
+      clk typo
+}
+
+typo-flag_expected () {
+      local expected
+      expected="$(cat<<"EOEXPECTED"
+[33mwarning: [0mWhen loading command typo at path ./clk-root/bin/typo: Expected format in typo is F:name:help[:{someextrajsondata}], got F:--loud
+[31merror: [0mFound the command typo in the resolver external but could not load it.
+[33mwarning: [0mFailed to get the command typo: Expected format in typo is F:name:help[:{someextrajsondata}], got F:--loud
+error: clk.typo could not be loaded. Re run with clk --develop to see the stacktrace or clk --debug-on-command-load-error to debug the load error
+EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
+}
+
+echo 'Run typo-flag'
+
+{ typo-flag_code || true ; } > "${TMP}/code.txt" 2>&1
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/typo-flag"
+else
+    typo-flag_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying typo-flag"
+        exit 1
+    }
+fi
+# giving the defaults in json:9 ends here

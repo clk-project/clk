@@ -276,3 +276,31 @@ clk greet --times 2
 
     HELLO
     HELLO
+
+When I forget the help of an option, clk tells me what it expected.
+
+```bash
+clk command create bash typo --option '--times:int'
+clk typo
+```
+
+<pre>
+<span style="color:olive;">warning: </span>When loading command typo at path ./clk-root/bin/typo: Expected format in typo is O:name:type:help[:{someextrajsondata}], got O:--times:int
+<span style="color:red;">error: </span>Found the command typo in the resolver external but could not load it.
+<span style="color:olive;">warning: </span>Failed to get the command typo: Expected format in typo is O:name:type:help[:{someextrajsondata}], got O:--times:int
+error: clk.typo could not be loaded. Re run with clk --develop to see the stacktrace or clk --debug-on-command-load-error to debug the load error
+</pre>
+
+The same goes for a flag.
+
+```bash
+clk command create bash typo --force --flag '--loud'
+clk typo
+```
+
+<pre>
+<span style="color:olive;">warning: </span>When loading command typo at path ./clk-root/bin/typo: Expected format in typo is F:name:help[:{someextrajsondata}], got F:--loud
+<span style="color:red;">error: </span>Found the command typo in the resolver external but could not load it.
+<span style="color:olive;">warning: </span>Failed to get the command typo: Expected format in typo is F:name:help[:{someextrajsondata}], got F:--loud
+error: clk.typo could not be loaded. Re run with clk --develop to see the stacktrace or clk --debug-on-command-load-error to debug the load error
+</pre>

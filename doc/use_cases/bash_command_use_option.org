@@ -397,6 +397,34 @@ clk greet --times 2
 : HELLO
 : HELLO
 
+When I forget the help of an option, clk tells me what it expected.
+
+#+name: typo-option
+#+BEGIN_SRC bash :results verbatim :exports both :session 100aa89b-f320-46ee-9d5d-2193ef48d4eb :cache yes
+clk command create bash typo --option '--times:int'
+clk typo
+#+END_SRC
+
+#+RESULTS[]: typo-option
+: [33mwarning: [0mWhen loading command typo at path ./clk-root/bin/typo: Expected format in typo is O:name:type:help[:{someextrajsondata}], got O:--times:int
+: [31merror: [0mFound the command typo in the resolver external but could not load it.
+: [33mwarning: [0mFailed to get the command typo: Expected format in typo is O:name:type:help[:{someextrajsondata}], got O:--times:int
+: error: clk.typo could not be loaded. Re run with clk --develop to see the stacktrace or clk --debug-on-command-load-error to debug the load error
+
+The same goes for a flag.
+
+#+name: typo-flag
+#+BEGIN_SRC bash :results verbatim :exports both :session 100aa89b-f320-46ee-9d5d-2193ef48d4eb :cache yes
+clk command create bash typo --force --flag '--loud'
+clk typo
+#+END_SRC
+
+#+RESULTS[]: typo-flag
+: [33mwarning: [0mWhen loading command typo at path ./clk-root/bin/typo: Expected format in typo is F:name:help[:{someextrajsondata}], got F:--loud
+: [31merror: [0mFound the command typo in the resolver external but could not load it.
+: [33mwarning: [0mFailed to get the command typo: Expected format in typo is F:name:help[:{someextrajsondata}], got F:--loud
+: error: clk.typo could not be loaded. Re run with clk --develop to see the stacktrace or clk --debug-on-command-load-error to debug the load error
+
 #+BEGIN_SRC bash :exports none :tangle ../../tests/use_cases/bash_command_use_option.sh :noweb yes :shebang "#!/usr/bin/env bash"
   set -eu
 <<init>>
@@ -436,4 +464,8 @@ check-result(old-greet-run)
 <<greet-create>>
 
 check-result(greet-run)
+
+check-result(typo-option)
+
+check-result(typo-flag)
 #+END_SRC
