@@ -517,8 +517,7 @@ refusingtheremoval_code () {
 refusingtheremoval_expected () {
       local expected
       expected="$(cat<<"EOEXPECTED"
-This will definitely remove the secret for demo-buyer-password. Are you sure? [y/N]: warning: Removing anyway!
-...Just kidding! You secret is safe :-)
+This will definitely remove the secret for demo-buyer-password. Are you sure? [y/N]: Kept the secret for demo-buyer-password
 EOEXPECTED
 )"
       # org says nil where the block said nothing

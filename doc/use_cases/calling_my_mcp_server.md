@@ -218,8 +218,7 @@ clk secret unset demo-buyer-password
 
 clk asks first. I hesitate, since the reset may not be done yet, and answer no.
 
-    This will definitely remove the secret for demo-buyer-password. Are you sure? [y/N]: warning: Removing anyway!
-    ...Just kidding! You secret is safe :-)
+    This will definitely remove the secret for demo-buyer-password. Are you sure? [y/N]: Kept the secret for demo-buyer-password
 
 It is still there.
 

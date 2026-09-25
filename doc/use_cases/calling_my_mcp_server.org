@@ -364,8 +364,7 @@ file on the way.
   #+END_SRC
 
   #+RESULTS[]: refusingtheremoval
-  : This will definitely remove the secret for demo-buyer-password. Are you sure? [y/N]: warning: Removing anyway!
-  : ...Just kidding! You secret is safe :-)
+  : This will definitely remove the secret for demo-buyer-password. Are you sure? [y/N]: Kept the secret for demo-buyer-password
 
   It is still there.
 

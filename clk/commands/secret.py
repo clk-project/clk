@@ -1,7 +1,5 @@
 #!/usr/bin/env python
 
-import time
-
 import click
 
 from clk.decorators import argument, flag, group, option, table_fields, table_format
@@ -38,20 +36,18 @@ def _set(key, secret):
 
 @secret.command(ignore_unknown_options=True, change_directory_options=False)
 @argument("key", help="The secret to remove")
-@flag("--force", help="Don't ask before removing it")
+@flag("--force/--no-force", help="Don't ask before removing it")
 def unset(key, force):
     """Remove the secret"""
     keyring = get_keyring()
     if not keyring.get_password("clk", key):
         raise click.ClickException("No secret set")
-    if force or click.confirm(
+    if not force and not click.confirm(
         f"This will definitely remove the secret for {key}. Are you sure?"
     ):
-        keyring.delete_password("clk", key)
-    else:
-        LOGGER.warning("Removing anyway!")
-        time.sleep(1)
-        LOGGER.info("...Just kidding! You secret is safe :-)")
+        LOGGER.info(f"Kept the secret for {key}")
+        return
+    keyring.delete_password("clk", key)
 
 
 @secret.command(ignore_unknown_options=True, change_directory_options=False)
