@@ -390,7 +390,7 @@ file on the way.
     clk secret unset demo-buyer-password
   #+END_SRC
 
-  Asking for it now tells me it is gone.
+  Asking for it now fails, so a script that reads it notices.
 
   #+NAME: checkthatthesecretisgone
   #+BEGIN_SRC bash :results verbatim :exports both :session 0b6acd63-d091-4c6b-83f6-7d2dd3ce908f :cache yes
@@ -398,7 +398,17 @@ file on the way.
   #+END_SRC
 
   #+RESULTS[]: checkthatthesecretisgone
-  : warning: No secret set
+  : error: No secret set
+
+  Removing it again tells me there is nothing left to remove.
+
+  #+NAME: unsetmissingsecret
+  #+BEGIN_SRC bash :results verbatim :exports both :session 0b6acd63-d091-4c6b-83f6-7d2dd3ce908f :cache yes
+    clk secret unset demo-buyer-password
+  #+END_SRC
+
+  #+RESULTS[]: unsetmissingsecret
+  : error: No secret set
 
 * when an agent runs it for me
   :PROPERTIES:
@@ -493,7 +503,7 @@ file on the way.
   #+END_SRC
 
   #+RESULTS[]: netrc_missing
-  : warning: No secret set
+  : error: No secret set
 
   It only reads: storing one is up to me, in the file itself.
 
@@ -574,6 +584,8 @@ file on the way.
     <<removingsecret>>
 
     check-result(checkthatthesecretisgone)
+
+    check-result(unsetmissingsecret)
 
     <<generate_netrc>>
 

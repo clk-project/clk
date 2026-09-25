@@ -53,9 +53,5 @@ class DummyFileKeyring(keyring.backend.KeyringBackend):
 
     def delete_password(self, servicename, username):
         content = self._content
-        service = content.get(servicename, {})
-        try:
-            del service[username]
-        except KeyError:
-            pass
+        content.get(servicename, {}).pop(username, None)
         self.path.write_text(json.dumps(content))

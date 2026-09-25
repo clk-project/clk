@@ -582,7 +582,7 @@ checkthatthesecretisgone_code () {
 checkthatthesecretisgone_expected () {
       local expected
       expected="$(cat<<"EOEXPECTED"
-warning: No secret set
+error: No secret set
 EOEXPECTED
 )"
       # org says nil where the block said nothing
@@ -599,6 +599,36 @@ else
     checkthatthesecretisgone_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
         echo "Something went wrong when trying checkthatthesecretisgone"
+        exit 1
+    }
+fi
+
+
+
+unsetmissingsecret_code () {
+      clk secret unset demo-buyer-password
+}
+
+unsetmissingsecret_expected () {
+      local expected
+      expected="$(cat<<"EOEXPECTED"
+error: No secret set
+EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
+}
+
+echo 'Run unsetmissingsecret'
+
+{ unsetmissingsecret_code || true ; } > "${TMP}/code.txt" 2>&1
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/unsetmissingsecret"
+else
+    unsetmissingsecret_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying unsetmissingsecret"
         exit 1
     }
 fi
@@ -747,7 +777,7 @@ netrc_missing_code () {
 netrc_missing_expected () {
       local expected
       expected="$(cat<<"EOEXPECTED"
-warning: No secret set
+error: No secret set
 EOEXPECTED
 )"
       # org says nil where the block said nothing

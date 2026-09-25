@@ -235,13 +235,21 @@ The reset is done, so this time I answer yes. In a script, `--force` skips the q
 clk secret unset demo-buyer-password
 ```
 
-Asking for it now tells me it is gone.
+Asking for it now fails, so a script that reads it notices.
 
 ```bash
 clk secret show demo-buyer-password
 ```
 
-    warning: No secret set
+    error: No secret set
+
+Removing it again tells me there is nothing left to remove.
+
+```bash
+clk secret unset demo-buyer-password
+```
+
+    error: No secret set
 
 
 <a id="when-an-agent-runs-it-for-me"></a>
@@ -294,7 +302,7 @@ A secret my netrc file does not hold is simply not there.
 clk --keyring clk.keyrings.NetrcKeyring secret show other_token --secret
 ```
 
-    warning: No secret set
+    error: No secret set
 
 It only reads: storing one is up to me, in the file itself.
 

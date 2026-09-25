@@ -41,10 +41,13 @@ def _set(key, secret):
 @flag("--force", help="Don't ask before removing it")
 def unset(key, force):
     """Remove the secret"""
+    keyring = get_keyring()
+    if not keyring.get_password("clk", key):
+        raise click.ClickException("No secret set")
     if force or click.confirm(
         f"This will definitely remove the secret for {key}. Are you sure?"
     ):
-        get_keyring().delete_password("clk", key)
+        keyring.delete_password("clk", key)
     else:
         LOGGER.warning("Removing anyway!")
         time.sleep(1)
@@ -59,10 +62,9 @@ def unset(key, force):
 def show(key, fields, format, secret):
     """Show the secret"""
     secret_ = get_keyring().get_password("clk", key)
-    if secret_:
-        if not secret:
-            secret_ = "*****"
-        with TablePrinter(fields, format) as tp:
-            tp.echo(key, secret_)
-    else:
-        LOGGER.warn("No secret set")
+    if not secret_:
+        raise click.ClickException("No secret set")
+    if not secret:
+        secret_ = "*****"
+    with TablePrinter(fields, format) as tp:
+        tp.echo(key, secret_)
