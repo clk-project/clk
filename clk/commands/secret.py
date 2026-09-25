@@ -1,12 +1,18 @@
 #!/usr/bin/env python
 
+from collections import defaultdict
+
 import click
 
+from clk.colors import Colorer
+from clk.config import config
 from clk.decorators import argument, flag, group, option, table_fields, table_format
 from clk.lib import TablePrinter, get_keyring
 from clk.log import get_logger
 
 LOGGER = get_logger(__name__)
+
+SECRET_PREFIX = "secret:"
 
 
 def backend_name(backend):
@@ -59,6 +65,51 @@ def unset(key, force):
         LOGGER.info(f"Kept the secret for {key}")
         return
     keyring.delete_password("clk", key)
+
+
+@secret.command(change_directory_options=False)
+@table_fields(choices=["key", "status", "commands"])
+@table_format(default="simple")
+@Colorer.color_options
+def _list(fields, format, **kwargs):
+    """List the secrets your parameters and aliases refer to, telling whether each is set
+
+    The keyring cannot tell which secrets it holds, so only the ones mentioned
+    as secret:key in the parameters and the aliases are listed, each command
+    in the color of the profile that refers to it.
+    """
+    users = defaultdict(set)
+    for profile in config.all_enabled_profiles:
+        uses = [
+            (cmd, param)
+            for cmd, params in profile.get_settings("parameters").items()
+            for param in params
+        ] + [
+            (alias, arg)
+            for alias, definition in profile.get_settings("alias").items()
+            for command in definition.get("commands", [])
+            for arg in command
+        ]
+        for cmd, arg in uses:
+            if str(arg).startswith(SECRET_PREFIX):
+                users[arg[len(SECRET_PREFIX) :]].add((cmd, profile.name))
+    if not users:
+        LOGGER.info("No parameter or alias refers to a secret")
+        return
+    keyring = get_keyring()
+    with Colorer(kwargs) as colorer, TablePrinter(fields, format) as tp:
+        for key in sorted(users):
+            is_set = keyring.get_password("clk", key)
+            tp.echo(
+                key,
+                click.style(
+                    "set" if is_set else "missing", fg="green" if is_set else "red"
+                ),
+                " ".join(
+                    click.style(cmd, **colorer.get_style(profile))
+                    for cmd, profile in sorted(users[key])
+                ),
+            )
 
 
 @secret.command(ignore_unknown_options=True, change_directory_options=False)

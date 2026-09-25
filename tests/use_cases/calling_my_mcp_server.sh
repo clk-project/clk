@@ -469,6 +469,40 @@ else
 fi
 
 
+clk alias set buyer-token agentcore --user demo-buyer --password noeval:secret:demo-buyer-password token
+
+
+listsecrets_code () {
+      clk secret list
+}
+
+listsecrets_expected () {
+      local expected
+      expected="$(cat<<"EOEXPECTED"
+key                  status    commands
+-------------------  --------  ---------------------
+demo-buyer-password  set       agentcore buyer-token
+EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
+}
+
+echo 'Run listsecrets'
+
+{ listsecrets_code || true ; } > "${TMP}/code.txt" 2>&1
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/listsecrets"
+else
+    listsecrets_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying listsecrets"
+        exit 1
+    }
+fi
+
+
 clk command create python dosomething --force
 cat<<EOF >> "${CLKCONFIGDIR}/python/dosomething.py"
 from clk import get_secret
@@ -628,6 +662,38 @@ else
     unsetmissingsecret_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
         echo "Something went wrong when trying unsetmissingsecret"
+        exit 1
+    }
+fi
+
+
+
+listmissingsecrets_code () {
+      clk secret list
+}
+
+listmissingsecrets_expected () {
+      local expected
+      expected="$(cat<<"EOEXPECTED"
+key                  status    commands
+-------------------  --------  ---------------------
+demo-buyer-password  missing   agentcore buyer-token
+EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
+}
+
+echo 'Run listmissingsecrets'
+
+{ listmissingsecrets_code || true ; } > "${TMP}/code.txt" 2>&1
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/listmissingsecrets"
+else
+    listmissingsecrets_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying listmissingsecrets"
         exit 1
     }
 fi
@@ -905,6 +971,39 @@ else
     readonly_keyring_set_expected > "${TMP}/expected.txt" 2>&1
     diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
         echo "Something went wrong when trying readonly_keyring_set"
+        exit 1
+    }
+fi
+
+
+clk parameter unset agentcore
+clk alias unset buyer-token
+
+
+listnosecret_code () {
+      clk secret list
+}
+
+listnosecret_expected () {
+      local expected
+      expected="$(cat<<"EOEXPECTED"
+No parameter or alias refers to a secret
+EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
+}
+
+echo 'Run listnosecret'
+
+{ listnosecret_code || true ; } > "${TMP}/code.txt" 2>&1
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/listnosecret"
+else
+    listnosecret_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying listnosecret"
         exit 1
     }
 fi

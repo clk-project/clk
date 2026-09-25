@@ -309,6 +309,33 @@ file on the way.
   #+RESULTS[]: runbashcall
   : Calling get_account_info as demo-buyer with password mytoken
 
+* setting up a new laptop
+  :PROPERTIES:
+  :CUSTOM_ID: setting-up-a-new-laptop
+  :END:
+
+  My clk parameters and aliases follow me from laptop to laptop, my password
+  manager does not always. One of those aliases gets the token of demo-buyer
+  whatever the parameters say.
+
+  #+NAME: secretalias
+  #+BEGIN_SRC bash :results none :exports code :session 0b6acd63-d091-4c6b-83f6-7d2dd3ce908f
+    clk alias set buyer-token agentcore --user demo-buyer --password noeval:secret:demo-buyer-password token
+  #+END_SRC
+
+  To know which secrets to store again, clk lists the ones they refer to, and
+  whether each is there.
+
+  #+NAME: listsecrets
+  #+BEGIN_SRC bash :results verbatim :exports both :session 0b6acd63-d091-4c6b-83f6-7d2dd3ce908f :cache yes
+    clk secret list
+  #+END_SRC
+
+  #+RESULTS[]: listsecrets
+  : key                  status    commands
+  : -------------------  --------  ---------------------
+  : demo-buyer-password  set       agentcore buyer-token
+
 * a check of my own in python
   :PROPERTIES:
   :CUSTOM_ID: a-check-of-my-own-in-python
@@ -408,6 +435,18 @@ file on the way.
 
   #+RESULTS[]: unsetmissingsecret
   : error: No secret set
+
+  And the list reminds me to store the new one.
+
+  #+NAME: listmissingsecrets
+  #+BEGIN_SRC bash :results verbatim :exports both :session 0b6acd63-d091-4c6b-83f6-7d2dd3ce908f :cache yes
+    clk secret list
+  #+END_SRC
+
+  #+RESULTS[]: listmissingsecrets
+  : key                  status    commands
+  : -------------------  --------  ---------------------
+  : demo-buyer-password  missing   agentcore buyer-token
 
 * when an agent runs it for me
   :PROPERTIES:
@@ -575,6 +614,29 @@ file on the way.
   #+RESULTS[]: readonly_keyring_set
   : error: The keyring team_keyring.SecretsManagerKeyring cannot store secrets. Store it with the tool of that password manager, or pick another keyring with --keyring.
 
+* when the demo is over
+  :PROPERTIES:
+  :CUSTOM_ID: when-the-demo-is-over
+  :END:
+
+  The demo-buyer user is gone, and so are its parameter and its alias.
+
+  #+NAME: dropparameter
+  #+BEGIN_SRC bash :results none :exports code :session 0b6acd63-d091-4c6b-83f6-7d2dd3ce908f
+    clk parameter unset agentcore
+    clk alias unset buyer-token
+  #+END_SRC
+
+  No command of mine needs a secret any more.
+
+  #+NAME: listnosecret
+  #+BEGIN_SRC bash :results verbatim :exports both :session 0b6acd63-d091-4c6b-83f6-7d2dd3ce908f :cache yes
+    clk secret list
+  #+END_SRC
+
+  #+RESULTS[]: listnosecret
+  : No parameter or alias refers to a secret
+
   #+NAME: test
   #+BEGIN_SRC bash :results none :exports none :noweb yes :shebang "#!/usr/bin/env bash" :tangle ../../tests/use_cases/calling_my_mcp_server.sh
     set -eu
@@ -618,6 +680,10 @@ file on the way.
 
     check-result(runbashcall)
 
+    <<secretalias>>
+
+    check-result(listsecrets)
+
     <<testgetsecret>>
 
     check-result(showgetsecret)
@@ -633,6 +699,8 @@ file on the way.
     check-result(checkthatthesecretisgone)
 
     check-result(unsetmissingsecret)
+
+    check-result(listmissingsecrets)
 
     <<generate_netrc>>
 
@@ -659,6 +727,10 @@ file on the way.
     <<install_readonly_keyring>>
 
     check-result(readonly_keyring_set)
+
+    <<dropparameter>>
+
+    check-result(listnosecret)
 
   #+END_SRC
 

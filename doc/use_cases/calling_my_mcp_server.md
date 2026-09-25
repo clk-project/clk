@@ -2,10 +2,12 @@
 - [not typing the password every hour](#not-typing-the-password-every-hour)
 - [on a machine where I have not stored it](#on-a-machine-where-i-have-not-stored-it)
 - [storing it in my password manager](#storing-it-in-my-password-manager)
+- [setting up a new laptop](#setting-up-a-new-laptop)
 - [a check of my own in python](#a-check-of-my-own-in-python)
 - [when the demo-buyer password is reset](#when-the-demo-buyer-password-is-reset)
 - [when an agent runs it for me](#when-an-agent-runs-it-for-me)
 - [when the team shares the password](#when-the-team-shares-the-password)
+- [when the demo is over](#when-the-demo-is-over)
 
 I have an MCP server running on Amazon Bedrock AgentCore. It sits behind a Cognito user pool, so before calling one of its tools I need an access token, and to get one I log in as a test user, demo-buyer, with its password.
 
@@ -185,6 +187,27 @@ clk mcp-call get_account_info
     Calling get_account_info as demo-buyer with password mytoken
 
 
+<a id="setting-up-a-new-laptop"></a>
+
+# setting up a new laptop
+
+My clk parameters and aliases follow me from laptop to laptop, my password manager does not always. One of those aliases gets the token of demo-buyer whatever the parameters say.
+
+```bash
+clk alias set buyer-token agentcore --user demo-buyer --password noeval:secret:demo-buyer-password token
+```
+
+To know which secrets to store again, clk lists the ones they refer to, and whether each is there.
+
+```bash
+clk secret list
+```
+
+    key                  status    commands
+    -------------------  --------  ---------------------
+    demo-buyer-password  set       agentcore buyer-token
+
+
 <a id="a-check-of-my-own-in-python"></a>
 
 # a check of my own in python
@@ -250,6 +273,16 @@ clk secret unset demo-buyer-password
 ```
 
     error: No secret set
+
+And the list reminds me to store the new one.
+
+```bash
+clk secret list
+```
+
+    key                  status    commands
+    -------------------  --------  ---------------------
+    demo-buyer-password  missing   agentcore buyer-token
 
 
 <a id="when-an-agent-runs-it-for-me"></a>
@@ -354,6 +387,26 @@ clk --keyring team_keyring.SecretsManagerKeyring secret set demo-buyer-password
 ```
 
     error: The keyring team_keyring.SecretsManagerKeyring cannot store secrets. Store it with the tool of that password manager, or pick another keyring with --keyring.
+
+
+<a id="when-the-demo-is-over"></a>
+
+# when the demo is over
+
+The demo-buyer user is gone, and so are its parameter and its alias.
+
+```bash
+clk parameter unset agentcore
+clk alias unset buyer-token
+```
+
+No command of mine needs a secret any more.
+
+```bash
+clk secret list
+```
+
+    No parameter or alias refers to a secret
 
 ## Footnotes
 
