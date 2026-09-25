@@ -311,6 +311,92 @@ clk showpackage https://example.com/path/to/package.apk
 #+RESULTS[c24d1c0e01f964073512a0eadfe311775d7145b4]: urlarg-run
 : https://example.com/path/to/package.apk
 
+* giving the defaults in json
+  :PROPERTIES:
+  :CUSTOM_ID: giving-the-defaults-in-json
+  :END:
+
+A command I wrote a while ago gives the defaults of its option and of its flag
+after a colon.
+
+#+name: old-greet-def
+#+BEGIN_SRC bash :results none :exports code
+O:--times:int:How many times to greet:1
+F:--loud/--quiet:Greet in capital case:True
+#+END_SRC
+
+#+name: greet-body
+#+BEGIN_SRC bash :results none :exports none
+msg=hello
+if clk_true loud
+then
+    msg=HELLO
+fi
+for i in $(seq 1 "${CLK___TIMES}")
+do
+    echo "${msg}"
+done
+#+END_SRC
+
+#+name: old-greet-create
+#+BEGIN_SRC bash :results none :exports none :session 100aa89b-f320-46ee-9d5d-2193ef48d4eb :noweb yes
+clk command create bash greet
+cat <<"EOH" > "$(clk command which greet)"
+#!/usr/bin/env bash
+set -eu
+
+source "_clk.sh"
+
+clk_usage () {
+    cat<<EOF
+$0
+
+Greet someone
+--
+<<old-greet-def>>
+EOF
+}
+
+clk_help_handler "$@"
+
+<<greet-body>>
+EOH
+#+END_SRC
+
+clk still reads them, and tells me how to write them now.
+
+#+name: old-greet-run
+#+BEGIN_SRC bash :results verbatim :exports both :session 100aa89b-f320-46ee-9d5d-2193ef48d4eb :cache yes
+clk greet
+#+END_SRC
+
+#+RESULTS[]: old-greet-run
+: [35mdeprecated: [0mIn greet, O:--times:int:How many times to greet:1 gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{"default": "value"}
+: [35mdeprecated: [0mIn greet, F:--loud/--quiet:Greet in capital case:True gives its default after a colon. Give it in the json that ends the line instead, like F:name:help:{"default": true}
+: HELLO
+
+A default that holds colons, like a url, would not fit after a colon anyway.
+The json that ends the line takes any default.
+
+#+name: greet-create
+#+BEGIN_SRC bash :results none :exports code :session 100aa89b-f320-46ee-9d5d-2193ef48d4eb :noweb yes
+clk command create bash greet --force --description "Greet someone" \
+    --option '--times:int:How many times to greet:{"default": 1}' \
+    --flag '--loud/--quiet:Greet in capital case:{"default": true}' \
+    --body '
+<<greet-body>>
+'
+#+END_SRC
+
+#+name: greet-run
+#+BEGIN_SRC bash :results verbatim :exports both :session 100aa89b-f320-46ee-9d5d-2193ef48d4eb :cache yes
+clk greet --times 2
+#+END_SRC
+
+#+RESULTS[]: greet-run
+: HELLO
+: HELLO
+
 #+BEGIN_SRC bash :exports none :tangle ../../tests/use_cases/bash_command_use_option.sh :noweb yes :shebang "#!/usr/bin/env bash"
   set -eu
 <<init>>
@@ -342,4 +428,12 @@ check-result(wordcount-completion-insensitive)
 <<urlarg-create>>
 
 check-result(urlarg-run)
+
+<<old-greet-create>>
+
+check-result(old-greet-run)
+
+<<greet-create>>
+
+check-result(greet-run)
 #+END_SRC

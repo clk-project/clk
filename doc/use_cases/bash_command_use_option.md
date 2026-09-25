@@ -1,5 +1,6 @@
 - [completing against files](#dddf6c5e-3fce-4203-b75c-e918bcf3240f)
 - [passing a URL to a file argument](#6a1b2c3d-4e5f-6789-abcd-ef0123456789)
+- [giving the defaults in json](#giving-the-defaults-in-json)
 
 An option is an optional parameter that is given a value. A flag is an optional parameter that is a boolean. An argument is a positional parameter that you must give.
 
@@ -225,3 +226,53 @@ clk showpackage https://example.com/path/to/package.apk
 ```
 
     https://example.com/path/to/package.apk
+
+
+<a id="giving-the-defaults-in-json"></a>
+
+# giving the defaults in json
+
+A command I wrote a while ago gives the defaults of its option and of its flag after a colon.
+
+```bash
+O:--times:int:How many times to greet:1
+F:--loud/--quiet:Greet in capital case:True
+```
+
+clk still reads them, and tells me how to write them now.
+
+```bash
+clk greet
+```
+
+<pre>
+<span style="color:purple;">deprecated: </span>In greet, O:--times:int:How many times to greet:1 gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{&quot;default&quot;: &quot;value&quot;}
+<span style="color:purple;">deprecated: </span>In greet, F:--loud/--quiet:Greet in capital case:True gives its default after a colon. Give it in the json that ends the line instead, like F:name:help:{&quot;default&quot;: true}
+HELLO
+</pre>
+
+A default that holds colons, like a url, would not fit after a colon anyway. The json that ends the line takes any default.
+
+```bash
+clk command create bash greet --force --description "Greet someone" \
+    --option '--times:int:How many times to greet:{"default": 1}' \
+    --flag '--loud/--quiet:Greet in capital case:{"default": true}' \
+    --body '
+msg=hello
+if clk_true loud
+then
+    msg=HELLO
+fi
+for i in $(seq 1 "${CLK___TIMES}")
+do
+    echo "${msg}"
+done
+'
+```
+
+```bash
+clk greet --times 2
+```
+
+    HELLO
+    HELLO

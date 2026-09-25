@@ -156,13 +156,19 @@ class ExternalCommandResolver(CommandResolver):
                         options.append(m.groupdict())
                     if line.startswith("F:"):
                         m = re.match(
-                            "^F:(?P<name>[^:]+):(?P<help>[^:]+)(:(?P<default>[^:]+))?$",
+                            "^F:(?P<name>[^:]+):(?P<help>[^:]+)(:(?P<extra>{.+})|(:(?P<default>[^:]+))?)$",
                             line,
                         )
                         if m is None:
                             raise click.UsageError(
-                                f"Expected format in {path} is F:name:help[:default],"
+                                f"Expected format in {path} is F:name:help[:{{someextrajsondata}}],"
                                 f" got {line}"
+                            )
+                        if m.group("default"):
+                            LOGGER.deprecated(
+                                f"In {path}, {line} gives its default after a colon."
+                                " Give it in the json that ends the line instead,"
+                                ' like F:name:help:{"default": true}'
                             )
                         flags.append(m.groupdict())
                     if line.startswith("A:"):
@@ -280,10 +286,11 @@ class ExternalCommandResolver(CommandResolver):
                 nargs=extra.get("nargs", 1),
             )(external_command)
         for f in flags:
+            extra = json.loads(f["extra"] or "{}")
             external_command = flag(
                 *(f["name"].split(",")),
                 help=f["help"],
-                default=f["default"] == "True",
+                default=extra.get("default", f["default"] == "True"),
             )(external_command)
         if cmd_flowoptions:
             from clk.overloads import flow_options, get_command2

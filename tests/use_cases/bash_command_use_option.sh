@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# [[file:../../doc/use_cases/bash_command_use_option.org::#6a1b2c3d-4e5f-6789-abcd-ef0123456789][passing a URL to a file argument:5]]
+# [[file:../../doc/use_cases/bash_command_use_option.org::#giving-the-defaults-in-json][giving the defaults in json:7]]
 set -eu
 . ./sandboxing.sh
 
@@ -391,4 +391,115 @@ else
         exit 1
     }
 fi
-# passing a URL to a file argument:5 ends here
+
+
+clk command create bash greet
+cat <<"EOH" > "$(clk command which greet)"
+#!/usr/bin/env bash
+set -eu
+
+source "_clk.sh"
+
+clk_usage () {
+    cat<<EOF
+$0
+
+Greet someone
+--
+O:--times:int:How many times to greet:1
+F:--loud/--quiet:Greet in capital case:True
+EOF
+}
+
+clk_help_handler "$@"
+
+msg=hello
+if clk_true loud
+then
+    msg=HELLO
+fi
+for i in $(seq 1 "${CLK___TIMES}")
+do
+    echo "${msg}"
+done
+EOH
+
+
+old-greet-run_code () {
+      clk greet
+}
+
+old-greet-run_expected () {
+      local expected
+      expected="$(cat<<"EOEXPECTED"
+[35mdeprecated: [0mIn greet, O:--times:int:How many times to greet:1 gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{"default": "value"}
+[35mdeprecated: [0mIn greet, F:--loud/--quiet:Greet in capital case:True gives its default after a colon. Give it in the json that ends the line instead, like F:name:help:{"default": true}
+HELLO
+EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
+}
+
+echo 'Run old-greet-run'
+
+{ old-greet-run_code || true ; } > "${TMP}/code.txt" 2>&1
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/old-greet-run"
+else
+    old-greet-run_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying old-greet-run"
+        exit 1
+    }
+fi
+
+
+clk command create bash greet --force --description "Greet someone" \
+    --option '--times:int:How many times to greet:{"default": 1}' \
+    --flag '--loud/--quiet:Greet in capital case:{"default": true}' \
+    --body '
+msg=hello
+if clk_true loud
+then
+    msg=HELLO
+fi
+for i in $(seq 1 "${CLK___TIMES}")
+do
+    echo "${msg}"
+done
+'
+
+
+greet-run_code () {
+      clk greet --times 2
+}
+
+greet-run_expected () {
+      local expected
+      expected="$(cat<<"EOEXPECTED"
+HELLO
+HELLO
+EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
+}
+
+echo 'Run greet-run'
+
+{ greet-run_code || true ; } > "${TMP}/code.txt" 2>&1
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/greet-run"
+else
+    greet-run_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying greet-run"
+        exit 1
+    }
+fi
+# giving the defaults in json:7 ends here

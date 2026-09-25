@@ -177,7 +177,7 @@ def create():
 @option(
     "--flag",
     "flags_",
-    help="Add a flag (format: --name:HELP)",
+    help="Add a flag (format: --name:HELP or --name:HELP:JSON_OPTS)",
     multiple=True,
 )
 def bash(
@@ -250,7 +250,8 @@ def bash(
             if isinstance(param, Option):
                 if param.is_flag:
                     flags.append(
-                        f"F:{','.join(param.opts)}:{param.help}:{param.default is True}"
+                        f"F:{','.join(param.opts)}:{param.help}:"
+                        + json.dumps({"default": param.default is True})
                     )
                     args += f"""
 if [ "${{{config.main_command.path.upper()}___{param.name.upper()}-}}" == "True" ]
