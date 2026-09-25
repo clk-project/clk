@@ -908,9 +908,10 @@ showbackends_expected () {
       expected="$(cat<<"EOEXPECTED"
 backend                                  configuration      priority  status
 ---------------------------------------  ---------------  ----------  --------
+keyring.backends.chainer.ChainerBackend  Unset                    10
+clk.keyrings.GpgKeyring                  Unset                     1
 clk.keyrings.NetrcKeyring                Unset                     1  in use
 keyring.backends.fail.Keyring            Unset                     0
-keyring.backends.chainer.ChainerBackend  Unset                    -1
 EOEXPECTED
 )"
       # org says nil where the block said nothing
@@ -1230,8 +1231,231 @@ else
 fi
 
 
+export GNUPGHOME="${TMP}/gnupg"
+mkdir -m 700 "${GNUPGHOME}"
+gpg --batch --quiet --passphrase '' --quick-gen-key me@example.com default default never 2>/dev/null
 mkdir -p "${TMP}/mcp-server/.clk"
 cd "${TMP}/mcp-server"
+
+
+gpgnoid_code () {
+      clk --keyring clk.keyrings.GpgKeyring secret set demo-buyer-password
+}
+
+gpgnoid_expected () {
+      local expected
+      expected="$(cat<<"EOEXPECTED"
+error: Could not save your secret.
+Usage: clk secret set [OPTIONS] KEY
+error: Write in ./.clk/secrets/.gpg-id the gpg ids to encrypt the secrets to, one per line. gpg --list-secret-keys shows yours.
+EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
+}
+
+echo 'Run gpgnoid'
+
+{ gpgnoid_code || true ; } > "${TMP}/code.txt" 2>&1
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/gpgnoid"
+else
+    gpgnoid_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying gpgnoid"
+        exit 1
+    }
+fi
+
+
+mkdir -p .clk/secrets
+echo me@example.com > .clk/secrets/.gpg-id
+
+
+completegpg_code () {
+      clk completion try --remove-bash-formatting --last secret backend --local use clk.keyrings.
+}
+
+completegpg_expected () {
+      local expected
+      expected="$(cat<<"EOEXPECTED"
+clk.keyrings.GpgKeyring
+clk.keyrings.NetrcKeyring
+EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
+}
+
+echo 'Run completegpg'
+
+{ completegpg_code || true ; } > "${TMP}/code.txt" 2>&1
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/completegpg"
+else
+    completegpg_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying completegpg"
+        exit 1
+    }
+fi
+
+
+
+usegpg_code () {
+      clk secret backend --local use clk.keyrings.GpgKeyring
+}
+
+usegpg_expected () {
+      local expected
+      expected="$(cat<<"EOEXPECTED"
+clk now keeps your secrets in clk.keyrings.GpgKeyring (local settings)
+EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
+}
+
+echo 'Run usegpg'
+
+{ usegpg_code || true ; } > "${TMP}/code.txt" 2>&1
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/usegpg"
+else
+    usegpg_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying usegpg"
+        exit 1
+    }
+fi
+
+
+clk secret set demo-buyer-password
+
+
+gpgfiles_code () {
+      ls .clk/secrets
+}
+
+gpgfiles_expected () {
+      local expected
+      expected="$(cat<<"EOEXPECTED"
+demo-buyer-password.gpg
+EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
+}
+
+echo 'Run gpgfiles'
+
+{ gpgfiles_code || true ; } > "${TMP}/code.txt" 2>&1
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/gpgfiles"
+else
+    gpgfiles_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying gpgfiles"
+        exit 1
+    }
+fi
+
+
+
+gpgshow_code () {
+      clk secret show demo-buyer-password --secret
+}
+
+gpgshow_expected () {
+      local expected
+      expected="$(cat<<"EOEXPECTED"
+demo-buyer-password mytoken
+EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
+}
+
+echo 'Run gpgshow'
+
+{ gpgshow_code || true ; } > "${TMP}/code.txt" 2>&1
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/gpgshow"
+else
+    gpgshow_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying gpgshow"
+        exit 1
+    }
+fi
+
+
+
+gpgunset_code () {
+      clk secret unset demo-buyer-password
+      ls .clk/secrets
+      clk secret show demo-buyer-password
+}
+
+gpgunset_expected () {
+      local expected
+      expected="$(cat<<"EOEXPECTED"
+error: No secret set
+EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
+}
+
+echo 'Run gpgunset'
+
+{ gpgunset_code || true ; } > "${TMP}/code.txt" 2>&1
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/gpgunset"
+else
+    gpgunset_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying gpgunset"
+        exit 1
+    }
+fi
+
+
+
+unusegpg_code () {
+      clk secret backend --local unuse
+}
+
+unusegpg_expected () {
+      local expected
+      expected="$(cat<<"EOEXPECTED"
+clk no longer picks a keyring
+EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
+}
+
+echo 'Run unusegpg'
+
+{ unusegpg_code || true ; } > "${TMP}/code.txt" 2>&1
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/unusegpg"
+else
+    unusegpg_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying unusegpg"
+        exit 1
+    }
+fi
+
 
 export DBUS_SESSION_BUS_ADDRESS="$(dbus-daemon --session --fork --print-address)"
 echo -n desktop | gnome-keyring-daemon --unlock --components=secrets > /dev/null
@@ -1336,6 +1560,7 @@ else
         exit 1
     }
 fi
+
 
 
 

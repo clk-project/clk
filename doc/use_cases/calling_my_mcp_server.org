@@ -566,9 +566,10 @@ file on the way.
   #+RESULTS[]: showbackends
   : backend                                  configuration      priority  status
   : ---------------------------------------  ---------------  ----------  --------
+  : keyring.backends.chainer.ChainerBackend  Unset                    10
+  : clk.keyrings.GpgKeyring                  Unset                     1
   : clk.keyrings.NetrcKeyring                Unset                     1  in use
   : keyring.backends.fail.Keyring            Unset                     0
-  : keyring.backends.chainer.ChainerBackend  Unset                    -1
 
   I can also ask for netrc explicitly, with the ~NetrcKeyring~ of
   ~clk.keyrings~.
@@ -710,15 +711,108 @@ file on the way.
   :CUSTOM_ID: keeping-it-in-the-project
   :END:
 
-  In the project of my MCP server, I keep the demo-buyer password in the
-  password manager of my desktop session, behind the Secret Service interface,
-  rather than in the team keyring.
+  The demo-buyer password is a throwaway, not worth a place in a password
+  manager. I keep it in the project of my MCP server instead, encrypted with my
+  gpg key.
 
-  #+NAME: projectsetup
+  #+NAME: gpgsetup
   #+BEGIN_SRC bash :results none :exports none :session 0b6acd63-d091-4c6b-83f6-7d2dd3ce908f
+    export GNUPGHOME="${TMP}/gnupg"
+    mkdir -m 700 "${GNUPGHOME}"
+    gpg --batch --quiet --passphrase '' --quick-gen-key me@example.com default default never 2>/dev/null
     mkdir -p "${TMP}/mcp-server/.clk"
     cd "${TMP}/mcp-server"
   #+END_SRC
+
+  I give it a try first.
+
+  #+NAME: gpgnoid
+  #+BEGIN_SRC bash :results verbatim :exports both :session 0b6acd63-d091-4c6b-83f6-7d2dd3ce908f :cache yes
+    clk --keyring clk.keyrings.GpgKeyring secret set demo-buyer-password
+  #+END_SRC
+
+  #+RESULTS[]: gpgnoid
+  : error: Could not save your secret.
+  : Usage: clk secret set [OPTIONS] KEY
+  : error: Write in ./.clk/secrets/.gpg-id the gpg ids to encrypt the secrets to, one per line. gpg --list-secret-keys shows yours.
+
+  #+NAME: gpgid
+  #+BEGIN_SRC bash :results none :exports code :session 0b6acd63-d091-4c6b-83f6-7d2dd3ce908f
+    mkdir -p .clk/secrets
+    echo me@example.com > .clk/secrets/.gpg-id
+  #+END_SRC
+
+  Then I make it the keyring of the project. I don't remember its name, tab
+  does.
+
+  #+NAME: completegpg-shown
+  #+BEGIN_SRC bash :results none :exports code
+    clk secret backend --local use clk.keyrings.<TAB>
+  #+END_SRC
+
+  #+NAME: completegpg
+  #+BEGIN_SRC bash :results verbatim :exports results :session 0b6acd63-d091-4c6b-83f6-7d2dd3ce908f :cache yes
+    clk completion try --remove-bash-formatting --last secret backend --local use clk.keyrings.
+  #+END_SRC
+
+  #+RESULTS[]: completegpg
+  : clk.keyrings.GpgKeyring
+  : clk.keyrings.NetrcKeyring
+
+  #+NAME: usegpg
+  #+BEGIN_SRC bash :results verbatim :exports both :session 0b6acd63-d091-4c6b-83f6-7d2dd3ce908f :cache yes
+    clk secret backend --local use clk.keyrings.GpgKeyring
+  #+END_SRC
+
+  #+RESULTS[]: usegpg
+  : clk now keeps your secrets in clk.keyrings.GpgKeyring (local settings)
+
+  #+NAME: gpgset
+  #+BEGIN_SRC bash :results none :exports code :session 0b6acd63-d091-4c6b-83f6-7d2dd3ce908f
+    clk secret set demo-buyer-password
+  #+END_SRC
+
+  #+NAME: gpgfiles
+  #+BEGIN_SRC bash :results verbatim :exports both :session 0b6acd63-d091-4c6b-83f6-7d2dd3ce908f :cache yes
+    ls .clk/secrets
+  #+END_SRC
+
+  #+RESULTS[]: gpgfiles
+  : demo-buyer-password.gpg
+
+  #+NAME: gpgshow
+  #+BEGIN_SRC bash :results verbatim :exports both :session 0b6acd63-d091-4c6b-83f6-7d2dd3ce908f :cache yes
+    clk secret show demo-buyer-password --secret
+  #+END_SRC
+
+  #+RESULTS[]: gpgshow
+  : demo-buyer-password mytoken
+
+  Removing it removes the file.
+
+  #+NAME: gpgunset
+  #+BEGIN_SRC bash :results verbatim :exports both :session 0b6acd63-d091-4c6b-83f6-7d2dd3ce908f :cache yes
+    clk secret unset demo-buyer-password
+    ls .clk/secrets
+    clk secret show demo-buyer-password
+  #+END_SRC
+
+  #+RESULTS[]: gpgunset
+  : error: No secret set
+
+  With no secret left in it, the project goes back to the keyring of my
+  laptop.
+
+  #+NAME: unusegpg
+  #+BEGIN_SRC bash :results verbatim :exports both :session 0b6acd63-d091-4c6b-83f6-7d2dd3ce908f :cache yes
+    clk secret backend --local unuse
+  #+END_SRC
+
+  #+RESULTS[]: unusegpg
+  : clk no longer picks a keyring
+
+  On my desktop, the password manager of my session, behind the Secret Service
+  interface, does just as well, and I don't need to handle gpg ids.
 
   #+NAME: secretservicesetup
   #+BEGIN_SRC bash :results none :exports none :session 0b6acd63-d091-4c6b-83f6-7d2dd3ce908f
@@ -992,7 +1086,25 @@ file on the way.
 
     check-result(showteambackends)
 
-    <<projectsetup>>
+    <<gpgsetup>>
+
+    check-result(gpgnoid)
+
+    <<gpgid>>
+
+    check-result(completegpg)
+
+    check-result(usegpg)
+
+    <<gpgset>>
+
+    check-result(gpgfiles)
+
+    check-result(gpgshow)
+
+    check-result(gpgunset)
+
+    check-result(unusegpg)
 
     <<secretservicesetup>>
 
@@ -1009,6 +1121,7 @@ file on the way.
     <<dropparameter>>
 
     check-result(unuseteambackend)
+
 
     check-result(unuseagain)
 

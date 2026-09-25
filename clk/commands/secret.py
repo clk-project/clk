@@ -45,7 +45,7 @@ class BackendType(click.ParamType):
         import keyring.backend
 
         names = [backend_name(backend) for backend in keyring.backend.get_all_keyring()]
-        names += ["clk.keyrings.NetrcKeyring"]
+        names += ["clk.keyrings.GpgKeyring", "clk.keyrings.NetrcKeyring"]
         return [
             click.shell_completion.CompletionItem(name)
             for name in sorted(set(names))

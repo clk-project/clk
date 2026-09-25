@@ -1,6 +1,6 @@
 VERSION 0.8
 IMPORT github.com/Konubinix/Earthfile AS e
-ARG --global TEST_EXTRA_PACKAGES="git expect direnv faketime jq graphviz procps dbus gnome-keyring"
+ARG --global TEST_EXTRA_PACKAGES="git expect direnv faketime jq graphviz procps gnupg dbus gnome-keyring"
 ARG --global TEST_PACKAGES="coverage pytest keyring testiq"
 
 requirements:

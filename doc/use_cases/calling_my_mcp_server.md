@@ -352,9 +352,10 @@ clk secret backend show
 
     backend                                  configuration      priority  status
     ---------------------------------------  ---------------  ----------  --------
+    keyring.backends.chainer.ChainerBackend  Unset                    10
+    clk.keyrings.GpgKeyring                  Unset                     1
     clk.keyrings.NetrcKeyring                Unset                     1  in use
     keyring.backends.fail.Keyring            Unset                     0
-    keyring.backends.chainer.ChainerBackend  Unset                    -1
 
 I can also ask for netrc explicitly, with the `NetrcKeyring` of `clk.keyrings`.
 
@@ -458,7 +459,73 @@ clk secret backend show
 
 # keeping it in the project
 
-In the project of my MCP server, I keep the demo-buyer password in the password manager of my desktop session, behind the Secret Service interface, rather than in the team keyring.
+The demo-buyer password is a throwaway, not worth a place in a password manager. I keep it in the project of my MCP server instead, encrypted with my gpg key.
+
+I give it a try first.
+
+```bash
+clk --keyring clk.keyrings.GpgKeyring secret set demo-buyer-password
+```
+
+    error: Could not save your secret.
+    Usage: clk secret set [OPTIONS] KEY
+    error: Write in ./.clk/secrets/.gpg-id the gpg ids to encrypt the secrets to, one per line. gpg --list-secret-keys shows yours.
+
+```bash
+mkdir -p .clk/secrets
+echo me@example.com > .clk/secrets/.gpg-id
+```
+
+Then I make it the keyring of the project. I don't remember its name, tab does.
+
+```bash
+clk secret backend --local use clk.keyrings.<TAB>
+```
+
+    clk.keyrings.GpgKeyring
+    clk.keyrings.NetrcKeyring
+
+```bash
+clk secret backend --local use clk.keyrings.GpgKeyring
+```
+
+    clk now keeps your secrets in clk.keyrings.GpgKeyring (local settings)
+
+```bash
+clk secret set demo-buyer-password
+```
+
+```bash
+ls .clk/secrets
+```
+
+    demo-buyer-password.gpg
+
+```bash
+clk secret show demo-buyer-password --secret
+```
+
+    demo-buyer-password mytoken
+
+Removing it removes the file.
+
+```bash
+clk secret unset demo-buyer-password
+ls .clk/secrets
+clk secret show demo-buyer-password
+```
+
+    error: No secret set
+
+With no secret left in it, the project goes back to the keyring of my laptop.
+
+```bash
+clk secret backend --local unuse
+```
+
+    clk no longer picks a keyring
+
+On my desktop, the password manager of my session, behind the Secret Service interface, does just as well, and I don't need to handle gpg ids.
 
 ```bash
 clk secret backend --local use keyring.backends.SecretService.Keyring
