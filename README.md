@@ -58,7 +58,7 @@ If you know what you need but not what clk calls it, start here.
 -   have commands that only exist in a project: [using a project](doc/use_cases/using_a_project.md)
 -   run the same workflow everywhere, each project doing it its own way: [global workflow, local implementation](doc/use_cases/global_workflow_local_implementation.md)
 -   reach the commands of a sibling project without `cd`: [alias to root](doc/use_cases/alias_to_root.md)
--   keep a password out of my scripts: [dealing with secrets](doc/use_cases/dealing_with_secrets.md)
+-   keep a password out of my scripts: [calling my MCP server](doc/use_cases/calling_my_mcp_server.md)
 -   fetch some json and show it: [fetching and displaying json data](doc/use_cases/fetching_and_displaying_json_data.md)
 -   not fetch the same page twice: [scrapping the web](doc/use_cases/scrapping_the_web.md)
 -   clean up what my command set up, even when it fails: [controlling the audio](doc/use_cases/controlling_the_audio.md)

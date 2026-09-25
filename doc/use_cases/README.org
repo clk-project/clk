@@ -28,7 +28,7 @@ looking for.
   - have commands that only exist in a project: [[file:using_a_project.org][using a project]]
   - run the same workflow everywhere, each project doing it its own way: [[file:global_workflow_local_implementation.org][global workflow, local implementation]]
   - reach the commands of a sibling project without ~cd~: [[file:alias_to_root.org][alias to root]]
-  - keep a password out of my scripts: [[file:dealing_with_secrets.org][dealing with secrets]]
+  - keep a password out of my scripts: [[file:calling_my_mcp_server.org][calling my MCP server]]
   - fetch some json and show it: [[file:fetching_and_displaying_json_data.org][fetching and displaying json data]]
   - not fetch the same page twice: [[file:scrapping_the_web.org][scrapping the web]]
   - clean up what my command set up, even when it fails: [[file:controlling_the_audio.org][controlling the audio]]
@@ -222,7 +222,7 @@ looking for.
 
   [[file:choices.org][Choices]] for providing selection in commands. [[file:scrapping_the_web.org][Caching]] computation results to
   disk. [[file:fetching_and_displaying_json_data.org][Fetching and displaying JSON data]] with ~download~ and ~echo_json~.
-  Handling [[file:dealing_with_secrets.org][secrets]] in commands. [[file:controlling_the_audio.org][Cleaning up]] what a command set up, with
+  Handling [[file:calling_my_mcp_server.org][secrets]] in commands. [[file:controlling_the_audio.org][Cleaning up]] what a command set up, with
   ~clk.atexit~.
 
   The [[file:lib.org][clk.lib reference]] covers what has been documented so far.

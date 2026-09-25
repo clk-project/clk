@@ -1,0 +1,607 @@
+:PROPERTIES:
+:ID:       0b6acd63-d091-4c6b-83f6-7d2dd3ce908f
+:END:
+#+language: en
+#+EXPORT_FILE_NAME: ./calling_my_mcp_server.md
+#+SUBTITLE: Getting a Cognito token for my MCP server on AgentCore, with its password kept out of files and parameters (clk secret, keyring, netrc, --ask-secret)
+
+#+CALL: ../../lp.org:check-result()
+
+#+NAME: init
+#+BEGIN_SRC bash :results none :exports none :session 0b6acd63-d091-4c6b-83f6-7d2dd3ce908f
+  . ./sandboxing.sh
+#+END_SRC
+
+I have an MCP server running on Amazon Bedrock AgentCore. It sits behind a
+Cognito user pool, so before calling one of its tools I need an access token,
+and to get one I log in as a test user, demo-buyer, with its password.
+
+The token lasts an hour. Every hour, I read the password from a plain file with
+~$(cat ...)~, hand it to ~aws cognito-idp initiate-auth~ and paste the token
+where it goes. Let's make a command out of it, and get that password out of the
+file on the way.
+
+* a command to get my token
+  :PROPERTIES:
+  :CUSTOM_ID: a-command-to-get-my-token
+  :END:
+
+  Writing the password on the command line would leave it in my shell
+  history, so the command prompts for it, hiding what I type and asking twice,
+  the [[https://click.palletsprojects.com/en/8.1.x/options/#password-prompts][click way]]. In real life, ~token~ calls ~aws cognito-idp initiate-auth~.
+  Here, it only says how it logs in.
+
+  #+NAME: command
+  #+BEGIN_SRC python :results none :exports code
+    from clk.config import config
+    from clk.decorators import group, option
+
+
+    class AgentcoreConfig:
+        pass
+
+
+    @group()
+    @option("--user", default="demo-buyer", help="The Cognito user to log in as", expose_class=AgentcoreConfig)
+    @option(
+        "--password",
+        help="The password of that user",
+        prompt=True,
+        confirmation_prompt=True,
+        hide_input=True,
+        expose_class=AgentcoreConfig,
+    )
+    def agentcore():
+        "Talk to my MCP server on Bedrock AgentCore"
+
+
+    @agentcore.command()
+    def token():
+        "Get a fresh access token from Cognito"
+        print(f"Logging in as {config.agentcore.user} with password {config.agentcore.password}")
+  #+END_SRC
+
+  #+NAME: createthecommand
+  #+BEGIN_SRC bash :results none :exports none :session 0b6acd63-d091-4c6b-83f6-7d2dd3ce908f :noweb yes
+    cat > "${TMP}/agentcore.py" <<'EOF'
+    <<command>>
+    EOF
+    clk command create python agentcore --group --force --from-file "${TMP}/agentcore.py"
+  #+END_SRC
+
+  To know more about ~expose_class=AgentcoreConfig~, see [[file:dynamic_parameters_and_exposed_class.org][dynamic parameters]].
+
+* not typing the password every hour
+  :PROPERTIES:
+  :CUSTOM_ID: not-typing-the-password-every-hour
+  :END:
+
+  Being prompted every hour gets old fast. I could make the password a
+  parameter.
+
+  #+NAME: setsecretinparameter
+  #+BEGIN_SRC bash :results verbatim :exports both :session 0b6acd63-d091-4c6b-83f6-7d2dd3ce908f :cache yes
+    clk parameter set agentcore --password mytoken
+  #+END_SRC
+
+  #+RESULTS[]: setsecretinparameter
+  : New global parameters for agentcore: --password mytoken
+
+  #+NAME: usesecretinparameter
+  #+BEGIN_SRC bash :results verbatim :exports both :session 0b6acd63-d091-4c6b-83f6-7d2dd3ce908f :cache yes
+    clk agentcore token
+  #+END_SRC
+
+  #+RESULTS[]: usesecretinparameter
+  : Logging in as demo-buyer with password mytoken
+
+  It works, but the password now sits in plain text in my clk parameters, no
+  better than the file I started from.
+
+  Instead, the parameter can tell clk to look the password up in my password
+  manager.
+
+  #+NAME: usethebearefromsecret
+  #+BEGIN_SRC bash :results verbatim :exports both :session 0b6acd63-d091-4c6b-83f6-7d2dd3ce908f :cache yes
+    clk parameter set agentcore --password noeval:secret:demo-buyer-password
+  #+END_SRC
+
+  #+RESULTS[]: usethebearefromsecret
+  : Removing global parameters of agentcore: --password mytoken
+  : New global parameters for agentcore: --password secret:demo-buyer-password
+
+  1. ~secret:demo-buyer-password~ tells clk to get the value from my password
+     manager, under the key ~demo-buyer-password~,
+  2. ~noeval:~ keeps clk from looking it up right now, so that the parameter
+     holds the reference rather than the password.
+
+  I have not stored it yet, so clk fails and says so[fn:1].
+
+  #+NAME: httpwithsecretfail
+  #+BEGIN_SRC bash :results verbatim :exports both :session 0b6acd63-d091-4c6b-83f6-7d2dd3ce908f :cache yes
+    clk agentcore token
+  #+END_SRC
+
+  #+RESULTS[]: httpwithsecretfail
+  : error: Could not find the secret for demo-buyer-password
+
+* on a machine where I have not stored it
+  :PROPERTIES:
+  :CUSTOM_ID: on-a-machine-where-i-have-not-stored-it
+  :END:
+
+  On a colleague's laptop, or on mine before I store it, ~--ask-secret~ makes
+  clk ask me for the password rather than fail.
+
+  #+NAME: askforpassword
+  #+BEGIN_SRC bash :results none :exports code
+    clk --ask-secret agentcore token
+  #+END_SRC
+
+  #+NAME: generate_expect_file_success
+  #+BEGIN_SRC bash :results none :exports none :noweb yes :session 0b6acd63-d091-4c6b-83f6-7d2dd3ce908f
+    cat<<"EOEXPECT" > "pass.exp"
+    #!/usr/bin/env -S expect -f
+    set timeout -1
+    spawn <<askforpassword>>
+    match_max 100000
+    expect -exact "warning: Could not find the secret for demo-buyer-password\r
+    Please provide the secret demo-buyer-password: "
+    send -- "test\r"
+    expect -exact "\r
+    Repeat for confirmation: "
+    send -- "test\r"
+    expect eof
+    EOEXPECT
+  #+END_SRC
+
+  #+NAME: call_ask_for_real
+  #+BEGIN_SRC bash :results verbatim :exports results :session 0b6acd63-d091-4c6b-83f6-7d2dd3ce908f :cache yes
+    expect pass.exp |tail -n+2
+  #+END_SRC
+
+  #+RESULTS[]: call_ask_for_real
+  : warning: Could not find the secret for demo-buyer-password
+  : Please provide the secret demo-buyer-password:
+  : Repeat for confirmation:
+  : Logging in as demo-buyer with password test
+
+  The error became a warning, and I typed the password.
+
+  #+NAME: generate_expect_file_error
+  #+BEGIN_SRC bash :results none :exports none :noweb yes :session 0b6acd63-d091-4c6b-83f6-7d2dd3ce908f
+    cat<<"EOEXPECT" > "passerror.exp"
+    #!/usr/bin/env -S expect -f
+    set timeout -1
+    spawn <<askforpassword>>
+    match_max 100000
+    expect -exact "warning: Could not find the secret for demo-buyer-password\r
+    Please provide the secret demo-buyer-password: "
+    send -- "something\r"
+    expect -exact "\r
+    Repeat for confirmation: "
+    send -- "somethingelse\r"
+    expect -exact "Error: The two entered values do not match.\r"
+    expect -exact "Please provide the secret demo-buyer-password:"
+    EOEXPECT
+  #+END_SRC
+
+  #+NAME: call_ask_for_real_error
+  #+BEGIN_SRC bash :results verbatim :exports results :session 0b6acd63-d091-4c6b-83f6-7d2dd3ce908f :cache yes
+    expect passerror.exp |tail -n+2
+  #+END_SRC
+
+  When I mistype it, clk asks again until both match.
+
+  #+RESULTS[]: call_ask_for_real_error
+  : warning: Could not find the secret for demo-buyer-password
+  : Please provide the secret demo-buyer-password:
+  : Repeat for confirmation:
+  : Error: The two entered values do not match.
+  : Please provide the secret demo-buyer-password:
+
+  The missing password does not get in the way of completing the command,
+  with or without ~--ask-secret~.
+
+  #+NAME: sequence-to-complete
+  #+BEGIN_SRC bash :results none :exports none
+    agentcore --us
+  #+END_SRC
+
+  #+NAME: ask-for-completion
+  #+BEGIN_SRC bash :results none :exports code :noweb yes
+    clk <<sequence-to-complete>><TAB>
+  #+END_SRC
+
+  #+NAME: try-completion
+  #+BEGIN_SRC bash :results verbatim :exports results :session 0b6acd63-d091-4c6b-83f6-7d2dd3ce908f :noweb yes :cache yes
+    clk completion try --remove-bash-formatting --last <<sequence-to-complete>>
+  #+END_SRC
+
+  #+RESULTS[]: try-completion
+  : --user
+
+  #+NAME: try-completion-without-ask-secret
+  #+BEGIN_SRC bash :results verbatim :exports none :session 0b6acd63-d091-4c6b-83f6-7d2dd3ce908f :noweb yes :cache yes
+    clk --ask-secret completion try --remove-bash-formatting --last <<sequence-to-complete>>
+  #+END_SRC
+
+  #+RESULTS[]: try-completion-without-ask-secret
+  : --user
+
+* storing it in my password manager
+  :PROPERTIES:
+  :CUSTOM_ID: storing-it-in-my-password-manager
+  :END:
+
+  clk stores secrets with [[https://github.com/jaraco/keyring][keyring]], hence in whatever password manager keyring
+  is set up to use.
+
+  #+NAME: providepassword
+  #+BEGIN_SRC bash :results none :exports none :session 0b6acd63-d091-4c6b-83f6-7d2dd3ce908f
+    clk secret set --set-parameter global --secret mytoken
+  #+END_SRC
+
+  #+NAME: storeasecret
+  #+BEGIN_SRC bash :results none :exports code :session 0b6acd63-d091-4c6b-83f6-7d2dd3ce908f
+    clk secret set demo-buyer-password
+  #+END_SRC
+
+  It prompts for the password, to keep it out of my shell history too. Let's
+  say I typed "mytoken".
+
+  #+NAME: showsecret
+  #+BEGIN_SRC bash :results verbatim :exports both :session 0b6acd63-d091-4c6b-83f6-7d2dd3ce908f :cache yes
+    clk secret show demo-buyer-password
+  #+END_SRC
+
+  #+RESULTS[]: showsecret
+  : demo-buyer-password *****
+
+  That tells me it is there without putting it on my screen. When I do want to
+  see it, I say so.
+
+  #+NAME: reallyshowsecret
+  #+BEGIN_SRC bash :results verbatim :exports both :session 0b6acd63-d091-4c6b-83f6-7d2dd3ce908f :cache yes
+    clk secret show demo-buyer-password --secret
+  #+END_SRC
+
+  #+RESULTS[]: reallyshowsecret
+  : demo-buyer-password mytoken
+
+  And to hand it to another program, the value alone.
+
+  #+NAME: reallyshowonlysecret
+  #+BEGIN_SRC bash :results verbatim :exports both :session 0b6acd63-d091-4c6b-83f6-7d2dd3ce908f :cache yes
+    clk secret show demo-buyer-password --secret --field secret
+  #+END_SRC
+
+  #+RESULTS[]: reallyshowonlysecret
+  : mytoken
+
+  Now my command gets its password on its own, and I can delete that plain
+  file.
+
+  #+NAME: httpwithsecret
+  #+BEGIN_SRC bash :results verbatim :exports both :session 0b6acd63-d091-4c6b-83f6-7d2dd3ce908f :cache yes
+    clk agentcore token
+  #+END_SRC
+
+  #+RESULTS[]: httpwithsecret
+  : Logging in as demo-buyer with password mytoken
+
+  Calling a tool of the server is a bash command, whose password defaults to
+  the secret.
+
+  #+NAME: bashcall
+  #+BEGIN_SRC bash :results none :exports code :session 0b6acd63-d091-4c6b-83f6-7d2dd3ce908f
+    clk command create bash mcp-call --description "Call a tool of my MCP server" \
+        --option '--password:str:The password of demo-buyer:{"default": "secret:demo-buyer-password"}' \
+        --argument 'tool:str:The tool to call' \
+        --body 'echo "Calling ${CLK___TOOL} as demo-buyer with password ${CLK___PASSWORD}"'
+  #+END_SRC
+
+  #+NAME: runbashcall
+  #+BEGIN_SRC bash :results verbatim :exports both :session 0b6acd63-d091-4c6b-83f6-7d2dd3ce908f :cache yes
+    clk mcp-call get_account_info
+  #+END_SRC
+
+  #+RESULTS[]: runbashcall
+  : Calling get_account_info as demo-buyer with password mytoken
+
+* a check of my own in python
+  :PROPERTIES:
+  :CUSTOM_ID: a-check-of-my-own-in-python
+  :END:
+
+  I also wrote a quick python command that logs in with its own http client.
+  It reads the same password with ~get_secret~.
+
+  #+NAME: getsecretfromcode
+  #+BEGIN_SRC python :results none :exports code
+    from clk import get_secret
+
+    @command()
+    def dosomething():
+        'Log in with my own client'
+        click.echo(get_secret('demo-buyer-password'))
+  #+END_SRC
+
+  #+NAME: testgetsecret
+  #+BEGIN_SRC bash :results none :exports none :session 0b6acd63-d091-4c6b-83f6-7d2dd3ce908f :noweb yes
+    clk command create python dosomething --force
+    cat<<EOF >> "${CLKCONFIGDIR}/python/dosomething.py"
+    <<getsecretfromcode>>
+    EOF
+  #+END_SRC
+
+  #+NAME: showgetsecret
+  #+BEGIN_SRC bash :results verbatim :exports both :session 0b6acd63-d091-4c6b-83f6-7d2dd3ce908f :cache yes
+    clk dosomething
+  #+END_SRC
+
+  #+RESULTS[]: showgetsecret
+  : mytoken
+
+* when the demo-buyer password is reset
+  :PROPERTIES:
+  :CUSTOM_ID: when-the-demo-buyer-password-is-reset
+  :END:
+
+  When someone resets the demo-buyer password, I remove the old one.
+
+  #+NAME: unsetshown
+  #+BEGIN_SRC bash :results none :exports code
+    clk secret unset demo-buyer-password
+  #+END_SRC
+
+  clk asks first. I hesitate, since the reset may not be done yet, and answer
+  no.
+
+  #+NAME: refusingtheremoval
+  #+BEGIN_SRC bash :results verbatim :exports results :session 0b6acd63-d091-4c6b-83f6-7d2dd3ce908f :cache yes
+    clk secret unset demo-buyer-password <<< n
+  #+END_SRC
+
+  #+RESULTS[]: refusingtheremoval
+  : This will definitely remove the secret for demo-buyer-password. Are you sure? [y/N]: warning: Removing anyway!
+  : ...Just kidding! You secret is safe :-)
+
+  It is still there.
+
+  #+NAME: stillthere
+  #+BEGIN_SRC bash :results verbatim :exports both :session 0b6acd63-d091-4c6b-83f6-7d2dd3ce908f :cache yes
+    clk secret show demo-buyer-password
+  #+END_SRC
+
+  #+RESULTS[]: stillthere
+  : demo-buyer-password *****
+
+  #+NAME: forceunset
+  #+BEGIN_SRC bash :results none :exports none :session 0b6acd63-d091-4c6b-83f6-7d2dd3ce908f
+    clk parameter set secret.unset --force
+  #+END_SRC
+
+  The reset is done, so this time I answer yes. In a script, ~--force~ skips
+  the question.
+
+  #+NAME: removingsecret
+  #+BEGIN_SRC bash :results none :exports code :session 0b6acd63-d091-4c6b-83f6-7d2dd3ce908f
+    clk secret unset demo-buyer-password
+  #+END_SRC
+
+  Asking for it now tells me it is gone.
+
+  #+NAME: checkthatthesecretisgone
+  #+BEGIN_SRC bash :results verbatim :exports both :session 0b6acd63-d091-4c6b-83f6-7d2dd3ce908f :cache yes
+    clk secret show demo-buyer-password
+  #+END_SRC
+
+  #+RESULTS[]: checkthatthesecretisgone
+  : warning: No secret set
+
+* when an agent runs it for me
+  :PROPERTIES:
+  :CUSTOM_ID: when-an-agent-runs-it-for-me
+  :END:
+
+  These days, a coding agent calls my MCP server as often as I do. It runs in a
+  shell with no desktop session, where keyring has no backend to work with, and
+  it cannot answer a prompt either. There, I keep the password in ~~/.netrc~:
+  the secret name in ~machine~, its value in ~password~.
+
+  #+NAME: netrc_content
+  #+BEGIN_SRC authinfo :results none :exports code
+    machine demo-buyer-password
+    password thevalue
+  #+END_SRC
+
+  #+NAME: generate_netrc
+  #+BEGIN_SRC bash :results none :exports none :session 0b6acd63-d091-4c6b-83f6-7d2dd3ce908f :noweb yes
+    cat <<EOF > "${CLK_NETRC_LOCATION}"
+    <<netrc_content>>
+    EOF
+  #+END_SRC
+
+  Sometimes the agent runs in a container where clk was installed without the
+  python library keyring. clk reads my netrc file all the same.
+
+  #+NAME: hidekeyring
+  #+BEGIN_SRC bash :results none :exports none :session 0b6acd63-d091-4c6b-83f6-7d2dd3ce908f
+    mkdir -p "${TMP}/nokeyring/keyring"
+    echo "raise ModuleNotFoundError(\"No module named 'keyring'\")" > "${TMP}/nokeyring/keyring/__init__.py"
+    OLDPYTHONPATH="${PYTHONPATH-}"
+    export PYTHONPATH="${TMP}/nokeyring${PYTHONPATH:+:${PYTHONPATH}}"
+  #+END_SRC
+
+  #+NAME: nokeyring_show
+  #+BEGIN_SRC bash :results verbatim :exports both :session 0b6acd63-d091-4c6b-83f6-7d2dd3ce908f :cache yes
+    clk secret show demo-buyer-password --secret
+  #+END_SRC
+
+  #+RESULTS[]: nokeyring_show
+  : demo-buyer-password thevalue
+
+  Naming a keyring there makes no sense, and clk says so.
+
+  #+NAME: nokeyring_named
+  #+BEGIN_SRC bash :results verbatim :exports both :session 0b6acd63-d091-4c6b-83f6-7d2dd3ce908f :cache yes
+    clk --keyring clk.keyrings.NetrcKeyring secret show demo-buyer-password
+  #+END_SRC
+
+  #+RESULTS[]: nokeyring_named
+  : Usage: clk [OPTIONS] [COMMAND] [ARGS]...
+  : error: You need to install keyring in order to manipulate secrets. Hint: python3 -m pip install keyring
+
+  #+NAME: bringbackkeyring
+  #+BEGIN_SRC bash :results none :exports none :session 0b6acd63-d091-4c6b-83f6-7d2dd3ce908f
+    export PYTHONPATH="${OLDPYTHONPATH}"
+  #+END_SRC
+
+  Where keyring is installed but finds no password manager, clk falls back on
+  netrc by itself.
+
+  #+NAME: nobackend
+  #+BEGIN_SRC bash :results none :exports none :session 0b6acd63-d091-4c6b-83f6-7d2dd3ce908f
+    clk parameter set clk --keyring keyring.backends.fail.Keyring
+  #+END_SRC
+
+  #+NAME: netrc_fallback
+  #+BEGIN_SRC bash :results verbatim :exports both :session 0b6acd63-d091-4c6b-83f6-7d2dd3ce908f :cache yes
+    clk secret show demo-buyer-password --secret
+  #+END_SRC
+
+  #+RESULTS[]: netrc_fallback
+  : demo-buyer-password thevalue
+
+  I can also ask for netrc explicitly, with the ~NetrcKeyring~ of
+  ~clk.keyrings~.
+
+  #+NAME: using_netrc
+  #+BEGIN_SRC bash :results verbatim :exports both :session 0b6acd63-d091-4c6b-83f6-7d2dd3ce908f :cache yes
+    clk --keyring clk.keyrings.NetrcKeyring secret show demo-buyer-password --secret
+  #+END_SRC
+
+  #+RESULTS[]: using_netrc
+  : demo-buyer-password thevalue
+
+  A secret my netrc file does not hold is simply not there.
+
+  #+NAME: netrc_missing
+  #+BEGIN_SRC bash :results verbatim :exports both :session 0b6acd63-d091-4c6b-83f6-7d2dd3ce908f :cache yes
+    clk --keyring clk.keyrings.NetrcKeyring secret show other_token --secret
+  #+END_SRC
+
+  #+RESULTS[]: netrc_missing
+  : warning: No secret set
+
+  It only reads: storing one is up to me, in the file itself.
+
+  #+NAME: netrc_readonly
+  #+BEGIN_SRC bash :results verbatim :exports both :session 0b6acd63-d091-4c6b-83f6-7d2dd3ce908f :cache yes
+    clk --keyring clk.keyrings.NetrcKeyring secret set other_token
+  #+END_SRC
+
+  #+RESULTS[]: netrc_readonly
+  : error: Could not save your secret.
+  : Usage: clk secret set [OPTIONS] KEY
+  : error: The netrc keyring only reads secrets. Write this one in your netrc file to use it.
+
+  Removing one is up to me as well.
+
+  #+NAME: netrc_readonly_unset
+  #+BEGIN_SRC bash :results verbatim :exports both :session 0b6acd63-d091-4c6b-83f6-7d2dd3ce908f :cache yes
+    clk --keyring clk.keyrings.NetrcKeyring secret unset demo-buyer-password
+  #+END_SRC
+
+  #+RESULTS[]: netrc_readonly_unset
+  : Usage: clk secret unset [OPTIONS] KEY
+  : error: The netrc keyring only reads secrets. Remove this one from your netrc file to get rid of it.
+
+  #+NAME: test
+  #+BEGIN_SRC bash :results none :exports none :noweb yes :shebang "#!/usr/bin/env bash" :tangle ../../tests/use_cases/calling_my_mcp_server.sh
+    set -eu
+    <<init>>
+
+    <<createthecommand>>
+
+    check-result(setsecretinparameter)
+
+    check-result(usesecretinparameter)
+
+    check-result(usethebearefromsecret)
+
+    check-result(httpwithsecretfail)
+
+    <<generate_expect_file_success>>
+
+    check-result(call_ask_for_real)
+
+    <<generate_expect_file_error>>
+
+    check-result(call_ask_for_real_error)
+
+    check-result(try-completion)
+
+    check-result(try-completion-without-ask-secret)
+
+    <<providepassword>>
+
+    <<storeasecret>>
+
+    check-result(showsecret)
+
+    check-result(reallyshowsecret)
+
+    check-result(reallyshowonlysecret)
+
+    check-result(httpwithsecret)
+
+    <<bashcall>>
+
+    check-result(runbashcall)
+
+    <<testgetsecret>>
+
+    check-result(showgetsecret)
+
+    check-result(refusingtheremoval)
+
+    check-result(stillthere)
+
+    <<forceunset>>
+
+    <<removingsecret>>
+
+    check-result(checkthatthesecretisgone)
+
+    <<generate_netrc>>
+
+    <<hidekeyring>>
+
+    check-result(nokeyring_show)
+
+    check-result(nokeyring_named)
+
+    <<bringbackkeyring>>
+
+    <<nobackend>>
+
+    check-result(netrc_fallback)
+
+    check-result(using_netrc)
+
+    check-result(netrc_missing)
+
+    check-result(netrc_readonly)
+
+    check-result(netrc_readonly_unset)
+
+  #+END_SRC
+
+* Footnotes
+  :PROPERTIES:
+  :CUSTOM_ID: footnotes
+  :END:
+
+[fn:1] so that a script calling clk learns that something went wrong

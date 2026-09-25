@@ -85,7 +85,6 @@ cat <<EOF > "${TMP}/clk-distribution/clk.json5"
 {
     "parameters": {
         "clk": [
-            "--keyring", "clk.keyrings.DummyFileKeyring",
             "--forced-width",
             "--reproducible-output"
         ],
@@ -119,6 +118,7 @@ eval "$(direnv hook bash)"
 cat<<EOF > "${TMP}/.envrc" && direnv allow
 export CLKCONFIGDIR="${TMP}/clk-root"
 export CLK_DISTRIBUTION_PROFILE="${TMP}/clk-distribution"
+export PYTHON_KEYRING_BACKEND=clk.keyrings.DummyFileKeyring
 export DUMMYFILEKEYRINGPATH="${TMP}/keyring.json"
 export CLK_NETRC_LOCATION="${TMP}/netrc"
 export CLK_BIN="${CLK_BIN}"

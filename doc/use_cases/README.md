@@ -45,7 +45,7 @@ If you know what you need but not what clk calls it, start here.
 -   have commands that only exist in a project: [using a project](using_a_project.md)
 -   run the same workflow everywhere, each project doing it its own way: [global workflow, local implementation](global_workflow_local_implementation.md)
 -   reach the commands of a sibling project without `cd`: [alias to root](alias_to_root.md)
--   keep a password out of my scripts: [dealing with secrets](dealing_with_secrets.md)
+-   keep a password out of my scripts: [calling my MCP server](calling_my_mcp_server.md)
 -   fetch some json and show it: [fetching and displaying json data](fetching_and_displaying_json_data.md)
 -   not fetch the same page twice: [scrapping the web](scrapping_the_web.md)
 -   clean up what my command set up, even when it fails: [controlling the audio](controlling_the_audio.md)
@@ -187,7 +187,7 @@ clk tries hard to provide most of what you need in a generic command line tool.
 
 The bash library (\_clk.sh) provides helpers for creating friendly shell commands, like the `clk_drop_duplicate` of [the albums I played lately](controlling_my_music.md).
 
-[Choices](choices.md) for providing selection in commands. [Caching](scrapping_the_web.md) computation results to disk. [Fetching and displaying JSON data](fetching_and_displaying_json_data.md) with `download` and `echo_json`. Handling [secrets](dealing_with_secrets.md) in commands. [Cleaning up](controlling_the_audio.md) what a command set up, with `clk.atexit`.
+[Choices](choices.md) for providing selection in commands. [Caching](scrapping_the_web.md) computation results to disk. [Fetching and displaying JSON data](fetching_and_displaying_json_data.md) with `download` and `echo_json`. Handling [secrets](calling_my_mcp_server.md) in commands. [Cleaning up](controlling_the_audio.md) what a command set up, with `clk.atexit`.
 
 The [clk.lib reference](lib.md) covers what has been documented so far.
 
@@ -247,6 +247,7 @@ The [backing up documents](backing_up_documents.md) use case shows how to build 
 | [alias_to_root.md](alias_to_root.md) | Aliases pointing to the root command of a sibling project, to run its commands without cd-ing into it |  |
 | [backing_up_documents.md](backing_up_documents.md) | Building a backup system with hierarchical commands, flows, parameters, and per-project configuration |  |
 | [bash_command_use_option.md](bash_command_use_option.md) | Arguments (A:), options (O:), flags (F:), file completion, clk_value, clk_given, clk_true, clk_format_choice | clk_format_choice,clk_given,clk_true,clk_value |
+| [calling_my_mcp_server.md](calling_my_mcp_server.md) | Getting a Cognito token for my MCP server on AgentCore, with its password kept out of files and parameters (clk secret, keyring, netrc, --ask-secret) | clk.get_secret,expose_class |
 | [chaotic_simulator_manager.md](chaotic_simulator_manager.md) | Building your own standalone CLI tool on top of clk as a library | clk.lib.format_options,clk.lib.rm,clk.overloads.option,clk.setup.basic_entry_point,clk.setup.main |
 | [checking_my_server.md](checking_my_server.md) | A bash command that says whether my server answers, with its exit code and its cleaning up | clk.lib.check_output,clk.lib.safe_check_output |
 | [choices.md](choices.md) | Restricting user input to predefined values using Choice types | clk.lib.call,clk.lib.check_output,clk.types.DocumentedChoice,clk.types.Suggestion |
@@ -254,7 +255,6 @@ The [backing up documents](backing_up_documents.md) use case shows how to build 
 | [controlling_my_music.md](controlling_my_music.md) | Controlling my music player with clk, from a simple alias to a bash command | clk_drop_duplicate,clk_true,clk_value |
 | [controlling_the_audio.md](controlling_the_audio.md) | Recording what an application plays, and tearing down the plumbing with clk.atexit | clk.atexit.register |
 | [creating_extensions.md](creating_extensions.md) | Creating and sharing extensions (folders of commands and configuration) | clk.lib.check_output,clk.lib.makedirs,clk.lib.move,clk.lib.tempdir,clk.lib.temporary_file,clk_extension_hello |
-| [dealing_with_secrets.md](dealing_with_secrets.md) | Handling secrets (passwords, tokens) safely in clk commands | clk.get_secret,expose_class |
 | [dynamic_parameters_and_exposed_class.md](dynamic_parameters_and_exposed_class.md) | Splitting commands into subcommands with shared config via dynamic parameters and exposed classes | expose_class |
 | [ethereum_local_environment_dev_tool.md](ethereum_local_environment_dev_tool.md) | Using clk commands as parameters in other commands (Ethereum dev tool example) |  |
 | [fetching_and_displaying_json_data.md](fetching_and_displaying_json_data.md) | Fetching JSON from APIs and displaying with syntax highlighting, download, echo_json |  |
@@ -281,7 +281,7 @@ The [backing up documents](backing_up_documents.md) use case shows how to build 
 - `CLK_P_AWS` : [wrapping_a_cloud_provider_cli.md](wrapping_a_cloud_provider_cli.md)
 - `clk.atexit.register` : [controlling_the_audio.md](controlling_the_audio.md)
 - `clk.core.cache_disk` : [scrapping_the_web.md](scrapping_the_web.md)
-- `clk.get_secret` : [dealing_with_secrets.md](dealing_with_secrets.md)
+- `clk.get_secret` : [calling_my_mcp_server.md](calling_my_mcp_server.md)
 - `clk.lib.call` : [choices.md](choices.md)
 - `clk.lib.check_output` : [checking_my_server.md](checking_my_server.md), [choices.md](choices.md), [creating_extensions.md](creating_extensions.md), [lib.md](lib.md)
 - `clk.lib.createfile` : [podcast_automation.md](podcast_automation.md)
@@ -312,4 +312,4 @@ The [backing up documents](backing_up_documents.md) use case shows how to build 
 - `clk_list_to_choice` : [ipfs_name_publish.md](ipfs_name_publish.md), [send_sms.md](send_sms.md)
 - `clk_true` : [bash_command_use_option.md](bash_command_use_option.md), [controlling_my_music.md](controlling_my_music.md)
 - `clk_value` : [bash_command_use_option.md](bash_command_use_option.md), [controlling_my_music.md](controlling_my_music.md), [finding_recent_documents.md](finding_recent_documents.md), [ipfs_name_publish.md](ipfs_name_publish.md), [podcast_automation.md](podcast_automation.md), [send_sms.md](send_sms.md)
-- `expose_class` : [dealing_with_secrets.md](dealing_with_secrets.md), [dynamic_parameters_and_exposed_class.md](dynamic_parameters_and_exposed_class.md), [wrapping_a_cloud_provider_cli.md](wrapping_a_cloud_provider_cli.md)
+- `expose_class` : [calling_my_mcp_server.md](calling_my_mcp_server.md), [dynamic_parameters_and_exposed_class.md](dynamic_parameters_and_exposed_class.md), [wrapping_a_cloud_provider_cli.md](wrapping_a_cloud_provider_cli.md)
