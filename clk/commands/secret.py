@@ -9,6 +9,10 @@ from clk.log import get_logger
 LOGGER = get_logger(__name__)
 
 
+def backend_name(backend):
+    return f"{type(backend).__module__}.{type(backend).__name__}"
+
+
 @group()
 def secret():
     """Manipulate your secrets"""
@@ -27,8 +31,15 @@ def secret():
 )
 def _set(key, secret):
     """Set the secret"""
+    keyring = get_keyring()
     try:
-        get_keyring().set_password("clk", key, secret)
+        keyring.set_password("clk", key, secret)
+    except NotImplementedError:
+        raise click.ClickException(
+            f"The keyring {backend_name(keyring)} cannot store secrets."
+            " Store it with the tool of that password manager,"
+            " or pick another keyring with --keyring."
+        )
     except:  # NOQA: E722
         LOGGER.error("Could not save your secret.")
         raise

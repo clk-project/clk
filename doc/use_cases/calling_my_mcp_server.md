@@ -5,6 +5,7 @@
 - [a check of my own in python](#a-check-of-my-own-in-python)
 - [when the demo-buyer password is reset](#when-the-demo-buyer-password-is-reset)
 - [when an agent runs it for me](#when-an-agent-runs-it-for-me)
+- [when the team shares the password](#when-the-team-shares-the-password)
 
 I have an MCP server running on Amazon Bedrock AgentCore. It sits behind a Cognito user pool, so before calling one of its tools I need an access token, and to get one I log in as a test user, demo-buyer, with its password.
 
@@ -321,6 +322,38 @@ clk --keyring clk.keyrings.NetrcKeyring secret unset demo-buyer-password
 
     Usage: clk secret unset [OPTIONS] KEY
     error: The netrc keyring only reads secrets. Remove this one from your netrc file to get rid of it.
+
+
+<a id="when-the-team-shares-the-password"></a>
+
+# when the team shares the password
+
+The team now keeps the demo-buyer password in AWS Secrets Manager, and my role may read it, not write it. I wrote a keyring backend that reads from there. In real life, `get_password` calls `aws secretsmanager get-secret-value`.
+
+```python
+import keyring.backend
+
+
+class SecretsManagerKeyring(keyring.backend.KeyringBackend):
+    priority = 6
+
+    def get_password(self, service, username):
+        return None
+
+    def set_password(self, service, username, password):
+        raise NotImplementedError
+
+    def delete_password(self, service, username):
+        raise NotImplementedError
+```
+
+Out of habit, I tried storing the new password after it was reset. clk says which keyring refused.
+
+```bash
+clk --keyring team_keyring.SecretsManagerKeyring secret set demo-buyer-password
+```
+
+    error: The keyring team_keyring.SecretsManagerKeyring cannot store secrets. Store it with the tool of that password manager, or pick another keyring with --keyring.
 
 ## Footnotes
 

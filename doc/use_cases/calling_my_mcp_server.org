@@ -527,6 +527,54 @@ file on the way.
   : Usage: clk secret unset [OPTIONS] KEY
   : error: The netrc keyring only reads secrets. Remove this one from your netrc file to get rid of it.
 
+* when the team shares the password
+  :PROPERTIES:
+  :CUSTOM_ID: when-the-team-shares-the-password
+  :END:
+
+  The team now keeps the demo-buyer password in AWS Secrets Manager, and my
+  role may read it, not write it. I wrote a keyring backend that reads from
+  there. In real life, ~get_password~ calls ~aws secretsmanager
+  get-secret-value~.
+
+  #+NAME: readonly_keyring
+  #+BEGIN_SRC python :results none :exports code
+    import keyring.backend
+
+
+    class SecretsManagerKeyring(keyring.backend.KeyringBackend):
+        priority = 6
+
+        def get_password(self, service, username):
+            return None
+
+        def set_password(self, service, username, password):
+            raise NotImplementedError
+
+        def delete_password(self, service, username):
+            raise NotImplementedError
+  #+END_SRC
+
+  #+NAME: install_readonly_keyring
+  #+BEGIN_SRC bash :results none :exports none :session 0b6acd63-d091-4c6b-83f6-7d2dd3ce908f :noweb yes
+    mkdir -p "${TMP}/pylib"
+    cat <<'EOF' > "${TMP}/pylib/team_keyring.py"
+    <<readonly_keyring>>
+    EOF
+    export PYTHONPATH="${TMP}/pylib${PYTHONPATH:+:${PYTHONPATH}}"
+  #+END_SRC
+
+  Out of habit, I tried storing the new password after it was reset. clk says
+  which keyring refused.
+
+  #+NAME: readonly_keyring_set
+  #+BEGIN_SRC bash :results verbatim :exports both :session 0b6acd63-d091-4c6b-83f6-7d2dd3ce908f :cache yes
+    clk --keyring team_keyring.SecretsManagerKeyring secret set demo-buyer-password
+  #+END_SRC
+
+  #+RESULTS[]: readonly_keyring_set
+  : error: The keyring team_keyring.SecretsManagerKeyring cannot store secrets. Store it with the tool of that password manager, or pick another keyring with --keyring.
+
   #+NAME: test
   #+BEGIN_SRC bash :results none :exports none :noweb yes :shebang "#!/usr/bin/env bash" :tangle ../../tests/use_cases/calling_my_mcp_server.sh
     set -eu
@@ -607,6 +655,10 @@ file on the way.
     check-result(netrc_readonly)
 
     check-result(netrc_readonly_unset)
+
+    <<install_readonly_keyring>>
+
+    check-result(readonly_keyring_set)
 
   #+END_SRC
 

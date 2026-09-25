@@ -859,4 +859,53 @@ else
         exit 1
     }
 fi
+
+
+mkdir -p "${TMP}/pylib"
+cat <<'EOF' > "${TMP}/pylib/team_keyring.py"
+import keyring.backend
+
+
+class SecretsManagerKeyring(keyring.backend.KeyringBackend):
+    priority = 6
+
+    def get_password(self, service, username):
+        return None
+
+    def set_password(self, service, username, password):
+        raise NotImplementedError
+
+    def delete_password(self, service, username):
+        raise NotImplementedError
+EOF
+export PYTHONPATH="${TMP}/pylib${PYTHONPATH:+:${PYTHONPATH}}"
+
+
+readonly_keyring_set_code () {
+      clk --keyring team_keyring.SecretsManagerKeyring secret set demo-buyer-password
+}
+
+readonly_keyring_set_expected () {
+      local expected
+      expected="$(cat<<"EOEXPECTED"
+error: The keyring team_keyring.SecretsManagerKeyring cannot store secrets. Store it with the tool of that password manager, or pick another keyring with --keyring.
+EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
+}
+
+echo 'Run readonly_keyring_set'
+
+{ readonly_keyring_set_code || true ; } > "${TMP}/code.txt" 2>&1
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/readonly_keyring_set"
+else
+    readonly_keyring_set_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying readonly_keyring_set"
+        exit 1
+    }
+fi
 # test ends here
