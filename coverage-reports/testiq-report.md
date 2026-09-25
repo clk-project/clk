@@ -56,7 +56,7 @@ Found 18 tests that are subsets of others (showing top 20 by coverage ratio):
     **Action**: Consider removing if no unique edge cases
 
 
-  - `completion:command` is 97.8% covered by `completion:dynamic_group`
+  - `completion:command` is 97.9% covered by `completion:dynamic_group`
     **Action**: Consider removing if no unique edge cases
 
 
