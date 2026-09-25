@@ -113,10 +113,14 @@ clk trigger set pre mycommand echo hello
 We can verify that the trigger was set by showing it:
 
 ```bash
-clk trigger show --no-color pre mycommand
+clk trigger show pre mycommand
 ```
 
-    mycommand echo hello
+<pre>
+mycommand <span style="color:teal;">echo hello</span>
+--------------
+Legend: <span style="color:teal;">global</span>
+</pre>
 
 
 <a id="pre-trigger-execution"></a>

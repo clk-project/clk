@@ -139,11 +139,13 @@ We can verify that the trigger was set by showing it:
 
 #+NAME: show_trigger
 #+BEGIN_SRC bash :results verbatim :exports both :session a197f802-e04c-40a2-8bfa-bc96ba703252 :cache yes
-clk trigger show --no-color pre mycommand
+clk trigger show pre mycommand
 #+END_SRC
 
 #+RESULTS[35a18865be353eb072a8677718d8603a16de1a51]: show_trigger
-: mycommand echo hello
+: mycommand [2m[36m[2mecho hello[0m[0m
+: [2m--------------[0m
+: Legend: [36m[2mglobal[0m
 
 ** pre-trigger execution
    :PROPERTIES:

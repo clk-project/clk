@@ -90,13 +90,15 @@ clk trigger set pre mycommand echo hello
 
 
 show_trigger_code () {
-      clk trigger show --no-color pre mycommand
+      clk trigger show pre mycommand
 }
 
 show_trigger_expected () {
       local expected
       expected="$(cat<<"EOEXPECTED"
-mycommand echo hello
+mycommand [2m[36m[2mecho hello[0m[0m
+[2m--------------[0m
+Legend: [36m[2mglobal[0m
 EOEXPECTED
 )"
       # org says nil where the block said nothing
