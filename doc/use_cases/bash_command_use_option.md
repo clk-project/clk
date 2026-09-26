@@ -32,9 +32,10 @@ do
 done
 ```
 
+Rather than opening my editor, `--no-open` says where it put the command, so that I can write the whole of it right away.
+
 ```bash
-clk command create bash animal --no-open
-cat <<"EOH" > "$(clk command which animal)"
+cat <<"EOH" > "$(clk command create bash animal --no-open)"
 #!/usr/bin/env bash
   set -eu
 
@@ -113,8 +114,7 @@ A:document:file:The document to count words in
 ```
 
 ```bash
-clk command create bash wordcount
-cat <<"EOH" > "$(clk command which wordcount)"
+cat <<"EOH" > "$(clk command create bash wordcount --no-open)"
 #!/usr/bin/env bash
   set -eu
 

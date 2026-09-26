@@ -149,7 +149,11 @@ def create():
         " already exists."
     ),
 )
-@flag("--open/--no-open", help="Also open the file after its creation", default=True)
+@flag(
+    "--open/--no-open",
+    help="Also open the file after its creation, else print where it is",
+    default=True,
+)
 @flag("--force", help="Overwrite a file if it already exists")
 @option("--body", help="The initial body to put", default="")
 @option("--from-alias", help="The alias to use as base", type=AliasesType())
@@ -356,11 +360,17 @@ clk_help_handler "$@"
         )
     if open:
         click.edit(filename=str(script_path))
+    else:
+        print(script_path)
 
 
 @create.command()
 @argument("name", help="The name of the new command")
-@flag("--open/--no-open", help="Also open the file after its creation", default=True)
+@flag(
+    "--open/--no-open",
+    help="Also open the file after its creation, else print where it is",
+    default=True,
+)
 @flag("--force", help="Overwrite a file if it already exists")
 @flag("--group/--command", help="Bootstrap a command or a group of commands")
 @flag(
@@ -444,6 +454,8 @@ def {command_name.replace("-", "_")}():
     createfile(script_path, script_text)
     if open:
         click.edit(filename=str(script_path))
+    else:
+        print(script_path)
 
 
 @command.command()

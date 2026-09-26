@@ -103,8 +103,7 @@ else
 fi
 
 
-clk command create bash ipfs.name.publish --no-open
-cat <<"EOH" > "$(clk command which ipfs.name.publish)"
+cat <<"EOH" > "$(clk command create bash ipfs.name.publish --no-open)"
 #!/usr/bin/env bash
 set -eu
 

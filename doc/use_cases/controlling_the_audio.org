@@ -63,8 +63,7 @@ def record(disk_full):
 
 #+NAME: create-record
 #+BEGIN_SRC bash :results none :exports none :session 7ffd3ae1-014c-4992-8902-ed044cb20b75 :noweb yes
-clk command create python record --description "Record what the music player plays"
-cat<<'EOF' > "$(clk command which record)"
+cat <<'EOF' > "$(clk command create python record --description "Record what the music player plays" --no-open)"
 <<record-code>>
 EOF
 #+END_SRC

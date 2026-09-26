@@ -5,8 +5,7 @@ set -eu
 
 echo speakers > routing.txt
 
-clk command create python record --description "Record what the music player plays"
-cat<<'EOF' > "$(clk command which record)"
+cat <<'EOF' > "$(clk command create python record --description "Record what the music player plays" --no-open)"
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 

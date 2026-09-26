@@ -36,8 +36,7 @@ termux-contact-number () {
     echo "$dumb_contacts" | jq -r ".[] | select(.name == \"${name}\").number"
 }
 EOF
-clk command create bash termux.sms.send --no-open
-cat <<"EOC" > "$(clk command which termux.sms.send)"
+cat <<"EOC" > "$(clk command create bash termux.sms.send --no-open)"
 #!/usr/bin/env bash
   set -eu
 

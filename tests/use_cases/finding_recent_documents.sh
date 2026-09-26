@@ -9,8 +9,7 @@ touch -d 2024-02-01 minutes.txt
 touch -d 2024-02-12 invoice.txt
 touch -d 2024-02-14 receipt.txt
 
-clk command create bash find-new-documents
-cat <<"EOH" > "$(clk command which find-new-documents)"
+cat <<"EOH" > "$(clk command create bash find-new-documents --no-open)"
 #!/usr/bin/env bash
   set -eu
 

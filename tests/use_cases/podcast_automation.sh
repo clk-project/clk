@@ -400,8 +400,7 @@ stateType = Suggestion(STATES)
 EOF
 export PYTHONPATH="$(pwd)/lib"
 
-clk command create bash podcast.extract-audio
-cat <<"EOH" > "$(clk command which podcast.extract-audio)"
+cat <<"EOH" > "$(clk command create bash podcast.extract-audio --no-open)"
 #!/usr/bin/env bash
 set -eu
 

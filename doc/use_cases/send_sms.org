@@ -100,8 +100,7 @@ that means we can provide several contacts.
 
 #+NAME: create-command
 #+BEGIN_SRC bash :results verbatim :noweb yes :exports none :session 3781d830-096f-4fb6-9e77-d18586507997
-  clk command create bash termux.sms.send --no-open
-  cat <<"EOC" > "$(clk command which termux.sms.send)"
+  cat <<"EOC" > "$(clk command create bash termux.sms.send --no-open)"
   <<command>>
   EOC
 #+END_SRC

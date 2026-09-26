@@ -146,8 +146,7 @@ else
 fi
 
 
-clk command create python show-items --no-open --force
-cat <<'EOF' > "$(clk command which show-items)"
+cat <<'EOF' > "$(clk command create python show-items --no-open --force)"
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 

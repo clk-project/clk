@@ -311,8 +311,7 @@ echo "extracting the audio of the episodes in state $(clk_value state)"
 
 #+NAME: extract_audio
 #+BEGIN_SRC bash :results none :exports none :session c8fcfc53-6d2a-4b9c-a836-c303933b6563 :noweb yes
-clk command create bash podcast.extract-audio
-cat <<"EOH" > "$(clk command which podcast.extract-audio)"
+cat <<"EOH" > "$(clk command create bash podcast.extract-audio --no-open)"
 <<extract_audio_code>>
 EOH
 #+END_SRC

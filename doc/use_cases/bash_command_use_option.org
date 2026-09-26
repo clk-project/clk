@@ -46,10 +46,12 @@ F:--shout:Print the message of the animal in capital case
   done
 #+END_SRC
 
+Rather than opening my editor, ~--no-open~ says where it put the command, so
+that I can write the whole of it right away.
+
 #+name: create
 #+BEGIN_SRC bash :results none :session 100aa89b-f320-46ee-9d5d-2193ef48d4eb :noweb yes
-clk command create bash animal --no-open
-cat <<"EOH" > "$(clk command which animal)"
+cat <<"EOH" > "$(clk command create bash animal --no-open)"
 #!/usr/bin/env bash
   set -eu
 
@@ -128,8 +130,7 @@ A:document:file:The document to count words in
 
 #+name: wordcount-create
 #+BEGIN_SRC bash :results none :export code :session 100aa89b-f320-46ee-9d5d-2193ef48d4eb :noweb yes
-clk command create bash wordcount
-cat <<"EOH" > "$(clk command which wordcount)"
+cat <<"EOH" > "$(clk command create bash wordcount --no-open)"
 #!/usr/bin/env bash
   set -eu
 
@@ -276,8 +277,7 @@ echo "$(clk_value package)"
 
 #+name: urlarg-create
 #+BEGIN_SRC bash :results none :exports none :session 100aa89b-f320-46ee-9d5d-2193ef48d4eb :noweb yes
-clk command create bash showpackage
-cat <<"EOH" > "$(clk command which showpackage)"
+cat <<"EOH" > "$(clk command create bash showpackage --no-open)"
 #!/usr/bin/env bash
   set -eu
 
@@ -340,8 +340,7 @@ done
 
 #+name: old-greet-create
 #+BEGIN_SRC bash :results none :exports none :session 100aa89b-f320-46ee-9d5d-2193ef48d4eb :noweb yes
-clk command create bash greet
-cat <<"EOH" > "$(clk command which greet)"
+cat <<"EOH" > "$(clk command create bash greet --no-open)"
 #!/usr/bin/env bash
 set -eu
 

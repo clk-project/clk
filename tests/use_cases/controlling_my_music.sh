@@ -283,6 +283,9 @@ else
 fi
 
 
+editor_is_idle
+
+
 bootstrap_code () {
       clk command create bash --replace-alias music.play
 }

@@ -198,6 +198,11 @@ clk music play MyAlbum
 : Running mpc with: wait-for-server
 : Running mpc with: play --random --use-speakers --replaygain --repeat MyAlbum
 
+#+NAME: idle-editor
+#+BEGIN_SRC bash :results none :exports none :session e6078fc8-4b12-44ad-b008-20f0b7311069
+editor_is_idle
+#+END_SRC
+
 * falling back to a real command
   :PROPERTIES:
   :CUSTOM_ID: falling-back-to-a-real-command
@@ -493,6 +498,9 @@ clk parameter show music.shuffle
   <<edit-alias>>
 
   check-result(run-edited-alias)
+
+  <<idle-editor>>
+
   check-result(bootstrap)
   check-result(try_command)
   check-result(which)

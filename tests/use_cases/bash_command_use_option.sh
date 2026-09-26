@@ -3,8 +3,7 @@
 set -eu
 . ./sandboxing.sh
 
-clk command create bash animal --no-open
-cat <<"EOH" > "$(clk command which animal)"
+cat <<"EOH" > "$(clk command create bash animal --no-open)"
 #!/usr/bin/env bash
   set -eu
 
@@ -122,8 +121,7 @@ test "$(clk animal duck --sound-of-animal couac --repeat 2)" = "duck does couac
 duck does couac
 duck does couac"
 
-clk command create bash wordcount
-cat <<"EOH" > "$(clk command which wordcount)"
+cat <<"EOH" > "$(clk command create bash wordcount --no-open)"
 #!/usr/bin/env bash
   set -eu
 
@@ -339,8 +337,7 @@ else
 fi
 
 
-clk command create bash showpackage
-cat <<"EOH" > "$(clk command which showpackage)"
+cat <<"EOH" > "$(clk command create bash showpackage --no-open)"
 #!/usr/bin/env bash
   set -eu
 
@@ -393,8 +390,7 @@ else
 fi
 
 
-clk command create bash greet
-cat <<"EOH" > "$(clk command which greet)"
+cat <<"EOH" > "$(clk command create bash greet --no-open)"
 #!/usr/bin/env bash
 set -eu
 

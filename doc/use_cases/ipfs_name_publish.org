@@ -110,8 +110,7 @@ with the following content.
 
 #+NAME: name-publish
 #+BEGIN_SRC bash :results none :exports none :session 344b2d46-b85a-40ea-a50b-ad95ddc177f4  :noweb yes
-  clk command create bash ipfs.name.publish --no-open
-  cat <<"EOH" > "$(clk command which ipfs.name.publish)"
+  cat <<"EOH" > "$(clk command create bash ipfs.name.publish --no-open)"
   <<name-publish-content>>
   EOH
 #+END_SRC

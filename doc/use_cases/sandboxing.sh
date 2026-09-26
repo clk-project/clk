@@ -63,6 +63,11 @@ EOS
     export EDITOR="${TMP}/editor"
     export VISUAL="${TMP}/editor"
 }
+editor_is_idle () {
+    export EDITOR=true
+    export VISUAL=true
+}
+editor_is_idle
 clk () {
     if test -n "${CLK_FAKED_TIME-}"
     then
@@ -90,7 +95,6 @@ cat <<EOF > "${TMP}/clk-distribution/clk.json5"
             "--reproducible-output"
         ],
         "command.create.python": [
-            "--no-open",
             "--force"
         ],
         "extension.remove": [
@@ -100,7 +104,6 @@ cat <<EOF > "${TMP}/clk-distribution/clk.json5"
             "--call"
         ],
         "command.create.bash": [
-            "--no-open",
             "--force"
         ],
         "plugin.create": [

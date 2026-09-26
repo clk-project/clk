@@ -29,7 +29,7 @@ clk command create python --help
       NAME  The name of the new command
 
     Options:
-      --open / --no-open   Also open the file after its creation  [default: open]
+      --open / --no-open   Also open the file after its creation, else print where it is  [default: open]
       --force              Overwrite a file if it already exists
       --group / --command  Bootstrap a command or a group of commands  [default: command]
       --with-data          Create a directory module instead of a single file. So that you can ship data with it

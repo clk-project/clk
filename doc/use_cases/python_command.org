@@ -41,7 +41,7 @@ clk command create python --help
 :   NAME  The name of the new command
 :
 : Options:
-:   --open / --no-open   Also open the file after its creation  [default: open]
+:   --open / --no-open   Also open the file after its creation, else print where it is  [default: open]
 :   --force              Overwrite a file if it already exists
 :   --group / --command  Bootstrap a command or a group of commands  [default: command]
 :   --with-data          Create a directory module instead of a single file. So that you can ship data with it
@@ -569,8 +569,7 @@ Some days you sketch a command and leave the hard part for later.
 
 #+NAME: write-notyet
 #+BEGIN_SRC bash :results none :exports none :session b115ee6f-3575-46e0-a64c-880cfa22d4e3 :noweb yes
-clk command create python notyet --description "Not written yet"
-cat<<'EOF' > "$(clk command which notyet)"
+cat <<'EOF' > "$(clk command create python notyet --description "Not written yet" --no-open)"
 <<notyet-code>>
 EOF
 #+END_SRC
@@ -605,8 +604,7 @@ than pretending.
 
 #+NAME: write-boom
 #+BEGIN_SRC bash :results none :exports none :session b115ee6f-3575-46e0-a64c-880cfa22d4e3 :noweb yes
-clk command create python boom --description "Breaks"
-cat<<'EOF' > "$(clk command which boom)"
+cat <<'EOF' > "$(clk command create python boom --description "Breaks" --no-open)"
 <<boom-code>>
 EOF
 #+END_SRC
