@@ -129,7 +129,7 @@ Found 3924 test pairs with ≥30% similarity (showing top 20):
     **Action**: Review for potential merge or refactoring
 
 
-  - `custom:simple_python` ↔ `types:default_with_converter`: 99.3% similar
+  - `custom:simple_python` ↔ `types:default_with_converter`: 99.4% similar
     **Action**: Review for potential merge or refactoring
 
 
@@ -145,15 +145,19 @@ Found 3924 test pairs with ≥30% similarity (showing top 20):
     **Action**: Review for potential merge or refactoring
 
 
-  - `flow:flow_in_aliases` ↔ `flow:flow_not_captured_if_consumed`: 99.0% similar
-    **Action**: Review for potential merge or refactoring
-
-
   - `custom:simple_python` ↔ `types:date`: 99.0% similar
     **Action**: Review for potential merge or refactoring
 
 
+  - `flow:flow_in_aliases` ↔ `flow:flow_not_captured_if_consumed`: 99.0% similar
+    **Action**: Review for potential merge or refactoring
+
+
   - `completion:command` ↔ `types:complete_date`: 98.8% similar
+    **Action**: Review for potential merge or refactoring
+
+
+  - `use_cases:use_case[controlling_the_audio]` ↔ `use_cases:use_case[reading_later_from_qutebrowser]`: 98.7% similar
     **Action**: Review for potential merge or refactoring
 
 
@@ -162,10 +166,6 @@ Found 3924 test pairs with ≥30% similarity (showing top 20):
 
 
   - `types:complete_date` ↔ `types:suggestion`: 98.5% similar
-    **Action**: Review for potential merge or refactoring
-
-
-  - `parameter:config_extension_overrides_global` ↔ `parameter:parameter_precedence`: 98.4% similar
     **Action**: Review for potential merge or refactoring
 
 
