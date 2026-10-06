@@ -246,8 +246,8 @@ clk greet
 ```
 
 <pre>
-<span style="color:purple;">deprecated: </span>In greet, O:--times:int:How many times to greet:1 gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{&quot;default&quot;: &quot;value&quot;}
-<span style="color:purple;">deprecated: </span>In greet, F:--loud/--quiet:Greet in capital case:True gives its default after a colon. Give it in the json that ends the line instead, like F:name:help:{&quot;default&quot;: true}
+<span style="color:purple;">deprecated: </span>In ./clk-root/bin/greet, O:--times:int:How many times to greet:1 gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{&quot;default&quot;: &quot;value&quot;}
+<span style="color:purple;">deprecated: </span>In ./clk-root/bin/greet, F:--loud/--quiet:Greet in capital case:True gives its default after a colon. Give it in the json that ends the line instead, like F:name:help:{&quot;default&quot;: true}
 HELLO
 </pre>
 

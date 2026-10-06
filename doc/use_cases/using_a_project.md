@@ -232,11 +232,11 @@ cd .. && clk release-notes 2>&1 | tail -1 ; cd myprojet
 
 ```bash
 clk command move release-notes global
-clk command which release-notes | sed "s|${TMP}|.|"
+clk command which release-notes
 cd .. && clk release-notes ; cd myprojet
 ```
 
-    ./clk-root/bin/release-notes
+    ../clk-root/bin/release-notes
     gathering the commits since the last tag
 
 Now that it answers everywhere, I want a copy of it back in the project, one I can cut about without touching the real one. `clk command copy` takes the profile to copy into and the name to give it there.

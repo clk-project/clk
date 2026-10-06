@@ -56,11 +56,30 @@ clk backup docs do
 ```
 
 <pre>
-<span style="color:purple;">deprecated: </span>In backup.docs.do, O:--source:str:Source directory:~/docs gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{&quot;default&quot;: &quot;value&quot;}
+<span style="color:purple;">deprecated: </span>In ./clk-root/bin/backup.docs.do, O:--source:str:Source directory:~/docs gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{&quot;default&quot;: &quot;value&quot;}
 Backing up documents from ~/docs to /mnt/backup
 </pre>
 
 The bash command automatically has access to `BACKUP_DESTINATION` because the parent group set it in `config.override_env`.
+
+clk also tells me I gave the default of `--source` the old way. I am in the middle of backing up my documents, which is not the time to go and rewrite the command. I'd rather clk kept that warning in a file, for when I have the time.
+
+```bash
+clk parameter set clk --deprecation-file deprecations.txt
+```
+
+```bash
+clk backup docs do
+clk backup docs do
+```
+
+When I have the time, the file tells me what to fix, once.
+
+```bash
+cat deprecations.txt
+```
+
+    In ./clk-root/bin/backup.docs.do, O:--source:str:Source directory:~/docs gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{"default": "value"}
 
 The `backup` group now has a `docs` subgroup.
 
@@ -105,7 +124,7 @@ clk backup docs do
 ```
 
 <pre>
-<span style="color:purple;">deprecated: </span>In backup.docs.do, O:--source:str:Source directory:~/docs gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{&quot;default&quot;: &quot;value&quot;}
+<span style="color:purple;">deprecated: </span>In ./clk-root/bin/backup.docs.do, O:--source:str:Source directory:~/docs gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{&quot;default&quot;: &quot;value&quot;}
 Backing up documents from ~/docs to /media/external/documents
 </pre>
 
@@ -116,7 +135,7 @@ clk backup --dest /tmp/quick-backup docs do
 ```
 
 <pre>
-<span style="color:purple;">deprecated: </span>In backup.docs.do, O:--source:str:Source directory:~/docs gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{&quot;default&quot;: &quot;value&quot;}
+<span style="color:purple;">deprecated: </span>In ./clk-root/bin/backup.docs.do, O:--source:str:Source directory:~/docs gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{&quot;default&quot;: &quot;value&quot;}
 Backing up documents from ~/docs to /tmp/quick-backup
 </pre>
 
@@ -148,8 +167,8 @@ clk backup --help
 ```
 
 <pre>
-<span style="color:purple;">deprecated: </span>In backup.database, O:--db:str:Database name:main.db gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{&quot;default&quot;: &quot;value&quot;}
-<span style="color:purple;">deprecated: </span>In backup.photos, O:--quality:str:Compression quality:high gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{&quot;default&quot;: &quot;value&quot;}
+<span style="color:purple;">deprecated: </span>In ./clk-root/bin/backup.database, O:--db:str:Database name:main.db gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{&quot;default&quot;: &quot;value&quot;}
+<span style="color:purple;">deprecated: </span>In ./clk-root/bin/backup.photos, O:--quality:str:Compression quality:high gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{&quot;default&quot;: &quot;value&quot;}
 Usage: clk backup [OPTIONS] COMMAND [ARGS]...
 
   Backup operations
@@ -176,9 +195,9 @@ clk backup photos
 ```
 
 <pre>
-<span style="color:purple;">deprecated: </span>In backup.database, O:--db:str:Database name:main.db gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{&quot;default&quot;: &quot;value&quot;}
+<span style="color:purple;">deprecated: </span>In ./clk-root/bin/backup.database, O:--db:str:Database name:main.db gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{&quot;default&quot;: &quot;value&quot;}
 Dumping database main.db to /media/external/documents
-<span style="color:purple;">deprecated: </span>In backup.photos, O:--quality:str:Compression quality:high gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{&quot;default&quot;: &quot;value&quot;}
+<span style="color:purple;">deprecated: </span>In ./clk-root/bin/backup.photos, O:--quality:str:Compression quality:high gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{&quot;default&quot;: &quot;value&quot;}
 Backing up photos with high quality to /media/external/documents
 </pre>
 
@@ -211,7 +230,7 @@ clk backup docs --help
 ```
 
 <pre>
-<span style="color:purple;">deprecated: </span>In backup.docs.do, O:--source:str:Source directory:~/docs gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{&quot;default&quot;: &quot;value&quot;}
+<span style="color:purple;">deprecated: </span>In ./clk-root/bin/backup.docs.do, O:--source:str:Source directory:~/docs gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{&quot;default&quot;: &quot;value&quot;}
 Usage: clk backup docs [OPTIONS] COMMAND [ARGS]...
 
   Automatically created group to organize subcommands
@@ -237,7 +256,7 @@ clk backup docs do
 ```
 
 <pre>
-<span style="color:purple;">deprecated: </span>In backup.docs.do, O:--source:str:Source directory:~/docs gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{&quot;default&quot;: &quot;value&quot;}
+<span style="color:purple;">deprecated: </span>In ./clk-root/bin/backup.docs.do, O:--source:str:Source directory:~/docs gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{&quot;default&quot;: &quot;value&quot;}
 Backing up documents from ~/docs to /media/external/documents
 </pre>
 
@@ -263,8 +282,8 @@ clk flowdep set backup.docs.do backup.database
 ```
 
 <pre>
-<span style="color:purple;">deprecated: </span>In backup.docs.do, O:--source:str:Source directory:~/docs gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{&quot;default&quot;: &quot;value&quot;}
-<span style="color:purple;">deprecated: </span>In backup.database, O:--db:str:Database name:main.db gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{&quot;default&quot;: &quot;value&quot;}
+<span style="color:purple;">deprecated: </span>In ./clk-root/bin/backup.docs.do, O:--source:str:Source directory:~/docs gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{&quot;default&quot;: &quot;value&quot;}
+<span style="color:purple;">deprecated: </span>In ./clk-root/bin/backup.database, O:--db:str:Database name:main.db gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{&quot;default&quot;: &quot;value&quot;}
 New <span style="color:teal;">global</span> flowdep for backup.docs.do: backup.database
 </pre>
 
@@ -275,8 +294,8 @@ clk backup docs do --flow
 ```
 
 <pre>
-<span style="color:purple;">deprecated: </span>In backup.docs.do, O:--source:str:Source directory:~/docs gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{&quot;default&quot;: &quot;value&quot;}
-<span style="color:purple;">deprecated: </span>In backup.database, O:--db:str:Database name:main.db gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{&quot;default&quot;: &quot;value&quot;}
+<span style="color:purple;">deprecated: </span>In ./clk-root/bin/backup.docs.do, O:--source:str:Source directory:~/docs gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{&quot;default&quot;: &quot;value&quot;}
+<span style="color:purple;">deprecated: </span>In ./clk-root/bin/backup.database, O:--db:str:Database name:main.db gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{&quot;default&quot;: &quot;value&quot;}
 Dumping database main.db to /media/external/documents
 Backing up documents from ~/docs to /media/external/documents
 </pre>
@@ -301,9 +320,9 @@ clk backup full
 ```
 
 <pre>
-<span style="color:purple;">deprecated: </span>In backup.database, O:--db:str:Database name:main.db gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{&quot;default&quot;: &quot;value&quot;}
-<span style="color:purple;">deprecated: </span>In backup.docs.do, O:--source:str:Source directory:~/docs gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{&quot;default&quot;: &quot;value&quot;}
-<span style="color:purple;">deprecated: </span>In backup.photos, O:--quality:str:Compression quality:high gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{&quot;default&quot;: &quot;value&quot;}
+<span style="color:purple;">deprecated: </span>In ./clk-root/bin/backup.database, O:--db:str:Database name:main.db gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{&quot;default&quot;: &quot;value&quot;}
+<span style="color:purple;">deprecated: </span>In ./clk-root/bin/backup.docs.do, O:--source:str:Source directory:~/docs gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{&quot;default&quot;: &quot;value&quot;}
+<span style="color:purple;">deprecated: </span>In ./clk-root/bin/backup.photos, O:--quality:str:Compression quality:high gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{&quot;default&quot;: &quot;value&quot;}
 Dumping database main.db to /media/external/documents
 Backing up documents from ~/docs to /media/external/documents
 Backing up photos with high quality to /media/external/documents
@@ -332,11 +351,11 @@ clk backup work
 ```
 
 <pre>
-<span style="color:purple;">deprecated: </span>In backup.docs.do, O:--source:str:Source directory:~/docs gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{&quot;default&quot;: &quot;value&quot;}
-<span style="color:purple;">deprecated: </span>In backup.database, O:--db:str:Database name:main.db gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{&quot;default&quot;: &quot;value&quot;}
+<span style="color:purple;">deprecated: </span>In ./clk-root/bin/backup.docs.do, O:--source:str:Source directory:~/docs gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{&quot;default&quot;: &quot;value&quot;}
+<span style="color:purple;">deprecated: </span>In ./clk-root/bin/backup.database, O:--db:str:Database name:main.db gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{&quot;default&quot;: &quot;value&quot;}
 Backing up documents from ~/notes to /media/external/documents
-<span style="color:purple;">deprecated: </span>In backup.docs.do, O:--source:str:Source directory:~/docs gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{&quot;default&quot;: &quot;value&quot;}
-<span style="color:purple;">deprecated: </span>In backup.database, O:--db:str:Database name:main.db gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{&quot;default&quot;: &quot;value&quot;}
+<span style="color:purple;">deprecated: </span>In ./clk-root/bin/backup.docs.do, O:--source:str:Source directory:~/docs gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{&quot;default&quot;: &quot;value&quot;}
+<span style="color:purple;">deprecated: </span>In ./clk-root/bin/backup.database, O:--db:str:Database name:main.db gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{&quot;default&quot;: &quot;value&quot;}
 Backing up documents from ~/work/documents to /media/external/documents
 </pre>
 
@@ -359,8 +378,8 @@ clk parameter set backup --dest /mnt/backup/project-a
 ```
 
 <pre>
-<span style="color:purple;">deprecated: </span>In backup.docs.do, O:--source:str:Source directory:~/docs gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{&quot;default&quot;: &quot;value&quot;}
-<span style="color:purple;">deprecated: </span>In backup.database, O:--db:str:Database name:main.db gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{&quot;default&quot;: &quot;value&quot;}
+<span style="color:purple;">deprecated: </span>In ../clk-root/bin/backup.docs.do, O:--source:str:Source directory:~/docs gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{&quot;default&quot;: &quot;value&quot;}
+<span style="color:purple;">deprecated: </span>In ../clk-root/bin/backup.database, O:--db:str:Database name:main.db gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{&quot;default&quot;: &quot;value&quot;}
 New <span style="color:green;">local</span> parameters for backup.docs.do: --source ./documentation
 New <span style="color:green;">local</span> parameters for backup: --dest /mnt/backup/project-a
 </pre>
@@ -370,8 +389,8 @@ clk backup docs do
 ```
 
 <pre>
-<span style="color:purple;">deprecated: </span>In backup.docs.do, O:--source:str:Source directory:~/docs gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{&quot;default&quot;: &quot;value&quot;}
-<span style="color:purple;">deprecated: </span>In backup.database, O:--db:str:Database name:main.db gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{&quot;default&quot;: &quot;value&quot;}
+<span style="color:purple;">deprecated: </span>In ../clk-root/bin/backup.docs.do, O:--source:str:Source directory:~/docs gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{&quot;default&quot;: &quot;value&quot;}
+<span style="color:purple;">deprecated: </span>In ../clk-root/bin/backup.database, O:--db:str:Database name:main.db gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{&quot;default&quot;: &quot;value&quot;}
 Backing up documents from ./documentation to /mnt/backup/project-a
 </pre>
 
@@ -383,8 +402,8 @@ clk backup docs do
 ```
 
 <pre>
-<span style="color:purple;">deprecated: </span>In backup.docs.do, O:--source:str:Source directory:~/docs gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{&quot;default&quot;: &quot;value&quot;}
-<span style="color:purple;">deprecated: </span>In backup.database, O:--db:str:Database name:main.db gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{&quot;default&quot;: &quot;value&quot;}
+<span style="color:purple;">deprecated: </span>In ./clk-root/bin/backup.docs.do, O:--source:str:Source directory:~/docs gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{&quot;default&quot;: &quot;value&quot;}
+<span style="color:purple;">deprecated: </span>In ./clk-root/bin/backup.database, O:--db:str:Database name:main.db gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{&quot;default&quot;: &quot;value&quot;}
 Backing up documents from ~/docs to /media/external/documents
 </pre>
 
@@ -416,8 +435,8 @@ clk backup docs do
 ```
 
 <pre>
-<span style="color:purple;">deprecated: </span>In backup.docs.do, O:--source:str:Source directory:~/docs gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{&quot;default&quot;: &quot;value&quot;}
-<span style="color:purple;">deprecated: </span>In backup.database, O:--db:str:Database name:main.db gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{&quot;default&quot;: &quot;value&quot;}
+<span style="color:purple;">deprecated: </span>In ./clk-root/bin/backup.docs.do, O:--source:str:Source directory:~/docs gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{&quot;default&quot;: &quot;value&quot;}
+<span style="color:purple;">deprecated: </span>In ./clk-root/bin/backup.database, O:--db:str:Database name:main.db gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{&quot;default&quot;: &quot;value&quot;}
 Backing up documents from ~/docs to /mnt/my-nas/documents
 </pre>
 
@@ -432,8 +451,8 @@ clk backup docs do
 ```
 
 <pre>
-<span style="color:purple;">deprecated: </span>In backup.docs.do, O:--source:str:Source directory:~/docs gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{&quot;default&quot;: &quot;value&quot;}
-<span style="color:purple;">deprecated: </span>In backup.database, O:--db:str:Database name:main.db gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{&quot;default&quot;: &quot;value&quot;}
+<span style="color:purple;">deprecated: </span>In ../clk-root/bin/backup.docs.do, O:--source:str:Source directory:~/docs gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{&quot;default&quot;: &quot;value&quot;}
+<span style="color:purple;">deprecated: </span>In ../clk-root/bin/backup.database, O:--db:str:Database name:main.db gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{&quot;default&quot;: &quot;value&quot;}
 Backing up documents from ./documentation to /mnt/backup/project-a
 </pre>
 
@@ -449,8 +468,8 @@ clk backup docs do
 ```
 
 <pre>
-<span style="color:purple;">deprecated: </span>In backup.docs.do, O:--source:str:Source directory:~/docs gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{&quot;default&quot;: &quot;value&quot;}
-<span style="color:purple;">deprecated: </span>In backup.database, O:--db:str:Database name:main.db gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{&quot;default&quot;: &quot;value&quot;}
+<span style="color:purple;">deprecated: </span>In ./clk-root/bin/backup.docs.do, O:--source:str:Source directory:~/docs gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{&quot;default&quot;: &quot;value&quot;}
+<span style="color:purple;">deprecated: </span>In ./clk-root/bin/backup.database, O:--db:str:Database name:main.db gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{&quot;default&quot;: &quot;value&quot;}
 Backing up documents from ~/docs to /mnt/my-nas/documents
 </pre>
 
@@ -472,9 +491,9 @@ clk backup --help
 ```
 
 <pre>
-<span style="color:purple;">deprecated: </span>In backup.database, O:--db:str:Database name:main.db gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{&quot;default&quot;: &quot;value&quot;}
-<span style="color:purple;">deprecated: </span>In backup.docs.do, O:--source:str:Source directory:~/docs gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{&quot;default&quot;: &quot;value&quot;}
-<span style="color:purple;">deprecated: </span>In backup.photos, O:--quality:str:Compression quality:high gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{&quot;default&quot;: &quot;value&quot;}
+<span style="color:purple;">deprecated: </span>In ./clk-root/bin/backup.database, O:--db:str:Database name:main.db gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{&quot;default&quot;: &quot;value&quot;}
+<span style="color:purple;">deprecated: </span>In ./clk-root/bin/backup.docs.do, O:--source:str:Source directory:~/docs gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{&quot;default&quot;: &quot;value&quot;}
+<span style="color:purple;">deprecated: </span>In ./clk-root/bin/backup.photos, O:--quality:str:Compression quality:high gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{&quot;default&quot;: &quot;value&quot;}
 Usage: clk backup [OPTIONS] COMMAND [ARGS]...
 
   Backup operations

@@ -585,14 +585,14 @@ fi
 
 move_release_notes_code () {
       clk command move release-notes global
-      clk command which release-notes | sed "s|${TMP}|.|"
+      clk command which release-notes
       cd .. && clk release-notes ; cd myprojet
 }
 
 move_release_notes_expected () {
       local expected
       expected="$(cat<<"EOEXPECTED"
-./clk-root/bin/release-notes
+../clk-root/bin/release-notes
 gathering the commits since the last tag
 EOEXPECTED
 )"

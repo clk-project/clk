@@ -355,12 +355,12 @@ cd .. && clk release-notes 2>&1 | tail -1 ; cd myprojet
 #+NAME: move_release_notes
 #+BEGIN_SRC bash :results verbatim :exports both :session 6de55de4-c0b3-41d6-952a-25e0fe06c881 :cache yes
 clk command move release-notes global
-clk command which release-notes | sed "s|${TMP}|.|"
+clk command which release-notes
 cd .. && clk release-notes ; cd myprojet
 #+END_SRC
 
 #+RESULTS[]: move_release_notes
-: ./clk-root/bin/release-notes
+: ../clk-root/bin/release-notes
 : gathering the commits since the last tag
 
 Now that it answers everywhere, I want a copy of it back in the project, one I

@@ -149,7 +149,7 @@ class ExternalCommandResolver(CommandResolver):
                             )
                         if m.group("default") or m.group("multiple"):
                             LOGGER.deprecated(
-                                f"In {path}, {line} gives its default after a colon."
+                                f"In {command_path}, {line} gives its default after a colon."
                                 " Give it in the json that ends the line instead,"
                                 ' like O:name:type:help:{"default": "value"}'
                             )
@@ -166,7 +166,7 @@ class ExternalCommandResolver(CommandResolver):
                             )
                         if m.group("default"):
                             LOGGER.deprecated(
-                                f"In {path}, {line} gives its default after a colon."
+                                f"In {command_path}, {line} gives its default after a colon."
                                 " Give it in the json that ends the line instead,"
                                 ' like F:name:help:{"default": true}'
                             )

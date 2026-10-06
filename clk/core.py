@@ -600,6 +600,12 @@ def main_command_decoration(f, cls, **kwargs):
         is_eager=True,
     )(f)
     f = main_command_option(
+        "--deprecation-file",
+        help="Append the deprecation warnings to this file, to fix them later",
+        callback=deprecation_file_callback,
+        is_eager=True,
+    )(f)
+    f = main_command_option(
         "-e",
         "--extension",
         callback=extension_callback,
@@ -849,15 +855,11 @@ def make_relative(path):
             return "./"
         return "./" + rel_str if not rel_str.startswith(".") else rel_str
     except ValueError:
-        # Try the reverse - maybe cwd is inside the target path
-        try:
-            cwd.relative_to(abs_path)
-            # cwd is inside abs_path, compute relative path using os.path.relpath
-            import os
+        import os
 
-            return os.path.relpath(abs_path, cwd) + "/"
-        except ValueError:
-            return str(abs_path)
+        rel_str = os.path.relpath(abs_path, cwd)
+        # cwd is inside abs_path, which then is a directory
+        return rel_str + "/" if cwd.is_relative_to(abs_path) else rel_str
 
 
 @cache
@@ -1000,6 +1002,33 @@ def report_file_callback(ctx, attr, value):
         filepath = Path(value).resolve()
         handler = logging.FileHandler(filepath)
         handler.setLevel(1)
+        from clk import LOGGERS
+
+        for logger in LOGGERS:
+            logger.addHandler(handler)
+
+
+class DeprecationFileHandler(logging.Handler):
+    """Keep the deprecation warnings in a file, sorted and once each"""
+
+    def __init__(self, path):
+        super().__init__()
+        self.path = path
+
+    def emit(self, record):
+        if record.levelno != log.DEPRECATED:
+            return
+        message = self.format(record)
+        if config.reproducible_output:
+            message = redact_locations(message)
+        lines = set(self.path.read_text().splitlines()) if self.path.exists() else set()
+        lines.add(message)
+        self.path.write_text("".join(f"{line}\n" for line in sorted(lines)))
+
+
+def deprecation_file_callback(ctx, attr, value):
+    if value and not ctx.resilient_parsing:
+        handler = DeprecationFileHandler(Path(value).resolve())
         from clk import LOGGERS
 
         for logger in LOGGERS:

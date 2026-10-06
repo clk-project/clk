@@ -81,11 +81,36 @@ clk backup docs do
 #+END_SRC
 
 #+RESULTS[6ac099e1f8d9a7a71fa425bb837d0c80f99fe4ca]: try-backup-docs-do
-: [35mdeprecated: [0mIn backup.docs.do, O:--source:str:Source directory:~/docs gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{"default": "value"}
+: [35mdeprecated: [0mIn ./clk-root/bin/backup.docs.do, O:--source:str:Source directory:~/docs gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{"default": "value"}
 : Backing up documents from ~/docs to /mnt/backup
 
 The bash command automatically has access to ~BACKUP_DESTINATION~ because the
 parent group set it in ~config.override_env~.
+
+clk also tells me I gave the default of ~--source~ the old way. I am in the
+middle of backing up my documents, which is not the time to go and rewrite the
+command. I'd rather clk kept that warning in a file, for when I have the time.
+
+#+NAME: set-deprecation-file
+#+BEGIN_SRC bash :results none :exports code :session f8a2b3c4-d5e6-7890-abcd-ef1234567891
+clk parameter set clk --deprecation-file deprecations.txt
+#+END_SRC
+
+#+NAME: backup-docs-do-with-deprecation-file
+#+BEGIN_SRC bash :results none :exports code :session f8a2b3c4-d5e6-7890-abcd-ef1234567891
+clk backup docs do
+clk backup docs do
+#+END_SRC
+
+When I have the time, the file tells me what to fix, once.
+
+#+NAME: show-deprecation-file
+#+BEGIN_SRC bash :results verbatim :exports both :session f8a2b3c4-d5e6-7890-abcd-ef1234567891 :cache yes
+cat deprecations.txt
+#+END_SRC
+
+#+RESULTS[]: show-deprecation-file
+: In ./clk-root/bin/backup.docs.do, O:--source:str:Source directory:~/docs gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{"default": "value"}
 
 The ~backup~ group now has a ~docs~ subgroup.
 
@@ -135,7 +160,7 @@ clk backup docs do
 #+END_SRC
 
 #+RESULTS[6ac099e1f8d9a7a71fa425bb837d0c80f99fe4ca]: try-with-param
-: [35mdeprecated: [0mIn backup.docs.do, O:--source:str:Source directory:~/docs gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{"default": "value"}
+: [35mdeprecated: [0mIn ./clk-root/bin/backup.docs.do, O:--source:str:Source directory:~/docs gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{"default": "value"}
 : Backing up documents from ~/docs to /media/external/documents
 
 I can still override it when needed.
@@ -146,7 +171,7 @@ clk backup --dest /tmp/quick-backup docs do
 #+END_SRC
 
 #+RESULTS[aa4050eb6555f7616ebc106cfc53dce3b90101df]: override-param
-: [35mdeprecated: [0mIn backup.docs.do, O:--source:str:Source directory:~/docs gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{"default": "value"}
+: [35mdeprecated: [0mIn ./clk-root/bin/backup.docs.do, O:--source:str:Source directory:~/docs gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{"default": "value"}
 : Backing up documents from ~/docs to /tmp/quick-backup
 
 * adding more backup targets
@@ -182,8 +207,8 @@ clk backup --help
 #+END_SRC
 
 #+RESULTS[c68e489e34c5f4a54025f419fd5515006eeddcff]: show-backup-commands
-: [35mdeprecated: [0mIn backup.database, O:--db:str:Database name:main.db gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{"default": "value"}
-: [35mdeprecated: [0mIn backup.photos, O:--quality:str:Compression quality:high gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{"default": "value"}
+: [35mdeprecated: [0mIn ./clk-root/bin/backup.database, O:--db:str:Database name:main.db gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{"default": "value"}
+: [35mdeprecated: [0mIn ./clk-root/bin/backup.photos, O:--quality:str:Compression quality:high gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{"default": "value"}
 : Usage: clk backup [OPTIONS] COMMAND [ARGS]...
 :
 :   Backup operations
@@ -210,9 +235,9 @@ clk backup photos
 #+END_SRC
 
 #+RESULTS[299bcef965bc261666c9bfc8d1d55bccbef66c20]: try-all-backups
-: [35mdeprecated: [0mIn backup.database, O:--db:str:Database name:main.db gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{"default": "value"}
+: [35mdeprecated: [0mIn ./clk-root/bin/backup.database, O:--db:str:Database name:main.db gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{"default": "value"}
 : Dumping database main.db to /media/external/documents
-: [35mdeprecated: [0mIn backup.photos, O:--quality:str:Compression quality:high gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{"default": "value"}
+: [35mdeprecated: [0mIn ./clk-root/bin/backup.photos, O:--quality:str:Compression quality:high gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{"default": "value"}
 : Backing up photos with high quality to /media/external/documents
 
 Notice how both commands use ~/media/external/documents~ - the destination I
@@ -253,7 +278,7 @@ clk backup docs --help
 #+END_SRC
 
 #+RESULTS[ee8140f68d7a71aa77a808b5b993fe71da009823]: show-docs-group
-: [35mdeprecated: [0mIn backup.docs.do, O:--source:str:Source directory:~/docs gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{"default": "value"}
+: [35mdeprecated: [0mIn ./clk-root/bin/backup.docs.do, O:--source:str:Source directory:~/docs gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{"default": "value"}
 : Usage: clk backup docs [OPTIONS] COMMAND [ARGS]...
 :
 :   Automatically created group to organize subcommands
@@ -279,7 +304,7 @@ clk backup docs do
 #+END_SRC
 
 #+RESULTS[6ac099e1f8d9a7a71fa425bb837d0c80f99fe4ca]: call-docs-do
-: [35mdeprecated: [0mIn backup.docs.do, O:--source:str:Source directory:~/docs gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{"default": "value"}
+: [35mdeprecated: [0mIn ./clk-root/bin/backup.docs.do, O:--source:str:Source directory:~/docs gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{"default": "value"}
 : Backing up documents from ~/docs to /media/external/documents
 
 Or use the subcommands.
@@ -308,8 +333,8 @@ clk flowdep set backup.docs.do backup.database
 #+END_SRC
 
 #+RESULTS[6884ee47aab2752817f5ec08a49fe711cb34a802]: set-flowdep
-: [35mdeprecated: [0mIn backup.docs.do, O:--source:str:Source directory:~/docs gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{"default": "value"}
-: [35mdeprecated: [0mIn backup.database, O:--db:str:Database name:main.db gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{"default": "value"}
+: [35mdeprecated: [0mIn ./clk-root/bin/backup.docs.do, O:--source:str:Source directory:~/docs gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{"default": "value"}
+: [35mdeprecated: [0mIn ./clk-root/bin/backup.database, O:--db:str:Database name:main.db gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{"default": "value"}
 : New [36mglobal[0m flowdep for backup.docs.do: backup.database
 
 Now when I run ~backup docs do~ with ~--flow~, it first backs up the database.
@@ -320,8 +345,8 @@ clk backup docs do --flow
 #+END_SRC
 
 #+RESULTS[ca58910ff31b48f4cc81e37ff83469711e42490f]: run-with-flow
-: [35mdeprecated: [0mIn backup.docs.do, O:--source:str:Source directory:~/docs gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{"default": "value"}
-: [35mdeprecated: [0mIn backup.database, O:--db:str:Database name:main.db gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{"default": "value"}
+: [35mdeprecated: [0mIn ./clk-root/bin/backup.docs.do, O:--source:str:Source directory:~/docs gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{"default": "value"}
+: [35mdeprecated: [0mIn ./clk-root/bin/backup.database, O:--db:str:Database name:main.db gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{"default": "value"}
 : Dumping database main.db to /media/external/documents
 : Backing up documents from ~/docs to /media/external/documents
 
@@ -347,9 +372,9 @@ clk backup full
 #+END_SRC
 
 #+RESULTS[568a73df160aa2a1082c1a3ad8fe20f184154b5b]: run-full-backup
-: [35mdeprecated: [0mIn backup.database, O:--db:str:Database name:main.db gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{"default": "value"}
-: [35mdeprecated: [0mIn backup.docs.do, O:--source:str:Source directory:~/docs gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{"default": "value"}
-: [35mdeprecated: [0mIn backup.photos, O:--quality:str:Compression quality:high gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{"default": "value"}
+: [35mdeprecated: [0mIn ./clk-root/bin/backup.database, O:--db:str:Database name:main.db gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{"default": "value"}
+: [35mdeprecated: [0mIn ./clk-root/bin/backup.docs.do, O:--source:str:Source directory:~/docs gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{"default": "value"}
+: [35mdeprecated: [0mIn ./clk-root/bin/backup.photos, O:--quality:str:Compression quality:high gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{"default": "value"}
 : Dumping database main.db to /media/external/documents
 : Backing up documents from ~/docs to /media/external/documents
 : Backing up photos with high quality to /media/external/documents
@@ -378,11 +403,11 @@ clk backup work
 #+END_SRC
 
 #+RESULTS[734a48c658572a54c68074500cfb567e1a050798]: try-shortcuts
-: [35mdeprecated: [0mIn backup.docs.do, O:--source:str:Source directory:~/docs gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{"default": "value"}
-: [35mdeprecated: [0mIn backup.database, O:--db:str:Database name:main.db gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{"default": "value"}
+: [35mdeprecated: [0mIn ./clk-root/bin/backup.docs.do, O:--source:str:Source directory:~/docs gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{"default": "value"}
+: [35mdeprecated: [0mIn ./clk-root/bin/backup.database, O:--db:str:Database name:main.db gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{"default": "value"}
 : Backing up documents from ~/notes to /media/external/documents
-: [35mdeprecated: [0mIn backup.docs.do, O:--source:str:Source directory:~/docs gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{"default": "value"}
-: [35mdeprecated: [0mIn backup.database, O:--db:str:Database name:main.db gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{"default": "value"}
+: [35mdeprecated: [0mIn ./clk-root/bin/backup.docs.do, O:--source:str:Source directory:~/docs gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{"default": "value"}
+: [35mdeprecated: [0mIn ./clk-root/bin/backup.database, O:--db:str:Database name:main.db gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{"default": "value"}
 : Backing up documents from ~/work/documents to /media/external/documents
 
 * per-project backup configuration
@@ -409,8 +434,8 @@ clk parameter set backup --dest /mnt/backup/project-a
 #+END_SRC
 
 #+RESULTS[518b8bda1205e6df5385106c56757cb83f291133]: set-project-a-params
-: [35mdeprecated: [0mIn backup.docs.do, O:--source:str:Source directory:~/docs gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{"default": "value"}
-: [35mdeprecated: [0mIn backup.database, O:--db:str:Database name:main.db gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{"default": "value"}
+: [35mdeprecated: [0mIn ../clk-root/bin/backup.docs.do, O:--source:str:Source directory:~/docs gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{"default": "value"}
+: [35mdeprecated: [0mIn ../clk-root/bin/backup.database, O:--db:str:Database name:main.db gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{"default": "value"}
 : New [32mlocal[0m parameters for backup.docs.do: --source ./documentation
 : New [32mlocal[0m parameters for backup: --dest /mnt/backup/project-a
 
@@ -420,8 +445,8 @@ clk backup docs do
 #+END_SRC
 
 #+RESULTS[6ac099e1f8d9a7a71fa425bb837d0c80f99fe4ca]: run-in-project-a
-: [35mdeprecated: [0mIn backup.docs.do, O:--source:str:Source directory:~/docs gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{"default": "value"}
-: [35mdeprecated: [0mIn backup.database, O:--db:str:Database name:main.db gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{"default": "value"}
+: [35mdeprecated: [0mIn ../clk-root/bin/backup.docs.do, O:--source:str:Source directory:~/docs gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{"default": "value"}
+: [35mdeprecated: [0mIn ../clk-root/bin/backup.database, O:--db:str:Database name:main.db gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{"default": "value"}
 : Backing up documents from ./documentation to /mnt/backup/project-a
 
 When I leave the project, global settings take over.
@@ -433,8 +458,8 @@ clk backup docs do
 #+END_SRC
 
 #+RESULTS[9569ad32ff5d8cf776686c91ebf0dcb8f9713495]: leave-project
-: [35mdeprecated: [0mIn backup.docs.do, O:--source:str:Source directory:~/docs gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{"default": "value"}
-: [35mdeprecated: [0mIn backup.database, O:--db:str:Database name:main.db gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{"default": "value"}
+: [35mdeprecated: [0mIn ./clk-root/bin/backup.docs.do, O:--source:str:Source directory:~/docs gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{"default": "value"}
+: [35mdeprecated: [0mIn ./clk-root/bin/backup.database, O:--db:str:Database name:main.db gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{"default": "value"}
 : Backing up documents from ~/docs to /media/external/documents
 
 * personal preferences with a hostname extension
@@ -470,8 +495,8 @@ clk backup docs do
 #+END_SRC
 
 #+RESULTS[6ac099e1f8d9a7a71fa425bb837d0c80f99fe4ca]: run-with-hostname
-: [35mdeprecated: [0mIn backup.docs.do, O:--source:str:Source directory:~/docs gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{"default": "value"}
-: [35mdeprecated: [0mIn backup.database, O:--db:str:Database name:main.db gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{"default": "value"}
+: [35mdeprecated: [0mIn ./clk-root/bin/backup.docs.do, O:--source:str:Source directory:~/docs gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{"default": "value"}
+: [35mdeprecated: [0mIn ./clk-root/bin/backup.database, O:--db:str:Database name:main.db gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{"default": "value"}
 : Backing up documents from ~/docs to /mnt/my-nas/documents
 
 Inside a project that defines its own ~--dest~, the project-local parameters
@@ -489,8 +514,8 @@ clk backup docs do
 #+END_SRC
 
 #+RESULTS[6ac099e1f8d9a7a71fa425bb837d0c80f99fe4ca]: run-in-project-a-hostname
-: [35mdeprecated: [0mIn backup.docs.do, O:--source:str:Source directory:~/docs gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{"default": "value"}
-: [35mdeprecated: [0mIn backup.database, O:--db:str:Database name:main.db gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{"default": "value"}
+: [35mdeprecated: [0mIn ../clk-root/bin/backup.docs.do, O:--source:str:Source directory:~/docs gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{"default": "value"}
+: [35mdeprecated: [0mIn ../clk-root/bin/backup.database, O:--db:str:Database name:main.db gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{"default": "value"}
 : Backing up documents from ./documentation to /mnt/backup/project-a
 
 Note that clk will always enable the extension matching your hostname, even if
@@ -510,8 +535,8 @@ clk backup docs do
 #+END_SRC
 
 #+RESULTS[c2de72eb8e0154d3db842611d2ee221e7f6b3636]: try-disable-hostname
-: [35mdeprecated: [0mIn backup.docs.do, O:--source:str:Source directory:~/docs gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{"default": "value"}
-: [35mdeprecated: [0mIn backup.database, O:--db:str:Database name:main.db gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{"default": "value"}
+: [35mdeprecated: [0mIn ./clk-root/bin/backup.docs.do, O:--source:str:Source directory:~/docs gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{"default": "value"}
+: [35mdeprecated: [0mIn ./clk-root/bin/backup.database, O:--db:str:Database name:main.db gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{"default": "value"}
 : Backing up documents from ~/docs to /mnt/my-nas/documents
 
 Even after disabling, the hostname extension remains active and its parameters
@@ -536,9 +561,9 @@ clk backup --help
 #+END_SRC
 
 #+RESULTS[c68e489e34c5f4a54025f419fd5515006eeddcff]: final-help
-: [35mdeprecated: [0mIn backup.database, O:--db:str:Database name:main.db gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{"default": "value"}
-: [35mdeprecated: [0mIn backup.docs.do, O:--source:str:Source directory:~/docs gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{"default": "value"}
-: [35mdeprecated: [0mIn backup.photos, O:--quality:str:Compression quality:high gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{"default": "value"}
+: [35mdeprecated: [0mIn ./clk-root/bin/backup.database, O:--db:str:Database name:main.db gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{"default": "value"}
+: [35mdeprecated: [0mIn ./clk-root/bin/backup.docs.do, O:--source:str:Source directory:~/docs gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{"default": "value"}
+: [35mdeprecated: [0mIn ./clk-root/bin/backup.photos, O:--quality:str:Compression quality:high gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{"default": "value"}
 : Usage: clk backup [OPTIONS] COMMAND [ARGS]...
 :
 :   Backup operations
@@ -596,6 +621,12 @@ easy to use, easy to extend, and self-documenting through ~--help~.
 <<create-backup-docs-do>>
 
 check-result(try-backup-docs-do)
+
+<<set-deprecation-file>>
+
+<<backup-docs-do-with-deprecation-file>>
+
+check-result(show-deprecation-file)
 
 check-result(show-backup-help)
 

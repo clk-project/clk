@@ -428,8 +428,8 @@ old-greet-run_code () {
 old-greet-run_expected () {
       local expected
       expected="$(cat<<"EOEXPECTED"
-[35mdeprecated: [0mIn greet, O:--times:int:How many times to greet:1 gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{"default": "value"}
-[35mdeprecated: [0mIn greet, F:--loud/--quiet:Greet in capital case:True gives its default after a colon. Give it in the json that ends the line instead, like F:name:help:{"default": true}
+[35mdeprecated: [0mIn ./clk-root/bin/greet, O:--times:int:How many times to greet:1 gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{"default": "value"}
+[35mdeprecated: [0mIn ./clk-root/bin/greet, F:--loud/--quiet:Greet in capital case:True gives its default after a colon. Give it in the json that ends the line instead, like F:name:help:{"default": true}
 HELLO
 EOEXPECTED
 )"
