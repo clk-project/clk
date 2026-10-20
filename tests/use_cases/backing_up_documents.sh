@@ -23,8 +23,16 @@ EOF
 
 clk command create bash backup.docs.do \
     --description "Backup documents to external drive" \
-    --option '--source:str:Source directory:~/docs' \
-    --body 'echo "Backing up documents from ${CLK___SOURCE} to ${BACKUP_DESTINATION}"'
+    --option '--source:str:Source directory:{"default": "~/docs"}' \
+    --option '--from:str:Old name of --source' \
+    --body '
+if clk_given from
+then
+    clk log --level deprecated "The option --from of backup docs do is deprecated, use --source instead"
+    CLK___SOURCE="${CLK___FROM}"
+fi
+echo "Backing up documents from ${CLK___SOURCE} to ${BACKUP_DESTINATION}"
+'
 
 
 try-backup-docs-do_code () {
@@ -34,7 +42,6 @@ try-backup-docs-do_code () {
 try-backup-docs-do_expected () {
       local expected
       expected="$(cat<<"EOEXPECTED"
-[35mdeprecated: [0mIn ./clk-root/bin/backup.docs.do, O:--source:str:Source directory:~/docs gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{"default": "value"}
 Backing up documents from ~/docs to /mnt/backup
 EOEXPECTED
 )"
@@ -58,10 +65,42 @@ else
 fi
 
 
+
+try-backup-docs-do-from_code () {
+      clk backup docs do --from '~/old-docs'
+}
+
+try-backup-docs-do-from_expected () {
+      local expected
+      expected="$(cat<<"EOEXPECTED"
+[35mdeprecated: [0mThe option --from of backup docs do is deprecated, use --source instead
+Backing up documents from ~/old-docs to /mnt/backup
+EOEXPECTED
+)"
+      # org says nil where the block said nothing
+      test "${expected}" = nil || echo "${expected}"
+}
+
+echo 'Run try-backup-docs-do-from'
+
+{ try-backup-docs-do-from_code || true ; } > "${TMP}/code.txt" 2>&1
+if [ -n "${CLK_RECORD_RESULTS-}" ]
+then
+    mkdir -p "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)"
+    cp "${TMP}/code.txt" "${CLK_RECORD_RESULTS}/$(basename "$0" .sh)/try-backup-docs-do-from"
+else
+    try-backup-docs-do-from_expected > "${TMP}/expected.txt" 2>&1
+    diff -uBw "${TMP}/code.txt" "${TMP}/expected.txt" || {
+        echo "Something went wrong when trying try-backup-docs-do-from"
+        exit 1
+    }
+fi
+
+
 clk parameter set clk --deprecation-file deprecations.txt
 
-clk backup docs do
-clk backup docs do
+clk backup docs do --from '~/old-docs'
+clk backup docs do --from '~/old-docs'
 
 
 show-deprecation-file_code () {
@@ -71,7 +110,7 @@ show-deprecation-file_code () {
 show-deprecation-file_expected () {
       local expected
       expected="$(cat<<"EOEXPECTED"
-In ./clk-root/bin/backup.docs.do, O:--source:str:Source directory:~/docs gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{"default": "value"}
+The option --from of backup docs do is deprecated, use --source instead
 EOEXPECTED
 )"
       # org says nil where the block said nothing
@@ -177,7 +216,6 @@ try-with-param_code () {
 try-with-param_expected () {
       local expected
       expected="$(cat<<"EOEXPECTED"
-[35mdeprecated: [0mIn ./clk-root/bin/backup.docs.do, O:--source:str:Source directory:~/docs gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{"default": "value"}
 Backing up documents from ~/docs to /media/external/documents
 EOEXPECTED
 )"
@@ -209,7 +247,6 @@ override-param_code () {
 override-param_expected () {
       local expected
       expected="$(cat<<"EOEXPECTED"
-[35mdeprecated: [0mIn ./clk-root/bin/backup.docs.do, O:--source:str:Source directory:~/docs gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{"default": "value"}
 Backing up documents from ~/docs to /tmp/quick-backup
 EOEXPECTED
 )"
@@ -235,12 +272,12 @@ fi
 
 clk command create bash backup.database \
     --description "Backup database" \
-    --option '--db:str:Database name:main.db' \
+    --option '--db:str:Database name:{"default": "main.db"}' \
     --body 'echo "Dumping database ${CLK___DB} to ${BACKUP_DESTINATION}"'
 
 clk command create bash backup.photos \
     --description "Backup photos" \
-    --option '--quality:str:Compression quality:high' \
+    --option '--quality:str:Compression quality:{"default": "high"}' \
     --body 'echo "Backing up photos with ${CLK___QUALITY} quality to ${BACKUP_DESTINATION}"'
 
 
@@ -251,8 +288,6 @@ show-backup-commands_code () {
 show-backup-commands_expected () {
       local expected
       expected="$(cat<<"EOEXPECTED"
-[35mdeprecated: [0mIn ./clk-root/bin/backup.database, O:--db:str:Database name:main.db gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{"default": "value"}
-[35mdeprecated: [0mIn ./clk-root/bin/backup.photos, O:--quality:str:Compression quality:high gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{"default": "value"}
 Usage: clk backup [OPTIONS] COMMAND [ARGS]...
 
   Backup operations
@@ -302,9 +337,7 @@ try-all-backups_code () {
 try-all-backups_expected () {
       local expected
       expected="$(cat<<"EOEXPECTED"
-[35mdeprecated: [0mIn ./clk-root/bin/backup.database, O:--db:str:Database name:main.db gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{"default": "value"}
 Dumping database main.db to /media/external/documents
-[35mdeprecated: [0mIn ./clk-root/bin/backup.photos, O:--quality:str:Compression quality:high gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{"default": "value"}
 Backing up photos with high quality to /media/external/documents
 EOEXPECTED
 )"
@@ -345,7 +378,6 @@ show-docs-group_code () {
 show-docs-group_expected () {
       local expected
       expected="$(cat<<"EOEXPECTED"
-[35mdeprecated: [0mIn ./clk-root/bin/backup.docs.do, O:--source:str:Source directory:~/docs gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{"default": "value"}
 Usage: clk backup docs [OPTIONS] COMMAND [ARGS]...
 
   Automatically created group to organize subcommands
@@ -392,7 +424,6 @@ call-docs-do_code () {
 call-docs-do_expected () {
       local expected
       expected="$(cat<<"EOEXPECTED"
-[35mdeprecated: [0mIn ./clk-root/bin/backup.docs.do, O:--source:str:Source directory:~/docs gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{"default": "value"}
 Backing up documents from ~/docs to /media/external/documents
 EOEXPECTED
 )"
@@ -457,8 +488,6 @@ set-flowdep_code () {
 set-flowdep_expected () {
       local expected
       expected="$(cat<<"EOEXPECTED"
-[35mdeprecated: [0mIn ./clk-root/bin/backup.docs.do, O:--source:str:Source directory:~/docs gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{"default": "value"}
-[35mdeprecated: [0mIn ./clk-root/bin/backup.database, O:--db:str:Database name:main.db gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{"default": "value"}
 New [36mglobal[0m flowdep for backup.docs.do: backup.database
 EOEXPECTED
 )"
@@ -490,8 +519,6 @@ run-with-flow_code () {
 run-with-flow_expected () {
       local expected
       expected="$(cat<<"EOEXPECTED"
-[35mdeprecated: [0mIn ./clk-root/bin/backup.docs.do, O:--source:str:Source directory:~/docs gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{"default": "value"}
-[35mdeprecated: [0mIn ./clk-root/bin/backup.database, O:--db:str:Database name:main.db gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{"default": "value"}
 Dumping database main.db to /media/external/documents
 Backing up documents from ~/docs to /media/external/documents
 EOEXPECTED
@@ -555,9 +582,6 @@ run-full-backup_code () {
 run-full-backup_expected () {
       local expected
       expected="$(cat<<"EOEXPECTED"
-[35mdeprecated: [0mIn ./clk-root/bin/backup.database, O:--db:str:Database name:main.db gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{"default": "value"}
-[35mdeprecated: [0mIn ./clk-root/bin/backup.docs.do, O:--source:str:Source directory:~/docs gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{"default": "value"}
-[35mdeprecated: [0mIn ./clk-root/bin/backup.photos, O:--quality:str:Compression quality:high gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{"default": "value"}
 Dumping database main.db to /media/external/documents
 Backing up documents from ~/docs to /media/external/documents
 Backing up photos with high quality to /media/external/documents
@@ -625,11 +649,7 @@ try-shortcuts_code () {
 try-shortcuts_expected () {
       local expected
       expected="$(cat<<"EOEXPECTED"
-[35mdeprecated: [0mIn ./clk-root/bin/backup.docs.do, O:--source:str:Source directory:~/docs gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{"default": "value"}
-[35mdeprecated: [0mIn ./clk-root/bin/backup.database, O:--db:str:Database name:main.db gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{"default": "value"}
 Backing up documents from ~/notes to /media/external/documents
-[35mdeprecated: [0mIn ./clk-root/bin/backup.docs.do, O:--source:str:Source directory:~/docs gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{"default": "value"}
-[35mdeprecated: [0mIn ./clk-root/bin/backup.database, O:--db:str:Database name:main.db gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{"default": "value"}
 Backing up documents from ~/work/documents to /media/external/documents
 EOEXPECTED
 )"
@@ -664,8 +684,6 @@ set-project-a-params_code () {
 set-project-a-params_expected () {
       local expected
       expected="$(cat<<"EOEXPECTED"
-[35mdeprecated: [0mIn ../clk-root/bin/backup.docs.do, O:--source:str:Source directory:~/docs gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{"default": "value"}
-[35mdeprecated: [0mIn ../clk-root/bin/backup.database, O:--db:str:Database name:main.db gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{"default": "value"}
 New [32mlocal[0m parameters for backup.docs.do: --source ./documentation
 New [32mlocal[0m parameters for backup: --dest /mnt/backup/project-a
 EOEXPECTED
@@ -698,8 +716,6 @@ run-in-project-a_code () {
 run-in-project-a_expected () {
       local expected
       expected="$(cat<<"EOEXPECTED"
-[35mdeprecated: [0mIn ../clk-root/bin/backup.docs.do, O:--source:str:Source directory:~/docs gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{"default": "value"}
-[35mdeprecated: [0mIn ../clk-root/bin/backup.database, O:--db:str:Database name:main.db gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{"default": "value"}
 Backing up documents from ./documentation to /mnt/backup/project-a
 EOEXPECTED
 )"
@@ -732,8 +748,6 @@ leave-project_code () {
 leave-project_expected () {
       local expected
       expected="$(cat<<"EOEXPECTED"
-[35mdeprecated: [0mIn ./clk-root/bin/backup.docs.do, O:--source:str:Source directory:~/docs gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{"default": "value"}
-[35mdeprecated: [0mIn ./clk-root/bin/backup.database, O:--db:str:Database name:main.db gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{"default": "value"}
 Backing up documents from ~/docs to /media/external/documents
 EOEXPECTED
 )"
@@ -798,8 +812,6 @@ run-with-hostname_code () {
 run-with-hostname_expected () {
       local expected
       expected="$(cat<<"EOEXPECTED"
-[35mdeprecated: [0mIn ./clk-root/bin/backup.docs.do, O:--source:str:Source directory:~/docs gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{"default": "value"}
-[35mdeprecated: [0mIn ./clk-root/bin/backup.database, O:--db:str:Database name:main.db gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{"default": "value"}
 Backing up documents from ~/docs to /mnt/my-nas/documents
 EOEXPECTED
 )"
@@ -833,8 +845,6 @@ run-in-project-a-hostname_code () {
 run-in-project-a-hostname_expected () {
       local expected
       expected="$(cat<<"EOEXPECTED"
-[35mdeprecated: [0mIn ../clk-root/bin/backup.docs.do, O:--source:str:Source directory:~/docs gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{"default": "value"}
-[35mdeprecated: [0mIn ../clk-root/bin/backup.database, O:--db:str:Database name:main.db gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{"default": "value"}
 Backing up documents from ./documentation to /mnt/backup/project-a
 EOEXPECTED
 )"
@@ -869,8 +879,6 @@ try-disable-hostname_code () {
 try-disable-hostname_expected () {
       local expected
       expected="$(cat<<"EOEXPECTED"
-[35mdeprecated: [0mIn ./clk-root/bin/backup.docs.do, O:--source:str:Source directory:~/docs gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{"default": "value"}
-[35mdeprecated: [0mIn ./clk-root/bin/backup.database, O:--db:str:Database name:main.db gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{"default": "value"}
 Backing up documents from ~/docs to /mnt/my-nas/documents
 EOEXPECTED
 )"
@@ -904,9 +912,6 @@ final-help_code () {
 final-help_expected () {
       local expected
       expected="$(cat<<"EOEXPECTED"
-[35mdeprecated: [0mIn ./clk-root/bin/backup.database, O:--db:str:Database name:main.db gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{"default": "value"}
-[35mdeprecated: [0mIn ./clk-root/bin/backup.docs.do, O:--source:str:Source directory:~/docs gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{"default": "value"}
-[35mdeprecated: [0mIn ./clk-root/bin/backup.photos, O:--quality:str:Compression quality:high gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{"default": "value"}
 Usage: clk backup [OPTIONS] COMMAND [ARGS]...
 
   Backup operations

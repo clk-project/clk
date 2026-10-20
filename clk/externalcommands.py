@@ -139,7 +139,7 @@ class ExternalCommandResolver(CommandResolver):
                 for line in metadata_out.splitlines():
                     if line.startswith("O:"):
                         m = re.match(
-                            "^O:(?P<name>[^:]+):(?P<type>[^:]+):(?P<help>[^:]+)(:(?P<extra>{.+})|(:(?P<default>[^:]+))?(:(?P<multiple>[^:]+))?)$",
+                            "^O:(?P<name>[^:]+):(?P<type>[^:]+):(?P<help>[^:]+)(:(?P<extra>{.+}))?$",
                             line,
                         )
                         if m is None:
@@ -147,28 +147,16 @@ class ExternalCommandResolver(CommandResolver):
                                 f"Expected format in {path} is O:name:type:help[:{{someextrajsondata}}],"
                                 f" got {line}"
                             )
-                        if m.group("default") or m.group("multiple"):
-                            LOGGER.deprecated(
-                                f"In {command_path}, {line} gives its default after a colon."
-                                " Give it in the json that ends the line instead,"
-                                ' like O:name:type:help:{"default": "value"}'
-                            )
                         options.append(m.groupdict())
                     if line.startswith("F:"):
                         m = re.match(
-                            "^F:(?P<name>[^:]+):(?P<help>[^:]+)(:(?P<extra>{.+})|(:(?P<default>[^:]+))?)$",
+                            "^F:(?P<name>[^:]+):(?P<help>[^:]+)(:(?P<extra>{.+}))?$",
                             line,
                         )
                         if m is None:
                             raise click.UsageError(
                                 f"Expected format in {path} is F:name:help[:{{someextrajsondata}}],"
                                 f" got {line}"
-                            )
-                        if m.group("default"):
-                            LOGGER.deprecated(
-                                f"In {command_path}, {line} gives its default after a colon."
-                                " Give it in the json that ends the line instead,"
-                                ' like F:name:help:{"default": true}'
                             )
                         flags.append(m.groupdict())
                     if line.startswith("A:"):
@@ -266,13 +254,13 @@ class ExternalCommandResolver(CommandResolver):
             if "type" in o:
                 t = get_type(o["type"])
             t = t or str
-            default = extra.get("default", o.get("default"))
+            default = extra.get("default")
             external_command = option(
                 *(o["name"].split(",")),
                 help=o["help"],
                 type=t,
-                multiple=extra.get("multiple", o.get("multiple") == "True"),
-                default=t(default) if default not in (None, "None") else None,
+                multiple=extra.get("multiple", False),
+                default=t(default) if default is not None else None,
             )(external_command)
         for a in reversed(arguments):
             extra = json.loads(a["extra"] or "{}")
@@ -290,7 +278,7 @@ class ExternalCommandResolver(CommandResolver):
             external_command = flag(
                 *(f["name"].split(",")),
                 help=f["help"],
-                default=extra.get("default", f["default"] == "True"),
+                default=extra.get("default", False),
             )(external_command)
         if cmd_flowoptions:
             from clk.overloads import flow_options, get_command2

@@ -9,7 +9,7 @@ $0
 
 Picking some episodes
 --
-O:--wanted-duration:int:Number of episodes to take:20
+O:--wanted-duration:int:Number of episodes to take:{"default": 20}
 EOF
 }
 

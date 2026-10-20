@@ -10,7 +10,6 @@ from clk.config import config
 from clk.core import run
 from clk.decorators import (
     argument,
-    flag,
     group,
     option,
     table_fields,
@@ -159,11 +158,6 @@ config.globalpreset_profile.settings["alias"]["alias.rm"] = {
 
 
 @alias.command(handle_dry_run=True)
-@flag(
-    "--name-only/--no-name-only",
-    help="Only display the alias names",
-    deprecated="please use '--field alias' instead",
-)
 @Colorer.color_options
 @option(
     "--under",
@@ -178,10 +172,8 @@ config.globalpreset_profile.settings["alias"]["alias.rm"] = {
     type=CommandSettingsKeyType("alias"),
     help="The aliases to show. All the aliases are showed when no alias is provided",
 )
-def show(name_only, aliases, under, fields, format, **kwargs):
+def show(aliases, under, fields, format, **kwargs):
     """Show the aliases"""
-    if name_only:
-        fields = ["alias"]
     aliases = aliases or sorted(config.alias.readonly.keys())
     if under:
         aliases = [alias for alias in aliases if alias.startswith(under)]

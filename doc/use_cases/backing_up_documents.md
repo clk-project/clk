@@ -42,11 +42,21 @@ The key line is `config.override_env["BACKUP_DESTINATION"] = dest`. This makes t
 
 Now I create a bash command to back up my docs. Since I want it nested under the `backup` group and inside a `docs` subgroup, I name it `backup.docs.do`. clk automatically creates the intermediate `docs` group.
 
+My old backup script called the source `--from`, and a few of my scripts still use that name. I call it `--source` now, but I keep `--from` working for a while and have clk remind me to stop using it.
+
 ```bash
 clk command create bash backup.docs.do \
     --description "Backup documents to external drive" \
-    --option '--source:str:Source directory:~/docs' \
-    --body 'echo "Backing up documents from ${CLK___SOURCE} to ${BACKUP_DESTINATION}"'
+    --option '--source:str:Source directory:{"default": "~/docs"}' \
+    --option '--from:str:Old name of --source' \
+    --body '
+if clk_given from
+then
+    clk log --level deprecated "The option --from of backup docs do is deprecated, use --source instead"
+    CLK___SOURCE="${CLK___FROM}"
+fi
+echo "Backing up documents from ${CLK___SOURCE} to ${BACKUP_DESTINATION}"
+'
 ```
 
 Let's try it.
@@ -55,22 +65,30 @@ Let's try it.
 clk backup docs do
 ```
 
-<pre>
-<span style="color:purple;">deprecated: </span>In ./clk-root/bin/backup.docs.do, O:--source:str:Source directory:~/docs gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{&quot;default&quot;: &quot;value&quot;}
-Backing up documents from ~/docs to /mnt/backup
-</pre>
+    Backing up documents from ~/docs to /mnt/backup
 
 The bash command automatically has access to `BACKUP_DESTINATION` because the parent group set it in `config.override_env`.
 
-clk also tells me I gave the default of `--source` the old way. I am in the middle of backing up my documents, which is not the time to go and rewrite the command. I'd rather clk kept that warning in a file, for when I have the time.
+One of my old scripts still says `--from`.
+
+```bash
+clk backup docs do --from '~/old-docs'
+```
+
+<pre>
+<span style="color:purple;">deprecated: </span>The option --from of backup docs do is deprecated, use --source instead
+Backing up documents from ~/old-docs to /mnt/backup
+</pre>
+
+I am in the middle of backing up my documents, which is not the time to go and fix my scripts. I'd rather clk kept that warning in a file, for when I have the time.
 
 ```bash
 clk parameter set clk --deprecation-file deprecations.txt
 ```
 
 ```bash
-clk backup docs do
-clk backup docs do
+clk backup docs do --from '~/old-docs'
+clk backup docs do --from '~/old-docs'
 ```
 
 When I have the time, the file tells me what to fix, once.
@@ -79,7 +97,7 @@ When I have the time, the file tells me what to fix, once.
 cat deprecations.txt
 ```
 
-    In ./clk-root/bin/backup.docs.do, O:--source:str:Source directory:~/docs gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{"default": "value"}
+    The option --from of backup docs do is deprecated, use --source instead
 
 The `backup` group now has a `docs` subgroup.
 
@@ -114,6 +132,9 @@ clk parameter set backup --dest /media/external/documents
 ```
 
 <pre>
+substitute aha with a more uptodate version (/home/sam/.nix-profile/bin/aha, /nix/store/bqzfjqjbjq0yp2v9hqimk9q0m9b6yrph-etc-nix-registry.json, /home/sam/.cache/hardliasesstamps//aha, /nix/store/w61g6s2rwhm006xamaa24ys9sv8nmmaw-etc-nix-registry.json)
+removing 'flake:nixpkgs#legacyPackages.x86_64-linux.aha'
+removed 1 packages, kept 172 packages
 New <span style="color:teal;">global</span> parameters for backup: --dest /media/external/documents
 </pre>
 
@@ -123,10 +144,7 @@ Now the command uses my preferred destination automatically.
 clk backup docs do
 ```
 
-<pre>
-<span style="color:purple;">deprecated: </span>In ./clk-root/bin/backup.docs.do, O:--source:str:Source directory:~/docs gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{&quot;default&quot;: &quot;value&quot;}
-Backing up documents from ~/docs to /media/external/documents
-</pre>
+    Backing up documents from ~/docs to /media/external/documents
 
 I can still override it when needed.
 
@@ -134,10 +152,7 @@ I can still override it when needed.
 clk backup --dest /tmp/quick-backup docs do
 ```
 
-<pre>
-<span style="color:purple;">deprecated: </span>In ./clk-root/bin/backup.docs.do, O:--source:str:Source directory:~/docs gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{&quot;default&quot;: &quot;value&quot;}
-Backing up documents from ~/docs to /tmp/quick-backup
-</pre>
+    Backing up documents from ~/docs to /tmp/quick-backup
 
 
 <a id="32c0cfd1-07ab-4f3c-854b-e6a1b13ccbe5"></a>
@@ -149,14 +164,14 @@ My backup needs grow. I want to back up my database and photos too. I create sib
 ```bash
 clk command create bash backup.database \
     --description "Backup database" \
-    --option '--db:str:Database name:main.db' \
+    --option '--db:str:Database name:{"default": "main.db"}' \
     --body 'echo "Dumping database ${CLK___DB} to ${BACKUP_DESTINATION}"'
 ```
 
 ```bash
 clk command create bash backup.photos \
     --description "Backup photos" \
-    --option '--quality:str:Compression quality:high' \
+    --option '--quality:str:Compression quality:{"default": "high"}' \
     --body 'echo "Backing up photos with ${CLK___QUALITY} quality to ${BACKUP_DESTINATION}"'
 ```
 
@@ -166,40 +181,32 @@ Now my backup group has three commands.
 clk backup --help
 ```
 
-<pre>
-<span style="color:purple;">deprecated: </span>In ./clk-root/bin/backup.database, O:--db:str:Database name:main.db gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{&quot;default&quot;: &quot;value&quot;}
-<span style="color:purple;">deprecated: </span>In ./clk-root/bin/backup.photos, O:--quality:str:Compression quality:high gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{&quot;default&quot;: &quot;value&quot;}
-Usage: clk backup [OPTIONS] COMMAND [ARGS]...
+    Usage: clk backup [OPTIONS] COMMAND [ARGS]...
 
-  Backup operations
+      Backup operations
 
-  The current parameters set for this command are: --dest /media/external/documents
+      The current parameters set for this command are: --dest /media/external/documents
 
-  Edit this custom command by running `clk command edit backup`
-  Or edit ./clk-root/python/backup.py directly.
+      Edit this custom command by running `clk command edit backup`
+      Or edit ./clk-root/python/backup.py directly.
 
-Options:
-  --dest TEXT  Backup destination base directory  [default: /mnt/backup]
-  --help-all   Show the full help message, automatic options included.
-  --help       Show this message and exit.
+    Options:
+      --dest TEXT  Backup destination base directory  [default: /mnt/backup]
+      --help-all   Show the full help message, automatic options included.
+      --help       Show this message and exit.
 
-Commands:
-  database  Backup database
-  docs      Automatically created group to organize subcommands
-  photos    Backup photos
-</pre>
+    Commands:
+      database  Backup database
+      docs      Automatically created group to organize subcommands
+      photos    Backup photos
 
 ```bash
 clk backup database
 clk backup photos
 ```
 
-<pre>
-<span style="color:purple;">deprecated: </span>In ./clk-root/bin/backup.database, O:--db:str:Database name:main.db gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{&quot;default&quot;: &quot;value&quot;}
-Dumping database main.db to /media/external/documents
-<span style="color:purple;">deprecated: </span>In ./clk-root/bin/backup.photos, O:--quality:str:Compression quality:high gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{&quot;default&quot;: &quot;value&quot;}
-Backing up photos with high quality to /media/external/documents
-</pre>
+    Dumping database main.db to /media/external/documents
+    Backing up photos with high quality to /media/external/documents
 
 Notice how both commands use `/media/external/documents` - the destination I persisted on the `backup` group. I didn't have to configure it on each command separately.
 
@@ -229,25 +236,22 @@ Now `backup docs` is a group with several subcommands. All of them have access t
 clk backup docs --help
 ```
 
-<pre>
-<span style="color:purple;">deprecated: </span>In ./clk-root/bin/backup.docs.do, O:--source:str:Source directory:~/docs gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{&quot;default&quot;: &quot;value&quot;}
-Usage: clk backup docs [OPTIONS] COMMAND [ARGS]...
+    Usage: clk backup docs [OPTIONS] COMMAND [ARGS]...
 
-  Automatically created group to organize subcommands
+      Automatically created group to organize subcommands
 
-  This is a built in created group. To remove it, simply remove all its subcommands (with `clk command remove SUBCMD`,
-  or `clk alias unset SUBCMD`). To rename it, simply rename them (with `clk command rename SUBCMD` or `clk alias rename
-  SUBCMD`)
+      This is a built in created group. To remove it, simply remove all its subcommands (with `clk command remove SUBCMD`,
+      or `clk alias unset SUBCMD`). To rename it, simply rename them (with `clk command rename SUBCMD` or `clk alias rename
+      SUBCMD`)
 
-Options:
-  --help-all  Show the full help message, automatic options included.
-  --help      Show this message and exit.
+    Options:
+      --help-all  Show the full help message, automatic options included.
+      --help      Show this message and exit.
 
-Commands:
-  do        Backup documents to external drive
-  retrieve  Retrieve a file from backup
-  verify    Verify backup integrity
-</pre>
+    Commands:
+      do        Backup documents to external drive
+      retrieve  Retrieve a file from backup
+      verify    Verify backup integrity
 
 I can call the backup command directly.
 
@@ -255,10 +259,7 @@ I can call the backup command directly.
 clk backup docs do
 ```
 
-<pre>
-<span style="color:purple;">deprecated: </span>In ./clk-root/bin/backup.docs.do, O:--source:str:Source directory:~/docs gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{&quot;default&quot;: &quot;value&quot;}
-Backing up documents from ~/docs to /media/external/documents
-</pre>
+    Backing up documents from ~/docs to /media/external/documents
 
 Or use the subcommands.
 
@@ -282,8 +283,6 @@ clk flowdep set backup.docs.do backup.database
 ```
 
 <pre>
-<span style="color:purple;">deprecated: </span>In ./clk-root/bin/backup.docs.do, O:--source:str:Source directory:~/docs gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{&quot;default&quot;: &quot;value&quot;}
-<span style="color:purple;">deprecated: </span>In ./clk-root/bin/backup.database, O:--db:str:Database name:main.db gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{&quot;default&quot;: &quot;value&quot;}
 New <span style="color:teal;">global</span> flowdep for backup.docs.do: backup.database
 </pre>
 
@@ -293,12 +292,8 @@ Now when I run `backup docs do` with `--flow`, it first backs up the database.
 clk backup docs do --flow
 ```
 
-<pre>
-<span style="color:purple;">deprecated: </span>In ./clk-root/bin/backup.docs.do, O:--source:str:Source directory:~/docs gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{&quot;default&quot;: &quot;value&quot;}
-<span style="color:purple;">deprecated: </span>In ./clk-root/bin/backup.database, O:--db:str:Database name:main.db gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{&quot;default&quot;: &quot;value&quot;}
-Dumping database main.db to /media/external/documents
-Backing up documents from ~/docs to /media/external/documents
-</pre>
+    Dumping database main.db to /media/external/documents
+    Backing up documents from ~/docs to /media/external/documents
 
 
 <a id="50e4a5e1-c60f-448f-bf30-e0cc255fa96b"></a>
@@ -319,14 +314,9 @@ New <span style="color:teal;">global</span> alias for backup.full: backup databa
 clk backup full
 ```
 
-<pre>
-<span style="color:purple;">deprecated: </span>In ./clk-root/bin/backup.database, O:--db:str:Database name:main.db gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{&quot;default&quot;: &quot;value&quot;}
-<span style="color:purple;">deprecated: </span>In ./clk-root/bin/backup.docs.do, O:--source:str:Source directory:~/docs gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{&quot;default&quot;: &quot;value&quot;}
-<span style="color:purple;">deprecated: </span>In ./clk-root/bin/backup.photos, O:--quality:str:Compression quality:high gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{&quot;default&quot;: &quot;value&quot;}
-Dumping database main.db to /media/external/documents
-Backing up documents from ~/docs to /media/external/documents
-Backing up photos with high quality to /media/external/documents
-</pre>
+    Dumping database main.db to /media/external/documents
+    Backing up documents from ~/docs to /media/external/documents
+    Backing up photos with high quality to /media/external/documents
 
 
 <a id="acc52577-dff0-47ee-a0be-0b82beeffb82"></a>
@@ -350,14 +340,8 @@ clk backup quick
 clk backup work
 ```
 
-<pre>
-<span style="color:purple;">deprecated: </span>In ./clk-root/bin/backup.docs.do, O:--source:str:Source directory:~/docs gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{&quot;default&quot;: &quot;value&quot;}
-<span style="color:purple;">deprecated: </span>In ./clk-root/bin/backup.database, O:--db:str:Database name:main.db gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{&quot;default&quot;: &quot;value&quot;}
-Backing up documents from ~/notes to /media/external/documents
-<span style="color:purple;">deprecated: </span>In ./clk-root/bin/backup.docs.do, O:--source:str:Source directory:~/docs gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{&quot;default&quot;: &quot;value&quot;}
-<span style="color:purple;">deprecated: </span>In ./clk-root/bin/backup.database, O:--db:str:Database name:main.db gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{&quot;default&quot;: &quot;value&quot;}
-Backing up documents from ~/work/documents to /media/external/documents
-</pre>
+    Backing up documents from ~/notes to /media/external/documents
+    Backing up documents from ~/work/documents to /media/external/documents
 
 
 <a id="65537dcf-015c-4dbd-9479-faa5282f1864"></a>
@@ -378,8 +362,6 @@ clk parameter set backup --dest /mnt/backup/project-a
 ```
 
 <pre>
-<span style="color:purple;">deprecated: </span>In ../clk-root/bin/backup.docs.do, O:--source:str:Source directory:~/docs gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{&quot;default&quot;: &quot;value&quot;}
-<span style="color:purple;">deprecated: </span>In ../clk-root/bin/backup.database, O:--db:str:Database name:main.db gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{&quot;default&quot;: &quot;value&quot;}
 New <span style="color:green;">local</span> parameters for backup.docs.do: --source ./documentation
 New <span style="color:green;">local</span> parameters for backup: --dest /mnt/backup/project-a
 </pre>
@@ -388,11 +370,7 @@ New <span style="color:green;">local</span> parameters for backup: --dest /mnt/b
 clk backup docs do
 ```
 
-<pre>
-<span style="color:purple;">deprecated: </span>In ../clk-root/bin/backup.docs.do, O:--source:str:Source directory:~/docs gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{&quot;default&quot;: &quot;value&quot;}
-<span style="color:purple;">deprecated: </span>In ../clk-root/bin/backup.database, O:--db:str:Database name:main.db gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{&quot;default&quot;: &quot;value&quot;}
-Backing up documents from ./documentation to /mnt/backup/project-a
-</pre>
+    Backing up documents from ./documentation to /mnt/backup/project-a
 
 When I leave the project, global settings take over.
 
@@ -401,11 +379,7 @@ cd ..
 clk backup docs do
 ```
 
-<pre>
-<span style="color:purple;">deprecated: </span>In ./clk-root/bin/backup.docs.do, O:--source:str:Source directory:~/docs gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{&quot;default&quot;: &quot;value&quot;}
-<span style="color:purple;">deprecated: </span>In ./clk-root/bin/backup.database, O:--db:str:Database name:main.db gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{&quot;default&quot;: &quot;value&quot;}
-Backing up documents from ~/docs to /media/external/documents
-</pre>
+    Backing up documents from ~/docs to /media/external/documents
 
 
 <a id="41dfc4f9-e04b-4e10-a6e7-0fa7bf0ffb26"></a>
@@ -434,11 +408,7 @@ Outside any project, the extension's destination is used.
 clk backup docs do
 ```
 
-<pre>
-<span style="color:purple;">deprecated: </span>In ./clk-root/bin/backup.docs.do, O:--source:str:Source directory:~/docs gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{&quot;default&quot;: &quot;value&quot;}
-<span style="color:purple;">deprecated: </span>In ./clk-root/bin/backup.database, O:--db:str:Database name:main.db gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{&quot;default&quot;: &quot;value&quot;}
-Backing up documents from ~/docs to /mnt/my-nas/documents
-</pre>
+    Backing up documents from ~/docs to /mnt/my-nas/documents
 
 Inside a project that defines its own `--dest`, the project-local parameters take precedence. This is useful when a shared project needs a specific backup destination that everyone on the team should use.
 
@@ -450,11 +420,7 @@ cd project-a
 clk backup docs do
 ```
 
-<pre>
-<span style="color:purple;">deprecated: </span>In ../clk-root/bin/backup.docs.do, O:--source:str:Source directory:~/docs gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{&quot;default&quot;: &quot;value&quot;}
-<span style="color:purple;">deprecated: </span>In ../clk-root/bin/backup.database, O:--db:str:Database name:main.db gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{&quot;default&quot;: &quot;value&quot;}
-Backing up documents from ./documentation to /mnt/backup/project-a
-</pre>
+    Backing up documents from ./documentation to /mnt/backup/project-a
 
 Note that clk will always enable the extension matching your hostname, even if you explicitly disable it. Let's try it.
 
@@ -467,11 +433,7 @@ clk extension disable "$(hostname)"
 clk backup docs do
 ```
 
-<pre>
-<span style="color:purple;">deprecated: </span>In ./clk-root/bin/backup.docs.do, O:--source:str:Source directory:~/docs gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{&quot;default&quot;: &quot;value&quot;}
-<span style="color:purple;">deprecated: </span>In ./clk-root/bin/backup.database, O:--db:str:Database name:main.db gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{&quot;default&quot;: &quot;value&quot;}
-Backing up documents from ~/docs to /mnt/my-nas/documents
-</pre>
+    Backing up documents from ~/docs to /mnt/my-nas/documents
 
 Even after disabling, the hostname extension remains active and its parameters are still applied. This is practical to put personal preferences that apply everywhere, while still respecting project-specific overrides when they exist.
 
@@ -490,32 +452,27 @@ As the backup system grows, I can see all available commands with `--help`.
 clk backup --help
 ```
 
-<pre>
-<span style="color:purple;">deprecated: </span>In ./clk-root/bin/backup.database, O:--db:str:Database name:main.db gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{&quot;default&quot;: &quot;value&quot;}
-<span style="color:purple;">deprecated: </span>In ./clk-root/bin/backup.docs.do, O:--source:str:Source directory:~/docs gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{&quot;default&quot;: &quot;value&quot;}
-<span style="color:purple;">deprecated: </span>In ./clk-root/bin/backup.photos, O:--quality:str:Compression quality:high gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{&quot;default&quot;: &quot;value&quot;}
-Usage: clk backup [OPTIONS] COMMAND [ARGS]...
+    Usage: clk backup [OPTIONS] COMMAND [ARGS]...
 
-  Backup operations
+      Backup operations
 
-  The current parameters set for this command are: --dest /media/external/documents
+      The current parameters set for this command are: --dest /media/external/documents
 
-  Edit this custom command by running `clk command edit backup`
-  Or edit ./clk-root/python/backup.py directly.
+      Edit this custom command by running `clk command edit backup`
+      Or edit ./clk-root/python/backup.py directly.
 
-Options:
-  --dest TEXT  Backup destination base directory  [default: /mnt/backup]
-  --help-all   Show the full help message, automatic options included.
-  --help       Show this message and exit.
+    Options:
+      --dest TEXT  Backup destination base directory  [default: /mnt/backup]
+      --help-all   Show the full help message, automatic options included.
+      --help       Show this message and exit.
 
-Commands:
-  database  Backup database
-  docs      Automatically created group to organize subcommands
-  full      Alias for: backup database , backup docs do , backup...
-  photos    Backup photos
-  quick     Alias for: backup docs do --source '~/notes'
-  work      Alias for: backup docs do --source '~/work/documents'
-</pre>
+    Commands:
+      database  Backup database
+      docs      Automatically created group to organize subcommands
+      full      Alias for: backup database , backup docs do , backup...
+      photos    Backup photos
+      quick     Alias for: backup docs do --source '~/notes'
+      work      Alias for: backup docs do --source '~/work/documents'
 
 This gives me a complete overview: the core commands (`database`, `docs`, `photos`), the convenience aliases (`full`, `quick`, `work`), and I can drill down into any group for more details.
 

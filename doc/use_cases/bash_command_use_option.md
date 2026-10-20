@@ -232,29 +232,10 @@ clk showpackage https://example.com/path/to/package.apk
 
 # giving the defaults in json
 
-A command I wrote a while ago gives the defaults of its option and of its flag after a colon.
+I want `greet` to say hello once, and loudly, unless I tell it otherwise. I put those defaults in the json at the end of the option and flag lines.
 
 ```bash
-O:--times:int:How many times to greet:1
-F:--loud/--quiet:Greet in capital case:True
-```
-
-clk still reads them, and tells me how to write them now.
-
-```bash
-clk greet
-```
-
-<pre>
-<span style="color:purple;">deprecated: </span>In ./clk-root/bin/greet, O:--times:int:How many times to greet:1 gives its default after a colon. Give it in the json that ends the line instead, like O:name:type:help:{&quot;default&quot;: &quot;value&quot;}
-<span style="color:purple;">deprecated: </span>In ./clk-root/bin/greet, F:--loud/--quiet:Greet in capital case:True gives its default after a colon. Give it in the json that ends the line instead, like F:name:help:{&quot;default&quot;: true}
-HELLO
-</pre>
-
-A default that holds colons, like a url, would not fit after a colon anyway. The json that ends the line takes any default.
-
-```bash
-clk command create bash greet --force --description "Greet someone" \
+clk command create bash greet --description "Greet someone" \
     --option '--times:int:How many times to greet:{"default": 1}' \
     --flag '--loud/--quiet:Greet in capital case:{"default": true}' \
     --body '

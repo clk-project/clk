@@ -25,7 +25,7 @@ $0
 Some command to say something
 --
 F:--shouting:Shout the message
-O:--message:str:Message to say:something
+O:--message:str:Message to say:{"default": "something"}
 EOF
 }
 

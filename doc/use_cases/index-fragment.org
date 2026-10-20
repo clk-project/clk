@@ -9,7 +9,7 @@
 |------|-------------|----------------------|
 | [3D_printing_flow.md](3D_printing_flow.md) | Chaining commands into a workflow sequence using flows | clk.overloads.get_command |
 | [alias_to_root.md](alias_to_root.md) | Aliases pointing to the root command of a sibling project, to run its commands without cd-ing into it |  |
-| [backing_up_documents.md](backing_up_documents.md) | Building a backup system with hierarchical commands, flows, parameters, and per-project configuration |  |
+| [backing_up_documents.md](backing_up_documents.md) | Building a backup system with hierarchical commands, flows, parameters, and per-project configuration | clk_given |
 | [bash_command_use_option.md](bash_command_use_option.md) | Arguments (A:), options (O:), flags (F:), file completion, clk_value, clk_given, clk_true, clk_format_choice | clk_format_choice,clk_given,clk_true,clk_value |
 | [calling_my_mcp_server.md](calling_my_mcp_server.md) | Getting a Cognito token for my MCP server on AgentCore, with its password kept out of files and parameters (clk secret, keyring, netrc, --ask-secret) | clk.get_secret,expose_class |
 | [chaotic_simulator_manager.md](chaotic_simulator_manager.md) | Building your own standalone CLI tool on top of clk as a library | clk.lib.format_options,clk.lib.rm,clk.overloads.option,clk.setup.basic_entry_point,clk.setup.main |
@@ -71,7 +71,7 @@
 - `clk_drop_duplicate` : [controlling_my_music.md](controlling_my_music.md)
 - `clk_extension_hello` : [creating_extensions.md](creating_extensions.md)
 - `clk_format_choice` : [bash_command_use_option.md](bash_command_use_option.md)
-- `clk_given` : [bash_command_use_option.md](bash_command_use_option.md)
+- `clk_given` : [backing_up_documents.md](backing_up_documents.md), [bash_command_use_option.md](bash_command_use_option.md)
 - `clk_import` : [send_sms.md](send_sms.md)
 - `clk_list_to_choice` : [ipfs_name_publish.md](ipfs_name_publish.md), [send_sms.md](send_sms.md)
 - `clk_true` : [bash_command_use_option.md](bash_command_use_option.md), [controlling_my_music.md](controlling_my_music.md)

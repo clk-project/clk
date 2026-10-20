@@ -194,13 +194,6 @@ def call(args, **kwargs):
     internal = kwargs.get("internal")
     if "internal" in kwargs.keys():
         del kwargs["internal"]
-    # deal with backward compatibility
-    if "force" in kwargs.keys():
-        LOGGER.deprecated(
-            "'force' argument is deprecated since version 0.9.0, use 'internal' instead."
-        )
-        internal = kwargs["force"]
-        del kwargs["force"]
     args = [str(arg) for arg in args]
     message = " ".join(quote(arg) for arg in args)
     action_message = f"run: {message}"
@@ -399,13 +392,6 @@ def safe_check_output(*args, **kwargs):
     internal = kwargs.get("internal")
     if "internal" in kwargs:
         del kwargs["internal"]
-    # deal with backward compatibility
-    if "force" in kwargs.keys():
-        LOGGER.deprecated(
-            "'force' argument is deprecated since version 0.9.0, use 'internal' instead."
-        )
-        internal = kwargs["force"]
-        del kwargs["force"]
     action_message = "run: {}".format(" ".join(map(str, args[0])))
     if internal:
         LOGGER.develop(action_message)
@@ -446,13 +432,6 @@ def check_output(cmd, *args, **kwargs):
         timeout = kwargs.pop("timeout")
     except KeyError:
         timeout = None
-    # deal with backward compatibility
-    if "force" in kwargs.keys():
-        LOGGER.deprecated(
-            "'force' argument is deprecated since version 0.9.0, use 'internal' instead."
-        )
-        internal = kwargs["force"]
-        del kwargs["force"]
     action_message = f"run: {message}"
     if internal:
         LOGGER.develop(action_message)
