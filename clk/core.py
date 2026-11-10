@@ -1182,7 +1182,14 @@ def cache_disk(
                         filepath.touch()
                     return pickle.load(open(filepath, "rb"))
             result = f(*args, **kwargs)
-            pickle.dump(result, open(filepath, "wb"))
+            temppath = filepath.with_name(f"{filepath.name}.{os.getpid()}.tmp")
+            try:
+                with open(temppath, "wb") as fd:
+                    pickle.dump(result, fd)
+                os.replace(temppath, filepath)
+            finally:
+                if temppath.exists():
+                    rm(temppath)
             # to have a coherent behavior when using faketime in the tests, I need
             # to touch the file, so that it has the modification date specified
             # in faketime. I don't know why open is impervious to faketime
