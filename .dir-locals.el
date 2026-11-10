@@ -19,8 +19,8 @@
                                                       ("^ruff format" . "")
                                                       ("^clk coverage missing" . "")
                                                       ))
-         (konix/agent-shell-mcp-project-servers . ("konix-emacs-code-review"
-                                                   "konix-emacs-workspace"
+         (konix/agent-shell-mcp-project-servers . (("konix-emacs-code-review". "")
+                                                   ("konix-emacs-workspace". "")
                                                    ))))
  (org-mode . ((ispell-dictionary . "american")
               (org-id-link-to-org-use-id . nil)
