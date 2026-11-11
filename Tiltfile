@@ -1,5 +1,5 @@
 local_resource(
     "test",
-    "earthly +test",
+    "earth +test",
     ["clk", "tests"],
 )

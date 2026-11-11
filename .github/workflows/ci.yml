@@ -22,12 +22,12 @@ jobs:
       FORCE_COLOR: 1
     steps:
     - uses: actions/checkout@v2
-    - name: Download latest earthly
-      run: "sudo /bin/sh -c 'wget https://github.com/earthly/earthly/releases/download/v0.8.15/earthly-linux-amd64 -O /usr/local/bin/earthly && chmod +x /usr/local/bin/earthly'"
+    - name: Download latest earth
+      run: "sudo /bin/sh -c 'wget https://github.com/EarthBuild/earthbuild/releases/download/v0.8.19/earth-linux-amd64 -O /usr/local/bin/earth && chmod +x /usr/local/bin/earth'"
     - name: Login to GHCR
       run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
     - name: Test
-      run: earthly --secret SONAR_TOKEN="${{ secrets.SONAR_TOKEN }}" --ci --remote-cache=ghcr.io/${{ github.repository }}:cache --artifact +sanity-check/output/coverage-reports/*.md ./coverage-reports/
+      run: earth --secret SONAR_TOKEN="${{ secrets.SONAR_TOKEN }}" --ci --remote-cache=ghcr.io/${{ github.repository }}:cache --artifact +sanity-check/output/coverage-reports/*.md ./coverage-reports/
     - name: Commit coverage reports
       if: github.ref == 'refs/heads/main'
       run: |
@@ -44,7 +44,7 @@ jobs:
         fi
     - name: Build the site
       if: github.ref == 'refs/heads/main'
-      run: earthly --ci --remote-cache=ghcr.io/${{ github.repository }}:cache --artifact +pages/site/* ./site/
+      run: earth --ci --remote-cache=ghcr.io/${{ github.repository }}:cache --artifact +pages/site/* ./site/
     - name: Upload the site
       if: github.ref == 'refs/heads/main'
       uses: actions/upload-pages-artifact@v3
@@ -72,9 +72,9 @@ jobs:
       FORCE_COLOR: 1
     steps:
     - uses: actions/checkout@v2
-    - name: Download latest earthly
-      run: "sudo /bin/sh -c 'wget https://github.com/earthly/earthly/releases/download/v0.8.15/earthly-linux-amd64 -O /usr/local/bin/earthly && chmod +x /usr/local/bin/earthly'"
+    - name: Download latest earth
+      run: "sudo /bin/sh -c 'wget https://github.com/EarthBuild/earthbuild/releases/download/v0.8.19/earth-linux-amd64 -O /usr/local/bin/earth && chmod +x /usr/local/bin/earth'"
     - name: Login to GHCR
       run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
     - name: Test
-      run: earthly --secret SONAR_TOKEN="${{ secrets.SONAR_TOKEN }}" --secret pypi_username="__token__" --secret pypi_password="${{ secrets.PYPI_TOKEN }}" --ci --remote-cache=ghcr.io/${{ github.repository }}:cache --push +deploy
+      run: earth --secret SONAR_TOKEN="${{ secrets.SONAR_TOKEN }}" --secret pypi_username="__token__" --secret pypi_password="${{ secrets.PYPI_TOKEN }}" --ci --remote-cache=ghcr.io/${{ github.repository }}:cache --push +deploy

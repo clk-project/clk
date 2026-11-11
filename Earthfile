@@ -134,7 +134,7 @@ test:
     SAVE ARTIFACT output /output
 
 sandbox:
-    # to be used with earthly -i
+    # to be used with earth -i
     FROM e+debian-python-user-venv --extra_packages="git curl" # --packages="clk"
     WORKDIR /app
     COPY --dir +git-files/app/* +sources/app/* +side-files/app/* +test-files/app/* .
@@ -280,7 +280,7 @@ pages:
     SAVE ARTIFACT /site AS LOCAL output/site
 
 ralph:
-    # Example: earthly --secret-file CLAUDE_CREDENTIALS=~/.claude/.credentials.json +ralph --ralph_args="run --max-iterations 1 -p 'do something'" --output_dir=results
+    # Example: earth --secret-file CLAUDE_CREDENTIALS=~/.claude/.credentials.json +ralph --ralph_args="run --max-iterations 1 -p 'do something'" --output_dir=results
     # Start from the test base: debian with python venv, all test tooling, plus npm for ralph
     FROM e+debian-python-user-venv --extra_packages="${TEST_EXTRA_PACKAGES} npm xz-utils" --packages="${TEST_PACKAGES}"
     RUN echo 'source <(direnv hook bash)' >> "${HOME}/.bashrc"
