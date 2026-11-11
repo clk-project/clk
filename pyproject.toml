@@ -25,7 +25,6 @@ dependencies = [
     "ipdb",
     "humanize==4",
     "Pygments",
-    "cached-property",
     "requests",
     "tqdm",
     "pyjson5",

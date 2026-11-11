@@ -7,10 +7,10 @@ import socket
 from collections import defaultdict
 from contextlib import contextmanager
 from copy import deepcopy
+from functools import cached_property
 from pathlib import Path
 
 import click
-from cached_property import cached_property
 
 from clk.click_helpers import click_get_current_context_safe
 from clk.lib import quote, updated_env, value_to_string
